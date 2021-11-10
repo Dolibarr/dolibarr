@@ -574,10 +574,11 @@ class Asset extends CommonObject
 	 *
 	 * @param	int		$begin_period		Begin period filter
 	 * @param	int		$end_period			End period filter
+	 * @param	bool	$only_save			Return only saved depreciation lines
 	 * @param	bool	$only_new			Return only new depreciation lines
 	 * @return	int							<0 if KO, Id of created object if OK
 	 */
-	public function fetchDepreciationLines($begin_period = null, $end_period = null, $only_new = false)
+	public function fetchDepreciationLines($begin_period = null, $end_period = null, $only_save = false, $only_new = false)
 	{
 		global $langs;
 		$langs->load('assets');
@@ -585,6 +586,7 @@ class Asset extends CommonObject
 
 		// Clean parameters
 		$this->id = $this->id > 0 ? $this->id : 0;
+		if ($only_save && $only_new) $only_new = false;
 
 		// Check parameters
 		$error = 0;
@@ -639,124 +641,126 @@ class Asset extends CommonObject
 				}
 			}
 
-			// Get fiscal period
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-			$dates = getDefaultDatesForTransfer();
-			$fiscal_period_start = $dates['date_start'];
-			$fiscal_period_end = $dates['date_end'];
-			if (empty($fiscal_period_start) || empty($fiscal_period_end)) {
-				$pastmonthyear = $dates['pastmonthyear'];
-				$pastmonth = $dates['pastmonth'];
-				$fiscal_period_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-				$fiscal_period_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
-			}
+			if (!$only_save) {
+				// Get fiscal period
+				require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+				require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+				$dates = getDefaultDatesForTransfer();
+				$fiscal_period_start = $dates['date_start'];
+				$fiscal_period_end = $dates['date_end'];
+				if (empty($fiscal_period_start) || empty($fiscal_period_end)) {
+					$pastmonthyear = $dates['pastmonthyear'];
+					$pastmonth = $dates['pastmonth'];
+					$fiscal_period_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
+					$fiscal_period_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+				}
 
-			// Get last depreciation date saved
-			$sql = "SELECT depreciation_date, cumulative_depreciation_ht";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation";
-			$sql .= " WHERE fk_asset = " . $this->id;
-			$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-			$sql .= " ORDER BY depreciation_date DESC";
-			$sql .= " LIMIT 1";
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
-				return -1;
-			}
-			$depreciation_date = '';
-			$cumulative_depreciation_ht = '';
-			if ($obj = $this->db->fetch_object($resql)) {
-				$depreciation_date = $this->db->jdate($obj->depreciation_date);
-				$cumulative_depreciation_ht = $obj->cumulative_depreciation_ht;
-			}
-
-			// Get depreciation period
-			$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
-			$depreciation_date_end = dol_time_plus_duree($depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm': ($fields['duration_type'] == 2 ? 'd' : 'y'));
-			$depreciation_amount = $fields['total_amount_last_depreciation_ht'] > 0 ? $fields['total_amount_last_depreciation_ht'] : $fields['amount_base_depreciation_ht'];
-			$depreciation_period_amount = $depreciation_amount;
-			$start_date = $depreciation_date_start;
-			$finish_date = $depreciation_date_end;
-
-			if ($depreciation_date_start < $fiscal_period_start) {
-				if ($depreciation_date === "" && is_numeric($fields['depreciation_reversal_date'])) {
-					if ($fields['depreciation_reversal_date'] < $fiscal_period_start) {
-						$this->errors[] = $langs->trans('AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode', $mode_key);
-						return -1;
-					}
-
-					if (empty($fields['depreciation_reversal_amount_ht'])) {
-						$this->errors[] = $langs->trans('AssetErrorReversalAmountNotProvidedForMode', $mode_key);
-						return -1;
-					}
-
-					$start_date = $fields['depreciation_reversal_date'];
-					$cumulative_depreciation_ht = $fields['depreciation_reversal_amount_ht'];
-					$depreciation_period_amount = $depreciation_amount - $cumulative_depreciation_ht;
-					$lines[$start_date] = array(
-						'id' => 0,
-						'type' => 0,
-						'ref' => $langs->trans('AssetDepreciationReversal'),
-						'depreciation_date' => $start_date,
-						'depreciation_ht' => $cumulative_depreciation_ht,
-						'cumulative_depreciation_ht' => $cumulative_depreciation_ht,
-					);
-				} else {
-					$this->errors[] = $langs->trans('AssetErrorReversalDateNotProvidedForMode', $mode_key);
+				// Get last depreciation date saved
+				$sql = "SELECT depreciation_date, cumulative_depreciation_ht";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation";
+				$sql .= " WHERE fk_asset = " . $this->id;
+				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+				$sql .= " ORDER BY depreciation_date DESC";
+				$sql .= " LIMIT 1";
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
 					return -1;
 				}
-			}
-
-			$nb_days_in_year = 360;
-			$period_amount = (double)price2num($depreciation_period_amount * ($fields['duration_type'] == 1 ? 12 : ($fields['duration_type'] == 2 ? $nb_days_in_year : 1)) / $fields['duration'], 'MT');
-
-			$first_period_found = false;
-			$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
-			// Loop security
-			$idx_loop = 0;
-			$max_loop = $fields['duration'] + 2;
-			do {
-				// Loop security
-				$idx_loop++;
-				if ($idx_loop > $max_loop) break;
-
-				if ($first_period_date <= $start_date || $first_period_found) {
-					$first_period_found = true;
-
-					$period_begin = dol_print_date($fiscal_period_start, '%Y');
-					$period_end = dol_print_date($fiscal_period_end, '%Y');
-					$ref = $period_begin . ($period_begin != $period_end ? ' - ' . $period_end : '');
-
-					$begin_date = $fiscal_period_start < $start_date &&  $start_date <= $fiscal_period_end ? $start_date : $fiscal_period_start;
-					$end_date = $fiscal_period_start < $finish_date &&  $finish_date <= $fiscal_period_end ? $finish_date : $fiscal_period_end;
-					$nb_days = min($nb_days_in_year, ($end_date - $begin_date) / 86400); // 86400s = 1d
-					$depreciation_ht = (double)price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
-					if ($fiscal_period_start <= $depreciation_date_end && $depreciation_date_end <= $fiscal_period_end) { // last period
-						$depreciation_ht = (double)price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
-						$cumulative_depreciation_ht = $depreciation_amount;
-					} else {
-						$cumulative_depreciation_ht += $depreciation_ht;
-					}
-
-					$lines[$fiscal_period_end] = array(
-						'id' => 0,
-						'type' => 2,
-						'ref' => $ref,
-						'depreciation_date' => $fiscal_period_end,
-						'depreciation_ht' => $depreciation_ht,
-						'cumulative_depreciation_ht' => $cumulative_depreciation_ht,
-					);
+				$depreciation_date = '';
+				$cumulative_depreciation_ht = '';
+				if ($obj = $this->db->fetch_object($resql)) {
+					$depreciation_date = $this->db->jdate($obj->depreciation_date);
+					$cumulative_depreciation_ht = $obj->cumulative_depreciation_ht;
 				}
 
-				// Next fiscal period (+1 year)
-				$fiscal_period_start = dol_time_plus_duree($fiscal_period_end, 1, 'd');
-				$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
-				$last_period_date = isset($end_period) && $end_period < $depreciation_date_end ? $end_period : $depreciation_date_end;
-			} while ($fiscal_period_start < $last_period_date);
+				// Get depreciation period
+				$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
+				$depreciation_date_end = dol_time_plus_duree($depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y'));
+				$depreciation_amount = $fields['total_amount_last_depreciation_ht'] > 0 ? $fields['total_amount_last_depreciation_ht'] : $fields['amount_base_depreciation_ht'];
+				$depreciation_period_amount = $depreciation_amount;
+				$start_date = $depreciation_date_start;
+				$finish_date = $depreciation_date_end;
 
-			ksort($lines, SORT_NUMERIC);
-			$depreciation_lines[$mode_key] = $lines;
+				if ($depreciation_date_start < $fiscal_period_start) {
+					if ($depreciation_date === "" && is_numeric($fields['depreciation_reversal_date'])) {
+						if ($fields['depreciation_reversal_date'] < $fiscal_period_start) {
+							$this->errors[] = $langs->trans('AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode', $mode_key);
+							return -1;
+						}
+
+						if (empty($fields['depreciation_reversal_amount_ht'])) {
+							$this->errors[] = $langs->trans('AssetErrorReversalAmountNotProvidedForMode', $mode_key);
+							return -1;
+						}
+
+						$start_date = $fields['depreciation_reversal_date'];
+						$cumulative_depreciation_ht = $fields['depreciation_reversal_amount_ht'];
+						$depreciation_period_amount = $depreciation_amount - $cumulative_depreciation_ht;
+						$lines[$start_date] = array(
+							'id' => 0,
+							'type' => 0,
+							'ref' => $langs->trans('AssetDepreciationReversal'),
+							'depreciation_date' => $start_date,
+							'depreciation_ht' => $cumulative_depreciation_ht,
+							'cumulative_depreciation_ht' => $cumulative_depreciation_ht,
+						);
+					} else {
+						$this->errors[] = $langs->trans('AssetErrorReversalDateNotProvidedForMode', $mode_key);
+						return -1;
+					}
+				}
+
+				$nb_days_in_year = 360;
+				$period_amount = (double)price2num($depreciation_period_amount * ($fields['duration_type'] == 1 ? 12 : ($fields['duration_type'] == 2 ? $nb_days_in_year : 1)) / $fields['duration'], 'MT');
+
+				$first_period_found = false;
+				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
+				// Loop security
+				$idx_loop = 0;
+				$max_loop = $fields['duration'] + 2;
+				do {
+					// Loop security
+					$idx_loop++;
+					if ($idx_loop > $max_loop) break;
+
+					if ($first_period_date <= $start_date || $first_period_found) {
+						$first_period_found = true;
+
+						$period_begin = dol_print_date($fiscal_period_start, '%Y');
+						$period_end = dol_print_date($fiscal_period_end, '%Y');
+						$ref = $period_begin . ($period_begin != $period_end ? ' - ' . $period_end : '');
+
+						$begin_date = $fiscal_period_start < $start_date && $start_date <= $fiscal_period_end ? $start_date : $fiscal_period_start;
+						$end_date = $fiscal_period_start < $finish_date && $finish_date <= $fiscal_period_end ? $finish_date : $fiscal_period_end;
+						$nb_days = min($nb_days_in_year, ($end_date - $begin_date) / 86400); // 86400s = 1d
+						$depreciation_ht = (double)price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+						if ($fiscal_period_start <= $depreciation_date_end && $depreciation_date_end <= $fiscal_period_end) { // last period
+							$depreciation_ht = (double)price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
+							$cumulative_depreciation_ht = $depreciation_amount;
+						} else {
+							$cumulative_depreciation_ht += $depreciation_ht;
+						}
+
+						$lines[$fiscal_period_end] = array(
+							'id' => 0,
+							'type' => 2,
+							'ref' => $ref,
+							'depreciation_date' => $fiscal_period_end,
+							'depreciation_ht' => $depreciation_ht,
+							'cumulative_depreciation_ht' => $cumulative_depreciation_ht,
+						);
+					}
+
+					// Next fiscal period (+1 year)
+					$fiscal_period_start = dol_time_plus_duree($fiscal_period_end, 1, 'd');
+					$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
+					$last_period_date = isset($end_period) && $end_period < $depreciation_date_end ? $end_period : $depreciation_date_end;
+				} while ($fiscal_period_start < $last_period_date);
+
+				ksort($lines, SORT_NUMERIC);
+				$depreciation_lines[$mode_key] = $lines;
+			}
 		}
 
 		$this->depreciation_lines = $depreciation_lines;

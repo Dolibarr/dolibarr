@@ -471,7 +471,7 @@ class AccountingJournal extends CommonObject
 				return -1;
 			}
 
-			$result = $asset->fetchDepreciationLines();
+			$result = $asset->fetchDepreciationLines($date_start, $date_end, $in_bookkeeping == 'already', $in_bookkeeping == 'notyet');
 			if ($result < 0) {
 				$this->error = $assetaccountancycodes->error;
 				$this->errors = $assetaccountancycodes->errors;
@@ -493,55 +493,17 @@ class AccountingJournal extends CommonObject
 				'ht_lines' => array(),
 			);
 
-			$compta_prod = $obj->compte;
-			if (empty($compta_prod)) {
-				if ($obj->product_type == 0) {
-					$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : 'NotDefined';
-				} else {
-					$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : 'NotDefined';
+			foreach ($asset->depreciation_lines as $mode_key => $lines) {
+				$compta_in = (!empty($assetaccountancycodes->accountancy_codes[$mode_key][''])) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : 'NotDefined';
+				$compta_out = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : 'NotDefined';
+
+				foreach ($lines as $line) {
+					if (!isset($pre_data['elements'][$obj->rowid]['ht_lines'][$compta_in])) $pre_data['elements'][$obj->rowid]['ht_lines'][$compta_in] = 0;
+					$pre_data['elements'][$obj->rowid]['ht_lines'][$compta_in] += $obj->total_ht * $situation_ratio;
+					if (!isset($pre_data['elements'][$obj->rowid]['ht_lines'][$compta_out])) $pre_data['elements'][$obj->rowid]['ht_lines'][$compta_in] = 0;
+					$pre_data['elements'][$obj->rowid]['ht_lines'][$compta_out] += $obj->total_ht * $situation_ratio;
 				}
 			}
-
-			$vatdata = getTaxesFromId($obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : ''), $mysoc, $mysoc, 0);
-			$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
-			$compta_localtax1 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
-			$compta_localtax2 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
-
-			// Define array to display all VAT rates that use this accounting account $compta_tva
-			if (price2num($obj->tva_tx) || !empty($obj->vat_src_code)) {
-				if (!isset($pre_data['elements'][$obj->rowid]['vat_info'][$compta_tva])) $pre_data['elements'][$obj->rowid]['vat_info'][$compta_tva] = array();
-				$pre_data['elements'][$obj->rowid]['vat_info'][$compta_tva][vatrate($obj->tva_tx) . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : '')] = (vatrate($obj->tva_tx) . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : ''));
-			}
-
-			// Situation invoices handling
-			$line = new FactureLigne($this->db);
-			$line->fetch($obj->fdid);
-			$prev_progress = $line->get_prev_progress($obj->rowid);
-			if ($obj->type == Facture::TYPE_SITUATION) {
-				// Avoid divide by 0
-				if ($obj->situation_percent == 0) {
-					$situation_ratio = 0;
-				} else {
-					$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
-				}
-			} else {
-				$situation_ratio = 1;
-			}
-
-			if (!isset($pre_data['elements'][$obj->rowid]['ttc_lines'][$compta_soc])) $pre_data['elements'][$obj->rowid]['ttc_lines'][$compta_soc] = 0;
-			$pre_data['elements'][$obj->rowid]['ttc_lines'][$compta_soc] += $obj->total_ttc * $situation_ratio;
-
-			if (!isset($pre_data['elements'][$obj->rowid]['ht_lines'][$compta_prod])) $pre_data['elements'][$obj->rowid]['ht_lines'][$compta_prod] = 0;
-			$pre_data['elements'][$obj->rowid]['ht_lines'][$compta_prod] += $obj->total_ht * $situation_ratio;
-
-			if (!isset($pre_data['elements'][$obj->rowid]['vat_lines'][0][$compta_tva])) $pre_data['elements'][$obj->rowid]['vat_lines'][0][$compta_tva] = 0;
-			if (empty($line->tva_npr)) $pre_data['elements'][$obj->rowid]['vat_lines'][0][$compta_tva] += $obj->total_tva * $situation_ratio; // We ignore line if VAT is a NPR
-
-			if (!isset($pre_data['elements'][$obj->rowid]['vat_lines'][1][$compta_localtax1])) $pre_data['elements'][$obj->rowid]['vat_lines'][1][$compta_localtax1] = 0;
-			$pre_data['elements'][$obj->rowid]['vat_lines'][1][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
-
-			if (!isset($pre_data['elements'][$obj->rowid]['vat_lines'][2][$compta_localtax2])) $pre_data['elements'][$obj->rowid]['vat_lines'][2][$compta_localtax2] = 0;
-			$pre_data['elements'][$obj->rowid]['vat_lines'][2][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
 		}
 
 		$journal = $this->code;
