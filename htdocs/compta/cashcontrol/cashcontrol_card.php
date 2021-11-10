@@ -312,7 +312,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 				} elseif ($syear && $smonth && $sday) {
 					$sql .= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
 				} else {
-					dol_print_error('', 'Year not defined');
+					setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 				}
 
 				$resql = $db->query($sql);
@@ -356,7 +356,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			} elseif ($syear && $smonth && $sday) {
 				$sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 			} else {
-				setEventMessages($langs->trans('Year not defined'), null, 'errors');
+				setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 			}
 
 			$resql = $db->query($sql);
