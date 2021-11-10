@@ -1,6 +1,11 @@
 <?php
-/* Copyright (C) 2017      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2018      Alexandre Spangaro   	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +22,9 @@
  */
 
 /**
- *  \file       htdocs/asset/admin/assets_extrafields.php
+ *  \file       htdocs/asset/admin/asset_extrafields.php
  *  \ingroup    asset
- *  \brief      Page to setup extra fields of assets
+ *  \brief      Page to setup extra fields of asset
  */
 
 require '../../main.inc.php';
@@ -41,7 +46,7 @@ foreach ($tmptype2label as $key => $val) {
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'don'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'asset'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) {
 	accessforbidden();
@@ -60,17 +65,20 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$help_url = '';
+$page_name = "AssetSetup";
 $textobject = $langs->transnoentitiesnoconv("Assets");
 
-llxHeader('', $langs->trans("AssetsSetup"));
-
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("AssetsSetup"), $linkback, 'title_setup');
+llxHeader('', $langs->trans("AssetSetup"), $help_url);
 
 
-$head = asset_admin_prepare_head();
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
-print dol_get_fiche_head($head, 'attributes', $langs->trans("Assets"), -1, 'generic');
+
+$head = assetAdminPrepareHead();
+
+print dol_get_fiche_head($head, 'asset_extrafields', $langs->trans($page_name), -1, 'asset');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
@@ -80,29 +88,24 @@ print dol_get_fiche_end();
 // Buttons
 if ($action != 'create' && $action != 'edit') {
 	print '<div class="tabsAction">';
-	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a></div>';
+	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
 	print "</div>";
 }
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Create optional field                                                      */
-/*                                                                            */
-/* ************************************************************************** */
-
+/*
+ * Creation of an optional field
+ */
 if ($action == 'create') {
-	print "<br>";
+	print '<br><div id="newattrib"></div>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Edit optional field                                                        */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ * Edition of an optional field
+ */
 if ($action == 'edit' && !empty($attrname)) {
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));

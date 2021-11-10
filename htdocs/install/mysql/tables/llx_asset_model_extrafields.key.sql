@@ -13,14 +13,5 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-create table llx_asset_type
-(
-  rowid                                 integer AUTO_INCREMENT PRIMARY KEY,
-  entity                                integer DEFAULT 1 NOT NULL,	-- multi company id
-  tms                                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  label                                 varchar(50) NOT NULL,
-  accountancy_code_asset                varchar(32),
-  accountancy_code_depreciation_asset   varchar(32),
-  accountancy_code_depreciation_expense varchar(32),
-  note                                  text
-)ENGINE=innodb;
+
+ALTER TABLE llx_asset_model_extrafields ADD INDEX idx_asset_model_extrafields (fk_object);

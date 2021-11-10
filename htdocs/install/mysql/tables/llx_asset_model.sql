@@ -14,21 +14,13 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_asset(
+CREATE TABLE llx_asset_model(
 	rowid					integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity					integer			DEFAULT 1 NOT NULL,  -- multi company id
-	ref						varchar(128)	DEFAULT '(PROV)' NOT NULL,
+	ref						varchar(128)	NOT NULL,
 	label					varchar(255)	NOT NULL,
-	fk_asset_model			integer			NOT NULL,
 
-	acquisition_value_ht	double(24,8)	NOT NULL,
-	recovered_vat			double(24,8),
-	date_acquisition		date 			NOT NULL,
-	date_start				date 			NOT NULL,
-	qty						real			DEFAULT 1 NOT NULL,	-- qty asset
-	acquisition_type		smallint		DEFAULT 0 NOT NULL,	-- new, occasion
-	asset_type				smallint		DEFAULT 0 NOT NULL,	-- intangible, tangible, in progress, financial
-	not_depreciated			integer(1)		DEFAULT 0,
+	asset_type				smallint		NOT NULL,
 
 	note_public				text,
 	note_private			text,
@@ -36,8 +28,6 @@ CREATE TABLE llx_asset(
 	tms						timestamp,
 	fk_user_creat			integer			NOT NULL,
 	fk_user_modif			integer,
-	last_main_doc			varchar(255),
 	import_key				varchar(14),
-	model_pdf				varchar(255),
 	status					smallint		NOT NULL
 ) ENGINE=innodb;

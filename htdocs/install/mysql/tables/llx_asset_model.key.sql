@@ -14,11 +14,10 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
-ALTER TABLE llx_asset ADD INDEX idx_asset_rowid (rowid);
-ALTER TABLE llx_asset ADD INDEX idx_asset_ref (ref);
-ALTER TABLE llx_asset ADD INDEX idx_asset_entity (entity);
-ALTER TABLE llx_asset ADD INDEX idx_asset_fk_asset_model (fk_asset_model);
+ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_rowid (rowid);
+ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_ref (ref);
+ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_entity (entity);
+ALTER TABLE llx_asset_model ADD UNIQUE INDEX uk_asset_model (entity, ref);
 
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_asset_model	FOREIGN KEY (fk_asset_model)	REFERENCES llx_asset_model (rowid);
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_user_creat	FOREIGN KEY (fk_user_creat)		REFERENCES llx_user (rowid);
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
+ALTER TABLE llx_asset_model ADD CONSTRAINT fk_asset_model_user_creat	FOREIGN KEY (fk_user_creat)		REFERENCES llx_user (rowid);
+ALTER TABLE llx_asset_model ADD CONSTRAINT fk_asset_model_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
