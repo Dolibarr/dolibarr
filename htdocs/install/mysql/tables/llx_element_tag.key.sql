@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2012 Mikael Carlavan     <mcarlavan@qis-network.com>
--- Copyright (C) 2017 ATM Consulting      <contact@atm-consulting.fr>
--- Copyright (C) 2017 Pierre-Henry Favre  <phf@atm-consulting.fr>
+-- Copyright (C) 2021 Maxime Kohlhaas       <support@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,10 +16,6 @@
 --
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS llx_c_exp_tax_range (
-    rowid       integer  AUTO_INCREMENT PRIMARY KEY,
-    fk_c_exp_tax_cat integer DEFAULT 1 NOT NULL,
-    range_ik    double DEFAULT 0 NOT NULL,   
-    entity      integer DEFAULT 1 NOT NULL,
-    active      integer DEFAULT 1 NOT NULL		          
-)ENGINE=innodb;
+ALTER TABLE llx_element_tag ADD UNIQUE INDEX idx_element_tag_uk (fk_categorie, fk_element);
+
+ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);

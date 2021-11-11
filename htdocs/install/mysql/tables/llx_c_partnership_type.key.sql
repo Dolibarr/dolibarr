@@ -1,4 +1,5 @@
--- Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+-- ========================================================================
+-- Copyright (C) 2021 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -13,16 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Type of ticket. For example: COM, ISSUE, REQUEST, PROJECT, OTHER, ...
+-- ========================================================================
 
-create table llx_c_ticket_type
-(
-  rowid			integer AUTO_INCREMENT PRIMARY KEY,
-  entity		integer DEFAULT 1,
-  code			varchar(32)				NOT NULL,
-  pos			varchar(32)				NOT NULL,
-  label			varchar(128)			NOT NULL,
-  active		integer DEFAULT 1,
-  use_default	integer DEFAULT 1,
-  description	varchar(255)
-)ENGINE=innodb;
+ALTER TABLE llx_c_partnership_type ADD UNIQUE INDEX uk_c_partnership_type(entity, code);

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2020  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2021  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,8 +159,8 @@ class printing_printipp extends PrintingDriver
 				$ipp->setCopies($obj->copy);
 			} else {
 				if (!empty($conf->global->PRINTIPP_URI_DEFAULT)) {
-					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
-					$ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
+					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".getDolGlobalString('PRINTIPP_URI_DEFAULT'));
+					$ipp->setPrinterURI(getDolGlobalString('PRINTIPP_URI_DEFAULT'));
 				} else {
 					$this->errors[] = 'NoDefaultPrinterDefined';
 					$error++;

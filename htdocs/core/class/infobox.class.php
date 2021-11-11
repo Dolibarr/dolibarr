@@ -37,7 +37,7 @@ class InfoBox
 	{
 		global $conf;
 
-		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 			return array(
 				0 => 'Home',
 				1 => 'UsersHome',
