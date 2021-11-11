@@ -108,10 +108,10 @@ class printing_printipp extends PrintingDriver
 		global $conf;
 
 		$this->db = $db;
-		$this->host = $conf->global->PRINTIPP_HOST;
-		$this->port = $conf->global->PRINTIPP_PORT;
-		$this->user = $conf->global->PRINTIPP_USER;
-		$this->password = $conf->global->PRINTIPP_PASSWORD;
+		$this->host = getDolGlobalString('PRINTIPP_HOST');
+		$this->port = getDolGlobalString('PRINTIPP_PORT');
+		$this->user = getDolGlobalString('PRINTIPP_USER');
+		$this->password = getDolGlobalString('PRINTIPP_PASSWORD');
 		$this->conf[] = array('varname'=>'PRINTIPP_HOST', 'required'=>1, 'example'=>'localhost', 'type'=>'text');
 		$this->conf[] = array('varname'=>'PRINTIPP_PORT', 'required'=>1, 'example'=>'631', 'type'=>'text');
 		$this->conf[] = array('varname'=>'PRINTIPP_USER', 'required'=>0, 'example'=>'', 'type'=>'text', 'moreattributes'=>'autocomplete="off"');
