@@ -662,37 +662,9 @@ if (empty($reshook)) {
 				}
 			}
 
-			unset($_POST ['prod_entry_mode']);
-
-			unset($_POST['qty']);
-			unset($_POST['type']);
-			unset($_POST['remise_percent']);
-			unset($_POST['pu']);
-			unset($_POST['price_ht']);
-			unset($_POST['multicurrency_price_ht']);
-			unset($_POST['price_ttc']);
-			unset($_POST['fourn_ref']);
-			unset($_POST['tva_tx']);
-			unset($_POST['label']);
-			unset($localtax1_tx);
-			unset($localtax2_tx);
-			unset($_POST['np_marginRate']);
-			unset($_POST['np_markRate']);
-			unset($_POST['dp_desc']);
-			unset($_POST['idprodfournprice']);
-
-			unset($_POST['date_starthour']);
-			unset($_POST['date_startmin']);
-			unset($_POST['date_startsec']);
-			unset($_POST['date_startday']);
-			unset($_POST['date_startmonth']);
-			unset($_POST['date_startyear']);
-			unset($_POST['date_endhour']);
-			unset($_POST['date_endmin']);
-			unset($_POST['date_endsec']);
-			unset($_POST['date_endday']);
-			unset($_POST['date_endmonth']);
-			unset($_POST['date_endyear']);
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo) . '#addline';
+			header("Location: ".$urltogo);
+			exit;
 		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -785,35 +757,10 @@ if (empty($reshook)) {
 			$pu_ht_devise,
 			GETPOST('fourn_ref', 'alpha')
 		);
-		unset($_POST['qty']);
-		unset($_POST['type']);
-		unset($_POST['idprodfournprice']);
-		unset($_POST['remmise_percent']);
-		unset($_POST['dp_desc']);
-		unset($_POST['np_desc']);
-		unset($_POST['pu']);
-		unset($_POST['fourn_ref']);
-		unset($_POST['tva_tx']);
-		unset($_POST['date_start']);
-		unset($_POST['date_end']);
-		unset($_POST['units']);
-		unset($localtax1_tx);
-		unset($localtax2_tx);
-
-		unset($_POST['date_starthour']);
-		unset($_POST['date_startmin']);
-		unset($_POST['date_startsec']);
-		unset($_POST['date_startday']);
-		unset($_POST['date_startmonth']);
-		unset($_POST['date_startyear']);
-		unset($_POST['date_endhour']);
-		unset($_POST['date_endmin']);
-		unset($_POST['date_endsec']);
-		unset($_POST['date_endday']);
-		unset($_POST['date_endmonth']);
-		unset($_POST['date_endyear']);
 
 		if ($result >= 0) {
+			$db->commit();
+
 			// Define output language
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
@@ -837,7 +784,9 @@ if (empty($reshook)) {
 				}
 			}
 
-			$db->commit();
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo) . '#line_'.GETPOST('lineid', 'int');
+			header("Location: ".$urltogo);
+			exit;
 		} else {
 			$db->rollback();
 
