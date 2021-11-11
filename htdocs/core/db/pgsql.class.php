@@ -937,7 +937,9 @@ class DoliDBPgsql extends DoliDB
 
 		$escapedlike = '';
 		if ($table) {
-			$escapedlike = " AND table_name LIKE '".$this->escape($table)."'";
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$escapedlike = " AND table_name LIKE '".$this->escape($tmptable)."'";
 		}
 		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
 		if ($result) {
@@ -973,8 +975,8 @@ class DoliDBPgsql extends DoliDB
 		$sql .= "	'' as \"Extra\",";
 		$sql .= "	'' as \"Privileges\"";
 		$sql .= "	FROM information_schema.columns infcol";
-		$sql .= "	WHERE table_schema='public' ";
-		$sql .= "	AND table_name='".$this->escape($table)."'";
+		$sql .= "	WHERE table_schema = 'public' ";
+		$sql .= "	AND table_name = '".$this->escape($table)."'";
 		$sql .= "	ORDER BY ordinal_position;";
 
 		dol_syslog($sql, LOG_DEBUG);
@@ -1078,7 +1080,9 @@ class DoliDBPgsql extends DoliDB
 	public function DDLDropTable($table)
 	{
 		// phpcs:enable
-		$sql = "DROP TABLE ".$table;
+		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+
+		$sql = "DROP TABLE ".$tmptable;
 
 		if (!$this->query($sql)) {
 			return -1;
