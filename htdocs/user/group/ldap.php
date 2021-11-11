@@ -79,8 +79,6 @@ if ($action == 'dolibarr2ldap') {
 			$info['sAMAccountName'] = $object->name;
 		}
 
-		unset($info['member']);
-
 		$result = $ldap->update($dn, $info, $user, $olddn);
 	}
 
