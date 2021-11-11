@@ -2247,7 +2247,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
 			$outputlangs->load('orders');
 
-			if (count($objects) > 1) {
+			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 5)) {
 				$object->note_public .= dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
 				foreach ($objects as $elementobject) {
 					$object->note_public .= dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ');
