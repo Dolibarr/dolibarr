@@ -516,8 +516,9 @@ abstract class CommonDocGenerator
 		// Add vat by rates
 		if (is_array($object->lines) && count($object->lines) > 0) {
 			$totalUp = 0;
+			// Set substitution keys for different VAT rates
 			foreach ($object->lines as $line) {
-				// $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward compatibility
+				// $line->tva_tx format depends on database field accuracy, no reliable. This is kept for backward compatibility
 				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) {
 					$resarray[$array_key.'_total_vat_'.$line->tva_tx] = 0;
 				}
