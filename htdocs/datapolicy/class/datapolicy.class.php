@@ -311,7 +311,6 @@ class DataPolicy
 
 		$sendto = $adherent->email;
 
-
 		$code = md5($adherent->email);
 		if (!empty($adherent->default_lang)) {
 			$l = $adherent->default_lang;
