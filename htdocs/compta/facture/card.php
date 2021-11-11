@@ -5118,7 +5118,6 @@ if ($action == 'create') {
 			print ' :</td><td align="right">'.price($retainedWarranty).'</td><td>&nbsp;</td></tr>';
 		}
 	} else { // Credit note
-
 		$resteapayeraffiche = $resteapayer;
 		$cssforamountpaymentcomplete = 'amountpaymentneutral';
 
