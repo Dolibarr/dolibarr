@@ -1037,13 +1037,10 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 }
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-$sql .= " entity = ".$conf->entity." AND ";
-<<<<<<< HEAD
+$sql .= " entity = ".((int) $conf->entity)." AND ";
+$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
-=======
-$sql .= " posnumber = ".$_SESSION["takeposterminal"]." AND ";
-$sql .= " date(date_creation) = CURDATE()";
->>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
+
 $resql = $db->query($sql);
 if ($resql)
 {
