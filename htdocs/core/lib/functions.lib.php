@@ -2821,7 +2821,7 @@ function getArrayOfSocialNetworks()
 		$socialnetworks = $dataretrieved;
 	} else {
 		$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
-		$sql .= " WHERE entity=".$conf->entity;
+		$sql .= " WHERE entity IN (".getEntity(MAIN_DB_PREFIX."c_socialnetworks").")";
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
