@@ -1120,8 +1120,9 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLDropField($table, $field_name)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-		dol_syslog(get_class($this)."::DDLDropField ".$sql, LOG_DEBUG);
+		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
+
+		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$tmp_field_name."`";
 		if (!$this->query($sql)) {
 			$this->error = $this->lasterror();
 			return -1;
