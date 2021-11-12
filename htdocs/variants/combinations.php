@@ -73,7 +73,7 @@ if ($cancel) {
 }
 
 if (!$object->isProduct() && !$object->isService()) {
-	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
+	header('Location: '.DOL_URL_ROOT.'/product/card.php?id='.$object->id);
 	exit();
 }
 if ($action == 'add')
@@ -154,7 +154,7 @@ if ($_POST) {
 					unset($_SESSION['addvariant_'.$object->id]);
 
 					$db->commit();
-					header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+					header('Location: '.DOL_URL_ROOT.'/variants/combinations.php?id='.$id);
 					exit();
 				} else {
 					$langs->load("errors");
@@ -233,7 +233,7 @@ if ($_POST) {
 
 		if ($prodcomb->update($user) > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+			header('Location: '.DOL_URL_ROOT.'/variants/combinations.php?id='.$id);
 			exit();
 		} else {
 			setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
@@ -251,7 +251,7 @@ if ($action === 'confirm_deletecombination') {
 		if ($prodcomb->delete($user) > 0 && (empty($delete_product) || ($delete_product == 'on' && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0))) {
 			$db->commit();
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
+			header('Location: '.DOL_URL_ROOT.'/variants/combinations.php?id='.$object->id);
 			exit();
 		}
 
@@ -278,7 +278,7 @@ if ($action === 'confirm_deletecombination') {
 		//To prevent from copying to the same product
 		if ($prodstatic->ref != $object->ref) {
 			if ($prodcomb->copyAll($user, $object->id, $prodstatic) > 0) {
-				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$prodstatic->id, 2));
+				header('Location: '.DOL_URL_ROOT.'/variants/combinations.php?id='.$prodstatic->id);
 				exit();
 			} else {
 				setEventMessages($langs->trans('ErrorCopyProductCombinations'), null, 'errors');
