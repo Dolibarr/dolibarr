@@ -411,7 +411,7 @@ class Stripe extends CommonObject
 			}
 			if (!empty($conf->global->STRIPE_KLARNA)) {
 				$paymentmethodtypes[] = "klarna";
-			}      
+			}
 			if (!empty($conf->global->STRIPE_BANCONTACT)) {
 				$paymentmethodtypes[] = "bancontact";
 			}
@@ -609,7 +609,7 @@ class Stripe extends CommonObject
 			}
 			if (!empty($conf->global->STRIPE_KLARNA)) {
 				$paymentmethodtypes[] = "klarna";
-			}      
+			}
 			if (!empty($conf->global->STRIPE_IDEAL)) {
 				$paymentmethodtypes[] = "ideal";
 			}
