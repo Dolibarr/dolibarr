@@ -2396,10 +2396,10 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 
 			// Create a Stripe client.
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-      var cardButton = document.getElementById('buttontopay');
+	  var cardButton = document.getElementById('buttontopay');
 			var clientSecret = cardButton.dataset.secret;
-      var options = { clientSecret: clientSecret,};
-      
+	  var options = { clientSecret: clientSecret,};
+	  
 			// Create an instance of Elements
 			var elements = stripe.elements(options);
 
@@ -2439,8 +2439,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 					jQuery('#buttontopay').hide();
 
 					stripe.confirmPayment({
-          elements,confirmParams: {
-          return_url: '<?php echo $urlok; ?>',
+		  elements,confirmParams: {
+		  return_url: '<?php echo $urlok; ?>',
 						payment_method_data: {
 							billing_details: {
 								name: 'test'
@@ -2467,7 +2467,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 												} else {
 													print 'false';
 												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
-            },
+			},
 					}
 					).then(function(result) {
 						console.log(result);
