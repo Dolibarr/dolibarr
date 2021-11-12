@@ -448,3 +448,8 @@ ALTER TABLE llx_socpeople DROP COLUMN googleplus;
 ALTER TABLE llx_socpeople DROP COLUMN youtube;
 ALTER TABLE llx_socpeople DROP COLUMN whatsapp;
 
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'KLA', 'Klarna', 1, 1);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'SOF', 'Sofort', 1, 1);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'BAN', 'Bancontact' 1, 1);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'IDE', 'iDeal' 1, 1);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'GIR', 'Giropay' 1, 1)
