@@ -4905,8 +4905,9 @@ class Form
 			$formconfirm .= ($question ? '<div class="confirmmessage">'.img_help('', '').' '.$question.'</div>' : '');
 			$formconfirm .= '</div>'."\n";
 
-			$formconfirm .= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
+			$formconfirm .= "\n<!-- begin code of popup for formconfirm page=".$page." -->\n";
 			$formconfirm .= '<script type="text/javascript">'."\n";
+			$formconfirm .= "/* Code for the jQuery('#dialogforpopup').dialog() */\n";
 			$formconfirm .= 'jQuery(document).ready(function() {
             $(function() {
             	$( "#'.$dialogconfirm.'" ).dialog(
