@@ -111,7 +111,7 @@ function dol_hash($chain, $type = '0')
 	}
 
 	// Salt value
-	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'md5openldap') {
+	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'openldap') {
 		$chain = $conf->global->MAIN_SECURITY_SALT.$chain;
 	}
 
@@ -121,8 +121,8 @@ function dol_hash($chain, $type = '0')
 		return sha1(md5($chain));
 	} elseif ($type == '3' || $type == 'md5') {
 		return md5($chain);
-	} elseif ($type == '4' || $type == 'md5openldap') {
-		return '{md5}'.base64_encode(pack("H*", md5($chain))); // For OpenLdap with md5 (based on an unencrypted password in base)
+	} elseif ($type == '4' || $type == 'openldap') {
+		return dolGetLdapHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'), getDolGlobalString('MAIN_SECURITY_SALT'));
 	} elseif ($type == '5' || $type == 'sha256') {
 		return hash('sha256', $chain);
 	} elseif ($type == '6' || $type == 'password_hash') {
@@ -165,6 +165,45 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	}
 
 	return dol_hash($chain, $type) == $hash;
+}
+
+/**
+ * 	Returns a specific ldap hash of a string.
+ *
+ * 	@param 		string		$chain		String to hash
+ * 	@param		string		$type		Type of hash
+ * 	@return		string					Hash of string
+ */
+function dolGetLdapHash($chain, $type = 'md5')
+{
+	if (empty($type)) {
+		$type = 'md5';
+	}
+
+	if ($type === 'md5') {
+		return '{MD5}' . base64_encode(pack("H*", md5($chain))); // For OpenLdap with md5 (based on an unencrypted password in base)
+	} elseif ($type === 'md5frommd5') {
+		return '{MD5}' . base64_encode(hex2bin($chain)); // Create OpenLDAP MD5 password from Dolibarr MD5 password
+	} elseif ($type === 'smd5') {
+		mt_srand((double)microtime()*1000000);
+		$salt = pack("CCCC", mt_rand(), mt_rand(), mt_rand(), mt_rand());
+		return "{SMD5}" . base64_encode(pack("H*", md5($chain . $salt)) . $salt);
+	} elseif ($type === 'sha') {
+		return '{SHA}' . base64_encode(sha1($chain), true);
+	} elseif ($type === 'ssha') {
+		mt_srand((double)microtime()*1000000);
+		$salt = pack("CCCC", mt_rand(), mt_rand(), mt_rand(), mt_rand());
+		return "{SSHA}" . base64_encode(pack("H*", sha1($chain . $salt)) . $salt);
+	} elseif ($type === 'crypt') {
+		// Generate salt
+		$salt = "";
+		$pattern = '0123456789'.'abcdefghijklmnopqrstuvwxyz'.'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.'./';
+		mt_srand((double)microtime() * 1000000);
+		while (strlen($salt) < 2) {
+			$salt .= substr($pattern, (rand() % strlen($pattern)), 1);
+		}
+		return '{CRYPT}' . crypt($chain, $salt);
+	}
 }
 
 /**

@@ -196,6 +196,8 @@ class Ldap
 
 		$connected = 0;
 		$this->bind = 0;
+		$this->error = 0;
+		$this->connectedServer = '';
 
 		// Check parameters
 		if (count($this->server) == 0 || empty($this->server[0])) {
@@ -280,7 +282,7 @@ class Ldap
 						}
 						// Try in anonymous
 						if (!$this->bind) {
-							dol_syslog(get_class($this)."::connect_bind try bind on ".$host, LOG_DEBUG);
+							dol_syslog(get_class($this)."::connect_bind try bind anonymously on ".$host, LOG_DEBUG);
 							$result = $this->bind();
 							if ($result) {
 								$this->bind = $this->result;
@@ -295,6 +297,8 @@ class Ldap
 
 				if (!$connected) {
 					$this->unbind();
+				} else {
+					$this->connectedServer = $host;
 				}
 			}
 		}
@@ -307,7 +311,7 @@ class Ldap
 			$return = -1;
 			dol_syslog(get_class($this)."::connect_bind return=".$return.' - '.$this->error, LOG_WARNING);
 		}
-		$this->connectedServer = $host;
+
 		return $return;
 	}
 
