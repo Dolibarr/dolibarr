@@ -1195,7 +1195,7 @@ select.flat.selectlimit {
 }
 
 /* Styles for amount on card */
-table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaintopay {
+table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaintopay, table.paymenttable td.amountremaintopayback {
 	padding-top: 0px;
 	padding-bottom: 0px;
 }
