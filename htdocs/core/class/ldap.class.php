@@ -238,9 +238,9 @@ class Ldap
 					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
 						// For test/debug
-						ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
-						ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
-						ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
+						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
+						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
+						//ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
 
 						$resulttls = ldap_start_tls($this->connection);
 						if (!$resulttls) {
