@@ -134,7 +134,7 @@ class FormLdap
 		);
 
 		if (is_array($exclude) && !empty($exclude)) {
-			foreach($exclude as $value) {
+			foreach ($exclude as $value) {
 				if (array_key_exists($value, $arraylist)) {
 					unset($arraylist[$value]);
 				}

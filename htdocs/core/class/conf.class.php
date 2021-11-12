@@ -849,7 +849,7 @@ class Conf
 			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {
 				if ($this->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
 					$this->global->LDAP_SYNCHRO_ACTIVE = 1;
-				} else if ($this->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {
+				} elseif ($this->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {
 					$this->global->LDAP_SYNCHRO_ACTIVE = 2;
 				}
 			}
