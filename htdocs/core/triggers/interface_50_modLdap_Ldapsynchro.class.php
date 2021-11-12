@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -482,7 +482,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				// If status field is setup to be synchronized
 				if (!empty($conf->global->LDAP_FIELD_MEMBER_STATUS)) {
 					$ldap = new Ldap();
@@ -503,13 +503,13 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_SUBSCRIPTION') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				// If subscriptions fields are setup to be synchronized
-				if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE
-					|| $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT
-					|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE
-					|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
-					|| $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION) {
+				if (!empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)
+					|| !empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT)
+					|| !empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)
+					|| !empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)
+					|| !empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)) {
 					$ldap = new Ldap();
 					$result = $ldap->connect_bind();
 
@@ -528,7 +528,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_MODIFY') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
 				$result = $ldap->connect_bind();
 
@@ -616,9 +616,9 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_NEW_PASSWORD') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				// If password field is setup to be synchronized
-				if ($conf->global->LDAP_FIELD_PASSWORD || $conf->global->LDAP_FIELD_PASSWORD_CRYPTED) {
+				if (!empty($conf->global->LDAP_FIELD_PASSWORD) || !empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
 					$ldap = new Ldap();
 					$result = $ldap->connect_bind();
 
@@ -637,7 +637,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_RESILIATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				// If status field is setup to be synchronized
 				if (!empty($conf->global->LDAP_FIELD_MEMBER_STATUS)) {
 					$ldap = new Ldap();
@@ -658,7 +658,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
 				$result = $ldap->connect_bind();
 
