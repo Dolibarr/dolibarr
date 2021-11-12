@@ -766,6 +766,7 @@ class modSociete extends DolibarrModules
 			'sr.owner_address' => "BankAccountOwnerAddress",
 			'sr.default_rib' => 'Default',
 			'sr.rum' => 'RUM',
+			'sr.frstrecur' => "WithdrawMode",
 			'sr.type' => "Type ban is defaut",
 		);
 
@@ -797,6 +798,7 @@ class modSociete extends DolibarrModules
 			'sr.owner_address' => 'address of account holder',
 			'sr.default_rib' => '1 (default account) / 0 (not default)',
 			'sr.rum' => 'RUM code',
+			'sr.frstrecur' => 'FRST',
 			'sr.type' => 'ban',
 		);
 
