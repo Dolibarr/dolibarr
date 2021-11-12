@@ -757,7 +757,7 @@ class modSociete extends DolibarrModules
 			'sr.bank' => "Bank",
 			'sr.code_banque' => "BankCode",
 			'sr.code_guichet' => "DeskCode",
-			'sr.number' => "BankAccountNumber*",
+			'sr.number' => "BankAccountNumber",
 			'sr.cle_rib' => "BankAccountNumberKey",
 			'sr.bic' => "BIC",
 			'sr.iban_prefix' => "IBAN",
