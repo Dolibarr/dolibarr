@@ -1407,6 +1407,10 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
+tr.nobottom td {
+	border-bottom: 0px !important;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -2266,6 +2270,19 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
+li.tmenusel::after, li.tmenu:hover::after {
+	content: "";
+	position: absolute;
+	bottom: 0px;
+	left: 50%;
+	left: calc(50% - 6px);
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0px 6px 5px 6px;
+	border-color: transparent transparent #ffffff transparent;
+}
+
 div.tmenusep {
 <?php if ($disableimages) { ?>
 	display: none;
@@ -2359,9 +2376,7 @@ li.tmenu, li.tmenusel {
 li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
-li.tmenusel a.tmenusel {
-	text-decoration: underline !important;
-}
+
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
 
@@ -3381,6 +3396,33 @@ td.border, div.tagtable div div.border {
 .table-val-border-col {
 	width:auto;
 }
+
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_REF)) { ?>
+/* To have left column sticky */
+.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
+	position: sticky;
+	left: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_ACTION)) { ?>
+/* To have right column sticky */
+.tagtable td.actioncolumn, .tagtable th.actioncolumn {
+	position: sticky;
+	right: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
 
 
 /* Main boxes */
@@ -5580,6 +5622,10 @@ input.select2-input {
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	border: 1px solid #e4e4e4;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,
