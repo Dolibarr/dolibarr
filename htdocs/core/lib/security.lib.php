@@ -122,7 +122,7 @@ function dol_hash($chain, $type = '0')
 	} elseif ($type == '3' || $type == 'md5') {
 		return md5($chain);
 	} elseif ($type == '4' || $type == 'openldap') {
-		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'), getDolGlobalString('MAIN_SECURITY_SALT'));
+		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
 	} elseif ($type == '5' || $type == 'sha256') {
 		return hash('sha256', $chain);
 	} elseif ($type == '6' || $type == 'password_hash') {
