@@ -439,7 +439,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 		} elseif ($action == 'MEMBER_CREATE') {
 			// Members
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
 				$result = $ldap->connect_bind();
 
