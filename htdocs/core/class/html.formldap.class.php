@@ -81,16 +81,21 @@ class FormLdap
 		}
 
 		$arraylist = array(
-			"pbkdf2sha256"	=> "PBKDF2_SHA256",
-			"ssha512"		=> "SSHA512",
-			"ssha256"		=> "SSHA256",
+			//"pbkdf2sha256"	=> "PBKDF2_SHA256",
+			"ssha512"		=> "SSHA-512",
+			"ssha384"		=> "SSHA-384",
+			"ssha256"		=> "SSHA-256",
 			"ssha" 			=> "SSHA",
+			"sha512"		=> "SHA-512",
+			"sha384"		=> "SHA-384",
+			"sha256"		=> "SHA-256",
 			"sha"			=> "SHA",
 			"md5"			=> "MD5",
 			"smd5"			=> "SMD5",
-			"cryptmd5"		=> "CRYPT-MD5",
-			"cryptsha512"	=> "CRYPT-SHA512",
-			"cryptsha256"	=> "CRYPT-SHA256",
+			//"cryptmd5"	=> "CRYPT-MD5",
+			//"cryptsha512"	=> "CRYPT-SHA512",
+			//"cryptsha384"	=> "CRYPT-SHA384",
+			//"cryptsha256"	=> "CRYPT-SHA256",
 			"crypt"			=> "CRYPT",
 			"clear"			=> "CLEAR"
 		);
