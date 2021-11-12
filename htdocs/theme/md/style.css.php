@@ -4487,6 +4487,11 @@ div#card-errors {
 	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
 }
 
+div#dialogforpopup {
+	background-color: #f8f8f8 !important;
+}
+
+
 /* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
