@@ -2948,7 +2948,7 @@ class User extends CommonObject
 				// Just for the default MD5 !
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
 					if ($this->pass_indatabase_crypted && !empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
-						$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dolGetLdapHash($this->pass_indatabase_crypted, 'md5frommd5'); // Create OpenLDAP MD5 password from Dolibarr MD5 password
+						$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5'); // Create OpenLDAP MD5 password from Dolibarr MD5 password
 					}
 				}
 			} elseif (!empty($this->pass_indatabase)) {
