@@ -1559,7 +1559,7 @@ if ($action == 'create') {
 		// Tracking Number
 
 		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->reception->creer, 'string', $object->tracking_number);
+		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->reception->creer, 'string', $object->tracking_number);
 		print '</td></tr>';
 
 		// Incoterms
