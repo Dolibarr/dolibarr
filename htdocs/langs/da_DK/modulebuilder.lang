@@ -144,3 +144,4 @@ AsciiToPdfConverter=Ascii til PDF konverter
 TableNotEmptyDropCanceled=Tabellen er ikke tom. Drop er annulleret.
 ModuleBuilderNotAllowed=Modulbyggeren er tilgængelig, men ikke tilladt for din bruger.
 ImportExportProfiles=Import og eksport af profiler
+ValidateModBuilderDesc=Sæt 1, hvis dette felt skal valideres med $ this-> validateField () eller 0, hvis validering er påkrævet

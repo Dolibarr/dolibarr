@@ -144,3 +144,4 @@ AsciiToPdfConverter=Ascii uz PDF pārveidotāju
 TableNotEmptyDropCanceled=Tabula nav tukša. Dzēšana tika atcelta.
 ModuleBuilderNotAllowed=Moduļu veidotājs ir pieejams, bet nav atļauts jūsu lietotājam.
 ImportExportProfiles=Importēt un eksportēt profilus
+ValidateModBuilderDesc=Ievietojiet 1, ja šis lauks jāapstiprina ar $ this-> validateField () vai 0, ja nepieciešama validācija

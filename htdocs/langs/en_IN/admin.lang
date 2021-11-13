@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+DisableLinkToHelpCenter=Hide the link "<b>Need help or support</b>" on the login page
+DisableLinkToHelp=Hide the link to the online help "<b>%s</b>"
 Module20Name=Quotations
 Module20Desc=Management of quotations
 Permission21=Read quotations
@@ -8,11 +10,21 @@ Permission25=Send quotations
 Permission26=Close quotations
 Permission27=Delete quotations
 Permission28=Export quotations
+DictionaryOrderMethods=Order methods
+ShowBugTrackLink=Show the link "<strong>%s</strong>"
+DisplayDesc=Parameters affecting the look and presentation of the application can be modified here.
+MAIN_DISABLE_METEO=Disable weather thumb
 PropalSetup=Quotation module setup
 ProposalsNumberingModules=Quotation numbering models
 ProposalsPDFModules=Quotation documents models
 FreeLegalTextOnProposal=Free text on quotations
 WatermarkOnDraftProposal=Watermark on draft quotations (none if empty)
+SuggestedPaymentModesIfNotDefinedInOrder=Suggested payments mode on sales order by default if not defined on the order
+ViewProductDescInFormAbility=Display product descriptions in lines of items (otherwise show description in a tooltip popup)
 MailToSendProposal=Customer quotations
+MAIN_GENERATE_PROPOSALS_WITH_PICTURE=Add column for picture on proposal lines
 OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
-EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted a string 'Name: name to find' found into the body, use sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+ARestrictedPath=Some restricted path
+IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
+IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax

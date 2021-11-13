@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=Mēs jūs informējam, ka jūsu partnerības piepr
 YourPartnershipAcceptedContent=Mēs jūs informējam, ka jūsu partnerības pieprasījums ir pieņemts.
 YourPartnershipCanceledContent=Mēs jūs informējam, ka jūsu partnerattiecības ir atceltas.
 
+CountLastUrlCheckError=Kļūdu skaits pēdējā URL pārbaudē
+LastCheckBacklink=Pēdējās URL pārbaudes datums
+ReasonDeclineOrCancel=Noraidīt iemeslu
+
 #
 # Status
 #

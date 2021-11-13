@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - stocks
 Location=Ort
-WarehouseAskWarehouseOnThirparty=Set a warehouse on third-party
+WarehouseAskWarehouseDuringOrder=Set a warehouse on Sales Orders
 AverageUnitPricePMPShort=Warenwert
-OpenInternal=Open only for internal actions

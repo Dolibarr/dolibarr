@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=<b> <b> %s </b> доменіндегі <b> %s </b> пайдаланушының құпия сөзін өзгерту қажет.
+UserMustChangePassNextLogon=Пайдаланушы %s доменіндегі құпия сөзді өзгертуі керек
+LDAPInformationsForThisContact=Бұл контакт үшін LDAP дерекқорындағы ақпарат
+LDAPInformationsForThisUser=Осы пайдаланушы үшін LDAP дерекқорындағы ақпарат
+LDAPInformationsForThisGroup=Осы топқа арналған LDAP дерекқорындағы ақпарат
+LDAPInformationsForThisMember=Осы мүше үшін LDAP дерекқорындағы ақпарат
+LDAPInformationsForThisMemberType=Осы мүше түріне арналған LDAP дерекқорындағы ақпарат
+LDAPAttributes=LDAP атрибуттары
+LDAPCard=LDAP картасы
+LDAPRecordNotFound=Жазба LDAP дерекқорында табылмады
+LDAPUsers=LDAP дерекқорындағы пайдаланушылар
+LDAPFieldStatus=Күй
+LDAPFieldFirstSubscriptionDate=Бірінші жазылу күні
+LDAPFieldFirstSubscriptionAmount=Бірінші жазылу сомасы
+LDAPFieldLastSubscriptionDate=Соңғы жазылу күні
+LDAPFieldLastSubscriptionAmount=Жазылымның соңғы сомасы
+LDAPFieldSkype=Skype идентификаторы
+LDAPFieldSkypeExample=Мысалы: skypeName
+UserSynchronized=Қолданушы синхрондалды
+GroupSynchronized=Топ синхрондалды
+MemberSynchronized=Мүше синхрондалды
+MemberTypeSynchronized=Мүше түрі синхрондалған
+ContactSynchronized=Контакт синхрондалған
+ForceSynchronize=Dolibarr -> LDAP синхрондауды мәжбүрлеңіз
+ErrorFailedToReadLDAP=LDAP дерекқоры оқылмады. LDAP модулінің орнатылуын және дерекқордың қолжетімділігін тексеріңіз.
+PasswordOfUserInLDAP=LDAP ішіндегі пайдаланушының құпия сөзі
