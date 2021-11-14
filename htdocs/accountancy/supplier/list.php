@@ -595,9 +595,9 @@ if ($result) {
 			$suggestedid=$return['suggestedid'];
 			$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
 			$suggestedaccountingaccountbydefaultfor=$return['suggestedaccountingaccountbydefaultfor'];
-			$code_buy_l=$return['code_buy_l'];
-			$code_buy_p=$return['code_buy_p'];
-			$code_buy_t=$return['code_buy_t'];
+			$code_buy_l=$return['code_l'];
+			$code_buy_p=$return['code_p'];
+			$code_buy_t=$return['code_t'];
 		}
 		//var_dump($return);
 
