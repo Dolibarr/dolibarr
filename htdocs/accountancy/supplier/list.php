@@ -654,11 +654,11 @@ if ($result) {
 		print '</td>';
 
 		// Vat rate
-		$code_vat_differ='';
-		if ($objp->vat_tx_l != $objp->vat_tx_p && ! empty($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
-			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		$code_vat_differ = '';
+		if ($objp->vat_tx_l != $objp->vat_tx_p && !empty($objp->vat_tx_p) && !empty($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
+			$code_vat_differ = 'warning bold';
 		}
-		print '<td style="'.$code_vat_differ.'" class="right">';
+		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
 		print vatrate($facturefourn_static_det->tva_tx.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
