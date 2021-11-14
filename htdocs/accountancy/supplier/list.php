@@ -529,11 +529,12 @@ if ($result) {
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
-		// product_type: 0 = service ? 1 = product
+		// product_type: 0 = service, 1 = product
 		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
 		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
 		$objp->code_buy_l = '';
 		$objp->code_buy_p = '';
+		$objp->aarowid_suggest = ''; // Will be set later
 
 		$thirdpartystatic->id = $objp->socid;
 		$thirdpartystatic->name = $objp->name;
@@ -575,10 +576,6 @@ if ($result) {
 		$facturefourn_static_det->product_type = $objp->type_l;
 		$facturefourn_static_det->desc = $objp->description;
 
-		$code_buy_p_notset = '';
-		$code_buy_t_notset = '';
-		$objp->aarowid_suggest = ''; // Will be set later
-
 		$accountingAccountArray = array(
 			'dom'=>$objp->aarowid,
 			'intra'=>$objp->aarowid_intra,
@@ -600,6 +597,9 @@ if ($result) {
 			$code_buy_t=$return['code_t'];
 		}
 		//var_dump($return);
+
+		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+		// Not supported for suppliers
 
 		if (!empty($code_buy_p)) {
 			// Value was defined previously
@@ -655,7 +655,7 @@ if ($result) {
 
 		// Vat rate
 		$code_vat_differ = '';
-		if ($objp->vat_tx_l != $objp->vat_tx_p && !empty($objp->vat_tx_p) && !empty($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
+		if ($objp->vat_tx_l != $objp->vat_tx_p && price2num($objp->vat_tx_p) && price2num($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
 			$code_vat_differ = 'warning bold';
 		}
 		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
@@ -691,6 +691,11 @@ if ($result) {
 			$shelp = ''; $ttype = 'help';
 			if ($suggestedaccountingaccountfor == 'eec') {
 				$shelp = $langs->trans("SaleEEC");
+			} elseif ($suggestedaccountingaccountfor == 'eecwithvat') {
+				$shelp = $langs->trans("SaleEECWithVAT");
+			} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
+				$shelp = $langs->trans("SaleEECWithoutVATNumber");
+				$ttype = 'warning';
 			} elseif ($suggestedaccountingaccountfor == 'export') {
 				$shelp = $langs->trans("SaleExport");
 			}
@@ -719,12 +724,13 @@ if ($result) {
 
 		// Column with checkbox
 		print '<td class="center">';
-		if (!empty($suggestedid)) {
+		$ischecked = 0;
+		if (!empty($suggestedid) && $suggestedaccountingaccountfor <> '') {
 			$ischecked = 1;
-		} else {
+		} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
 			$ischecked = 0;
 		}
-		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? "checked" : "").'/>';
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
 		print '</td>';
 
 		print '</tr>';
