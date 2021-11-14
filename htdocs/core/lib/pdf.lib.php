@@ -1308,6 +1308,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
 	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
 
+	$desc = str_replace("\n", '__N__', $desc);
+
 	if ($issupplierline) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$prodser = new ProductFournisseur($db);
@@ -1374,7 +1376,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
 			$tmparrayofsubproducts = reset($prodser->sousprods);
 			foreach ($tmparrayofsubproducts as $subprodval) {
-				$libelleproduitservice .= "\n * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')';
+				$libelleproduitservice .= "__N__ * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')';
 			}
 		}
 	}
@@ -1418,7 +1420,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				}
 				if (empty($hidedesc)) {
 					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST)) {
-						$libelleproduitservice = $desc."\n".$libelleproduitservice;
+						$libelleproduitservice = $desc.'__N__'.$libelleproduitservice;
 					} else {
 						if (!empty($conf->global->HIDE_LABEL_VARIANT_PDF) && $prodser->isVariant()) {
 							$libelleproduitservice = $desc;
@@ -1553,7 +1555,6 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 	// Now we convert \n into br
 	if (dol_textishtml($libelleproduitservice)) {
-		$libelleproduitservice = str_replace("\n", '<br/>', $libelleproduitservice);
 		$libelleproduitservice = preg_replace('/__N__/', '<br>', $libelleproduitservice);
 	} else {
 		$libelleproduitservice = preg_replace('/__N__/', "\n", $libelleproduitservice);
