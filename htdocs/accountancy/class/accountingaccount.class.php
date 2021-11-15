@@ -820,7 +820,7 @@ class AccountingAccount extends CommonObject
 				if ($type=='customer' && !empty($product->accountancy_code_sell)) {
 					$code_p = $product->accountancy_code_sell;
 				} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
-					$code_p = $product->accountancy_code_sell;
+					$code_p = $product->accountancy_code_buy;
 				}
 				$suggestedid = $accountingAccount['dom'];
 				$suggestedaccountingaccountfor = 'prodserv';
@@ -830,7 +830,7 @@ class AccountingAccount extends CommonObject
 					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
 						$code_p = $product->accountancy_code_sell;
 					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
-						$code_p = $product->accountancy_code_sell;
+						$code_p = $product->accountancy_code_buy;
 					}
 					$suggestedid = $accountingAccount['dom'];
 					$suggestedaccountingaccountfor = 'eecwithvat';
@@ -839,7 +839,7 @@ class AccountingAccount extends CommonObject
 					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
 						$code_p = $product->accountancy_code_sell;
 					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
-						$code_p = $product->accountancy_code_sell;
+						$code_p = $product->accountancy_code_buy;
 					}
 					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
@@ -854,11 +854,10 @@ class AccountingAccount extends CommonObject
 					$suggestedaccountingaccountfor = 'eec';
 				} else {
 					// Foreign sale
-					// European intravat sale
 					if ($type=='customer' && !empty($product->accountancy_code_sell_export)) {
 						$code_p = $product->accountancy_code_sell_export;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_sell_export)) {
-						$code_p = $product->accountancy_code_sell_export;
+					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy_export)) {
+						$code_p = $product->accountancy_code_buy_export;
 					}
 					$suggestedid = $accountingAccount['export'];
 					$suggestedaccountingaccountfor = 'export';
