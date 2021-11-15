@@ -123,11 +123,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  * Actions
  */
 
-if ((float) DOL_VERSION >= 15) {
-	if ($action == 'update') {
-		$formSetup->saveConfFromPost();
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
