@@ -725,10 +725,8 @@ if ($result) {
 		// Column with checkbox
 		print '<td class="center">';
 		$ischecked = 0;
-		if (!empty($suggestedid) && $suggestedaccountingaccountfor <> '') {
+		if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
 			$ischecked = 1;
-		} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
-			$ischecked = 0;
 		}
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
 		print '</td>';
