@@ -261,7 +261,7 @@ class Ldap
 						}
 						// Try in anonymous
 						if (!$this->bind) {
-							dol_syslog(get_class($this)."::connect_bind try bind on ".$host, LOG_DEBUG);
+							dol_syslog(get_class($this)."::connect_bind try bind anonymously on ".$host, LOG_DEBUG);
 							$result = $this->bind();
 							if ($result) {
 								$this->bind = $this->result;

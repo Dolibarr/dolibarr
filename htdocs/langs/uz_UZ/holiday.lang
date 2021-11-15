@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=PDF-dagi bepul matn
 WatermarkOnDraftHolidayCards=Dam olish ta'tiliga yuborilgan so'rovlar bo'yicha moybo'yoqli belgilar
 HolidaysToApprove=Bayramlarni tasdiqlash
 NobodyHasPermissionToValidateHolidays=Bayramlarni tasdiqlash uchun hech kimning ruxsati yo'q
+HolidayBalanceMonthlyUpdate=Dam olish balansining oylik yangilanishi
+XIsAUsualNonWorkingDay=%s odatda NON ish kuni hisoblanadi

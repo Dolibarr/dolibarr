@@ -1645,6 +1645,9 @@ class FormFile
 		} elseif ($modulepart == 'project') {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$object_instance = new Project($this->db);
+		} elseif ($modulepart == 'project_task') {
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$object_instance = new Task($this->db);
 		} elseif ($modulepart == 'fichinter') {
 			include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 			$object_instance = new Fichinter($this->db);
@@ -1663,6 +1666,9 @@ class FormFile
 		} elseif ($modulepart == 'banque') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$object_instance = new Account($this->db);
+		} elseif ($modulepart == 'chequereceipt') {
+			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			$object_instance = new RemiseCheque($this->db);
 		} elseif ($modulepart == 'mrp-mo') {
 			include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 			$object_instance = new Mo($this->db);
@@ -1717,14 +1723,19 @@ class FormFile
 					$id = (isset($reg[1]) ? $reg[1] : '');
 				} elseif ($modulepart == 'invoice_supplier') {
 					preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg);
-					$ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) {
+					$ref = (isset($reg[1]) ? $reg[1] : '');
+					if (is_numeric($ref)) {
 						$id = $ref;
 						$ref = '';
 					}
-				} elseif ($modulepart == 'user' || $modulepart == 'holiday') {
+				} elseif ($modulepart == 'user') {
 					// $ref may be also id with old supplier invoices
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$id = (isset($reg[1]) ? $reg[1] : '');
+				} elseif ($modulepart == 'project_task') {
+					// $ref of task is the sub-directory of the project
+					$reg = explode("/", $relativefile);
+					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} elseif (in_array($modulepart, array(
 					'invoice',
 					'propal',
@@ -1734,11 +1745,14 @@ class FormFile
 					'contract',
 					'product',
 					'project',
+					'project_task',
 					'fichinter',
 					'expensereport',
 					'recruitment-recruitmentcandidature',
 					'mrp-mo',
-					'banque'))) {
+					'banque',
+					'chequereceipt',
+					'holiday'))) {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {

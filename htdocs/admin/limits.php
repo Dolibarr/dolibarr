@@ -237,7 +237,7 @@ if (empty($mysoc->country_code)) {
 
 	$sql = "SELECT taux as vat_rate, t.code as vat_code, t.localtax1 as localtax_rate1, t.localtax2 as localtax_rate2";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($mysoc->country_code)."' AND (t.taux <> 0 OR t.localtax1 <>0 OR t.localtax2 <>0)";
+	$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($mysoc->country_code)."' AND (t.taux <> 0 OR t.localtax1 <> '0' OR t.localtax2 <> '0')";
 	$sql .= " ORDER BY t.taux ASC";
 	$resql = $db->query($sql);
 	if ($resql) {

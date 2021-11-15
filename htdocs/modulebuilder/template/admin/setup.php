@@ -354,13 +354,14 @@ if ($action == 'edit') {
 					$result = $c->fetch($conf->global->{$constname});
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
+					} elseif ($result > 0 ) {
+						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+						$toprint = array();
+						foreach ($ways as $way) {
+							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
+						}
+						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 					}
-					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
-					$toprint = array();
-					foreach ($ways as $way) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
-					}
-					print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 					if ($conf->global->{$constname}==2) {
 						print $langs->trans("Prospect");

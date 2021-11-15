@@ -144,3 +144,4 @@ AsciiToPdfConverter=Konwerter ASCII na PDF
 TableNotEmptyDropCanceled=Tabela nie jest pusta. Upuszczenie zostało anulowane.
 ModuleBuilderNotAllowed=Kreator modułów jest dostępny, ale nie jest dozwolony dla użytkownika.
 ImportExportProfiles=Importuj i eksportuj profile
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

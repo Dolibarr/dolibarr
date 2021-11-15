@@ -689,9 +689,9 @@ class FormMail extends Form
 				$out .= '<tr><td class="minwidth200">';
 				$out .= $langs->trans("GroupEmails");
 				$out .= '</td><td>';
-				$out .= ' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
-				$out .= $langs->trans("OneEmailPerRecipient");
-				$out .= '<span class="hideonsmartphone">';
+				$out .= ' <input type="checkbox" id="oneemailperrecipient" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
+				$out .= '<label for="oneemailperrecipient">'.$langs->trans("OneEmailPerRecipient").'</label>';
+				$out .= '<span class="hideonsmartphone opacitymedium">';
 				$out .= ' - ';
 				$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
 				$out .= '</span>';
@@ -771,12 +771,11 @@ class FormMail extends Form
 
 				if (!empty($this->withmaindocfile)) {
 					if ($this->withmaindocfile == 1) {
-						$out .= '<input type="checkbox" name="addmaindocfile" value="1" />';
+						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" />';
+					} elseif ($this->withmaindocfile == -1) {
+						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" checked="checked" />';
 					}
-					if ($this->withmaindocfile == -1) {
-						$out .= '<input type="checkbox" name="addmaindocfile" value="1" checked="checked" />';
-					}
-					$out .= ' '.$langs->trans("JoinMainDoc").'.<br>';
+					$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDoc").'.</label><br>';
 				}
 
 				if (is_numeric($this->withfile)) {

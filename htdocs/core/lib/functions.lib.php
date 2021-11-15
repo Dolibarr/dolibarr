@@ -1055,7 +1055,7 @@ function dol_size($size, $type = '')
 
 /**
  *	Clean a string to use it as a file name.
- *  Replace also '--' and ' -' strings, they are used for parameters separation.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with.
@@ -1073,13 +1073,13 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	return $tmp;
 }
 
 /**
  *	Clean a string to use it as a path name.
- *  Replace also '--' and ' -' strings, they are used for parameters separation.
+ *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
@@ -1093,7 +1093,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
-	$tmp = preg_replace('/\s+\-/', ' _', $tmp);
+	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
 	return $tmp;
 }
 
@@ -2266,6 +2266,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 {
 	global $conf, $langs;
 
+	// If date undefined or "", we return ""
+	if (dol_strlen($time) == 0) {
+		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
+	}
+
 	if ($tzoutput === 'auto') {
 		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
 	}
@@ -2284,8 +2289,17 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
-				$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60; // Will not be used anymore
+
+				if (class_exists('DateTimeZone')) {
+					$user_date_tz = new DateTimeZone($offsettzstring);
+					$user_dt = new DateTime();
+					$user_dt->setTimezone($user_date_tz);
+					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
+					$offsettz = $user_dt->getOffset();
+				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
+					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
+					$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60; // Will not be used anymore
+				}
 			}
 		}
 	}
@@ -2346,11 +2360,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if ($reduceformat) {
 		$format = str_replace('%Y', '%y', $format);
 		$format = str_replace('yyyy', 'yy', $format);
-	}
-
-	// If date undefined or "", we return ""
-	if (dol_strlen($time) == 0) {
-		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
 	}
 
 	// Clean format
@@ -5320,13 +5329,16 @@ function price2num($amount, $rounding = '', $option = 0)
 		if ($thousand != ',' && $thousand != '.') {
 			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
 		}
+
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
+
+		$amount = preg_replace('/[^0-9\-\.]/', '', $amount);	// Clean non numeric chars (so it clean some UTF8 spaces for example.
 	}
 	//print ' XX'.$amount.' '.$rounding;
 
-	// Now, make a rounding if required
+	// Now, $amount is a real PHP float number. We make a rounding if required.
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
@@ -5366,9 +5378,12 @@ function price2num($amount, $rounding = '', $option = 0)
 		if ($thousand != ',' && $thousand != '.') {
 			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
 		}
+
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
+
+		$amount = preg_replace('/[^0-9\-\.]/', '', $amount);	// Clean non numeric chars (so it clean some UTF8 spaces for example.
 	}
 
 	return $amount;

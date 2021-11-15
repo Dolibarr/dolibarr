@@ -943,8 +943,10 @@ if ($rowid > 0) {
 		}
 		if (!$datefrom) {
 			$datefrom = $object->datevalid;
-			if ($object->datefin > 0) {
+			if ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > dol_now()) {
 				$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
+			} else {
+				$datefrom = dol_get_first_day(dol_print_date(time(), "%Y"));
 			}
 		}
 		print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
@@ -963,7 +965,7 @@ if ($rowid > 0) {
 
 		if ($adht->subscription) {
 			// Amount
-			print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'.GETPOST('subscription').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'. price(GETPOSTISSET('subscription') ? GETPOST('subscription') : $adht->amount).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
 
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td>';

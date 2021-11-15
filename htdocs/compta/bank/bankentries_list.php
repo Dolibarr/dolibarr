@@ -175,7 +175,6 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
-
 /*
  * Actions
  */
@@ -266,12 +265,14 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 
 	if (!$error) {
 		$param = 'action=reconcile&contextpage=banktransactionlist&id='.$id.'&search_account='.$id;
-		$param .= '&search_conciliated='.urlencode($search_conciliated);
 		if ($page) {
 			$param .= '&page='.urlencode($page);
 		}
 		if ($offset) {
 			$param .= '&offset='.urlencode($offset);
+		}
+		if ($search_conciliated != '' && $search_conciliated != '-1') {
+			$param .= '&search_conciliated='.urlencode($search_conciliated);
 		}
 		if ($search_thirdparty_user) {
 			$param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
@@ -414,7 +415,6 @@ $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
 
 $now = dol_now();
-
 
 // Must be before button action
 $param = '';
@@ -748,7 +748,7 @@ if ($resql) {
 	// Confirmation delete
 	if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteTransaction');
-		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&rowid='.GETPOST("rowid"), $langs->trans('DeleteTransaction'), $text, 'confirm_delete', null, '', 1);
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&rowid='.GETPOST("rowid", 'int'), $langs->trans('DeleteTransaction'), $text, 'confirm_delete', null, '', 1);
 	}
 
 	// Lines of title fields
@@ -1189,7 +1189,7 @@ if ($resql) {
 				$objforbalance = $db->fetch_object($resqlforbalance);
 				if ($objforbalance) {
 					// If sort is desc,desc,desc then total of previous date + amount is the balancebefore of the previous line before the line to show
-					if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc') {
+					if ($sortfield == 'b.datev,b.dateo,b.rowid' && ($sortorder == 'desc' || $sortorder == 'desc,desc' || $sortorder == 'desc,desc,desc')) {
 						$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
 					} else {
 						// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
@@ -1274,8 +1274,7 @@ if ($resql) {
 			}
 		}
 
-
-		if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc') {
+		if ($sortfield == 'b.datev,b.dateo,b.rowid' && ($sortorder == 'desc' || $sortorder == 'desc,desc' || $sortorder == 'desc,desc,desc')) {
 			$balance = price2num($balancebefore, 'MT'); // balance = balancebefore of previous line (sort is desc)
 			$balancebefore = price2num($balancebefore - ($sign * $objp->amount), 'MT');
 		} else {

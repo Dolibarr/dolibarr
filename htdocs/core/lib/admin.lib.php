@@ -1101,7 +1101,7 @@ function activateModule($value, $withdeps = 1)
 
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
-		$ret['nbperms'] += count($objMod->rights);
+		$ret['nbperms'] += (is_array($objMod->rights)?count($objMod->rights):0);
 	}
 
 	return $ret;

@@ -144,3 +144,4 @@ AsciiToPdfConverter=Ascii til PDF konverter
 TableNotEmptyDropCanceled=Tabellen er ikke tom. Drop har blitt kansellert.
 ModuleBuilderNotAllowed=Modulbyggeren er tilgjengelig, men ikke tillatt for brukeren din.
 ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

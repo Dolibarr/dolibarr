@@ -144,3 +144,4 @@ AsciiToPdfConverter=Ascii-dan PDF-ga o'tkazuvchi
 TableNotEmptyDropCanceled=Stol bo'sh emas Drop bekor qilindi.
 ModuleBuilderNotAllowed=Modul yaratuvchisi mavjud, ammo sizning foydalanuvchingizga ruxsat berilmagan.
 ImportExportProfiles=Import va eksport rejimlari
+ValidateModBuilderDesc=Agar bu maydonni $ this-> validateField () bilan tasdiqlash kerak bo'lsa, 1-ni qo'ying yoki agar tekshirish zarur bo'lsa, 0-ni qo'ying

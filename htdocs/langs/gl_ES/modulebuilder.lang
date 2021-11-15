@@ -144,3 +144,4 @@ AsciiToPdfConverter=Conversor de ascii a PDF
 TableNotEmptyDropCanceled=A táboa non está baleira. Cancelouse a eliminación.
 ModuleBuilderNotAllowed=O creador de módulos está dispoñible pero non permitido ao seu usuario.
 ImportExportProfiles=Importar e exportar perfís
+ValidateModBuilderDesc=Poña 1 se é preciso validar este campo con $ this-> validateField () ou 0 se é precisa a validación 

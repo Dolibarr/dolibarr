@@ -77,6 +77,10 @@ YourPartnershipRefusedContent=Sizning sheriklik so'rovingiz rad etilganligi haqi
 YourPartnershipAcceptedContent=Sizga sheriklik so'rovingiz qabul qilinganligi to'g'risida xabar beramiz.
 YourPartnershipCanceledContent=Sizning hamkorligingiz bekor qilinganligi haqida xabar beramiz.
 
+CountLastUrlCheckError=Oxirgi URL tekshiruvidagi xatolar soni
+LastCheckBacklink=URLni oxirgi tekshirish sanasi
+ReasonDeclineOrCancel=Rad etish sababi
+
 #
 # Status
 #

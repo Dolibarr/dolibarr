@@ -22,7 +22,7 @@ ProductService=Produkt oder Dienstleistung
 AllProducts=Alle Produkte und Leistungen
 ChooseProduct/Service=Produkt oder Service wählen
 ForceBuyingPriceIfNull=Benutze EK-Preis/Herstellkosten als Verkaufspreis, wenn nicht definiert
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Wenn beim Hinzufügen einer neuen Zeile kein Kauf-/Einstandspreis angegeben wird und diese Option aktiviert ist, beträgt die Marge auf der neuen Zeile 0%% (Einkaufs-/Einstandspreis = Verkaufspreis). Wenn diese Option deaktiviert ist (empfohlen), entspricht die Marge dem standardmäßig vorgeschlagenen Wert (und kann 100%% betragen, wenn kein Standardwert gefunden werden kann).
 MARGIN_METHODE_FOR_DISCOUNT=Margin-Methode für globale Rabatte
 UseDiscountAsProduct=als Produkt
 UseDiscountAsService=als Dienstleistung

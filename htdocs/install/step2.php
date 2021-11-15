@@ -570,19 +570,27 @@ dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step2: end");
 
+// Force here a value we need after because master.inc.php is not loaded into step2.
+// This code must be similar with the one into main.inc.php
+$conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id); // Unique id of instance
 
-$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno" value="checked" checked="true"> ';
+$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+
+$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((!empty($conf->global->MAIN_FIRST_PING_OK_ID) && $conf->global->MAIN_FIRST_PING_OK_ID == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
 $out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';
 
 $out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';
 $out .= '<script type="text/javascript">';
 $out .= 'jQuery(document).ready(function(){';
-$out .= '  document.cookie = "DOLINSTALLNOPING_'.md5($dolibarr_main_instance_unique_id).'=0; path=/"'."\n";
+$out .= '  document.cookie = "DOLINSTALLNOPING_'.$hash_unique_id.'=0; path=/"'."\n";
 $out .= '  jQuery("#dolibarrpingno").click(function() {';
 $out .= '    if (! $(this).is(\':checked\')) {';
 $out .= '      console.log("We uncheck anonymous ping");';
-$out .= '      document.cookie = "DOLINSTALLNOPING_'.md5($dolibarr_main_instance_unique_id).'=1; path=/"'."\n";
-$out .= '    }';
+$out .= '      document.cookie = "DOLINSTALLNOPING_'.$hash_unique_id.'=1; path=/"'."\n";
+$out .= '    } else {'."\n";
+$out .= '      console.log("We check anonymous ping");';
+$out .= '      document.cookie = "DOLINSTALLNOPING_'.$hash_unique_id.'=0; path=/"'."\n";
+$out .= '    }'."\n";
 $out .= '  });';
 $out .= '});';
 $out .= '</script>';
