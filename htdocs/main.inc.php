@@ -3208,7 +3208,7 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// A div for the address popup
-		print "\n<!-- A div to allow dialog popup -->\n";
+		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)
