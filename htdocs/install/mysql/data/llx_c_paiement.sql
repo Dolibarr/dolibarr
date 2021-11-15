@@ -40,3 +40,8 @@ insert into llx_c_paiement (id,code,libelle,type,active) values (50, 'VAD', 'Onl
 insert into llx_c_paiement (id,code,libelle,type,active) values (51, 'TRA', 'Traite',            2,0);
 insert into llx_c_paiement (id,code,libelle,type,active) values (52, 'LCR', 'LCR',               2,0);
 insert into llx_c_paiement (id,code,libelle,type,active) values (53, 'FAC', 'Factor',            2,0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'KLA', 'Klarna',           1,1);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (101, 'SOF', 'Sofort',           1,1);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (102, 'BAN', 'Bancontact',       1,1);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (103, 'IDE', 'iDeal',            1,1);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (104, 'GIR', 'Giropay',          1,1);
