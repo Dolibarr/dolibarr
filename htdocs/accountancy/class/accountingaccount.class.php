@@ -732,16 +732,16 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Return Suggest accounting accounts to bind
 	 *
-	 * @param 	Societe 		$buyer 				Object buyer
-	 * @param 	Societe 		$seller 			Object seller
-	 * @param 	Product 		$product 			Product object sell or buy
-	 * @param 	Facture 		$facture 			Facture
-	 * @param 	FactureLigne 	$factureDet 		Facture Det
-	 * @param 	array 			$accountingAccount 	Array of Account account
-	 * @param 	string 			$type 				Customer / Supplier
-	 * @return	array       						Accounting accounts suggested
+	 * @param 	Societe 							$buyer 				Object buyer
+	 * @param 	Societe 							$seller 			Object seller
+	 * @param 	Product 							$product 			Product object sell or buy
+	 * @param 	Facture|FactureFournisseur 			$facture 			Facture
+	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
+	 * @param 	array 								$accountingAccount 	Array of Account account
+	 * @param 	string 								$type 				Customer / Supplier
+	 * @return	array       											Accounting accounts suggested
 	 */
-	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, Facture $facture, FactureLigne $factureDet, $accountingAccount = array(), $type = '')
+	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
 		global $conf;
 		global $hookmanager;
