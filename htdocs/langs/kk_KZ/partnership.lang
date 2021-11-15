@@ -58,6 +58,7 @@ ManagePartnership=Серіктестікті басқару
 BacklinkNotFoundOnPartnerWebsite=Серіктестің веб -сайтында кері сілтеме табылмады
 ConfirmClosePartnershipAsk=Бұл серіктестіктен шынымен де бас тартқыңыз келе ме?
 PartnershipType=Серіктестік түрі
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
