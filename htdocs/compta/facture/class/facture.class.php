@@ -1058,7 +1058,7 @@ class Facture extends CommonInvoice
 	{
 		global $conf;
 
-		// Charge facture source
+		// Source invoice load
 		$facture = new Facture($this->db);
 
 		// Retrieve all extrafield
@@ -2405,7 +2405,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paye=1
-	 *  or partialy (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
+	 *  or partially (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
 	 *
 	 *  @param	User	$user      	Object user that modify
 	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
@@ -2421,7 +2421,7 @@ class Facture extends CommonInvoice
 
 			$now = dol_now();
 
-			dol_syslog(get_class($this)."::set_paid rowid=".((int) $this->id), LOG_DEBUG);
+			dol_syslog(get_class($this)."::setPaid rowid=".((int) $this->id), LOG_DEBUG);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 			$sql .= ' fk_statut='.self::STATUS_CLOSED;
@@ -2502,7 +2502,7 @@ class Facture extends CommonInvoice
 		$sql .= ' fk_user_closing=null';
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
+		dol_syslog(get_class($this)."::setUnpaid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Call trigger
@@ -2728,7 +2728,7 @@ class Facture extends CommonInvoice
 				$error++;
 			}
 
-			// On verifie si la facture etait une provisoire
+			// We check if the invoice was provisional
 			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref))) {
 				// La verif qu'une remise n'est pas utilisee 2 fois est faite au moment de l'insertion de ligne
 			}
@@ -2737,7 +2737,7 @@ class Facture extends CommonInvoice
 				// Define third party as a customer
 				$result = $this->thirdparty->set_as_client();
 
-				// Si active on decremente le produit principal et ses composants a la validation de facture
+				// If active we decrement the main product and its components at invoice validation
 				if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL) && $idwarehouse > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
@@ -4783,7 +4783,7 @@ class Facture extends CommonInvoice
 
 		// TODO : add a flag on invoices to store this conf : INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION
 
-		// note : we dont need to test INVOICE_USE_RETAINED_WARRANTY because if $this->retained_warranty is not empty it's because it was set when this conf was active
+		// note : we don't need to test INVOICE_USE_RETAINED_WARRANTY because if $this->retained_warranty is not empty it's because it was set when this conf was active
 
 		$displayWarranty = false;
 		if (!empty($this->retained_warranty)) {
@@ -4982,7 +4982,7 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		//Select all action comm reminder
+		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
@@ -5382,7 +5382,7 @@ class FactureLigne extends CommonInvoiceLine
 
 		$this->db->begin();
 
-		// Insertion dans base de la ligne
+		// Update line in database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 		$sql .= ' (fk_facture, fk_parent_line, label, description, qty,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
@@ -5450,8 +5450,8 @@ class FactureLigne extends CommonInvoiceLine
 				}
 			}
 
-			// Si fk_remise_except defini, on lie la remise a la facture
-			// ce qui la flague comme "consommee".
+			// If fk_remise_except is defined, the discount is linked to the invoice
+			// which flags it as "consumed".
 			if ($this->fk_remise_except) {
 				$discount = new DiscountAbsolute($this->db);
 				$result = $discount->fetch($this->fk_remise_except);
@@ -5740,7 +5740,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->total_localtax2 = 0;
 		}
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
 		$sql .= " total_ht=".price2num($this->total_ht)."";
 		$sql .= ",total_tva=".price2num($this->total_tva)."";
