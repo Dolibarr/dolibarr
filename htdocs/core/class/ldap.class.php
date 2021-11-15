@@ -123,6 +123,21 @@ class Ldap
 	 */
 	public $result;
 
+	/**
+	 * No Ldap synchronization
+	 */
+	const SYNCHRO_NONE = 0;
+
+	/**
+	 * Dolibarr to Ldap synchronization
+	 */
+	const SYNCHRO_DOLIBARR_TO_LDAP = 1;
+
+	/**
+	 * Ldap to Dolibarr synchronization
+	 */
+	const SYNCHRO_LDAP_TO_DOLIBARR = 2;
+
 
 	/**
 	 *  Constructor
@@ -226,6 +241,7 @@ class Ldap
 						// For test/debug
 						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
 						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
+						//ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
 
 						$resulttls = ldap_start_tls($this->connection);
 						if (!$resulttls) {
@@ -299,7 +315,6 @@ class Ldap
 
 		return $return;
 	}
-
 
 	/**
 	 * Simply closes the connection set up earlier. Returns true if OK, false if there was an error.
@@ -921,10 +936,10 @@ class Ldap
 			return -3;
 		}
 
-		$search = ldap_search($this->connection, $dn, $filter);
+		$search = @ldap_search($this->connection, $dn, $filter);
 
 		// Only one entry should ever be returned
-		$entry = ldap_first_entry($this->connection, $search);
+		$entry = @ldap_first_entry($this->connection, $search);
 
 		if (!$entry) {
 			$this->ldapErrorCode = -1;

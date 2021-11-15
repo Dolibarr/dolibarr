@@ -26,3 +26,7 @@ ForceSynchronize=Force synchronizing Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Failed to read LDAP database. Check LDAP module setup and database accessibility.
 PasswordOfUserInLDAP=Password of user in LDAP
 PasswordMustBeChangedToBeSynchronized=Password MUST be modified or regenerated to be in LDAP database
+LDAPPasswordHashType=Password hash type
+LDAPPasswordHashTypeExample=Type of password hash used on the server
+SupportedForLDAPExportScriptOnly=Only supported by an ldap export script
+SupportedForLDAPImportScriptOnly=Only supported by an ldap import script

@@ -61,8 +61,8 @@ if ($action == 'add') {
 
 	$dateo = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 	$label = GETPOST('label', 'alpha');
-	$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
-	$amountto = price2num(GETPOST('amountto', 'alpha'), 'MT');
+	$amount = price2num(GETPOST('amount', 'alpha'), 'MT', 2);
+	$amountto = price2num(GETPOST('amountto', 'alpha'), 'MT', 2);
 
 	if (!$label) {
 		$error++;
