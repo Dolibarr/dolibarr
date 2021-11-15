@@ -77,8 +77,9 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
+$useFormSetup = 0;
 
-if ((float) DOL_VERSION >= 15) {
+if ($useFormSetup && (float) DOL_VERSION >= 15) {
 	// For Dolibarr v15+ compatibility
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 	$formSetup = new FormSetup($db);
@@ -263,8 +264,11 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print $formSetup->generateOutput(true);
-
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+		print $formSetup->generateOutput(true);
+	} else {
+		// Add input fields here
+	}
 	print '<br><div class="center">';
 	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '</div>';
@@ -272,10 +276,18 @@ if ($action == 'edit') {
 	print '</form>';
 	print '<br>';
 } else {
-	if (!empty($formSetup->items)) {
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {
 		print $formSetup->generateOutput();
-		$setupnotempty++;
+		$setupnotempty = count($formSetup->items);
+	} else {
+		// Show fields here
+		foreach ($arrayofparameters as $key => $val) {
+			$setupnotempty++;
+			
+		}
+	}
 
+	if ($setupnotempty) {
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 		print '</div>';
