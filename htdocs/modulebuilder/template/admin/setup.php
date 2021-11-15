@@ -60,6 +60,9 @@ require_once '../lib/mymodule.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "mymodule@mymodule"));
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('mymodulesetup', 'globalsetup'));
+
 // Access control
 if (!$user->admin) {
 	accessforbidden();
@@ -74,7 +77,43 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-$arrayofparameters = array(
+$useFormSetup = 0;
+
+if ($useFormSetup && (float) DOL_VERSION >= 15) {
+	// For Dolibarr v15+ compatibility
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
+	$formSetup = new FormSetup($db);
+
+	// Hôte
+	$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+	$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+	$item->cssClass = 'minwidth500';
+
+	// Setup conf MYMODULE_MYPARAM1 as a simple string input
+	$item = $formSetup->newItem('MYMODULE_MYPARAM1');
+
+	// Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
+	$item = $formSetup->newItem('MYMODULE_MYPARAM2');
+	$item->nameText = $item->getNameText().' more html text ';
+
+	// Setup conf MYMODULE_MYPARAM3
+	$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+	$item->setAsThirdpartyType();
+
+	// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
+	$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+
+	// Setup conf MYMODULE_MYPARAM5
+	$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+
+	// Setup conf MYMODULE_MYPARAM6
+	$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+
+	// Setup conf MYMODULE_MYPARAM7
+	$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+} else {
+	// For Dolibarr v6+ compatibility
+	$arrayofparameters = array(
 	'MYMODULE_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
 	'MYMODULE_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'MYMODULE_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
@@ -95,9 +134,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
@@ -227,92 +264,11 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-	foreach ($arrayofparameters as $constname => $val) {
-		if ($val['enabled']==1) {
-			$setupnotempty++;
-			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
-			print '</td><td>';
-
-			if ($val['type'] == 'textarea') {
-				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
-				print $conf->global->{$constname};
-				print "</textarea>\n";
-			} elseif ($val['type']== 'html') {
-				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
-				$doleditor->Create();
-			} elseif ($val['type'] == 'yesno') {
-				print $form->selectyesno($constname, $conf->global->{$constname}, 1);
-			} elseif (preg_match('/emailtemplate:/', $val['type'])) {
-				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-
-				$tmp = explode(':', $val['type']);
-				$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, 1); // We set lang=null to get in priority record with no lang
-				//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
-				$arrayofmessagename = array();
-				if (is_array($formmail->lines_model)) {
-					foreach ($formmail->lines_model as $modelmail) {
-						//var_dump($modelmail);
-						$moreonlabel = '';
-						if (!empty($arrayofmessagename[$modelmail->label])) {
-							$moreonlabel = ' <span class="opacitymedium">(' . $langs->trans("SeveralLangugeVariatFound") . ')</span>';
-						}
-						// The 'label' is the key that is unique if we exclude the language
-						$arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
-					}
-				}
-				print $form->selectarray($constname, $arrayofmessagename, $conf->global->{$constname}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
-			} elseif (preg_match('/category:/', $val['type'])) {
-				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-				$formother = new FormOther($db);
-
-				$tmp = explode(':', $val['type']);
-				print img_picto('', 'category', 'class="pictofixedwidth"');
-				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
-			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-				$formcompany = new FormCompany($db);
-				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
-			} elseif ($val['type'] == 'securekey') {
-				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
-				if (!empty($conf->use_javascript_ajax)) {
-					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
-				}
-				if (!empty($conf->use_javascript_ajax)) {
-					print "\n".'<script type="text/javascript">';
-					print '$(document).ready(function () {
-                        $("#generate_token'.$constname.'").click(function() {
-                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#'.$constname.'").val(token);
-            				});
-                         });
-                    });';
-					print '</script>';
-				}
-			} elseif ($val['type'] == 'product') {
-				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-					$form->select_produits($selected, $constname, '', 0);
-				}
-			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
-			}
-			print '</td></tr>';
-		}
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+		print $formSetup->generateOutput(true);
+	} else {
+		// Add input fields here
 	}
-	print '</table>';
-
 	print '<br><div class="center">';
 	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '</div>';
@@ -320,75 +276,18 @@ if ($action == 'edit') {
 	print '</form>';
 	print '<br>';
 } else {
-	if (!empty($arrayofparameters)) {
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-		foreach ($arrayofparameters as $constname => $val) {
-			if ($val['enabled']==1) {
-				$setupnotempty++;
-				print '<tr class="oddeven"><td>';
-				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
-				print '</td><td>';
-
-				if ($val['type'] == 'textarea') {
-					print dol_nl2br($conf->global->{$constname});
-				} elseif ($val['type']== 'html') {
-					print  $conf->global->{$constname};
-				} elseif ($val['type'] == 'yesno') {
-					print ajax_constantonoff($constname);
-				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
-					include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-					$formmail = new FormMail($db);
-
-					$tmp = explode(':', $val['type']);
-
-					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
-					if ($template<0) {
-						setEventMessages(null, $formmail->errors, 'errors');
-					}
-					print $langs->trans($template->label);
-				} elseif (preg_match('/category:/', $val['type'])) {
-					$c = new Categorie($db);
-					$result = $c->fetch($conf->global->{$constname});
-					if ($result < 0) {
-						setEventMessages(null, $c->errors, 'errors');
-					} elseif ($result > 0 ) {
-						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
-						$toprint = array();
-						foreach ($ways as $way) {
-							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
-						}
-						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
-					}
-				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-					if ($conf->global->{$constname}==2) {
-						print $langs->trans("Prospect");
-					} elseif ($conf->global->{$constname}==3) {
-						print $langs->trans("ProspectCustomer");
-					} elseif ($conf->global->{$constname}==1) {
-						print $langs->trans("Customer");
-					} elseif ($conf->global->{$constname}==0) {
-						print $langs->trans("NorProspectNorCustomer");
-					}
-				} elseif ($val['type'] == 'product') {
-					$product = new Product($db);
-					$resprod = $product->fetch($conf->global->{$constname});
-					if ($resprod > 0) {
-						print $product->ref;
-					} elseif ($resprod < 0) {
-						setEventMessages(null, $object->errors, "errors");
-					}
-				} else {
-					print $conf->global->{$constname};
-				}
-				print '</td></tr>';
-			}
+	if ($useFormSetup && (float) DOL_VERSION >= 15) {
+		print $formSetup->generateOutput();
+		$setupnotempty = count($formSetup->items);
+	} else {
+		// Show fields here
+		foreach ($arrayofparameters as $key => $val) {
+			$setupnotempty++;
+			
 		}
+	}
 
-		print '</table>';
-
+	if ($setupnotempty) {
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 		print '</div>';
