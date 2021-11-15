@@ -572,21 +572,23 @@ if ($object->id > 0) {
 						}
 						tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':productinput});
 					})
-					switch(barcodemode){
-						case "barcodeforautodetect":
-							barcodeserialforproduct(textarray,tabproduct,barcodeproductqty,selectaddorreplace,"barcode",true);
-							barcodeserialforproduct(textarray,tabproduct,barcodeproductqty,selectaddorreplace,"lotserial",true);
-							break;
-						case "barcodeforproduct": //TODO: create product !exist + ajout
-							barcodeserialforproduct(textarray,tabproduct,barcodeproductqty,selectaddorreplace,"barcode");
-							break;
-						case "barcodeforlotserial":
-							barcodeserialforproduct(textarray,tabproduct,barcodeproductqty,selectaddorreplace,"lotserial");
-							break;
-						default:
-							alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
-							throw"'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
-					}
+					tabproduct.forEach(product => {
+						switch(barcodemode){
+							case "barcodeforautodetect":
+								barcodeserialforproduct(textarray,product,barcodeproductqty,selectaddorreplace,"barcode",true);
+								barcodeserialforproduct(textarray,product,barcodeproductqty,selectaddorreplace,"lotserial",true);
+								break;
+							case "barcodeforproduct": //TODO: create product !exist + ajout
+								barcodeserialforproduct(textarray,product,barcodeproductqty,selectaddorreplace,"barcode");
+								break;
+							case "barcodeforlotserial":
+								barcodeserialforproduct(textarray,product,barcodeproductqty,selectaddorreplace,"lotserial");
+								break;
+							default:
+								alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
+								throw"'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
+						}
+					)}
 					tabproduct.forEach(product => {
 						if(product.Qty!=0){
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
@@ -598,13 +600,14 @@ if ($object->id > 0) {
 
 			}
 
-			function barcodeserialforproduct(textarray,tabproduct,barcodeproductqty,selectaddorreplace,mode,autodetect=false){
+			function barcodeserialforproduct(textarray,product,barcodeproductqty,selectaddorreplace,mode,autodetect=false){
 				textarray.forEach(function(element,index){
 					$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-						data: { "action":"existbarcode","barcode":element},
+						data: { "action":"existbarcode",'.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.',':'').'"barcode":element,"product":product},
 						type: \'POST\',
 						success: function(response) {
 							console.log("test+1");
+							//gerer erreur si entrepot different
 						},
 						error : function(output) {
 						   console.error("Error on Fetch of KM articles");
@@ -612,23 +615,21 @@ if ($object->id > 0) {
 				   });
 					console.log("Product "+(index+=1)+": "+element);
 					BarCodeDoesNotExist=0;
-					tabproduct.forEach(product => {
-						if(mode == "barcode"){
-							testonproduct = product.Barcode
-						}else if (mode == "lotserial"){
-							testonproduct = product.Batch
+					if(mode == "barcode"){
+						testonproduct = product.Barcode
+					}else if (mode == "lotserial"){
+						testonproduct = product.Batch
+					}
+					if(testonproduct == element){
+						if(selectaddorreplace == "add"){
+							productqty = parseInt(product.Qty,10)
+							product.Qty = productqty + (1*barcodeproductqty)
+						}else if(selectaddorreplace == "replace"){
+							product.Qty = (1*barcodeproductqty)
 						}
-						if(testonproduct == element){
-							if(selectaddorreplace == "add"){
-								productqty = parseInt(product.Qty,10)
-								product.Qty = productqty + (1*barcodeproductqty)
-							}else if(selectaddorreplace == "replace"){
-								product.Qty = (1*barcodeproductqty)
-							}
-						}else{
-							BarCodeDoesNotExist+=1;
-						}
-					})
+					}else{
+						BarCodeDoesNotExist+=1;
+					}
 					if(autodetect == false){
 						if(BarCodeDoesNotExist >= tabproduct.length && mode == "barcode"){
 							alert("'.$langs->trans('ProductBarcodeDoesNotExist').': "+element);

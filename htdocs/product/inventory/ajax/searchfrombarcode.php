@@ -50,23 +50,29 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 
 $action = GETPOST("action", "alpha");
 $barcode = GETPOST("barcode", "aZ09");
+$product = GETPOST("product");
 $response = "";
-$fk_entrepot = -1;
+$fk_entrepot = GETPOST("fk_entrepot", "int");
 if ($action == "existbarcode" && !empty($barcode)) {
-	$sql = "SELECT *";
+	$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
-	" WHERE p.barcode = '".$db->escape($barcode)."'";
+	$sql .= " WHERE p.barcode = '".$db->escape($barcode)."'";
+	if (!empty($fk_entrepot)) {
+		$sql .= "AND ps.fk_entrepot = '".$db->escape($fk_entrepot)."'";
+	}
 	$result = $db->query($sql);
 	if ($result) {
-		$objecttab = $db->fetch_row($resql);
 		$nbline = $db->num_rows($resql);
 		for ($i=0; $i < $nbline; $i++) {
-			if ($fk_entrepot != $objecttab[$i]) {
-				// code...
+			$object = $db->fetch_object($resql);
+			if ($barcode == $object->barcode) {
+				if (!empty($object->fk_entrepot) && $product["Warehouse"] == $object->fk_entrepot) {
+					//si warehouse !=$object->fk_entrepot erreur
+				}
 			}
 		}
 	} else {
