@@ -58,6 +58,7 @@ ManagePartnership=Идоракунии шарикӣ
 BacklinkNotFoundOnPartnerWebsite=Истиноди бозгашт дар вебсайти шарик ёфт нашуд
 ConfirmClosePartnershipAsk=Шумо мутмаин ҳастед, ки мехоҳед ин шарикиро бекор кунед?
 PartnershipType=Навъи шарикӣ
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
