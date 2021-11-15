@@ -79,15 +79,14 @@ $type = 'myobject';
 
 
 if ((float) DOL_VERSION >= 15) {
+	// For Dolibarr v15+ compatibility
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 	$formSetup = new FormSetup($db);
-
 
 	// Hôte
 	$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
 	$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 	$item->cssClass = 'minwidth500';
-
 
 	// Setup conf MYMODULE_MYPARAM1 as a simple string input
 	$item = $formSetup->newItem('MYMODULE_MYPARAM1');
@@ -111,7 +110,18 @@ if ((float) DOL_VERSION >= 15) {
 
 	// Setup conf MYMODULE_MYPARAM7
 	$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
-}
+} else {
+	// For Dolibarr v6+ compatibility
+	$arrayofparameters = array(
+	'MYMODULE_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
+	'MYMODULE_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
+	//'MYMODULE_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
+	//'MYMODULE_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
+	//'MYMODULE_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
+	//'MYMODULE_MYPARAM5'=>array('type'=>'thirdparty_type', 'enabled'=>1),
+	//'MYMODULE_MYPARAM6'=>array('type'=>'securekey', 'enabled'=>1),
+	//'MYMODULE_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
+);
 
 $error = 0;
 $setupnotempty = 0;
