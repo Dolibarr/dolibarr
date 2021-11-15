@@ -2771,7 +2771,6 @@ img.login, img.printer, img.entity {
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
 	border-radius: 50%;
 	background-size: contain;
-	background-size: contain;
 	border: 1px solid;
 	border-color: rgba(255, 255, 255, 0.2);
 }
