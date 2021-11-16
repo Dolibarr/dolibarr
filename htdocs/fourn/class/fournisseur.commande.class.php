@@ -1597,9 +1597,10 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param 		string	$pu_ht_devise			Amount in currency
 	 *  @param		string	$origin					'order', ...
 	 *  @param		int		$origin_id				Id of origin object
+	 *  @param      int		$rang            		Position of line
      *	@return     int             				<=0 if KO, >0 if OK
      */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1)
     {
         global $langs, $mysoc, $conf;
 
@@ -1616,6 +1617,7 @@ class CommandeFournisseur extends CommonOrder
 			if (!$qty) $qty = 1;
 			if (!$info_bits) $info_bits = 0;
 			if (empty($txtva)) $txtva = 0;
+			if (empty($rang)) $rang = 0;
 			if (empty($txlocaltax1)) $txlocaltax1 = 0;
 			if (empty($txlocaltax2)) $txlocaltax2 = 0;
 			if (empty($remise_percent)) $remise_percent = 0;
@@ -1776,8 +1778,11 @@ class CommandeFournisseur extends CommonOrder
             $localtax1_type = $localtaxes_type[0];
 			$localtax2_type = $localtaxes_type[2];
 
-            $rangmax = $this->line_max();
-            $rang = $rangmax + 1;
+			if ($rang < 0)
+			{
+				$rangmax = $this->line_max();
+				$rang = $rangmax + 1;
+			}
 
             // Insert line
             $this->line = new CommandeFournisseurLigne($this->db);
@@ -1839,6 +1844,11 @@ class CommandeFournisseur extends CommonOrder
             {
                 // Reorder if child line
                 if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
+				elseif($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
+					for ($ii = $rang; $ii <= count($this->lines); $ii++) {
+						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					}
+				}
 
                 // Mise a jour informations denormalisees au niveau de la commande meme
                 $result = $this->update_price(1, 'auto', 0, $this->thirdparty); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.

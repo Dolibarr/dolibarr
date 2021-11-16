@@ -65,6 +65,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $projectid = GETPOST('projectid', 'int');
 $lineid = GETPOST('lineid', 'int');
 $contactid = GETPOST('contactid', 'int');
+$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -678,7 +679,7 @@ if (empty($reshook))
 					    $pu_ttc,
 					    $tva_npr,
 					    $type,
-					    -1,
+					    $rank,
 					    0,
 					    GETPOST('fk_parent_line'),
 					    $fournprice,

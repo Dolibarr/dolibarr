@@ -296,6 +296,18 @@ if ($nolinesbefore) {
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
 		}
+
+		if(!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+			$tab = array(-1 => $langs->trans('AtTheEnd'));
+			if (!empty($object->lines)) {
+				$langs->load('admin');
+				foreach ($object->lines as $k => $v) {
+					$tab[$v->rang] = $langs->trans('OnLine') . '&nbsp;' . ($k + 1);
+				}
+			}
+			echo '<br>'.$langs->trans('Position').' : '.$form->selectarray('rank', $tab);
+		}
+
 		if (is_object($hookmanager) && empty($senderissupplier))
 		{
 			$parameters = array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));

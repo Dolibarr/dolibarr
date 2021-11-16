@@ -66,6 +66,7 @@ $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $cancel         = GETPOST('cancel', 'alpha');
 $lineid         = GETPOST('lineid', 'int');
+$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 $lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
@@ -532,7 +533,8 @@ if (empty($reshook))
 					$productsupplier->fk_unit,
 					$pu_ht_devise,
 					'',
-					0
+					0,
+					$rank
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
