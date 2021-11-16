@@ -58,6 +58,7 @@ ManagePartnership=Hamkorlikni boshqarish
 BacklinkNotFoundOnPartnerWebsite=Backlink sherik veb-saytida topilmadi
 ConfirmClosePartnershipAsk=Haqiqatan ham ushbu hamkorlikni bekor qilmoqchimisiz?
 PartnershipType=Hamkorlik turi
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

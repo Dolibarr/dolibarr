@@ -133,3 +133,4 @@ SplitSale=Split vânzare
 PrintWithoutDetailsButton=Adaugare buton "Tipărire fără detalii"
 PrintWithoutDetailsLabelDefault=Etichetă linie în mod implicit la imprimarea fără detalii
 PrintWithoutDetails=Tipărire fără detalii
+YearNotDefined=Anul nu este definit

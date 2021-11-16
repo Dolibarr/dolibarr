@@ -133,3 +133,4 @@ SplitSale=Venta dividida
 PrintWithoutDetailsButton=Agregar botón "Imprimir sin detalles"
 PrintWithoutDetailsLabelDefault=Etiqueta de línea por defecto al imprimir sin detalles
 PrintWithoutDetails=Imprimir sin detalles
+YearNotDefined=Year is not defined

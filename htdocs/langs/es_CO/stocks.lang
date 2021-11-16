@@ -71,7 +71,6 @@ StockLimit=Límite de stock para alerta
 PhysicalStock=Inventario FISICO
 RealStockDesc=El stock físico / real es el stock que se encuentra actualmente en los almacenes.
 RealStockWillAutomaticallyWhen=El stock real se modificará de acuerdo con esta regla (según se define en el módulo Stock):
-VirtualStockAtDate=Virtual stock at a future date
 VirtualStockDesc=El stock virtual es el stock calculado disponible una vez que se cierran todas las acciones abiertas / pendientes (que afectan a las existencias) (órdenes de compra recibidas, órdenes de venta enviadas, órdenes de fabricación producidas, etc.)
 IdWarehouse=ID de almacén
 LieuWareHouse=Almacén de localización

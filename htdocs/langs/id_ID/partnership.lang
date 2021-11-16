@@ -58,6 +58,7 @@ ManagePartnership=Kelola kemitraan
 BacklinkNotFoundOnPartnerWebsite=Tautan balik tidak ditemukan di situs web mitra
 ConfirmClosePartnershipAsk=Anda yakin ingin membatalkan kemitraan ini?
 PartnershipType=Jenis kemitraan
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

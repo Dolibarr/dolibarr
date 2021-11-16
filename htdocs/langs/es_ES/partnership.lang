@@ -58,6 +58,7 @@ ManagePartnership=Gestionar la asociación
 BacklinkNotFoundOnPartnerWebsite=Vínculo de retroceso no encontrado en el sitio web del socio
 ConfirmClosePartnershipAsk=¿Está seguro de que desea cancelar esta asociación?
 PartnershipType=Tipo de asociación
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

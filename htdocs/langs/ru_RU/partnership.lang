@@ -58,6 +58,7 @@ ManagePartnership=Управление партнерством
 BacklinkNotFoundOnPartnerWebsite=Обратная ссылка не найдена на партнерском сайте
 ConfirmClosePartnershipAsk=Вы уверены, что хотите отменить это партнерство?
 PartnershipType=Тип партнерства
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
