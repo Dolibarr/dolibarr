@@ -52,7 +52,7 @@ class modCommande extends DolibarrModules
 		$this->numero = 25;
 
 		$this->family = "crm";
-		$this->module_position = '23';
+		$this->module_position = '11';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des commandes clients";
@@ -60,7 +60,7 @@ class modCommande extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='order';
+		$this->picto = 'order';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/commande/temp");
@@ -72,11 +72,11 @@ class modCommande extends DolibarrModules
 		$this->depends = array("modSociete");
 		$this->requiredby = array("modExpedition");
 		$this->conflictwith = array();
-		$this->langfiles = array('orders', 'bills', 'companies','products', 'deliveries', 'sendings');
+		$this->langfiles = array('orders', 'bills', 'companies', 'products', 'deliveries', 'sendings');
 
 		// Constants
 		$this->const = array();
-		$r=0;
+		$r = 0;
 
 		$this->const[$r][0] = "COMMANDE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
