@@ -97,7 +97,7 @@ function dol_decode($chain, $key = '1')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap with no salt, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @see getRandomPassword()
  */
@@ -111,7 +111,7 @@ function dol_hash($chain, $type = '0')
 	}
 
 	// Salt value
-	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'md5openldap') {
+	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'openldap') {
 		$chain = $conf->global->MAIN_SECURITY_SALT.$chain;
 	}
 
@@ -121,8 +121,8 @@ function dol_hash($chain, $type = '0')
 		return sha1(md5($chain));
 	} elseif ($type == '3' || $type == 'md5') {
 		return md5($chain);
-	} elseif ($type == '4' || $type == 'md5openldap') {
-		return '{md5}'.base64_encode(pack("H*", md5($chain))); // For OpenLdap with md5 (based on an unencrypted password in base)
+	} elseif ($type == '4' || $type == 'openldap') {
+		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
 	} elseif ($type == '5' || $type == 'sha256') {
 		return hash('sha256', $chain);
 	} elseif ($type == '6' || $type == 'password_hash') {
@@ -145,7 +145,7 @@ function dol_hash($chain, $type = '0')
  *
  * 	@param 		string		$chain		String to hash (not hashed string)
  * 	@param 		string		$hash		hash to compare
- * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
  */
 function dol_verifyHash($chain, $hash, $type = '0')
@@ -165,6 +165,50 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	}
 
 	return dol_hash($chain, $type) == $hash;
+}
+
+/**
+ * 	Returns a specific ldap hash of a password.
+ *
+ * 	@param 		string		$password	Password to hash
+ * 	@param		string		$type		Type of hash
+ * 	@return		string					Hash of password
+ */
+function dolGetLdapPasswordHash($password, $type = 'md5')
+{
+	if (empty($type)) {
+		$type = 'md5';
+	}
+
+	$salt = substr(sha1(time()), 0, 8);
+
+	if ($type === 'md5') {
+		return '{MD5}' . base64_encode(hash("md5", $password, true)); //For OpenLdap with md5 (based on an unencrypted password in base)
+	} elseif ($type === 'md5frommd5') {
+		return '{MD5}' . base64_encode(hex2bin($password)); // Create OpenLDAP MD5 password from Dolibarr MD5 password
+	} elseif ($type === 'smd5') {
+		return "{SMD5}" . base64_encode(hash("md5", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha') {
+		return '{SHA}' . base64_encode(hash("sha1", $password, true));
+	} elseif ($type === 'ssha') {
+		return "{SSHA}" . base64_encode(hash("sha1", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha256') {
+		return "{SHA256}" . base64_encode(hash("sha256", $password, true));
+	} elseif ($type === 'ssha256') {
+		return "{SSHA256}" . base64_encode(hash("sha256", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha384') {
+		return "{SHA384}" . base64_encode(hash("sha384", $password, true));
+	} elseif ($type === 'ssha384') {
+		return "{SSHA384}" . base64_encode(hash("sha384", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha512') {
+		return "{SHA512}" . base64_encode(hash("sha512", $password, true));
+	} elseif ($type === 'ssha512') {
+		return "{SSHA512}" . base64_encode(hash("sha512", $password . $salt, true) . $salt);
+	} elseif ($type === 'crypt') {
+		return '{CRYPT}' . crypt($password, $salt);
+	} elseif ($type === 'clear') {
+		return '{CLEAR}' . $password;  // Just for test, plain text password is not secured !
+	}
 }
 
 /**

@@ -231,8 +231,11 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 	$object->fetch($id);
 
 	if ($object->id > 0) {
-		$object->paye = 0;
 		$object->id = $object->ref = null;
+		$object->paye = 0;
+		if (GETPOST('amount', 'alphanohtml')) {
+			$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
+		}
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
@@ -244,7 +247,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 			$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 			$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 		} else {
-			// Note dateech is often a little bit higher than dateperiod
+			// Note date_ech is often a little bit higher than dateperiod
 			$newdateperiod = dol_mktime(0, 0, 0, GETPOST('clone_periodmonth', 'int'), GETPOST('clone_periodday', 'int'), GETPOST('clone_periodyear', 'int'));
 			$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
 			if ($newdateperiod) {
@@ -263,7 +266,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 			}
 		}
 
-		if ($object->check()) {
+		$resultcheck = $object->check();
+		if ($resultcheck) {
 			$id = $object->create($user);
 			if ($id > 0) {
 				$db->commit();
@@ -431,9 +435,10 @@ if ($id > 0) {
 			} else {
 				$formquestion[] = array('type' => 'date', 'datenow'=>1, 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
+				$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 			}
 
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
 		}
 
 

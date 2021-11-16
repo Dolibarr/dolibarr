@@ -70,6 +70,9 @@ print '<!-- Force style container -->'."\n".'<style>
 .id-container {
     width: 100%;
 }
+#id-right {
+	padding-left: unset;
+}
 </style>';
 
 $arrayofnatures = array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));

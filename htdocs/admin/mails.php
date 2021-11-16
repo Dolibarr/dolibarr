@@ -851,8 +851,11 @@ if ($action == 'edit') {
 		$companyemail = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 		$dnsinfo = false;
 		if (!empty($companyemail) && function_exists('dns_get_record')) {
-			$domain = array_pop(explode('@', $companyemail));
-			$dnsinfo = dns_get_record($domain, DNS_TXT);
+			$arrayofemailparts = explode('@', $companyemail);
+			if (count($arrayofemailparts) == 2) {
+				$domain = $arrayofemailparts[1];
+				$dnsinfo = dns_get_record($domain, DNS_TXT);
+			}
 		}
 		if (!empty($dnsinfo) && is_array($dnsinfo)) {
 			foreach ($dnsinfo as $info) {

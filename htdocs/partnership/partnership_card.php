@@ -153,7 +153,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_accept' && $confirm == 'yes' && $permissiontoadd) {
-		$result = $object->accept($user);
+		$result = $object->approve($user);
 		if ($result >= 0) {
 			// Define output language
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -232,7 +232,7 @@ if (empty($reshook)) {
 	// Actions to send emails
 	$triggersendname = 'PARTNERSHIP_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PARTNERSHIP_TO';
-	$trackid = 'partnership'.$object->id;
+	$trackid = 'pship'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	if (!empty($id) && !empty(GETPOST('confirm'))) {
@@ -590,9 +590,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Cancel
 			if ($permissiontoadd) {
-				if ($object->status == $object::STATUS_ACCEPTED) {
+				if ($object->status == $object::STATUS_APPROVED) {
 					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
-				} elseif ($object->status > $object::STATUS_ACCEPTED) {
+				} elseif ($object->status > $object::STATUS_APPROVED) {
 					// print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 					print dolGetButtonAction($langs->trans('Re-Open'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				}
@@ -600,7 +600,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Refuse
 			if ($permissiontoadd) {
-				if ($object->status != $object::STATUS_DRAFT && $object->status != $object::STATUS_ACCEPTED && $object->status != $object::STATUS_CANCELED && $object->status != $object::STATUS_REFUSED) {
+				if ($object->status != $object::STATUS_DRAFT && $object->status != $object::STATUS_APPROVED && $object->status != $object::STATUS_CANCELED && $object->status != $object::STATUS_REFUSED) {
 					print dolGetButtonAction($langs->trans('Refuse'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=refuse&token='.newToken(), '', $permissiontoadd);
 				}
 			}
@@ -643,14 +643,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.DOL_URL_ROOT.'/partnership/partnership_agenda.php?id='.$object->id.'">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/partnership/partnership_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div></div>';
 	}
@@ -664,7 +662,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$modelmail = 'partnership_send';
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->partnership->dir_output;
-	$trackid = 'partnership'.$object->id;
+	$trackid = 'pship'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }

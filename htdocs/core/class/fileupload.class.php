@@ -222,7 +222,7 @@ class FileUpload
 	protected function setFileDeleteUrl($file)
 	{
 		$file->delete_url = $this->options['script_url']
-		.'?file='.rawurlencode($file->name).'&fk_element='.$this->fk_element.'&element='.$this->element;
+		.'?file='.urlencode($file->name).'&fk_element='.urlencode($this->fk_element).'&element='.urlencode($this->element);
 		$file->delete_type = $this->options['delete_type'];
 		if ($file->delete_type !== 'DELETE') {
 			$file->delete_url .= '&_method=DELETE';

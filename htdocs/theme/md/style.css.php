@@ -1170,7 +1170,7 @@ select.flat.selectlimit {
 	max-width: 62px;
 }
 .selectlimit, .marginrightonly {
-	margin-right: 10px !important;
+	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
 	margin-<?php echo $left; ?>: 10px !important;
@@ -1407,6 +1407,10 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
+tr.nobottom td {
+	border-bottom: 0px !important;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1521,11 +1525,11 @@ table[summary="list_of_modules"] .fa-cog {
 }
 
 /* Set a width. Note: add also a max-width, for example maxwidth500, that will be used in priority */
-.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
 }
-.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -1987,7 +1991,7 @@ div.fichehalfleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -1995,7 +1999,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -2266,6 +2270,19 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
+li.tmenusel::after, li.tmenu:hover::after {
+	content: "";
+	position: absolute;
+	bottom: 0px;
+	left: 50%;
+	left: calc(50% - 6px);
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0px 6px 5px 6px;
+	border-color: transparent transparent #ffffff transparent;
+}
+
 div.tmenusep {
 <?php if ($disableimages) { ?>
 	display: none;
@@ -2359,9 +2376,7 @@ li.tmenu, li.tmenusel {
 li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
-li.tmenusel a.tmenusel {
-	text-decoration: underline !important;
-}
+
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
 
@@ -3382,6 +3397,33 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_REF)) { ?>
+/* To have left column sticky */
+.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
+	position: sticky;
+	left: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_ACTION)) { ?>
+/* To have right column sticky */
+.tagtable td.actioncolumn, .tagtable th.actioncolumn {
+	position: sticky;
+	right: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
+
 
 /* Main boxes */
 .nobordertop, .nobordertop tr:first-of-type td {
@@ -3829,11 +3871,12 @@ div.liste_titre_bydiv {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 
-	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	width: calc(100% - 1px);
+	box-shadow: none;
+	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
+	width: calc(100%);
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
@@ -4485,6 +4528,11 @@ div#card-errors {
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
 }
+
+div#dialogforpopup {
+	background-color: #f8f8f8 !important;
+}
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -5574,6 +5622,10 @@ input.select2-input {
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	border: 1px solid #e4e4e4;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,

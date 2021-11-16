@@ -98,7 +98,9 @@ if (!empty($ExecTimeLimit)) {
 	@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
 	error_reporting($err);
 }
-$MemoryLimit = 0;
+
+/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */
+$MemoryLimit = getDolGlobalString('MAIN_MEMORY_LIMIT_ARCHIVE_DATAROOT');
 if (!empty($MemoryLimit)) {
 	@ini_set('memory_limit', $MemoryLimit);
 }
