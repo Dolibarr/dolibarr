@@ -17,6 +17,7 @@
  * Copyright (C) 2016      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2018      Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2018      Nicolas ZABOURI        <info@inovea-conseil.com>
+ * Copyright (C) 2021      Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
