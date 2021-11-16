@@ -511,7 +511,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		print "<br>\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("TotalMarge").'SSSSS</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("TotalMarge").'</td>';
 		for ($i = 1; $i <= 12; $i++) {
 			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 			if ($j > 12) {
