@@ -46,6 +46,7 @@ $facid = GETPOST('facid', 'int');
 $accountid = GETPOST('accountid', 'int');
 $paymentnum	= GETPOST('num_paiement', 'alpha');
 $socid      = GETPOST('socid', 'int');
+$fac_only   = GETPOST('fac_only', 'int');
 
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'alpha');
@@ -335,6 +336,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			$formquestion[$i++] = array('type' => 'hidden', 'name' => 'facid', 'value' => $facture->id);
 			$formquestion[$i++] = array('type' => 'hidden', 'name' => 'socid', 'value' => $facture->socid);
 			$formquestion[$i++] = array('type' => 'hidden', 'name' => 'type', 'value' => $facture->type);
+			$formquestion[$i++] = array('type' => 'hidden', 'name' => 'fac_only', 'value' => $fac_only);
 		}
 
 		// Invoice with Paypal transaction
@@ -454,6 +456,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
 		print '<input type="hidden" name="type" id="invoice_type" value="'.$facture->type.'">';
+		print '<input type="hidden" name="fac_only" value="'.$fac_only.'">';
 		print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->thirdparty->name).'">';
 
 		print dol_get_fiche_head();
@@ -529,6 +532,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		$sql .= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= ' WHERE f.entity IN ('.getEntity('facture').')';
+		if ($facid && $fac_only) $sql .= ' AND f.rowid = '.((int) $facid);
 		$sql .= ' AND (f.fk_soc = '.((int) $facture->socid);
 		// Can pay invoices of all child of parent company
 		if (!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
@@ -840,7 +844,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 				print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 			}
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type.'&fac_only='.$fac_only, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
 		}
 
 		print "</form>\n";
@@ -871,6 +875,7 @@ if (!GETPOST('action', 'aZ09')) {
 	$sql .= ', '.MAIN_DB_PREFIX.'facture as f';
 	$sql .= ' WHERE p.fk_facture = f.rowid';
 	$sql .= ' AND f.entity IN ('.getEntity('invoice').')';
+	if ($facid && $fac_only) $sql .= ' AND f.rowid = '.((int) $facid);
 	if ($socid) {
 		$sql .= ' AND f.fk_soc = '.((int) $socid);
 	}
