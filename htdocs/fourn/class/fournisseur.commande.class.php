@@ -1858,8 +1858,7 @@ class CommandeFournisseur extends CommonOrder
 			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
-			if ($rang < 0)
-			{
+			if ($rang < 0) {
 				$rangmax = $this->line_max();
 				$rang = $rangmax + 1;
 			}
@@ -1924,7 +1923,7 @@ class CommandeFournisseur extends CommonOrder
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
-				} elseif($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
+				} elseif ($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
 					for ($ii = $rang; $ii <= count($this->lines); $ii++) {
 						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
 					}
