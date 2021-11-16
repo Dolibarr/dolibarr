@@ -198,7 +198,7 @@ class modCommande extends DolibarrModules
 			'c.total_ttc'=>"TotalTTC",'c.facture'=>"Billed",'c.fk_statut'=>'Status','c.note_public'=>"Note",'c.date_livraison'=>'DeliveryDate',
 			'c.fk_user_author'=>'CreatedById','uc.login'=>'CreatedByLogin','c.fk_user_valid'=>'ValidatedById','uv.login'=>'ValidatedByLogin',
 			'pj.ref'=>'ProjectRef','cd.rowid'=>'LineId','cd.label'=>"Label",'cd.description'=>"LineDescription",'cd.product_type'=>'TypeOfLineServiceOrProduct',
-			'cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty",'cd.total_ht'=>"LineTotalHT",'cd.total_tva'=>"LineTotalVAT",'cd.total_ttc'=>"LineTotalTTC",
+			'cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty",'cd.total_ht'=>"LineTotalHT",'cd.total_tva'=>"LineTotalVAT",'cd.total_ttc'=>"LineTotalTTC",'cd.special_code'=>'SpecialCode',
 			'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel'
 		);
 		if (! empty($conf->multicurrency->enabled))
@@ -223,7 +223,7 @@ class modCommande extends DolibarrModules
 			'c.date_commande'=>"Date",'c.date_livraison'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",
 			'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','pj.ref'=>'Text',
 			'cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",
-			'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:ref::product','p.ref'=>'Text','p.label'=>'Text','d.nom'=>'Text'
+			'cd.total_ttc'=>"Numeric", 'cd.special_code'=>"Numeric",'p.rowid'=>'List:product:ref::product','p.ref'=>'Text','p.label'=>'Text','d.nom'=>'Text'
 		);
 		$this->export_entities_array[$r]=array(
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company',
@@ -232,7 +232,7 @@ class modCommande extends DolibarrModules
 			'c.remise_percent'=>"order",'c.total_ht'=>"order",'c.total_ttc'=>"order",'c.facture'=>"order",'c.fk_statut'=>"order",'c.note'=>"order",
 			'c.date_livraison'=>"order",'pj.ref'=>'project','cd.rowid'=>'order_line','cd.label'=>"order_line",'cd.description'=>"order_line",
 			'cd.product_type'=>'order_line','cd.tva_tx'=>"order_line",'cd.qty'=>"order_line",'cd.total_ht'=>"order_line",'cd.total_tva'=>"order_line",
-			'cd.total_ttc'=>"order_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product'
+			'cd.total_ttc'=>"order_line", 'cd.special_code'=>'order_line','p.rowid'=>'product','p.ref'=>'product','p.label'=>'product'
 		);
 		$this->export_dependencies_array[$r]=array('order_line'=>'cd.rowid','product'=>'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		$keyforselect='commande'; $keyforelement='order'; $keyforaliasextra='extra';
