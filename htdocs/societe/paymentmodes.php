@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 $permissiontoread = $user->rights->societe->lire;
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
-$permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->addupdate_thirdparty_payment_information->write)));
+$permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
 
 if (!empty($conf->stripe->enabled)) {
 	$service = 'StripeTest';
