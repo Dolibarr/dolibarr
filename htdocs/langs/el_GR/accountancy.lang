@@ -37,8 +37,8 @@ OtherInfo=Αλλες πληροφορίες
 DeleteCptCategory=Κατάργηση λογαριασμού λογιστικής από την ομάδα
 ConfirmDeleteCptCategory=Είστε βέβαιοι ότι θέλετε να καταργήσετε αυτόν τον λογαριασμό λογιστικής από την ομάδα λογαριασμών λογαριασμού;
 JournalizationInLedgerStatus=Κατάσταση της περιοδικής εγγραφής
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Η ομάδα είναι κενή, ελέγξτε τη ρύθμιση της εξατομικευμένης ομάδας λογιστικής
 DetailByAccount=Εμφάνιση λεπτομερειών βάσει λογαριασμού
 AccountWithNonZeroValues=Λογαριασμοί με μη μηδενικές τιμές
@@ -298,7 +298,7 @@ NoNewRecordSaved=Δεν υπάρχει πλέον ρεκόρ για να κάν�
 ListOfProductsWithoutAccountingAccount=Κατάλογος προϊόντων που δεν δεσμεύονται σε κανένα λογιστικό λογαριασμό
 ChangeBinding=Αλλάξτε τη σύνδεση
 Accounted=Πληρώθηκε σε
-NotYetAccounted=Not yet accounted in the ledger
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Εμφάνιση εκπαιδευτικού προγράμματος
 NotReconciled=Δεν ταιριάζουν
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Εξαγωγή σχεδίου περιοδικού
 Modelcsv=Πρότυπο εξαγωγής
@@ -343,7 +343,7 @@ Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Εξαγωγή για Quadratus QuadraCompta
 Modelcsv_ebp=Εξαγωγή για EBP
 Modelcsv_cogilog=Εξαγωγή για το Cogilog
-Modelcsv_agiris=Εξαγωγή για Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Εξαγωγή για LD Compta (v10 και άνω)
 Modelcsv_openconcerto=Εξαγωγή για OpenConcerto (Test)
@@ -351,9 +351,10 @@ Modelcsv_configurable=Εξαγωγή CSV εξαγωγής
 Modelcsv_FEC=Εξαγωγή FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Εξαγωγή για Sage 50 Ελβετία
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Λογαριασμός Id
 
 ## Tools - Init accounting account on product / service

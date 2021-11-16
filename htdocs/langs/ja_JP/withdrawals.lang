@@ -43,7 +43,7 @@ MakeWithdrawRequest=口座振替の支払リクエストを行う
 MakeBankTransferOrder=クレジット振込をリクエストする
 WithdrawRequestsDone=%s口座振替の支払要求が記録された
 BankTransferRequestsDone=%sクレジット転送リクエストが記録済
-ThirdPartyBankCode=サードパーティの銀行コード
+ThirdPartyBankCode=取引先の銀行コード
 NoInvoiceCouldBeWithdrawed=正常に引き落とされた請求書はない。請求書が有効なIBANを持つ会社のものであり、IBANにモード<strong> %s </strong>のUMR(一意の委任参照)があることを確認すること。
 WithdrawalCantBeCreditedTwice=この出金票はすでに貸方でマークされている。これは、重複した支払いと銀行エントリを作成する可能性があるため、2回実行することは不可。
 ClassCredited=入金分類
@@ -137,7 +137,7 @@ ICS=債権者識別子-ICS
 END_TO_END=「EndToEndId」SEPAXMLタグ-トランザクションごとに割り当てられた一意のID
 USTRD=「非構造化」SEPAXMLタグ
 ADDDAYS=実行日に日数を追加
-NoDefaultIBANFound=このサードパーティのデフォルトのIBANは見つからなかった
+NoDefaultIBANFound=この取引先のデフォルトのIBANは見つからなかった
 ### Notifications
 InfoCreditSubject=銀行による口座振替注文%sの支払
 InfoCreditMessage=口座振替の支払注文%sは銀行によって支払われた<br>支払のデータ：%s

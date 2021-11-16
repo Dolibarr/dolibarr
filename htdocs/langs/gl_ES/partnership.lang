@@ -58,6 +58,7 @@ ManagePartnership=Xestionar a asociación
 BacklinkNotFoundOnPartnerWebsite=Non se atopou a ligazón de atraso no sitio web do socio 
 ConfirmClosePartnershipAsk=Está certo de querer cancelar esta asociación? 
 PartnershipType=Tipo de asociación
+PartnershipRefApproved=A asociación %s aprobouse
 
 #
 # Template Mail
@@ -77,8 +78,8 @@ YourPartnershipRefusedContent=Informámoslle que a súa solicitude de subscrici�
 YourPartnershipAcceptedContent=Informámoslle que a súa solicitude de subscrición foi aceptada. 
 YourPartnershipCanceledContent=Informámoslle que a súa subscrición foi cancelada. 
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
+CountLastUrlCheckError=Número de erros para as últimas URL revisadas
+LastCheckBacklink=Data da última URL revisada
 ReasonDeclineOrCancel=Razón para declinar
 
 #

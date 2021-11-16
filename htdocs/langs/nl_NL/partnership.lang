@@ -58,6 +58,7 @@ ManagePartnership=Partnerschap beheren
 BacklinkNotFoundOnPartnerWebsite=Backlink niet gevonden op partnerwebsite
 ConfirmClosePartnershipAsk=Weet u zeker dat u deze partnerschap wilt opzeggen?
 PartnershipType=Partnerschapstype
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

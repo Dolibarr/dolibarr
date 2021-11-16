@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
 ShowLoanPayment=Zeige Kreidtauszahlung
-Term=Laufzeit
 LoanAccountancyInsuranceCode=Buchhaltungskonto Kreditversicherung
 LoanAccountancyInterestCode=Buchhaltungskonto Kreditzins
 ListLoanAssociatedProject=Kredite für dieses Projekt

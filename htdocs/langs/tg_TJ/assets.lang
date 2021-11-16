@@ -16,52 +16,52 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+Assets = Дороиҳо
+NewAsset = Янги актив
+AccountancyCodeAsset = Рамзи баҳисобгирӣ (дороиҳо)
+AccountancyCodeDepreciationAsset = Рамзи баҳисобгирӣ (ҳисоби амортизатсияи дороиҳо)
+AccountancyCodeDepreciationExpense = Рамзи баҳисобгирӣ (ҳисоби хароҷоти амортизатсионӣ)
+NewAssetType=Навъи дороиҳо
+AssetsTypeSetup=Танзими намуди дороиҳо
+AssetTypeModified=Навъи дороиҳо тағир дода шуд
+AssetType=Навъи дороиҳо
+AssetsLines=Дороиҳо
+DeleteType=Нест кардан
+DeleteAnAssetType=Навъи дороиҳоро нест кунед
+ConfirmDeleteAssetType=Шумо мутмаин ҳастед, ки мехоҳед ин намуди дороиҳоро нест кунед?
+ShowTypeCard=Намуди '%s' -ро нишон диҳед
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName = Дороиҳо
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc = Тавсифи дороиҳо
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetsSetup = Танзими дороиҳо
+Settings = Танзимот
+AssetsSetupPage = Саҳифаи танзими дороиҳо
+ExtraFieldsAssetsType = Хусусиятҳои иловагӣ (намуди дороиҳо)
+AssetsType=Навъи дороиҳо
+AssetsTypeId=Шиносаи намуди дороиҳо
+AssetsTypeLabel=Нишонаи намуди дороиҳо
+AssetsTypes=Навъҳои дороиҳо
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
+MenuAssets = Дороиҳо
+MenuNewAsset = Янги актив
+MenuTypeAssets = Намуди дороиҳо
+MenuListAssets = Рӯйхат
+MenuNewTypeAssets = Нав
+MenuListTypeAssets = Рӯйхат
 
 #
 # Module
 #
-Asset=Asset
-NewAssetType=New asset type
-NewAsset=New asset
-ConfirmDeleteAsset=Are you sure you want to delete this asset ?
+Asset=Дороӣ
+NewAssetType=Навъи дороиҳо
+NewAsset=Янги актив
+ConfirmDeleteAsset=Шумо мутмаин ҳастед, ки ин активро нест кардан мехоҳед?
