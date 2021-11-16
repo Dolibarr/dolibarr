@@ -673,7 +673,7 @@ if (empty($reshook)) {
 						$pu_ttc,
 						$tva_npr,
 						$type,
-					    $rank,
+						$rank,
 						0,
 						GETPOST('fk_parent_line'),
 						$fournprice,

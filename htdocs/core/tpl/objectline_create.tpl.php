@@ -310,7 +310,7 @@ if ($nolinesbefore) {
 			echo '</span>';
 		}
 
-		if(!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 			$tab = array(-1 => $langs->trans('AtTheEnd'));
 			if (!empty($object->lines)) {
 				$langs->load('admin');
