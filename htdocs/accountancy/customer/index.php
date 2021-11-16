@@ -511,7 +511,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		print "<br>\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("TotalMarge").'</td>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("TotalMarge").'SSSSS</td>';
 		for ($i = 1; $i <= 12; $i++) {
 			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 			if ($j > 12) {
@@ -529,7 +529,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 			}
 			$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, '(fd.total_ht-(fd.qty * fd.buy_price_ht))', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 		}
-		$sql .= "  SUM((fd.total_ht-(fd.qty * fd.buy_price_ht))) as total";
+		//$sql .= "  SUM((fd.total_ht-(fd.qty * fd.buy_price_ht))) as total";
+		$sql .= ' SUM(CASE WHEN
+							MONTH(f.datef)='.$j.'
+						THEN (CASE WHEN	fd.total_ht < 0
+							  THEN (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))
+							  ELSE  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))
+							  END)
+						ELSE 0 END) AS month'.str_pad($j, 2, '0', STR_PAD_LEFT);
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 		$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 		$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
