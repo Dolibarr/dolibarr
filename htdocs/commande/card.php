@@ -334,6 +334,11 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
+							// Replicate extrafields
+							$srcobject->fetch_optionals();
+							$object->array_options = $srcobject->array_options;
+							$object->insertExtraFields();
+
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
 								$srcobject->fetch_lines();
