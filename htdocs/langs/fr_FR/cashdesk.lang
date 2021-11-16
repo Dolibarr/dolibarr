@@ -133,3 +133,4 @@ SplitSale=Fractionner la vente
 PrintWithoutDetailsButton=Affiche le bouton "Générer sans les détails"
 PrintWithoutDetailsLabelDefault=Line label by default on printing without details
 PrintWithoutDetails=Générer sans les détails
+YearNotDefined=Year is not defined

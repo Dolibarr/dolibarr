@@ -133,3 +133,4 @@ SplitSale=Split sale
 PrintWithoutDetailsButton=Add "Print without details" button
 PrintWithoutDetailsLabelDefault=Line label by default on printing without details
 PrintWithoutDetails=Print without details
+YearNotDefined=Year is not defined

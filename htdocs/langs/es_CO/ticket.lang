@@ -154,5 +154,4 @@ BoxLastTicketDescription=Últimas entradas creadas %s
 BoxLastTicketNoRecordedTickets=No hay tickets recientes no leídos
 BoxLastModifiedTicketDescription=Últimos tickets modificados %s
 BoxNoTicketSeverity=No se abrieron boletos
-BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketClosedToday=Boleto cerrado hoy

@@ -133,3 +133,4 @@ SplitSale=Split salg
 PrintWithoutDetailsButton=Tilføj knappen "Udskriv uden detaljer"
 PrintWithoutDetailsLabelDefault=Linjelabel som standard ved udskrivning uden detaljer
 PrintWithoutDetails=Udskriv uden detaljer
+YearNotDefined=År er ikke defineret

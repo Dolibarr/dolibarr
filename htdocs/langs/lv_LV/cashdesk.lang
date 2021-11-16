@@ -133,3 +133,4 @@ SplitSale=Sadalīta pārdošana
 PrintWithoutDetailsButton=Pievienojiet pogu "Drukāt bez detaļām".
 PrintWithoutDetailsLabelDefault=Līnijas etiķete pēc noklusējuma, drukājot bez detaļām
 PrintWithoutDetails=Drukāt bez detaļām
+YearNotDefined=Year is not defined
