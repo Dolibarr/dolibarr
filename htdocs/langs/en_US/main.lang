@@ -1159,3 +1159,5 @@ hasBeenValidated=%s has been validated
 ClientTZ=Client Time Zone (user)
 NotClosedYet=Not yet closed
 ClearSignature=Signature reset
+AtTheEnd=At the end  
+OnLine=On line

@@ -77,6 +77,7 @@ $cancel         = GETPOST('cancel', 'alpha');
 $lineid         = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 //PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -583,7 +584,8 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					$pu_ht_devise,
 					'',
-					0
+					0,
+					$rank
 				);
 			}
 			if ($idprod == -99 || $idprod == 0) {

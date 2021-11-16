@@ -1648,6 +1648,10 @@ class Commande extends CommonOrder
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
+				} elseif($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
+					for ($ii = $ranktouse; $ii <= count($this->lines); $ii++) {
+						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					}
 				}
 
 				// Mise a jour informations denormalisees au niveau de la commande meme
