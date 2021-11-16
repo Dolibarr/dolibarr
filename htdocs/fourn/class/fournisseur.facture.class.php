@@ -1025,7 +1025,7 @@ class FactureFournisseur extends CommonInvoice
     public function insert_discount($idremise)
     {
         // phpcs:enable
-    	global $langs;
+    	global $conf, $langs;
 
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
     	include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -1057,6 +1057,13 @@ class FactureFournisseur extends CommonInvoice
     		$facligne->remise_percent = 0;
     		$facligne->rang = -1;
     		$facligne->info_bits = 2;
+
+		if(!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+			$facligne->rang = 1;
+			for ($ii = 1; $ii <= count($this->lines); $ii++) {
+				$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii+1);
+			}
+		}
 
     		// Get buy/cost price of invoice that is source of discount
     		if ($remise->fk_invoice_supplier_source > 0)
