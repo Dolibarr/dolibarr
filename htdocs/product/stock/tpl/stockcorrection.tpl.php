@@ -36,6 +36,7 @@ if ($object->element == 'product') {
 
 $langs->load("productbatch");
 
+global $object, $form, $formproduct;
 
 if (empty($id)) {
 	$id = $object->id;
