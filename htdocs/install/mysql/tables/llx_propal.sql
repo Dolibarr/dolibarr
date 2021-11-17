@@ -60,6 +60,9 @@ create table llx_propal
   fk_cond_reglement		integer,						-- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,						-- mode de reglement (Virement, Prelevement)
  
+  online_sign_ip		varchar(48),
+  online_sign_name		varchar(64),
+  
   note_private			text,
   note_public			text,
   
