@@ -479,6 +479,13 @@ class Ticket extends CommonObject
 				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 
+			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
+				// add creator as contributor
+				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
+					$error++;
+				}
+			}
+
 			if (!$error) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
 
