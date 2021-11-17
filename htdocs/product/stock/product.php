@@ -874,13 +874,13 @@ if ($id > 0 || $ref) {
 
 	// Correct stock
 	if ($action == "correction") {
-		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
+		dol_include_once('/product/stock/tpl/stockcorrection.tpl.php');
 		print '<br><br>';
 	}
 
 	// Transfer of units
 	if ($action == "transfert") {
-		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
+		dol_include_once('/product/stock/tpl/stocktransfer.tpl.php');
 		print '<br><br>';
 	}
 } else {
