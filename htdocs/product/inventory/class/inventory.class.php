@@ -59,10 +59,10 @@ class Inventory extends CommonObject
 	 */
 	public $picto = 'inventory';
 
-	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATED = 1;
-	const STATUS_RECORDED = 2;
-	const STATUS_CANCELED = 9;
+	const STATUS_DRAFT = 0;			// Draft
+	const STATUS_VALIDATED = 1;		// Inventory is in process
+	const STATUS_RECORDED = 2;		// Inventory is finisged. Stock movement has been recorded.
+	const STATUS_CANCELED = 9;		// Canceled
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -368,7 +368,7 @@ class Inventory extends CommonObject
 	}
 
 	/**
-	 * Set to Recorded
+	 * Set to inventory to status "Closed". It means all stock movements were recorded.
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
@@ -616,11 +616,11 @@ class Inventory extends CommonObject
 
 		$labelStatus = array();
 		$labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated').' ('.$langs->transnoentitiesnoconv('Started').')';
+		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated').' ('.$langs->transnoentitiesnoconv('InventoryStartedShort').')';
 		$labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		$labelStatus[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
 		$labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Started');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('InventoryStartedShort');
 		$labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		$labelStatusShort[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
 

@@ -109,6 +109,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$savaction = $action;
 	$error = 0;
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
@@ -152,6 +153,12 @@ if (empty($reshook)) {
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_INVENTORY_TO';
 	$trackid = 'stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	if (!$error && $savaction == 'confirm_validate' && $action == '' && $object->id > 0) {
+		// Switch to the tab inventory
+		header("Location: ".DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id);
+		exit;
+	}
 }
 
 
