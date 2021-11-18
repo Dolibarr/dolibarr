@@ -1046,6 +1046,24 @@ foreach ($listofreferent as $key => $value) {
 			}
 			$addform .= '<div>';
 		}
+		if ($key == "order_supplier") {
+			$addform .= '<a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
+						 <span id="textBtnShow" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("ShowCanceled").'</span><span id="minus-circle" class="fa fa-eye valignmiddle paddingleft" style="padding: 3px 4px 2px 3px"></span>
+						 </a>
+						 <script>
+						 $("#btnShow").on("click", function () {
+							if($("#tr_canceled").css("display") == "none"){
+								$("#tr_canceled").show();
+								$("#textBtnShow").text("'.$langs->trans("HideCanceled").'");
+								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
+							} else {
+								$("#tr_canceled").hide();
+								$("#textBtnShow").text("'.$langs->trans("ShowCanceled").'");
+								$("#minus-circle").removeClass("fa-eye-slash").addClass("fa-eye");
+							}
+						 });
+						 </script>';
+		}
 
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
@@ -1168,9 +1186,16 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->close_code) && $element->close_code == 'replaced') {
 						$qualifiedfortotal = false; // Replacement invoice, do not include into total
 					}
+				} elseif (($key == 'order_supplier') && ($element->status == 7)) {
+					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				print '<tr class="oddeven">';
+				if (($key == "order_supplier") && ($element->status == 7)) {
+					print '<tr id ="tr_canceled" class="oddeven" style=display:none>';
+				} else {
+					print '<tr class="oddeven" >';
+				}
+
 
 				// Remove link
 				print '<td style="width: 24px">';
