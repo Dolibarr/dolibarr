@@ -7294,13 +7294,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	if (empty($exclude) || !in_array('objectamount', $exclude)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
-		if (is_object($object)){
+		if (is_object($object)) {
 			    $sumpayed = $object->getSommePaiement();
 			    $sumdeposit = $object->getSumDepositsUsed();
 			    $sumcreditnote = $object->getSumCreditNotesUsed();
 			    $already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
-		} 
-                
+		}
+
 		$substitutionarray['__DATE_YMD__']        = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
 		$substitutionarray['__DATE_DUE_YMD__']    = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : null) : '';
 
