@@ -451,4 +451,6 @@ ALTER TABLE llx_socpeople DROP COLUMN whatsapp;
 ALTER TABLE llx_propal ADD COLUMN online_sign_ip varchar(48);
 ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
 
+ALTER TABLE llx_entrepot ADD COLUMN usage integer DEFAULT 1;
+
 
