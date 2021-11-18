@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deshabilitar la vinculación y transfere
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactive la vinculación y transferencia en contabilidad en informes de gastos (los informes de gastos no se tendrán en cuenta en la contabilidad)
 
 ## Export
-NotifiedExportDate=Fecha de exportación notificada (no será posible modificar las entradas)
-NotifiedValidationDate=Validación de las entradas (no será posible modificar o eliminar las entradas)
+NotifiedExportDate=Líneas marcadas como exportadas (no será posible modificar las líneas)
+NotifiedValidationDate=Entradas exportadas validadas (no será posible modificar o borrar las líneas)
 ConfirmExportFile=¿Confirmación de la generación del archivo de exportación contable?
 ExportDraftJournal=Exportar libro borrador
 Modelcsv=Modelo de exportación
@@ -339,11 +339,11 @@ Modelcsv_normal=Exportación clásica
 Modelcsv_CEGID=Exportar a CEGID Expert Comptabilité
 Modelcsv_COALA=Exportar a Sage Coala
 Modelcsv_bob50=Exportar a Sage BOB 50
-Modelcsv_ciel=Exportar a Sage Ciel Compta o Compta Evolution
+Modelcsv_ciel=Exportar a Sage50, Ciel Compta o Compta Evo. (Formato XIMPORT)
 Modelcsv_quadratus=Exportar a Quadratus QuadraCompta
 Modelcsv_ebp=Exportar a EBP
 Modelcsv_cogilog=Eportar a Cogilog
-Modelcsv_agiris=Exportar a Agiris
+Modelcsv_agiris=Exportar a Agiris Isacompta
 Modelcsv_LDCompta=Exportar a LD Compta (v9 y superior) (En pruebas)
 Modelcsv_LDCompta10=Exportar a LD Compta (v10 & superior)
 Modelcsv_openconcerto=Exportar a OpenConcerto (En pruebas)
@@ -353,7 +353,8 @@ Modelcsv_FEC2=Exportar a FEC (con escritura de generación de fechas / documento
 Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
 Modelcsv_winfic=Exportar a Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Exportar a Gestinum (v3)
-Modelcsv_Gestinumv5Export para Gestinum (v5)
+Modelcsv_Gestinumv5=Exportar a Gestinum (v5)
+Modelcsv_charlemagne=Exportar a Aplim Charlemagne
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service

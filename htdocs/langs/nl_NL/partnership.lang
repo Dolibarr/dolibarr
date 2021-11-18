@@ -58,6 +58,7 @@ ManagePartnership=Partnerschap beheren
 BacklinkNotFoundOnPartnerWebsite=Backlink niet gevonden op partnerwebsite
 ConfirmClosePartnershipAsk=Weet u zeker dat u deze partnerschap wilt opzeggen?
 PartnershipType=Partnerschapstype
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
@@ -76,6 +77,10 @@ YourPartnershipWillSoonBeCanceledContent=Wij informeren u dat uw partnerschap bi
 YourPartnershipRefusedContent=Wij informeren u dat uw partnerschapsverzoek is afgewezen.
 YourPartnershipAcceptedContent=Wij informeren u dat uw partnerschapsverzoek is geaccepteerd.
 YourPartnershipCanceledContent=Wij informeren u dat uw partnerschap is beëindigd.
+
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Reden afwijzing
 
 #
 # Status

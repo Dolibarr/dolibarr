@@ -45,3 +45,5 @@ GenerateImgWebp=Wszystkie obrazy o innej wersji powiel w formacie .webp
 ConfirmGenerateImgWebp=Jeśli potwierdzisz, wygenerujesz obraz w formacie .webp dla wszystkich obrazów obecnie znajdujących się w tym folderze (podfoldery nie zostaną uwzględniane)...
 ConfirmImgWebpCreation=Potwierdź powielenie wszystkich obrazów
 SucessConvertImgWebp=Obrazy zostały pomyślnie zduplikowane
+ECMDirName=Dir name
+ECMParentDirectory=Parent directory

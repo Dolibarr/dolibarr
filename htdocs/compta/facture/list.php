@@ -606,12 +606,6 @@ if ($search_country) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty != '-1') {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 }
-if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
-}
-if ($search_company_alias) {
-	$sql .= natural_search('s.name_alias', $search_company_alias);
-}
 if ($search_montant_ht != '') {
 	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
 }

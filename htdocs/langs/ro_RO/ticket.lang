@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Mare
 TicketSeverityShortBLOCKING=Critic, blocant
 
+TicketCategoryShortOTHER=Altele
+
 ErrorBadEmailAddress=Câmpul '%s' este incorect
 MenuTicketMyAssign=Tichetele mele
 MenuTicketMyAssignNonClosed=Tichetele mele deschise
@@ -66,7 +68,7 @@ NeedMoreInformation=În aşteptare feedback de la raportor
 NeedMoreInformationShort=În aşteptare feedback
 Answered=S-a răspuns
 Waiting=În aşteptare
-Closed=Închis
+SolvedClosed=Rezolvat
 Deleted=Șters
 
 # Dict
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=Tichet adăugat
 TicketMessageSuccessfullyAdded=Mesaj adăugat cu succes
 TicketMessagesList=Listă de mesaje
 NoMsgForThisTicket=Niciun mesaj pentru acest tichet
-Properties=Clasificare
+TicketProperties=Clasificare
 LatestNewTickets=Ultimele %s cele mai noi tichete (necitite)
 TicketSeverity=Gravitate
 ShowTicket=Vedeți tichetul
 RelatedTickets=Tichete conexe
 TicketAddIntervention=Crează intervenţie
-CloseTicket=Închide tichet
-CloseATicket=Închide un tichet
+CloseTicket=Închidere/Rezolvare tichet
+AbandonTicket=Abandonare tichet
+CloseATicket=Închidere/Rezolvare un tichet
 ConfirmCloseAticket=Confirmați închiderea tichetului
+ConfirmAbandonTicket=Confirmați închiderea tichetului cu statusul 'Abandonat'
 ConfirmDeleteTicket=Confirmați ștergerea tichetului
 TicketDeletedSuccess=Tichet a fost șters cu succes
 TicketMarkedAsClosed=Tichet marcat ca închis
@@ -314,6 +318,7 @@ BoxTicketLastXDays=Numărul de tichete noi după zile din ultimele %s zile
 BoxTicketLastXDayswidget = Numărul de tichete noi pe zile în ultimele X zile
 BoxNoTicketLastXDays=Niciun tichet nou în ultimele %s zile
 BoxNumberOfTicketByDay=Număr tichete noi după zi
-BoxNewTicketVSClose=Numărul de tichete noi de astăzi comparativ cu tichetele închise de astăzi
+BoxNewTicketVSClose=Nr. tichete versus tichete închise (azi)
 TicketCreatedToday=Tichet creat azi
 TicketClosedToday=Tichet închis azi
+KMFoundForTicketGroup=Am găsit subiecte și întrebări frecvente care pot răspunde la întrebarea ta, te rugăm să le verifici înainte de trimiterea tichetului

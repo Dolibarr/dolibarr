@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=Penyiapan modul Klien FTP atau SFTP
+FTPClientSetup=Pengaturan modul Klien FTP atau SFTP
 NewFTPClient=Pengaturan koneksi FTP / FTPS baru
 FTPArea=Area FTP / FTPS
 FTPAreaDesc=Layar ini menunjukkan tampilan server FTP dan SFTP.
@@ -10,5 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Gagal masuk ke server dengan login / k
 FTPFailedToRemoveFile=Gagal menghapus file<b>%s </b>.
 FTPFailedToRemoveDir=Gagal menghapus direktori<b>%s </b>: periksa izin dan direktori tersebut kosong.
 FTPPassiveMode=Mode pasif
-ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
+ChooseAFTPEntryIntoMenu=Pilih situs FTP/SFTP dari menu...
 FailedToGetFile=Gagal mendapatkan file %s
