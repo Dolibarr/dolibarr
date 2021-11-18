@@ -853,6 +853,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			$formconfirm = $hookmanager->resPrint;
 		}
 
+		// Print form confirm
+		print $formconfirm;
+
 		print "</form>\n";
 	}
 }
