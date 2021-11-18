@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
- * Copyright (C) 2015-2019	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2015-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
@@ -2078,6 +2078,7 @@ class FactureFournisseur extends CommonInvoice
 			if ($this->db->num_rows($result))
 			{
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 				if ($obj->fk_user_author)
 				{
@@ -2097,8 +2098,8 @@ class FactureFournisseur extends CommonInvoice
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
-				$this->date_creation     = $this->db->idate($obj->datec);
-				$this->date_modification = $this->db->idate($obj->datem);
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
 				//$this->date_validation   = $obj->datev; // This field is not available. Should be store into log table and using this function should be replaced with showing content of log (like for supplier orders)
 			}
 			$this->db->free($result);
