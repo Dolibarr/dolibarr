@@ -526,13 +526,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 			if ($j > 12) {
 				$j -= 12;
 			}
-			$sql .= ' SUM(CASE WHEN
-							MONTH(f.datef)='.$j.'
-						THEN (CASE WHEN	fd.total_ht < 0
-							  THEN (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))
-							  ELSE  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))
-							  END)
-						ELSE 0 END) AS month'.str_pad($j, 2, '0', STR_PAD_LEFT).',';
+			$sql .= '
+			SUM('.$db->ifsql('MONTH(f.datef)='.$j,
+						' ('.
+							$db->ifsql('fd.total_ht < 0',
+							' (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))',
+								'  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))'
+							  ).')',
+						 0).') AS month'.str_pad($j, 2, '0', STR_PAD_LEFT).',';
 		}
 		$sql .= "  SUM((fd.total_ht-(fd.qty * fd.buy_price_ht))) as total";
 
@@ -552,7 +553,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		} else {
 			$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.", ".Facture::TYPE_REPLACEMENT.", ".Facture::TYPE_CREDIT_NOTE.", ".Facture::TYPE_DEPOSIT.", ".Facture::TYPE_SITUATION.")";
 		}
-
 		dol_syslog('htdocs/accountancy/customer/index.php');
 		$resql = $db->query($sql);
 		if ($resql) {
