@@ -116,6 +116,7 @@ class Conf
 		// Common objects that are not modules and set by the main and not into the this->setValues()
 		$this->browser = new stdClass();
 
+		// Common arrays
 		$this->cache = array();
 		$this->modules = array();
 		$this->modules_parts = array(
@@ -230,6 +231,7 @@ class Conf
 		$this->expensereport	= new stdClass();
 		$this->productbatch		= new stdClass();
 
+		// Common arrays
 		$this->cache = array();
 		$this->modules = array();;
 		$this->modules_parts = array(
