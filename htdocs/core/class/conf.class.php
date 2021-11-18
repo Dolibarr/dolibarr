@@ -161,6 +161,23 @@ class Conf
 		$this->productbatch		= new stdClass();
 	}
 
+	/**
+	 *  Load setup values into conf object (read llx_const) for a specified entity
+	 *  Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
+	 *
+	 * @param	DoliDB	$db			Database handler
+	 * @param	int		$entity		Entity to get
+	 * @return	int					< 0 if KO, >= 0 if OK
+	 */
+	public function setEntityValues($db, $entity)
+	{
+		if ($this->entity != $entity) {
+			$this->entity = $entity;
+			return $this->setValues($db);
+		}
+
+		return 0;
+	}
 
 	/**
 	 *  Load setup values into conf object (read llx_const)
@@ -172,6 +189,58 @@ class Conf
 	public function setValues($db)
 	{
 		dol_syslog(get_class($this)."::setValues");
+
+		// Unset all old modules values
+		if (!empty($this->modules)) {
+			foreach ($this->modules as $m) {
+				if (isset($this->$m)) unset($this->$m);
+			}
+		}
+
+		// Properly declare multi-modules objects.
+		$this->global			= new stdClass();
+		$this->multicompany		= new stdClass();
+
+		// First level object
+		// TODO Remove this part.
+		$this->expedition_bon	= new stdClass();
+		$this->delivery_note	= new stdClass();
+		$this->fournisseur		= new stdClass();
+		$this->product			= new stdClass();
+		$this->service			= new stdClass();
+		$this->contrat			= new stdClass();
+		$this->actions			= new stdClass();
+		$this->agenda			= new stdClass();
+		$this->commande			= new stdClass();
+		$this->propal			= new stdClass();
+		$this->facture			= new stdClass();
+		$this->contrat			= new stdClass();
+		$this->usergroup		= new stdClass();
+		$this->adherent			= new stdClass();
+		$this->bank				= new stdClass();
+		$this->notification		= new stdClass();
+		$this->mailing			= new stdClass();
+		$this->expensereport	= new stdClass();
+		$this->productbatch		= new stdClass();
+		$this->modules = array();;
+		$this->modules_parts = array(
+			'css' => array(),
+			'js' => array(),
+			'tabs' => array(),
+			'triggers' => array(),
+			'login' => array(),
+			'substitutions' => array(),
+			'menus' => array(),
+			'theme' => array(),
+			'sms' => array(),
+			'tpl' => array(),
+			'barcode' => array(),
+			'models' => array(),
+			'societe' => array(),
+			'hooks' => array(),
+			'dir' => array(),
+			'syslog' => array(),
+		);
 
 		if (!is_null($db) && is_object($db)) {
 			// Define all global constants into $this->global->key=value
