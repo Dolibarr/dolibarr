@@ -7295,10 +7295,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
 		if (is_object($object)) {
-			    $sumpayed = $object->getSommePaiement();
-			    $sumdeposit = $object->getSumDepositsUsed();
-			    $sumcreditnote = $object->getSumCreditNotesUsed();
-			    $already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
+			$sumpayed = $object->getSommePaiement();
+			$sumdeposit = $object->getSumDepositsUsed();
+			$sumcreditnote = $object->getSumCreditNotesUsed();
+			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
 		}
 
 		$substitutionarray['__DATE_YMD__']        = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
