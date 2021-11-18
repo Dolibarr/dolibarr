@@ -657,6 +657,10 @@ input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
+input[type=checkbox], input[type=radio] {
+	margin: 0 3px 0 3px;
+}
+
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
 ::-webkit-input-placeholder { color:#ccc; }
@@ -922,6 +926,19 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.paddingtop {
+	padding-top: 4px;
+}
+.paddingtop2 {
+	padding-top: 2px;
+}
+.paddingbottom {
+	padding-bottom: 4px;
+}
+.paddingbottom2 {
+	padding-bottom: 2px;
+}
+
 .cursordefault {
 	cursor: default;
 }
@@ -3324,18 +3341,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
 	padding: 4px !important;
 }
-.nopaddingleft {
-	padding-<?php print $left; ?>: 0px;
-}
-.nopaddingright {
-	padding-<?php print $right; ?>: 0px;
-}
-.nopaddingtopimp {
-	padding-top: 0px !important;
-}
-.nopaddingbottomimp {
-	padding-bottom: 0px !important;
-}
+
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
