@@ -3124,10 +3124,10 @@ div.tabsElem a {
 }
 div.tabBar {
 	color: #<?php echo $colortextbacktab; ?>;
-	padding-top: 21px;
+	padding-top: 23px;
 	padding-left: 24px;
 	padding-right: 24px;
-	padding-bottom: 18px;
+	padding-bottom: 23px;
 	margin: 0px 0px 18px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;

@@ -535,3 +535,4 @@ AmountMustBePositive=O valor deve ser positivo
 ByStatus=Por status
 DateOfBirth=Data de nascimento
 OnHold=Em espera
+ClientTZ=Fuso Horário do cliente (usuário)

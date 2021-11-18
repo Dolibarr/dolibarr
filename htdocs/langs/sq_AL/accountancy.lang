@@ -37,8 +37,8 @@ OtherInfo=Other information
 DeleteCptCategory=Remove accounting account from group
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
 JournalizationInLedgerStatus=Status of journalization
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non-zero values
@@ -298,7 +298,7 @@ NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
 Accounted=Accounted in ledger
-NotYetAccounted=Not yet accounted in the ledger
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
 NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Export draft journal
 Modelcsv=Model of export
@@ -343,7 +343,7 @@ Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
-Modelcsv_agiris=Export for Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
@@ -351,9 +351,10 @@ Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

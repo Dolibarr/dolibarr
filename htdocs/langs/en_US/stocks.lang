@@ -264,3 +264,5 @@ ProductBatchDoesNotExist=Product with batch/serial does not exist
 ProductBarcodeDoesNotExist=Product with barcode does not exist
 WarehouseId=Warehouse ID
 WarehouseRef=Warehouse Ref
+SaveQtyFirst=Save the real inventoried quantities first, before asking creation of the stock movement.
+InventoryStartedShort=Started

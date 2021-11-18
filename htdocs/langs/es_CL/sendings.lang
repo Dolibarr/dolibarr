@@ -35,7 +35,6 @@ SendShippingByEMail=Enviar envío por correo electrónico
 SendShippingRef=Presentación del envío %s
 ActionsOnShipping=Eventos en el envío
 LinkToTrackYourPackage=Enlace para rastrear tu paquete
-ShipmentCreationIsDoneFromOrder=Por el momento, la creación de un nuevo envio se realiza desde el módulo comercial en pedido de cliente.
 ShipmentLine=Línea de envío
 ProductQtyInShipmentAlreadySent=Cantidad de producto de pedido abierto ya enviado
 NoProductToShipFoundIntoStock=No hay productos para enviar encontrados en el almacén <b>%s</b> . Corregir el stock o volver a elegir otro almacén.

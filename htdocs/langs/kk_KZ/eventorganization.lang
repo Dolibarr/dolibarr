@@ -17,133 +17,150 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
+ModuleEventOrganizationName = Іс -шараны ұйымдастыру
+EventOrganizationDescription = Модульдік жоба арқылы оқиғаны ұйымдастыру
+EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
 #
 # Menu
 #
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+EventOrganizationMenuLeft = Ұйымдастырылған шаралар
+EventOrganizationConferenceOrBoothMenuLeft = Конференция немесе стенд
+
+PaymentEvent=Payment of event
 
 #
 # Admin page
 #
-EventOrganizationSetup = Event Organization setup
-Settings = Settings
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a subscription to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a subscription to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter thirdpartie's select list in attendees creation card/form with category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter thirdpartie's select list in attendees creation card/form with customer type
+NewRegistration=Registration
+EventOrganizationSetup=Іс -шараны ұйымдастыру
+EventOrganization=Event organization
+Settings=Параметрлер
+EventOrganizationSetupPage = Оқиғаны ұйымдастыру беті
+EVENTORGANIZATION_TASK_LABEL = Жоба расталған кезде автоматты түрде жасалатын тапсырмалар белгісі
+EVENTORGANIZATION_TASK_LABELTooltip = Сіз ұйымдасқан оқиғаны тексеру кезінде, кейбір тапсырмалар автоматты түрде жобаға құрылуы мүмкін <br> <br> Мысалы: Бут Жіберу <br> қатысушыларға арналған іс-шараларға Ашық жазылымдарын <br> конференциялар қоңырау алуға <br> Бут қоңырау алуға <br> Конференцияның үшін <br> жіберу қоңыраулар жіберу <br> баяндамашыларға оқиғаны еске түсіру
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Біреу конференция ұсынған кезде үшінші тараптарға автоматты түрде қосылатын санат
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Үшінші тараптарға стенд ұсынылған кезде автоматты түрде қосылатын санат
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Конференция туралы ұсынысты алғаннан кейін жіберілетін электрондық пошта үлгісі.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Стенд ұсынысын алғаннан кейін жіберілетін электрондық пошта үлгісі.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Қатысушыларға массаждың электрондық поштасының үлгісі
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Динамиктерге массаж электрондық поштасының үлгісі
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Қатысушылар картасы/формасы бар үшінші топтың таңдаулы тізімін сүзгіден өткізіңіз
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Келушілердің картасы/формасы бойынша үшінші тараптың таңдаулы тізімін тұтынушы түрі бойынша сүзіңіз
 
 #
 # Object
 #
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage event organisation
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountOfSubscriptionPaid = Amount of subscription paid
-DateSubscription = Date of subscription
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
+EventOrganizationConfOrBooth= Конференция немесе стенд
+ManageOrganizeEvent = Manage the organization of an event
+ConferenceOrBooth = Конференция немесе стенд
+ConferenceOrBoothTab = Конференция немесе стенд
+AmountPaid = Amount paid
+DateOfRegistration = Date of registration
+ConferenceOrBoothAttendee = Конференцияға немесе стендке қатысушы
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailSubsBooth = Subscription for booth
-EventOrganizationEmailSubsEvent = Subscription for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
+YourOrganizationEventConfRequestWasReceived = Сіздің конференцияға сұранысыңыз қабылданды
+YourOrganizationEventBoothRequestWasReceived = Стендке сұранысыңыз қабылданды
+EventOrganizationEmailAskConf = Конференцияға сұраныс
+EventOrganizationEmailAskBooth = Стендке сұраныс
+EventOrganizationEmailBoothPayment = Payment of your booth
+EventOrganizationEmailRegistrationPayment = Registration for an event
+EventOrganizationMassEmailAttendees = Қатысушыларға хабарлау
+EventOrganizationMassEmailSpeakers = Баяндамашылармен байланыс
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price of registration
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for events
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees = Attendees
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
-NbVotes=Number of votes
+AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
+AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+PriceOfRegistration=Тіркеу бағасы
+PriceOfRegistrationHelp=Price to pay to register or participate in the event
+PriceOfBooth=Кабинаға жазылу бағасы
+PriceOfBoothHelp=Кабинаға жазылу бағасы
+EventOrganizationICSLink=Оқиғалар үшін ICS байланыстырыңыз
+ConferenceOrBoothInformation=Конференция немесе стенд туралы ақпарат
+Attendees=Қатысушылар
+ListOfAttendeesOfEvent=List of attendees of the event project
+DownloadICSLink = ICS сілтемесін жүктеңіз
+EVENTORGANIZATION_SECUREKEY = Конференцияға ашық тіркеу сілтемесінің қауіпсіз кілті
+SERVICE_BOOTH_LOCATION = Кабинаның орналасқан жері туралы шот -фактура жолы үшін қолданылатын қызмет
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Конференцияға қатысушы жазылымы туралы шот -фактура жолында қолданылатын қызмет
+NbVotes=Дауыстар саны
 #
 # Status
 #
-EvntOrgDraft = Draft
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
-EvntOrgDone = Done
-EvntOrgCancelled = Cancelled
+EvntOrgDraft = Жоба
+EvntOrgSuggested = Ұсынылды
+EvntOrgConfirmed = Расталды
+EvntOrgNotQualified = Біліктілігі жоқ
+EvntOrgDone = Орындалды
+EvntOrgCancelled = Бас тартылды
 #
 # Public page
 #
-SuggestForm = Suggestion page
-RegisterPage = Page for conferences or booth
-EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
-EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionPage = Public link of registration to a conference
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
-EventType = Event type
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
+SuggestForm = Ұсыныс беті
+SuggestOrVoteForConfOrBooth = Page for suggestion or vote
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
+EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+ListOfSuggestedConferences = Ұсынылған конференциялар тізімі
+ListOfSuggestedBooths = Ұсынылған стендтердің тізімі
+ListOfConferencesOrBooths=List of conferences or booths of event project
+SuggestConference = Жаңа конференцияны ұсыныңыз
+SuggestBooth = Стенд ұсыну
+ViewAndVote = Ұсынылған оқиғаларды қарау және оларға дауыс беру
+PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
+PublicAttendeeSubscriptionPage = Public link for registration to this event only
+MissingOrBadSecureKey = Қауіпсіздік кілті жарамсыз немесе жоқ
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
+EvntOrgDuration = Бұл конференция %s басталып, %s аяқталады.
+ConferenceAttendeeFee = Конференцияға қатысушылардың ақысы: «%s» - %s - %s аралығында.
+BoothLocationFee = Іс -шараның стендтік орны: '%s' %s мен %s аралығында болады
+EventType = Оқиға түрі
+LabelOfBooth=Стенд белгісі
+LabelOfconference=Конференция белгісі
+ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
+DateMustBeBeforeThan=%s %s алдында болуы керек
+DateMustBeAfterThan=%s %s кейін болуы керек
+
+NewSubscription=Registration
+OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
+OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
+OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
+OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
+OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
+OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+
+NewSuggestionOfBooth=Application for a booth
+NewSuggestionOfConference=Application for a conference
 
 #
 # Vote page
 #
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
+EvntOrgRegistrationWelcomeMessage = Конференцияға немесе стенд ұсыныстарына қош келдіңіз.
+EvntOrgRegistrationConfWelcomeMessage = Конференцияның ұсыныс бетіне қош келдіңіз.
+EvntOrgRegistrationBoothWelcomeMessage = Стенд ұсыныстар бетіне қош келдіңіз.
+EvntOrgVoteHelpMessage = Мұнда сіз жобаға ұсынылған оқиғаларды көре және дауыс бере аласыз
+VoteOk = Сіздің дауысыңыз қабылданды.
+AlreadyVoted = Сіз бұл оқиғаға дауыс бердіңіз.
+VoteError = Дауыс беру кезінде қате пайда болды, қайталап көріңіз.
 
-#
-# SubscriptionOk page
-#
-SubscriptionOk = Your subscription to this conference has been validated
-#
-# Subscription validation mail
-#
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a conference
-#
-# Payment page
-#
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
+SubscriptionOk = Your registration has been validated
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
+Attendee = Қатысушы
+PaymentConferenceAttendee = Конференцияға қатысушылардың төлемі
+PaymentBoothLocation = Букс орналасқан жерді төлеу
+DeleteConferenceOrBoothAttendee=Remove attendee
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
+EmailAttendee=Attendee email
+EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event

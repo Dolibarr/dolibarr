@@ -8730,7 +8730,11 @@ abstract class CommonObject
 			$res = $this->db->query($sql);
 			if ($res === false) {
 				$error++;
-				$this->errors[] = $this->db->lasterror();
+				if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$this->errors[] = "ErrorRefAlreadyExists";
+				} else {
+					$this->errors[] = $this->db->lasterror();
+				}
 			}
 		}
 

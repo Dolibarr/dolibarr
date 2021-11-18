@@ -478,7 +478,6 @@ if ($result) {
 	print '</div>';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
@@ -528,6 +527,9 @@ if ($result) {
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
+		// product_type: 0 = service, 1 = product
+		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
+		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
 		$code_sell_l = '';
 		$code_sell_p = '';
 
@@ -586,9 +588,9 @@ if ($result) {
 			$suggestedid=$return['suggestedid'];
 			$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
 			$suggestedaccountingaccountbydefaultfor=$return['suggestedaccountingaccountbydefaultfor'];
-			$code_sell_l=$return['code_sell_l'];
-			$code_sell_p=$return['code_sell_p'];
-			$code_sell_t=$return['code_sell_t'];
+			$code_sell_l=$return['code_l'];
+			$code_sell_p=$return['code_p'];
+			$code_sell_t=$return['code_t'];
 		}
 		//var_dump($return);
 
@@ -661,11 +663,11 @@ if ($result) {
 		print '</td>';
 
 		// Vat rate
-		$code_vat_differ='';
-		if ($product_static->tva_tx !== $facture_static_det->tva_tx && ! empty($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
-			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		$code_vat_differ = '';
+		if ($product_static->tva_tx !== $facture_static_det->tva_tx && price2num($product_static->tva_tx) && price2num($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
+			$code_vat_differ = 'warning bold';
 		}
-		print '<td style="'.$code_vat_differ.'" class="right">';
+		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
 		print vatrate($facture_static_det->tva_tx.($facture_static_det->vat_src_code ? ' ('.$facture_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
@@ -731,12 +733,11 @@ if ($result) {
 
 		// Column with checkbox
 		print '<td class="center">';
-		if (!empty($suggestedid) && $suggestedaccountingaccountfor <> '') {
-			$ischecked=1;
-		} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
-			$ischecked = 0;
+		$ischecked = 0;
+		if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
+			$ischecked = 1;
 		}
-		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facture_static_det->id.'" name="toselect[]" value="'.$facture_static_det->id."_".$i.'"'.($ischecked ? "checked" : "").'/>';
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facture_static_det->id.'" name="toselect[]" value="'.$facture_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
 		print '</td>';
 
 		print '</tr>';

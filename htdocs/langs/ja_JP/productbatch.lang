@@ -37,7 +37,8 @@ ManufacturingDate=製造日付
 DestructionDate=破壊日
 FirstUseDate=初回使用日
 QCFrequency=品質管理頻度（日数）
-
+ShowAllLots=すべてのロットを表示
+HideLots=たくさん隠す
 #Traceability - qc status
 OutOfOrder=故障中
 InWorkingOrder=正常動作中

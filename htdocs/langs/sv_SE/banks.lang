@@ -182,3 +182,4 @@ BankColorizeMovementName2=Bakgrundsfärg för kreditrörelse
 IfYouDontReconcileDisableProperty=Om du inte gör någon bankavstämning på vissa bankkonton, inaktivera "%s" på dem för att ta bort denna varning
 NoBankAccountDefined=Inget bankkonto definerat
 NoRecordFoundIBankcAccount=Ingen post hittades på bankkontot. Vanligtvis inträffar detta när en post har raderats manuellt från transaktionslistan på bankkontot (till exempel under en avstämning av bankkontot). En annan anledning är att betalningen registrerades när modulen "%s" inaktiverades.
+AlreadyOneBankAccount=Already one bank account defined

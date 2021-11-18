@@ -390,6 +390,20 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 	print '</td></tr>';
 }
 
+// Activate Klarna
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_KLARNA").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_KLARNA');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_KLARNA", $arrval, $conf->global->STRIPE_KLARNA);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForKlarnaCustomers").'</span>';
+	print '</td></tr>';
+}
+
 // Activate Bancontact
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 	print '<tr class="oddeven"><td>';
