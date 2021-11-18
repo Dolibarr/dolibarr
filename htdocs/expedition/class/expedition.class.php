@@ -364,14 +364,14 @@ class Expedition extends CommonObject
 				{
 					if (!isset($this->lines[$i]->detail_batch))
 					{	// no batch management
-						if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) < 0)
+						if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0)
 						{
 							$error++;
 						}
 					}
 					else
 					{	// with batch management
-						if ($this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) < 0)
+						if ($this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) <= 0)
 						{
 							$error++;
 						}
