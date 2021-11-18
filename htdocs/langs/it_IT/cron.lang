@@ -47,7 +47,7 @@ CronNbRun=Num. lancio
 CronMaxRun=Numero massimo di lanci
 CronEach=Ogni
 JobFinished=Processo eseguito e completato
-Scheduled=Scheduled
+Scheduled=Pianificato
 #Page card
 CronAdd= Aggiungi processo
 CronEvery=Esegui ogni processo
@@ -60,7 +60,7 @@ CronErrEndDateStartDt=La data di fine non può essere precedente a quella di ini
 StatusAtInstall=Stato all'installazione del modulo
 CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Disattiva
-CronTaskInactive=This job is disabled (not scheduled)
+CronTaskInactive=Questo processo è disattivo (non pianificato)
 CronId=Id
 CronClassFile=Nome file con classe
 CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
@@ -86,6 +86,6 @@ WarningCronDelayed=Attenzione, per motivi di performance, qualunque sia la data 
 DATAPOLICYJob=Pulizia dei dati e anonimizzatore
 JobXMustBeEnabled=Job %s must be enabled
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
+LastExecutedScheduledJob=Ultimo processo pianificato eseguito
+NextScheduledJobExecute=Prossimo processo pianificato da eseguire
+NumberScheduledJobError=Numero di processi pianificati in errore

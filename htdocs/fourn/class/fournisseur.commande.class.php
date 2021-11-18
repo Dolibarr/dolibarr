@@ -2274,7 +2274,6 @@ class CommandeFournisseur extends CommonOrder
 		return $ret;
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Set a delivery in database for this supplier order

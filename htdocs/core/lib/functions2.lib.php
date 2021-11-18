@@ -2131,30 +2131,38 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 	// Special cases, to work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
+		$langs->load('bills');
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$myobject = 'facture';
 	} elseif ($objecttype == 'commande' || $objecttype == 'order') {
+		$langs->load('orders');
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$myobject = 'commande';
 	} elseif ($objecttype == 'propal') {
+		$langs->load('propal');
 		$classpath = 'comm/propal/class';
 	} elseif ($objecttype == 'supplier_proposal') {
+		$langs->load('supplier_proposal');
 		$classpath = 'supplier_proposal/class';
 	} elseif ($objecttype == 'shipping') {
+		$langs->load('sendings');
 		$classpath = 'expedition/class';
 		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	} elseif ($objecttype == 'delivery') {
+		$langs->load('deliveries');
 		$classpath = 'delivery/class';
 		$myobject = 'delivery';
 		$module = 'delivery_note';
 	} elseif ($objecttype == 'contract') {
+		$langs->load('contracts');
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$myobject = 'contrat';
 	} elseif ($objecttype == 'member') {
+		$langs->load('members');
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$myobject = 'adherent';
@@ -2163,13 +2171,16 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'cabinetmed';
 		$myobject = 'cabinetmedcons';
 	} elseif ($objecttype == 'fichinter') {
+		$langs->load('interventions');
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$myobject = 'fichinter';
 	} elseif ($objecttype == 'project') {
+		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
 	} elseif ($objecttype == 'task') {
+		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$myobject = 'task';

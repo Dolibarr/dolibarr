@@ -18,3 +18,5 @@ SetHereATitleForLink=Yer imi için bir ad belirleyin
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Harici/mutlak bir bağlantı (https://URL) veya dahili/göreceli bir bağlantı (/DOLIBARR_ROOT/htdocs/...) kullanın
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bağlantı verilen sayfanın mevcut sekmede mi yoksa yeni sekmede mi açılacağını seçin
 BookmarksManagement=Yer imi yönetimi
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - loan
+NewLoan=Préstamo nuevo
+ShowLoan=Mostrar préstamo
+LoanPayment=Pago de préstamo
+ShowLoanPayment=Mostrar pago del préstamo
+Interest=Interesar
+Nbterms=Numero de terminos
+Term=Término
+LoanAccountancyCapitalCode=Capital de la cuenta contable
+LoanAccountancyInsuranceCode=Seguro de cuenta contable
+LoanAccountancyInterestCode=Intereses de la cuenta contable
+ConfirmDeleteLoan=Confirma la eliminación de este préstamo
+ConfirmPayLoan=Confirmar clasificar pagado este préstamo
+ListLoanAssociatedProject=Lista de préstamos asociados al proyecto
+AddLoan=Crear préstamo
+FinancialCommitment=Compromiso financiero
+InterestAmount=Interesar
+CapitalRemain=El capital permanece
+CantModifyInterestIfScheduleIsUsed =No puede modificar el interés si usa el horario
+ConfigLoan=Configuración del préstamo del módulo
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital de la cuenta contable por defecto
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Intereses de la cuenta contable por defecto
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Seguro de cuenta contable por defecto
+CreateCalcSchedule=Editar compromiso financiero

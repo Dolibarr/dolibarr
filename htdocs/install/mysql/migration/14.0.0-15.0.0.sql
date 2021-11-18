@@ -448,3 +448,7 @@ ALTER TABLE llx_socpeople DROP COLUMN googleplus;
 ALTER TABLE llx_socpeople DROP COLUMN youtube;
 ALTER TABLE llx_socpeople DROP COLUMN whatsapp;
 
+ALTER TABLE llx_propal ADD COLUMN online_sign_ip varchar(48);
+ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
+
+

@@ -206,7 +206,7 @@ MigrationUserPhotoPath=Migrasi jalur foto untuk pengguna
 MigrationFieldsSocialNetworks=Migrasi pengguna memasukkan jejaring sosial (%s)
 MigrationReloadModule=Muat ulang modul %s
 MigrationResetBlockedLog=Atur ulang modul BlockedLog untuk algoritma v7
-MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
+MigrationImportOrExportProfiles=Migrasi profil impor atau ekspor (%s)
 ShowNotAvailableOptions=Tampilkan opsi yang tidak tersedia
 HideNotAvailableOptions=Sembunyikan opsi yang tidak tersedia
 ErrorFoundDuringMigration=Kesalahan dilaporkan selama proses migrasi sehingga langkah selanjutnya tidak tersedia. Untuk mengabaikan kesalahan, Anda dapat <a href="%s"> klik di sini </a>, tetapi aplikasi atau beberapa fitur mungkin tidak berfungsi dengan benar sampai kesalahan diselesaikan.

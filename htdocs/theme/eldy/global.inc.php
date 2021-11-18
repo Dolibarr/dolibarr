@@ -2791,7 +2791,6 @@ img.login, img.printer, img.entity {
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
 	border-radius: 50%;
 	background-size: contain;
-	background-size: contain;
 	border: 1px solid;
 	border-color: rgba(255, 255, 255, 0.2);
 }
@@ -3385,12 +3384,27 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
-/* To have left column sticky
-.tagtable td[data-key="ref"] {
+/* To have left column sticky */
+/*.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
 	position: sticky;
 	left: 0;
 	top: 0;
 	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+*/
+
+/* To have right column sticky */
+/*.tagtable td.actioncolumn, .tagtable th.actioncolumn {
+	position: sticky-right;
+	right: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
 }
 */
 
