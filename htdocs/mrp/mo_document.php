@@ -83,12 +83,14 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
+$permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*

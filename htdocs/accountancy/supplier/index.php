@@ -245,13 +245,13 @@ if ($action == 'validatehistory') {
 			if (!is_array($return) && $return<0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {
-				$suggestedid=$return['suggestedid'];
-				$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
+				$suggestedid = $return['suggestedid'];
+				$suggestedaccountingaccountfor = $return['suggestedaccountingaccountfor'];
 
-				if (!empty($suggestedid) && $suggestedaccountingaccountfor<>'') {
-					$suggestedid=$return['suggestedid'];
+				if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
+					$suggestedid = $return['suggestedid'];
 				} else {
-					$suggestedid=0;
+					$suggestedid = 0;
 				}
 			}
 

@@ -171,6 +171,7 @@ if ($object->usage_bill_time) {
 }
 
 // Extra fields
+$extrafieldsobjectkey = $taskstatic->table_element;
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -550,13 +551,13 @@ if ($id > 0 || !empty($ref)) {
 	// Title
 	$morehtmlref .= $object->title;
 	// Thirdparty
-	if ($object->thirdparty->id > 0) {
+	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire) {
+	if (empty($user->rights->projet->all->lire)) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -969,7 +970,6 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '</td>';
 	}
 
-	$extrafieldsobjectkey = $taskstatic->table_element;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Action column

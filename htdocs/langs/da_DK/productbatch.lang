@@ -37,7 +37,8 @@ ManufacturingDate=produktionsdato
 DestructionDate=Destruktionsdato
 FirstUseDate=Dato for første brug
 QCFrequency=Kvalitetskontrolfrekvens (i dage)
-
+ShowAllLots=Vis alle numre
+HideLots=Skjul masser
 #Traceability - qc status
 OutOfOrder=Virker ikke
 InWorkingOrder=I funktionsdygtig stand

@@ -79,10 +79,12 @@ if ($action == 'update') {
 	if (!empty($max_rank)) {
 		$static_skill = new Skill($db);
 		$TAllSkills = $static_skill->fetchAll();
-		foreach ($TAllSkills as &$skill) {
-			if (empty($skill->lines)) $skill->fetchLines();
-			if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
-				$skill->createSkills(count($skill->lines) + 1);
+		if (is_array($TAllSkills)) {
+			foreach ($TAllSkills as &$skill) {
+				if (empty($skill->lines)) $skill->fetchLines();
+				if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
+					$skill->createSkills(count($skill->lines) + 1);
+				}
 			}
 		}
 	}

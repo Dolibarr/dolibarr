@@ -112,7 +112,7 @@ print getCustomerInvoiceDraftTable($max, $socid);
 print '<br>';
 print getDraftSupplierTable($max, $socid);
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
@@ -749,7 +749,7 @@ if ($resql) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardAccountancy', $parameters, $object); // Note that $action and $object may have been modified by hook

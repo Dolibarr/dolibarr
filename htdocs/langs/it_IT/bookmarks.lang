@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Usa un indirizzo http esterno o uno 
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Scegli se la pagina collegata deve essera aperta in una nuova finestra oppure no
 BookmarksManagement=Gestione segnalibri
 BookmarksMenuShortCut=Ctrl + Maiusc + m
+NoBookmarks=No bookmarks defined

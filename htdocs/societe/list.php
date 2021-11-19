@@ -258,7 +258,7 @@ $arrayfields = array(
 	's.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
 if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-	$arrayfields['s.price_level'] =array('label'=>"PriceLevel", 'position'=>30, 'checked'=>0);
+	$arrayfields['s.price_level'] = array('label'=>"PriceLevel", 'position'=>30, 'checked'=>0);
 }
 
 // Extra fields
@@ -467,10 +467,10 @@ if ($search_sale && $search_sale != '-1') {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
 // We'll need these fields in order to filter by categ
-if ($search_categ_cus && $search_categ_cus!=-1) {
+if ($search_categ_cus && $search_categ_cus != -1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
-if ($search_categ_sup && $search_categ_sup!=-1) {
+if ($search_categ_sup && $search_categ_sup != -1) {
 	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
 // Add fields from extrafields
@@ -573,7 +573,7 @@ if ($search_account_supplier_code) {
 	$sql .= natural_search("s.code_compta_fournisseur", $search_account_supplier_code);
 }
 if ($search_address) {
-	$sql.= natural_search('s.address', $search_address);
+	$sql .= natural_search('s.address', $search_address);
 }
 if ($search_town) {
 	$sql .= natural_search("s.town", $search_town);
@@ -751,7 +751,7 @@ if ($search_alias != '') {
 	$param .= "&search_alias=".urlencode($search_alias);
 }
 if ($search_address != '') {
-	$param .= '&search_address=' . urlencode($search_address);
+	$param .= '&search_address='.urlencode($search_address);
 }
 if ($search_town != '') {
 	$param .= "&search_town=".urlencode($search_town);
@@ -1007,12 +1007,12 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Fields title search
 print '<tr class="liste_titre_filter">';
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre" data-key="id">';
 	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre" data-key="ref">';
 	if (!empty($search_nom_only) && empty($search_nom)) {
 		$search_nom = $search_nom_only;
 	}
@@ -1094,7 +1094,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	// We use showempty=0 here because there is already an unknown value into dictionary.
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth100', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth125', 1);
 	print '</td>';
 }
 // Multiprice level
@@ -1235,7 +1235,7 @@ if (!empty($arrayfields['s.import_key']['checked'])) {
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre center">';
+print '<td class="liste_titre center actioncolumn">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -1243,10 +1243,10 @@ print '</td>';
 print "</tr>\n";
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, 'actioncolumn ');
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, ' data-key="ref"', $sortfield, $sortorder, 'actioncolumn ');
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
@@ -1357,12 +1357,13 @@ if (!empty($arrayfields['s.status']['checked'])) {
 if (!empty($arrayfields['s.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['s.import_key']['label'], $_SERVER["PHP_SELF"], "s.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 print "</tr>\n";
 
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -1393,7 +1394,7 @@ while ($i < min($num, $limit)) {
 	}
 	print '>';
 	if (!empty($arrayfields['s.rowid']['checked'])) {
-		print '<td class="tdoverflowmax50">';
+		print '<td class="tdoverflowmax50" data-key="id">';
 		print $obj->rowid;
 		print "</td>\n";
 		if (!$i) {
@@ -1405,7 +1406,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			$companystatic->name_alias = '';
 		}
-		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').'>';
+		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
 		if ($contextpage == 'poslist') {
 			print $obj->name;
 		} else {
@@ -1507,11 +1508,13 @@ while ($i < min($num, $limit)) {
 	}
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
-		print '<td class="center">';
 		if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+		$labeltypeofcompany= empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+
+		print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
+		print dol_escape_htmltag($labeltypeofcompany);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1700,7 +1703,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
-	print '<td class="nowrap center">';
+	print '<td class="nowrap center actioncolumn">';
 	if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
 		if (in_array($obj->rowid, $arrayofselected)) {

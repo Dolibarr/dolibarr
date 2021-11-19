@@ -211,7 +211,7 @@ if (!empty($conf->supplier_proposal->enabled)) {
 	}
 }
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 5;
@@ -385,7 +385,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 	}
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardSupplierProposal', $parameters, $object); // Note that $action and $object may have been modified by hook

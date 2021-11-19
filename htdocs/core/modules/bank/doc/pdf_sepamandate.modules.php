@@ -282,7 +282,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$sepaname = '______________________________________________';
 				if ($thirdparty->id > 0) {
-					$sepaname = $thirdparty->name.($object->account_owner ? ' ('.$object->account_owner.')' : '');
+					$sepaname = $thirdparty->name.($object->proprio ? ' ('.$object->proprio.')' : '');
 				}
 				$posY = $pdf->GetY();
 				$posY += 3;

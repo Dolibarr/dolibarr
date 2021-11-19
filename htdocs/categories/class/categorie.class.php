@@ -244,7 +244,6 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
-
 	 */
 	public $type;
 
@@ -385,8 +384,8 @@ class Categorie extends CommonObject
 			}
 		} else {
 			dol_print_error($this->db);
-			$this->error=$this->db->lasterror;
-			$this->errors[]=$this->db->lasterror;
+			$this->error = $this->db->lasterror;
+			$this->errors[] = $this->db->lasterror;
 			return -1;
 		}
 	}
@@ -759,8 +758,6 @@ class Categorie extends CommonObject
 			}
 			return -1;
 		}
-
-		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -816,8 +813,6 @@ class Categorie extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
-
-		return 0;
 	}
 
 	/**
@@ -1980,6 +1975,12 @@ class Categorie extends CommonObject
 	{
 		if ($type == 'bank_account') {
 			$type = 'account';
+		}
+		if ($type == 'customer') {
+			$type = 'societe';
+		}
+		if ($type == 'supplier') {
+			$type = 'fournisseur';
 		}
 
 		if (empty($searchList) && !is_array($searchList)) {

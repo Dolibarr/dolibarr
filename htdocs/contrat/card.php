@@ -505,8 +505,8 @@ if (empty($reshook)) {
 				$desc = $prod->description;
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
-				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
-					$product_desc='';
+				if ($product_desc == $desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+					$product_desc = '';
 				}
 
 				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) {
@@ -1335,9 +1335,10 @@ if ($action == 'create') {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}

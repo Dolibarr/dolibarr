@@ -58,6 +58,7 @@ ManagePartnership=Zarządzaj partnerstwem
 BacklinkNotFoundOnPartnerWebsite=Nie znaleziono linku zwrotnego w witrynie partnera
 ConfirmClosePartnershipAsk=Czy na pewno chcesz anulować to partnerstwo?
 PartnershipType=Rodzaj partnerstwa
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

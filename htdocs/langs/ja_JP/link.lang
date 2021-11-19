@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - languages
 LinkANewFile=新規ファイル/ドキュメントをリンクする
 LinkedFiles=ファイルとドキュメントをリンクした
-NoLinkFound=リンクは登録されていません
+NoLinkFound=リンクは登録されていない
 LinkComplete=ファイルを正常にリンクした
 ErrorFileNotLinked=ファイルをリンクできなかった
 LinkRemoved=リンク %s が削除された
