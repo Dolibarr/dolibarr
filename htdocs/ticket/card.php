@@ -418,20 +418,25 @@ if (empty($reshook)) {
 		if (!$error) {    // Update list of contacts
 			// Si déjà un user assigné on le supprime des contacts
 			if ($useroriginassign > 0) {
-				$internal_contacts = $object->listeContact(-1, 'internal');
-
+				$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 				foreach ($internal_contacts as $key => $contact) {
-					if ($contact['code'] == "SUPPORTTEC" && $contact['id'] == $useroriginassign) {
-					}
-					{
+					if ($contact['id'] !== $usertoassign) {
 						//print "user à effacer : ".$useroriginassign;
-						$object->delete_contact($contact['rowid']);
+						$result = $object->delete_contact($contact['rowid']);
+						if ($result<0) {
+							$error++;
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
 					}
 				}
 			}
 
-			if ($usertoassign > 0) {
-				$object->add_contact($usertoassign, "SUPPORTTEC", 'internal', $notrigger = 0);
+			if ($usertoassign > 0 && $usertoassign!==$useroriginassign) {
+				$result = $object->add_contact($usertoassign, "SUPPORTTEC", 'internal', $notrigger = 0);
+				if ($result<0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 
@@ -439,11 +444,10 @@ if (empty($reshook)) {
 			// Log action in ticket logs table
 			$object->fetch_user($usertoassign);
 			$log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
-
+			//var_dump($error);
 			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
-
 			header("Location: card.php?track_id=".$object->track_id."&action=view");
-			exit;
+			//exit;
 		} else {
 			array_push($object->errors, $object->error);
 		}
