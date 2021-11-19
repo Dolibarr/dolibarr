@@ -97,6 +97,7 @@ $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
+$firstdaytoshowgmt = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'gmt');
 $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
@@ -520,6 +521,7 @@ if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 for ($idw = 0; $idw < 7; $idw++)
 {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
+	$dayinloopfromfirstdaytoshowgmt = dol_time_plus_duree($firstdaytoshowgmt, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
 	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
 
 	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
@@ -534,7 +536,7 @@ for ($idw = 0; $idw < 7; $idw++)
 	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow, $statusofholidaytocheck);
 	$isavailable[$dayinloopfromfirstdaytoshow] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-	$test = num_public_holiday($dayinloopfromfirstdaytoshow, $dayinloopfromfirstdaytoshow + 86400, $mysoc->country_code);
+	$test = num_public_holiday($dayinloopfromfirstdaytoshowgmt, $dayinloopfromfirstdaytoshowgmt + 86400, $mysoc->country_code);
 	if ($test) $isavailable[$dayinloopfromfirstdaytoshow] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 }
 //var_dump($isavailable);
