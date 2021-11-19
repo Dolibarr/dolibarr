@@ -229,7 +229,9 @@ class HookManager
 				'showLinkToObjectBlock',
 				'setContentSecurityPolicy',
 				'setHtmlTitle',
-				'completeTabsHead'
+				'completeTabsHead',
+				'formDolBanner',
+				'displayMarginInfos',
 				)
 		)) {
 			$hooktype = 'addreplace';

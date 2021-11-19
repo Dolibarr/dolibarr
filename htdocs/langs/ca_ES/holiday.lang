@@ -133,4 +133,4 @@ WatermarkOnDraftHolidayCards=Marques d'aigua sobre esborranys de sol·licituds d
 HolidaysToApprove=Vacances per a aprovar
 NobodyHasPermissionToValidateHolidays=Ningú no té permís per a validar les vacances
 HolidayBalanceMonthlyUpdate=Actualització mensual del saldo de vacances
-XIsAUsualNonWorkingDay=%s is usualy a NON working day
+XIsAUsualNonWorkingDay=%s sol ser un dia NO laborable

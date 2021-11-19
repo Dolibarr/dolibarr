@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/SqlTest.php
+ *      \file       test/phpunit/CodingPhpTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -363,7 +363,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			// Check string sql|set|WHERE|...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 			$ok=true;
 			$matches=array();
-			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES|LIKE).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
 				if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
 					$ok=false;	// This will generate error

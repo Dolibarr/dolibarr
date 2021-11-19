@@ -124,13 +124,13 @@ print dol_get_fiche_end();
 
 print '<div class="tabsAction">';
 
-if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1) {
+if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1) {
+if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	print "<br>\n";
 }
 
@@ -170,7 +170,6 @@ if ($result > 0) {
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }

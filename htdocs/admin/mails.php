@@ -848,8 +848,22 @@ if ($action == 'edit') {
 				$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD -->'.$langs->trans("WarningPHPMailSPF", $conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD);
 			}
 		}
-
-
+		$companyemail = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
+		$dnsinfo = false;
+		if (!empty($companyemail) && function_exists('dns_get_record')) {
+			$arrayofemailparts = explode('@', $companyemail);
+			if (count($arrayofemailparts) == 2) {
+				$domain = $arrayofemailparts[1];
+				$dnsinfo = dns_get_record($domain, DNS_TXT);
+			}
+		}
+		if (!empty($dnsinfo) && is_array($dnsinfo)) {
+			foreach ($dnsinfo as $info) {
+				if (strpos($info['txt'], 'v=spf') !== false) {
+					$text .= ($text ? '<br><br>' : '').$langs->trans("ActualMailSPFRecordFound", $info['txt']);
+				}
+			}
+		}
 		if ($text) {
 			print info_admin($text);
 		}
