@@ -58,6 +58,7 @@ ManagePartnership=Administrare parteneriat
 BacklinkNotFoundOnPartnerWebsite=Backlink-ul nu a fost găsit pe site-ul partenerului
 ConfirmClosePartnershipAsk=Sigur vrei să anulezi acest parteneriat?
 PartnershipType=Tip parteneriat
+PartnershipRefApproved=Parteneriatul %s a fost aprobat
 
 #
 # Template Mail

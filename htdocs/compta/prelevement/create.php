@@ -90,10 +90,10 @@ if (empty($reshook)) {
 		}
 	}
 	if ($action == 'create') {
-		$default_account=($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
+		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
 		if ($id_bankaccount != $conf->global->{$default_account}) {
-			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity);	//Set as default
+			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); //Set as default
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

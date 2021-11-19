@@ -37,8 +37,8 @@ OtherInfo=Overige informatie
 DeleteCptCategory=Verwijder grootboekrekening uit groep
 ConfirmDeleteCptCategory=Weet u zeker dat u deze grootboekrekening wilt verwijderen uit de grootboekrekening-groep?
 JournalizationInLedgerStatus=Journaal-status
-AlreadyInGeneralLedger=Reeds verwerkt in journaals en grootboek
-NotYetInGeneralLedger=Nog niet doorgeboekt in journaals en grootboek
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Groep is leeg. Controleer instellingen bij gepersonaliseerde rekeninggroep
 DetailByAccount=Details grootboekrekening
 AccountWithNonZeroValues=Grootboekrekeningen met niet-nulwaarden
@@ -298,7 +298,7 @@ NoNewRecordSaved=Geen posten door te boeken
 ListOfProductsWithoutAccountingAccount=Overzicht van producten welke nog niet zijn gekoppeld aan een grootboekrekening
 ChangeBinding=Wijzig koppeling
 Accounted=Geboekt in grootboek
-NotYetAccounted=Nog niet doorgeboekt in het grootboek
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Handleiding weergeven
 NotReconciled=Niet afgestemd
 WarningRecordWithoutSubledgerAreExcluded=Pas op, alle bewerkingen zonder gedefinieerde subgrootboekrekening worden gefilterd en uitgesloten van deze weergave
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Schakel het koppelen en doorboeken naar 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken naar de boekhouding van onkostendeclaraties uit (met onkostendeclaraties wordt geen rekening gehouden in de boekhouding)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Journaal exporteren
 Modelcsv=Export model
@@ -343,7 +343,7 @@ Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Exporteren naar Quadratus QuadraCompta
 Modelcsv_ebp=Exporteren naar EBP
 Modelcsv_cogilog=Exporteren naar Cogilog
-Modelcsv_agiris=Exporteren naar Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Exporteren voor LD Compta (v9) (test)
 Modelcsv_LDCompta10=Exporteren voor LD Compta (v10 en hoger)
 Modelcsv_openconcerto=Exporteren voor OpenConcerto (test)
@@ -351,9 +351,10 @@ Modelcsv_configurable=Configureerbare CSV export
 Modelcsv_FEC=FEC exporteren
 Modelcsv_FEC2=FEC exporteren (met datumgeneratie schrijven / document omgekeerd)
 Modelcsv_Sage50_Swiss=Export voor Sage 50 Zwitserland
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Exporteren voor Gestinum (v3)
-Modelcsv_Gestinumv5Export voor Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Rekeningschema Id
 
 ## Tools - Init accounting account on product / service

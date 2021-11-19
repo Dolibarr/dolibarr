@@ -1851,7 +1851,7 @@ abstract class CommonObject
 		$result = false;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = '".$key."'";
+		$sql .= " WHERE ".$field." = '".$this->db->escape($key)."'";
 		if (!empty($element)) {
 			$sql .= " AND entity IN (".getEntity($element).")";
 		} else {
@@ -7874,11 +7874,6 @@ abstract class CommonObject
 
 						$out .= ($display_type=='card' ? '</td>' : '</div>');
 
-						/*for($ii = 0; $ii < ($colspan - 1); $ii++)
-						{
-							$out .='<td class="'.$this->element.'_extras_'.$key.'"></td>';
-						}*/
-
 						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) {
 							$out .= ($display_type=='card' ? '</tr>' : '</div>');
 						} else {
@@ -8735,7 +8730,11 @@ abstract class CommonObject
 			$res = $this->db->query($sql);
 			if ($res === false) {
 				$error++;
-				$this->errors[] = $this->db->lasterror();
+				if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$this->errors[] = "ErrorRefAlreadyExists";
+				} else {
+					$this->errors[] = $this->db->lasterror();
+				}
 			}
 		}
 
@@ -8887,7 +8886,7 @@ abstract class CommonObject
 
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".MAIN_DB_PREFIX.$objectline->table_element." as l";
-		$sql .= " WHERE l.fk_".$this->element." = ".((int) $this->id);
+		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
 		if ($morewhere) {
 			$sql .= $morewhere;
 		}

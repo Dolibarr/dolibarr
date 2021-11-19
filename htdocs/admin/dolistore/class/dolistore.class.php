@@ -307,7 +307,7 @@ class Dolistore
 				}
 			} else {
 				//need update
-				$version    = '<span class="compatibleafterupdate">'.$langs->trans(
+				$version = '<span class="compatibleafterupdate">'.$langs->trans(
 					'CompatibleAfterUpdate',
 					DOL_VERSION,
 					$product->dolibarr_min,

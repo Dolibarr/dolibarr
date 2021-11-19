@@ -135,7 +135,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->db = $db;
 		$this->name = "muscadet";
 		$this->description = $langs->trans('SuppliersCommandModelMuscadet');
-		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -1127,7 +1127,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		global $langs, $conf, $mysoc;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings"));

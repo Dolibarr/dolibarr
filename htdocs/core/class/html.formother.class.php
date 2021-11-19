@@ -542,7 +542,6 @@ class FormOther
 		$resql_usr = $this->db->query($sql_usr);
 		if ($resql_usr) {
 			$userstatic = new User($this->db);
-			$showstatus = 1;
 
 			while ($obj_usr = $this->db->fetch_object($resql_usr)) {
 				$userstatic->id = $obj_usr->rowid;

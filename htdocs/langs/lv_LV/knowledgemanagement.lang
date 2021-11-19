@@ -47,3 +47,4 @@ KnowledgeRecord = Raksts
 KnowledgeRecordExtraFields = Raksta paplašinājumi
 GroupOfTicket=Biļešu grupa
 YouCanLinkArticleToATicketCategory=Rakstu var saistīt ar biļešu grupu (tāpēc raksts tiks ieteikts jauno biļešu kvalifikācijas iegūšanas laikā)
+SuggestedForTicketsInGroup=Ieteicams biļetēm, kad grupa ir

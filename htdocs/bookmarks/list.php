@@ -62,9 +62,9 @@ $id = GETPOST("id", 'int');
 
 $object = new Bookmark($db);
 
-$permissiontoread = $user->rights->bookmark->lire;
-$permissiontoadd = $user->rights->bookmark->write;
-$permissiontodelete = $user->rights->bookmark->delete;
+$permissiontoread = !empty($user->rights->bookmark->lire);
+$permissiontoadd = !empty($user->rights->bookmark->creer);
+$permissiontodelete = !empty($user->rights->bookmark->supprimer);
 
 
 /*

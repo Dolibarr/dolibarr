@@ -150,13 +150,14 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	cursor: default;
 
 	font-size: 10px;
-	line-height: 22px;
-	padding: 0px 3px;
+	line-height: 1.5em;
+	padding: 4px 3px;
 	text-align: center;
 	opacity: 1;
 	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
 	transition: opacity 0.5s, visibility 0s 0.5s;
 }
+
 .box-flex-item.info-box-module.--disabled {
 	/* opacity: 0.6; */
 }

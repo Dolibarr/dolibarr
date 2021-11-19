@@ -34,7 +34,7 @@ function workstationAdminPrepareHead()
 
 	$h = 0;
 	$head = array();
-	$head[$h][0] = DOL_URL_ROOT . "/admin/workstation.php";
+	$head[$h][0] = DOL_URL_ROOT."/admin/workstation.php";
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;

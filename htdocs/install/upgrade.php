@@ -260,6 +260,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			);
 
 			$listtables = $db->DDLListTables($conf->db->name, '');
+
 			foreach ($listtables as $val) {
 				// Database prefix filter
 				if (preg_match('/^'.MAIN_DB_PREFIX.'/', $val)) {

@@ -37,8 +37,8 @@ OtherInfo=Alte informații
 DeleteCptCategory=Eliminați contul contabil din grup
 ConfirmDeleteCptCategory=Sigur doriți să eliminați acest cont contabil din grupul de conturi?
 JournalizationInLedgerStatus=Stare jurnalizare
-AlreadyInGeneralLedger=Transferat deja în jurnale și registrele contabile
-NotYetInGeneralLedger=Netransferat încă în jurnale și registrele contabile
+AlreadyInGeneralLedger=Transferat deja în jurnalele contabile şi cartea mare
+NotYetInGeneralLedger=Netransferat încă în jurnalele contabile şi cartea mare
 GroupIsEmptyCheckSetup=Grupul este gol, verificați configurarea grupului personalizat de conturi
 DetailByAccount=Afișați detalii după cont
 AccountWithNonZeroValues=Conturi cu valori nenule
@@ -298,7 +298,7 @@ NoNewRecordSaved=Nu se mai înregistrează nicio intrare în jurnal.
 ListOfProductsWithoutAccountingAccount=Lista produselor care nu sunt asociate unui cont contabil
 ChangeBinding=Schimbați asocierea
 Accounted=Contabilizat în jurnal - Cartea Mare
-NotYetAccounted=Nu este încă înregistrat în jurnalul contabil 
+NotYetAccounted=Netransferat încă în contabilitate
 ShowTutorial=Arată tutorial
 NotReconciled=Nu este decontat
 WarningRecordWithoutSubledgerAreExcluded=Atenție, toate operațiunile fără cont de subregistru definit sunt filtrate și excluse din această vizualizare
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Dezactivați legarea și transferul în 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Dezactivați legarea și transferul în contabilitate pentru rapoartele de cheltuieli (rapoartele de cheltuieli nu vor fi luate în considerare în contabilitate)
 
 ## Export
-NotifiedExportDate=Dată notificare export (modificarea înregistrărilor nu va fi posibilă)
-NotifiedValidationDate=Validare intrări (modificarea sau ștergerea intrărilor nu va fi posibilă)
+NotifiedExportDate=Marcaţi liniile ca exportate (modificarea liniilor nu va fi posibilă)
+NotifiedValidationDate=Validați intrările exportate (modificarea sau ștergerea liniilor nu va fi posibilă)
 ConfirmExportFile=Confirmare generare fișier de export contabil?
 ExportDraftJournal=Export jurnal schiţă
 Modelcsv=Model export
@@ -343,7 +343,7 @@ Modelcsv_ciel=Export pentru Sage50, Ciel Compta sau Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Export pentru Quadratus QuadraCompta
 Modelcsv_ebp=Export pentru EBP
 Modelcsv_cogilog=Export pentru Cogilog
-Modelcsv_agiris=Export pentru Agiris
+Modelcsv_agiris=Export pentru Agiris Isacompta
 Modelcsv_LDCompta=Export pentru LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export pentru LD Compta (v10 & mai nou)
 Modelcsv_openconcerto=Export pentru OpenConcerto (Test)
@@ -351,9 +351,10 @@ Modelcsv_configurable=Exportați CSV configurabil
 Modelcsv_FEC=Exportă fişier FEC
 Modelcsv_FEC2=Export FEC (cu scriere de date generate/document inversat)
 Modelcsv_Sage50_Swiss=Export pentru Sage 50 Switzerland
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export pentru Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export pentru Gestinum (v3)
-Modelcsv_Gestinumv5Export pentru Gestinum (v5)
+Modelcsv_Gestinumv5=Export pentru Gestinum (v5)
+Modelcsv_charlemagne=Export pentru Aplim Charlemagne
 ChartofaccountsId=Id plan de conturi
 
 ## Tools - Init accounting account on product / service

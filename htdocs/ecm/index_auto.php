@@ -366,8 +366,8 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
-		$sectionauto[]=$hookmanager->resArray;
+	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
+		$sectionauto[] = $hookmanager->resArray;
 		$rowspan += count($hookmanager->resArray);
 	}
 }

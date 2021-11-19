@@ -59,9 +59,9 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer) {
-	$source  = 'internal';
+	$source = 'internal';
 	if (GETPOST("addsourceexternal")) {
-		$source  ='external';
+		$source = 'external';
 	}
 
 	$result = $object->fetch($id, $ref);

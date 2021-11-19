@@ -441,6 +441,9 @@ input, select {
 input.button.massactionconfirmed {
 	margin: 4px;
 }
+input.short {
+	width: 40px;
+}
 
 textarea {
 	border-radius: 0;
@@ -654,6 +657,10 @@ input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
+input[type=checkbox], input[type=radio] {
+	margin: 0 3px 0 3px;
+}
+
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
 ::-webkit-input-placeholder { color:#ccc; }
@@ -829,6 +836,12 @@ textarea.centpercent {
 .alignstart {
 	text-align: start;
 }
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
@@ -913,6 +926,19 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.paddingtop {
+	padding-top: 4px;
+}
+.paddingtop2 {
+	padding-top: 2px;
+}
+.paddingbottom {
+	padding-bottom: 4px;
+}
+.paddingbottom2 {
+	padding-bottom: 2px;
+}
+
 .cursordefault {
 	cursor: default;
 }
@@ -1161,7 +1187,7 @@ select.flat.selectlimit {
 	max-width: 62px;
 }
 .selectlimit, .marginrightonly {
-	margin-right: 10px !important;
+	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
 	margin-<?php echo $left; ?>: 10px !important;
@@ -1398,6 +1424,10 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
+tr.nobottom td {
+	border-bottom: 0px !important;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1512,11 +1542,11 @@ table[summary="list_of_modules"] .fa-cog {
 }
 
 /* Set a width. Note: add also a max-width, for example maxwidth500, that will be used in priority */
-.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
 }
-.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -1699,7 +1729,7 @@ table[summary="list_of_modules"] .fa-cog {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: #666;
 }
 
@@ -1978,7 +2008,7 @@ div.fichehalfleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -1986,7 +2016,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -2257,6 +2287,19 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
+li.tmenusel::after, li.tmenu:hover::after {
+	content: "";
+	position: absolute;
+	bottom: 0px;
+	left: 50%;
+	left: calc(50% - 6px);
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0px 6px 5px 6px;
+	border-color: transparent transparent #ffffff transparent;
+}
+
 div.tmenusep {
 <?php if ($disableimages) { ?>
 	display: none;
@@ -2350,9 +2393,7 @@ li.tmenu, li.tmenusel {
 li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
-li.tmenusel a.tmenusel {
-	text-decoration: underline !important;
-}
+
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
 
@@ -3100,10 +3141,10 @@ div.tabsElem a {
 }
 div.tabBar {
 	color: #<?php echo $colortextbacktab; ?>;
-	padding-top: 21px;
+	padding-top: 23px;
 	padding-left: 24px;
 	padding-right: 24px;
-	padding-bottom: 18px;
+	padding-bottom: 23px;
 	margin: 0px 0px 18px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
@@ -3300,18 +3341,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
 	padding: 4px !important;
 }
-.nopaddingleft {
-	padding-<?php print $left; ?>: 0px;
-}
-.nopaddingright {
-	padding-<?php print $right; ?>: 0px;
-}
-.nopaddingtopimp {
-	padding-top: 0px !important;
-}
-.nopaddingbottomimp {
-	padding-bottom: 0px !important;
-}
+
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -3372,6 +3402,33 @@ td.border, div.tagtable div div.border {
 .table-val-border-col {
 	width:auto;
 }
+
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_REF)) { ?>
+/* To have left column sticky */
+.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
+	position: sticky;
+	left: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_ACTION)) { ?>
+/* To have right column sticky */
+.tagtable td.actioncolumn, .tagtable th.actioncolumn {
+	position: sticky;
+	right: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
 
 
 /* Main boxes */
@@ -3820,11 +3877,12 @@ div.liste_titre_bydiv {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 
-	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	width: calc(100% - 1px);
+	box-shadow: none;
+	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
+	width: calc(100%);
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
@@ -4477,6 +4535,11 @@ div#card-errors {
 	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
 }
 
+div#dialogforpopup {
+	background-color: #f8f8f8 !important;
+}
+
+
 /* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
@@ -4651,7 +4714,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 
@@ -5565,6 +5628,10 @@ input.select2-input {
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	border: 1px solid #e4e4e4;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,
