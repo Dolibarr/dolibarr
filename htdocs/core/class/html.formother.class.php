@@ -1382,12 +1382,12 @@ class FormOther
 
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || $selected == $obj->$keyfield) {
-						print '<option value="'.$obj->$keyfield.'" selected>';
+					if ($selected == $obj->rowid || $selected == $obj->{$keyfield}) {
+						print '<option value="'.$obj->{$keyfield}.'" selected>';
 					} else {
-						print '<option value="'.$obj->$keyfield.'">';
+						print '<option value="'.$obj->{$keyfield}.'">';
 					}
-					print $obj->$labelfield;
+					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != ($dictionarytable.$obj->{$labelfield}) ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
 					print '</option>';
 					$i++;
 				}
