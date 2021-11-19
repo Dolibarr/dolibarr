@@ -742,9 +742,9 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 		// Dir for module
 		$diroflang = dol_buildpath($modulelowercase, 0);
 
-		if ($diroflang == $dirread.'/'.$modulelowercase) {
+		if ($diroflang == $dolibarr_main_document_root.'/'.$modulelowercase) {
 			// This is not a custom module, we force diroflang to htdocs root
-			$diroflang = $dirread;
+			$diroflang = $dolibarr_main_document_root;
 
 			$srcfile = $diroflang.'/langs/en_US/'.$modulelowercase.'.lang';
 			$destfile = $diroflang.'/langs/'.$newlangcode.'/'.$modulelowercase.'.lang';
