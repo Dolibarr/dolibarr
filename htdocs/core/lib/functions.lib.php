@@ -8082,7 +8082,7 @@ function verifCond($strRights)
 
 	//print $strRights."<br>\n";
 	$rights = true;
-	if ($strRights != '') {
+	if ($strRights !== '') {
 		$str = 'if(!('.$strRights.')) { $rights = false; }';
 		dol_eval($str); // The dol_eval must contains all the global $xxx used into a condition
 	}

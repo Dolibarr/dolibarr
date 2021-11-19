@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - trips
+ExpenseReportRulesDesc=You can define max amount rules for expense reports. These rules will be applied when a new expense is added to an expense report
+ExpenseReportLimitAmount=Max amount
+ExpenseReportRestrictive=Exceeding forbidden
+ExpenseReportConstraintViolationError=Max amount exceeded (rule %s): %s is higher than %s (Exceeding forbidden)
+ExpenseReportConstraintViolationWarning=Max amount exceeded (rule %s): %s is higher than %s (Exceeding authorized)

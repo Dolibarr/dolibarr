@@ -16,13 +16,13 @@
 #
 # Generic
 #
-ModulePartnershipName=Parnterschafts-Verwaltung
+ModulePartnershipName=Partnerschaften
 PartnershipDescription=Modul zur Parnterschafts-Verwaltung
 PartnershipDescriptionLong= Modul zur Parnterschafts-Verwaltung
 
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+AddPartnership=Partnerschaft hinzufügen
+CancelPartnershipForExpiredMembers=Partnerschaft: Partnerschaft von Mitgliedern mit abgelaufenen Abonnements kündigen
+PartnershipCheckBacklink=Partnerschaft: Überprüfen Sie den verweisenden Backlink
 
 #
 # Menu
@@ -33,31 +33,32 @@ ListOfPartnerships=Liste der Partnerschaften
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
+PartnershipSetup=Partnerschaft einrichten
 PartnershipAbout=Über die Partschnerschaft
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipAboutPage=Partnerschaft "Über uns"-Seite
+partnershipforthirdpartyormember=Der Partnerstatus muss bei einem "Geschäftspartner" oder "Mitglied" gesetzt sein
+PARTNERSHIP_IS_MANAGED_FOR=Partnerschaft verwaltet für
+PARTNERSHIP_BACKLINKS_TO_CHECK=zu überprüfende Backlinks
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Anzahl Tage bis zur Kündigung des Status einer Partnerschaft, wenn ein Abonnement abgelaufen ist
+ReferingWebsiteCheck=Überprüfung der verweisenden Website
+ReferingWebsiteCheckDesc=Sie können eine Funktion aktivieren, um zu überprüfen, ob Ihre Partner auf ihrer eigenen Website einen Backlink zu Ihren Website-Domains hinzugefügt haben.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Partnerschaft löschen
+PartnershipDedicatedToThisThirdParty=Partnerschaft mit diesem Geschäftspartner
+PartnershipDedicatedToThisMember=Partnerschaft mit diesem Mitglied
 DatePartnershipStart=Startdatum
 DatePartnershipEnd=Ende
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
+ReasonDecline=Ablehnungsgrund
+ReasonDeclineOrCancel=Ablehnungsgrund
+PartnershipAlreadyExist=Partnerschaft besteht bereits
+ManagePartnership=Partnerschaft verwalten
+BacklinkNotFoundOnPartnerWebsite=Backlink auf Partner-Website nicht gefunden
+ConfirmClosePartnershipAsk=Möchten Sie diese Partnerschaft wirklich beenden?
+PartnershipType=Partnerschaftstyp
+PartnershipRefApproved=Partnerschaft %s genehmigt
 
 #
 # Template Mail
@@ -72,10 +73,14 @@ YourPartnershipRefusedTopic=Partnerschaft abgelehnt
 YourPartnershipAcceptedTopic=Partnerschaft akzeptiert
 YourPartnershipCanceledTopic=Partnerschaft beendet
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Wir informieren Sie darüber, dass Ihre Partnerschaft bald beendet wird (Backlink nicht gefunden)
+YourPartnershipRefusedContent=Wir informieren Sie darüber, dass Ihre Partnerschaftsanfrage abgelehnt wurde.
+YourPartnershipAcceptedContent=Wir informieren Sie darüber, dass Ihre Partnerschaftsanfrage angenommen wurde.
+YourPartnershipCanceledContent=Wir informieren Sie darüber, dass Ihre Partnerschaft gekündigt wurde.
+
+CountLastUrlCheckError=Anzahl der Fehler bei der letzten URL-Überprüfung
+LastCheckBacklink=Datum der letzten URL-Überprüfung
+ReasonDeclineOrCancel=Ablehnungsgrund
 
 #
 # Status

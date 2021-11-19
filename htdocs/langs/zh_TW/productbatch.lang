@@ -37,7 +37,8 @@ ManufacturingDate=生產日期
 DestructionDate=銷毀日期
 FirstUseDate=首次使用日期
 QCFrequency=品質控制頻率（天）
-
+ShowAllLots=Show all lots
+HideLots=Hide lots
 #Traceability - qc status
-OutOfOrder=Out of order
+OutOfOrder=亂序
 InWorkingOrder=在生產訂單中

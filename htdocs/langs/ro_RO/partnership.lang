@@ -58,6 +58,7 @@ ManagePartnership=Administrare parteneriat
 BacklinkNotFoundOnPartnerWebsite=Backlink-ul nu a fost găsit pe site-ul partenerului
 ConfirmClosePartnershipAsk=Sigur vrei să anulezi acest parteneriat?
 PartnershipType=Tip parteneriat
+PartnershipRefApproved=Parteneriatul %s a fost aprobat
 
 #
 # Template Mail
@@ -76,6 +77,10 @@ YourPartnershipWillSoonBeCanceledContent=Vă informăm că parteneriatul dvs. va
 YourPartnershipRefusedContent=Vă informăm că solicitarea dvs. de parteneriat a fost respinsă.
 YourPartnershipAcceptedContent=Vă informăm că parteneriatul a fost acceptat.
 YourPartnershipCanceledContent=Vă informăm că parteneriatul dvs. a fost anulat. 
+
+CountLastUrlCheckError=Număr de erori pentru ultima verficare URL
+LastCheckBacklink=Data ultimei verificări URL
+ReasonDeclineOrCancel=Motiv respingere
 
 #
 # Status

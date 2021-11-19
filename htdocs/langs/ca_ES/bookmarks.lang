@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Utilitzeu un enllaç extern / absolu
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Trieu si la pàgina enllaçada s'ha d'obrir a la pestanya actual o a una pestanya nova
 BookmarksManagement=Gestió de marcadors
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

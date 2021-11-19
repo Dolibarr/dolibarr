@@ -1,6 +1,6 @@
 Module68000Name = Intracomm レポート
 Module68000Desc = Intracomm レポート管理(フランス語のDEB / DES形式のサポート)
-IntracommReportSetup = Intracommreportモジュールのセットアップ
+IntracommReportSetup = Intracommreportモジュールの設定
 IntracommReportAbout = Intracomm レポートについて
 
 # Setup

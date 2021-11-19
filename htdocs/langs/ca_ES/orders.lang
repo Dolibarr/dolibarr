@@ -124,6 +124,8 @@ SupplierOrderReceivedInDolibarr=La comanda de compra %s ha rebut %s
 SupplierOrderSubmitedInDolibarr=Comanda de compra %s enviada
 SupplierOrderClassifiedBilled=Comanda de compra %s com a facturada
 OtherOrders=Altres comandes
+SupplierOrderValidatedAndApproved=La comanda del proveïdor està validada i aprovada: %s
+SupplierOrderValidated=La comanda del proveïdor està validada: %s
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Ordre de venda de seguiment representatiu
 TypeContact_commande_internal_SHIPPING=Responsable del seguiment de l'enviament
@@ -151,6 +153,7 @@ PDFEdisonDescription=Model de comanda simple
 PDFProformaDescription=Una plantilla completa de factura Proforma
 CreateInvoiceForThisCustomer=Facturar comandes
 CreateInvoiceForThisSupplier=Facturar comandes
+CreateInvoiceForThisReceptions=Recepcions de factures
 NoOrdersToInvoice=Sense comandes facturables
 CloseProcessedOrdersAutomatically=Classifica com a "Processades" totes les comandes seleccionades.
 OrderCreation=Creació comanda

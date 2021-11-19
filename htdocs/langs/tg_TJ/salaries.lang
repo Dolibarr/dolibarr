@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Ҳисоби баҳисобгирӣ барои корбарони сеюм истифода мешавад
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Ҳисоби баҳисобгирии муҳосибӣ, ки дар корти корбар муайян шудааст, танҳо барои баҳисобгирии зерпардохт истифода мешавад. Ин барои китоби умумӣ ва ҳамчун арзиши пешфарзии баҳисобгирии Subledger истифода мешавад, агар ҳисоби махсуси баҳисобгирии корбар дар корбар муайян карда нашуда бошад.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Ҳисоби баҳисобгирӣ бо нобаёнӣ барои пардохти музди меҳнат
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Бо нобаёнӣ, ҳангоми эҷод кардани маош опсияи "Ба таври худкор пардохти умумӣ" -ро холӣ гузоред
+Salary=Музди меҳнат
+Salaries=Музди кор
+NewSalary=Музди нав
+AddSalary=Add salary
+NewSalaryPayment=Корти нави маош
+AddSalaryPayment=Иловаи пардохти музди меҳнат
+SalaryPayment=Пардохти музди меҳнат
+SalariesPayments=Пардохтҳои музди меҳнат
+SalariesPaymentsOf=Пардохти маоши %s
+ShowSalaryPayment=Нишон додани пардохти музди меҳнат
+THM=Меъёри миёнаи соатбайъ
+TJM=Нархи миёнаи рӯзона
+CurrentSalary=Музди ҷорӣ
+THMDescription=Ин арзиш метавонад барои ҳисоб кардани арзиши вақти сарфшуда дар як лоиҳа, ки корбарон ҳангоми истифодаи лоиҳаи модул истифода кардаанд, истифода шавад
+TJMDescription=Ин арзиш ҳоло танҳо барои маълумот аст ва барои ҳисобкунӣ истифода намешавад
+LastSalaries=Музди охирини %s
+AllSalaries=Ҳама маош
+SalariesStatistics=Омори музди меҳнат
+SalariesAndPayments=Музди меҳнат ва пардохтҳо
+ConfirmDeleteSalaryPayment=Оё шумо ин пардохти музди меҳнатро нест кардан мехоҳед?
+FillFieldFirst=Fill employee field first
