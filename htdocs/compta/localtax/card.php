@@ -64,7 +64,7 @@ if ($cancel && !$id) {
 	exit;
 }
 
-if ($action == 'add' && $cancel) {
+if ($action == 'add' && !$cancel) {
 	$db->begin();
 
 	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));

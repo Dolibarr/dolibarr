@@ -1576,7 +1576,7 @@ table[summary="list_of_modules"] .fa-cog {
 		min-width: 150px !important;
 	}
 
-	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
+	.divmainbodylarge { margin-left: 10px; margin-right: 10px; }
 
 	.tdoverflowonsmartphone {
 		max-width: 0;
@@ -6819,6 +6819,10 @@ span.clipboardCPValue.hidewithsize {
 	}
 	li.tmenu, li.tmenusel {
 		min-width: 30px;
+	}
+
+	div.login_block {
+		border-right: 1px solid rgba(0,0,0,0.3);
 	}
 
 	div.tmenucenter {

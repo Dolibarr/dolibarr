@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/public/members/new.php
+ *	\file       htdocs/public/project/suggestconference.php
  *	\ingroup    member
- *	\brief      Example of form to add a new member
+ *	\brief      Example of form to suggest a conference
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
@@ -95,7 +95,7 @@ if ($resultproject < 0) {
 
 // Security check
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -113,7 +113,7 @@ $extrafields = new ExtraFields($db);
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'conference@eventorganization\'');
+$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conference@eventorganization'");
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
@@ -213,9 +213,21 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
+	if (!GETPOST("lastname")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
+	}
+	if (!GETPOST("firstname")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
+	}
 	if (!GETPOST("email")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
+	}
+	if (!GETPOST("societe")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
 	}
 	if (!GETPOST("label")) {
 		$error++;
@@ -224,30 +236,6 @@ if (empty($reshook) && $action == 'add') {
 	if (!GETPOST("note")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Note"))."<br>\n";
-	}
-	if (!GETPOST("datestart")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart"))."<br>\n";
-	}
-	if (!GETPOST("dateend")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd"))."<br>\n";
-	}
-	if (!GETPOST("email")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
-	}
-	if (!GETPOST("lastname")) {
-		$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
-	}
-	if (!GETPOST("firstname")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
-	}
-	if (!GETPOST("societe")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
 	}
 	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
 		$error++;
@@ -460,10 +448,10 @@ if (empty($reshook) && $action == 'add') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeaderVierge($langs->trans("NewSuggestion"));
+llxHeaderVierge($langs->trans("NewSuggestionOfConference"));
 
 
-print load_fiche_titre($langs->trans("NewSuggestion"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewSuggestionOfConference"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
@@ -472,7 +460,7 @@ print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
 $text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationConfWelcomeMessage").'</strong></td></tr></br>';
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationConfHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationConfHelpMessage").' '.$project->label.'.<br><br></td></tr>'."\n";
 $text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
 print $text;
 print '</div>';
@@ -568,13 +556,6 @@ print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol
 // Note
 print '<tr><td>'.$langs->trans("Description").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td><textarea name="note" id="note" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
-// Start Date
-print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
-print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('datestart')).'"></td></tr>'."\n";
-// End Date
-print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
-print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
-
 
 print "</table>\n";
 

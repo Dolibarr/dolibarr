@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -220,7 +220,7 @@ if (empty($reshook)) {
 			$object->fk_user_author = $user->id;
 		}
 
-		// Check that expense report is for a user inside the hierarchy or advanced permission for all is set
+		// Check that expense report is for a user inside the hierarchy, or that advanced permission for all is set
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
 			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
 			$error++;
@@ -1095,7 +1095,7 @@ if (empty($reshook)) {
 			$action = '';
 		}
 
-		if ((int) $tmpvat < 0 || $tmpvat == '') {
+		if ((float) $tmpvat < 0 || $tmpvat === '') {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("VAT")), null, 'errors');
 			$action = '';
@@ -1190,7 +1190,6 @@ if (empty($reshook)) {
 				}
 			}
 
-			$object->update_totaux_del($object_ligne->total_ht, $object_ligne->total_tva);
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
 			exit;
 		} else {
@@ -1240,7 +1239,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$action = '';
 		}
-		if ((int) $tmpvat < 0 || $tmpvat == '') {
+		if ((float) $tmpvat < 0 || $tmpvat == '') {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
 			$action = '';
@@ -1276,8 +1275,6 @@ if (empty($reshook)) {
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 				}
-
-				$result = $object->recalculer($id);
 
 				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				//exit;
@@ -1424,7 +1421,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	print '<tbody>';
@@ -1440,8 +1437,6 @@ if ($action == 'create') {
 	print '</form>';
 } elseif ($id > 0 || $ref) {
 	$result = $object->fetch($id, $ref);
-
-	$res = $object->fetch_optionals();
 
 	if ($result > 0) {
 		if (!in_array($object->fk_user_author, $user->getAllChildIds(1))) {
@@ -1843,12 +1838,22 @@ if ($action == 'create') {
 
 			 print '<tr>';
 			 print '<td>'.$langs->trans("AmountVAT").'</td>';
-			 print '<td class="nowrap amountcard">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
+			 print '<td class="nowrap amountcard">'.price($object->total_tva, 1, '', 1, -1, -1, $conf->currency).'</td>';
 			 print '</tr>';
+
+			 // Amount Local Taxes
+			if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { 		// Localtax1
+				print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
+				print '<td class="valuefield">'.price($object->total_localtax1, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+			}
+			if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { 		// Localtax2 IRPF
+				print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
+				print '<td class="valuefield">'.price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+			}
 
 			 print '<tr>';
 			 print '<td>'.$langs->trans("AmountTTC").'</td>';
-			 print '<td class="nowrap amountcard">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
+			 print '<td class="nowrap amountcard">'.price($object->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</td>';
 			 print '</tr>';
 
 			 // List of payments already done
@@ -2053,7 +2058,7 @@ if ($action == 'create') {
 						// Comment
 						print '<td class="left">'.dol_nl2br($line->comments).'</td>';
 						// VAT rate
-						print '<td class="right">'.vatrate($line->vatrate, true).'</td>';
+						print '<td class="right">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
 						// Unit price HT
 						print '<td class="right">';
 						if (!empty($line->value_unit_ht)) {
@@ -2260,8 +2265,9 @@ if ($action == 'create') {
 						print '</td>';
 
 						// VAT
+						$selectedvat = price2num($line->vatrate).($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
 						print '<td class="right">';
-						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $line->vatrate), $mysoc, '', 0, 0, '', false, 1);
+						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $selectedvat), $mysoc, '', 0, 0, '', false, 1);
 						print '</td>';
 
 						// Unit price
@@ -2276,7 +2282,7 @@ if ($action == 'create') {
 
 						// Quantity
 						print '<td class="right">';
-						print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+						print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';  // We must be able to enter decimal qty
 						print '</td>';
 
 						//print '<td class="right">'.$langs->trans('AmountHT').'</td>';
@@ -2518,7 +2524,7 @@ if ($action == 'create') {
 
 print '<div class="tabsAction">';
 
-if ($action != 'create' && $action != 'edit') {
+if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 

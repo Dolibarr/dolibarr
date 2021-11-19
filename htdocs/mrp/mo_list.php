@@ -84,7 +84,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -207,7 +207,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.' ' : '');
 	}
 }
 // Add fields from hooks
@@ -270,8 +270,7 @@ $sql .= $hookmanager->resPrint;
 
 /* If a group by is required
 $sql.= " GROUP BY ";
-foreach($object->fields as $key => $val)
-{
+foreach($object->fields as $key => $val) {
 	$sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
@@ -343,9 +342,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
 		foreach ($search[$key] as $skey) {
-			$param .= '&search_'.$key.'[]='.urlencode($skey);
+			if ($skey != '') {
+				$param .= '&search_'.$key.'[]='.urlencode($skey);
+			}
 		}
-	} else {
+	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }

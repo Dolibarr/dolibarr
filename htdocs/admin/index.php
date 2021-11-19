@@ -109,8 +109,8 @@ $reshook = $hookmanager->executeHooks('addHomeSetup', $parameters, $object, $act
 print $hookmanager->resPrint;
 if (empty($reshook)) {
 	// Show into other
-	print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
-	print "<br>";
+	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("SetupDescription5")."</span><br>";
+	print '<br class="hideonsmartphone">';
 
 	// Show logo
 	print '<div class="center"><div class="logo_setup"></div></div>';

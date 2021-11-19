@@ -71,6 +71,10 @@ if (empty($action) && empty($id) && empty($ref)) {
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+if ($object->id > 0) {
+	$object->calculateCosts();
+}
+
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -112,8 +116,13 @@ if (empty($reshook)) {
 
 	$triggermodname = 'BOM_MODIFY'; // Name of trigger action code to execute when we modify record
 
+
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	// The fetch/fetch_lines was redone into the inc.php so we must recall the calculateCosts()
+	if ($action == 'confirm_validate' && $object->id > 0) {
+		$object->calculateCosts();
+	}
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
@@ -311,8 +320,6 @@ if (($id || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	$res = $object->fetch_optionals();
-
 	$head = bomPrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("BillOfMaterials"), -1, 'bom');
 

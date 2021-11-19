@@ -999,7 +999,7 @@ class CommandeFournisseur extends CommonOrder
 			if (empty($secondlevel)) {	// standard or first level approval
 				$sql .= " date_approve='".$this->db->idate($now)."',";
 				$sql .= " fk_user_approve = ".$user->id;
-				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
+				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
 					if (empty($this->user_approve_id2)) {
 						$movetoapprovestatus = false; // second level approval not done
 						$comment = ' (first level)';
@@ -2084,7 +2084,7 @@ class CommandeFournisseur extends CommonOrder
 
 		// Test we can delete
 		$this->fetchObjectLinked(null, 'order_supplier');
-		if (!empty($this->linkedObjects)) {
+		if (!empty($this->linkedObjects) && array_key_exists('reception', $this->linkedObjects)) {
 			foreach ($this->linkedObjects['reception'] as $element) {
 				if ($element->statut >= 0) {
 					$this->errors[] = $langs->trans('ReceptionExist');
@@ -2927,11 +2927,11 @@ class CommandeFournisseur extends CommonOrder
 					$this->user_approve_id2 = $obj->fk_user_approve2;
 				}
 
-				$this->date_creation     = $this->db->idate($obj->datec);
-				$this->date_modification = $this->db->idate($obj->datem);
-				$this->date_approve      = $this->db->idate($obj->datea);
-				$this->date_approve2     = $this->db->idate($obj->datea2);
-				$this->date_validation   = $this->db->idate($obj->date_validation);
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_approve      = $this->db->jdate($obj->datea);
+				$this->date_approve2     = $this->db->jdate($obj->datea2);
+				$this->date_validation   = $this->db->jdate($obj->date_validation);
 			}
 			$this->db->free($result);
 		} else {

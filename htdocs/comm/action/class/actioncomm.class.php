@@ -735,13 +735,14 @@ class ActionComm extends CommonObject
 	/**
 	 *  Load object from database
 	 *
-	 *  @param  int		$id     		Id of action to get
-	 *  @param  string	$ref    		Ref of action to get
-	 *  @param  string	$ref_ext		Ref ext to get
-	 *  @param	string	$email_msgid	Email msgid
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @param  int		$id     			Id of action to get
+	 *  @param  string	$ref    			Ref of action to get
+	 *  @param  string	$ref_ext			Ref ext to get
+	 *  @param	string	$email_msgid		Email msgid
+	 *  @param	string	$loadresources		1=Load also resources
+	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
 		global $langs;
 
@@ -858,8 +859,13 @@ class ActionComm extends CommonObject
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
 
-				$this->fetchResources();
+				$this->fetch_optionals();
+
+				if ($loadresources) {
+					$this->fetchResources();
+				}
 			}
+
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();

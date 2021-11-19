@@ -150,6 +150,7 @@ if ($object->usage_bill_time) {
 }
 
 // Extra fields
+$extrafieldsobjectkey = $taskstatic->table_element;
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -459,7 +460,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Usage
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
@@ -532,7 +533,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Description
 	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -541,7 +542,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Categories
 	if ($conf->categorie->enabled) {
-		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
 	}
@@ -845,7 +846,6 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '</td>';
 	}
 
-	$extrafieldsobjectkey = $taskstatic->table_element;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Action column

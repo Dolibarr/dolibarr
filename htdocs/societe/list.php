@@ -89,9 +89,9 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
-$search_sale = trim(GETPOST("search_sale", 'int'));
-$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
-$search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
+$search_sale = GETPOST("search_sale", 'int');
+$search_categ_cus = GETPOST("search_categ_cus", 'int');
+$search_categ_sup = GETPOST("search_categ_sup", 'int');
 $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_price_level = GETPOST('search_price_level', 'int');
@@ -100,8 +100,8 @@ $search_status = GETPOST("search_status", 'int');
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array");
 $search_stcomm = GETPOST('search_stcomm', 'int');
-$search_import_key  = GETPOST("search_import_key", "alpha");
-$search_parent_name = GETPOST('search_parent_name', 'alpha');
+$search_import_key  = trim(GETPOST("search_import_key", "alpha"));
+$search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
 
 $type = GETPOST('type', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -494,10 +494,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_ef
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
-if (!empty($search_categ_cus) && $search_categ_cus!=-1) {
+if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
-if (!empty($search_categ_sup) && $search_categ_sup!=-1) {
+if (!empty($search_categ_sup) && $search_categ_sup != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
@@ -1001,12 +1001,12 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Fields title search
 print '<tr class="liste_titre_filter">';
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre" data-key="id">';
 	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre" data-key="ref">';
 	if (!empty($search_nom_only) && empty($search_nom)) {
 		$search_nom = $search_nom_only;
 	}
@@ -1237,10 +1237,10 @@ print '</td>';
 print "</tr>\n";
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, ' data-key="ref"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
@@ -1387,7 +1387,7 @@ while ($i < min($num, $limit)) {
 	}
 	print '>';
 	if (!empty($arrayfields['s.rowid']['checked'])) {
-		print '<td class="tdoverflowmax50">';
+		print '<td class="tdoverflowmax50" data-key="id">';
 		print $obj->rowid;
 		print "</td>\n";
 		if (!$i) {
@@ -1399,7 +1399,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			$companystatic->name_alias = '';
 		}
-		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').'>';
+		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
 		if ($contextpage == 'poslist') {
 			print $obj->name;
 		} else {

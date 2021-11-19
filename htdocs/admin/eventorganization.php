@@ -366,7 +366,7 @@ if ($action == 'edit') {
 					$product = new Product($db);
 					$resprod = $product->fetch($conf->global->{$constname});
 					if ($resprod > 0) {
-						print $product->ref;
+						print $product->getNomUrl(1);
 					} elseif ($resprod < 0) {
 						setEventMessages(null, $object->errors, "errors");
 					}

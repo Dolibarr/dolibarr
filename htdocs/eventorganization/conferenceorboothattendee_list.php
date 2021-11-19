@@ -97,7 +97,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -369,8 +369,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 }
 
 
-// Output page
-// --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
@@ -576,7 +574,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 		//print '</span>';
 		print '</td><td>';
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_registration.php?id='.$projectstatic->id.'&type=global';
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.$projectstatic->id.'&type=global';
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 'md5');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
@@ -646,22 +644,25 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
 		foreach ($search[$key] as $skey) {
-			$param .= '&search_'.$key.'[]='.urlencode($skey);
+			if ($skey != '') {
+				$param .= '&search_'.$key.'[]='.urlencode($skey);
+			}
 		}
-	} else {
+	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
 if ($confOrBooth->id > 0) {
-	$param .= '&conforboothid='.urlencode($confOrBooth->id).$withProjectUrl;
+	$param .= '&conforboothid='.urlencode($confOrBooth->id);
 }
 if ($projectstatic->id > 0) {
-	$param .= '&fk_project='.urlencode($projectstatic->id).$withProjectUrl;
+	$param .= '&fk_project='.urlencode($projectstatic->id);
 }
-
+$param .= $withProjectUrl;
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -694,8 +695,12 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+print '<input type="hidden" name="fk_project" value="'.$fk_project.'">';
+print '<input type="hidden" name="page_y" value="">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl), '', $permissiontoadd);
+$params = array('morecss'=>'reposition');
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl), '', $permissiontoadd, $params);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 

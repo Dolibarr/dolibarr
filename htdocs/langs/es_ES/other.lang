@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Actualmente solo es posible 1 campo como X-Axis. 
 AtLeastOneMeasureIsRequired=Se requiere al menos 1 campo para medir
 AtLeastOneXAxisIsRequired=Se requiere al menos 1 campo para el eje X
 LatestBlogPosts=Últimas publicaciones de blog
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Validación pedido de cliente
 Notify_ORDER_SENTBYMAIL=Envío pedido de cliente por e-mail
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Envío pedido a proveedor por e-mail
@@ -291,3 +294,7 @@ PopuCom=Productos/Servicios por popularidad en Pedidos
 ProductStatistics=Estadísticas de productos/servicios
 NbOfQtyInOrders=Cantidad en pedidos
 SelectTheTypeOfObjectToAnalyze=Seleccione un objeto para ver sus estadísticas ...
+
+ConfirmBtnCommonContent = ¿Está seguro de que desea "%s"?
+ConfirmBtnCommonTitle = Confirme su acción
+CloseDialog = Cerrar

@@ -27,9 +27,9 @@ StockDetailPerBatch=Lager detaljer pr. Parti Serie
 SerialNumberAlreadyInUse=Serienummer %s bruges allerede til produkt %s
 TooManyQtyForSerialNumber=Du kan kun have et produkt %s til serienummer %s
 ManageLotMask=Brugerdefineret maske
-CustomMasks=Option to define a different numbering mask for each product
-BatchLotNumberingModules=Numbering rule for automatic generation of lot number
-BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+CustomMasks=Mulighed for at definere en anden nummereringsmaske for hvert produkt
+BatchLotNumberingModules=Nummereringsregel til automatisk generering af partinummer
+BatchSerialNumberingModules=Nummereringsregel til automatisk generering af serienummer (for produkter med ejendom 1 unikt parti / serienummer for hvert produkt)
 QtyToAddAfterBarcodeScan=Mængde, der skal tilføjes for hver stregkode / parti / seriel scannet
 LifeTime=Levetid (i dage)
 EndOfLife=udløbet på dato
@@ -37,7 +37,8 @@ ManufacturingDate=produktionsdato
 DestructionDate=Destruktionsdato
 FirstUseDate=Dato for første brug
 QCFrequency=Kvalitetskontrolfrekvens (i dage)
-
+ShowAllLots=Vis alle numre
+HideLots=Skjul masser
 #Traceability - qc status
 OutOfOrder=Virker ikke
 InWorkingOrder=I funktionsdygtig stand

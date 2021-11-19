@@ -408,9 +408,9 @@ if (empty($reshook)) {
 			dol_print_error($db);
 		}
 	} elseif ($action == 'setdatef' && $usercancreate) {
-		$newdate = dol_mktime(0, 0, 0, $_POST['datefmonth'], $_POST['datefday'], $_POST['datefyear']);
-		if ($newdate > (dol_now() + (empty($conf->global->INVOICE_MAX_OFFSET_IN_FUTURE) ? 0 : $conf->global->INVOICE_MAX_OFFSET_IN_FUTURE))) {
-			if (empty($conf->global->INVOICE_MAX_OFFSET_IN_FUTURE)) {
+		$newdate = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'), 'tzserver');
+		if ($newdate > (dol_now('tzuserrel') + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			if (empty($conf->global->INVOICE_MAX_FUTURE_DELAY)) {
 				setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
 			} else {
 				setEventMessages($langs->trans("WarningInvoiceDateTooFarInFuture"), null, 'warnings');
@@ -434,7 +434,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setdate_lim_reglement' && $usercancreate) {
 		$object->fetch($id);
-		$object->date_echeance = dol_mktime(12, 0, 0, $_POST['date_lim_reglementmonth'], $_POST['date_lim_reglementday'], $_POST['date_lim_reglementyear']);
+		$object->date_echeance = dol_mktime(12, 0, 0, GETPOST('date_lim_reglementmonth', 'int'), GETPOST('date_lim_reglementday', 'int'), GETPOST('date_lim_reglementyear', 'int'));
 		if (!empty($object->date_echeance) && $object->date_echeance < $object->date) {
 			$object->date_echeance = $object->date;
 			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
@@ -680,6 +680,7 @@ if (empty($reshook)) {
 		if ($socid > 0) {
 			$object->socid = GETPOST('socid', 'int');
 		}
+		$selectedLines = GETPOST('toselect', 'array');
 
 		$db->begin();
 
@@ -691,8 +692,12 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$datedue = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
+		$dateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+		$datedue = dol_mktime(0, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'), 'tzserver');
+		/*var_dump($dateinvoice.' '.dol_print_date($dateinvoice, 'dayhour'));
+		var_dump(dol_now('tzuserrel').' '.dol_get_last_hour(dol_now('tzuserrel')).' '.dol_print_date(dol_now('tzuserrel'),'dayhour').' '.dol_print_date(dol_get_last_hour(dol_now('tzuserrel')), 'dayhour'));
+		var_dump($db->idate($dateinvoice));
+		exit;*/
 
 		// Replacement invoice
 		if (GETPOST('type') == FactureFournisseur::TYPE_REPLACEMENT) {
@@ -701,7 +706,7 @@ if (empty($reshook)) {
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -765,7 +770,7 @@ if (empty($reshook)) {
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -874,7 +879,7 @@ if (empty($reshook)) {
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1112,6 +1117,10 @@ if (empty($reshook)) {
 
 							$num = count($lines);
 							for ($i = 0; $i < $num; $i++) { // TODO handle subprice < 0
+								if (!in_array($lines[$i]->id, $selectedLines)) {
+									continue; // Skip unselected lines
+								}
+
 								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
@@ -2261,7 +2270,7 @@ if ($action == 'create') {
 	}
 
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
+		print $object->showOptionals($extrafields, 'create');
 	}
 
 	// Public note
@@ -2348,9 +2357,6 @@ if ($action == 'create') {
 	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
-	print "</form>\n";
-
-
 	// Show origin lines
 	if (is_object($objectsrc)) {
 		print '<br>';
@@ -2360,10 +2366,12 @@ if ($action == 'create') {
 
 		print '<table class="noborder centpercent">';
 
-		$objectsrc->printOriginLinesList();
+		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
 	}
+
+	print "</form>\n";
 } else {
 	if ($id > 0 || !empty($ref)) {
 		//
@@ -2397,6 +2405,15 @@ if ($action == 'create') {
 		// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled)) {
+			$multicurrency_totalpaye = $object->getSommePaiement(1);
+			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
+			$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
+			$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaye - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
+			$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+		}
 
 		if ($object->paye) {
 			$resteapayer = 0;

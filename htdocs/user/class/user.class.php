@@ -384,6 +384,9 @@ class User extends CommonObject
 		$this->rights->user = new stdClass();
 		$this->rights->user->user = new stdClass();
 		$this->rights->user->self = new stdClass();
+		$this->rights->user->user_advance = new stdClass();
+		$this->rights->user->self_advance = new stdClass();
+		$this->rights->user->group_advance = new stdClass();
 	}
 
 	/**
@@ -1770,7 +1773,9 @@ class User extends CommonObject
 			$sql .= ", salaryextra= ".($this->salaryextra != '' ? "'".$this->db->escape($this->salaryextra)."'" : "null");
 		}
 		$sql .= ", weeklyhours= ".($this->weeklyhours != '' ? "'".$this->db->escape($this->weeklyhours)."'" : "null");
-		$sql .= ", entity = ".((int) $this->entity);
+		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
+			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
+		}
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
@@ -2618,7 +2623,7 @@ class User extends CommonObject
 	/**
 	 *  Return clickable link of login (eventualy with picto)
 	 *
-	 *	@param	int		$withpictoimg		Include picto into link
+	 *	@param	int		$withpictoimg		Include picto into link (1=picto, -1=photo)
 	 *	@param	string	$option				On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param	integer	$notooltip			1=Disable tooltip on picto and name
 	 *  @param  string  $morecss       		Add more css on link

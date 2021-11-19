@@ -2047,9 +2047,9 @@ class ExtraFields
 	 *
 	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
 	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only some keys are filled:$this
+	 * @param	string	$onlykey		Only some keys are filled:
 	 *                                  'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  '@GETPOSTISSET' => When we make update of extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 *                                  '@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
@@ -2220,9 +2220,16 @@ class ExtraFields
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					if ($keysuffix != 'search_') {	// If value is for a search, we must keep complex string like '>100 <=150'
+					if ($keysuffix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
 						$value_key = price2num($value_arr);
 					} else {
+						$value_key = $value_arr;
+					}
+				} elseif (in_array($key_type, array('boolean'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						$value_key = '';
+					} else {
+						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
 				} else {

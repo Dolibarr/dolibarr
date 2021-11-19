@@ -1759,7 +1759,7 @@ class Societe extends CommonObject
 
 				$this->country_id   = $obj->country_id;
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
-				$this->country = $obj->country_id ? ($langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				$this->country = $obj->country_id ? (($langs->transnoentities('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
@@ -2575,13 +2575,13 @@ class Societe extends CommonObject
 			$label .= ' '.$this->getLibStatut(5);
 		}
 
-		if (!empty($this->name)) {
-			$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
-			if (!empty($this->name_alias)) {
-				$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
-			}
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
+		if (!empty($this->name_alias)) {
+			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
 		}
-		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
+		if ($this->email) {
+			$label .= '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
+		}
 		if (!empty($this->phone) || !empty($this->fax)) {
 			$phonelist = array();
 			if ($this->phone) {
@@ -2590,7 +2590,7 @@ class Societe extends CommonObject
 			if ($this->fax) {
 				$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
 			}
-			$label .= '<br><b>'.$langs->trans('Phone').':</b> '.implode('&nbsp;', $phonelist);
+			$label .= '<br>'.implode('&nbsp;', $phonelist);
 		}
 		if (!empty($this->address)) {
 			$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);	// Address + country

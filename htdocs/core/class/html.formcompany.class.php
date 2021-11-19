@@ -781,7 +781,7 @@ class FormCompany extends Form
 
 			$out .= '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) {
-				$out .= '<option value="0"></option>';
+				$out .= '<option value="0">&nbsp;</option>';
 			}
 			foreach ($lesTypes as $key => $value) {
 				$out .= '<option value="'.$key.'"';

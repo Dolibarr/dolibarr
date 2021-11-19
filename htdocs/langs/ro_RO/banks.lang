@@ -182,3 +182,4 @@ BankColorizeMovementName2=Culoarea de fundal pentru tranzacţiile de credit
 IfYouDontReconcileDisableProperty= Dacă nu faceți decontări bancare pe unele conturi bancare, dezactivați proprietatea "%s" de pe ele pentru a elimina acest avertisment
 NoBankAccountDefined=Nu a fost definit niciun cont bancar
 NoRecordFoundIBankcAccount=Nu s-a găsit nicio înregistrare în contul bancar. În mod obișnuit, acest lucru se întâmplă atunci când o înregistrare a fost ștearsă manual din lista tranzacțiilor din contul bancar (de exemplu, în timpul decontării contului bancar). Un alt motiv este că plata a fost înregistrată când modulul "%s" a fost dezactivat.
+AlreadyOneBankAccount=Este deja definit un cont bancar

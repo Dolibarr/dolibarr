@@ -1139,3 +1139,5 @@ ConfirmCancel=Are you sure you want to cancel
 EmailMsgID=Email MsgID
 Forthcoming=Forthcoming
 Currently=Currently
+ClientTZ=Client Time Zone (user)
+NotClosedYet=Not yet closed

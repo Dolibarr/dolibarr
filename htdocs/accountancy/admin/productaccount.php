@@ -186,18 +186,35 @@ if ($action == 'update') {
 					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				} else {
-					$db->begin();
-
+					$sql = '';
 					if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_perentity (fk_product, entity, '".$db->escape($accountancy_field_name)."')";
-						$sql .= " VALUES (".((int) $productid).", ".((int) $conf->entity).", '".$db->escape($accounting->account_number)."')";
-						$sql .= " ON DUPLICATE KEY UPDATE ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
+						$sql_exists  = "SELECT rowid FROM " . MAIN_DB_PREFIX . "product_perentity";
+						$sql_exists .= " WHERE fk_product = " . ((int) $productid) . " AND entity = " . ((int) $conf->entity);
+						$resql_exists = $db->query($sql_exists);
+						if (!$resql_exists) {
+							$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$resql_exists.'</pre></span></div>';
+							$ko++;
+						} else {
+							$nb_exists = $db->num_rows($resql_exists);
+							if ($nb_exists <= 0) {
+								// insert
+								$sql  = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, " . $db->escape($accountancy_field_name) . ")";
+								$sql .= " VALUES (" . ((int) $productid) . ", " . ((int) $conf->entity) . ", '" . $db->escape($accounting->account_number) . "')";
+							} else {
+								$obj_exists = $db->fetch_object($resql_exists);
+								// update
+								$sql  = "UPDATE " . MAIN_DB_PREFIX . "product_perentity";
+								$sql .= " SET " . $accountancy_field_name . " = '" . $db->escape($accounting->account_number) . "'";
+								$sql .= " WHERE rowid = " . ((int) $obj_exists->rowid);
+							}
+						}
 					} else {
 						$sql = " UPDATE ".MAIN_DB_PREFIX."product";
 						$sql .= " SET ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
 						$sql .= " WHERE rowid = ".((int) $productid);
 					}
 
+					$db->begin();
 					dol_syslog("/accountancy/admin/productaccount.php sql=".$sql, LOG_DEBUG);
 					if ($db->query($sql)) {
 						$ok++;

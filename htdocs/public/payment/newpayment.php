@@ -115,6 +115,8 @@ if (!$action) {
 
 if ($source == 'organizedeventregistration') {
 	// Finding the Attendee
+	$attendee = new ConferenceOrBoothAttendee($db);
+
 	$invoiceid = GETPOST('ref', 'int');
 	$invoice = new Facture($db);
 
@@ -123,14 +125,28 @@ if ($source == 'organizedeventregistration') {
 	if ($resultinvoice <= 0) {
 		setEventMessages(null, $invoice->errors, "errors");
 	} else {
+		/*
+		$attendeeid = 0;
+
 		$invoice->fetchObjectLinked();
 		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
 
 		if (is_array($linkedAttendees)) {
 			$linkedAttendees = array_values($linkedAttendees);
+			$attendeeid = $linkedAttendees[0];
+		}*/
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+		$sql .= " WHERE fk_invoice = ".((int) $invoiceid);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$attendeeid = $obj->rowid;
+			}
+		}
 
-			$attendee = new ConferenceOrBoothAttendee($db);
-			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+		if ($attendeeid > 0) {
+			$resultattendee = $attendee->fetch($attendeeid);
 
 			if ($resultattendee <= 0) {
 				setEventMessages(null, $attendee->errors, "errors");
@@ -1834,12 +1850,13 @@ if ($source == 'organizedeventregistration') {
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Attendee");
 	print '</td><td class="CTableRow2"><b>';
-	print $thirdparty->name;
+	print $attendee->email;
+	print ($thirdparty->name ? ' ('.$langs->trans("Company").' '.$thirdparty->name.')' : '');
 	print '</b>';
 	print '</td></tr>'."\n";
 
 	if (! is_object($attendee->project)) {
-		$text = 'ErrorProjectotFound';
+		$text = 'ErrorProjectNotFound';
 	} else {
 		$text = $langs->trans("PaymentEvent").' - '.$attendee->project->title;
 	}

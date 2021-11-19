@@ -1231,7 +1231,7 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 }
 
 // Delete page (from website page menu)
-if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
+if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete && !GETPOST('file_manager')) {
 	$error = 0;
 
 	$db->begin();
@@ -3127,7 +3127,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>'; // end websitetools
 
 		print '<span class="websitehelp">';
-		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
+		if ($action == 'editsource' || $action == 'editcontent' || GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
 			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
 			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);

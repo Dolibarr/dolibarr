@@ -689,9 +689,9 @@ class FormMail extends Form
 				$out .= '<tr><td class="minwidth200">';
 				$out .= $langs->trans("GroupEmails");
 				$out .= '</td><td>';
-				$out .= ' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
-				$out .= $langs->trans("OneEmailPerRecipient");
-				$out .= '<span class="hideonsmartphone">';
+				$out .= ' <input type="checkbox" id="oneemailperrecipient" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
+				$out .= '<label for="oneemailperrecipient">'.$langs->trans("OneEmailPerRecipient").'</label>';
+				$out .= '<span class="hideonsmartphone opacitymedium">';
 				$out .= ' - ';
 				$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
 				$out .= '</span>';
@@ -771,12 +771,11 @@ class FormMail extends Form
 
 				if (!empty($this->withmaindocfile)) {
 					if ($this->withmaindocfile == 1) {
-						$out .= '<input type="checkbox" name="addmaindocfile" value="1" />';
+						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" />';
+					} elseif ($this->withmaindocfile == -1) {
+						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" checked="checked" />';
 					}
-					if ($this->withmaindocfile == -1) {
-						$out .= '<input type="checkbox" name="addmaindocfile" value="1" checked="checked" />';
-					}
-					$out .= ' '.$langs->trans("JoinMainDoc").'.<br>';
+					$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDoc").'.</label><br>';
 				}
 
 				if (is_numeric($this->withfile)) {
@@ -792,6 +791,7 @@ class FormMail extends Form
 					if (count($listofpaths)) {
 						foreach ($listofpaths as $key => $val) {
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
+
 							if ($conf->entity > 1) {
 								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
 							}
@@ -802,6 +802,7 @@ class FormMail extends Form
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
+
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';

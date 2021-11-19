@@ -154,18 +154,18 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Other application/modules
 
-- Electronic Document Management (EDM) 
+- Electronic Document Management (EDM)
 - Bookmarks management
 - Reporting
 - Data export/import
-- Barcodes 
+- Barcodes
 - Margin calculations
 - LDAP connectivity
 - ClickToDial integration
 - Mass emailing
 - RSS integration
 - Skype integration
-- Social platforms linking 
+- Social platforms linking
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
 
@@ -179,14 +179,11 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Multi-Users and groups with finely grained rights
 - Multi-Currency
 - Multi-Company (by adding of an external module)
-
 - Very user friendly and easy to use
 - customizable Dashboard
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
-
 - APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
-
 - Support a lot of country specific features:
   - Spanish Tax RE and ISPF
   - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
@@ -197,7 +194,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
   - Compatible with European GDPR rules
   - ...
 - Flexible PDF & ODT generation for invoices, proposals, orders...
-- …
+- ...
 
 
 ### System Environment / Requirements

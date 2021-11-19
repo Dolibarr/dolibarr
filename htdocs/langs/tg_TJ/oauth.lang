@@ -1,0 +1,32 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Танзимоти OAuth
+OAuthServices=Хидматҳои OAuth
+ManualTokenGeneration=Насли аломатҳои дастӣ
+TokenManager=Менеҷери нишона
+IsTokenGenerated=Оё токен тавлид шудааст?
+NoAccessToken=Нишони дастрасӣ ба пойгоҳи додаҳои маҳаллӣ сабт нашудааст
+HasAccessToken=Нишон тавлид шуд ва дар пойгоҳи додаҳои маҳаллӣ сабт шуд
+NewTokenStored=Токен қабул ва захира карда шуд
+ToCheckDeleteTokenOnProvider=Барои тафтиш/нест кардани иҷозати аз ҷониби провайдери %s OAuth сабтшуда ин ҷо клик кунед
+TokenDeleted=Нишон нест карда шуд
+RequestAccess=Барои дархост кардан/нав кардани дастрасӣ ва гирифтани аломати нав барои наҷот ин ҷо клик кунед
+DeleteAccess=Барои нест кардани аломат ин ҷо клик кунед
+UseTheFollowingUrlAsRedirectURI=Ҳангоми эҷоди эътимодномаи худ бо провайдери OAuth URL -и зеринро ҳамчун URI масир истифода баред:
+ListOfSupportedOauthProviders=Эътимодномаеро, ки провайдери OAuth2 пешниҳод кардааст, ворид кунед. Дар ин ҷо танҳо провайдерҳои пуштибони OAuth2 номбар шудаанд. Ин хидматҳо метавонанд аз ҷониби дигар модулҳое истифода шаванд, ки ба тасдиқи OAuth2 ниёз доранд.
+OAuthSetupForLogin=Саҳифа барои тавлиди OAuth
+SeePreviousTab=Ба ҷадвали қаблӣ нигаред
+OAuthIDSecret=ID ва махфияти OAuth
+TOKEN_REFRESH=Ҳозираи навсозии токен
+TOKEN_EXPIRED=Мӯҳлати нишона гузаштааст
+TOKEN_EXPIRE_AT=Мӯҳлати нишона дар
+TOKEN_DELETE=Нишони захирашударо нест кунед
+OAUTH_GOOGLE_NAME=Хидмати OAuth Google
+OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_SECRET=Сирри Google OAuth
+OAUTH_GOOGLE_DESC=Ба <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> ба ин саҳифа равед </a> ва сипас "Эътимоднома" барои эҷоди маълумоти OAuth
+OAUTH_GITHUB_NAME=Хидмати OAuth GitHub
+OAUTH_GITHUB_ID=Шиносаи OAuth GitHub
+OAUTH_GITHUB_SECRET=Сирри OAuth GitHub
+OAUTH_GITHUB_DESC=Ба <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> ба ин саҳифа равед </a> ва сипас "Эҷоди як барномаи навро сабт кунед" то эътимодномаи OAuth эҷод кунед.
+OAUTH_STRIPE_TEST_NAME=Санҷиши рахи OAuth
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

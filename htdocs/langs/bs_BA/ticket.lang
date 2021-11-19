@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Veliki potencijal
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=Ostalo
+
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
 MenuTicketMyAssignNonClosed=My open tickets
@@ -66,7 +68,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Answered
 Waiting=Čekanje
-Closed=Zatvoren
+SolvedClosed=Solved
 Deleted=Deleted
 
 # Dict
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=Ticket added
 TicketMessageSuccessfullyAdded=Message successfully added
 TicketMessagesList=Message list
 NoMsgForThisTicket=No message for this ticket
-Properties=Classification
+TicketProperties=Classification
 LatestNewTickets=Latest %s newest tickets (not read)
 TicketSeverity=Severity
 ShowTicket=See ticket
 RelatedTickets=Related tickets
 TicketAddIntervention=Create intervention
-CloseTicket=Close ticket
-CloseATicket=Close a ticket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirm ticket closing
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed
@@ -314,6 +318,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

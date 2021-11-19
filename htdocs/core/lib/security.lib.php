@@ -489,9 +489,13 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->fournisseur->commande->supprimer) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'payment_supplier') {
+			} elseif ($feature == 'payment_supplier') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
 				if (!$user->rights->fournisseur->facture->creer) {
 					$deleteok = 0;
+				}
+			} elseif ($feature == 'payment') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
+				if (!$user->rights->facture->creer) {
+						$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
 				if (!$user->rights->banque->modifier) {
@@ -513,8 +517,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->salaries->delete) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'salaries') {
-				if (!$user->rights->salaries->delete) {
+			} elseif ($feature == 'adherent') {
+				if (!$user->rights->adherent->supprimer) {
 					$deleteok = 0;
 				}
 			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels

@@ -1675,11 +1675,6 @@ class Form
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
-			}
-
 			if ($htmlname != 'none' && !$options_only) {
 				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
@@ -1808,6 +1803,11 @@ class Form
 
 			if ($htmlname != 'none' && !$options_only) {
 				$out .= '</select>';
+			}
+
+			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 			}
 
 			$this->num = $num;
@@ -6769,13 +6769,15 @@ class Form
 
 		// Search data
 		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
-		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
-			$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
-		}
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (isset($objecttmp->ismultientitymanaged)) {
+			if (!is_numeric($objecttmp->ismultientitymanaged)) {
+				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
+			}
+			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
+				if (!$user->rights->societe->client->voir && !$user->socid) {
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
 			}
 		}
 
@@ -6786,17 +6788,24 @@ class Form
 			$sql .= $hookmanager->resPrint;
 		} else {
 			$sql .= " WHERE 1=1";
-			if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) {
-				$sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
-			}
-			if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
-				$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
-			}
-			if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
-				if ($objecttmp->element == 'societe') {
-					$sql .= " AND t.rowid = ".((int) $user->socid);
-				} else {
-					$sql .= " AND t.fk_soc = ".((int) $user->socid);
+			if (isset($objecttmp->ismultientitymanaged)) {
+				if ($objecttmp->ismultientitymanaged == 1) {
+					$sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+				}
+				if (!is_numeric($objecttmp->ismultientitymanaged)) {
+					$sql .= " AND parenttable.entity = t.".$tmparray[0];
+				}
+				if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
+					if ($objecttmp->element == 'societe') {
+						$sql .= " AND t.rowid = ".((int) $user->socid);
+					} else {
+						$sql .= " AND t.fk_soc = ".((int) $user->socid);
+					}
+				}
+				if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
+					if (!$user->rights->societe->client->voir && !$user->socid) {
+						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+					}
 				}
 			}
 			if ($searchkey != '') {
@@ -8520,8 +8529,8 @@ class Form
 	public function showFilterButtons()
 	{
 		$out = '<div class="nowraponall">';
-		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+		$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';
 
 		return $out;

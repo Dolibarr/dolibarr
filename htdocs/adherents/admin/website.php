@@ -56,7 +56,7 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	$amount = GETPOST('MEMBER_NEWFORM_AMOUNT');
+	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
 	$editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
@@ -205,7 +205,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
 	print '</td><td class="right">';
-	print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
+	print '<input type="text" class="right width75" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
 	// Can edit

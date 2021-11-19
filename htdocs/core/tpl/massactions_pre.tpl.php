@@ -99,12 +99,9 @@ if ($massaction == 'presend') {
 
 	print '<input type="hidden" name="massaction" value="confirm_presend">';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	$formmail = new FormMail($db);
-
 	print dol_get_fiche_head(null, '', '');
 
-	// Cree l'objet formulaire mail
+	// Create mail form
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->withform = -1;
@@ -154,7 +151,7 @@ if ($massaction == 'presend') {
 	// $formmail->withfile = 2; Not yet supported in mass action
 	$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"
 	if ($objecttmp->element != 'societe') {
-		$formmail->withfile = '<span class="hideonsmartphone">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
+		$formmail->withfile = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
 		$formmail->withmaindocfile = - 1; // Add a checkbox "Attach also main document" but not checked by default
 	}
 	$formmail->withbody = 1;

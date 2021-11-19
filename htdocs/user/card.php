@@ -448,19 +448,15 @@ if (empty($reshook)) {
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				// Do we update also ->entity ?
-				if (!empty($conf->multicompany->enabled)) {	// If multicompany is not enabled, we never update the entity of a user.
-					if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-						$object->entity = 1; // all users are in master entity
+				if (!empty($conf->multicompany->enabled && $user->entity == 0 && !empty($user->admin))) {	// If multicompany is not enabled, we never update the entity of a user.
+					if (GETPOST('superadmin', 'int')) {
+						$object->entity = 0;
 					} else {
-						// A user should not be able to move a user into another entity. Only superadmin should be able to do this.
-						if ($user->entity == 0 && $user->admin) {
-							if (GETPOST("superadmin")) {
-								// We try to set the user as superadmin.
-								$object->entity = 0;
-							} else {
-								// We try to change the entity of user
-								$object->entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $object->entity);
-							}
+						if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+							$object->entity = 1; // all users are in master entity
+						} else {
+							// We try to change the entity of user
+							$object->entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $object->entity);
 						}
 					}
 				}

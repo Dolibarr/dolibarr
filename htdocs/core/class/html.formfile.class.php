@@ -136,6 +136,7 @@ class FormFile
 				$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">'."\n";
 				$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'aZ09comma').'">'."\n";
 				$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09comma').'">'."\n";
+				$out .= '<input type="hidden" name="page_y" value="">'."\n";
 			}
 
 			$out .= '<table class="nobordernopadding centpercent">';
@@ -215,13 +216,13 @@ class FormFile
 				$langs->load('link');
 				$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label></span>';
 			}
-			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+			$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= '>';
 
 			if ($addcancel) {
 				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				$out .= '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 
 			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
@@ -275,6 +276,7 @@ class FormFile
 					$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 					$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">'."\n";
 					$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">'."\n";
+					$out .= '<input type="hidden" name="page_y" value="">'."\n";
 				}
 
 				$out .= '<div class="valignmiddle">';
@@ -293,7 +295,7 @@ class FormFile
 				$out .= '<input type="hidden" name="objectid" value="'.$object->id.'">';
 				$out .= '</div>';
 				$out .= '<div class="inline-block" style="padding-right: 10px;">';
-				$out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
+				$out .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
 				$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 				$out .= '>';
 				$out .= '</div>';
@@ -1543,7 +1545,7 @@ class FormFile
 	 *
 	 *  @param	string	$upload_dir         Directory that was scanned. This directory will contains files into subdirs REF/files
 	 *  @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
-	 *  @param  string	$modulepart         Value for modulepart used by download wrapper
+	 *  @param  string	$modulepart         Value for modulepart used by download wrapper. Value can be $object->table_name (that is 'myobject' or 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 	 *  @param  string	$param              Parameters on sort links
 	 *  @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
 	 *  @param  string	$relativepath       Relative path of docs (autodefined if not provided)
@@ -1643,6 +1645,9 @@ class FormFile
 		} elseif ($modulepart == 'project') {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$object_instance = new Project($this->db);
+		} elseif ($modulepart == 'project_task') {
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$object_instance = new Task($this->db);
 		} elseif ($modulepart == 'fichinter') {
 			include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 			$object_instance = new Fichinter($this->db);
@@ -1661,6 +1666,9 @@ class FormFile
 		} elseif ($modulepart == 'banque') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$object_instance = new Account($this->db);
+		} elseif ($modulepart == 'chequereceipt') {
+			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			$object_instance = new RemiseCheque($this->db);
 		} elseif ($modulepart == 'mrp-mo') {
 			include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 			$object_instance = new Mo($this->db);
@@ -1672,7 +1680,8 @@ class FormFile
 					dol_include_once($hookmanager->resArray['classpath']);
 					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
 						if (class_exists($hookmanager->resArray['classname'])) {
-							$object_instance = new ${$hookmanager->resArray['classname']}($this->db);
+							$tmpclassname = $hookmanager->resArray['classname'];
+							$object_instance = new $tmpclassname($this->db);
 						}
 					}
 				}
@@ -1706,21 +1715,27 @@ class FormFile
 				$id = 0;
 				$ref = '';
 
-				// To show ref or specific information according to view to show (defined by $module)
+				// To show ref or specific information according to view to show (defined by $modulepart)
+				// $modulepart can be $object->table_name (that is 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 				$reg = array();
 				if ($modulepart == 'company' || $modulepart == 'tax') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
 					$id = (isset($reg[1]) ? $reg[1] : '');
 				} elseif ($modulepart == 'invoice_supplier') {
 					preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg);
-					$ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) {
+					$ref = (isset($reg[1]) ? $reg[1] : '');
+					if (is_numeric($ref)) {
 						$id = $ref;
 						$ref = '';
 					}
-				} elseif ($modulepart == 'user' || $modulepart == 'holiday') {
+				} elseif ($modulepart == 'user') {
 					// $ref may be also id with old supplier invoices
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$id = (isset($reg[1]) ? $reg[1] : '');
+				} elseif ($modulepart == 'project_task') {
+					// $ref of task is the sub-directory of the project
+					$reg = explode("/", $relativefile);
+					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} elseif (in_array($modulepart, array(
 					'invoice',
 					'propal',
@@ -1730,11 +1745,14 @@ class FormFile
 					'contract',
 					'product',
 					'project',
+					'project_task',
 					'fichinter',
 					'expensereport',
 					'recruitment-recruitmentcandidature',
 					'mrp-mo',
-					'banque'))) {
+					'banque',
+					'chequereceipt',
+					'holiday'))) {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
@@ -1811,9 +1829,10 @@ class FormFile
 				print '</td>';
 
 				// File
+				// Check if document source has external module part, if it the case use it for module part on document.php
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
-				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
 				if ($forcedownload) {
 					print '&attachment=1';
 				}

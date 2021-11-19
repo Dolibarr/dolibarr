@@ -146,7 +146,7 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/=data:/si', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $val);
+	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforecopy|beforecut|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $val);
 	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $val);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $val);
@@ -1039,6 +1039,28 @@ if (!defined('NOLOGIN')) {
 		$user->rights->user->user->supprimer = 1;
 		$user->rights->user->self->creer = 1;
 		$user->rights->user->self->password = 1;
+
+		//Required if advanced permissions are used with MAIN_USE_ADVANCED_PERMS
+		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			if (empty($user->rights->user->user_advance)) {
+				$user->rights->user->user_advance = new stdClass(); // To avoid warnings
+			}
+			if (empty($user->rights->user->self_advance)) {
+				$user->rights->user->self_advance = new stdClass(); // To avoid warnings
+			}
+			if (empty($user->rights->user->group_advance)) {
+				$user->rights->user->group_advance = new stdClass(); // To avoid warnings
+			}
+
+			$user->rights->user->user_advance->readperms = 1;
+			$user->rights->user->user_advance->write = 1;
+			$user->rights->user->self_advance->readperms = 1;
+			$user->rights->user->self_advance->writeperms = 1;
+			$user->rights->user->group_advance->read = 1;
+			$user->rights->user->group_advance->readperms = 1;
+			$user->rights->user->group_advance->write = 1;
+			$user->rights->user->group_advance->delete = 1;
+		}
 	}
 
 	/*
@@ -3194,6 +3216,7 @@ if (!function_exists("llxFooter")) {
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
 			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
 				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
 			|| $forceping) {
@@ -3202,7 +3225,7 @@ if (!function_exists("llxFooter")) {
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
 				} elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping) {	// Cookie is set when we uncheck the checkbox in the installation wizard.
 					// MAIN_LAST_PING_KO_DATE
-					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent
+					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent (this month)
 					if (!empty($conf->global->MAIN_LAST_PING_KO_DATE) && substr($conf->global->MAIN_LAST_PING_KO_DATE, 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
 						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occured this month, we will try later. -->\n";
 					} else {

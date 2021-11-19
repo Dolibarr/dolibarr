@@ -121,6 +121,7 @@ class Partnership extends CommonObject
 		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>63, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
 		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>-2,),
 		'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>64, 'notnull'=>0, 'visible'=>-2,),
+		// fk_member and fk_soc are added into constructor
 	);
 
 	/**
@@ -197,9 +198,9 @@ class Partnership extends CommonObject
 		$this->db = $db;
 
 		if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
-			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'member');
+			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'member', 'csslist'=>'tdoverflowmax150');
 		} else {
-			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company');
+			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'csslist'=>'tdoverflowmax150');
 		}
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
@@ -1157,7 +1158,7 @@ class Partnership extends CommonObject
 		$this->lines = array();
 
 		$objectline = new PartnershipLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_partnership = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_partnership = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

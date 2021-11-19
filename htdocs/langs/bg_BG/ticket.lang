@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Нормален
 TicketSeverityShortHIGH=Висок
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=Други
+
 ErrorBadEmailAddress=Полето "%s" е неправилно
 MenuTicketMyAssign=Мои тикети
 MenuTicketMyAssignNonClosed=Мои активни тикети
@@ -66,7 +68,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Отговорен
 Waiting=В изчакване
-Closed=Приключен
+SolvedClosed=Solved
 Deleted=Изтрит
 
 # Dict
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=Тикетът е добавен
 TicketMessageSuccessfullyAdded=Съобщението е успешно добавено
 TicketMessagesList=Списък със съобщения
 NoMsgForThisTicket=Няма съобщение за този тикет
-Properties=Реквизити
+TicketProperties=Реквизити
 LatestNewTickets=Тикети: %s последни (непрочетени)
 TicketSeverity=Приоритет
 ShowTicket=Преглед на тикет
 RelatedTickets=Свързани тикети
 TicketAddIntervention=Създаване на интервенция
-CloseTicket=Приключване на тикет
-CloseATicket=Приключване на тикет
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Потвърдете приключването на тикета
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Потвърдете изтриването на тикета
 TicketDeletedSuccess=Тикетът е успешно изтрит
 TicketMarkedAsClosed=Тикетът е маркиран като приключен
@@ -314,6 +318,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

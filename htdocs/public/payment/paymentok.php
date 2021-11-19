@@ -932,7 +932,7 @@ if ($ispaymentok) {
 		}
 
 		// TODO send email with acknowledgment for the donation
-		//      (need that the donation module can gen a pdf document for the cerfa with pre filled content)
+		//      (we need first that the donation module is able to generate a pdf document for the cerfa with pre filled content)
 	} elseif (array_key_exists('ATT', $tmptag) && $tmptag['ATT'] > 0) {
 		// Record payment for registration to an event for an attendee
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1340,6 +1340,7 @@ if ($ispaymentok) {
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_OK';
 	if (!empty($conf->global->$key)) {
+		print '<br>';
 		print $conf->global->$key;
 	}
 

@@ -75,8 +75,13 @@ if ($complete == 'na' || $complete == -2) {
 	$complete = -1;
 }
 
-$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
-$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+if ($fulldayevent) {
+	$datep = dol_mktime('00', '00', 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+	$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+} else {
+	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -1218,7 +1223,11 @@ if ($action == 'create') {
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
 		}
-		$tid = GETPOST("projecttaskid") ? GETPOST("projecttaskid") : '';
+		if ($origin=='task') {
+			$tid= GETPOST("originid");
+		} else {
+			$tid = GETPOST("projecttaskid") ? GETPOST("projecttaskid") : '';
+		}
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
@@ -1226,12 +1235,16 @@ if ($action == 'create') {
 	// Object linked
 	if (!empty($origin) && !empty($originid)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
-		print '<td colspan="3">'.dolGetElementUrl($originid, $origin, 1).'</td></tr>';
-		print '<input type="hidden" name="fk_element" value="'.GETPOST('originid', 'int').'">';
-		print '<input type="hidden" name="elementtype" value="'.GETPOST('origin').'">';
-		print '<input type="hidden" name="originid" value="'.GETPOST('originid', 'int').'">';
-		print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
+
+		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
+			// We do not use link for object that already contains a hard coded
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
+			print '<td colspan="3">'.dolGetElementUrl($originid, $origin, 1).'</td></tr>';
+			print '<input type="hidden" name="fk_element" value="'.GETPOST('originid', 'int').'">';
+			print '<input type="hidden" name="elementtype" value="'.GETPOST('origin').'">';
+			print '<input type="hidden" name="originid" value="'.GETPOST('originid', 'int').'">';
+			print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
+		}
 	}
 
 	$reg = array();
@@ -1258,7 +1271,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	print '</table>';
