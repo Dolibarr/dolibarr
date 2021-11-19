@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Actualment només és possible 1 camp com a Eix X
 AtLeastOneMeasureIsRequired=Almenys 1 camp per a la mesura és obligatori
 AtLeastOneXAxisIsRequired=Almenys 1 camp per a l'Eix X és obligatori
 LatestBlogPosts=Darreres publicacions al bloc
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Ordre de venda validat
 Notify_ORDER_SENTBYMAIL=Ordre de venda enviat per correu
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Ordre de compra enviat per correu electrònic
@@ -291,3 +294,7 @@ PopuCom=Productes / Serveis per popularitat a les comandes
 ProductStatistics=Productes / Serveis Estadístiques
 NbOfQtyInOrders=Quantitat en comandes
 SelectTheTypeOfObjectToAnalyze=Seleccioneu un objecte per veure'n les estadístiques ...
+
+ConfirmBtnCommonContent = Esteu segur que voleu "%s"?
+ConfirmBtnCommonTitle = Confirmeu la vostra acció
+CloseDialog = Tancar

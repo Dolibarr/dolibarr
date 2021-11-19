@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Gebruik een externe / absolute link 
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Kies of de gekoppelde pagina moet worden geopend in het huidige tabblad of een nieuw tabblad
 BookmarksManagement=Internetfavorietenbeheer
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

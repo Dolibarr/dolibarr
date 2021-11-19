@@ -14,7 +14,6 @@ NewSupplierOrderShort=Novo Pedido
 NewOrderSupplier=Novo Pedido de Compra
 ToOrder=Realizar Pedido
 MakeOrder=Realizar Pedido
-SaleOrderLines=Linhas do pedido de venda
 PurchaseOrderLines=Linhas do pedido de compra
 SuppliersOrdersRunning=Pedidos de compra atuais
 CustomerOrder=Pedido de venda

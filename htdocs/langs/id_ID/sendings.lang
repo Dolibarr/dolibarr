@@ -43,7 +43,7 @@ ConfirmValidateSending=Apakah Anda yakin ingin memvalidasi pengiriman ini dengan
 ConfirmCancelSending=Anda yakin ingin membatalkan pengiriman ini?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Peringatan, tidak ada produk yang menunggu untuk dikirim.
-StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+StatsOnShipmentsOnlyValidated=Statistik hanya untuk pengiriman yang divalidasi. Tanggal yang digunakan adalah tanggal validasi pengiriman (tanggal pengiriman yang direncanakan tidak selalu diketahui)
 DateDeliveryPlanned=Tanggal pengiriman yang direncanakan
 RefDeliveryReceipt=Kwitansi pengiriman Ref
 StatusReceipt=Tanda terima pengiriman status
@@ -53,7 +53,7 @@ SendShippingByEMail=Kirim kiriman melalui email
 SendShippingRef=Pengajuan pengiriman %s
 ActionsOnShipping=Acara pengiriman
 LinkToTrackYourPackage=Tautan untuk melacak paket Anda
-ShipmentCreationIsDoneFromOrder=Untuk saat ini, pembuatan kiriman baru dilakukan dari kartu pesanan.
+ShipmentCreationIsDoneFromOrder=Untuk saat ini, pembuatan pengiriman baru dilakukan dari catatan Sales Order.
 ShipmentLine=Jalur pengiriman
 ProductQtyInCustomersOrdersRunning=Kuantitas produk dari pesanan penjualan terbuka
 ProductQtyInSuppliersOrdersRunning=Kuantitas produk dari pesanan pembelian terbuka
@@ -66,7 +66,7 @@ ValidateOrderFirstBeforeShipment=Anda harus terlebih dahulu memvalidasi pesanan 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Model dokumen yang lebih lengkap untuk tanda terima pengiriman (logo ...)
-DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+DocumentModelStorm=Model dokumen yang lebih lengkap untuk resi pengiriman dan kompatibilitas extrafields (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER Konstan tidak ditentukan
 SumOfProductVolumes=Jumlah volume produk
 SumOfProductWeights=Jumlah bobot produk

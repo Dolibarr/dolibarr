@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alto
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=Outro
+
 ErrorBadEmailAddress=Campo '%s' incorreto
 MenuTicketMyAssign=Os meus tickets
 MenuTicketMyAssignNonClosed=Os meus pedidos abertos
@@ -66,7 +68,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Respondidas
 Waiting=Em espera
-Closed=Fechado
+SolvedClosed=Solved
 Deleted=Excluído
 
 # Dict
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=Ticket adicionado
 TicketMessageSuccessfullyAdded=Mensagem adicionada com sucesso
 TicketMessagesList=Lista de mensagens
 NoMsgForThisTicket=Nenhuma mensagem para este ticket
-Properties=Classificação
+TicketProperties=Classification
 LatestNewTickets=Últimos bilhetes %s mais recentes (não lidos)
 TicketSeverity=Severidade
 ShowTicket=Ver ticket
 RelatedTickets=Tickets relacionados
 TicketAddIntervention=Criar intervenção
-CloseTicket=Fechar ticket
-CloseATicket=Fechar um ticket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirmar o fecho do ticket
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Por favor confirme a eliminação do ticket
 TicketDeletedSuccess=Ticket eliminado com sucesso
 TicketMarkedAsClosed=Ticket marcado como fechado
@@ -314,6 +318,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
