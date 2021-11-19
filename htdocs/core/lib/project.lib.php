@@ -311,7 +311,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$project->id;
-	$head[$h][1] .= $langs->trans("Events");
+	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
@@ -471,14 +471,6 @@ function project_timesheet_prepare_head($mode, $fuser = null)
 		$h++;
 	}
 
-	/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perline.php".($param?'?'.$param:'');
-		$head[$h][1] = $langs->trans("InputDetail");
-		$head[$h][2] = 'inputperline';
-		$h++;
-	}*/
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_timesheet');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_timesheet', 'remove');
@@ -517,7 +509,7 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
-	if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$langs->load("members");
 
 		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';

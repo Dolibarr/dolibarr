@@ -58,6 +58,7 @@ ManagePartnership=Manage partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
 ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 PartnershipType=Partnership type
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

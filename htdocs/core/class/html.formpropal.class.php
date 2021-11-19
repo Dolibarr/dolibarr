@@ -104,6 +104,7 @@ class FormPropal
 			print '<option value="-1">&nbsp;</option>';
 		}
 
+		$i = 0;
 		foreach ($listofstatus as $key => $obj) {
 			if ($excludedraft) {
 				if ($obj['code'] == 'Draft' || $obj['code'] == 'PR_DRAFT') {

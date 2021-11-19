@@ -795,7 +795,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 	$permission = $user->rights->societe->creer;
 
 	$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
-	if ($contacts < 0) {
+	if (is_numeric($contacts) && $contacts < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		// Form to add record into a category
@@ -1048,7 +1048,7 @@ if ($type == Categorie::TYPE_USER) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddProjectIntoCategory").' &nbsp;';
-			$form->select_users('', 'elemid');
+			print $form->select_dolusers('', 'elemid');
 			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';

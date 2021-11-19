@@ -256,8 +256,11 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 	</div>
 
 <?php
-dol_fiche_end();
+
+print dol_get_fiche_end();
+
 llxFooter();
+
 
 
 /**

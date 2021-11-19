@@ -16,17 +16,16 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_hrm_evaluationdet(
-	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	fk_skill integer NOT NULL, 
-	fk_evaluation integer NOT NULL, 
-	rank integer NOT NULL,
-	required_rank integer NOT NULL, 
+CREATE TABLE llx_hrm_evaluationdet
+(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	fk_skill integer NOT NULL,
+	fk_evaluation integer NOT NULL,
+	rankorder integer NOT NULL,
+	required_rank integer NOT NULL,
 	import_key varchar(14)
-	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

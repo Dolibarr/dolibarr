@@ -118,6 +118,7 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 $projectRequired = $conf->projet->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+$fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
@@ -138,6 +139,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'expensereport', $object->id, 'expensereport');
+
+$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -1155,6 +1158,12 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
 		}
 
+		// If no file associated
+		if ($fileRequired && $fk_ecm_files == 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		}
+
 		if (!$error) {
 			$type = 0; // TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
@@ -1339,7 +1348,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->expensereport->dir_output;
-	$permissiontoadd = $user->rights->expensereport->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1850,7 +1858,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
@@ -1903,7 +1910,7 @@ if ($action == 'create') {
 				$nbcols++;
 			}
 
-			print '<table class="noborder paymenttable" width="100%">';
+			print '<table class="noborder paymenttable centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
@@ -1924,7 +1931,7 @@ if ($action == 'create') {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-			$sql .= " WHERE e.rowid = '".$id."'";
+			$sql .= " WHERE e.rowid = ".((int) $id);
 			$sql .= " AND p.fk_expensereport = e.rowid";
 			$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 			$sql .= " ORDER BY dp";
@@ -2002,7 +2009,6 @@ if ($action == 'create') {
 			}
 			print "</table>";
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 

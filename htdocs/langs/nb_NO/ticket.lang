@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Høy
 TicketSeverityShortBLOCKING=Kritisk, blokkerende
 
+TicketCategoryShortOTHER=Annet
+
 ErrorBadEmailAddress=Felt '%s' er feil
 MenuTicketMyAssign=Mine supportsedler
 MenuTicketMyAssignNonClosed=Mine åpne supportsedler
@@ -180,7 +182,7 @@ MessageSuccessfullyAdded=Supportseddel lagt til
 TicketMessageSuccessfullyAdded=Melding lagt til
 TicketMessagesList=Meldingsliste
 NoMsgForThisTicket=Ingen melding for denne supportseddelen
-Properties=Klassifisering
+TicketProperties=Klassifisering
 LatestNewTickets=Siste %s nyeste supportsedler (ikke lest)
 TicketSeverity=Alvorlighetsgrad
 ShowTicket=Se supportseddel
@@ -316,6 +318,7 @@ BoxTicketLastXDays=Antall nye billetter etter dager de siste %s dagene
 BoxTicketLastXDayswidget = Antall nye billetter etter dager de siste X dagene
 BoxNoTicketLastXDays=Ingen nye billetter de siste %s dagene
 BoxNumberOfTicketByDay=Antall nye billetter etter dag
-BoxNewTicketVSClose=Antall dagens nye billetter kontra dagens lukkede billetter
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Billett opprettet i dag
 TicketClosedToday=Billetter lukket i dag
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

@@ -67,10 +67,12 @@ $search_task_user = GETPOST('search_task_user', 'int');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
+$search_opp_status = GETPOST("search_opp_status", 'alpha');
 
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
 if ($mine) {
-	$search_task_user = $user->id; $mine = 0;
+	$search_task_user = $user->id;
+	$mine = 0;
 }
 
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -273,7 +275,7 @@ if ($id) {
 }
 
 // Get list of project id allowed to user (in a string list separated by coma)
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
 //var_dump($projectsListId);
@@ -346,7 +348,7 @@ $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($search_project_user > 0) {
@@ -357,7 +359,7 @@ if ($search_task_user > 0) {
 }
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('project').')';
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
 if (is_object($projectstatic) && $projectstatic->id > 0) {
@@ -604,7 +606,9 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
+if (!empty($type)) {
+	print '<input type="hidden" name="type" value="'.$type.'">';
+}
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 // Show description of content
@@ -634,7 +638,7 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
-$morehtmlfilter = '';
+$moreforfilter = '';
 
 // Filter on categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
@@ -861,10 +865,34 @@ if (!empty($arrayfields['t.tobill']['checked'])) {
 if (!empty($arrayfields['t.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+$totalarray = array(
+	'nbfield' => 0,
+	'val' => array(
+		't.planned_workload' => 0,
+		't.duration_effective' => 0,
+		't.progress' => 0,
+		't.budget_amount' => 0,
+	),
+	'totalplannedworkload' => 0,
+	'totaldurationeffective' => 0,
+	'totaldurationdeclared' => 0,
+	'totaltobillfield' => 0,
+	'totalbilledfield' => 0,
+	'totalbudget_amountfield' => 0,
+	'totalbudgetamount' => 0,
+	'totaltobill' => 0,
+	'totalbilled' => 0,
+);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array(
+	'arrayfields' => $arrayfields,
+	'param' => $param,
+	'sortfield' => $sortfield,
+	'sortorder' => $sortorder,
+	'totalarray' => &$totalarray,
+);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['t.datec']['checked'])) {
@@ -887,7 +915,6 @@ if (!empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) {
 }
 
 $i = 0;
-$totalarray = array();
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -1148,7 +1175,7 @@ while ($i < min($num, $limit)) {
 			}
 			$totalarray['val']['t.budget_amount'] += $obj->budget_amount;
 			if (!$i) {
-				$totalarray['totalbudget_amount'] = $totalarray['nbfield'];
+				$totalarray['totalbudget_amountfield'] = $totalarray['nbfield'];
 			}
 			$totalarray['totalbudgetamount'] += $obj->budget_amount;
 			print '</td>';
@@ -1269,7 +1296,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		} elseif ($totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-		} elseif ($totalarray['totalbudget_amount'] == $i) {
+		} elseif ($totalarray['totalbudget_amountfield'] == $i) {
 			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} else {
 			print '<td></td>';

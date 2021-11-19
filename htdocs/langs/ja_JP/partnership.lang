@@ -58,6 +58,7 @@ ManagePartnership=パートナーシップを管理する
 BacklinkNotFoundOnPartnerWebsite=パートナーのウェブサイトにバックリンクが見つからない
 ConfirmClosePartnershipAsk=このパートナーシップをキャンセルしてもよいか？
 PartnershipType=パートナーシップの種類
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

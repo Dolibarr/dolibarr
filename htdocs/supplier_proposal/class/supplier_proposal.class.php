@@ -1019,7 +1019,7 @@ class SupplierProposal extends CommonObject
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
-							empty($this->lines[$i]->label) ? '' : $this->lines[$i]->label,		// deprecated
+							empty($this->lines[$i]->label) ? '' : $this->lines[$i]->label, // deprecated
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->ref_fourn,
 							$this->lines[$i]->fk_unit,
@@ -1405,7 +1405,9 @@ class SupplierProposal extends CommonObject
 			$soc = new Societe($this->db);
 			$result = $soc->fetch($this->socid);
 
-			if ($result < 0) return -1;
+			if ($result < 0) {
+				return -1;
+			}
 
 			// Define new ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life

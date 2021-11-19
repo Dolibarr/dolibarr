@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan"));
+$langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan", "salaries"));
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('account', 'int') ? GETPOST('account', 'int') : GETPOST('id', 'int');
@@ -481,7 +481,7 @@ if (empty($numref)) {
 
 			// Description
 			print '<td valign="center">';
-			print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'">';
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) {
@@ -492,7 +492,7 @@ if (empty($numref)) {
 			print '</a>';
 
 			/*
-			 * Ajout les liens (societe, company...)
+			 * Add links under the label (link to payment, company, user, social contribution...)
 			 */
 			$newline = 1;
 			$links = $object->get_url($objp->rowid);

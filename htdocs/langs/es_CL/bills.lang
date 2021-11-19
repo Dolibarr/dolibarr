@@ -410,7 +410,6 @@ ToCreateARecurringInvoiceGene=Para generar facturas futuras de forma regular y m
 ToCreateARecurringInvoiceGeneAuto=Si necesita que dichas facturas se generen automáticamente, solicite a su administrador que habilite y configure el módulo <strong>%s</strong> . Tenga en cuenta que ambos métodos (manual y automático) se pueden usar juntos sin riesgo de duplicación.
 DeleteRepeatableInvoice=Eliminar factura de plantilla
 ConfirmDeleteRepeatableInvoice=¿Estás seguro de que deseas eliminar la factura de la plantilla?
-CreateOneBillByThird=Cree una factura por un tercero (de lo contrario, una factura por pedido)
 AutoFillDateFrom=Establecer fecha de inicio para la línea de servicio con fecha de factura
 AutoFillDateFromShort=Establecer fecha de inicio
 AutoFillDateToShort=Establecer fecha de finalización

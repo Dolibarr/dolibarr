@@ -175,7 +175,7 @@ if (!empty($conf->holiday->enabled)) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 
@@ -404,7 +404,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	}
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);

@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Høj
 TicketSeverityShortBLOCKING=Kritisk, blokering
 
+TicketCategoryShortOTHER=Andre
+
 ErrorBadEmailAddress=Felt '%s' forkert
 MenuTicketMyAssign=Mine opgaver
 MenuTicketMyAssignNonClosed=Mine åbne opgaver
@@ -180,7 +182,7 @@ MessageSuccessfullyAdded=Opgave tilføjet
 TicketMessageSuccessfullyAdded=Meddelelse med succes tilføjet
 TicketMessagesList=Meddelelsesliste
 NoMsgForThisTicket=Ingen besked til denne opgave
-Properties=Klassifikation
+TicketProperties=Klassifikation
 LatestNewTickets=Seneste %s nyeste opgaver (ikke læses)
 TicketSeverity=Alvorlighed
 ShowTicket=Se opgave
@@ -316,6 +318,7 @@ BoxTicketLastXDays=Antal nye opgaver efter dage de sidste %s dage
 BoxTicketLastXDayswidget = Antal nye opgaver efter dage de sidste X dage
 BoxNoTicketLastXDays=Ingen nye opgaver de sidste %s dage
 BoxNumberOfTicketByDay=Antal nye opgaver om dagen
-BoxNewTicketVSClose=Antal af dagens nye opgaver versus dagens lukkede opgaver
+BoxNewTicketVSClose=Antal billetter kontra lukkede billetter (i dag)
 TicketCreatedToday=Opgave oprettet i dag
 TicketClosedToday=Opgave lukket i dag
+KMFoundForTicketGroup=Vi fandt emner og ofte stillede spørgsmål, der kan besvare dit spørgsmål, takket være at kontrollere dem, inden du indsender billetten

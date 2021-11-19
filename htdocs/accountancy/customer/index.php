@@ -184,6 +184,8 @@ if ($action == 'validatehistory') {
 	} else {
 		$num_lines = $db->num_rows($result);
 
+		$facture_static = new Facture($db);
+
 		$isSellerInEEC = isInEEC($mysoc);
 
 		$thirdpartystatic = new Societe($db);
@@ -247,13 +249,13 @@ if ($action == 'validatehistory') {
 			if (!is_array($return) && $return<0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {
-				$suggestedid=$return['suggestedid'];
-				$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
+				$suggestedid = $return['suggestedid'];
+				$suggestedaccountingaccountfor = $return['suggestedaccountingaccountfor'];
 
-				if (!empty($suggestedid) && $suggestedaccountingaccountfor<>'') {
-					$suggestedid=$return['suggestedid'];
+				if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
+					$suggestedid = $return['suggestedid'];
 				} else {
-					$suggestedid=0;
+					$suggestedid = 0;
 				}
 			}
 
@@ -263,6 +265,18 @@ if ($action == 'validatehistory') {
 					$objp->code_sell_t = $objp->company_code_sell;
 					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
 					$suggestedaccountingaccountfor = '';
+				}
+			}
+
+			// Manage Deposit
+			if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT)) {
+				if ($objp->description == "(DEPOSIT)" || $objp->ftype == $facture_static::TYPE_DEPOSIT) {
+					$accountdeposittoventilated = new AccountingAccount($db);
+					$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+					$objp->code_sell_l = $accountdeposittoventilated->ref;
+					$objp->code_sell_p = '';
+					$objp->code_sell_t = '';
+					$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
 				}
 			}
 
