@@ -95,12 +95,12 @@ dol_mkdir($dir);
 $stats = new CommandeStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 if ($mode == 'customer') {
 	if ($object_status != '' && $object_status >= -1) {
-		$stats->where .= ' AND c.fk_statut IN ('.implode(',', $object_status).')';
+		$stats->where .= ' AND c.fk_statut IN ('.$db->escape(implode(',', $object_status)).')';
 	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
-		$stats->where .= ' AND c.fk_statut IN ('.implode(',', $object_status).')';
+		$stats->where .= ' AND c.fk_statut IN ('.$db->escape(implode(',', $object_status)).')';
 	}
 }
 
