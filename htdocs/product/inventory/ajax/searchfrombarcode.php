@@ -50,13 +50,17 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 require '../../../main.inc.php';
-//require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+//include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+$object = new Inventory($db);
+
 
 $action = GETPOST("action", "alpha");
 $barcode = GETPOST("barcode", "aZ09");
 $product = GETPOST("product");
 $response = "";
 $fk_entrepot = GETPOST("fk_entrepot", "int");
+$warehousefound = 0;
+$warehouseid = 0;
 if ($action == "existbarcode" && !empty($barcode)) {
 	$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
@@ -71,10 +75,19 @@ if ($action == "existbarcode" && !empty($barcode)) {
 			$object = $db->fetch_object($resql);
 			if ($barcode == $object->barcode) {
 				if (!empty($object->fk_entrepot) && $product["Warehouse"] == $object->fk_entrepot) {
-					//si warehouse !=$object->fk_entrepot erreur
+					$warehousefound++;
+					$warehouseid = $object->fk_entrepot;
 				}
 			}
 		}
+		if ($warehousefound < 1) {
+			$response = array('status'=>'error','errorcode'=>'NotFound','message'=>'No warehouse found for barcode'.$barcode);
+		} elseif ($warehousefound > 1) {
+			$response = array('status'=>'error','errorcode'=>'TooManyWarehouse','message'=>'Too many warehouse found');
+		} else {
+			$response = array('status'=>'success','message'=>'Warehouse found','warehouse'=>$warehouseid);
+		}
+		$response = json_encode($response);
 	} else {
 		$response = "No results found for barcode";
 	}

@@ -588,7 +588,7 @@ if ($object->id > 0) {
 								alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
 								throw"'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
 						}
-					)}
+					});
 					tabproduct.forEach(product => {
 						if(product.Qty!=0){
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
@@ -605,12 +605,17 @@ if ($object->id > 0) {
 					$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
 						data: { "action":"existbarcode",'.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.',':'').'"barcode":element,"product":product},
 						type: \'POST\',
+						async: false,
 						success: function(response) {
-							console.log("test+1");
-							//gerer erreur si entrepot different
+							response = JSON.parse(response);
+							if(response.status == "success"){
+								console.log(response.message);
+							}else{
+								console.error(response.message);
+							}
 						},
 						error : function(output) {
-						   console.error("Error on Fetch of KM articles");
+						   console.error("Error on barcodeserialforproduct function");
 						},
 				   });
 					console.log("Product "+(index+=1)+": "+element);
@@ -623,19 +628,12 @@ if ($object->id > 0) {
 					if(testonproduct == element){
 						if(selectaddorreplace == "add"){
 							productqty = parseInt(product.Qty,10)
-							product.Qty = productqty + (1*barcodeproductqty)
+							product.Qty = productqty + barcodeproductqty
 						}else if(selectaddorreplace == "replace"){
-							product.Qty = (1*barcodeproductqty)
+							product.Qty = barcodeproductqty
 						}
 					}else{
 						BarCodeDoesNotExist+=1;
-					}
-					if(autodetect == false){
-						if(BarCodeDoesNotExist >= tabproduct.length && mode == "barcode"){
-							alert("'.$langs->trans('ProductBarcodeDoesNotExist').': "+element);
-						}else if(BarCodeDoesNotExist >= tabproduct.length && mode == "lotserial"){
-							alert("'.$langs->trans('ProductBatchDoesNotExist').': "+element);
-						}
 					}
 				})
 			}
