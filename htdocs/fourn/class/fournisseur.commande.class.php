@@ -770,6 +770,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		}
+
 		return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
 	}
 
