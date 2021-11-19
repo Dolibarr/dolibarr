@@ -141,7 +141,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texte .= '</textarea>';
 		$texte .= '</td>';
 		$texte .= '<td class="center">&nbsp; ';
-		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" name="Button"value="'.$langs->trans("Modify").'">';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
@@ -320,17 +320,22 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
-							$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
-							foreach ($tmparray as $key => $val) {
-								try {
-									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								} catch (SegmentException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
+							if ((int) $res_contact > 0) {
+								$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
+								foreach ($tmparray as $key => $val) {
+									try {
+										$listlines->setVars($key, $val, true, 'UTF-8');
+									} catch (OdfException $e) {
+										dol_syslog($e->getMessage(), LOG_INFO);
+									} catch (SegmentException $e) {
+										dol_syslog($e->getMessage(), LOG_INFO);
+									}
 								}
+								$listlines->merge();
+							} else {
+								$this->error = $contactstatic->error;
+								dol_syslog($this->error, LOG_WARNING);
 							}
-							$listlines->merge();
 						}
 						$odfHandler->mergeSegment($listlines);
 					} catch (OdfException $e) {

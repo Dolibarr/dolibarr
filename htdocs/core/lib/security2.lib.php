@@ -111,7 +111,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Load translation files required by the page
 					$langs->loadLangs(array('other', 'main', 'errors'));
 
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorFailedToLoadLoginFileForMode", $mode);
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorFailedToLoadLoginFileForMode", $mode);
 				}
 			}
 		}
@@ -215,14 +215,19 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Execute hook getLoginPageOptions (for table)
-		$parameters = array('entity' => GETPOST('entity', 'int'));
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
 		$reshook = $hookmanager->executeHooks('getLoginPageOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$morelogincontent = $hookmanager->resPrint;
 
 		// Execute hook getLoginPageExtraOptions (eg for js)
-		$parameters = array('entity' => GETPOST('entity', 'int'));
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
 		$reshook = $hookmanager->executeHooks('getLoginPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$moreloginextracontent = $hookmanager->resPrint;
+
+		//Redirect after connection
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$reshook = $hookmanager->executeHooks('redirectAfterConnection', $parameters); // Note that $action and $object may have been modified by some hooks.
+		$php_self = $hookmanager->resPrint;
 
 		// Login
 		$login = (!empty($hookmanager->resArray['username']) ? $hookmanager->resArray['username'] : (GETPOST("username", "alpha") ? GETPOST("username", "alpha") : $demologin));
@@ -234,7 +239,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))	{
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
 			$width = 128;
 		} elseif (!empty($mysoc->logo_squarred_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_small)) {
@@ -476,8 +481,8 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 			}
 
 			$generated_password = str_shuffle($randomCode);
-		} else // Old platform, non cryptographic random
-		{
+		} else {
+			// Old platform, non cryptographic random
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
 				$tmp = mt_rand(0, $max);

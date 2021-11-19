@@ -178,7 +178,7 @@ $arrayofmode = array(
 	'facture' => 'Facture'
 	);
 $title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1);
-$title .= ' <input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$title .= ' <input type="submit" class="button small" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -198,7 +198,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 print '<table class="noborder centpercent">';
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);

@@ -149,8 +149,8 @@ NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Corrección de datos desnormalizados
-MigrationOrder=Migración de datos para os pedimentos a cliente
-MigrationSupplierOrder=Migración de datos para os pedimentos de provedor
+MigrationOrder=Migración de datos para os pedimentos de cliente
+MigrationSupplierOrder=Migración de datos para os pedimentos a provedor
 MigrationProposal=Migración de datos para propostas comerciais
 MigrationInvoice=Migración de datos para as facturas do cliente
 MigrationContract=Migración de datos para contratos
@@ -206,6 +206,7 @@ MigrationUserPhotoPath=Migración de enderezos de fotos para usuarios
 MigrationFieldsSocialNetworks=Migración de redes sociais dos campos dos usuarios (%s)
 MigrationReloadModule=Recargar o módulo %s
 MigrationResetBlockedLog=Restablecer o módulo BlockedLog para o algoritmo v7
+MigrationImportOrExportProfiles=Migración de perfís de importación ou exportación (%s) 
 ShowNotAvailableOptions=Amosar as opcións non dispoñibles
 HideNotAvailableOptions=Ocultar opcións non dispoñibles
 ErrorFoundDuringMigration=Informáronse erros durante o proceso de migración polo que o seguinte paso non está dispoñible. Para ignorar os erros, pode <a href="%s"> facer clic aquí </a>, pero é posible que a aplicación ou algunhas funcións non funcionen correctamente ata que non se resolvan os erros.

@@ -2,25 +2,30 @@
 /* Copyright (C) 2006-2014  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  *
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <https://www.gnu.org/licenses/>.
-*/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 /**
  *		\file 		htdocs/admin/tools/export_files.php
  *		\brief      Page to export documents into a compressed file
  */
+
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -37,7 +42,7 @@ $file = trim(GETPOST('zipfilename_template', 'alpha'));
 $compression = GETPOST('compression', 'aZ09');
 
 $file = dol_sanitizeFileName($file);
-$file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
+$file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2|\.zst)$/i', '', $file);
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -93,7 +98,9 @@ if (!empty($ExecTimeLimit)) {
 	@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
 	error_reporting($err);
 }
-$MemoryLimit = 0;
+
+/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */
+$MemoryLimit = getDolGlobalString('MAIN_MEMORY_LIMIT_ARCHIVE_DATAROOT');
 if (!empty($MemoryLimit)) {
 	@ini_set('memory_limit', $MemoryLimit);
 }
@@ -133,7 +140,7 @@ if ($compression == 'zip') {
 			$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
 		}
 	}
-} elseif (in_array($compression, array('gz', 'bz'))) {
+} elseif (in_array($compression, array('gz', 'bz', 'zstd'))) {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
 	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out'; // File used with popen method
@@ -152,9 +159,10 @@ if ($compression == 'zip') {
 	} else {
 		if ($compression == 'gz') {
 			$cmd = "gzip -f ".$outputdir."/".$file;
-		}
-		if ($compression == 'bz') {
+		} elseif ($compression == 'bz') {
 			$cmd = "bzip2 -f ".$outputdir."/".$file;
+		} elseif ($compression == 'zstd') {
+			$cmd = "zstd -z -9 -q --rm ".$outputdir."/".$file;
 		}
 
 		$result = $utils->executeCLI($cmd, $outputfile);

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,14 +91,13 @@ function dol_decode($chain, $key = '1')
 	return $chain;
 }
 
-
 /**
  * 	Returns a hash of a string.
  *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommanded value is 'password_hash')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap with no salt, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @see getRandomPassword()
  */
@@ -112,7 +111,7 @@ function dol_hash($chain, $type = '0')
 	}
 
 	// Salt value
-	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'md5openldap') {
+	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'openldap') {
 		$chain = $conf->global->MAIN_SECURITY_SALT.$chain;
 	}
 
@@ -122,10 +121,12 @@ function dol_hash($chain, $type = '0')
 		return sha1(md5($chain));
 	} elseif ($type == '3' || $type == 'md5') {
 		return md5($chain);
-	} elseif ($type == '4' || $type == 'md5openldap') {
-		return '{md5}'.base64_encode(mhash(MHASH_MD5, $chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
-	} elseif ($type == '5') {
+	} elseif ($type == '4' || $type == 'openldap') {
+		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+	} elseif ($type == '5' || $type == 'sha256') {
 		return hash('sha256', $chain);
+	} elseif ($type == '6' || $type == 'password_hash') {
+		return password_hash($chain, PASSWORD_DEFAULT);
 	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') {
 		return sha1($chain);
 	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') {
@@ -144,7 +145,7 @@ function dol_hash($chain, $type = '0')
  *
  * 	@param 		string		$chain		String to hash (not hashed string)
  * 	@param 		string		$hash		hash to compare
- * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
  */
 function dol_verifyHash($chain, $hash, $type = '0')
@@ -166,6 +167,49 @@ function dol_verifyHash($chain, $hash, $type = '0')
 	return dol_hash($chain, $type) == $hash;
 }
 
+/**
+ * 	Returns a specific ldap hash of a password.
+ *
+ * 	@param 		string		$password	Password to hash
+ * 	@param		string		$type		Type of hash
+ * 	@return		string					Hash of password
+ */
+function dolGetLdapPasswordHash($password, $type = 'md5')
+{
+	if (empty($type)) {
+		$type = 'md5';
+	}
+
+	$salt = substr(sha1(time()), 0, 8);
+
+	if ($type === 'md5') {
+		return '{MD5}' . base64_encode(hash("md5", $password, true)); //For OpenLdap with md5 (based on an unencrypted password in base)
+	} elseif ($type === 'md5frommd5') {
+		return '{MD5}' . base64_encode(hex2bin($password)); // Create OpenLDAP MD5 password from Dolibarr MD5 password
+	} elseif ($type === 'smd5') {
+		return "{SMD5}" . base64_encode(hash("md5", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha') {
+		return '{SHA}' . base64_encode(hash("sha1", $password, true));
+	} elseif ($type === 'ssha') {
+		return "{SSHA}" . base64_encode(hash("sha1", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha256') {
+		return "{SHA256}" . base64_encode(hash("sha256", $password, true));
+	} elseif ($type === 'ssha256') {
+		return "{SSHA256}" . base64_encode(hash("sha256", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha384') {
+		return "{SHA384}" . base64_encode(hash("sha384", $password, true));
+	} elseif ($type === 'ssha384') {
+		return "{SSHA384}" . base64_encode(hash("sha384", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha512') {
+		return "{SHA512}" . base64_encode(hash("sha512", $password, true));
+	} elseif ($type === 'ssha512') {
+		return "{SSHA512}" . base64_encode(hash("sha512", $password . $salt, true) . $salt);
+	} elseif ($type === 'crypt') {
+		return '{CRYPT}' . crypt($password, $salt);
+	} elseif ($type === 'clear') {
+		return '{CLEAR}' . $password;  // Just for test, plain text password is not secured !
+	}
+}
 
 /**
  *	Check permissions of a user to show a page and an object. Check read permission.
@@ -277,12 +321,12 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		}
 
 		if ($feature == 'societe') {
-			if (!$user->rights->societe->lire && !$user->rights->fournisseur->lire) {
+			if (empty($user->rights->societe->lire) && empty($user->rights->fournisseur->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'contact') {
-			if (!$user->rights->societe->contact->lire) {
+			if (empty($user->rights->societe->contact->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -297,12 +341,12 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'cheque') {
-			if (!$user->rights->banque->cheque) {
+			if (empty($user->rights->banque->cheque)) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'projet') {
-			if (!$user->rights->projet->lire && !$user->rights->projet->all->lire) {
+			if (!$user->rights->projet->lire && empty($user->rights->projet->all->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -312,7 +356,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_supplier') {
-			if (!$user->rights->fournisseur->facture->lire) {
+			if (empty($user->rights->fournisseur->facture->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -362,18 +406,18 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record or to upload files)
 	$createok = 1;
 	$nbko = 0;
-	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || GETPOST('action', 'aZ09') == 'create' || GETPOST('action', 'aZ09') == 'update') || GETPOST('roworder', 'alpha', 2);
+	$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'add_element_resource', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
 	$wemustcheckpermissionfordeletedraft = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
 
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
 		foreach ($featuresarray as $feature) {
 			if ($feature == 'contact') {
-				if (!$user->rights->societe->contact->creer) {
+				if (empty($user->rights->societe->contact->creer)) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'produit|service') {
-				if (!$user->rights->produit->creer && !$user->rights->service->creer) {
+				if (empty($user->rights->produit->creer) && empty($user->rights->service->creer)) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -383,22 +427,22 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					$nbko++;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
-				if (!$user->rights->fournisseur->commande->creer || !$user->rights->supplier_order->creer) {
+				if (empty($user->rights->fournisseur->commande->creer) || empty($user->rights->supplier_order->creer)) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'banque') {
-				if (!$user->rights->banque->modifier) {
+				if (empty($user->rights->banque->modifier)) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'cheque') {
-				if (!$user->rights->banque->cheque) {
+				if (empty($user->rights->banque->cheque)) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'import') {
-				if (!$user->rights->import->run) {
+				if (empty($user->rights->import->run)) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -414,6 +458,9 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					}
 					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->password) {
 						continue; // User can edit its own password
+					}
+					if ($subfeature == 'user' && $user->id != $objectid && $user->rights->user->user->password) {
+						continue; // User can edit another user's password
 					}
 
 					if (empty($user->rights->$feature->$subfeature->creer)
@@ -487,16 +534,20 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->fournisseur->commande->supprimer) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'payment_supplier') {
+			} elseif ($feature == 'payment_supplier') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
 				if (!$user->rights->fournisseur->facture->creer) {
 					$deleteok = 0;
 				}
+			} elseif ($feature == 'payment') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
+				if (!$user->rights->facture->creer) {
+						$deleteok = 0;
+				}
 			} elseif ($feature == 'banque') {
-				if (!$user->rights->banque->modifier) {
+				if (empty($user->rights->banque->modifier)) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'cheque') {
-				if (!$user->rights->banque->cheque) {
+				if (empty($user->rights->banque->cheque)) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'ecm') {
@@ -511,8 +562,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->salaries->delete) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'salaries') {
-				if (!$user->rights->salaries->delete) {
+			} elseif ($feature == 'adherent') {
+				if (empty($user->rights->adherent->supprimer)) {
 					$deleteok = 0;
 				}
 			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels
@@ -609,11 +660,11 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 			$feature = 'projet_task';
 		}
 
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salary', 'website'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for societe object
 		$checkother = array('contact', 'agenda'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
-		$checktask = array('projet_task');	// Test for task object
+		$checktask = array('projet_task'); // Test for task object
 		$nocheck = array('barcode', 'stock'); // No test
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 
@@ -660,13 +711,13 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 				if ($user->socid <> $objectid) {
 					return false;
 				}
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir)) {
+			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				$sql .= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql .= " WHERE sc.fk_soc IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND sc.fk_user = ".$user->id;
+				$sql .= " AND sc.fk_user = ".((int) $user->id);
 				$sql .= " AND sc.fk_soc = s.rowid";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			} elseif (!empty($conf->multicompany->enabled)) {
@@ -682,8 +733,8 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND dbt.fk_soc = ".$user->socid;
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir)) {
+				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
+			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -752,8 +803,8 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND dbt.".$dbt_keyfield." = ".$user->socid;
-			} elseif (!empty($conf->societe->enabled) && !$user->rights->societe->client->voir) {
+				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
+			} elseif (!empty($conf->societe->enabled) && empty($user->rights->societe->client->voir)) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
@@ -765,15 +816,15 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-					$sql .= " AND sc.fk_user = ".$user->id;
+					$sql .= " AND sc.fk_user = ".((int) $user->id);
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".$user->id;
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".((int) $user->id);
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-					$sql .= " AND (sc.fk_user = ".$user->id." OR sc.fk_user IS NULL)";
+					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR sc.fk_user IS NULL)";
 				}
 			} elseif (!empty($conf->multicompany->enabled)) {
 				// If multicompany and internal users with all permissions, check user is in correct entity
@@ -851,7 +902,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
 			if ($user->login) {
-				print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+				print $langs->trans("CurrentLogin").': <span class="error">'.$user->login.'</span><br>';
 				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
 			} else {
 				print $langs->trans("ErrorForbidden3");

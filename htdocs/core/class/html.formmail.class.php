@@ -157,6 +157,8 @@ class FormMail extends Form
 
 	public $lines_model;
 
+	public $withoptiononeemailperrecipient;
+
 
 	/**
 	 *	Constructor
@@ -501,7 +503,7 @@ class FormMail extends Form
 				}
 
 				$out .= ' &nbsp; ';
-				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
@@ -516,7 +518,7 @@ class FormMail extends Form
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
 				$out .= ' &nbsp; ';
-				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
+				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} else {
@@ -601,7 +603,7 @@ class FormMail extends Form
 
 						// Add also email aliases from the c_email_senderprofile table
 						$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
-						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
+						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.((int) $user->id).')';
 						$sql .= ' ORDER BY position';
 						$resql = $this->db->query($sql);
 						if ($resql) {
@@ -689,9 +691,9 @@ class FormMail extends Form
 				$out .= '<tr><td class="minwidth200">';
 				$out .= $langs->trans("GroupEmails");
 				$out .= '</td><td>';
-				$out .= ' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
-				$out .= $langs->trans("OneEmailPerRecipient");
-				$out .= '<span class="hideonsmartphone">';
+				$out .= ' <input type="checkbox" id="oneemailperrecipient" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
+				$out .= '<label for="oneemailperrecipient">'.$langs->trans("OneEmailPerRecipient").'</label>';
+				$out .= '<span class="hideonsmartphone opacitymedium">';
 				$out .= ' - ';
 				$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
 				$out .= '</span>';
@@ -771,12 +773,11 @@ class FormMail extends Form
 
 				if (!empty($this->withmaindocfile)) {
 					if ($this->withmaindocfile == 1) {
-						$out .= '<input type="checkbox" name="addmaindocfile" value="1" />';
+						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" />';
+					} elseif ($this->withmaindocfile == -1) {
+						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" checked="checked" />';
 					}
-					if ($this->withmaindocfile == -1) {
-						$out .= '<input type="checkbox" name="addmaindocfile" value="1" checked="checked" />';
-					}
-					$out .= ' '.$langs->trans("JoinMainDoc").'.<br>';
+					$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDoc").'.</label><br>';
 				}
 
 				if (is_numeric($this->withfile)) {
@@ -792,6 +793,7 @@ class FormMail extends Form
 					if (count($listofpaths)) {
 						foreach ($listofpaths as $key => $val) {
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
+
 							if ($conf->entity > 1) {
 								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
 							}
@@ -802,6 +804,7 @@ class FormMail extends Form
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
+
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
@@ -821,7 +824,7 @@ class FormMail extends Form
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						}
 						$out .= ' ';
-						$out .= '<input class="button" type="submit" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				} else {
 					$out .= $this->withfile;
@@ -956,15 +959,14 @@ class FormMail extends Form
 			$out .= '</table>'."\n";
 
 			if ($this->withform == 1 || $this->withform == -1) {
-				$out .= '<br><div class="center">';
-				$out .= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
+				$out .= '<div class="center">';
+				$out .= '<input type="submit" class="button button-add" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
 				// Add a javascript test to avoid to forget to submit file before sending email
 				if ($this->withfile == 2 && $conf->use_javascript_ajax) {
 					$out .= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
 				}
 				$out .= ' />';
 				if ($this->withcancel) {
-					$out .= ' &nbsp; &nbsp; ';
 					$out .= '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
 				}
 				$out .= '</div>'."\n";
@@ -1255,7 +1257,7 @@ class FormMail extends Form
 	 */
 	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$ret = new ModelMail();
 
@@ -1276,7 +1278,7 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // Get all public or private owned
+		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
@@ -1399,7 +1401,7 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".((int) $user->id).")";
 		if (is_object($outputlangs)) {
 			$sql .= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		}
@@ -1435,7 +1437,7 @@ class FormMail extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // See all public templates or templates I own.
+		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // See all public templates or templates I own.
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
@@ -1523,7 +1525,7 @@ class FormMail extends Form
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
 					$product->fetch_optionals();
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+					if (is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
 							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = $product->array_options['options_'.$key];
 						}

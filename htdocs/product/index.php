@@ -34,10 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'int');
-if ($type == '' && !$user->rights->produit->lire) {
+if ($type == '' && empty($user->rights->produit->lire)) {
 	$type = '1'; // Force global page on service page only
 }
-if ($type == '' && !$user->rights->service->lire) {
+if ($type == '' && empty($user->rights->service->lire)) {
 	$type = '0'; // Force global page on product page only
 }
 
@@ -105,7 +105,8 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be 
 				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 			}
 			print '<tr class="oddeven">';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td>';
+			print '<td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 			if ($i == 0) {
 				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 			}
@@ -273,7 +274,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	print '</table>';
 	print '</div>';
 }
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -336,11 +337,11 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 				$product_static->status_buy = $objp->tobuy;
 				$product_static->status_batch = $objp->tobatch;
 
-				//Multilangs
+				// Multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS)) {
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-					$sql .= " WHERE fk_product=".$objp->rowid;
+					$sql .= " WHERE fk_product=".((int) $objp->rowid);
 					$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 
 					$resultd = $db->query($sql);
@@ -372,7 +373,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 							$objp->price = $price_result;
 						}
 					}
-					print '<td class="nowrap right">';
+					print '<td class="nowraponall amount right">';
 					if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
 						print price($objp->price_ttc).' '.$langs->trans("TTC");
 					} else {
@@ -415,7 +416,7 @@ if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('type' => $type, 'user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook

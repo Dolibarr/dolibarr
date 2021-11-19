@@ -151,6 +151,15 @@ $dolibarr_main_db_character_set='utf8';
 $dolibarr_main_db_collation='utf8_unicode_ci';
 
 
+// dolibarr_main_db_readonly
+// Set this to 1 to have the application working in readonly mode. All sql access INSERT/UPDATE/DELETE/CREATE/ALTER/TRUNCATE/DROP will be disabled. 
+// Default value: 0
+// Examples:
+// $dolibarr_main_db_readonly='0';
+//
+$dolibarr_main_db_readonly=0;
+
+
 // dolibarr_main_instance_unique_id
 // An secret ID that is unique for each installation.
 // This value is also visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption.

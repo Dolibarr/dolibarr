@@ -106,7 +106,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a s
 			print '<tr '.$bc[false].'>';
 			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
 			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 			}
 			print '</tr>';
 			$i++;
@@ -174,8 +174,8 @@ foreach ($listofstatus as $status) {
 	print '<tr class="oddeven">';
 	print '<td><a href="list.php?search_status='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
 	print '<td class="right">'.(!empty($nb[$status]) ? $nb[$status] : '&nbsp;').'</td>';
-	print '<td class="right">'.(!empty($nb[$status]) ?price($somme[$status], 'MT') : '&nbsp;').'</td>';
-	print '<td class="right">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="right nowraponall amount">'.(!empty($nb[$status]) ? price($somme[$status], 'MT') : '&nbsp;').'</td>';
+	print '<td class="right nowraponall">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
 	$totalnb += (!empty($nb[$status]) ? $nb[$status] : 0);
 	$total += (!empty($somme[$status]) ? $somme[$status] : 0);
 	print "</tr>";
@@ -183,14 +183,14 @@ foreach ($listofstatus as $status) {
 
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
-print '<td class="right">'.$totalnb.'</td>';
-print '<td class="right">'.price($total, 'MT').'</td>';
-print '<td class="right">'.($totalnb ?price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
+print '<td class="right nowraponall">'.$totalnb.'</td>';
+print '<td class="right nowraponall">'.price($total, 'MT').'</td>';
+print '<td class="right nowraponall">'.($totalnb ?price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 10;
@@ -233,7 +233,7 @@ if ($resql) {
 			print dolGetFirstLastname($obj->lastname, $obj->firstname);
 			print '</td>';
 
-			print '<td class="right nobordernopadding">';
+			print '<td class="right nobordernopadding nowraponall amount">';
 			print price($obj->amount, 1);
 			print '</td>';
 
@@ -252,7 +252,7 @@ if ($resql) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardDonation', $parameters, $object); // Note that $action and $object may have been modified by hook

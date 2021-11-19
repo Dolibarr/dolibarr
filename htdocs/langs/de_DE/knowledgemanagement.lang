@@ -37,15 +37,7 @@ About = Über
 KnowledgeManagementAbout = Über Wissensmanagement
 KnowledgeManagementAboutPage = Über Wissensmanagement Seite
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Wissensmanagement
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = Wissensbasis
 ListKnowledgeRecord = Liste der Artikel
 NewKnowledgeRecord = Neuer Artikel
@@ -53,3 +45,6 @@ ValidateReply = Lösung bestätigen
 KnowledgeRecords = Artikel
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafelder für Artikel
+GroupOfTicket=Ticket-Gruppe
+YouCanLinkArticleToATicketCategory=Sie können einen Artikel mit einer Ticket-Gruppe verknüpfen (so wird der Artikel bei der Qualifizierung neuer Tickets vorgeschlagen)
+SuggestedForTicketsInGroup=Empfohlen für Tickets der Gruppe

@@ -286,7 +286,7 @@ class modAdherent extends DolibarrModules
 		$this->export_label[$r] = 'MembersAndSubscriptions';
 		$this->export_permission[$r] = array(array("adherent", "export"));
 		$this->export_fields_array[$r] = array(
-			'a.rowid'=>'Id', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'Nature',
+			'a.rowid'=>'Id', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
 			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
 			'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile", 'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status",
 			'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate", 'a.datec'=>'DateCreation', 'a.datevalid'=>'DateValidation',
@@ -338,14 +338,18 @@ class modAdherent extends DolibarrModules
 		$this->import_tables_array[$r] = array('a'=>MAIN_DB_PREFIX.'adherent', 'extra'=>MAIN_DB_PREFIX.'adherent_extrafields');
 		$this->import_tables_creator_array[$r] = array('a'=>'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
+			'a.ref' => 'Member Ref*',
 			'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname*", 'a.firstname'=>"Firstname", 'a.gender'=>"Gender", 'a.login'=>"Login*", "a.pass"=>"Password",
-			"a.fk_adherent_type"=>"MemberType*", 'a.morphy'=>'Nature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
+			"a.fk_adherent_type"=>"MemberType*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
 			'a.state_id'=>'StateId', 'a.country'=>"CountryId", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
 		);
+		if (!empty($conf->societe->enabled)) {
+			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
+		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -355,16 +359,45 @@ class modAdherent extends DolibarrModules
 			}
 		}
 		// End add extra fields
+		$this->import_convertvalue_array[$r] = array(
+			'a.ref'=>array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON),
+				'path'=>"/core/modules/member/".(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON).'.php'
+			),
+			'a.state_id' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cstate.class.php',
+				'class' => 'Cstate',
+				'method' => 'fetch',
+				'dict' => 'DictionaryStateCode'
+			),
+			'a.country' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/ccountry.class.php',
+				'class' => 'Ccountry',
+				'method' => 'fetch',
+				'dict' => 'DictionaryCountry'
+			)
+		);
+		if (!empty($conf->societe->enabled)) {
+			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty');
+		}
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array(
 			'a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility', 'a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type', 'a.morphy'=>'(phy|mor)',
 			'a.statut'=>'^[0|1]', 'a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r] = array(
-			'a.civility'=>"MR", 'a.lastname'=>'Smith', 'a.firstname'=>'John', 'a.login'=>'jsmith', 'a.pass'=>'passofjsmith', 'a.fk_adherent_type'=>'1',
+			'a.ref'=>"auto or MEM2010-1234",
+			'a.civility'=>"MR", 'a.lastname'=>'Smith', 'a.firstname'=>'John', 'a.gender'=>'man or woman', 'a.login'=>'jsmith', 'a.pass'=>'passofjsmith', 'a.fk_adherent_type'=>'1',
 			'a.morphy'=>'"mor" or "phy"', 'a.societe'=>'JS company', 'a.address'=>'21 jump street', 'a.zip'=>'55000', 'a.town'=>'New York', 'a.country'=>'1',
 			'a.email'=>'jsmith@example.com', 'a.birth'=>'1972-10-10', 'a.statut'=>"0 or 1", 'a.note_public'=>"This is a public comment on member",
 			'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
+		if (!empty($conf->societe->enabled)) {
+			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
+		}
+		$this->import_updatekeys_array[$r] = array('a.ref'=>'Member Ref', 'a.login'=>'Login');
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
@@ -421,8 +454,8 @@ class modAdherent extends DolibarrModules
 		}*/
 
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".$conf->entity,
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".$conf->entity.")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

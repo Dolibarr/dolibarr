@@ -273,17 +273,17 @@ class ProductStockEntrepot extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 
-		if (!empty($fk_product)) {
-			$sql .= ' AND fk_product = '.$fk_product;
-		} elseif (!empty($fk_entrepot)) {
-			$sql .= ' AND fk_entrepot = '.$fk_entrepot;
+		if (!empty($fk_product) && $fk_product > 0) {
+			$sql .= ' AND fk_product = '.((int) $fk_product);
+		} elseif (!empty($fk_entrepot) && $fk_entrepot > 0) {
+			$sql .= ' AND fk_entrepot = '.((int) $fk_entrepot);
 		}
 		// "elseif" used instead of "if" because getting list with specified fk_product and specified fk_entrepot would be the same as doing a fetch
 
@@ -291,7 +291,7 @@ class ProductStockEntrepot extends CommonObject
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$lines = array();

@@ -26,12 +26,10 @@ ShowLogOfMovementIfLot=Vis log af bevægelser for par produkt / partiSerie
 StockDetailPerBatch=Lager detaljer pr. Parti Serie
 SerialNumberAlreadyInUse=Serienummer %s bruges allerede til produkt %s
 TooManyQtyForSerialNumber=Du kan kun have et produkt %s til serienummer %s
-BatchLotNumberingModules=Valgmuligheder til automatisk generering af batchprodukter, der administreres af partier
-BatchSerialNumberingModules=Valgmuligheder til automatisk generering af batchprodukter styret af serienumre
 ManageLotMask=Brugerdefineret maske
-CustomMasks=Tilføjer en mulighed for at definere maske på produktkortet
-LotProductTooltip=Tilføjer en mulighed på produktkortet for at definere en dedikeret batchnummermaske
-SNProductTooltip=Tilføjer en mulighed på produktkortet for at definere en dedikeret serienummermaske
+CustomMasks=Mulighed for at definere en anden nummereringsmaske for hvert produkt
+BatchLotNumberingModules=Nummereringsregel til automatisk generering af partinummer
+BatchSerialNumberingModules=Nummereringsregel til automatisk generering af serienummer (for produkter med ejendom 1 unikt parti / serienummer for hvert produkt)
 QtyToAddAfterBarcodeScan=Mængde, der skal tilføjes for hver stregkode / parti / seriel scannet
 LifeTime=Levetid (i dage)
 EndOfLife=udløbet på dato
@@ -39,7 +37,8 @@ ManufacturingDate=produktionsdato
 DestructionDate=Destruktionsdato
 FirstUseDate=Dato for første brug
 QCFrequency=Kvalitetskontrolfrekvens (i dage)
-
+ShowAllLots=Vis alle numre
+HideLots=Skjul masser
 #Traceability - qc status
 OutOfOrder=Virker ikke
 InWorkingOrder=I funktionsdygtig stand

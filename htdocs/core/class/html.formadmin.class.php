@@ -73,6 +73,18 @@ class FormAdmin
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
+		// If the language to select is not inside the list of available language and empty value is not available, we must find
+		// an alternative as the language code to pre-select (to avoid to have first element in list pre-selected).
+		if ($selected && !in_array($selected, $langs_available) && empty($showempty)) {
+			$tmparray = explode('_', $selected);
+			if (!empty($tmparray[1])) {
+				$selected = getLanguageCodeFromCountryCode($tmparray[1]);
+			}
+			if (empty($selected)) {
+				$selected = $langs->defaultlang;
+			}
+		}
+
 		$out = '';
 
 		$out .= '<select '.($multiselect ? 'multiple="multiple" ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($disabled ? ' disabled' : '').'>';
@@ -292,7 +304,7 @@ class FormAdmin
 								if (preg_match('/\.lib/i', $filelib)) {
 									continue;
 								}
-								if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file, $expdevmenu)) {
+								if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 0 && in_array($file, $expdevmenu)) {
 									continue;
 								}
 
@@ -393,9 +405,10 @@ class FormAdmin
 	 *  @param      string	$htmlname       Name of HTML select field
 	 *  @param		string	$filter			Value to filter on code
 	 *  @param		int		$showempty		Add empty value
+	 * 	@param		int		$forcecombo		Force to load all values and output a standard combobox (with no beautification)
 	 *  @return		string					Return HTML output
 	 */
-	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0)
+	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -443,6 +456,11 @@ class FormAdmin
 			}
 		}
 		$out .= '</select>';
+
+		if (!$forcecombo) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}

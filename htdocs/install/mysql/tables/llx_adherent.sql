@@ -48,17 +48,18 @@ create table llx_adherent
   state_id         integer,
   country          integer,
   email            varchar(255),
+  url              varchar(255) NULL,
 
   socialnetworks   text DEFAULT NULL,           -- json with socialnetworks
-  skype            varchar(255),                -- deprecated
-  twitter          varchar(255),                -- deprecated
-  facebook         varchar(255),                -- deprecated
-  linkedin         varchar(255),                -- deprecated
-  instagram        varchar(255),                -- deprecated
-  snapchat         varchar(255),                -- deprecated
-  googleplus       varchar(255),                -- deprecated
-  youtube          varchar(255),                -- deprecated
-  whatsapp         varchar(255),                -- deprecated
+  --skype            varchar(255),                -- deprecated
+  --twitter          varchar(255),                -- deprecated
+  --facebook         varchar(255),                -- deprecated
+  --linkedin         varchar(255),                -- deprecated
+  --instagram        varchar(255),                -- deprecated
+  --snapchat         varchar(255),                -- deprecated
+  --googleplus       varchar(255),                -- deprecated
+  --youtube          varchar(255),                -- deprecated
+  --whatsapp         varchar(255),                -- deprecated
 
   phone            varchar(30),
   phone_perso      varchar(30),

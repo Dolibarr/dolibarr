@@ -600,7 +600,7 @@ class PaymentSocialContribution extends CommonObject
 							$result = $acc->add_url_line(
 								$bank_line_id,
 								$socialcontrib->fk_user,
-								DOL_URL_ROOT . '/user/card.php?id=',
+								DOL_URL_ROOT.'/user/card.php?id=',
 								$fuser->getFullName($langs),
 								'user'
 							);
@@ -777,7 +777,7 @@ class PaymentSocialContribution extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->bank_line;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->bank_line);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

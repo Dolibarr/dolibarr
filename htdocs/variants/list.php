@@ -16,8 +16,8 @@
  */
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 $action = GETPOST('action', 'aZ09');
 $object = new ProductAttribute($db);
@@ -142,7 +142,7 @@ foreach ($variants as $key => $attribute) {
 	print '<td class="right">'.$attribute->countChildValues().'</td>';
 	print '<td class="right">'.$attribute->countChildProducts().'</td>';
 	print '<td class="right">';
-	print '<a class="editfielda marginrightonly paddingleftonly" href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
+	print '<a class="editfielda marginrightonly paddingleftonly" href="card.php?id='.$attribute->id.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
 	print '<a class="marginrightonly paddingleftonlyhref="card.php?id='.$attribute->id.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 	print '</td>';
 	print '<td class="center linecolmove tdlineupdown">';

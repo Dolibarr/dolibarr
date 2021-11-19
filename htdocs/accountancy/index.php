@@ -49,7 +49,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
 if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled) && empty($conf->asset->enabled) && empty($conf->intracommreport->enabled)) {
 	accessforbidden();
 }
-if (empty($user->rights->compta->resultat->lire) && empty($user->rights->accounting->mouvements->lire) && empty($user->rights->asset->read) && empty($user->rights->intracommreport->read)) {
+if (empty($user->rights->compta->resultat->lire) && empty($user->rights->accounting->comptarapport->lire) && empty($user->rights->accounting->mouvements->lire) && empty($user->rights->asset->read) && empty($user->rights->intracommreport->read)) {
 	accessforbidden();
 }
 
@@ -81,7 +81,12 @@ $help_url = '';
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 
-if ($conf->accounting->enabled) {
+if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
+	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
+
+	print '<span class="opacitymedium">'.$langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices")."</span>\n";
+	print "<br>";
+} elseif ($conf->accounting->enabled) {
 	$step = 0;
 
 	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
@@ -258,7 +263,8 @@ if ($conf->accounting->enabled) {
 } else {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
-	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span><br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
+	print "<br>";
 }
 
 // End of page

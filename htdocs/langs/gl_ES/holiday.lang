@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=Texto libre no PDF
 WatermarkOnDraftHolidayCards=Marca de auga no borrador de pedimento de días libres
 HolidaysToApprove=Vacacións para aprobar
 NobodyHasPermissionToValidateHolidays=Ninguén ten permisos para validar vacacións
+HolidayBalanceMonthlyUpdate=Actualización mensual do saldo de vacacións
+XIsAUsualNonWorkingDay=%s é habitualmente un día NON laboral

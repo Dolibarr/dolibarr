@@ -951,6 +951,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$object->country_code='AU';
 		$address=dol_format_address($object);
 		$this->assertEquals("21 jump street\nMyTown, MyState, 99999", $address);
+
+		$object->country_code='JP';
+		$address=dol_format_address($object);
+		$this->assertEquals("21 jump street\nMyState, MyTown 99999", $address);
 	}
 
 
@@ -1317,8 +1321,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(1, price2num('1.000'), 'Test 1.000 give 1 with english language');
 
 		// Text can't be converted
-		$this->assertEquals('12.4$', price2num('12.4$'));
-		$this->assertEquals('12.4$', price2num('12r.4$'));
+		$this->assertEquals('12.4', price2num('12.4$'));
+		$this->assertEquals('12.4', price2num('12r.4$'));
 
 		// For spanish language
 		$newlangs2 = new Translate('', $conf);

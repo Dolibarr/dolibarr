@@ -85,7 +85,7 @@ class box_scheduled_jobs extends ModeleBoxes
 			$resultarray = array();
 
 			$result = 0;
-			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun,";
+			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun, t.datestart,";
 			$sql .= " t.label, t.status, t.test, t.lastresult";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "cronjob as t";
 			$sql .= " WHERE status <> ".$cronstatic::STATUS_DISABLED;

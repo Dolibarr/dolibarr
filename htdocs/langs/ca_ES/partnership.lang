@@ -20,9 +20,9 @@ ModulePartnershipName=Gestió de la col·laboració
 PartnershipDescription=Mòdul Gestió de la col·laboració
 PartnershipDescriptionLong= Mòdul Gestió de la col·laboració
 
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+AddPartnership=Afegiu associació
+CancelPartnershipForExpiredMembers=Associació: cancel·leu l'associació de membres amb subscripcions caducades
+PartnershipCheckBacklink=Associació: consulteu l'enllaç de retrocés de referència
 
 #
 # Menu
@@ -36,12 +36,12 @@ ListOfPartnerships=Llista d'associació
 PartnershipSetup=Configuració de l'associació
 PartnershipAbout=Quant a Partnership
 PartnershipAboutPage=Associació sobre la pàgina
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
+partnershipforthirdpartyormember=L'estat de soci s'ha de definir en un "tercer" o un "membre".
 PARTNERSHIP_IS_MANAGED_FOR=Associació gestionada per
 PARTNERSHIP_BACKLINKS_TO_CHECK=Enllaços enrere per comprovar
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de dies abans de cancel·lar l'estat d'una associació quan la subscripció ha caducat
+ReferingWebsiteCheck=Comprovació de referència del lloc web
+ReferingWebsiteCheckDesc=Podeu habilitar una funció per comprovar que els vostres socis han afegit un enllaç de retrocés als dominis del vostre lloc web al seu propi lloc web.
 
 #
 # Object
@@ -54,10 +54,11 @@ DatePartnershipEnd=Data final
 ReasonDecline=Rebutjar la raó
 ReasonDeclineOrCancel=Rebutjar la raó
 PartnershipAlreadyExist=L’associació ja existeix
-ManagePartnership=Manage partnership
+ManagePartnership=Gestioneu l'associació
 BacklinkNotFoundOnPartnerWebsite=Enllaç de retrocés no trobat al lloc web associat
 ConfirmClosePartnershipAsk=Esteu segur que voleu cancel·lar aquesta associació?
-PartnershipType=Partnership type
+PartnershipType=Tipus de col·laboració
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
@@ -76,6 +77,10 @@ YourPartnershipWillSoonBeCanceledContent=Us informem que la vostra associació a
 YourPartnershipRefusedContent=Us informem que la vostra sol·licitud de col·laboració s’ha rebutjat.
 YourPartnershipAcceptedContent=Us informem que la vostra sol·licitud de col·laboració ha estat acceptada.
 YourPartnershipCanceledContent=Us informem que la vostra associació s’ha cancel·lat.
+
+CountLastUrlCheckError=Nombre d'errors de l'última comprovació de l'URL
+LastCheckBacklink=Data de l'última comprovació de l'URL
+ReasonDeclineOrCancel=Rebutjar la raó
 
 #
 # Status

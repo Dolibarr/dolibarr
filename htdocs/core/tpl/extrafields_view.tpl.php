@@ -125,7 +125,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
-			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.(!empty($object->id)?'_'.$object->id:'');
+			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
 			}*/
@@ -194,16 +194,21 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			if ($object->element == 'contact') {
 				$permok = $user->rights->societe->contact->creer;
 			}
+			if ($object->element == 'salary') {
+				$permok = $user->rights->salaries->read;
+			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
 			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$tmpkeyextra]))
 				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $tmpkeyextra)
 				&& empty($extrafields->attributes[$object->table_element]['computed'][$tmpkeyextra])) {
-				$fieldid = 'id';
+				$fieldid = empty($forcefieldid) ? 'id' : $forcefieldid;
+				$valueid = empty($forceobjectid) ? $object->id : $forceobjectid;
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
 				}
-				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$object->id.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
+
+				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -214,18 +219,18 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date'))) {
-				$datenotinstring = $object->array_options['options_'.$tmpkeyextra];
+				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
 				// print 'X'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.'x';
-				if (!is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
+				if (!empty($object->array_options['options_'.$tmpkeyextra]) && !is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
 				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
 			}
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime'))) {
-				$datenotinstring = $object->array_options['options_'.$tmpkeyextra];
+				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
 				// print 'X'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.'x';
-				if (!is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
+				if (!empty($object->array_options['options_'.$tmpkeyextra]) && !is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
@@ -257,7 +262,6 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			print '</tr>'."\n";
 		}
 	}
-
 
 	// Add code to manage list depending on others
 	// TODO Test/enhance this with a more generic solution

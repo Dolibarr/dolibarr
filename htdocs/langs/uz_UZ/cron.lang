@@ -14,9 +14,9 @@ FileToLaunchCronJobs=Malakali cron ishlarini tekshirish va ishga tushirish uchun
 CronExplainHowToRunUnix=Unix muhitida buyruq satrini har 5 daqiqada bajarish uchun quyidagi crontab yozuvidan foydalanishingiz kerak
 CronExplainHowToRunWin=Microsoft (tm) Windows muhitida har 5 daqiqada buyruq satrini bajarish uchun Rejalashtirilgan Vazifa vositalaridan foydalanishingiz mumkin
 CronMethodDoesNotExists=%s sinfida %s usuli mavjud emas
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles
+CronMethodNotAllowed=%s sinfidagi %s usuli taqiqlangan usullarning qora ro'yxatiga kiritilgan
+CronJobDefDesc=Cron ishi profillari modul identifikatori faylida aniqlanadi. Modul faollashtirilganda, ular yuklanadi va mavjud bo'ladi, shuning uchun siz ishlarni administrator vositalari menyusidan %s boshqarishingiz mumkin.
+CronJobProfiles=Oldindan belgilangan cron ish profillari ro'yxati
 # Menu
 EnabledAndDisabled=Yoqilgan va o'chirilgan
 # Page list
@@ -47,7 +47,7 @@ CronNbRun=Ishga tushirilganlar soni
 CronMaxRun=Ishga tushirishning maksimal soni
 CronEach=Har bir
 JobFinished=Ish ishga tushirildi va tugadi
-Scheduled=Scheduled
+Scheduled=Rejalashtirilgan
 #Page card
 CronAdd= Ish joylarini qo'shing
 CronEvery=Har bir ishni bajaring
@@ -57,7 +57,7 @@ CronSaveSucess=Muvaffaqiyatli saqlang
 CronNote=Izoh
 CronFieldMandatory=%s maydonlari majburiydir
 CronErrEndDateStartDt=Tugash sanasi boshlanish sanasidan oldin bo'lishi mumkin emas
-StatusAtInstall=Status at module installation
+StatusAtInstall=Modulni o'rnatish holati
 CronStatusActiveBtn=Jadval
 CronStatusInactiveBtn=O'chirish
 CronTaskInactive=Bu ish o'chirilgan (rejalashtirilgan emas)
@@ -77,15 +77,15 @@ CronType=Ish turi
 CronType_method=PHP sinfining qo'ng'iroq usuli
 CronType_command=Shell buyrug'i
 CronCannotLoadClass=%s sinf fayli yuklanmadi (%s sinfidan foydalanish uchun)
-CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
+CronCannotLoadObject=%s sinf fayli yuklandi, lekin %s ob'ekti topilmadi
 UseMenuModuleToolsToAddCronJobs=Rejalashtirilgan ishlarni ko'rish va tahrirlash uchun "<a href="%s"> Bosh sahifa - Administrator vositalari - Rejalashtirilgan ish o'rinlari </a>" menyusiga o'ting.
 JobDisabled=Ish o'chirilgan
 MakeLocalDatabaseDumpShort=Mahalliy ma'lumotlar bazasini zaxiralash
 MakeLocalDatabaseDump=Mahalliy ma'lumotlar bazasi axlatxonasini yarating. Parametrlar quyidagilardir: siqish ('gz' yoki 'bz' yoki 'yo'q'), zaxira turi ('mysql', 'pgsql', 'auto'), 1, 'auto' yoki fayl nomi yaratish, saqlash uchun zaxira fayllar soni
 WarningCronDelayed=E'tibor bering, ishga tushirilgan ish kunining keyingi sanasi qanday bo'lishidan qat'i nazar, sizning ishingiz bajarilishidan oldin maksimal %s soatga kechiktirilishi mumkin.
-DATAPOLICYJob=Data cleaner and anonymizer
-JobXMustBeEnabled=Job %s must be enabled
+DATAPOLICYJob=Ma'lumotlarni tozalovchi va anonimayzer
+JobXMustBeEnabled=%s ishi yoqilgan bo'lishi kerak
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
+LastExecutedScheduledJob=Oxirgi marta rejalashtirilgan ish
+NextScheduledJobExecute=Keyingi rejalashtirilgan ish
+NumberScheduledJobError=Xatoda rejalashtirilgan ishlarning soni

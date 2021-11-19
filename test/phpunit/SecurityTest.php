@@ -321,6 +321,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="<a onpointerdown=alert(document.domain)>XSS</a>";
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject lll');
+
+		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
+		$result=testSqlAndScriptInject($test, 0);	// result must be 0
+		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject mmm');
 	}
 
 	/**
@@ -336,12 +340,17 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		// Force default mode
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+
 		$_COOKIE["id"]=111;
 		$_GET["param1"]="222";
 		$_POST["param1"]="333";
 		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
 		$_GET["param3"]='"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
-		$_GET["param4"]='../dir';
+		$_GET["param4a"]='..&#47;../dir';
+		$_GET["param4b"]='..&#92;..\dirwindows';
 		$_GET["param5"]="a_1-b";
 		$_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
 		$_POST["param6b"]='<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
@@ -358,6 +367,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
 		$_POST["param13"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61;vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
+		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
+		$_POST["param15"]="<img onerror<=alert(document.domain)> src=>0xbeefed";
 		//$_POST["param13"]='javascript%26colon%26%23x3B%3Balert(1)';
 		//$_POST["param14"]='javascripT&javascript#x3a alert(1)';
 
@@ -384,9 +395,13 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'na/b#e(pr)qq-rr\cc', 'Test on param3');
 
-		$result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
+		$result=GETPOST("param4a", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'dir');
+
+		$result=GETPOST("param4b", 'alpha');  // Must return string sanitized from ../
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'dirwindows');
 
 		// Test with aZ09
 
@@ -402,7 +417,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '');
 
-		$result=GETPOST("param4", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
+		$result=GETPOST("param4a", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('', $result);
+
+		$result=GETPOST("param4b", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('', $result);
 
@@ -475,7 +494,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		// Test with restricthtml we must remove html open/close tag and content but not htmlentities (we can decode html entities for ascii chars like &#110;)
 
 		$result=GETPOST("param6", 'restricthtml');
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." result param6=".$result."\n";
 		$this->assertEquals('&quot;&gt;', $result);
 
 		$result=GETPOST("param7", 'restricthtml');
@@ -493,6 +512,33 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param13b", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test 13b that HTML entities are decoded with restricthtml, but only for common alpha chars');
+
+		$result=GETPOST("param14", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)", $result, 'Test 14');
+
+		$result=GETPOST("param15", 'restricthtml');		// <img onerror<=alert(document.domain)> src=>0xbeefed
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals("<img onerror=alert(document.domain) src=>0xbeefed", $result, 'Test 15a');	// The GETPOST return a harmull string
+
+		// Test with restricthtml + MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES to test disabling of bad atrributes
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+
+		$result=GETPOST("param15", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');
+
+		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
+
+		// Test with restricthtml + MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES to test disabling of bad atrributes
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+
+		$result=GETPOST("param15", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<img src="">0xbeefed', $result, 'Test 15b');
+
+		unset($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES);
+
 
 		// Special test for GETPOST of backtopage, backtolist or backtourl parameter
 
@@ -789,8 +835,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=dol_sanitizeFileName('bad file | evilaction');
 		$this->assertEquals('bad file _ evilaction', $result);
 
-		$result=dol_sanitizeFileName('bad file --evilparam');
-		$this->assertEquals('bad file _evilparam', $result);
+		$result=dol_sanitizeFileName('bad file -evilparam --evilparam ---evilparam ----evilparam');
+		$this->assertEquals('bad file _evilparam _evilparam _evilparam _evilparam', $result);
 	}
 
 	/**
@@ -825,6 +871,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
 		$result=dol_eval('$a=exec("ls");', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a=exec ("ls")', 1, 1);
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 

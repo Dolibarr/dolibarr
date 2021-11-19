@@ -49,7 +49,7 @@ function pdf_admin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf.php';
-	$head[$h][1] = $langs->trans("Common");
+	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'general';
 	$h++;
 
@@ -177,8 +177,8 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$metric=$arrayformat['unit'];
 
 	$pdfa = false; // PDF-1.3
-	if (!empty($conf->global->PDF_USE_1A)) {
-		$pdfa = true; // PDF1/A
+	if (!empty($conf->global->PDF_USE_A)) {
+		$pdfa = $conf->global->PDF_USE_A; 	// PDF/A-1 ou PDF/A-3
 	}
 
 	if (class_exists('TCPDI')) {
@@ -979,6 +979,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	$outputlangs->load("dict");
 	$line = '';
+	$reg = array();
 
 	$dims = $pdf->getPageDimensions();
 
@@ -1045,7 +1046,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$line2 .= ($line2 ? " - " : "").$fromcompany->email;
 		}
 	}
-	if ($showdetails == 2 || $showdetails == 3 || ($fromcompany->country_code == 'DE')) {
+	if ($showdetails == 2 || $showdetails == 3 || (!empty($fromcompany->country_code) && $fromcompany->country_code == 'DE')) {
 		// Managers
 		if ($fromcompany->managers) {
 			$line2 .= ($line2 ? " - " : "").$fromcompany->managers;
@@ -1054,11 +1055,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	// Line 3 of company infos
 	// Juridical status
-	if ($fromcompany->forme_juridique_code) {
+	if (!empty($fromcompany->forme_juridique_code) && $fromcompany->forme_juridique_code) {
 		$line3 .= ($line3 ? " - " : "").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
 	}
 	// Capital
-	if ($fromcompany->capital) {
+	if (!empty($fromcompany->capital) && $fromcompany->capital) {
 		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
@@ -1067,7 +1068,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
+	if (!empty($fromcompany->idprof1) && $fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
 		$field = $outputlangs->transcountrynoentities("ProfId1", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1075,7 +1076,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line3 .= ($line3 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof1);
 	}
 	// Prof Id 2
-	if ($fromcompany->idprof2) {
+	if (!empty($fromcompany->idprof2) && $fromcompany->idprof2) {
 		$field = $outputlangs->transcountrynoentities("ProfId2", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1085,7 +1086,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	// Line 4 of company infos
 	// Prof Id 3
-	if ($fromcompany->idprof3) {
+	if (!empty($fromcompany->idprof3) && $fromcompany->idprof3) {
 		$field = $outputlangs->transcountrynoentities("ProfId3", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1093,7 +1094,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof3);
 	}
 	// Prof Id 4
-	if ($fromcompany->idprof4) {
+	if (!empty($fromcompany->idprof4) && $fromcompany->idprof4) {
 		$field = $outputlangs->transcountrynoentities("ProfId4", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1101,7 +1102,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof4);
 	}
 	// Prof Id 5
-	if ($fromcompany->idprof5) {
+	if (!empty($fromcompany->idprof5) && $fromcompany->idprof5) {
 		$field = $outputlangs->transcountrynoentities("ProfId5", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1109,7 +1110,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof5);
 	}
 	// Prof Id 6
-	if ($fromcompany->idprof6) {
+	if (!empty($fromcompany->idprof6) &&  $fromcompany->idprof6) {
 		$field = $outputlangs->transcountrynoentities("ProfId6", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
@@ -1117,7 +1118,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$line4 .= ($line4 ? " - " : "").$field.": ".$outputlangs->convToOutputCharset($fromcompany->idprof6);
 	}
 	// IntraCommunautary VAT
-	if ($fromcompany->tva_intra != '') {
+	if (!empty($fromcompany->tva_intra)  && $fromcompany->tva_intra != '') {
 		$line4 .= ($line4 ? " - " : "").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
 	}
 
@@ -1273,6 +1274,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 
 		// Fix bug of some HTML editors that replace links <img src="http://localhostgit/viewimage.php?modulepart=medias&file=image/efd.png" into <img src="http://localhostgit/viewimage.php?modulepart=medias&amp;file=image/efd.png"
 		// We make the reverse, so PDF generation has the real URL.
+		$nbrep = 0;
 		$labelproductservice = preg_replace('/(<img[^>]*src=")([^"]*)(&amp;)([^"]*")/', '\1\2&\4', $labelproductservice, -1, $nbrep);
 
 		//var_dump($labelproductservice);exit;
@@ -1357,11 +1359,15 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
-	// Description short of product line
-	$libelleproduitservice = $label;
-	if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
-		$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+	if (empty($conf->global->PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES)) {
+		// Description short of product line
+		$libelleproduitservice = $label;
+		if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
+			// This part of code is bugged. It introduces a HTML tag making the label a html string but without converting \n into br if it was a full text non html string before.
+			$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+		}
 	}
+
 
 	// Add ref of subproducts
 	if (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) {
@@ -2212,47 +2218,6 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 }
 
 /**
- *	Return total quantity of products and/or services
- *
- *	@param	Object		$object				Object
- *	@param	string		$type				Type
- *  @param  Translate	$outputlangs		Object langs for output
- * 	@return	integer
- *  @deprecated Not used by Dolibarr core, so will be removed.
- */
-function pdf_getTotalQty($object, $type, $outputlangs)
-{
-	global $hookmanager;
-
-	$total = 0;
-	$nblines = count($object->lines);
-
-	// Loop on each lines
-	for ($i = 0; $i < $nblines; $i++) {
-		if ($object->lines[$i]->special_code != 3) {
-			if ($type == 'all') {
-				$total += $object->lines[$i]->qty;
-			} elseif ($type == 9 && is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
-				$special_code = $object->lines[$i]->special_code;
-				if (!empty($object->lines[$i]->fk_parent_line)) {
-					$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-				}
-				$parameters = array('i'=>$i, 'outputlangs'=>$outputlangs, 'hidedetails'=>$hidedetails, 'special_code'=>$special_code);
-				$action = '';
-				$reshook = $hookmanager->executeHooks('pdf_getTotalQty', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-				return $hookmanager->resPrint;
-			} elseif ($type == 0 && $object->lines[$i]->product_type == 0) {
-				$total += $object->lines[$i]->qty;
-			} elseif ($type == 1 && $object->lines[$i]->product_type == 1) {
-				$total += $object->lines[$i]->qty;
-			}
-		}
-	}
-
-	return $total;
-}
-
-/**
  * 	Return linked objects to use for document generation.
  *  Warning: To save space, this function returns only one link per link type (all links are concated on same record string). This function is used by pdf_writeLinkedObjects
  *
@@ -2260,7 +2225,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
  * 	@param	Translate	$outputlangs	Object lang for output
  * 	@return	array                       Linked objects
  */
-function pdf_getLinkedObjects($object, $outputlangs)
+function pdf_getLinkedObjects(&$object, $outputlangs)
 {
 	global $db, $hookmanager;
 
@@ -2282,7 +2247,15 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
 			$outputlangs->load('orders');
-			foreach ($objects as $elementobject) {
+
+			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+				$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
+				foreach ($objects as $elementobject) {
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs).'<br>');
+				}
+			} elseif (count($objects) == 1) {
+				$elementobject = array_shift($objects);
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '');
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
@@ -2307,12 +2280,43 @@ function pdf_getLinkedObjects($object, $outputlangs)
 		} elseif ($objecttype == 'shipping') {
 			$outputlangs->loadLangs(array("orders", "sendings"));
 
-			foreach ($objects as $x => $elementobject) {
+			if (count($objects) > 1) {
+				$order = null;
+				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
+					$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br>');
+				} else {
+					$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefSending").' : <br>');
+				}
+				// We concat this record info into fields xxx_value. title is overwrote.
+				foreach ($objects as $elementobject) {
+					if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
+						$elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+						if (! empty($elementobject->linkedObjectsIds['commande'])) {
+							include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+							$order = new Commande($db);
+							$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
+							if ($ret < 1) {
+								$order = null;
+							}
+						}
+					}
+
+					if (! is_object($order)) {
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
+						$object->note_public = dol_concatdesc($object->note_public, '<br>');
+					} else {
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
+						$object->note_public = dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
+						$object->note_public = dol_concatdesc($object->note_public, '<br>');
+					}
+				}
+			} elseif (count($objects) == 1) {
+				$elementobject = array_shift($objects);
 				$order = null;
 				// We concat this record info into fields xxx_value. title is overwrote.
-				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {	// There is not already a link to order and object is not the order, so we show also info with order
+				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
 					$elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
-					if (!empty($elementobject->linkedObjectsIds['commande'])) {
+					if (! empty($elementobject->linkedObjectsIds['commande'])) {
 						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 						$order = new Commande($db);
 						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
@@ -2321,24 +2325,15 @@ function pdf_getLinkedObjects($object, $outputlangs)
 						}
 					}
 				}
-				if (!is_object($order)) {
+
+				if (! is_object($order)) {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
-					if (!empty($linkedobjects[$objecttype]['ref_value'])) {
-						$linkedobjects[$objecttype]['ref_value'] .= ' / ';
-					}
+					if (! empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
 					$linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
-					//$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateShipment");
-					//if (! empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'].=' / ';
-					//$linkedobjects[$objecttype]['date_value'].= dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
 				} else {
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
-					if (empty($linkedobjects[$objecttype]['ref_value'])) {
-						$linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
-					}
+					if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
 					$linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
-					//$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ($elementobject->date_delivery ? ' / ' . $outputlangs->transnoentities("DateShipment") : '');
-					//if (empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
-					//$linkedobjects[$objecttype]['date_value'].= ($elementobject->date_delivery ? ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs) : '');
 				}
 			}
 		}

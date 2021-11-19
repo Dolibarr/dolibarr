@@ -79,6 +79,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
+$permissiontoadd = $user->rights->tax->charges->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
@@ -86,7 +88,7 @@ $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-if ($action == 'setlib' && $user->rights->tax->charges->creer) {
+if ($action == 'setlib' && $permissiontoadd) {
 	$object->fetch($id);
 	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
 	if ($result < 0) {

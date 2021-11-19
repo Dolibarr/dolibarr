@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/admin/eventorganization_extrafields.php
+ *      \file       htdocs/admin/eventorganization_confbooth_extrafields.php
  *		\ingroup    bom
  *		\brief      Page to setup extra fields of EventOrganization
  */

@@ -8,4 +8,4 @@ LinkRemoved=%s havolasi o'chirildi
 ErrorFailedToDeleteLink= '<b> %s </b>' havolasi o'chirilmadi
 ErrorFailedToUpdateLink= '<b> %s </b>' havolasi yangilanmadi
 URLToLink=Ulanish uchun URL
-OverwriteIfExists=Overwrite file if exists
+OverwriteIfExists=Agar mavjud bo'lsa, faylni qayta yozing
