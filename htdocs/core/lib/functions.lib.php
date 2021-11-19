@@ -7194,7 +7194,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			// add substition variable for ticket
 			if (is_object($object) && $object->element == 'ticket') {
 				$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
-				$substitutionarray['__TICKET_REF__'] = $object->ref;
+				$substitutionarray['__REF__'] = $object->ref;
 				$substitutionarray['__TICKET_SUBJECT__'] = $object->subject;
 				$substitutionarray['__TICKET_TYPE__'] = $object->type_code;
 				$substitutionarray['__TICKET_SEVERITY__'] = $object->severity_code;
@@ -7210,7 +7210,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 				if ($object->fk_user_create > 0) {
 					$userstat->fetch($object->fk_user_create);
-					$substitutionarray['__TICKET_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+					$substitutionarray['__USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
 				}
 			}
 
