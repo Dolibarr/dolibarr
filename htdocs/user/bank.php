@@ -327,7 +327,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
                 $holiday->id = $objp->rowid;
 				$holiday->ref = $objp->rowid;
                 $holiday->fk_type = $objp->fk_type;
-				$nbopenedday = num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
+				$nbopenedday = num_open_day($db->jdate($objp->date_debut, 'gmt'), $db->jdate($objp->date_fin, 'gmt'), 0, 1, $objp->halfday);
 
                 print $holiday->getNomUrl(1);
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
