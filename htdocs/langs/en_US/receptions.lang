@@ -48,3 +48,5 @@ ReceptionsReceiptModel=Document templates for receptions
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
 ReceptionExist=A reception exists
 ReceptionBackToDraftInDolibarr=Reception %s back to draft
+ReceptionClassifyClosedInDolibarr=Reception %s classified Closed
+ReceptionUnClassifyCloseddInDolibarr=Reception %s re-open

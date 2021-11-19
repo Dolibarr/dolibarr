@@ -1689,6 +1689,7 @@ class Reception extends CommonObject
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 							$inventorycode = '';
 							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
+
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
@@ -1721,10 +1722,15 @@ class Reception extends CommonObject
 				}
 			}
 
-			if ($this->origin == 'order_supplier') {
+			if (!$error && $this->origin == 'order_supplier') {
 				$commande = new CommandeFournisseur($this->db);
 				$commande->fetch($this->origin_id);
-				$commande->setStatus($user, 4);
+				$result = $commande->setStatus($user, 4);
+				if ($result < 0) {
+					$error++;
+					$this->error = $commande->error;
+					$this->errors = $commande->errors;
+				}
 			}
 		} else {
 			$error++;
