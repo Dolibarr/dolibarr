@@ -8113,7 +8113,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	if (!empty($entityfilter)) {
 		$sql .= " AND entity IN (".getEntity($tablename).")";
 	}
-	print $sql;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
