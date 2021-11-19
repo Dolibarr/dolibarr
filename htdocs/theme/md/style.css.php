@@ -1455,6 +1455,7 @@ tr.nobottom td {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
 	.minwidth300imp { min-width: 300px !important; }
@@ -1514,6 +1515,7 @@ tr.nobottom td {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 150px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
@@ -1533,6 +1535,7 @@ tr.nobottom td {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 70px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -1679,6 +1682,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -3459,7 +3463,7 @@ div.colorback
 	border-left: 1px solid #ccc;
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
-	width: calc(100% - 1px);	/* -1 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
+	width: calc(100% - 2px);	/* -2 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
