@@ -109,3 +109,7 @@ INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRIC
 --
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('ADHERENT_LOGIN_NOT_REQUIRED', 0, '1', 'string', 0);
 
+--
+-- EXIF IMAGE
+--
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_USE_EXIF_ROTATION', 0, '1', 'string', 0);
