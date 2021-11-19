@@ -620,6 +620,11 @@ $restrictviewformytask = ((!isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSI
 
 // Get if user is available or not for each day
 $isavailable = array();
+
+// Assume from Monday to Friday if conf empty or badly formed
+$numstartworkingday = 1;
+$numendworkingday = 5;
+
 if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 {
 	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
