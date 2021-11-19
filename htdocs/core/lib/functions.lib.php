@@ -6992,7 +6992,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			// add variables subtitutions ticket
 			if (!empty($conf->ticket->enabled) && (!is_object($object) || $object->element == 'ticket')) {
 				$substitutionarray['__TICKET_TRACKID__'] = '__TICKET_TRACKID__';
-				$substitutionarray['__TICKET_REF__'] = '__TICKET_REF__';
 				$substitutionarray['__TICKET_SUBJECT__'] = '__TICKET_SUBJECT__';
 				$substitutionarray['__TICKET_TYPE__'] = '__TICKET_TYPE__';
 				$substitutionarray['__TICKET_SEVERITY__'] = '__TICKET_SEVERITY__';
@@ -7001,7 +7000,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_MESSAGE__'] = '__TICKET_MESSAGE__';
 				$substitutionarray['__TICKET_PROGRESSION__'] = '__TICKET_PROGRESSION__';
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
-				$substitutionarray['__TICKET_USER_CREATE__'] = '__TICKET_USER_CREATE__';
 			}
 
 			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'candidature')) {
