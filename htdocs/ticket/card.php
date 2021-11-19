@@ -421,7 +421,6 @@ if (empty($reshook)) {
 				$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 				foreach ($internal_contacts as $key => $contact) {
 					if ($contact['id'] !== $usertoassign) {
-						//print "user à effacer : ".$useroriginassign;
 						$result = $object->delete_contact($contact['rowid']);
 						if ($result<0) {
 							$error++;
