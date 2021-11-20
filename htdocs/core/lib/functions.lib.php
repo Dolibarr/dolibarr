@@ -8132,10 +8132,10 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 /**
  * Verify if condition in string is ok or not
  *
- * @param 	string		$strRights		String with condition to check
- * @return 	boolean						True or False. Return True if strRights is ''
+ * @param 	string		$strToEvaluate	String with condition to check
+ * @return 	boolean						True or False. Note: It returns True if $strToEvaluate is ''
  */
-function verifCond($strRights)
+function verifCond($strToEvaluate)
 {
 	global $user, $conf, $langs;
 	global $leftmenu;
@@ -8143,8 +8143,8 @@ function verifCond($strRights)
 
 	//print $strRights."<br>\n";
 	$rights = true;
-	if ($strRights != '') {
-		$str = 'if(!('.$strRights.')) { $rights = false; }';
+	if ($strToEvaluate !== '') {
+		$str = 'if(!('.$strToEvaluate.')) { $rights = false; }';
 		dol_eval($str); // The dol_eval must contains all the global $xxx used into a condition
 	}
 	return $rights;

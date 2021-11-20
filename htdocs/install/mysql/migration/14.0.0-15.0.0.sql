@@ -448,7 +448,14 @@ ALTER TABLE llx_socpeople DROP COLUMN googleplus;
 ALTER TABLE llx_socpeople DROP COLUMN youtube;
 ALTER TABLE llx_socpeople DROP COLUMN whatsapp;
 
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'KLA', 'Klarna',     1, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (101, 'SOF', 'Sofort',     1, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (102, 'BAN', 'Bancontact', 1, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (103, 'IDE', 'iDeal',      1, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (104, 'GIR', 'Giropay',    1, 0);
+
 ALTER TABLE llx_propal ADD COLUMN online_sign_ip varchar(48);
 ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
 
+ALTER TABLE llx_entrepot ADD COLUMN usage integer DEFAULT 1;
 

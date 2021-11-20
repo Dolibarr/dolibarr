@@ -59,10 +59,10 @@ class Inventory extends CommonObject
 	 */
 	public $picto = 'inventory';
 
-	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATED = 1;
-	const STATUS_RECORDED = 2;
-	const STATUS_CANCELED = 9;
+	const STATUS_DRAFT = 0;			// Draft
+	const STATUS_VALIDATED = 1;		// Inventory is in process
+	const STATUS_RECORDED = 2;		// Inventory is finisged. Stock movement has been recorded.
+	const STATUS_CANCELED = 9;		// Canceled
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -101,8 +101,7 @@ class Inventory extends CommonObject
 		'title'          => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax200'),
 		'fk_warehouse'   => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
 		'fk_product'     => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
-		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>1, 'position'=>35),
-
+		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>'$conf->global->STOCK_INVENTORY_ADD_A_VALUE_DATE', 'position'=>35),	// This date is not used so disabled by default.
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
 		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
 		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>502),
@@ -368,7 +367,7 @@ class Inventory extends CommonObject
 	}
 
 	/**
-	 * Set to Recorded
+	 * Set to inventory to status "Closed". It means all stock movements were recorded.
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
@@ -616,11 +615,11 @@ class Inventory extends CommonObject
 
 		$labelStatus = array();
 		$labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated').' ('.$langs->transnoentitiesnoconv('Started').')';
+		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated').' ('.$langs->transnoentitiesnoconv('InventoryStartedShort').')';
 		$labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		$labelStatus[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
 		$labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Started');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('InventoryStartedShort');
 		$labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		$labelStatusShort[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
 
