@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2021  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -113,7 +113,7 @@ $sql .= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
 $sql .= " ct.accountancy_code_buy as account_tva, ct.recuperableonly";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as fd";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = ".((int) $idpays);
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = ".((int) $idpays)." AND ct.entity IN (".getEntity('c_tva').")";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";

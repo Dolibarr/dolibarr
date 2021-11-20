@@ -1,24 +1,24 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (C) 2005		Eric Seigne		     <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015	Regis Houssin		 <regis.houssin@capnetworks.com>
- * Copyright (C) 2006		Andre Cianfarani	 <acianfa@free.fr>
- * Copyright (C) 2006		Auguria SARL		 <info@auguria.org>
- * Copyright (C) 2010-2015	Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2013-2016	Marcos García		 <marcosgdf@gmail.com>
- * Copyright (C) 2012-2013	Cédric Salvador		 <csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2020	Alexandre Spangaro	 <aspangaro@open-dsi.fr>
- * Copyright (C) 2014		Cédric Gross		 <c.gross@kreiz-it.fr>
- * Copyright (C) 2014-2015	Ferran Marcet		 <fmarcet@2byte.es>
- * Copyright (C) 2015		Jean-François Ferry	 <jfefe@aternatik.fr>
- * Copyright (C) 2015		Raphaël Doursenaud	 <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
- * Copyright (C) 2016		Meziane Sof		     <virtualsof@yahoo.fr>
- * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2006       Auguria SARL            <info@auguria.org>
+ * Copyright (C) 2010-2015  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013-2016  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2013  Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2011-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014       Cédric Gross            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
+ * Copyright (C) 2017       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -331,6 +331,7 @@ if (empty($reshook)) {
 				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 				$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+				$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
