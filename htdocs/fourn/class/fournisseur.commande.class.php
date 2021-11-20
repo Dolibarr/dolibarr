@@ -2295,7 +2295,14 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::Livraison");
 
-		if ($user->rights->fournisseur->commande->receptionner) {
+		$usercanreceive = 0;
+		if (empty($conf->reception->enabled)) {
+			$usercanreceive = $user->rights->fournisseur->commande->receptionner;
+		} else {
+			$usercanreceive = $user->rights->reception->creer;
+		}
+
+		if ($usercanreceive) {
 			// Define the new status
 			if ($type == 'par') {
 				$statut = self::STATUS_RECEIVED_PARTIALLY;

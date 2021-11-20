@@ -2149,7 +2149,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					// Not enabled but visible (so greyed), except if parent was not enabled.
 					print '<div class="menu_contenu'.$cssmenu.'">';
 					print $tabstring;
-					print '<span class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span><br></div>'."\n";
+					print '<span class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span><br>';
+					print '</div>'."\n";
 				}
 			}
 

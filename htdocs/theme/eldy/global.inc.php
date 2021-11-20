@@ -2881,12 +2881,12 @@ a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	color: #202020;
 	margin: 1px 1px 1px 6px;
 }
-font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa; }
+span.vsmenudisabled, font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
 	white-space: nowrap;
 }
-font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
+span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; color: #aaa; text-decoration: none; }
