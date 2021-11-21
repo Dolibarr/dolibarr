@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2021	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ if (!defined('NOREQUIREHTML')) {
 
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
@@ -51,10 +53,84 @@ if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
+if (!empty($conf->stripe->enabled)) {
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+	// Force to use the correct API key
+	global $stripearrayofkeysbyenv;
+	$site_account = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+
+	$stripe = new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
+	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
+	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
+	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&servicestatus='.$servicestatus;
+	if (!empty($conf->global->STRIPE_LOCATION)) $urlconnexiontoken .= '&location='.$conf->global->STRIPE_LOCATION;
+	if (!empty($stripeacc)) $urlconnexiontoken .= '&stripeacc='.$stripeacc;
+?>
+<script src="https://js.stripe.com/terminal/v1/"></script>
+<script>
+var terminal = StripeTerminal.create({
+  onFetchConnectionToken: fetchConnectionToken,
+  onUnexpectedReaderDisconnect: unexpectedDisconnect,
+});
+function unexpectedDisconnect() {
+  // In this function, your app should notify the user that the reader disconnected.
+  // You can also include a way to attempt to reconnect to a reader.
+  console.log("Disconnected from reader")
+}
+function fetchConnectionToken() {
+  // Do not cache or hardcode the ConnectionToken. The SDK manages the ConnectionToken's lifecycle.
+  return fetch('<?php echo $urlconnexiontoken; ?>', { method: "POST" })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      return data.secret;
+    });
+}
+
+const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'} //false, location: '{{LOCATION_ID}}'
+  terminal.discoverReaders(config).then(function(discoverResult) {
+    if (discoverResult.error) {
+      console.log('Failed to discover: ', discoverResult.error);
+    } else if (discoverResult.discoveredReaders.length === 0) {
+      console.log('No available readers.');
+    } else {
+      // You should show the list of discoveredReaders to the
+      // cashier here and let them select which to connect to (see below).
+      selectedReader = discoverResult.discoveredReaders[0];
+	  //console.log('terminal.discoverReaders', selectedReader); // only active for development
+	  
+	  terminal.connectReader(selectedReader).then(function(connectResult) {
+        if (connectResult.error) {
+          console.log('Failed to connect: ', connectResult.error);
+        } else {
+          console.log('Connected to reader: ', connectResult.reader.label);
+		  if (document.getElementById("StripeTerminal")) {
+			  document.getElementById("StripeTerminal").innerHTML = '<button type="button" class="calcbutton2" onclick="ValidateStripeTerminal();"><span class="fa fa-2x fa-credit-card iconwithlabel"></span><br>'+connectResult.reader.label+'</button>';
+			}
+        }
+      });
+
+    }
+  });
+</script>
+<?php
+}
 
 /*
  * View
  */
+
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
+}
 
 $invoice = new Facture($db);
 if ($invoiceid > 0) {
@@ -218,6 +294,38 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				location.reload();
 			}
 		});
+	}
+
+	function ValidateStripeTerminal() {
+		console.log("Launch ValidateStripeTerminal");
+		<?php $_SESSION['SMP_CURRENT_PAYMENT'] = "NEW" ?>
+		var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
+		var amountpayed = $("#change1").val();
+		if (amountpayed > <?php echo $invoice->getRemainToPay(); ?>) {
+			amountpayed = <?php echo $invoice->getRemainToPay(); ?>;
+		}
+		if (amountpayed == 0) {
+			amountpayed = <?php echo $invoice->getRemainToPay(); ?>;
+		}
+		amountpayed = amountpayed * 100;
+		console.log("Pay with terminal ", amountpayed);
+
+	terminal.setSimulatorConfiguration({testCardNumber: '4242424242424242'});
+      terminal.collectPaymentMethod(clientSecret).then(function(result) {
+      if (result.error) {
+        // Placeholder for handling result.error
+      } else {
+          console.log('terminal.collectPaymentMethod', result.paymentIntent);
+          terminal.processPayment(result.paymentIntent).then(function(result) {
+          if (result.error) {
+            console.log(result.error)
+          } else if (result.paymentIntent) {
+              paymentIntentId = result.paymentIntent.id;
+              console.log('terminal.processPayment', result.paymentIntent);
+          }
+        });
+	}
+    });	
 	}
 
 	function ValidateSumup() {
@@ -421,8 +529,19 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	$i = $i + 1;
 }
 
-$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
+print '<span id="StripeTerminal"></span>';
+	if (!empty($conf->global->$keyforstripeterminalbank)) {
+		
+	} else {
+		$langs->loadLangs(array("errors", "admin"));
+		//print '<button type="button" class="calcbutton2 disabled" title="'.$langs->trans("SetupNotComplete").'">TerminalOff</button>';
+	}
+}
+
 if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
 	if (!empty($conf->global->$keyforsumupbank)) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {
