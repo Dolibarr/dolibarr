@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net> 
+ * Copyright (C) 2021       Thibault FOUCART    <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,28 +179,28 @@ if (!empty($conf->banque->enabled)) {
 		$atleastonefound++;
 	}
 	print '</td></tr>';
-	
+
 	if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForStripeTerminal").'</td>'; // Force Stripe Terminal
-	print '<td>';
-	$service = 'StripeTest';
-	$servicestatus = 0;
-	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
-		$service = 'StripeLive';
-		$servicestatus = 1;
-	}
-	global $stripearrayofkeysbyenv;
-	$site_account = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
-	\Stripe\Stripe::setApiKey($site_account);
-	$locations = \Stripe\Terminal\Reader::all(['location' => $conf->global->STRIPE_LOCATION]);
-	$location = array();
-	$location[""] = $langs->trans("NoReader");
-	foreach ($locations as $locations) {
-	$location[$locations->id] = $locations->display_name;
-	}	
-	print $form->selectarray("ASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse.'", $location, $conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse});
-	//print '<input type="text" name="CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse}.'" />';
-	print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForStripeTerminal").'</td>'; // Force Stripe Terminal
+		print '<td>';
+		$service = 'StripeTest';
+		$servicestatus = 0;
+		if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+			$service = 'StripeLive';
+			$servicestatus = 1;
+		}
+		global $stripearrayofkeysbyenv;
+		$site_account = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
+		\Stripe\Stripe::setApiKey($site_account);
+		$locations = \Stripe\Terminal\Reader::all(['location' => $conf->global->STRIPE_LOCATION]);
+		$location = array();
+		$location[""] = $langs->trans("NoReader");
+		foreach ($locations as $locations) {
+			$location[$locations->id] = $locations->display_name;
+		}
+		print $form->selectarray("ASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse.'", $location, $conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse});
+		//print '<input type="text" name="CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse}.'" />';
+		print '</td></tr>';
 	}
 
 	if ($conf->global->TAKEPOS_ENABLE_SUMUP) {

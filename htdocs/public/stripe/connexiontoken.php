@@ -71,22 +71,21 @@ if (empty($endpoint_secret)) {
 header('Content-Type: application/json');
 
 try {
-  // Be sure to authenticate the endpoint for creating connection tokens.
-  // Force to use the correct API key
-  global $stripearrayofkeysbyenv;
-  \Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
-  // The ConnectionToken's secret lets you connect to any Stripe Terminal reader
-  // and take payments with your Stripe account.
-  if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-	$connectionToken = \Stripe\Terminal\ConnectionToken::create();
-} else {
-	$connectionToken = \Stripe\Terminal\ConnectionToken::create([
+	// Be sure to authenticate the endpoint for creating connection tokens.
+	// Force to use the correct API key
+	global $stripearrayofkeysbyenv;
+	\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
+	// The ConnectionToken's secret lets you connect to any Stripe Terminal reader
+	// and take payments with your Stripe account.
+	if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+		$connectionToken = \Stripe\Terminal\ConnectionToken::create();
+	} else {
+		$connectionToken = \Stripe\Terminal\ConnectionToken::create([
 		'location' => ''
-	  ], array("stripe_account" => $stripeacc));
-}
-  echo json_encode(array('secret' => $connectionToken->secret));
-
+		  ], array("stripe_account" => $stripeacc));
+	}
+	echo json_encode(array('secret' => $connectionToken->secret));
 } catch (Error $e) {
-  http_response_code(500);
-  echo json_encode(['error' => $e->getMessage()]);
+	http_response_code(500);
+	echo json_encode(['error' => $e->getMessage()]);
 }
