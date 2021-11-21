@@ -69,24 +69,23 @@ if ($action == 'getConnexionToken') {
 		$array = array();
 		if (isset($location) && !empty($location))  $array['location'] = $location;
 		if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-		  $connectionToken = \Stripe\Terminal\ConnectionToken::create($array);
-	  } else {
-		  $connectionToken = \Stripe\Terminal\ConnectionToken::create($array, array("stripe_account" => $stripeacc));
-	  }
+			$connectionToken = \Stripe\Terminal\ConnectionToken::create($array);
+		} else {
+			$connectionToken = \Stripe\Terminal\ConnectionToken::create($array, array("stripe_account" => $stripeacc));
+		}
 		echo json_encode(array('secret' => $connectionToken->secret));
-	  
-	  } catch (Error $e) {
+	} catch (Error $e) {
 		http_response_code(500);
 		echo json_encode(['error' => $e->getMessage()]);
-	  }
-} elseif ($action == 'createPaymentIntent') { 
+	}
+} elseif ($action == 'createPaymentIntent') {
 	try {
 		$json_str = file_get_contents('php://input');
 		$json_obj = json_decode($json_str);
-	  
+
 		// For Terminal payments, the 'payment_method_types' parameter must include
 		// 'card_present' and the 'capture_method' must be set to 'manual'
-		
+
 		$intent = \Stripe\PaymentIntent::create([
 		  'amount' => $json_obj->amount,
 		  'currency' => 'eur',
@@ -94,25 +93,22 @@ if ($action == 'getConnexionToken') {
 		  'capture_method' => 'manual',
 		]);
 		echo json_encode(array('client_secret' => $intent->client_secret));
-	  
-	  
-	  } catch (Error $e) {
+	} catch (Error $e) {
 		http_response_code(500);
 		echo json_encode(['error' => $e->getMessage()]);
-	  }
-	} elseif ($action == 'capturePaymentIntent') { 
-		try {
-			// retrieve JSON from POST body
-			$json_str = file_get_contents('php://input');
-			$json_obj = json_decode($json_str);
-		  
-			$intent = \Stripe\PaymentIntent::retrieve($json_obj->id);
-			$intent = $intent->capture();
-		  
-			echo json_encode($intent);
-		  
-		  } catch (Error $e) {
-			http_response_code(500);
-			echo json_encode(['error' => $e->getMessage()]);
-		  }
 	}
+} elseif ($action == 'capturePaymentIntent') {
+	try {
+		// retrieve JSON from POST body
+		$json_str = file_get_contents('php://input');
+		$json_obj = json_decode($json_str);
+
+		$intent = \Stripe\PaymentIntent::retrieve($json_obj->id);
+		$intent = $intent->capture();
+
+		echo json_encode($intent);
+	} catch (Error $e) {
+		http_response_code(500);
+		echo json_encode(['error' => $e->getMessage()]);
+	}
+}
