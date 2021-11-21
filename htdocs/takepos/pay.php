@@ -356,7 +356,9 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		console.log("Pay with terminal ", amountpayed);
 
 		fetchPaymentIntentClientSecret(amountpayed).then(function(client_secret) {
+			<?php if (empty($servicestatus) && empty($keyforstripeterminalbank)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '4242424242424242'});
+	  		<?php } ?>
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
 		// Placeholder for handling result.error
@@ -365,7 +367,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		  terminal.processPayment(result.paymentIntent).then(function(result) {
 		  if (result.error) {
 			console.log(result.error)
-		  } else if (result.paymentIntent) {
+		} else if (result.paymentIntent) {
 			  paymentIntentId = result.paymentIntent.id;
 			  console.log('terminal.processPayment', result.paymentIntent);
 			  capturePaymentIntent(paymentIntentId).then(function(client_secret) {
