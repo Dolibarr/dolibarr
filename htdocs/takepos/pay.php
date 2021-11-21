@@ -358,7 +358,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		fetchPaymentIntentClientSecret(amountpayed).then(function(client_secret) {
 			<?php if (empty($servicestatus) && empty($keyforstripeterminalbank)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '4242424242424242'});
-	  		<?php } ?>
+			<?php } ?>
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
 		// Placeholder for handling result.error
