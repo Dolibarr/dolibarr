@@ -95,6 +95,7 @@ function fetchConnectionToken() {
 	});
 }
 
+<?php if (empty($conf->global->$keyforstripeterminalbank)) { ?>
 const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'} //false, location: '{{LOCATION_ID}}'
   terminal.discoverReaders(config).then(function(discoverResult) {
 	if (discoverResult.error) {
@@ -120,6 +121,20 @@ const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOC
 
 	}
   });
+<?php } else { ?>
+
+	terminal.connectReader(selectedReader).then(function(connectResult) {
+		if (connectResult.error) {
+		  console.log('Failed to connect: ', connectResult.error);
+		} else {
+		  console.log('Connected to reader: ', connectResult.reader.label);
+		  if (document.getElementById("StripeTerminal")) {
+			  document.getElementById("StripeTerminal").innerHTML = '<button type="button" class="calcbutton2" onclick="ValidateStripeTerminal();"><span class="fa fa-2x fa-credit-card iconwithlabel"></span><br>'+connectResult.reader.label+'</button>';
+			}
+		}
+	  });
+
+<?php } ?>
 </script>
 	<?php
 }
@@ -356,7 +371,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		console.log("Pay with terminal ", amountpayed);
 
 		fetchPaymentIntentClientSecret(amountpayed).then(function(client_secret) {
-			<?php if (empty($servicestatus) && empty($keyforstripeterminalbank)) { ?>
+			<?php if (empty($servicestatus) && empty($conf->global->$keyforstripeterminalbank)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '4242424242424242'});
 			<?php } ?>
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
