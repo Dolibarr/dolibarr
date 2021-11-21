@@ -398,8 +398,8 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 	$location = array();
 	$location[""] = $langs->trans("EmptyLocation");
 	foreach ($locations as $locations) {
-	$location[$locations->id] = $locations->display_name;
-	}	
+		$location[$locations->id] = $locations->display_name;
+	}
 	print $form->selectarray("STRIPE_LOCATION", $location, $conf->global->STRIPE_LOCATION);
 	print '</td></tr>';
 }
