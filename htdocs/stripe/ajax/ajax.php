@@ -68,16 +68,14 @@ if ($action == 'getConnexionToken') {
 		$array = array();
 		if (isset($location) && !empty($location))  $array['location'] = $location;
 		if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-		  $connectionToken = \Stripe\Terminal\ConnectionToken::create($array);
-	  } else {
-		  $connectionToken = \Stripe\Terminal\ConnectionToken::create($array, array("stripe_account" => $stripeacc));
-	  }
+			$connectionToken = \Stripe\Terminal\ConnectionToken::create($array);
+		} else {
+			$connectionToken = \Stripe\Terminal\ConnectionToken::create($array, array("stripe_account" => $stripeacc));
+		}
 		echo json_encode(array('secret' => $connectionToken->secret));
-	  
-	  } catch (Error $e) {
+	} catch (Error $e) {
 		http_response_code(500);
 		echo json_encode(['error' => $e->getMessage()]);
-	  }
-} elseif ($action == 'CreatePaymentIntent') { 
-
+	}
+} elseif ($action == 'CreatePaymentIntent') {
 }
