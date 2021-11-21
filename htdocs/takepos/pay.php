@@ -94,8 +94,39 @@ function fetchConnectionToken() {
 	  return data.secret;
 	});
 }
+</script>
+<?php }
 
-	<?php if (empty($conf->global->$keyforstripeterminalbank)) { ?>
+/*
+ * View
+ */
+
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
+}
+
+$invoice = new Facture($db);
+if ($invoiceid > 0) {
+	$invoice->fetch($invoiceid);
+} else {
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$resql = $db->query($sql);
+	$obj = $db->fetch_object($resql);
+	if ($obj) {
+		$invoiceid = $obj->rowid;
+	}
+	if (!$invoiceid) {
+		$invoiceid = 0; // Invoice does not exist yet
+	} else {
+		$invoice->fetch($invoiceid);
+	}
+}
+
+?>
+<script>
+	<?php 
+	if ($invoice->type != $invoice::TYPE_CREDIT_NOTE) {
+	if (empty($conf->global->$keyforstripeterminalbank)) { ?>
 const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'} //false, location: '{{LOCATION_ID}}'
   terminal.discoverReaders(config).then(function(discoverResult) {
 	if (discoverResult.error) {
@@ -133,35 +164,9 @@ const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOC
 		}
 	  });
 
-	<?php } ?>
+	<?php } } ?>
 </script>
-	<?php
-}
-
-/*
- * View
- */
-
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
-}
-
-$invoice = new Facture($db);
-if ($invoiceid > 0) {
-	$invoice->fetch($invoiceid);
-} else {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-	$resql = $db->query($sql);
-	$obj = $db->fetch_object($resql);
-	if ($obj) {
-		$invoiceid = $obj->rowid;
-	}
-	if (!$invoiceid) {
-		$invoiceid = 0; // Invoice does not exist yet
-	} else {
-		$invoice->fetch($invoiceid);
-	}
-}
+<?php
 
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs = array();
