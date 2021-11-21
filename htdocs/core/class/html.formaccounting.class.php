@@ -479,16 +479,16 @@ class FormAccounting extends Form
 			$this->db->free($resql);
 
 			// Auxiliary user account
-			$sql = "SELECT DISTINCT accountancy_code, lastname, firstname ";
+			$sql = "SELECT DISTINCT accountancy_code_subledger, lastname, firstname ";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user";
 			$sql .= " WHERE entity IN (".getEntity('user').")";
-			$sql .= " ORDER BY accountancy_code";
+			$sql .= " ORDER BY accountancy_code_subledger";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
-					if (!empty($obj->accountancy_code)) {
-						$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
+					if (!empty($obj->accountancy_code_subledger)) {
+						$aux_account[$obj->accountancy_code_subledger] = $obj->accountancy_code_subledger.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
 					}
 				}
 			} else {

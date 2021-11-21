@@ -8,7 +8,7 @@
  * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
  * Copyright (C) 2013-2019  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
@@ -321,7 +321,8 @@ class User extends CommonObject
 	public $parentof; // To store an array of all parents for all ids.
 	private $cache_childids; // Cache array of already loaded childs
 
-	public $accountancy_code; // Accountancy code in prevision of the complete accountancy module
+	public $accountancy_code_general;
+	public $accountancy_code_subledger;
 
 	public $thm; // Average cost of employee - Used for valuation of time spent
 	public $tjm; // Average cost of employee
@@ -426,7 +427,8 @@ class User extends CommonObject
 		$sql .= " u.dateendvalidity,";
 		$sql .= " u.photo as photo,";
 		$sql .= " u.openid as openid,";
-		$sql .= " u.accountancy_code,";
+		$sql .= " u.accountancy_code_general,";
+		$sql .= " u.accountancy_code_subledger,";
 		$sql .= " u.thm,";
 		$sql .= " u.tjm,";
 		$sql .= " u.salary,";
@@ -530,7 +532,8 @@ class User extends CommonObject
 				$this->openid		= $obj->openid;
 				$this->lang			= $obj->lang;
 				$this->entity		= $obj->entity;
-				$this->accountancy_code = $obj->accountancy_code;
+				$this->accountancy_code_general		= $obj->accountancy_code_general;
+				$this->accountancy_code_subledger	= $obj->accountancy_code_subledger;
 				$this->thm			= $obj->thm;
 				$this->tjm			= $obj->tjm;
 				$this->salary = $obj->salary;
@@ -1773,7 +1776,8 @@ class User extends CommonObject
 		$this->zip			= empty($this->zip) ? '' : $this->zip;
 		$this->town = empty($this->town) ? '' : $this->town;
 		$this->setUpperOrLowerCase();
-		$this->accountancy_code = trim($this->accountancy_code);
+		$this->accountancy_code_general		= trim($this->accountancy_code_general);
+		$this->accountancy_code_subledger	= trim($this->accountancy_code_subledger);
 		$this->color = empty($this->color) ? '' : $this->color;
 		$this->dateemployment = empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend = empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
@@ -1857,7 +1861,8 @@ class User extends CommonObject
 		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", job = '".$this->db->escape($this->job)."'";
 		$sql .= ", signature = '".$this->db->escape($this->signature)."'";
-		$sql .= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
+		$sql .= ", accountancy_code_general = '".$this->db->escape($this->accountancy_code_general)."'";
+		$sql .= ", accountancy_code_subledger = '".$this->db->escape($this->accountancy_code_subledger)."'";
 		$sql .= ", color = '".$this->db->escape($this->color)."'";
 		$sql .= ", dateemployment=".(strval($this->dateemployment) != '' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
 		$sql .= ", dateemploymentend=".(strval($this->dateemploymentend) != '' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
@@ -2602,8 +2607,8 @@ class User extends CommonObject
 		if (!empty($this->admin)) {
 			$label .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
 		}
-		if (!empty($this->accountancy_code) || $option == 'accountancy') {
-			$label .= '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
+		if (!empty($this->accountancy_code_subledger) || $option == 'accountancy') {
+			$label .= '<br><b>'.$langs->trans("UserAccountancyCode").'</b>: '.$this->accountancy_code_subledger;
 		}
 		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users

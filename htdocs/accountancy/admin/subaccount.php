@@ -220,9 +220,9 @@ if (!empty($search_type) && $search_type >= 0) {
 
 // User
 $sql .= " UNION ";
-$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
+$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code_subledger as subaccount, '3' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
 $sql .= " WHERE u.entity IN (".getEntity('user').")";
-$sql .= " AND u.accountancy_code <> ''";
+$sql .= " AND u.accountancy_code_subledger <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
@@ -251,10 +251,10 @@ if (strlen(trim($search_subaccount))) {
 				$search_subaccount_tmp_clean = preg_replace('/^\^/', '', $search_subaccount_tmp);
 				$search_subaccount_clean = preg_replace('/^\^/', '', $search_subaccount);
 			}
-			$sql .= " AND (u.accountancy_code LIKE '".$db->escape($startchar.$search_subaccount_tmp_clean)."'";
-			$sql .= " OR u.accountancy_code LIKE '".$db->escape($startchar.$search_subaccount_clean)."%')";
+			$sql .= " AND (u.accountancy_code_subledger LIKE '".$db->escape($startchar.$search_subaccount_tmp_clean)."'";
+			$sql .= " OR u.accountancy_code_subledger LIKE '".$db->escape($startchar.$search_subaccount_clean)."%')";
 		} else {
-			$sql .= natural_search("u.accountancy_code", $search_subaccount_tmp);
+			$sql .= natural_search("u.accountancy_code_subledger", $search_subaccount_tmp);
 		}
 	}
 }

@@ -222,7 +222,7 @@ class modUser extends DolibarrModules
 		$this->export_permission[$r] = array(array("user", "user", "export"));
 		$this->export_fields_array[$r] = array(
 			'u.rowid'=>"Id", 'u.login'=>"Login", 'u.lastname'=>"Lastname", 'u.firstname'=>"Firstname", 'u.employee'=>"Employee", 'u.job'=>"PostOrFunction", 'u.gender'=>"Gender",
-			'u.accountancy_code'=>"UserAccountancyCode",
+			'u.accountancy_code_subledger'=>"UserAccountancyCode",
 			'u.address'=>"Address", 'u.zip'=>"Zip", 'u.town'=>"Town",
 			'u.office_phone'=>'Phone', 'u.user_mobile'=>"Mobile", 'u.office_fax'=>'Fax',
 			'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
@@ -236,7 +236,7 @@ class modUser extends DolibarrModules
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'u.rowid'=>'Numeric', 'u.login'=>"Text", 'u.lastname'=>"Text", 'u.firstname'=>"Text", 'u.employee'=>'Boolean', 'u.job'=>'Text',
-			'u.accountancy_code'=>'Text',
+			'u.accountancy_code_subledger'=>'Text',
 			'u.address'=>"Text", 'u.zip'=>"Text", 'u.town'=>"Text",
 			'u.office_phone'=>'Text', 'u.user_mobile'=>'Text', 'u.office_fax'=>'Text',
 			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.datelastlogin'=>'Date',
@@ -247,7 +247,7 @@ class modUser extends DolibarrModules
 		);
 		$this->export_entities_array[$r] = array(
 			'u.rowid'=>"user", 'u.login'=>"user", 'u.lastname'=>"user", 'u.firstname'=>"user", 'u.employee'=>'user', 'u.job'=>'user', 'u.gender'=>'user',
-			'u.accountancy_code'=>'user',
+			'u.accountancy_code_subledger'=>'user',
 			'u.address'=>"user", 'u.zip'=>"user", 'u.town'=>"user",
 			'u.office_phone'=>'user', 'u.user_mobile'=>'user', 'u.office_fax'=>'user',
 			'u.email'=>'user', 'u.note'=>"user", 'u.signature'=>'user',
@@ -286,7 +286,7 @@ class modUser extends DolibarrModules
 		$this->import_tables_array[$r] = array('u'=>MAIN_DB_PREFIX.'user', 'extra'=>MAIN_DB_PREFIX.'user_extrafields'); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array(
 			'u.login'=>"Login*", 'u.lastname'=>"Name*", 'u.firstname'=>"Firstname", 'u.employee'=>"Employee*", 'u.job'=>"PostOrFunction", 'u.gender'=>"Gender",
-			'u.accountancy_code'=>"UserAccountancyCode",
+			'u.accountancy_code_subledger'=>"UserAccountancyCode",
 			'u.pass_crypted'=>"Password", 'u.admin'=>"Administrator", 'u.fk_soc'=>"Company*", 'u.address'=>"Address", 'u.zip'=>"Zip", 'u.town'=>"Town",
 			'u.fk_state'=>"StateId", 'u.fk_country'=>"CountryCode",
 			'u.office_phone'=>"Phone", 'u.user_mobile'=>"Mobile", 'u.office_fax'=>"Fax",

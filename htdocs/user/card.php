@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2021 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
- * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2012-2018 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
+/* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2021  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
+ * Copyright (C) 2012-2018  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2017  Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2015-2018  Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       David Beniamine         <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,15 @@ if (!empty($conf->categorie->enabled)) {
 }
 if (!empty($conf->stock->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+}
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+}
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
 $id = GETPOST('id', 'int');
@@ -274,7 +283,18 @@ if (empty($reshook)) {
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 			$object->job = GETPOST("job", 'alphanohtml');
 			$object->signature = GETPOST("signature", 'restricthtml');
-			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
+
+			if (GETPOSTISSET('accountancy_code_general')) {
+				$accountancy_code_general  = GETPOST('accountancy_code_general', 'alpha');
+
+				if (empty($accountancy_code_general) || $accountancy_code_general == '-1') {
+					$object->accountancy_code_general = '';
+				} else {
+					$object->accountancy_code_general = $accountancy_code_general;
+				}
+			}
+			$object->accountancy_code_subledger = GETPOST("accountancy_code_subledger", 'alphanohtml');
+
 			$object->note = GETPOST("note", 'restricthtml');
 			$object->note_private = GETPOST("note", 'restricthtml');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
@@ -433,7 +453,18 @@ if (empty($reshook)) {
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 				$object->job = GETPOST("job", 'alphanohtml');
 				$object->signature = GETPOST("signature", 'restricthtml');
-				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
+
+				if (GETPOSTISSET('accountancy_code_general')) {
+					$accountancy_code_general  = GETPOST('accountancy_code_general', 'alpha');
+
+					if (empty($accountancy_code_general) || $accountancy_code_general == '-1') {
+						$object->accountancy_code_general = '';
+					} else {
+						$object->accountancy_code_general = $accountancy_code_general;
+					}
+				}
+				$object->accountancy_code_subledger = GETPOST("accountancy_code_subledger", 'alphanohtml');
+
 				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
 				$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
@@ -716,6 +747,9 @@ $formadmin = new FormAdmin($db);
 $formfile = new FormFile($db);
 if (!empty($conf->stock->enabled)) {
 	$formproduct = new FormProduct($db);
+}
+if (!empty($conf->accounting->enabled)) {
+	$formaccounting = new FormAccounting($db);
 }
 
 llxHeader('', $langs->trans("UserCard"));
@@ -1132,14 +1166,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 	}
 
-	// Accountancy code
-	if (!empty($conf->accounting->enabled)) {
-		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-		print '<td>';
-		print '<input type="text" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
-		print '</td></tr>';
-	}
-
 	// User color
 	if (!empty($conf->agenda->enabled)) {
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
@@ -1275,6 +1301,28 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $form->selectDate($dateofbirth, 'dateofbirth', 0, 0, 1, 'createuser', 1, 0);
 	print '</td>';
 	print "</tr>\n";
+
+	print '</table><hr><table class="border centpercent">';
+
+	// User accountancy general account
+	if (!empty($conf->accounting->enabled)) {
+		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+		print '<td>';
+		$accountancy_code_general = GETPOST('accountancy_code_general', 'alpha');
+		print $formaccounting->select_account($accountancy_code_general, 'accountancy_code_general', 1, null, 1, 1, '');
+		print '</td></tr>';
+	} else {
+		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+		print '<td>';
+		print '<input type="text" name="accountancy_code_general" value="'.dol_escape_htmltag(GETPOST('accountancy_code_general', 'alphanohtml')).'">';
+		print '</td></tr>';
+	}
+
+	// User accountancy subledger account
+	print '<tr><td>'.$langs->trans("UserAccountancyCode").'</td>';
+	print '<td>';
+	print '<input type="text" name="accountancy_code_subledger" value="'.dol_escape_htmltag(GETPOST('accountancy_code_subledger', 'alphanohtml')).'">';
+	print '</td></tr>';
 
 	print "</table>\n";
 
@@ -1575,11 +1623,24 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
-			// Accountancy code
-			if (!empty($conf->accounting->enabled)) {
-				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>'.$object->accountancy_code.'</td></tr>';
+			// Accountancy
+			print '<tr><td class="nowrap">';
+			print $langs->trans("AccountancyCode");
+			print '</td><td>';
+			if (! empty($conf->accounting->enabled)) {
+				if (! empty($object->accountancy_code_general)) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch('', $object->accountancy_code_general, 1);
+
+					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+				}
+			} else {
+				print $object->accountancy_code_general;
 			}
+			print '</td></tr>';
+
+			print '<tr><td>'.$langs->trans("UserAccountancyCode").'</td>';
+			print '<td>'.$object->accountancy_code_subledger.'</td></tr>';
 
 			print '</table>';
 
@@ -2476,21 +2537,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
-			// Accountancy code
-			if (!empty($conf->accounting->enabled)) {
-				print "<tr>";
-				print '<td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>';
-				if ($caneditfield) {
-					print '<input type="text" class="flat maxwidth300" name="accountancy_code" value="'.$object->accountancy_code.'">';
-				} else {
-					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-					print $object->accountancy_code;
-				}
-				print '</td>';
-				print "</tr>";
-			}
-
 			// User color
 			if (!empty($conf->agenda->enabled)) {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ColorUser").'</td>';
@@ -2729,7 +2775,36 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
-			print '</table>';
+			print '</table><hr><table class="border centpercent">';
+
+			// User accountancy general account
+			print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+			print '<td>';
+			if ($caneditfield) {
+				if (!empty($conf->accounting->enabled)) {
+					$accountancy_code_general = GETPOST('accountancy_code_general', 'alpha');
+					print $formaccounting->select_account($accountancy_code_general, 'accountancy_code_general', 1, null, 1, 1, '');
+				} else {
+					print '<input type="text" class="flat maxwidth300" name="accountancy_code_general" value="'.$object->accountancy_code_general.'">';
+				}
+			} else {
+				print '<input type="hidden" name="accountancy_code_general" value="'.$object->accountancy_code_general.'">';
+				print $object->accountancy_code_general;
+			}
+			print '</td></tr>';
+
+			// User accountancy subledger account
+			print '<tr><td>'.$langs->trans("UserAccountancyCode").'</td>';
+			print '<td>';
+			if ($caneditfield) {
+				print '<input type="text" class="flat maxwidth300" name="accountancy_code_subledger" value="'.$object->accountancy_code_subledger.'">';
+			} else {
+				print '<input type="hidden" name="accountancy_code_subledger" value="'.$object->accountancy_code_subledger.'">';
+				print $object->accountancy_code_subledger;
+			}
+			print '</td></tr>';
+
+			print "</table>\n";
 
 			print dol_get_fiche_end();
 

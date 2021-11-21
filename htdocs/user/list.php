@@ -101,7 +101,7 @@ $fieldstosearchall = array(
 	'u.login'=>"Login",
 	'u.lastname'=>"Lastname",
 	'u.firstname'=>"Firstname",
-	'u.accountancy_code'=>"AccountancyCode",
+	'u.accountancy_code_subledger'=>"AccountancyCode",
 	'u.office_phone'=>"PhonePro",
 	'u.user_mobile'=>"PhoneMobile",
 	'u.email'=>"EMail",
@@ -120,7 +120,7 @@ $arrayfields = array(
 	'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
 	'u.employee'=>array('label'=>"Employee", 'checked'=>($mode == 'employee' ? 1 : 0), 'position'=>25),
 	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
-	'u.accountancy_code'=>array('label'=>"AccountancyCode", 'checked'=>0, 'position'=>30),
+	'u.accountancy_code_subledger'=>array('label'=>"AccountancyCode", 'checked'=>0, 'position'=>30),
 	'u.office_phone'=>array('label'=>"PhonePro", 'checked'=>1, 'position'=>31),
 	'u.user_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1, 'position'=>32),
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
@@ -327,7 +327,7 @@ if ($contextpage == 'employeelist' && $search_employee == 1) {
 
 $user2 = new User($db);
 
-$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
+$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code_subledger, u.gender, u.employee, u.photo,";
 $sql .= " u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.ldap_sid, u.statut, u.entity,";
 $sql .= " u.tms as date_update, u.datec as date_creation,";
@@ -390,7 +390,7 @@ if (is_numeric($search_employee) && $search_employee >= 0) {
 	$sql .= ' AND u.employee = '.(int) $search_employee;
 }
 if ($search_accountancy_code != '') {
-	$sql .= natural_search("u.accountancy_code", $search_accountancy_code);
+	$sql .= natural_search("u.accountancy_code_subledger", $search_accountancy_code);
 }
 if ($search_phonepro != '') {
 	$sql .= natural_search("u.office_phone", $search_phonepro);
@@ -677,7 +677,7 @@ if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth200');
 	print '</td>';
 }
-if (!empty($arrayfields['u.accountancy_code']['checked'])) {
+if (!empty($arrayfields['u.accountancy_code_subledger']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="'.$search_accountancy_code.'"></td>';
 }
 if (!empty($arrayfields['u.office_phone']['checked'])) {
@@ -756,8 +756,8 @@ if (!empty($arrayfields['u.employee']['checked'])) {
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
 }
-if (!empty($arrayfields['u.accountancy_code']['checked'])) {
-	print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['u.accountancy_code_subledger']['checked'])) {
+	print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code_subledger", $param, "", "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['u.office_phone']['checked'])) {
 	print_liste_field_titre("PhonePro", $_SERVER['PHP_SELF'], "u.office_phone", $param, "", "", $sortfield, $sortorder);
@@ -938,8 +938,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 
-	if (!empty($arrayfields['u.accountancy_code']['checked'])) {
-		print '<td>'.$obj->accountancy_code.'</td>';
+	if (!empty($arrayfields['u.accountancy_code_subledger']['checked'])) {
+		print '<td>'.$obj->accountancy_code_subledger.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
