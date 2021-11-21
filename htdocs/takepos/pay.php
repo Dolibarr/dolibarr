@@ -374,6 +374,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
 			console.log("Capture paymentIntent successfull "+paymentIntentId);
+				  amountpayed = amountpayed / 100;
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
