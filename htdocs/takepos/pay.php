@@ -95,7 +95,7 @@ function fetchConnectionToken() {
 	});
 }
 
-<?php if (empty($conf->global->$keyforstripeterminalbank)) { ?>
+	<?php if (empty($conf->global->$keyforstripeterminalbank)) { ?>
 const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'} //false, location: '{{LOCATION_ID}}'
   terminal.discoverReaders(config).then(function(discoverResult) {
 	if (discoverResult.error) {
@@ -121,8 +121,7 @@ const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOC
 
 	}
   });
-<?php } else { ?>
-
+	<?php } else { ?>
 	terminal.connectReader(selectedReader).then(function(connectResult) {
 		if (connectResult.error) {
 		  console.log('Failed to connect: ', connectResult.error);
@@ -134,7 +133,7 @@ const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOC
 		}
 	  });
 
-<?php } ?>
+	<?php } ?>
 </script>
 	<?php
 }
