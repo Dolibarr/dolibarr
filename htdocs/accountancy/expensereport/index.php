@@ -32,6 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
+$validatemonth = GETPOST('validatemonth', 'int');
+$validateyear = GETPOST('validateyear', 'int');
+
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) {
 	$year_start = GETPOST("year", 'int');
@@ -106,12 +109,18 @@ if ($action == 'validatehistory') {
 		$sql1 .= " WHERE ".MAIN_DB_PREFIX."expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity);
 		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code = accnt.account_number";
 		$sql1 .= " AND ".MAIN_DB_PREFIX."expensereport_det.fk_code_ventilation = 0";
+		if ($validatemonth && $validateyear) {
+			$sql1 .= dolSqlDateFilter('date', 0, $validatemonth, $validateyear);
+		}
 	} else {
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd, ".MAIN_DB_PREFIX."c_type_fees as t, ".MAIN_DB_PREFIX."accounting_account as accnt , ".MAIN_DB_PREFIX."accounting_system as syst";
 		$sql1 .= " SET erd.fk_code_ventilation = accnt.rowid";
 		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity);
 		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code=accnt.account_number";
 		$sql1 .= " AND erd.fk_code_ventilation = 0";
+		if ($validatemonth && $validateyear) {
+			$sql1 .= dolSqlDateFilter('erd.date', 0, $validatemonth, $validateyear);
+		}
 	}
 
 	dol_syslog('htdocs/accountancy/expensereport/index.php');

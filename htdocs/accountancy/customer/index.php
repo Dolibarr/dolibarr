@@ -36,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
+$validatemonth = GETPOST('validatemonth', 'int');
+$validateyear = GETPOST('validateyear', 'int');
+
 // Security check
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
@@ -173,6 +176,9 @@ if ($action == 'validatehistory') {
 	$sql .= " AND l.product_type <= 2";
 	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	}
+	if ($validatemonth && $validateyear) {
+		$sql .= dolSqlDateFilter('f.datef', 0, $validatemonth, $validateyear);
 	}
 
 	dol_syslog('htdocs/accountancy/customer/index.php');
