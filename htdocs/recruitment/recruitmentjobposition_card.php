@@ -550,7 +550,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			$url = getPublicJobPositionUrl(0, $object->ref);
 			$out .= '<div class="urllink"><input type="text" id="recruitmentjobpositionurl" class="quatrevingtpercent" value="'.$url.'">';
-			$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe').'</a></div>';
+			$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe').'</a></div>';
 			$out .= ajax_autoselect("recruitmentjobpositionurl", 0);
 
 			print $out;

@@ -2887,7 +2887,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank">'.$value.'</a>';
+				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.$value.'</a>';
 			} else {
 				$htmllink .= $value;
 			}
@@ -3140,7 +3140,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				// Old method
 				$newphone = '<a href="'.$url.'"';
 				if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
-					$newphone .= ' target="_blank"';
+					$newphone .= ' target="_blank" rel="noopener noreferrer"';
 				}
 				$newphone .= '>'.$newphonesav.'</a>';
 			}
@@ -9157,9 +9157,9 @@ function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
 		    </script>';
 	if ($addlink) {
 		if ($textonlink === 'image') {
-			$out .= ' <a href="'.$addlink.'" target="_blank">'.img_picto('', 'globe').'</a>';
+			$out .= ' <a href="'.$addlink.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe').'</a>';
 		} else {
-			$out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+			$out .= ' <a href="'.$addlink.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("Link").'</a>';
 		}
 	}
 	return $out;

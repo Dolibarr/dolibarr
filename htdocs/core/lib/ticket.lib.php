@@ -164,7 +164,7 @@ function showDirectPublicLink($object)
 		if ($url) {
 			$out .= '<div class="urllink">';
 			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" value="'.$url.'">';
-			$out .= '<a href="'.$url.'" target="_blank" rel="noopener">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
+			$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
 			$out .= '</div>';
 			$out .= ajax_autoselect("directpubliclink", 0);
 		} else {
@@ -850,7 +850,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 						$class .= ' documentpreview';
 					}
 
-					$footer .= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank"  '.$mimeAttr.' >';
+					$footer .= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank" rel="noopener noreferrer" '.$mimeAttr.' >';
 					$footer .= img_mime($filePath).' '.$doc->filename;
 					$footer .= '</a>';
 

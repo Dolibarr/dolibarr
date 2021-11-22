@@ -8197,7 +8197,7 @@ abstract class CommonObject
 							if ($urladvanced) {
 								$return .= '<a href="'.$urladvanced.'">';
 							} else {
-								$return .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+								$return .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 							}
 						}
 
