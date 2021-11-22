@@ -550,7 +550,7 @@ class AccountingAccount extends CommonObject
 			$result .= $linkstart . $label_link . $linkend;
 		}
 		global $action;
-		$hookmanager->initHooks(array('accountingjournaldao'));
+		$hookmanager->initHooks(array('accountingaccountdao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
