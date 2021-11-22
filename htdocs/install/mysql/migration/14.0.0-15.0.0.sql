@@ -457,5 +457,5 @@ INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (104, 'GIR', 'Gi
 ALTER TABLE llx_propal ADD COLUMN online_sign_ip varchar(48);
 ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
 
-ALTER TABLE llx_entrepot ADD COLUMN usage integer DEFAULT 1;
+ALTER TABLE llx_entrepot ADD COLUMN warehouse_usage integer DEFAULT 1;
 
