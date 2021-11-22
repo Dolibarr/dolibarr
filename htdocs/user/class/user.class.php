@@ -2264,6 +2264,8 @@ class User extends CommonObject
 
 		if (!$changelater) {
 			$url = $urlwithroot.'/';
+			if(!empty($conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD))
+				$url = $conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD;
 			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
