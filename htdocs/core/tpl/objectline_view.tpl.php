@@ -381,6 +381,22 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		}
 	}
 
+	if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+		print '<td class="linecolasset center">';
+		$coldisplay++;
+		$accountancy_code_asset = $conf->global->ASSET_ACCOUNTANCY_CODE;
+		if (!empty($accountancy_code_asset) && (
+				$product_static->accountancy_code_buy == $accountancy_code_asset ||
+				$product_static->accountancy_code_buy_intra == $accountancy_code_asset ||
+				$product_static->accountancy_code_buy_export == $accountancy_code_asset
+			)
+		) {
+			print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&supplier_invoice_id=' . $object->id . '&token=' . newToken() . '">';
+			print img_edit_add() . '</a>';
+			print '</td>';
+		}
+	}
+
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {

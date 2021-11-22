@@ -25,6 +25,9 @@ CREATE TABLE llx_asset_depreciation(
 	depreciation_ht						double(24,8)	NOT NULL,
 	cumulative_depreciation_ht			double(24,8)	NOT NULL,
 
+    accountancy_code_debit				varchar(32),
+    accountancy_code_credit				varchar(32),
+
 	tms									timestamp,
 	fk_user_modif						integer
 ) ENGINE=innodb;

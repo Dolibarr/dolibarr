@@ -116,64 +116,63 @@ if ($id > 0 || !empty($ref)) {
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	} elseif (empty($reshook)) {
-		$save_icon = '<i class="fas fa-save" title="'.$langs->trans('AssetSavedDepreciationLine').'"></i>';
+		$bookkeeping_icon = '<i class="fas fa-save" title="'.$langs->trans('AssetDispatchedInBookkeeping').'"></i>';
 		$future_icon = '<i class="fas fa-clock" title="'.$langs->trans('AssetFutureDepreciationLine').'"></i>';
+		$now = dol_now();
 
-		foreach ($object->depreciation_lines as $mode_key => $lines) {
-			$mode_info = $assetdepreciationoptions->deprecation_options_fields[$mode_key];
-			$depreciation_info = $assetdepreciationoptions->getGeneralDepreciationInfoForMode($mode_key);
+		foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $fields) {
+			$lines = $object->depreciation_lines[$mode_key];
+			if (!empty($lines)) {
+				$mode_info = $assetdepreciationoptions->deprecation_options_fields[$mode_key];
+				$depreciation_info = $assetdepreciationoptions->getGeneralDepreciationInfoForMode($mode_key);
 
-			print load_fiche_titre($langs->trans($mode_info['label']), '', '');
+				print load_fiche_titre($langs->trans($mode_info['label']), '', '');
 
-			// Depreciation general info
-			//---------------------------------
-			print '<div class="fichecenter">';
-			print '<div class="fichehalfleft">';
-			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent tableforfield">' . "\n";
-			print '<tr><td class="titlefield">' . $langs->trans('AssetBaseDepreciationHT') . '</td><td>' . price($depreciation_info['base_depreciation_ht']) . '</td></tr>';
-			print '<tr><td class="titlefield">' . $langs->trans('AssetDepreciationBeginDate') . '</td><td>' . dol_print_date($object->date_start > $object->date_acquisition ? $object->date_start : $object->date_acquisition, 'day') . '</td></tr>';
-			print '</table>';
+				// Depreciation general info
+				//---------------------------------
+				print '<div class="fichecenter">';
+				print '<div class="fichehalfleft">';
+				print '<div class="underbanner clearboth"></div>';
+				print '<table class="border centpercent tableforfield">' . "\n";
+				print '<tr><td class="titlefield">' . $langs->trans('AssetBaseDepreciationHT') . '</td><td>' . price($depreciation_info['base_depreciation_ht']) . '</td></tr>';
+				print '<tr><td class="titlefield">' . $langs->trans('AssetDepreciationBeginDate') . '</td><td>' . dol_print_date($object->date_start > $object->date_acquisition ? $object->date_start : $object->date_acquisition, 'day') . '</td></tr>';
+				print '</table>';
 
-			// We close div and reopen for second column
-			print '</div>';
-			print '<div class="fichehalfright">';
+				// We close div and reopen for second column
+				print '</div>';
+				print '<div class="fichehalfright">';
 
-			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent tableforfield">';
-			print '<tr><td class="titlefield">' . $langs->trans('AssetDepreciationDuration') . '</td><td>' . $depreciation_info['duration'] . ' ( ' . $depreciation_info['duration_type'] . ' )</td></tr>';
-			print '<tr><td class="titlefield">' . $langs->trans('AssetDepreciationRate') . '</td><td>' . $depreciation_info['rate'] . '</td></tr>';
-			print '</table>';
-			print '</div>';
-			print '</div>';
-			print '<div class="clearboth"></div>';
+				print '<div class="underbanner clearboth"></div>';
+				print '<table class="border centpercent tableforfield">';
+				print '<tr><td class="titlefield">' . $langs->trans('AssetDepreciationDuration') . '</td><td>' . $depreciation_info['duration'] . ' ( ' . $depreciation_info['duration_type'] . ' )</td></tr>';
+				print '<tr><td class="titlefield">' . $langs->trans('AssetDepreciationRate') . '</td><td>' . $depreciation_info['rate'] . '</td></tr>';
+				print '</table>';
+				print '</div>';
+				print '</div>';
+				print '<div class="clearboth"></div>';
 
-			// Depreciation lines
-			//---------------------------------
-			print '<br>';
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder allwidth">';
+				// Depreciation lines
+				//---------------------------------
+				print '<br>';
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder allwidth">';
 
-			print '<tr class="liste_titre">';
-			print '<td class="width20"></td>';
-			print '<td>' . $langs->trans("Ref") . '</td>';
-			print '<td class="center">' . $langs->trans("AssetDepreciationDate") . '</td>';
-			print '<td class="right">' . $langs->trans("AssetDepreciationHT") . '</td>';
-			print '<td class="right">' . $langs->trans("AssetCumulativeDepreciationHT") . '</td>';
-			print '<td class="right">' . $langs->trans("AssetResidualHT") . '</td>';
-			print '</tr>';
+				print '<tr class="liste_titre">';
+				print '<td class="width20"></td>';
+				print '<td>' . $langs->trans("Ref") . '</td>';
+				print '<td class="center">' . $langs->trans("AssetDepreciationDate") . '</td>';
+				print '<td class="right">' . $langs->trans("AssetDepreciationHT") . '</td>';
+				print '<td class="right">' . $langs->trans("AssetCumulativeDepreciationHT") . '</td>';
+				print '<td class="right">' . $langs->trans("AssetResidualHT") . '</td>';
+				print '</tr>';
 
-			if (empty($lines)) {
-				print '<tr><td class="impair center" colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
-			} else {
-				foreach ($lines as $line) {
-					if (!empty($line['error'])) {
-						print '<tr><td class="impair center" colspan="6"><span class="opacitymedium" style="color: red;">'.$line['error'].'</span></td></tr>';
-						break;
-					} else {
+				if (empty($lines)) {
+					print '<tr><td class="impair center" colspan="6"><span class="opacitymedium">' . $langs->trans("None") . '</span></td></tr>';
+				} else {
+					foreach ($lines as $line) {
 						print '<tr class="oddeven">';
-						print '<td>' . ($line['type'] == 1 ? $save_icon : ($line['type'] == 2 ? $future_icon : '')) . '</td>';
-						print '<td >' . $line['ref'] . '</td>';
+						print '<td>' . ($line['bookkeeping'] ? $bookkeeping_icon : ($line['depreciation_date'] > $now ? $future_icon : '')) . '</td>';
+						print '<td >' . (empty($line['ref']) ? $langs->trans('AssetDepreciationReversal') : $line['ref']) . '</td>';
 						print '<td class="center">' . dol_print_date($line['depreciation_date'], 'day') . '</td>';
 						print '<td class="right">';
 						print price($line['depreciation_ht']);
@@ -187,10 +186,10 @@ if ($id > 0 || !empty($ref)) {
 						print "</tr>\n";
 					}
 				}
-			}
 
-			print '</table>';
-			print '</div>';
+				print '</table>';
+				print '</div>';
+			}
 		}
 	}
 }

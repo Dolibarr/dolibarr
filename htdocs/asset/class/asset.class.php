@@ -60,9 +60,8 @@ class Asset extends CommonObject
 	 */
 	public $picto = 'asset';
 
-	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATED = 1;
-	const STATUS_CANCELED = 9;
+	const STATUS_DRAFT = 0; 	// In progress
+	const STATUS_DISPOSED = 9;	// Disposed
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -97,17 +96,24 @@ class Asset extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'showoncombobox'=>'2', 'validate'=>'1',),
-		'fk_asset_model' => array('type'=>'integer:AssetModel:asset/class/assetmodel.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'AssetModel', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'validate'=>'1',),
-		'acquisition_value_ht' => array('type'=>'price', 'label'=>'AssetAcquisitionValueHT', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
-		'recovered_vat' => array('type'=>'price', 'label'=>'AssetRecoveredVAT', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
-		'date_acquisition' => array('type'=>'date', 'label'=>'AssetDateAcquisition', 'enabled'=>'1', 'position'=>70, 'notnull'=>1, 'visible'=>1,),
-		'date_start' => array('type'=>'date', 'label'=>'AssetDateStart', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1,),
-		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>90, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'validate'=>'1',),
-		'acquisition_type' => array('type'=>'smallint', 'label'=>'AssetAcquisitionType', 'enabled'=>'1', 'position'=>100, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetAcquisitionTypeNew', '1'=>'AssetAcquisitionTypeOccasion'), 'validate'=>'1',),
-		'asset_type' => array('type'=>'smallint', 'label'=>'AssetType', 'enabled'=>'1', 'position'=>110, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetTypeIntangible', '1'=>'AssetTypeTangible', '2'=>'AssetTypeInProgress', '3'=>'AssetTypeFinancial'), 'validate'=>'1',),
-		'not_depreciated' => array('type'=>'boolean', 'label'=>'AssetNotDepreciated', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>1, 'validate'=>'1',),
+		'fk_asset_model' => array('type'=>'integer:AssetModel:asset/class/assetmodel.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'AssetModel', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'validate'=>'1',),
+		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'validate'=>'1',),
+		'acquisition_type' => array('type'=>'smallint', 'label'=>'AssetAcquisitionType', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetAcquisitionTypeNew', '1'=>'AssetAcquisitionTypeOccasion'), 'validate'=>'1',),
+		'asset_type' => array('type'=>'smallint', 'label'=>'AssetType', 'enabled'=>'1', 'position'=>70, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetTypeIntangible', '1'=>'AssetTypeTangible', '2'=>'AssetTypeInProgress', '3'=>'AssetTypeFinancial'), 'validate'=>'1',),
+		'not_depreciated' => array('type'=>'boolean', 'label'=>'AssetNotDepreciated', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'default'=>'0', 'visible'=>1, 'validate'=>'1',),
+		'date_acquisition' => array('type'=>'date', 'label'=>'AssetDateAcquisition', 'enabled'=>'1', 'position'=>90, 'notnull'=>1, 'visible'=>1,),
+		'date_start' => array('type'=>'date', 'label'=>'AssetDateStart', 'enabled'=>'1', 'position'=>100, 'notnull'=>0, 'visible'=>-1,),
+		'acquisition_value_ht' => array('type'=>'price', 'label'=>'AssetAcquisitionValueHT', 'enabled'=>'1', 'position'=>110, 'notnull'=>1, 'visible'=>1, 'isameasure'=>'1', 'validate'=>'1',),
+		'recovered_vat' => array('type'=>'price', 'label'=>'AssetRecoveredVAT', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>1, 'isameasure'=>'1', 'validate'=>'1',),
+		'reversal_date' => array('type'=>'date', 'label'=>'AssetReversalDate', 'enabled'=>'1', 'position'=>130, 'notnull'=>0, 'visible'=>1,),
+		'reversal_amount_ht' => array('type'=>'price', 'label'=>'AssetReversalAmountHT', 'enabled'=>'1', 'position'=>140, 'notnull'=>0, 'visible'=>1, 'isameasure'=>'1', 'validate'=>'1',),
+		'disposal_date' => array('type'=>'date', 'label'=>'AssetDisposalDate', 'enabled'=>'1', 'position'=>200, 'notnull'=>0, 'visible'=>-2,),
+		'disposal_amount_ht' => array('type'=>'price', 'label'=>'AssetDisposalAmount', 'enabled'=>'1', 'position'=>210, 'notnull'=>0, 'visible'=>-2, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
+		'fk_disposal_type' => array('type'=>'sellist:c_asset_disposal_type:label:rowid::active=1', 'label'=>'AssetDisposalType', 'enabled'=>'1', 'position'=>220, 'notnull'=>0, 'visible'=>-2, 'index'=>1, 'validate'=>'1',),
+		'disposal_depreciated' => array('type'=>'boolean', 'label'=>'AssetDisposalDepreciated', 'enabled'=>'1', 'position'=>230, 'notnull'=>0, 'default'=>'0', 'visible'=>-2, 'validate'=>'1',),
+		'disposal_subject_to_vat' => array('type'=>'boolean', 'label'=>'AssetDisposalSubjectToVat', 'enabled'=>'1', 'position'=>240, 'notnull'=>0, 'default'=>'0', 'visible'=>-2, 'validate'=>'1',),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>300, 'notnull'=>0, 'visible'=>0, 'validate'=>'1',),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>301, 'notnull'=>0, 'visible'=>0, 'validate'=>'1',),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -123,14 +129,21 @@ class Asset extends CommonObject
 	public $ref;
 	public $label;
 	public $fk_asset_model;
+	public $reversal_amount_ht;
 	public $acquisition_value_ht;
 	public $recovered_vat;
+	public $reversal_date;
 	public $date_acquisition;
 	public $date_start;
 	public $qty;
 	public $acquisition_type;
 	public $asset_type;
 	public $not_depreciated;
+	public $disposal_date;
+	public $disposal_amount_ht;
+	public $fk_disposal_type;
+	public $disposal_depreciated;
+	public $disposal_subject_to_vat;
 	public $note_public;
 	public $note_private;
 	public $date_creation;
@@ -213,10 +226,20 @@ class Asset extends CommonObject
 	public function create(User $user, $notrigger = false)
 	{
 		if (!isset($this->date_start) || $this->date_start === "") $this->date_start = $this->date_acquisition;
-		$result = $result_create = $this->createCommon($user, $notrigger);
-		if ($result > 0) $result = $this->setDataFromAssetModel($user, $notrigger);
 
-//		$result = $this->validate($user, $notrigger);
+		$this->db->begin();
+
+		$result = $result_create = $this->createCommon($user, $notrigger);
+		if ($result > 0 && $this->fk_asset_model > 0) $result = $this->setDataFromAssetModel($user, $notrigger);
+		if ($result > 0) {
+			if ($this->supplier_invoice_id > 0) $this->add_object_linked('invoice_supplier', $this->supplier_invoice_id);
+		}
+
+		if ($result < 0) {
+			$this->db->rollback();
+		} else {
+			$this->db->commit();
+		}
 
 		return $result > 0 ? $result_create : $result;
 	}
@@ -235,89 +258,90 @@ class Asset extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$object = new self($this->db);
-
-		$this->db->begin();
-
-		// Load source object
-		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) {
-			$object->fetchLines();
-		}
-
-		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
-
-		// Reset some properties
-		unset($object->id);
-		unset($object->fk_user_creat);
-		unset($object->import_key);
-
-		// Clear fields
-		if (property_exists($object, 'ref')) {
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'label')) {
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		}
-		if (property_exists($object, 'status')) {
-			$object->status = self::STATUS_DRAFT;
-		}
-		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
-		}
-		if (property_exists($object, 'date_modification')) {
-			$object->date_modification = null;
-		}
-		// ...
-		// Clear extrafields that are unique
-		if (is_array($object->array_options) && count($object->array_options) > 0) {
-			$extrafields->fetch_name_optionals_label($this->table_element);
-			foreach ($object->array_options as $key => $option) {
-				$shortkey = preg_replace('/options_/', '', $key);
-				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
-					unset($object->array_options[$key]);
-				}
-			}
-		}
-
-		// Create clone
-		$object->context['createfromclone'] = 'createfromclone';
-		$result = $object->createCommon($user);
-		if ($result < 0) {
-			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
-		}
-
-		if (!$error) {
-			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0) {
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
-
-		unset($object->context['createfromclone']);
-
-		// End
-		if (!$error) {
-			$this->db->commit();
-			return $object;
-		} else {
-			$this->db->rollback();
-			return -1;
-		}
+//		$object = new self($this->db);
+//
+//		$this->db->begin();
+//
+//		// Load source object
+//		$result = $object->fetchCommon($fromid);
+//		if ($result > 0 && !empty($object->table_element_line)) {
+//			$object->fetchLines();
+//		}
+//
+//		// get lines so they will be clone
+//		//foreach($this->lines as $line)
+//		//	$line->fetch_optionals();
+//
+//		// Reset some properties
+//		unset($object->id);
+//		unset($object->fk_user_creat);
+//		unset($object->import_key);
+//
+//		// Clear fields
+//		if (property_exists($object, 'ref')) {
+//			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
+//		}
+//		if (property_exists($object, 'label')) {
+//			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+//		}
+//		if (property_exists($object, 'status')) {
+//			$object->status = self::STATUS_DRAFT;
+//		}
+//		if (property_exists($object, 'date_creation')) {
+//			$object->date_creation = dol_now();
+//		}
+//		if (property_exists($object, 'date_modification')) {
+//			$object->date_modification = null;
+//		}
+//		// ...
+//		// Clear extrafields that are unique
+//		if (is_array($object->array_options) && count($object->array_options) > 0) {
+//			$extrafields->fetch_name_optionals_label($this->table_element);
+//			foreach ($object->array_options as $key => $option) {
+//				$shortkey = preg_replace('/options_/', '', $key);
+//				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
+//					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+//					unset($object->array_options[$key]);
+//				}
+//			}
+//		}
+//
+//		// Create clone
+//		$object->context['createfromclone'] = 'createfromclone';
+//		$result = $object->createCommon($user);
+//		if ($result < 0) {
+//			$error++;
+//			$this->error = $object->error;
+//			$this->errors = $object->errors;
+//		}
+//
+//		if (!$error) {
+//			// copy internal contacts
+//			if ($this->copy_linked_contact($object, 'internal') < 0) {
+//				$error++;
+//			}
+//		}
+//
+//		if (!$error) {
+//			// copy external contacts if same company
+//			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+//				if ($this->copy_linked_contact($object, 'external') < 0) {
+//					$error++;
+//				}
+//			}
+//		}
+//
+//		unset($object->context['createfromclone']);
+//
+//		// End
+//		if (!$error) {
+//			$this->db->commit();
+//			return $object;
+//		} else {
+//			$this->db->rollback();
+//			return -1;
+//		}
+		return -1;
 	}
 
 	/**
@@ -330,8 +354,20 @@ class Asset extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
+		if ($result > 0) {
+			if (!empty($this->table_element_line)) $this->fetchLines();
+
+			$res = $this->hasDepreciationLinesInBookkeeping();
+			if ($res < 0) {
+				return -1;
+			} elseif ($res > 0) {
+				$this->fields['date_acquisition']['noteditable'] = '1';
+				$this->fields['date_start']['noteditable'] = '1';
+				$this->fields['acquisition_value_ht']['noteditable'] = '1';
+				$this->fields['recovered_vat']['noteditable'] = '1';
+				$this->fields['reversal_date']['noteditable'] = '1';
+				$this->fields['reversal_amount_ht']['noteditable'] = '1';
+			}
 		}
 		return $result;
 	}
@@ -439,8 +475,29 @@ class Asset extends CommonObject
 	public function update(User $user, $notrigger = false)
 	{
 		if (!isset($this->date_start) || $this->date_start === "") $this->date_start = $this->date_acquisition;
+
+		$this->db->begin();
+
 		$result = $this->updateCommon($user, $notrigger);
-		if ($result > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) $result = $this->setDataFromAssetModel($user, $notrigger);
+		if ($result > 0 && $this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) {
+			$result = $this->setDataFromAssetModel($user, $notrigger);
+		}
+		if ($result > 0 && (
+				$this->date_start != $this->oldcopy->date_start ||
+				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
+				$this->reversal_date != $this->oldcopy->reversal_date ||
+				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
+				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
+			)
+		) {
+			$result = $this->calculationDepreciation();
+		}
+
+		if ($result < 0) {
+			$this->db->rollback();
+		} else {
+			$this->db->commit();
+		}
 
 		return $result;
 	}
@@ -572,13 +629,9 @@ class Asset extends CommonObject
 	/**
 	 * Fetch depreciation lines for each mode in $this->depreciation_lines (sort by depreciation date)
 	 *
-	 * @param	int		$begin_period		Begin period filter
-	 * @param	int		$end_period			End period filter
-	 * @param	bool	$only_save			Return only saved depreciation lines
-	 * @param	bool	$only_new			Return only new depreciation lines
 	 * @return	int							<0 if KO, Id of created object if OK
 	 */
-	public function fetchDepreciationLines($begin_period = null, $end_period = null, $only_save = false, $only_new = false)
+	public function fetchDepreciationLines()
 	{
 		global $langs;
 		$langs->load('assets');
@@ -586,7 +639,164 @@ class Asset extends CommonObject
 
 		// Clean parameters
 		$this->id = $this->id > 0 ? $this->id : 0;
-		if ($only_save && $only_new) $only_new = false;
+
+		// Check parameters
+		$error = 0;
+		if (empty($this->id)) {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Asset") . ' (' . $langs->transnoentitiesnoconv("TechnicalID") . ')');
+			$error++;
+		}
+		if ($error) {
+			return -1;
+		}
+
+		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
+		$sql .= " SELECT DISTINCT fk_docdet";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		$sql .= " WHERE doc_type = 'asset'";
+		$sql .= ")";
+		$sql .= "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
+		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1 , 0) . " AS bookkeeping";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
+		$sql .= " WHERE ad.fk_asset = " . $this->id;
+		$sql .= " ORDER BY ad.depreciation_date ASC";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $langs->trans('AssetErrorFetchDepreciationLines') . ': ' . $this->db->lasterror();
+			return -1;
+		}
+
+		while ($obj = $this->db->fetch_object($resql)) {
+			if (!isset($this->depreciation_lines[$obj->depreciation_mode])) $this->depreciation_lines[$obj->depreciation_mode] = array();
+			$this->depreciation_lines[$obj->depreciation_mode][] = array(
+				'id' => $obj->rowid,
+				'ref' => $obj->ref,
+				'depreciation_date' => $this->db->jdate($obj->depreciation_date),
+				'depreciation_ht' => $obj->depreciation_ht,
+				'cumulative_depreciation_ht' => $obj->cumulative_depreciation_ht,
+				'bookkeeping' => $obj->bookkeeping,
+			);
+		}
+
+		return 1;
+	}
+
+	/**
+	 * If has depreciation lines in bookkeeping
+	 *
+	 * @return	int			<0 if KO, 0 if NO, 1 if Yes
+	 */
+	public function hasDepreciationLinesInBookkeeping()
+	{
+		global $langs;
+		$langs->load('assets');
+
+		// Clean parameters
+		$this->id = $this->id > 0 ? $this->id : 0;
+
+		// Check parameters
+		$error = 0;
+		if (empty($this->id)) {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Asset") . ' (' . $langs->transnoentitiesnoconv("TechnicalID") . ')');
+			$error++;
+		}
+		if ($error) {
+			return -1;
+		}
+
+		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
+		$sql .= " SELECT DISTINCT fk_docdet";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		$sql .= " WHERE doc_type = 'asset'";
+		$sql .= ")";
+		$sql .= "SELECT COUNT(*) AS has_bookkeeping";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
+		$sql .= " WHERE ad.fk_asset = " . $this->id;
+		$sql .= " AND iab.fk_docdet IS NOT NULL";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $langs->trans('AssetErrorFetchDepreciationLines') . ': ' . $this->db->lasterror();
+			return -1;
+		}
+
+		if ($obj = $this->db->fetch_object($resql)) {
+			return $obj->has_bookkeeping > 0 ? 1 : 0;
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Add depreciation line for a mode
+	 *
+	 * @param	string		$mode							Depreciation mode (economic, accelerated_depreciation, ...)
+	 * @param	string		$ref							Ref line
+	 * @param	int			$depreciation_date				Depreciation date
+	 * @param	double		$depreciation_ht				Depreciation amount HT
+	 * @param	double		$cumulative_depreciation_ht		Depreciation cumulative amount HT
+	 * @param	string		$accountancy_code_debit			Accountancy code Debit
+	 * @param	string		$accountancy_code_credit		Accountancy code Credit
+	 * @return	int											<0 if KO, Id of created line if OK
+	 */
+	public function addDepreciationLine($mode, $ref, $depreciation_date, $depreciation_ht, $cumulative_depreciation_ht, $accountancy_code_debit, $accountancy_code_credit)
+	{
+		global $langs;
+		$langs->load('assets');
+
+		// Clean parameters
+		$this->id = $this->id > 0 ? $this->id : 0;
+		$mode = strtolower(trim($mode));
+		$ref = trim($ref);
+		$accountancy_code_debit = trim($accountancy_code_debit);
+		$accountancy_code_credit = trim($accountancy_code_credit);
+
+		// Check parameters
+		$error = 0;
+		if (empty($this->id)) {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Asset") . ' (' . $langs->transnoentitiesnoconv("TechnicalID") . ')');
+			$error++;
+		}
+		if ($error) {
+			return -1;
+		}
+
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "asset_depreciation(fk_asset, depreciation_mode, ref, depreciation_date, depreciation_ht, cumulative_depreciation_ht, accountancy_code_debit, accountancy_code_credit)";
+		$sql .= " VALUES ( ";
+		$sql .= " " . (int)$this->id;
+		$sql .= ", '" . $this->db->escape($mode) . "'";
+		$sql .= ", '" . $this->db->escape($ref) . "'";
+		$sql .= ", '" . $this->db->idate($depreciation_date) . "'";
+		$sql .= ", " . (double)$depreciation_ht;
+		$sql .= ", " . (double)$cumulative_depreciation_ht;
+		$sql .= ", '" . $this->db->escape($accountancy_code_debit) . "'";
+		$sql .= ", '" . $this->db->escape($accountancy_code_credit) . "'";
+		$sql .= ")";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $langs->trans('AssetErrorAddDepreciationLine') . ': ' . $this->db->lasterror();
+			return -1;
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Calculation depreciation lines (reversal and future) for each mode
+	 *
+	 * @return	int							<0 if KO, Id of created object if OK
+	 */
+	public function calculationDepreciation()
+	{
+		global $langs;
+		$langs->load('assets');
+
+		// Clean parameters
+		$this->id = $this->id > 0 ? $this->id : 0;
 
 		// Check parameters
 		$error = 0;
@@ -609,113 +819,154 @@ class Asset extends CommonObject
 			return -1;
 		}
 
-		$depreciation_lines = array();
+		// Get accountancy codes
+		//---------------------------
+		require_once DOL_DOCUMENT_ROOT . '/asset/class/assetaccountancycodes.class.php';
+		$accountancy_codes = new AssetAccountancyCodes($this->db);
+		$result = $accountancy_codes->fetchAccountancyCodes($this->id);
+		if ($result < 0) {
+			$this->error = $accountancy_codes->error;
+			$this->errors = $accountancy_codes->errors;
+			return -1;
+		}
+
+		$this->db->begin();
+
+		// Delete old lines
+		$modes = array();
 		foreach ($options->deprecation_options as $mode_key => $fields) {
-			$lines = array();
+			$modes[$mode_key] = $this->db->escape($mode_key);
+		}
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
+		$sql .= " WHERE fk_asset = " . $this->id;
+		$sql .= " AND depreciation_mode NOT IN ('" . implode("', '", $modes) . "')";
 
-			// Get saved lines for period provided
-			if (!$only_new) {
-				$sql = "SELECT rowid, ref, depreciation_date, depreciation_ht, cumulative_depreciation_ht";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation";
-				$sql .= " WHERE fk_asset = " . $this->id;
-				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				if (isset($begin_period)) $sql .= " AND depreciation_date >= '" . $this->db->idate($begin_period) . "'";
-				if (isset($end_period)) $sql .= " AND depreciation_date <= '" . $this->db->idate($end_period) . "'";
-				$sql .= " ORDER BY depreciation_date ASC";
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $langs->trans('AssetErrorClearDepreciationLines') . ': ' . $this->db->lasterror();
+			$error++;
+		}
 
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$this->errors[] = $langs->trans('AssetErrorFetchDepreciationLinesForMode', $mode_key) . ': ' . $this->db->lasterror();
-					return -1;
-				}
-				while ($obj = $this->db->fetch_object($resql)) {
-					$depreciation_date = $this->db->jdate($obj->depreciation_date);
-					$lines[$depreciation_date] = array(
-						'id' => $obj->rowid,
-						'type' => 1,
-						'ref' => $obj->ref,
-						'depreciation_date' => $depreciation_date,
-						'depreciation_ht' => $obj->depreciation_ht,
-						'cumulative_depreciation_ht' => $obj->cumulative_depreciation_ht,
-					);
-				}
+		if (!$error) {
+			// Get fiscal period
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+			$dates = getDefaultDatesForTransfer();
+			$init_fiscal_period_start = $dates['date_start'];
+			$init_fiscal_period_end = $dates['date_end'];
+			if (empty($init_fiscal_period_start) || empty($init_fiscal_period_end)) {
+				$pastmonthyear = $dates['pastmonthyear'];
+				$pastmonth = $dates['pastmonth'];
+				$init_fiscal_period_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
+				$init_fiscal_period_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 			}
 
-			if (!$only_save) {
-				// Get fiscal period
-				require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-				require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-				$dates = getDefaultDatesForTransfer();
-				$fiscal_period_start = $dates['date_start'];
-				$fiscal_period_end = $dates['date_end'];
-				if (empty($fiscal_period_start) || empty($fiscal_period_end)) {
-					$pastmonthyear = $dates['pastmonthyear'];
-					$pastmonth = $dates['pastmonth'];
-					$fiscal_period_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-					$fiscal_period_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
-				}
-
-				// Get last depreciation date saved
-				$sql = "SELECT depreciation_date, cumulative_depreciation_ht";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation";
-				$sql .= " WHERE fk_asset = " . $this->id;
-				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " ORDER BY depreciation_date DESC";
+			foreach ($options->deprecation_options as $mode_key => $fields) {
+				// Get last depreciation lines save in bookkeeping
+				//-----------------------------------------------------
+				$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
+				$sql .= " SELECT fk_docdet";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+				$sql .= " WHERE doc_type = 'asset'";
+				$sql .= ")";
+				$sql .= "SELECT ad.depreciation_date, ad.cumulative_depreciation_ht";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+				$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
+				$sql .= " WHERE ad.fk_asset = " . $this->id;
+				$sql .= " AND ad.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+				$sql .= " AND iab.fk_docdet IS NOT NULL";
+				$sql .= " ORDER BY ad.depreciation_date DESC";
 				$sql .= " LIMIT 1";
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
-					return -1;
+					$error++;
+					break;
 				}
-				$depreciation_date = '';
-				$cumulative_depreciation_ht = '';
+				$last_depreciation_date = '';
+				$last_cumulative_depreciation_ht = $this->reversal_amount_ht;
 				if ($obj = $this->db->fetch_object($resql)) {
-					$depreciation_date = $this->db->jdate($obj->depreciation_date);
-					$cumulative_depreciation_ht = $obj->cumulative_depreciation_ht;
+					$last_depreciation_date = $this->db->jdate($obj->depreciation_date);
+					$last_cumulative_depreciation_ht = $obj->cumulative_depreciation_ht;
+				}
+
+				// Set last cumulative depreciation
+				$sql = "UPDATE " . MAIN_DB_PREFIX . $options->deprecation_options_fields[$mode_key]['table'];
+				$sql .= " SET total_amount_last_depreciation_ht = " . (empty($last_cumulative_depreciation_ht) ? 0 : $last_cumulative_depreciation_ht);
+				$sql .= " WHERE fk_asset = " . $this->id;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->errors[] = $langs->trans('AssetErrorSetLastCumulativeDepreciation') . ': ' . $this->db->lasterror();
+					$error++;
+					break;
+				}
+
+				// Delete old lines
+				$sql = "DELETE " . MAIN_DB_PREFIX . "asset_depreciation FROM " . MAIN_DB_PREFIX . "asset_depreciation";
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab ON ab.doc_type = 'asset' AND ab.fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid";
+				$sql .= " WHERE " . MAIN_DB_PREFIX . "asset_depreciation.fk_asset = " . $this->id;
+				$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+				$sql .= " AND ab.fk_docdet IS NULL";
+				if ($last_depreciation_date !== "") $sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->errors[] = $langs->trans('AssetErrorClearDepreciationLines') . ': ' . $this->db->lasterror();
+					$error++;
+					break;
 				}
 
 				// Get depreciation period
+				$fiscal_period_start = $init_fiscal_period_start;
+				$fiscal_period_end = $init_fiscal_period_end;
 				$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
 				$depreciation_date_end = dol_time_plus_duree($depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y'));
-				$depreciation_amount = $fields['total_amount_last_depreciation_ht'] > 0 ? $fields['total_amount_last_depreciation_ht'] : $fields['amount_base_depreciation_ht'];
-				$depreciation_period_amount = $depreciation_amount;
+				$depreciation_amount = $fields['amount_base_depreciation_ht'];
+				$cumulative_depreciation_ht = $last_cumulative_depreciation_ht;
+				$depreciation_period_amount = $depreciation_amount - $this->reversal_amount_ht;
 				$start_date = $depreciation_date_start;
-				$finish_date = $depreciation_date_end;
+				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
+				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
+				$accountancy_code_depreciation_debit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_debit'];
+				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key];
+				$accountancy_code_depreciation_credit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_credit'];
+				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key];
 
-				if ($depreciation_date_start < $fiscal_period_start) {
-					if ($depreciation_date === "" && is_numeric($fields['depreciation_reversal_date'])) {
-						if ($fields['depreciation_reversal_date'] < $fiscal_period_start) {
+				// Reversal depreciation line
+				//-----------------------------------------------------
+				if ($last_depreciation_date === "" && ($depreciation_date_start < $fiscal_period_start || is_numeric($this->reversal_date))) {
+					if (is_numeric($this->reversal_date)) {
+						if ($this->reversal_date < $fiscal_period_start) {
 							$this->errors[] = $langs->trans('AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode', $mode_key);
-							return -1;
+							$error++;
+							break;
 						}
 
-						if (empty($fields['depreciation_reversal_amount_ht'])) {
+						if (empty($this->reversal_amount_ht)) {
 							$this->errors[] = $langs->trans('AssetErrorReversalAmountNotProvidedForMode', $mode_key);
-							return -1;
+							$error++;
+							break;
 						}
 
-						$start_date = $fields['depreciation_reversal_date'];
-						$cumulative_depreciation_ht = $fields['depreciation_reversal_amount_ht'];
-						$depreciation_period_amount = $depreciation_amount - $cumulative_depreciation_ht;
-						$lines[$start_date] = array(
-							'id' => 0,
-							'type' => 0,
-							'ref' => $langs->trans('AssetDepreciationReversal'),
-							'depreciation_date' => $start_date,
-							'depreciation_ht' => $cumulative_depreciation_ht,
-							'cumulative_depreciation_ht' => $cumulative_depreciation_ht,
-						);
+						$start_date = $this->reversal_date;
+						$result = $this->addDepreciationLine($mode_key, '', $start_date, $this->reversal_amount_ht, $this->reversal_amount_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
+						if ($result < 0) {
+							$error++;
+							break;
+						}
 					} else {
 						$this->errors[] = $langs->trans('AssetErrorReversalDateNotProvidedForMode', $mode_key);
-						return -1;
+						$error++;
+						break;
 					}
 				}
 
+				// futures depreciation lines
+				//-----------------------------------------------------
 				$nb_days_in_year = 360;
 				$period_amount = (double)price2num($depreciation_period_amount * ($fields['duration_type'] == 1 ? 12 : ($fields['duration_type'] == 2 ? $nb_days_in_year : 1)) / $fields['duration'], 'MT');
-
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
+
 				// Loop security
 				$idx_loop = 0;
 				$max_loop = $fields['duration'] + 2;
@@ -724,12 +975,20 @@ class Asset extends CommonObject
 					$idx_loop++;
 					if ($idx_loop > $max_loop) break;
 
-					if ($first_period_date <= $start_date || $first_period_found) {
+					if ($last_depreciation_date < $fiscal_period_end && ($first_period_date <= $start_date || $first_period_found)) {
+						// Disposal not depreciated
+						if ($fiscal_period_start <= $disposal_date && $disposal_date <= $fiscal_period_end && empty($this->disposal_depreciated)) {
+							break;
+						}
+
 						$first_period_found = true;
 
 						$period_begin = dol_print_date($fiscal_period_start, '%Y');
 						$period_end = dol_print_date($fiscal_period_end, '%Y');
 						$ref = $period_begin . ($period_begin != $period_end ? ' - ' . $period_end : '');
+						if ($fiscal_period_start <= $disposal_date && $disposal_date <= $fiscal_period_end) {
+							$ref .= ' - ' . $langs->transnoentitiesnoconv('AssetDisposal');
+						}
 
 						$begin_date = $fiscal_period_start < $start_date && $start_date <= $fiscal_period_end ? $start_date : $fiscal_period_start;
 						$end_date = $fiscal_period_start < $finish_date && $finish_date <= $fiscal_period_end ? $finish_date : $fiscal_period_end;
@@ -742,194 +1001,160 @@ class Asset extends CommonObject
 							$cumulative_depreciation_ht += $depreciation_ht;
 						}
 
-						$lines[$fiscal_period_end] = array(
-							'id' => 0,
-							'type' => 2,
-							'ref' => $ref,
-							'depreciation_date' => $fiscal_period_end,
-							'depreciation_ht' => $depreciation_ht,
-							'cumulative_depreciation_ht' => $cumulative_depreciation_ht,
-						);
+						$result = $this->addDepreciationLine($mode_key, $ref, $fiscal_period_end, $depreciation_ht, $cumulative_depreciation_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
+						if ($result < 0) {
+							$error++;
+							break;
+						}
 					}
 
 					// Next fiscal period (+1 year)
 					$fiscal_period_start = dol_time_plus_duree($fiscal_period_end, 1, 'd');
 					$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
-					$last_period_date = isset($end_period) && $end_period < $depreciation_date_end ? $end_period : $depreciation_date_end;
+					$last_period_date = $disposal_date !== "" && $disposal_date < $depreciation_date_end ? $disposal_date : $depreciation_date_end;
 				} while ($fiscal_period_start < $last_period_date);
 
-				ksort($lines, SORT_NUMERIC);
-				$depreciation_lines[$mode_key] = $lines;
+				if ($error) {
+					break;
+				}
 			}
 		}
 
-		$this->depreciation_lines = $depreciation_lines;
-		return 1;
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**
-	 *	Validate object
+	 * Set last cumulative depreciation for each mode
 	 *
-	 *	@param		User	$user     		User making status change
-	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 * @param	int		$asset_depreciation_id		Asset depreciation line ID
+	 * @return	int									<0 if KO, >0 if OK
 	 */
-	public function validate($user, $notrigger = 0)
+	public function setLastCumulativeDepreciation($asset_depreciation_id)
 	{
-		global $conf, $langs;
+		global $langs;
+		$langs->load('assets');
 
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		// Clean parameters
+		$asset_depreciation_id = $asset_depreciation_id > 0 ? $asset_depreciation_id : 0;
 
+		// Check parameters
 		$error = 0;
-
-		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
-			return 0;
+		if (empty($asset_depreciation_id)) {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AssetDepreciation") . ' (' . $langs->transnoentitiesnoconv("TechnicalID") . ')');
+			$error++;
 		}
-
-		$now = dol_now();
+		if ($error) {
+			return -1;
+		}
 
 		$this->db->begin();
 
-		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
-			$num = $this->getNextNumRef();
+		require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.php';
+		$options = new AssetDepreciationOptions($this->db);
+
+		// Get last depreciation lines save in bookkeeping
+		//-----------------------------------------------------
+		$sql = "SELECT fk_asset, depreciation_mode, cumulative_depreciation_ht";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation";
+		$sql .= " WHERE rowid = " . $asset_depreciation_id;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $langs->trans('AssetErrorFetchCumulativeDepreciation') . ': ' . $this->db->lasterror();
+			$error++;
 		} else {
-			$num = $this->ref;
-		}
-		$this->newref = $num;
-
-		if (!empty($num)) {
-			// Validate
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($num)."',";
-			$sql .= " status = ".self::STATUS_VALIDATED;
-			if (!empty($this->fields['date_validation'])) {
-				$sql .= ", date_validation = '".$this->db->idate($now)."'";
-			}
-			if (!empty($this->fields['fk_user_valid'])) {
-				$sql .= ", fk_user_valid = ".((int) $user->id);
-			}
-			$sql .= " WHERE rowid = ".((int) $this->id);
-
-			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				dol_print_error($this->db);
-				$this->error = $this->db->lasterror();
-				$error++;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('ASSET_VALIDATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-		}
-
-		if (!$error) {
-			$this->oldref = $this->ref;
-
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
-				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'asset/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'asset/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
-				}
-
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->asset->dir_output.'/asset/'.$oldref;
-				$dirdest = $conf->asset->dir_output.'/asset/'.$newref;
-				if (!$error && file_exists($dirsource)) {
-					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
-
-					if (@rename($dirsource, $dirdest)) {
-						dol_syslog("Rename ok");
-						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->asset->dir_output.'/asset/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry) {
-							$dirsource = $fileentry['name'];
-							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-							$dirsource = $fileentry['path'].'/'.$dirsource;
-							$dirdest = $fileentry['path'].'/'.$dirdest;
-							@rename($dirsource, $dirdest);
-						}
+			if ($obj = $this->db->fetch_object($resql)) {
+				$mode_key = $obj->depreciation_mode;
+				if (!empty($options->deprecation_options_fields[$mode_key])) {
+					$sql = "UPDATE " . MAIN_DB_PREFIX . $options->deprecation_options_fields[$mode_key]['table'];
+					$sql .= " SET total_amount_last_depreciation_ht = " . $obj->cumulative_depreciation_ht;
+					$sql .= " WHERE fk_asset = " . $obj->fk_asset;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$this->errors[] = $langs->trans('AssetErrorSetLastCumulativeDepreciation') . ': ' . $this->db->lasterror();
+						$error++;
 					}
 				}
 			}
 		}
 
-		// Set new ref and current status
-		if (!$error) {
-			$this->ref = $num;
-			$this->status = self::STATUS_VALIDATED;
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		} else {
+		if ($error) {
 			$this->db->rollback();
 			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
 		}
 	}
 
-
 	/**
-	 *	Set draft status
+	 *	Set dispose status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@param	User	$user						Object user that dispose
+	 *	@param	int		$disposal_invoice_id		Disposal invoice ID
+	 *  @param	int		$notrigger					1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int									<0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function setDraft($user, $notrigger = 0)
+	public function dispose($user, $disposal_invoice_id, $notrigger = 0)
 	{
+		global $conf, $langs;
+
 		// Protection
-		if ($this->status <= self::STATUS_DRAFT) {
+		if ($this->status != self::STATUS_DRAFT || $this->status == self::STATUS_DISPOSED) {
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->asset->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->asset->asset_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
+		$this->db->begin();
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'ASSET_UNVALIDATE');
-	}
+		$required_fields = array('disposal_date', 'disposal_date', 'fk_disposal_type');
+		foreach ($required_fields as $field) {
+			$this->fields[$field]['notnull'] = 1;
+		}
+		$result = $this->update($user, 1);
+		foreach ($required_fields as $field) {
+			$this->fields[$field]['notnull'] = 0;
+		}
+		if ($result > 0) {
+			if ($disposal_invoice_id > 0) $this->add_object_linked('facture', $disposal_invoice_id);
+			$result = $this->setStatusCommon($user, self::STATUS_DISPOSED, $notrigger, 'ASSET_DISPOSED');
+		}
+		if ($result > 0) $result = $this->calculationDepreciation();
 
-	/**
-	 *	Set cancel status
-	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
-	 */
-	public function cancel($user, $notrigger = 0)
-	{
-		// Protection
-		if ($this->status != self::STATUS_VALIDATED) {
-			return 0;
+		if ($result < 0) {
+			$this->db->rollback();
+		} else {
+			$this->db->commit();
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->asset->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->asset->asset_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
+		// Define output language
+		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (method_exists($this, 'generateDocument')) {
+				global $hidedetails, $hidedesc, $hideref;
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					$newlang = $this->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model = $this->model_pdf;
+				$ret = $this->fetch($this->id); // Reload to get new records
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'ASSET_CANCEL');
+				$this->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -941,32 +1166,72 @@ class Asset extends CommonObject
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
+		global $conf, $langs;
+
 		// Protection
-		if ($this->status != self::STATUS_CANCELED) {
+		if ($this->status != self::STATUS_DISPOSED || $this->status == self::STATUS_DRAFT) {
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->asset->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->asset->asset_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'ASSET_REOPEN');
+		$this->db->begin();
+
+		$this->disposal_date = null;
+		$this->disposal_amount_ht = null;
+		$this->fk_disposal_type = null;
+		$this->disposal_depreciated = null;
+		$this->disposal_subject_to_vat = null;
+		$result = $this->update($user, 1);
+		if ($result > 0) {
+			$this->deleteObjectLinked(null, 'facture');
+			$result = $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'ASSET_REOPEN');
+		}
+		if ($result > 0) $result = $this->calculationDepreciation();
+
+		if ($result < 0) {
+			$this->db->rollback();
+		} else {
+			$this->db->commit();
+		}
+
+		// Define output language
+		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (method_exists($this, 'generateDocument')) {
+				global $hidedetails, $hidedesc, $hideref;
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					$newlang = $this->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model = $this->model_pdf;
+				$ret = $this->fetch($this->id); // Reload to get new records
+
+				$this->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
+		return $result;
 	}
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *  @param  string  $option                     On what the link point to ('nolink', ...)
-	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
-	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return	string                              String with URL
+	 * @param	int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 * @param	string  $option                     On what the link point to ('nolink', ...)
+	 * @param	int		$maxlen			          	Max length of name
+	 * @param	int     $notooltip                  1=Disable tooltip
+	 * @param	string  $morecss                    Add more css on link
+	 * @param	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return	string                              String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1052,7 +1317,10 @@ class Asset extends CommonObject
 		}
 
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			$name = $this->ref;
+			if ($option == 'label') $name = $this->label;
+			elseif ($option == 'with_label') $name .= ' - ' . $this->label;
+			$result .= dol_escape_htmltag($maxlen ? dol_trunc($name, $maxlen) : $name);
 		}
 
 		$result .= $linkend;
@@ -1107,17 +1375,14 @@ class Asset extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("asset@asset");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
+			$this->labelStatus[self::STATUS_DISPOSED] = $langs->transnoentitiesnoconv('AssetDisposed');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
+			$this->labelStatusShort[self::STATUS_DISPOSED] = $langs->transnoentitiesnoconv('AssetDisposed');
 		}
 
-		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		if ($status == self::STATUS_CANCELED) {
+		$statusType = 'status4';
+		if ($status == self::STATUS_DISPOSED) {
 			$statusType = 'status6';
 		}
 
@@ -1264,61 +1529,31 @@ class Asset extends CommonObject
 	 *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
-	{
-		global $conf, $langs;
-
-		$result = 0;
-		$includedocgeneration = 1;
-
-		$langs->load("asset@asset");
-
-		if (!dol_strlen($modele)) {
-			$modele = 'standard_asset';
-
-			if (!empty($this->model_pdf)) {
-				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->ASSET_ADDON_PDF)) {
-				$modele = $conf->global->ASSET_ADDON_PDF;
-			}
-		}
-
-		$modelpath = "core/modules/asset/doc/";
-
-		if ($includedocgeneration && !empty($modele)) {
-			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
-	}
+//	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+//	{
+//		global $conf, $langs;
+//
+//		$result = 0;
+//		$includedocgeneration = 1;
+//
+//		$langs->load("asset@asset");
+//
+//		if (!dol_strlen($modele)) {
+//			$modele = 'standard_asset';
+//
+//			if (!empty($this->model_pdf)) {
+//				$modele = $this->model_pdf;
+//			} elseif (!empty($conf->global->ASSET_ADDON_PDF)) {
+//				$modele = $conf->global->ASSET_ADDON_PDF;
+//			}
+//		}
+//
+//		$modelpath = "core/modules/asset/doc/";
+//
+//		if ($includedocgeneration && !empty($modele)) {
+//			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+//		}
+//
+//		return $result;
+//	}
 }

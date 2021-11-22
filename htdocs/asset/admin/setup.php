@@ -46,8 +46,9 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'asset';
 
 $arrayofparameters = array(
-	'ASSET_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
-	'ASSET_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
+	'ASSET_ACCOUNTANCY_CODE'=>array('type'=>'accountancy_code', 'enabled'=>1),
+	//'ASSET_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
+	//'ASSET_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'ASSET_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	//'ASSET_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
 	//'ASSET_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
@@ -190,12 +191,12 @@ $head = assetAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "asset");
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("AssetSetupPage").'</span><br><br>';
+echo '<span class="opacitymedium">'.$langs->trans("AssetSetupPage").'</span>';
 
 
 $moduledir = 'asset';
 $myTmpObjects = array();
-$myTmpObjects['Asset'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
+$myTmpObjects['Asset'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
@@ -538,6 +539,15 @@ if ($action == 'edit') {
 					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
+			} elseif ($val['type'] == 'accountancy_code') {
+				$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+				if (!empty($conf->accounting->enabled)) {
+					require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+					$formaccounting = new FormAccounting($db);
+					print $formaccounting->select_account($selected, $constname, 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
+				} else {
+					print '<input name="' . $constname . '" class="maxwidth200" value="' . dol_escape_htmltag($selected) . '">';
+				}
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
@@ -612,6 +622,16 @@ if ($action == 'edit') {
 						print $product->ref;
 					} elseif ($resprod < 0) {
 						setEventMessages(null, $object->errors, "errors");
+					}
+				} elseif ($val['type'] == 'accountancy_code') {
+					if (!empty($conf->accounting->enabled)) {
+						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch('', $conf->global->{$constname}, 1);
+
+						print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+					} else {
+						print $conf->global->{$constname};
 					}
 				} else {
 					print $conf->global->{$constname};

@@ -140,6 +140,10 @@ if ($outputalsopricetotalwithtax) {
 	print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
 }
 
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	print '<td class="linecolasset"></td>';
+}
+
 print '<td class="linecoledit"></td>'; // No width to allow autodim
 
 print '<td class="linecoldelete" style="width: 10px"></td>';

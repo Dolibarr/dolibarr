@@ -72,6 +72,11 @@ if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', '
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	$colspan++;
+}
+
+
 
 print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 

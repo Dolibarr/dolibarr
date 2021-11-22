@@ -194,7 +194,6 @@ $form = new Form($db);
 
 $now = dol_now();
 
-//$help_url="EN:Module_AssetModel|FR:Module_AssetModel_FR|ES:Módulo_AssetModel";
 $help_url = '';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("AssetModels"));
 $morejs = array();

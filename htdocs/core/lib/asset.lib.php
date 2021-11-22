@@ -104,6 +104,13 @@ function assetPrepareHead($object)
 		$h++;
 	}
 
+	if (isset($object->disposal_date) && $object->disposal_date !== "") {
+		$head[$h][0] = DOL_URL_ROOT . '/asset/disposal.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans("AssetDisposal");
+		$head[$h][2] = 'disposal';
+		$h++;
+	}
+
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {

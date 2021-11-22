@@ -435,17 +435,33 @@ ALTER TABLE llx_asset CHANGE COLUMN amount_vat recovered_vat double(24,8) NOT NU
 DELETE FROM llx_asset WHERE fk_asset_type IS NOT NULL;
 ALTER TABLE llx_asset DROP COLUMN fk_asset_type;
 ALTER TABLE llx_asset DROP COLUMN description;
-ALTER TABLE llx_asset ADD COLUMN fk_asset_model integer NOT NULL AFTER label;
-ALTER TABLE llx_asset ADD COLUMN date_acquisition date NOT NULL AFTER recovered_vat;
+ALTER TABLE llx_asset ADD COLUMN reversal_amount_ht double(24,8) AFTER fk_asset_model;
+ALTER TABLE llx_asset ADD COLUMN fk_asset_model integer AFTER label;
+ALTER TABLE llx_asset ADD COLUMN reversal_date date AFTER recovered_vat;
+ALTER TABLE llx_asset ADD COLUMN date_acquisition date NOT NULL AFTER reversal_date;
 ALTER TABLE llx_asset ADD COLUMN date_start date NOT NULL AFTER date_acquisition;
 ALTER TABLE llx_asset ADD COLUMN qty real DEFAULT 1 NOT NULL AFTER date_start;
 ALTER TABLE llx_asset ADD COLUMN acquisition_type smallint DEFAULT 0 NOT NULL AFTER qty;
 ALTER TABLE llx_asset ADD COLUMN asset_type smallint DEFAULT 0 NOT NULL AFTER acquisition_type;
 ALTER TABLE llx_asset ADD COLUMN not_depreciated integer(1) DEFAULT 0 AFTER asset_type;
+ALTER TABLE llx_asset ADD COLUMN disposal_date date AFTER not_depreciated;
+ALTER TABLE llx_asset ADD COLUMN disposal_amount_ht double(24,8) AFTER disposal_date;
+ALTER TABLE llx_asset ADD COLUMN fk_disposal_type integer AFTER disposal_amount_ht;
+ALTER TABLE llx_asset ADD COLUMN disposal_depreciated integer(1) DEFAULT 0 AFTER fk_disposal_type;
+ALTER TABLE llx_asset ADD COLUMN disposal_subject_to_vat integer(1) DEFAULT 0 AFTER disposal_depreciated;
 ALTER TABLE llx_asset ADD COLUMN last_main_doc varchar(255) AFTER fk_user_modif;
 ALTER TABLE llx_asset ADD COLUMN model_pdf varchar(255) AFTER import_key;
 
 DROP TABLE llx_asset_type;
+
+CREATE TABLE llx_c_asset_disposal_type
+(
+  rowid    integer            AUTO_INCREMENT PRIMARY KEY,
+  entity 	 integer NOT NULL DEFAULT 1,
+  code     varchar(16)        NOT NULL,
+  label    varchar(50)        NOT NULL,
+  active   integer  DEFAULT 1 NOT NULL
+)ENGINE=innodb;
 
 CREATE TABLE llx_asset_accountancy_codes_economic(
 	rowid						integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -490,8 +506,6 @@ CREATE TABLE llx_asset_depreciation_options_economic(
     duration							smallint		NOT NULL,
     duration_type						smallint		DEFAULT 0  NOT NULL,	-- 0:annual, 1:monthly, 2:daily
 
-	depreciation_reversal_date			date,
-	depreciation_reversal_amount_ht		double(24,8),
 	amount_base_depreciation_ht			double(24,8),
 	amount_base_deductible_ht			double(24,8),
 	total_amount_last_depreciation_ht	double(24,8),
@@ -511,8 +525,6 @@ CREATE TABLE llx_asset_depreciation_options_fiscal(
     duration							smallint		NOT NULL,
     duration_type						smallint		DEFAULT 0  NOT NULL,	-- 0:annual, 1:monthly, 2:daily
 
-	depreciation_reversal_date			date,
-	depreciation_reversal_amount_ht		double(24,8),
 	amount_base_depreciation_ht			double(24,8),
 	amount_base_deductible_ht			double(24,8),
 	total_amount_last_depreciation_ht	double(24,8),
@@ -531,6 +543,9 @@ CREATE TABLE llx_asset_depreciation(
 	depreciation_date					datetime		NOT NULL,
 	depreciation_ht						double(24,8)	NOT NULL,
 	cumulative_depreciation_ht			double(24,8)	NOT NULL,
+
+    accountancy_code_debit				varchar(32),
+    accountancy_code_credit				varchar(32),
 
 	tms									timestamp,
 	fk_user_modif						integer
@@ -570,9 +585,13 @@ CREATE TABLE llx_asset_model_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
+ALTER TABLE llx_c_asset_disposal_type ADD UNIQUE INDEX uk_c_asset_disposal_type(code, entity);
+
 ALTER TABLE llx_asset ADD INDEX idx_asset_fk_asset_model (fk_asset_model);
+ALTER TABLE llx_asset ADD INDEX idx_asset_fk_disposal_type (fk_disposal_type);
 
 ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_asset_model	FOREIGN KEY (fk_asset_model)	REFERENCES llx_asset_model (rowid);
+ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_disposal_type	FOREIGN KEY (fk_disposal_type)	REFERENCES llx_c_asset_disposal_type (rowid);
 ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_user_creat	FOREIGN KEY (fk_user_creat)		REFERENCES llx_user (rowid);
 ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
 

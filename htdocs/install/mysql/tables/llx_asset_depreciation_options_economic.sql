@@ -26,8 +26,6 @@ CREATE TABLE llx_asset_depreciation_options_economic(
     duration							smallint		NOT NULL,
     duration_type						smallint		DEFAULT 0  NOT NULL,	-- 0:annual, 1:monthly, 2:daily
 
-	depreciation_reversal_date			date,
-	depreciation_reversal_amount_ht		double(24,8),
 	amount_base_depreciation_ht			double(24,8),
 	amount_base_deductible_ht			double(24,8),
 	total_amount_last_depreciation_ht	double(24,8),

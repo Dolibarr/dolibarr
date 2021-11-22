@@ -1059,6 +1059,7 @@ DictionaryExpenseTaxCat=Note de frais - catégories de déplacement
 DictionaryExpenseTaxRange=Note de frais - Tri par catégorie de déplacement
 DictionaryTransportMode=Déclaration d'échanges intracommunautaires - Mode de transport
 DictionaryBatchStatus=État du contrôle qualité du lot/série de produits
+DictionaryAssetDisposalType=Type de cession des immobilisations
 TypeOfUnit=Type d'unité
 SetupSaved=Configuration sauvegardée
 SetupNotSaved=Configuration non enregistrée

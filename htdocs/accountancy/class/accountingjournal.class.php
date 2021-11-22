@@ -392,7 +392,7 @@ class AccountingJournal extends CommonObject
 		} elseif (empty($reshook)) {
 			switch ($this->nature) {
 				case 1: // Various Journal
-					$data = $this->getVariousData($user, $type, $date_start, $date_end, $in_bookkeeping);
+					$data = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
 					break;
 //				case 2: // Sells Journal
 //				case 3: // Purchases Journal
@@ -407,7 +407,7 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 *  Get various journal data
+	 *  Get asset data for various journal
 	 *
 	 * @param 	User			$user				User who get infos
 	 * @param 	string			$type				Type data returned ('view', 'bookkeeping', 'csv')
@@ -416,41 +416,55 @@ class AccountingJournal extends CommonObject
 	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
 	 * @return 	array|int							<0 if KO, >0 if OK
 	 */
-	public function getVariousData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
+	public function getAssetData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
-		global $conf, $langs, $mysoc;
+		global $conf, $langs;
 
-		return array();
+		if (empty($conf->asset->enabled)) {
+			return array();
+		}
 
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 		require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/asset/class/assetaccountancycodes.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.php';
 
-		$langs->loadLangs(array("companies", "assets"));
+		$langs->loadLangs(array("assets"));
 
 		// Clean parameters
 		if (empty($type)) $type = 'view';
 		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
 
-		$sql = "SELECT a.rowid";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "asset as a";
+		$sql = "";
+		if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
+			$sql .= "WITH in_accounting_bookkeeping(fk_docdet) AS (";
+			$sql .= " SELECT DISTINCT fk_docdet";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+			$sql .= " WHERE doc_type = 'asset'";
+			$sql .= ")";
+		}
+		$sql .= "SELECT ad.fk_asset AS rowid, a.ref AS asset_ref, a.label AS asset_label, a.acquisition_value_ht AS asset_acquisition_value_ht";
+		$sql .= ", a.disposal_date AS asset_disposal_date, a.disposal_amount_ht AS asset_disposal_amount_ht, a.disposal_subject_to_vat AS asset_disposal_subject_to_vat";
+		$sql .= ", ad.rowid AS depreciation_id, ad.depreciation_mode, ad.ref AS depreciation_ref, ad.depreciation_date, ad.depreciation_ht, ad.accountancy_code_debit, ad.accountancy_code_credit";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation as ad";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "asset as a ON a.rowid = ad.fk_asset";
+		if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
+			$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
+		}
 		$sql .= " WHERE a.entity IN (" . getEntity('asset', 0) . ')'; // We don't share object for accountancy, we use source object sharing
-		$sql .= " AND a.status > 0 AND a.status != 2";
-//		if ($date_start && $date_end) {
-//			$sql .= " AND a.date_start >= '" . $this->db->idate($date_start) . "' AND f.datef <= '" . $this->db->idate($date_end) . "'";
-//		}
-//		// Define begin binding date
-//		if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
-//			$sql .= " AND f.date_start >= '" . $this->db->idate($conf->global->ACCOUNTING_DATE_START_BINDING) . "'";
-//		}
-//		// Already in bookkeeping or not
-//		if ($in_bookkeeping == 'already') {
-//			$sql .= " AND f.rowid IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
-//		} elseif ($in_bookkeeping == 'notyet') {
-//			$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
-//		}
-		$sql .= " ORDER BY a.date_start";
+		$sql .= " AND ad.ref != ''"; // not reversal lines
+		if ($date_start && $date_end) {
+			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($date_start) . "' AND ad.depreciation_date <= '" . $this->db->idate($date_end) . "'";
+		}
+		// Define begin binding date
+		if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($conf->global->ACCOUNTING_DATE_START_BINDING) . "'";
+		}
+		// Already in bookkeeping or not
+		if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
+			$sql .= " AND iab.fk_docdet IS" . ($in_bookkeeping == 'already' ? " NOT" : "") . " NULL";
+		}
+		$sql .= " ORDER BY ad.depreciation_date";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -463,248 +477,107 @@ class AccountingJournal extends CommonObject
 			'elements' => array(),
 		);
 		while ($obj = $this->db->fetch_object($resql)) {
-			$asset = new Asset($this->db);
-			$result = $asset->fetch($obj->rowid);
-			if ($result < 0) {
-				$this->error = $asset->error;
-				$this->errors = $asset->errors;
-				return -1;
-			}
+			if (!isset($pre_data['elements'][$obj->rowid])) {
+				$pre_data['elements'][$obj->rowid] = array(
+					'ref' => $obj->asset_ref,
+					'label' => $obj->asset_label,
+					'acquisition_value_ht' => $obj->asset_acquisition_value_ht,
+					'depreciation' => array(),
+				);
 
-			$result = $asset->fetchDepreciationLines($date_start, $date_end, $in_bookkeeping == 'already', $in_bookkeeping == 'notyet');
-			if ($result < 0) {
-				$this->error = $assetaccountancycodes->error;
-				$this->errors = $assetaccountancycodes->errors;
-				return -1;
-			}
-
-			$assetaccountancycodes = new AssetAccountancyCodes($this->db);
-			$result = $assetaccountancycodes->fetchAccountancyCodes($obj->rowid);
-			if ($result < 0) {
-				$this->error = $assetaccountancycodes->error;
-				$this->errors = $assetaccountancycodes->errors;
-				return -1;
-			}
-
-			$pre_data['elements'][$obj->rowid] = array(
-				'error' => '',
-				'date' => $this->db->jdate($obj->df),
-				'ref' => $obj->ref,
-				'ht_lines' => array(),
-			);
-
-			foreach ($asset->depreciation_lines as $mode_key => $lines) {
-				$compta_in = (!empty($assetaccountancycodes->accountancy_codes[$mode_key][''])) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : 'NotDefined';
-				$compta_out = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : 'NotDefined';
-
-				foreach ($lines as $line) {
-					if (!isset($pre_data['elements'][$obj->rowid]['ht_lines'][$compta_in])) $pre_data['elements'][$obj->rowid]['ht_lines'][$compta_in] = 0;
-					$pre_data['elements'][$obj->rowid]['ht_lines'][$compta_in] += $obj->total_ht * $situation_ratio;
-					if (!isset($pre_data['elements'][$obj->rowid]['ht_lines'][$compta_out])) $pre_data['elements'][$obj->rowid]['ht_lines'][$compta_in] = 0;
-					$pre_data['elements'][$obj->rowid]['ht_lines'][$compta_out] += $obj->total_ht * $situation_ratio;
+				// Disposal infos
+				if (isset($obj->asset_disposal_date)) {
+					$pre_data['elements'][$obj->rowid]['disposal'] = array(
+						'date' => $this->db->jdate($obj->asset_disposal_date),
+						'amount' => $obj->asset_disposal_amount_ht,
+						'subject_to_vat' => !empty($obj->asset_disposal_subject_to_vat),
+					);
 				}
 			}
+
+			$compta_debit = empty($obj->accountancy_code_debit) ? 'NotDefined' : $obj->accountancy_code_debit;
+			$compta_credit = empty($obj->accountancy_code_credit) ? 'NotDefined' : $obj->accountancy_code_credit;
+
+			$pre_data['elements'][$obj->rowid]['depreciation'][$obj->depreciation_id] = array(
+				'date' => $this->db->jdate($obj->depreciation_date),
+				'ref' => $obj->depreciation_ref,
+				'lines' => array(
+					$compta_debit => -$obj->depreciation_ht,
+					$compta_credit => $obj->depreciation_ht,
+				),
+			);
 		}
 
+		$disposal_ref = $langs->transnoentitiesnoconv('AssetDisposal');
 		$journal = $this->code;
 		$journal_label = $this->label;
 		$journal_label_formatted = $langs->transnoentities($journal_label);
 		$now = dol_now();
 
-		$company_static = new Client($this->db);
-		$element_static = new Facture($this->db);
+		$element_static = new Asset($this->db);
 
 		$journal_data = array();
 		foreach ($pre_data['elements'] as $pre_data_id => $pre_data_info) {
 			$element_static->id = $pre_data_id;
 			$element_static->ref = (string)$pre_data_info["ref"];
-			$element_static->type = $pre_data_info["type"];
-			$element_static->close_code = $pre_data_info["close_code"];
-			$element_static->date = $pre_data_info["date"];
-			$element_static->date_lim_reglement = $pre_data_info["date_limit_payment"];
-			$element_link = $element_static->getNomUrl(1);
-			$element_date = dol_print_date($element_static->date, 'day');
+			$element_static->label = (string)$pre_data_info["label"];
+			$element_static->acquisition_value_ht = $pre_data_info["acquisition_value_ht"];
+			$element_link = $element_static->getNomUrl(1, 'with_label');
 
-			$company_static->id = $pre_data_info['company_id'];
-			if (!empty($pre_data['companies'][$company_static->id])) {
-				$company_infos = $pre_data['companies'][$company_static->id];
-				$company_static->name = $company_infos['name'];
-				$company_static->code_client = $company_infos['code_client'];
-				$company_static->code_compta_client = $company_infos['code_compta'];
-				$company_static->client = 3;
-				$company_name_formatted_0 = dol_trunc($company_static->name, 16);
-				$company_name_formatted_1 = utf8_decode(dol_trunc($company_static->name, 32));
-				$company_name_formatted_2 = utf8_decode(dol_trunc($company_static->name, 16));
-			} else {
-				$company_static->name = '';
-				$company_static->code_client = '';
-				$company_static->code_compta_client = '';
-				$company_static->client = '';
-				$company_name_formatted_0 = '';
-				$company_name_formatted_1 = '';
-				$company_name_formatted_2 = '';
-			}
-
-			$label_operation = $company_static->getNomUrl(0, 'customer', 16) . ' - ' . $element_static->ref;
-
-			// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
-			$replacedinvoice = 0;
-			if ($element_static->close_code == Facture::CLOSECODE_REPLACED) {
-				$replacedinvoice = 1;
-				$alreadydispatched = $element_static->getVentilExportCompta(); // Test if replaced invoice already into bookkeeping.
-				if ($alreadydispatched) {
-					$replacedinvoice = 2;
-				}
-			}
+			$element_name_formatted_0 = dol_trunc($element_static->label, 16);
+			$element_name_formatted_1 = utf8_decode(dol_trunc($element_static->label, 32));
+			$element_name_formatted_2 = utf8_decode(dol_trunc($element_static->label, 16));
+			$label_operation = $element_static->getNomUrl(0, 'label', 16);
 
 			$element = array(
-				'ref' => $element_static->ref,
+				'ref' => dol_trunc($element_static->ref, 16, 'right', 'UTF-8', 1),
 				'error' => $pre_data_info['error'],
 				'blocks' => array(),
 			);
-			$blocks = array();
 
-			// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
-			if ($replacedinvoice == 1) {
-				if ($type == 'view') {
-					$blocks[] = array(
-						'date' => $element_date,
-						'piece' => '<strike>' . $element_link . '</strike>',
-						'account_accounting' => $langs->trans("Replaced"),
-						'subledger_account' => '',
-						'label_operation' => '',
-						'debit' => '',
-						'credit' => '',
-					);
-				} else {
-					continue;
-				}
-			} else {
-				if ($pre_data_info['error'] == 'somelinesarenotbound') {
-					if ($type == 'view') {
-						$blocks[] = array(
-							'date' => $element_date,
-							'piece' => $element_link,
-							'account_accounting' => '<span class="error">' . $langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $element_static->ref) . '</span>',
-							'subledger_account' => '',
-							'label_operation' => '',
-							'debit' => '',
-							'credit' => '',
-						);
-					} else {
-						$journal_data[$pre_data_id] = $element;
-						continue;
-					}
-				}
+			// Depreciation lines
+			//--------------------
+			foreach ($pre_data_info['depreciation'] as $depreciation_id => $line) {
+				$depreciation_ref = $line["ref"];
+				$depreciation_date = $line["date"];
+				$depreciation_date_formatted = dol_print_date($depreciation_date, 'day');
 
-				// Third parties
-				//--------------------
-				$account_to_show = length_accounta($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);
-				if (($account_to_show == "") || $account_to_show == 'NotDefined') {
-					$account_to_show = '<span class="error">' . $langs->trans("MainAccountForCustomersNotDefined") . '</span>';
-				}
-				foreach ($pre_data_info['ttc_lines'] as $account => $mt) {
-					if ($type == 'view') {
-						$subledger_account_to_show = length_accounta($account);
-						if (($subledger_account_to_show == "") || $subledger_account_to_show == 'NotDefined') {
-							$subledger_account_to_show = '<span class="error">' . $langs->trans("ThirdpartyAccountNotDefined") . '</span>';
-						}
-
-						$blocks[] = array(
-							'date' => $element_date,
-							'piece' => $element_link,
-							'account_accounting' => $account_to_show,
-							'subledger_account' => $subledger_account_to_show,
-							'label_operation' => $label_operation . ' - ' . $langs->trans("SubledgerAccount"),
-							'debit' => $mt >= 0 ? price($mt) : '',
-							'credit' => $mt < 0 ? price(-$mt) : '',
-						);
-					} elseif ($type == 'bookkeeping') {
-						$account_infos = $this->getAccountingAccountInfos($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);
-
-						$blocks[] = array(
-							'doc_date' => $element_static->date,
-							'date_lim_reglement' => $element_static->date_lim_reglement,
-							'doc_ref' => $element_static->ref,
-							'date_creation' => $now,
-							'doc_type' => 'customer_invoice',
-							'fk_doc' => $element_static->id,
-							'fk_docdet' => 0, // Useless, can be several lines that are source of this record to add
-							'thirdparty_code' => $company_static->code_client,
-							'subledger_account' => $company_static->code_compta_client,
-							'subledger_label' => $company_static->name,
-							'numero_compte' => $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER,
-							'label_compte' => $account_infos['label'],
-							'label_operation' => $company_name_formatted_0 . ' - ' . $element_static->ref . ' - ' . $langs->trans("SubledgerAccount"),
-							'montant' => $mt,
-							'sens' => $mt >= 0 ? 'D' : 'C',
-							'debit' => $mt >= 0 ? $mt : 0,
-							'credit' => $mt < 0 ? -$mt : 0,
-							'code_journal' => $journal,
-							'journal_label' => $journal_label_formatted,
-							'piece_num' => '',
-							'import_key' => '',
-							'fk_user_author' => $user->id,
-							'entity' => $conf->entity,
-						);
-					} else { // $type == 'csv'
-						$account_infos = $this->getAccountingAccountInfos($account);
-
-						$blocks[] = array(
-							$element_static->id,
-							$element_date,
-							$element_static->ref,
-							$company_name_formatted_1,
-							$account_infos['code_formatted_1'],
-							$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER,
-							$account_infos['code_formatted_1'],
-							$langs->trans("Thirdparty"),
-							$company_name_formatted_2 . ' - ' . $element_static->ref . ' - ' . $langs->trans("Thirdparty"),
-							$mt >= 0 ? price($mt) : '',
-							$mt < 0 ? price(-$mt) : '',
-							$journal,
-						);
-					}
-				}
-				$element['blocks'][] = $blocks;
-
-				// Product / Service
-				//--------------------
+				// lines
 				$blocks = array();
-				foreach ($pre_data_info['ht_lines'] as $account => $mt) {
+				foreach ($line['lines'] as $account => $mt) {
 					$account_infos = $this->getAccountingAccountInfos($account);
 
 					if ($type == 'view') {
 						$account_to_show = length_accounta($account);
 						if (($account_to_show == "") || $account_to_show == 'NotDefined') {
-							$account_to_show = '<span class="error">' . $langs->trans("ProductNotDefined") . '</span>';
+							$account_to_show = '<span class="error">' . $langs->trans("AssetInAccountNotDefined") . '</span>';
 						}
 
 						$blocks[] = array(
-							'date' => $element_date,
+							'date' => $depreciation_date_formatted,
 							'piece' => $element_link,
 							'account_accounting' => $account_to_show,
 							'subledger_account' => '',
-							'label_operation' => $label_operation . ' - ' . $account_infos['label'],
+							'label_operation' => $label_operation . ' - ' . $depreciation_ref,
 							'debit' => $mt < 0 ? price(-$mt) : '',
 							'credit' => $mt >= 0 ? price($mt) : '',
 						);
 					} elseif ($type == 'bookkeeping') {
 						if ($account_infos['found']) {
 							$blocks[] = array(
-								'doc_date' => $element_static->date,
-								'date_lim_reglement' => $element_static->date_lim_reglement,
+								'doc_date' => $depreciation_date,
+								'date_lim_reglement' => '',
 								'doc_ref' => $element_static->ref,
 								'date_creation' => $now,
-								'doc_type' => 'customer_invoice',
+								'doc_type' => 'asset',
 								'fk_doc' => $element_static->id,
-								'fk_docdet' => 0, // Useless, can be several lines that are source of this record to add
-								'thirdparty_code' => $company_static->code_client,
+								'fk_docdet' => $depreciation_id, // Useless, can be several lines that are source of this record to add
+								'thirdparty_code' => '',
 								'subledger_account' => '',
 								'subledger_label' => '',
 								'numero_compte' => $account,
 								'label_compte' => $account_infos['label'],
-								'label_operation' => $company_name_formatted_0 . ' - ' . $element_static->ref . ' - ' . $account_infos['label'],
+								'label_operation' => $element_name_formatted_0 . ' - ' . $depreciation_ref,
 								'montant' => $mt,
 								'sens' => $mt < 0 ? 'D' : 'C',
 								'debit' => $mt < 0 ? -$mt : 0,
@@ -719,97 +592,140 @@ class AccountingJournal extends CommonObject
 						}
 					} else { // $type == 'csv'
 						$blocks[] = array(
-							$element_static->id,
-							$element_date,
-							$element_static->ref,
-							$company_name_formatted_1,
-							$account_infos['code_formatted_1'],
-							$account_infos['code_formatted_1'],
-							'',
-							$account_infos['label_formatted_1'],
-							$company_name_formatted_2 . ' - ' . $account_infos['label_formatted_2'],
-							$mt < 0 ? price(-$mt) : '',
-							$mt >= 0 ? price($mt) : '',
-							$journal,
+							$depreciation_date,                                   	// Date
+							$element_static->ref,                                	// Piece
+							$account_infos['code_formatted_1'],                		// AccountAccounting
+							$element_name_formatted_0 . ' - ' . $depreciation_ref,  // LabelOperation
+							$mt < 0 ? price(-$mt) : '',                        		// Debit
+							$mt >= 0 ? price($mt) : '',                        		// Credit
 						);
 					}
 				}
 				$element['blocks'][] = $blocks;
+			}
 
-				// VAT
-				//--------------------
-				$blocks = array();
-				$list_of_tax = array(0, 1, 2);
-				foreach ($list_of_tax as $num_tax) {
-					foreach ($pre_data_info['vat_lines'][$num_tax] as $account => $mt) {
-						if ($mt) {
-							if ($type == 'view') {
-								$account_to_show = length_accounta($account);
-								if (($account_to_show == "") || $account_to_show == 'NotDefined') {
-									$account_to_show = '<span class="error">' . $langs->trans("VATAccountNotDefined") . ' (' . $langs->trans("Sale") . ')</span>';
+			// Disposal line
+			//--------------------
+			if (!empty($pre_data_info['disposal'])) {
+				$disposal_date = $pre_data_info['disposal']['date'];
+
+				if ((!($date_start && $date_end) || ($date_start <= $disposal_date && $disposal_date <= $date_end)) &&
+					(empty($conf->global->ACCOUNTING_DATE_START_BINDING) || $conf->global->ACCOUNTING_DATE_START_BINDING <= $disposal_date)
+				) {
+					$disposal_amount = $pre_data_info['disposal']['amount'];
+					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];
+					$disposal_date_formatted = dol_print_date($disposal_date, 'day');
+					$disposal_vat = $conf->global->ASSET_DISPOSAL_VAT > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
+
+					// Get accountancy codes
+					//---------------------------
+					require_once DOL_DOCUMENT_ROOT . '/asset/class/assetaccountancycodes.class.php';
+					$accountancy_codes = new AssetAccountancyCodes($this->db);
+					$result = $accountancy_codes->fetchAccountancyCodes($element_static->id);
+					if ($result < 0) {
+						$element['error'] = $accountancy_codes->errorsToString();
+					} else {
+						// Get last depreciation cumulative amount
+						$element_static->fetchDepreciationLines();
+						foreach ($element_static->depreciation_lines as $mode_key => $depreciation_lines) {
+							$accountancy_codes_list = $accountancy_codes->accountancy_codes[$mode_key];
+
+							if (!isset($accountancy_codes_list['value_asset_sold'])) {
+								continue;
+							}
+
+							$accountancy_code_value_asset_sold = empty($accountancy_codes_list['value_asset_sold']) ? 'NotDefined' : $accountancy_codes_list['value_asset_sold'];
+							$accountancy_code_depreciation_asset = empty($accountancy_codes_list['depreciation_asset']) ? 'NotDefined' : $accountancy_codes_list['depreciation_asset'];
+							$accountancy_code_asset = empty($accountancy_codes_list['asset']) ? 'NotDefined' : $accountancy_codes_list['asset'];
+							$accountancy_code_receivable_on_assignment = empty($accountancy_codes_list['receivable_on_assignment']) ? 'NotDefined' : $accountancy_codes_list['receivable_on_assignment'];
+							$accountancy_code_vat_collected = empty($accountancy_codes_list['vat_collected']) ? 'NotDefined' : $accountancy_codes_list['vat_collected'];
+							$accountancy_code_proceeds_from_sales = empty($accountancy_codes_list['proceeds_from_sales']) ? 'NotDefined' : $accountancy_codes_list['proceeds_from_sales'];
+
+							$last_cumulative_amount_ht = 0;
+							$depreciated_ids = array_keys($pre_data_info['depreciation']);
+							foreach ($depreciation_lines as $line) {
+								$last_cumulative_amount_ht = $line['cumulative_depreciation_ht'];
+								if (!in_array($line['id'], $depreciated_ids) && empty($line['bookkeeping']) && !empty($line['ref'])) {
+									break;
 								}
+							}
 
-								$blocks[] = array(
-									'date' => $element_date,
-									'piece' => $element_link,
-									'account_accounting' => $account_to_show,
-									'subledger_account' => '',
-									'label_operation' => $label_operation . ' - ' . $langs->trans("VAT") . ' ' . join(', ', $pre_data_info['vat_info'][$account]) . ' %' . ($num_tax ? ' - Localtax ' . $num_tax : ''),
-									'debit' => $mt < 0 ? price(-$mt) : '',
-									'credit' => $mt >= 0 ? price($mt) : '',
-								);
-							} elseif ($type == 'bookkeeping') {
-								$account_infos = $this->getAccountingAccountInfos($account);
+							$lines = array();
+							$lines[0][$accountancy_code_value_asset_sold] = -($element_static->acquisition_value_ht - $last_cumulative_amount_ht);
+							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
+							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 
-								$blocks[] = array(
-									'doc_date' => $element_static->date,
-									'date_lim_reglement' => $element_static->date_lim_reglement,
-									'doc_ref' => $element_static->ref,
-									'date_creation' => $now,
-									'doc_type' => 'customer_invoice',
-									'fk_doc' => $element_static->id,
-									'fk_docdet' => 0, // Useless, can be several lines that are source of this record to add
-									'thirdparty_code' => $company_static->code_client,
-									'subledger_account' => '',
-									'subledger_label' => '',
-									'numero_compte' => $account,
-									'label_compte' => $account_infos['label'],
-									'label_operation' => $company_name_formatted_0 . ' - ' . $element_static->ref . ' - ' . $langs->trans("VAT") . ' ' . join(', ', $pre_data_info['vat_info'][$account]) . ' %' . ($num_tax ? ' - Localtax ' . $num_tax : ''),
-									'montant' => $mt,
-									'sens' => $mt < 0 ? 'D' : 'C',
-									'debit' => $mt < 0 ? -$mt : 0,
-									'credit' => $mt >= 0 ? $mt : 0,
-									'code_journal' => $journal,
-									'journal_label' => $journal_label_formatted,
-									'piece_num' => '',
-									'import_key' => '',
-									'fk_user_author' => $user->id,
-									'entity' => $conf->entity,
-								);
-							} else { // $type == 'csv'
-								$account_infos = $this->getAccountingAccountInfos($account);
+							$disposal_amount_vat = $disposal_subject_to_vat ? (double)price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
+							$lines[1][$accountancy_code_receivable_on_assignment] = -($disposal_amount + $disposal_amount_vat);
+							if ($disposal_subject_to_vat) $lines[1][$accountancy_code_vat_collected] = $disposal_amount_vat;
+							$lines[1][$accountancy_code_proceeds_from_sales] = $disposal_amount;
 
-								$blocks[] = array(
-									$element_static->id,
-									$element_date,
-									$element_static->ref,
-									$company_name_formatted_1,
-									$account_infos['code_formatted_1'],
-									$account_infos['code_formatted_1'],
-									'',
-									$langs->trans("VAT") . ' - ' . join(', ', $pre_data_info['vat_info'][$account]) . ' %',
-									$company_name_formatted_2 . ' - ' . $element_static->ref . ' - ' . $langs->trans("VAT") . join(', ', $pre_data_info['vat_info'][$account]) . ' %' . ($num_tax ? ' - Localtax ' . $num_tax : ''),
-									$mt < 0 ? price(-$mt) : '',
-									$mt >= 0 ? price($mt) : '',
-									$journal,
-								);
+							foreach ($lines as $lines_block) {
+								$blocks = array();
+								foreach ($lines_block as $account => $mt) {
+									$account_infos = $this->getAccountingAccountInfos($account);
+
+									if ($type == 'view') {
+										$account_to_show = length_accounta($account);
+										if (($account_to_show == "") || $account_to_show == 'NotDefined') {
+											$account_to_show = '<span class="error">' . $langs->trans("AssetInAccountNotDefined") . '</span>';
+										}
+
+										$blocks[] = array(
+											'date' => $disposal_date_formatted,
+											'piece' => $element_link,
+											'account_accounting' => $account_to_show,
+											'subledger_account' => '',
+											'label_operation' => $label_operation . ' - ' . $disposal_ref,
+											'debit' => $mt < 0 ? price(-$mt) : '',
+											'credit' => $mt >= 0 ? price($mt) : '',
+										);
+									} elseif ($type == 'bookkeeping') {
+										if ($account_infos['found']) {
+											$blocks[] = array(
+												'doc_date' => $disposal_date,
+												'date_lim_reglement' => '',
+												'doc_ref' => $element_static->ref,
+												'date_creation' => $now,
+												'doc_type' => 'asset',
+												'fk_doc' => $element_static->id,
+												'fk_docdet' => 0, // Useless, can be several lines that are source of this record to add
+												'thirdparty_code' => '',
+												'subledger_account' => '',
+												'subledger_label' => '',
+												'numero_compte' => $account,
+												'label_compte' => $account_infos['label'],
+												'label_operation' => $element_name_formatted_0 . ' - ' . $disposal_ref,
+												'montant' => $mt,
+												'sens' => $mt < 0 ? 'D' : 'C',
+												'debit' => $mt < 0 ? -$mt : 0,
+												'credit' => $mt >= 0 ? $mt : 0,
+												'code_journal' => $journal,
+												'journal_label' => $journal_label_formatted,
+												'piece_num' => '',
+												'import_key' => '',
+												'fk_user_author' => $user->id,
+												'entity' => $conf->entity,
+											);
+										}
+									} else { // $type == 'csv'
+										$blocks[] = array(
+											$disposal_date,                                    // Date
+											$element_static->ref,                              // Piece
+											$account_infos['code_formatted_1'],                // AccountAccounting
+											$element_name_formatted_0 . ' - ' . $disposal_ref, // LabelOperation
+											$mt < 0 ? price(-$mt) : '',                        // Debit
+											$mt >= 0 ? price($mt) : '',                        // Credit
+										);
+									}
+								}
+								$element['blocks'][] = $blocks;
 							}
 						}
 					}
 				}
 			}
 
-			$element['blocks'][] = $blocks;
 			$journal_data[$pre_data_id] = $element;
 		}
 		unset($pre_data);
@@ -941,6 +857,19 @@ class AccountingJournal extends CommonObject
 									$this->errors[] = $bookkeeping->errorsToString();
 								}
 							}
+//
+//							if (!$error_for_line && !empty($conf->asset->enabled) && $this->nature == 1 && $bookkeeping->fk_doc > 0) {
+//								// Set last cumulative depreciation
+//								require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
+//								$asset = new Asset($this->db);
+//								$result = $asset->setLastCumulativeDepreciation($bookkeeping->fk_doc);
+//								if ($result < 0) {
+//									$error++;
+//									$error_for_line++;
+//									$journal_data[$element_id]['error'] = 'other';
+//									$this->errors[] = $asset->errorsToString();
+//								}
+//							}
 						}
 
 						if ($error_for_line) {
@@ -1035,6 +964,15 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("Note"),
 				);
 			} elseif ($this->nature == 5) {
+				$header = array(
+					$langs->transnoentitiesnoconv("Date"),
+					$langs->transnoentitiesnoconv("Piece"),
+					$langs->transnoentitiesnoconv("AccountAccounting"),
+					$langs->transnoentitiesnoconv("LabelOperation"),
+					$langs->transnoentitiesnoconv("Debit"),
+					$langs->transnoentitiesnoconv("Credit"),
+				);
+			} elseif ($this->nature == 1) {
 				$header = array(
 					$langs->transnoentitiesnoconv("Date"),
 					$langs->transnoentitiesnoconv("Piece"),

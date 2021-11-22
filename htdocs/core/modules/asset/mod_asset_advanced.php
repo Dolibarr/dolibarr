@@ -26,8 +26,7 @@
  * \brief      File containing class for advanced numbering model of Asset
  */
 
-dol_include_once('/asset/core/modules/asset/modules_asset.php');
-
+require_once DOL_DOCUMENT_ROOT.'/core/modules/asset/modules_asset.php';
 
 /**
  *	Class to manage customer Bom numbering rules advanced

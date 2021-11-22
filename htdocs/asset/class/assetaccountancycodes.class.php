@@ -30,11 +30,15 @@ class AssetAccountancyCodes extends CommonObject
 {
 	/**
 	 * @var array  Array with all accountancy codes info by mode.
+	 *  Note : 'economic' mode is mandatory and is the primary accountancy codes
+	 *         'depreciation_asset' and 'depreciation_expense' is mandatory and is used for write depreciation in bookkeeping
 	 */
 	public $accountancy_codes_fields = array(
 		'economic' => array(
 			'label' => 'AssetAccountancyCodeDepreciationEconomic',
 			'table'	=> 'asset_accountancy_codes_economic',
+			'depreciation_debit' => 'depreciation_asset',
+			'depreciation_credit' => 'depreciation_expense',
 			'fields' => array(
 				'asset' => array('label' => 'AssetAccountancyCodeAsset'),
 				'depreciation_asset' => array('label' => 'AssetAccountancyCodeDepreciationAsset'),
@@ -49,6 +53,8 @@ class AssetAccountancyCodes extends CommonObject
 		'accelerated_depreciation' => array(
 			'label' => 'AssetAccountancyCodeDepreciationAcceleratedDepreciation',
 			'table'	=> 'asset_accountancy_codes_fiscal',
+			'depreciation_debit' => 'accelerated_depreciation',
+			'depreciation_credit' => 'endowment_accelerated_depreciation',
 			'fields' => array(
 				'accelerated_depreciation' => array('label' => 'AssetAccountancyCodeAcceleratedDepreciation'),
 				'endowment_accelerated_depreciation' => array('label' => 'AssetAccountancyCodeEndowmentAcceleratedDepreciation'),
@@ -235,6 +241,19 @@ class AssetAccountancyCodes extends CommonObject
 					$this->errors[] = $langs->trans('AssetErrorInsertAccountancyCodesForMode', $mode_key) . ': ' . $this->db->lasterror();
 					$error++;
 				}
+			}
+		}
+
+		if (!$error && $asset_id > 0) {
+			// Calculation of depreciation lines (reversal and future)
+			require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
+			$asset = new Asset($this->db);
+			$result = $asset->fetch($asset_id);
+			if ($result > 0) $result = $asset->calculationDepreciation();
+			if ($result < 0) {
+				$this->errors[] = $langs->trans('AssetErrorCalculationDepreciationLines');
+				$this->errors[] = $asset->errorsToString();
+				$error++;
 			}
 		}
 
