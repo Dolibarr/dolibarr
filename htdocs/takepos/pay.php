@@ -69,9 +69,6 @@ if (!empty($conf->stripe->enabled)) {
 	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
 	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
-	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&servicestatus='.$servicestatus;
-	if (!empty($conf->global->STRIPE_LOCATION)) $urlconnexiontoken .= '&location='.$conf->global->STRIPE_LOCATION;
-	if (!empty($stripeacc)) $urlconnexiontoken .= '&stripeacc='.$stripeacc;
 	?>
 <script src="https://js.stripe.com/terminal/v1/"></script>
 <script>
@@ -85,6 +82,11 @@ function unexpectedDisconnect() {
   console.log("Disconnected from reader")
 }
 function fetchConnectionToken() {
+	<?php
+	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&servicestatus='.$servicestatus;
+	if (!empty($conf->global->STRIPE_LOCATION)) $urlconnexiontoken .= '&location='.$conf->global->STRIPE_LOCATION;
+	if (!empty($stripeacc)) $urlconnexiontoken .= '&stripeacc='.$stripeacc;
+	?>
   // Do not cache or hardcode the ConnectionToken. The SDK manages the ConnectionToken's lifecycle.
   return fetch('<?php echo $urlconnexiontoken; ?>', { method: "POST" })
 	.then(function(response) {
