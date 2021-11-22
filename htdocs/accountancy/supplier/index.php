@@ -307,7 +307,7 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?year='.$year_current.'&action=validatehistory">'.$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
@@ -366,7 +366,7 @@ if ($resql) {
 		print '</td>';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
 			print $row[1];
 		}
@@ -445,7 +445,7 @@ if ($resql) {
 		print '</td>';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
 			print $row[1];
 		}
