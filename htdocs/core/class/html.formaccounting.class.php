@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016-2020 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021 Nicolas ZABOURI   <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,7 +330,7 @@ class FormAccounting extends Form
 					}
 					// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
 					// Because same account_number can be share between different accounting_system and do have the same meaning
-					if ($selectid != '' && $selectid == $select_value_in) {
+					if ($selectid != "" && intval($selectid) == intval($select_value_in)) {
 						//var_dump("Found ".$selectid." ".$select_value_in);
 						$selected = $select_value_out;
 					}
