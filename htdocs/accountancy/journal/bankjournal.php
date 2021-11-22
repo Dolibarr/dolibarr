@@ -127,7 +127,7 @@ if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " soc.code_compta,";
 	$sql .= " soc.code_compta_fournisseur,";
 }
-$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, u.statut as userstatus,";
+$sql .= " u.accountancy_code_general, u.accountancy_code_subledger, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, u.statut as userstatus,";
 $sql .= " bu2.type as typeop_user,";
 $sql .= " bu3.type as typeop_payment, bu4.type as typeop_payment_supplier";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -262,8 +262,8 @@ if ($result) {
 		);
 
 		// Set accountancy code for user
-		// $obj->accountancy_code is the accountancy_code of table u=user but it is defined only if a link with type 'user' exists)
-		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : '');
+		// $obj->accountancy_code_subledger is the accountancy_code of table u=user but it is defined only if a link with type 'user' exists)
+		$compta_user = (!empty($obj->accountancy_code_subledger) ? $obj->accountancy_code_subledger : '');
 
 		$tabuser[$obj->rowid] = array(
 			'id' => $obj->userid,
@@ -271,7 +271,7 @@ if ($result) {
 			'lastname' => $obj->lastname,
 			'firstname' => $obj->firstname,
 			'email' => $obj->useremail,
-			'accountancy_code' => $compta_user,
+			'accountancy_code_subledger' => $compta_user,
 			'status' => $obj->userstatus
 		);
 
@@ -343,7 +343,7 @@ if ($result) {
 					$userstatic->firstname = $tabuser[$obj->rowid]['firstname'];
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
 					$userstatic->statut = $tabuser[$obj->rowid]['status'];
-					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
+					$userstatic->accountancy_code_subledger = $tabuser[$obj->rowid]['accountancy_code_subledger'];
 					if ($userstatic->id > 0) {
 						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
 					} else {
@@ -411,6 +411,8 @@ if ($result) {
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
+					$accountancy_code_general = (!empty($paymentexpensereportstatic->accountancy_code_general) ? $paymentexpensereportstatic->accountancy_code_general : 'NotDefined'); // NotDefined is a reserved word
+					$tabpay[$obj->rowid]["accountancy_code_general"] = $accountancy_code_general;
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentsalstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
 
@@ -427,7 +429,7 @@ if ($result) {
 						$userstatic->firstname = $tmpsalary->user->firstname;
 						$userstatic->lastname = $tmpsalary->user->lastname;
 						$userstatic->statut = $tmpsalary->user->statut;
-						$userstatic->accountancy_code = $tmpsalary->user->accountancy_code;
+						$userstatic->accountancy_code_subledger = $tmpsalary->user->accountancy_code_subledger;
 
 						if ($userstatic->id > 0) {
 							$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
@@ -436,7 +438,7 @@ if ($result) {
 						}
 
 						if (empty($obj->typeop_user)) {	// Add test to avoid to add amount twice if a link already exists also on user.
-							$compta_user = $userstatic->accountancy_code;
+							$compta_user = $userstatic->accountancy_code_subledger;
 							if ($compta_user) {
 								$tabtp[$obj->rowid][$compta_user] += $obj->amount;
 								$tabuser[$obj->rowid] = array(
@@ -445,7 +447,7 @@ if ($result) {
 								'lastname' => $userstatic->lastname,
 								'firstname' => $userstatic->firstname,
 								'email' => $userstatic->email,
-								'accountancy_code' => $compta_user,
+								'accountancy_code_subledger' => $compta_user,
 								'status' => $userstatic->statut
 								);
 							}
@@ -455,6 +457,8 @@ if ($result) {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= $paymentexpensereportstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentexpensereport"] = $paymentexpensereportstatic->id;
+					$accountancy_code_general = (!empty($paymentexpensereportstatic->accountancy_code_general) ? $paymentexpensereportstatic->accountancy_code_general : 'NotDefined'); // NotDefined is a reserved word
+					$tabpay[$obj->rowid]["accountancy_code_general"] = $accountancy_code_general;
 				} elseif ($links[$key]['type'] == 'payment_various') {
 					$paymentvariousstatic->id = $links[$key]['url_id'];
 					$paymentvariousstatic->ref = $links[$key]['url_id'];
@@ -696,15 +700,17 @@ if (!$error && $action == 'writebookkeeping') {
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 							$bookkeeping->label_compte = $accountingaccountsupplier->label;
 						} elseif ($tabtype[$key] == 'payment_expensereport') {
-							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
+							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code_subledger'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
-							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-							$bookkeeping->label_compte = $accountingaccountpayment->label;
+							$accountingaccount->fetch(null, $tabpay[$key]["accountancy_code_general"], true);	// TODO Use a cache
+							$bookkeeping->numero_compte = (isset($tabpay[$key]["accountancy_code_general"]) ? $tabpay[$key]["accountancy_code_general"] : $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'payment_salary') {
-							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
+							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code_subledger'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
-							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-							$bookkeeping->label_compte = $accountingaccountpayment->label;
+							$accountingaccount->fetch(null, $tabpay[$key]["accountancy_code_general"], true);	// TODO Use a cache
+							$bookkeeping->numero_compte = (isset($tabpay[$key]["accountancy_code_general"]) ? $tabpay[$key]["accountancy_code_general"] : $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
@@ -1196,7 +1202,7 @@ if (empty($action) || $action == 'view') {
 						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 					}
 					if ($tabtype[$key] == 'payment_salary') {
-						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$account_ledger = (isset($tabpay[$key]["accountancy_code_general"]) ? $tabpay[$key]["accountancy_code_general"] : $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
 					}
 					if ($tabtype[$key] == 'payment_vat') {
 						$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;

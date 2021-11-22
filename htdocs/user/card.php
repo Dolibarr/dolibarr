@@ -62,11 +62,7 @@ if (!empty($conf->stock->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -1302,17 +1298,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td>';
 	print "</tr>\n";
 
-	print '</table><hr><table class="border centpercent">';
+	print '</table>';
 
+	print '<!-- accountancy codes -->'."\n";
+	print '<hr><table class="border centpercent">';
 	// User accountancy general account
 	if (!empty($conf->accounting->enabled)) {
-		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		$accountancy_code_general = GETPOST('accountancy_code_general', 'alpha');
+		$accountancy_code_general = (GETPOSTISSET('accountancy_code_general') ? GETPOST('accountancy_code_general', 'alpha') : $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
 		print $formaccounting->select_account($accountancy_code_general, 'accountancy_code_general', 1, null, 1, 1, '');
 		print '</td></tr>';
 	} else {
-		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print '<input type="text" name="accountancy_code_general" value="'.dol_escape_htmltag(GETPOST('accountancy_code_general', 'alphanohtml')).'">';
 		print '</td></tr>';
@@ -2775,10 +2773,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
-			// User accountancy general account
-			print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+			print '<!-- accountancy codes -->'."\n";
+			print '<hr><table class="border centpercent">';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 			print '<td>';
 			if ($caneditfield) {
 				if (!empty($conf->accounting->enabled)) {
@@ -2794,7 +2793,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 			// User accountancy subledger account
-			print '<tr><td>'.$langs->trans("UserAccountancyCode").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("UserAccountancyCode").'</td>';
 			print '<td>';
 			if ($caneditfield) {
 				print '<input type="text" class="flat maxwidth300" name="accountancy_code_subledger" value="'.$object->accountancy_code_subledger.'">';
