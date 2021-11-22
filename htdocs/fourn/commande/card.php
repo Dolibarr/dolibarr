@@ -586,7 +586,7 @@ if (empty($reshook)) {
 					$pu_ht_devise,
 					'',
 					0,
-					$rank
+					min($rank, count($object->lines) + 1)
 				);
 			}
 			if ($idprod == -99 || $idprod == 0) {

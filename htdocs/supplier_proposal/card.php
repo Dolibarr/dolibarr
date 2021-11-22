@@ -674,7 +674,7 @@ if (empty($reshook)) {
 						$pu_ttc,
 						$tva_npr,
 						$type,
-						$rank,
+						min($rank, count($object->lines) + 1),
 						0,
 						GETPOST('fk_parent_line'),
 						$fournprice,

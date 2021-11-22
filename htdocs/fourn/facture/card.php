@@ -1510,7 +1510,7 @@ if (empty($reshook)) {
 					$tva_npr,
 					$price_base_type,
 					$type,
-					$rank,
+					min($rank, count($object->lines) + 1),
 					0,
 					$array_options,
 					$productsupplier->fk_unit,
