@@ -1051,7 +1051,9 @@ if ($mode == 'marketplace') {
 
 			<div id="category-tree-left">
 				<ul class="tree">
-					<?php echo dol_escape_htmltag($dolistore->get_categories()); ?>
+					<?php
+					echo $dolistore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content
+					?>
 				</ul>
 			</div>
 			<div id="listing-content">
