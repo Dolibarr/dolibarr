@@ -204,7 +204,8 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
+		print '<td>';
 		if ($row[0] == 'tobind') {
 			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
@@ -218,10 +219,11 @@ if ($resql) {
 			print $row[1];
 		}
 		print '</td>';
-		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
+		for ($i = 2; $i <= 13; $i++) {
+			print '<td class="right nowraponall amount">';
+			print price($row[$i]);
+			print '</td>';
 		}
-		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
@@ -283,7 +285,8 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
+		print '<td>';
 		if ($row[0] == 'tobind') {
 			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
@@ -298,10 +301,11 @@ if ($resql) {
 			print $row[1];
 		}
 		print '</td>';
-		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
+		for ($i = 2; $i <= 13; $i++) {
+			print '<td class="right nowraponall amount">';
+			print price($row[$i]);
+			print '</td>';
 		}
-		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}

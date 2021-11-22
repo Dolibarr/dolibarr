@@ -326,7 +326,24 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+	$cursormonth = $j;
+	if ($cursormonth > 12) {
+		$cursormonth -= 12;
+	}
+	$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+	$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
+	print '<td width="60" class="right">';
+	if (!empty($tmp['mday'])) {
+		$param = 'search_date_startday=1&search_date_startmonth='.$cursormonth.'&search_date_startyear='.$cursoryear;
+		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
+		print '<a href="'.DOL_URL_ROOT.'/accountancy/customer/list.php?'.$param.'">';
+	}
+	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	if (!empty($tmp['mday'])) {
+		print '</a>';
+	}
+	print '</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -366,7 +383,8 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
+		print '<td>';
 		if ($row[0] == 'tobind') {
 			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
@@ -380,14 +398,28 @@ if ($resql) {
 			print $row[1];
 		}
 		print '</td>';
-		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
+		for ($i = 2; $i <= 13; $i++) {
+			$cursormonth = (($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + $i - 2);
+			if ($cursormonth > 12) {
+				$cursormonth -= 12;
+			}
+			$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
+			print '<td class="right nowraponall amount">';
+			print price($row[$i]);
+			print '</td>';
 		}
-		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
+
+	if ($num == 0) {
+		print '<tr class="oddeven"><td colspan="16">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
+	}
 } else {
 	print $db->lasterror(); // Show last sql error
 }
@@ -410,7 +442,24 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+	$cursormonth = $j;
+	if ($cursormonth > 12) {
+		$cursormonth -= 12;
+	}
+	$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+	$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
+	print '<td width="60" class="right">';
+	if (!empty($tmp['mday'])) {
+		$param = 'search_date_startday=1&search_date_startmonth='.$cursormonth.'&search_date_startyear='.$cursoryear;
+		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
+		print '<a href="'.DOL_URL_ROOT.'/accountancy/customer/lines.php?'.$param.'">';
+	}
+	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	if (!empty($tmp['mday'])) {
+		print '</a>';
+	}
+	print '</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -450,7 +499,8 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
+		print '<td>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("Unknown");
 		} else {
@@ -466,14 +516,28 @@ if ($resql) {
 		}
 		print '</td>';
 
-		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
+		for ($i = 2; $i <= 13; $i++) {
+			$cursormonth = (($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + $i - 2);
+			if ($cursormonth > 12) {
+				$cursormonth -= 12;
+			}
+			$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
+			print '<td class="right nowraponall amount">';
+			print price($row[$i]);
+			print '</td>';
 		}
-		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
+
+	if ($num == 0) {
+		print '<tr class="oddeven"><td colspan="16">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
+	}
 } else {
 	print $db->lasterror(); // Show last sql error
 }
