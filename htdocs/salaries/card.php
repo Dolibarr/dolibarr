@@ -668,7 +668,7 @@ if ($action == 'create') {
 						);
 
 					} else {
-						alert("'.$langs->trans("FillFieldFirst").'");
+						alert("'.dol_escape_js($langs->trans("FillFieldFirst")).'");
 					}
 		});
 

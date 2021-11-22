@@ -53,7 +53,7 @@ create table llx_commande_fournisseurdet
   fk_unit                    integer      DEFAULT NULL,
   
   fk_multicurrency           integer,
-  multicurrency_code         varchar(255),
+  multicurrency_code         varchar(3),
   multicurrency_subprice     double(24,8) DEFAULT 0,
   multicurrency_total_ht     double(24,8) DEFAULT 0,
   multicurrency_total_tva    double(24,8) DEFAULT 0,

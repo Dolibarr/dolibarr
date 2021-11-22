@@ -77,7 +77,8 @@ abstract class DoliDB implements Database
 	 */
 	public function ifsql($test, $resok, $resko)
 	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
+		//return 'IF('.$test.','.$resok.','.$resko.')';		// Not sql standard
+		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
 	}
 
 	/**

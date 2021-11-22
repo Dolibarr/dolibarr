@@ -14,6 +14,7 @@
  * Copyright (C) 2019		Nicolas ZABOURI 		<info@inovea-conseil.com>
  * Copyright (C) 2020		Josep Lluís Amador 		<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2021		Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1520,7 +1521,7 @@ class Adherent extends CommonObject
 	{
 		global $langs;
 
-		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 
 		$this->partnerships[] = array();

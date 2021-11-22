@@ -583,6 +583,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$arrayoftypes = array(
 		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
 		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'recordjoinpiece'=>$langs->trans('recordjoinpieceonobject'),
 		'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) {
 		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';

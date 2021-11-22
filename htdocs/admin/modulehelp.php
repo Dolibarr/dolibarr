@@ -334,7 +334,7 @@ if ($mode == 'desc') {
 			$editor_url = 'http://'.$editor_url;
 		}
 		if (!empty($objMod->editor_url) && !preg_match('/dolibarr\.org/i', $objMod->editor_url)) {
-			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
+			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$objMod->editor_url.'</a>';
 		}
 		$text .= $textexternal;
 		$text .= '<br>';

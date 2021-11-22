@@ -532,9 +532,9 @@ if ($result) {
 		// product_type: 0 = service, 1 = product
 		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
 		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
-		$objp->code_buy_l = '';
-		$objp->code_buy_p = '';
-		$objp->aarowid_suggest = ''; // Will be set later
+		$code_buy_l = '';
+		$code_buy_p = '';
+		$code_buy_t = '';
 
 		$thirdpartystatic->id = $objp->socid;
 		$thirdpartystatic->name = $objp->name;
@@ -585,6 +585,8 @@ if ($result) {
 		$code_buy_p_notset = '';
 		$code_buy_t_notset = '';
 
+		$suggestedid = 0;
+
 		$return=$accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facturefourn_static, $facturefourn_static_det, $accountingAccountArray, 'supplier');
 		if (!is_array($return) && $return<0) {
 			setEventMessage($accountingAccount->error, 'errors');
@@ -597,9 +599,6 @@ if ($result) {
 			$code_buy_t=$return['code_t'];
 		}
 		//var_dump($return);
-
-		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-		// Not supported for suppliers
 
 		if (!empty($code_buy_p)) {
 			// Value was defined previously
@@ -616,6 +615,7 @@ if ($result) {
 		// $code_buy_l is now default code of product/service
 		// $code_buy_p is now code of product/service
 		// $code_buy_t is now code of thirdparty
+		//var_dump($code_buy_l.' - '.$code_buy_p.' - '.$code_buy_t.' -> '.$suggestedid.' ('.$suggestedaccountingaccountbydefaultfor.' '.$suggestedaccountingaccountfor.')');
 
 		print '<tr class="oddeven">';
 
