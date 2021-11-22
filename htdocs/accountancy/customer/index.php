@@ -251,6 +251,8 @@ if ($action == 'validatehistory') {
 			$code_sell_p_notset = '';
 			$code_sell_t_notset = '';
 
+			$suggestedid = 0;
+
 			$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
 			if (!is_array($return) && $return<0) {
 				setEventMessage($accountingAccount->error, 'errors');
@@ -265,28 +267,7 @@ if ($action == 'validatehistory') {
 				}
 			}
 
-			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-				if (!empty($objp->company_code_sell)) {
-					$objp->code_sell_t = $objp->company_code_sell;
-					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-					$suggestedaccountingaccountfor = '';
-				}
-			}
-
-			// Manage Deposit
-			if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT)) {
-				if ($objp->description == "(DEPOSIT)" || $objp->ftype == $facture_static::TYPE_DEPOSIT) {
-					$accountdeposittoventilated = new AccountingAccount($db);
-					$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
-					$objp->code_sell_l = $accountdeposittoventilated->ref;
-					$objp->code_sell_p = '';
-					$objp->code_sell_t = '';
-					$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
-				}
-			}
-
-			if ($objp->aarowid_suggest > 0) {
+			if ($suggestedid > 0) {
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facturedet";
 				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
 				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $facture_static_det->id);

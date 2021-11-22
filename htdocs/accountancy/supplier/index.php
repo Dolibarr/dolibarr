@@ -247,6 +247,8 @@ if ($action == 'validatehistory') {
 			$code_buy_p_notset = '';
 			$code_buy_t_notset = '';
 
+			$suggestedid = 0;
+
 			$return = $accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'supplier');
 			if (!is_array($return) && $return<0) {
 				setEventMessage($accountingAccount->error, 'errors');
@@ -261,16 +263,7 @@ if ($action == 'validatehistory') {
 				}
 			}
 
-			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-				if (!empty($objp->company_code_buy)) {
-					$objp->code_buy_t = $objp->company_code_buy;
-					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-					$suggestedaccountingaccountfor = '';
-				}
-			}
-
-			if ($objp->aarowid_suggest > 0) {
+			if ($suggestedid > 0) {
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
 				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $facture_static_det->id);
