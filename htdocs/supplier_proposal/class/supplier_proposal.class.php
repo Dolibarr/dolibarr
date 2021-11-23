@@ -2698,7 +2698,6 @@ class SupplierProposal extends CommonObject
 
 		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
-
 }
 
 
