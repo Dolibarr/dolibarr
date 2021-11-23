@@ -1145,7 +1145,8 @@ class FactureFournisseur extends CommonInvoice
 
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				$facligne->rang = 1;
-				for ($ii = 1; $ii <= count($this->lines); $ii++) {
+				$linecount = count($this->lines);
+				for ($ii = 1; $ii <= $linecount; $ii++) {
 					$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii+1);
 				}
 			}
@@ -2016,7 +2017,8 @@ class FactureFournisseur extends CommonInvoice
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
 				} elseif ($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
-					for ($ii = $rang; $ii <= count($this->lines); $ii++) {
+					$linecount = count($this->lines);
+					for ($ii = $rang; $ii <= $linecount; $ii++) {
 						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
 					}
 				}
