@@ -8036,7 +8036,7 @@ abstract class CommonObject
 
 			if (!$db->query($sql)) {
 				if ($ignoreerrors) {
-					return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
+					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
 				//$this->errors = $db->lasterror();
 				return false;
