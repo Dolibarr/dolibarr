@@ -408,3 +408,7 @@ mandatoryHelper=Message to the user on the need to enter a start date and an end
 DefaultBOM=Default BOM
 DefaultBOMDesc=The default BOM recommended to use to manufacture this product. This field can be set only if nature of product is '%s'.
 Rank=Rank
+MergeOriginProduct=Duplicate product (product you want to delete)
+MergeProducts=Merge products
+ConfirmMergeProducts=Are you sure you want to merge the chosen product with the current one? All linked objects (invoices, orders, ...) will be moved to the current product, after which the chosen product will be deleted.
+ProductsMergeSuccess=Products have been merged
