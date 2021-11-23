@@ -318,7 +318,7 @@ if (empty($reshook)) {
 						'Commande' => '/commande/class/commande.class.php',
 						'Facture' => '/compta/facture/class/facture.class.php',
 						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
-						// 'Mo' => '/mrp/class/mo.class.php',
+						'Bom' => '/bom/class/bom.class.php',
 						'Contrat' => '/contrat/class/contrat.class.php',
 						'Expedition' => '/expedition/class/expedition.class.php',
 						'Fichinter' => '/fichinter/class/fichinter.class.php',
@@ -2679,7 +2679,7 @@ if ($action == 'merge') {
 			'name' => 'product_origin',
 			'label' => $langs->trans('MergeOriginProduct'),
 			'type' => 'other',
-			'value' => $form->select_produits('', 'product_origin', '', 0, 0, 1, 2, '', 1, array(), 0, 1, 0, '', 0, '', null, 1),
+			'value' => $form->select_produits('', 'product_origin', '', 0, 0, 1, 2, '', 1, array(), 0, 1, 0, 'minwidth200', 0, '', null, 1),
 		)
 	);
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeProducts"), $langs->trans("ConfirmMergeProducts"), "confirm_merge", $formquestion, 'no', 1, 250);
