@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Прямая печать
-Module64000Desc=Включить систему прямой печати
-PrintingSetup=Настройки системы прямой печати
+Module64000Name=Печать в один клик
+Module64000Desc=Включить систему печати в один клик
+PrintingSetup=Настройка системы печати в один клик
 PrintingDesc=Этот модуль добавляет кнопку «Печать» к различным модулям, чтобы можно было печатать документы непосредственно на принтере без необходимости открывать документ в другом приложении.
-MenuDirectPrinting=Прямая печать заданий
-DirectPrint=Прямая печать
+MenuDirectPrinting=Печать заданий в один клик
+DirectPrint=Печать в один клик
 PrintingDriverDesc=Настройки драйвера принтера
 ListDrivers=Список драйверов
 PrintTestDesc=Список принтеров
@@ -46,7 +46,7 @@ IPP_Device=Устройство
 IPP_Media=СМИ для принтера
 IPP_Supported=Тип СМИ
 DirectPrintingJobsDesc=На этой странице перечислены задания печати, найденные для доступных принтеров.
-GoogleAuthNotConfigured=Google OAuth не настроен. Включите модуль OAuth и установите Google ID / Secret.
+GoogleAuthNotConfigured=Google OAuth не настроен. Включите модуль OAuth и установите Google ID/Secret.
 GoogleAuthConfigured=Учетные данные Google OAuth были найдены при настройке модуля OAuth.
 PrintingDriverDescprintgcp=Настройки для драйвера сервиса Google Cloud Print
 PrintingDriverDescprintipp=Переменные конфигурации для драйвера печати Cups.

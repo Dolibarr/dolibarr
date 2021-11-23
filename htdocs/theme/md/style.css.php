@@ -657,6 +657,10 @@ input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
+input[type=checkbox], input[type=radio] {
+	margin: 0 3px 0 3px;
+}
+
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
 ::-webkit-input-placeholder { color:#ccc; }
@@ -922,6 +926,19 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.paddingtop {
+	padding-top: 4px;
+}
+.paddingtop2 {
+	padding-top: 2px;
+}
+.paddingbottom {
+	padding-bottom: 4px;
+}
+.paddingbottom2 {
+	padding-bottom: 2px;
+}
+
 .cursordefault {
 	cursor: default;
 }
@@ -1407,6 +1424,10 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
+tr.nobottom td {
+	border-bottom: 0px !important;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1434,6 +1455,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
 	.minwidth300imp { min-width: 300px !important; }
@@ -1493,6 +1515,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 150px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
@@ -1512,6 +1535,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 70px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -1658,6 +1682,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -2266,6 +2291,19 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
+li.tmenusel::after, li.tmenu:hover::after {
+	content: "";
+	position: absolute;
+	bottom: 0px;
+	left: 50%;
+	left: calc(50% - 6px);
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0px 6px 5px 6px;
+	border-color: transparent transparent #ffffff transparent;
+}
+
 div.tmenusep {
 <?php if ($disableimages) { ?>
 	display: none;
@@ -2359,9 +2397,7 @@ li.tmenu, li.tmenusel {
 li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
-li.tmenusel a.tmenusel {
-	text-decoration: underline !important;
-}
+
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
 
@@ -2888,13 +2924,13 @@ div.vmenu, td.vmenu {
 .searchform .bordertransp { border: 0; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
+span.vmenudisabled, font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
-font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
+span.vsmenudisabled, font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
-font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
+span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
 
@@ -3109,10 +3145,10 @@ div.tabsElem a {
 }
 div.tabBar {
 	color: #<?php echo $colortextbacktab; ?>;
-	padding-top: 21px;
+	padding-top: 23px;
 	padding-left: 24px;
 	padding-right: 24px;
-	padding-bottom: 18px;
+	padding-bottom: 23px;
 	margin: 0px 0px 18px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
@@ -3309,18 +3345,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
 	padding: 4px !important;
 }
-.nopaddingleft {
-	padding-<?php print $left; ?>: 0px;
-}
-.nopaddingright {
-	padding-<?php print $right; ?>: 0px;
-}
-.nopaddingtopimp {
-	padding-top: 0px !important;
-}
-.nopaddingbottomimp {
-	padding-bottom: 0px !important;
-}
+
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -3382,6 +3407,33 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_REF)) { ?>
+/* To have left column sticky */
+.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
+	position: sticky;
+	left: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_ACTION)) { ?>
+/* To have right column sticky */
+.tagtable td.actioncolumn, .tagtable th.actioncolumn {
+	position: sticky;
+	right: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
+
 
 /* Main boxes */
 .nobordertop, .nobordertop tr:first-of-type td {
@@ -3411,7 +3463,7 @@ div.colorback
 	border-left: 1px solid #ccc;
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
-	width: calc(100% - 1px);	/* -1 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
+	width: calc(100% - 2px);	/* -2 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
@@ -4486,6 +4538,11 @@ div#card-errors {
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
 }
+
+div#dialogforpopup {
+	background-color: #f8f8f8 !important;
+}
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -5575,6 +5632,10 @@ input.select2-input {
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	border: 1px solid #e4e4e4;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,

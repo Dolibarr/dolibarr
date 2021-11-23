@@ -330,6 +330,8 @@ if ($action == 'creditnote' && $user->rights->facture->creer) {
 	$creditnote = new Facture($db);
 	$creditnote->socid = $invoice->socid;
 	$creditnote->date = dol_now();
+	$creditnote->module_source = 'takepos';
+	$creditnote->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 	$creditnote->type = Facture::TYPE_CREDIT_NOTE;
 	$creditnote->fk_facture_source = $placeid;
 	$creditnote->remise_absolue = $invoice->remise_absolue;

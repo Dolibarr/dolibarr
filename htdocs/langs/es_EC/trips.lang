@@ -86,8 +86,5 @@ expenseReportPrintExample=desplazamiento + (d x coef) = %S
 ExpenseReportApplyTo=Aplicar para
 ExpenseReportDateStart=Fecha de inicio
 ExpenseReportDateEnd=Fecha final
-ExpenseReportLimitAmount=Cantidad limitada
-ExpenseReportConstraintViolationError=Infracción de restricción id [%s]: %s es superior a %s %s
-ExpenseReportConstraintViolationWarning=Infracción de restricción id [%s]: %s es superior a %s %s
 ExpenseRangeOffset=Cantidad de compensación: %s
 AttachTheNewLineToTheDocument=Adjunte la línea a un documento cargado

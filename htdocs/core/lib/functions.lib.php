@@ -2887,7 +2887,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank">'.$value.'</a>';
+				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.$value.'</a>';
 			} else {
 				$htmllink .= $value;
 			}
@@ -3140,7 +3140,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				// Old method
 				$newphone = '<a href="'.$url.'"';
 				if (!empty($conf->global->CLICKTODIAL_FORCENEWTARGET)) {
-					$newphone .= ' target="_blank"';
+					$newphone .= ' target="_blank" rel="noopener noreferrer"';
 				}
 				$newphone .= '>'.$newphonesav.'</a>';
 			}
@@ -3645,14 +3645,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
+				'partnership', 'payment', 'payment_vat', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'region',
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'uncheck', 'user-cog', 'website', 'workstation',
+				'uncheck', 'user-cog', 'vat', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
 			))) {
 			$fakey = $pictowithouttext;
@@ -3692,7 +3692,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
 				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature',
-				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house',
@@ -3700,7 +3700,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'supplier'=>'building', 'technic'=>'cogs',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
-				'uncheck'=>'times', 'uparrow'=>'share', 'vcard'=>'address-card',
+				'uncheck'=>'times', 'uparrow'=>'share', 'vat'=>'money-check-alt', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
 				'website'=>'globe-americas', 'workstation'=>'pallet',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
@@ -3771,12 +3771,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4', 'switch_on_red'=>'font-status8',
 				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
 				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
-				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
+				'payment'=>'infobox-bank_account', 'payment_vat'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
 				'reception'=>'flip', 'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
 				'salary'=>'infobox-bank_account', 'shipment'=>'infobox-commande', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
 				'supplier'=>'infobox-order_supplier', 'supplier_order'=>'infobox-order_supplier', 'supplier_proposal'=>'infobox-supplier_proposal',
 				'ticket'=>'infobox-contrat', 'title_accountancy'=>'infobox-bank_account', 'title_hrm'=>'infobox-holiday', 'expensereport'=>'infobox-expensereport', 'trip'=>'infobox-expensereport', 'title_agenda'=>'infobox-action',
+				'vat'=>'infobox-bank_account',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
@@ -5378,13 +5379,16 @@ function price2num($amount, $rounding = '', $option = 0)
 		if ($thousand != ',' && $thousand != '.') {
 			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
 		}
+
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
+
+		$amount = preg_replace('/[^0-9\-\.]/', '', $amount);	// Clean non numeric chars (so it clean some UTF8 spaces for example.
 	}
 	//print ' XX'.$amount.' '.$rounding;
 
-	// Now, make a rounding if required
+	// Now, $amount is a real PHP float number. We make a rounding if required.
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
@@ -5424,9 +5428,12 @@ function price2num($amount, $rounding = '', $option = 0)
 		if ($thousand != ',' && $thousand != '.') {
 			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
 		}
+
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
+
+		$amount = preg_replace('/[^0-9\-\.]/', '', $amount);	// Clean non numeric chars (so it clean some UTF8 spaces for example.
 	}
 
 	return $amount;
@@ -8125,10 +8132,10 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 /**
  * Verify if condition in string is ok or not
  *
- * @param 	string		$strRights		String with condition to check
- * @return 	boolean						True or False. Return True if strRights is ''
+ * @param 	string		$strToEvaluate	String with condition to check
+ * @return 	boolean						True or False. Note: It returns True if $strToEvaluate is ''
  */
-function verifCond($strRights)
+function verifCond($strToEvaluate)
 {
 	global $user, $conf, $langs;
 	global $leftmenu;
@@ -8136,8 +8143,8 @@ function verifCond($strRights)
 
 	//print $strRights."<br>\n";
 	$rights = true;
-	if ($strRights != '') {
-		$str = 'if(!('.$strRights.')) { $rights = false; }';
+	if ($strToEvaluate !== '') {
+		$str = 'if(!('.$strToEvaluate.')) { $rights = false; }';
 		dol_eval($str); // The dol_eval must contains all the global $xxx used into a condition
 	}
 	return $rights;
@@ -9150,9 +9157,9 @@ function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
 		    </script>';
 	if ($addlink) {
 		if ($textonlink === 'image') {
-			$out .= ' <a href="'.$addlink.'" target="_blank">'.img_picto('', 'globe').'</a>';
+			$out .= ' <a href="'.$addlink.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe').'</a>';
 		} else {
-			$out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+			$out .= ' <a href="'.$addlink.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("Link").'</a>';
 		}
 	}
 	return $out;

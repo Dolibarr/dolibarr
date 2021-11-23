@@ -26,6 +26,14 @@
 // $arrayofparameters must be set for action 'update'
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
+// $formSetup may be defined
+
+
+if ($action == 'update' && !empty($formSetup) && is_object($formSetup)) {
+	$formSetup->saveConfFromPost();
+	return;
+}
+
 
 if ($action == 'update' && is_array($arrayofparameters)) {
 	$db->begin();

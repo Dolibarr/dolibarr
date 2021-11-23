@@ -1,8 +1,8 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Chargen-/Serien-Nr. benutzen 
-ProductStatusOnBatch=Ja (Charge erforderlich)
-ProductStatusOnSerial=Ja  (einzigartige Seriennummer erforderlich)
-ProductStatusNotOnBatch=Nein  (keine Chargen-/Serien-Nr.)
+ProductStatusOnBatch=Ja (Chargennummer erforderlich)
+ProductStatusOnSerial=Ja (eindeutige Seriennummer erforderlich)
+ProductStatusNotOnBatch=Nein (keine Chargen-/Serien-Nr.)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Seriennummer
 ProductStatusNotOnBatchShort=Keine
@@ -37,7 +37,8 @@ ManufacturingDate=Herstellungsdatum
 DestructionDate=Datum der Vernichtung
 FirstUseDate=Datum der ersten Verwendung
 QCFrequency=Häufigkeit der Qualitätskontrolle (in Tagen)
-
+ShowAllLots=Alle Lose anzeigen
+HideLots=Lose ausblenden
 #Traceability - qc status
 OutOfOrder=Außer Betrieb
 InWorkingOrder=In betriebsfähigem Zustand

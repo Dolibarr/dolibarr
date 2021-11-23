@@ -85,3 +85,132 @@ function emailcollectorPrepareHead($object)
 
 	return $head;
 }
+
+/**
+ * Récupère les parties d'un message
+ * @param object $structure structure du message
+ * @return object|boolean parties du message|false en cas d'erreur
+ */
+function getParts($structure)
+{
+	return isset($structure->parts) ? $structure->parts : false;
+}
+
+/**
+ * Tableau définissant la pièce jointe
+ * @param object $part partie du message
+ * @return object|boolean définition du message|false en cas d'erreur
+ */
+function getDParameters($part)
+{
+	return $part->ifdparameters ? $part->dparameters : false;
+}
+
+/**
+ * Récupère les pièces d'un mail donné
+ * @param integer $jk numéro du mail
+ * @param object $mbox object connection imaap
+ * @return array type, filename, pos
+ */
+function getAttachments($jk, $mbox)
+{
+	$structure = imap_fetchstructure($mbox, $jk);
+	$parts = getParts($structure);
+	$fpos = 2;
+	$attachments = array();
+	$nb = count($parts);
+	if ($parts && $nb) {
+		for ($i = 1; $i < $nb; $i++) {
+			$part = $parts[$i];
+
+			if ($part->ifdisposition && strtolower($part->disposition) == "attachment") {
+				$ext = $part->subtype;
+				$params = getDParameters($part);
+
+				if ($params) {
+					$filename = $part->dparameters[0]->value;
+					$filename = imap_utf8($filename);
+					$attachments[] = array('type' => $part->type, 'filename' => $filename, 'pos' => $fpos);
+				}
+			}
+			$fpos++;
+		}
+	}
+	return $attachments;
+}
+
+/**
+ * Récupère la contenu de la pièce jointe par rapport a sa position dans un mail donné
+ * @param integer $jk numéro du mail
+ * @param integer $fpos position de la pièce jointe
+ * @param integer $type type de la pièce jointe
+ * @param object $mbox object connection imaap
+ * @return mixed data
+ */
+function getFileData($jk, $fpos, $type, $mbox)
+{
+	$mege = imap_fetchbody($mbox, $jk, $fpos);
+	$data = getDecodeValue($mege, $type);
+
+	return $data;
+}
+
+/**
+ * Sauvegarde de la pièce jointe dans le dossier défini avec un nom unique
+ * @param string $path chemin de sauvegarde dui fichier
+ * @param string $filename nom du fichier
+ * @param mixed $data contenu à sauvegarder
+ * @return string emplacement du fichier
+ **/
+function saveAttachment($path, $filename, $data)
+{
+	global $lang;
+	$tmp = explode('.', $filename);
+	$ext = array_pop($tmp);
+	$filename = implode('.', $tmp);
+	if (!file_exists($path)) {
+		if (dol_mkdir($path) < 0) {
+			return -1;
+		}
+	}
+
+	$i = 1;
+	$filepath = $path . $filename . '.' . $ext;
+
+	while (file_exists($filepath)) {
+		$filepath = $path . $filename . '(' . $i . ').' . $ext;
+		$i++;
+	}
+	file_put_contents($filepath, $data);
+	return $filepath;
+}
+
+/**
+ * Décode le contenu du message
+ * @param string $message message
+ * @param integer $coding type de contenu
+ * @return message décodé
+ **/
+function getDecodeValue($message, $coding)
+{
+	switch ($coding) {
+		case 0: //text
+		case 1: //multipart
+			$message = imap_8bit($message);
+			break;
+		case 2: //message
+			$message = imap_binary($message);
+			break;
+		case 3: //application
+		case 5: //image
+		case 6: //video
+		case 7: //other
+			$message = imap_base64($message);
+			break;
+		case 4: //audio
+			$message = imap_qprint($message);
+			break;
+	}
+
+	return $message;
+}

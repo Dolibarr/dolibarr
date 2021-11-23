@@ -1894,7 +1894,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				}
 			}
 			$qs .= (($qs && $morequerystring) ? '&' : '').$morequerystring;
-			$text = '<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs ? '&' : '').'optioncss=print" target="_blank">';
+			$text = '<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs ? '&' : '').'optioncss=print" target="_blank" rel="noopener noreferrer">';
 			//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-print atoplogin valignmiddle"></span>';
 			$text .= '</a>';
@@ -1934,7 +1934,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 						$title .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
 					}
 				}
-				$text .= '<a class="help" target="_blank" rel="noopener" href="';
+				$text .= '<a class="help" target="_blank" rel="noopener noreferrer" href="';
 				if ($mode == 'wiki') {
 					$text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				} else {
@@ -2817,7 +2817,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 			if ($doliurl) {
-				print '<a class="help" target="_blank" rel="noopener" href="'.$doliurl.'">';
+				print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$doliurl.'">';
 			} else {
 				print '<span class="help">';
 			}
@@ -2885,7 +2885,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
-			print '<a class="help" target="_blank" rel="noopener" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
+			print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
 			print '</div>';
 		}
 
@@ -3208,7 +3208,7 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// A div for the address popup
-		print "\n<!-- A div to allow dialog popup -->\n";
+		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)

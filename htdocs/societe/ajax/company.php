@@ -114,7 +114,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		return;
 	}
 
-	if (!is_object($form)) {
+	if (empty($form) || !is_object($form)) {
 		$form = new Form($db);
 	}
 

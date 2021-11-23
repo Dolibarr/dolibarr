@@ -90,7 +90,6 @@ $datelivraison = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ordersuppliercard', 'globalcard'));
@@ -124,6 +123,8 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
+
 // Common permissions
 $usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
 $usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
@@ -136,7 +137,11 @@ $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($us
 $usercanapprove			= $user->rights->fournisseur->commande->approuver;
 $usercanapprovesecond	= $user->rights->fournisseur->commande->approve2;
 $usercanorder			= $user->rights->fournisseur->commande->commander;
-$usercanreceived		= $user->rights->fournisseur->commande->receptionner;
+if (empty($conf->reception->enabled)) {
+	$usercanreceive = $user->rights->fournisseur->commande->receptionner;
+} else {
+	$usercanreceive = $user->rights->reception->creer;
+}
 
 // Permissions for includes
 $permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php

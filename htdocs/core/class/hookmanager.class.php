@@ -230,7 +230,8 @@ class HookManager
 				'setContentSecurityPolicy',
 				'setHtmlTitle',
 				'completeTabsHead',
-				'formDolBanner'
+				'formDolBanner',
+				'displayMarginInfos',
 				)
 		)) {
 			$hooktype = 'addreplace';

@@ -732,17 +732,16 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Return Suggest accounting accounts to bind
 	 *
-	 * @param Societe $buyer Societe Object Buyers
-	 * @param $seller Company Object seller
-	 * @param Product $product Product object sell or buy
-	 * @param Facture $facture Facture
-	 * @param FactureLigne $factureDet Facture Det
-	 * @param array $accountingAccount array of Account account
-	 * @param string $type Customer / Supplier
-	 *
-	 * @return    array        Accounting accounts suggested
+	 * @param 	Societe 							$buyer 				Object buyer
+	 * @param 	Societe 							$seller 			Object seller
+	 * @param 	Product 							$product 			Product object sell or buy
+	 * @param 	Facture|FactureFournisseur 			$facture 			Facture
+	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
+	 * @param 	array 								$accountingAccount 	Array of Account account
+	 * @param 	string 								$type 				Customer / Supplier
+	 * @return	array       											Accounting accounts suggested
 	 */
-	public function getAccountingCodeToBind(Societe $buyer, $seller, Product $product, Facture $facture, FactureLigne $factureDet, $accountingAccount = array(), $type = '')
+	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
 		global $conf;
 		global $hookmanager;
@@ -755,21 +754,21 @@ class AccountingAccount extends CommonObject
 		$reshook = $hookmanager->executeHooks('accoutancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
-			if ($type=='customer') {
+			if ($type == 'customer') {
 				$const_name = "SOLD";
-			} elseif ($type=='supplier') {
+			} elseif ($type == 'supplier') {
 				$const_name = "BUY";
 			}
 
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			$isBuyerInEEC = isInEEC($buyer);
 			$isSellerInEEC = isInEEC($seller);
-			$code_l = '';
-			$code_p = '';
-			$code_t = '';
+			$code_l = '';	// Default value for generic product/service
+			$code_p = '';	// Value for the product/service in parameter ($product)
+			$code_t = '';	// Default value of product account for the thirdparty
 			$suggestedid = '';
 
-			// Level 1: Search suggested default account for product/service
+			// Level 1 (define $code_l): Search suggested default account for product/service
 			$suggestedaccountingaccountbydefaultfor = '';
 			if ($factureDet->product_type == 1) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
@@ -814,14 +813,14 @@ class AccountingAccount extends CommonObject
 				$code_l = '';
 			}
 
-			// Level 2: Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
+			// Level 2 (define $code_p): Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
 			$suggestedaccountingaccountfor = '';
 			if ((($buyer->country_code == $seller->country_code) || empty($buyer->country_code))) {
 				// If buyer in same country than seller (if not defined, we assume it is same country)
 				if ($type=='customer' && !empty($product->accountancy_code_sell)) {
 					$code_p = $product->accountancy_code_sell;
 				} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
-					$code_p = $product->accountancy_code_sell;
+					$code_p = $product->accountancy_code_buy;
 				}
 				$suggestedid = $accountingAccount['dom'];
 				$suggestedaccountingaccountfor = 'prodserv';
@@ -831,7 +830,7 @@ class AccountingAccount extends CommonObject
 					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
 						$code_p = $product->accountancy_code_sell;
 					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
-						$code_p = $product->accountancy_code_sell;
+						$code_p = $product->accountancy_code_buy;
 					}
 					$suggestedid = $accountingAccount['dom'];
 					$suggestedaccountingaccountfor = 'eecwithvat';
@@ -840,7 +839,7 @@ class AccountingAccount extends CommonObject
 					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
 						$code_p = $product->accountancy_code_sell;
 					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
-						$code_p = $product->accountancy_code_sell;
+						$code_p = $product->accountancy_code_buy;
 					}
 					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
@@ -855,18 +854,17 @@ class AccountingAccount extends CommonObject
 					$suggestedaccountingaccountfor = 'eec';
 				} else {
 					// Foreign sale
-					// European intravat sale
 					if ($type=='customer' && !empty($product->accountancy_code_sell_export)) {
 						$code_p = $product->accountancy_code_sell_export;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_sell_export)) {
-						$code_p = $product->accountancy_code_sell_export;
+					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy_export)) {
+						$code_p = $product->accountancy_code_buy_export;
 					}
 					$suggestedid = $accountingAccount['export'];
 					$suggestedaccountingaccountfor = 'export';
 				}
 			}
 
-			// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+			// Level 3 (define $code_t): Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 				if (!empty($buyer->code_compta)) {
 					$code_t = $buyer->code_compta;
@@ -876,7 +874,7 @@ class AccountingAccount extends CommonObject
 			}
 
 			// Manage Deposit
-			if ($factureDet->desc == "(DEPOSIT)") {
+			if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 				$accountdeposittoventilated = new self($this->db);
 				$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
 				if ($result < 0) {
@@ -888,6 +886,7 @@ class AccountingAccount extends CommonObject
 				$suggestedaccountingaccountfor = 'deposit';
 			}
 
+			// If $suggestedid could not be guessed yet, we set it from the generic default accounting code $code_l
 			if (empty($suggestedid) && empty($code_p) && !empty($code_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC)) {
 				if (empty($this->accountingaccount_codetotid_cache[$code_l])) {
 					$tmpaccount = new self($this->db);
