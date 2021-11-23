@@ -196,10 +196,10 @@ if (!empty($conf->banque->enabled)) {
 		$location = array();
 		$location[""] = $langs->trans("NoReader");
 		foreach ($locations as $locations) {
-			$location[$locations->id] = $locations->display_name;
+			$location[$locations->id] = $locations->label.' ('.$locations->status.')';
 		}
+		print $locations;
 		print $form->selectarray("ASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse.'", $location, $conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse});
-		//print '<input type="text" name="CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse}.'" />';
 		print '</td></tr>';
 	}
 
