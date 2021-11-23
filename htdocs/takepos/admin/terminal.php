@@ -198,7 +198,7 @@ if (!empty($conf->banque->enabled)) {
 		foreach ($locations as $locations) {
 			$location[$locations->id] = $locations->label.' ('.$locations->status.')';
 		}
-		print $locations;
+		//print $locations;
 		print $form->selectarray("ASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse.'", $location, $conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse});
 		print '</td></tr>';
 	}
