@@ -156,7 +156,7 @@ if ($invoiceid > 0) {
 	}
   });
 		<?php } else { ?>
-	terminal.connectReader(<?php json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
+	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
 		if (connectResult.error) {
 		  console.log('Failed to connect: ', connectResult.error);
 		} else {
