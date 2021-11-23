@@ -130,7 +130,7 @@ if ($invoiceid > 0) {
 	if ($invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 		if (empty($conf->global->$keyforstripeterminalbank)) { ?>
 		const config = {simulated: <?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?> true <?php } else { ?> false <?php } ?>
-		<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>} 
+			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>} 
   terminal.discoverReaders(config).then(function(discoverResult) {
 	if (discoverResult.error) {
 	  console.log('Failed to discover: ', discoverResult.error);
