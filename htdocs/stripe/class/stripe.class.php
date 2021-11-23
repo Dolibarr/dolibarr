@@ -293,14 +293,14 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe reader Object from its ID
 	 *
-	 * @param	string	$paymentmethod	   			Reader ID
-	 * @param	string	$key						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int		$status						Status (0=test, 1=live)
+	 * @param	string	$reader	   			Reader ID
+	 * @param	string	$key				''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int	$status				Status (0=test, 1=live)
 	 * @return 	\Stripe\Terminal\Reader|null		Stripe Reader or null if not found
 	 */
 	public function getSelectedReader($reader, $key = '', $status = 0)
 	{
-		$stripepaymentmethod = null;
+		$selectedreader = null;
 
 		try {
 			// Force to use the correct API key
