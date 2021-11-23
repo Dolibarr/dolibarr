@@ -291,6 +291,34 @@ class Stripe extends CommonObject
 	}
 
 	/**
+	 * Get the Stripe reader Object from its ID
+	 *
+	 * @param	string	$paymentmethod	   			Reader ID
+	 * @param	string	$key						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int		$status						Status (0=test, 1=live)
+	 * @return 	\Stripe\Terminal\Reader|null		Stripe Reader or null if not found
+	 */
+	public function getSelectedReader($reader, $key = '', $status = 0)
+	{
+		$stripepaymentmethod = null;
+
+		try {
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+				$selectedreader = \Stripe\Terminal\Reader::retrieve(''.$reader.'');
+			} else {
+				$stripepaymentmethod = \Stripe\Terminal\Reader::retrieve(''.$reader.'', array("stripe_account" => $key));
+			}
+		} catch (Exception $e) {
+			$this->error = $e->getMessage();
+		}
+
+		return $selectedreader;
+	}
+
+	/**
 	 * Get the Stripe payment intent. Create it with confirmnow=false
 	 * Warning. If a payment was tried and failed, a payment intent was created.
 	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed by Stripe.
