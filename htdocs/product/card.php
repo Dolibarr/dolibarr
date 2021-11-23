@@ -311,14 +311,14 @@ if (empty($reshook)) {
 					// TODO add this functionality into the api_products.class.php
 					// TODO Mutualise the list into object product.class.php
 					$objects = array(
-						'Categorie' => '/categories/class/categorie.class.php',
+						// do not use Categorie, it cause foreign key error, merge is done before
+						//'Categorie' => '/categories/class/categorie.class.php',
 						'Propal' => '/comm/propal/class/propal.class.php',
 						'Commande' => '/commande/class/commande.class.php',
 						'Facture' => '/compta/facture/class/facture.class.php',
 						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
 						'Bom' => '/bom/class/bom.class.php',
 						'Contrat' => '/contrat/class/contrat.class.php',
-						'Expedition' => '/expedition/class/expedition.class.php',
 						'Reception' => '/reception/class/reception.class.php',
 						'Fichinter' => '/fichinter/class/fichinter.class.php',
 						'FichinterRec' => '/fichinter/class/fichinter.class.php',
