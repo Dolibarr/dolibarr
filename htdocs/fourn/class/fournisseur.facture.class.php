@@ -1058,12 +1058,13 @@ class FactureFournisseur extends CommonInvoice
     		$facligne->rang = -1;
     		$facligne->info_bits = 2;
 
-		if(!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-			$facligne->rang = 1;
-			for ($ii = 1; $ii <= count($this->lines); $ii++) {
-				$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii+1);
+			if(!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+				$facligne->rang = 1;
+				$linecount = count($this->lines);
+				for ($ii = 1; $ii <= $linecount; $ii++) {
+					$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii+1);
+				}
 			}
-		}
 
     		// Get buy/cost price of invoice that is source of discount
     		if ($remise->fk_invoice_supplier_source > 0)
@@ -1865,7 +1866,8 @@ class FactureFournisseur extends CommonInvoice
 				// Reorder if child line
 				if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
 				elseif($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
-					for ($ii = $rang; $ii <= count($this->lines); $ii++) {
+					$linecount = count($this->lines);
+					for ($ii = $rang; $ii <= $linecount; $ii++) {
 						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
 					}
 				}

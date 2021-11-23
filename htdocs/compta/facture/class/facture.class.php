@@ -1988,7 +1988,8 @@ class Facture extends CommonInvoice
 
 			if(!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				$facligne->rang = 1;
-				for ($ii = 1; $ii <= count($this->lines); $ii++) {
+				$linecount = count($this->lines);
+				for ($ii = 1; $ii <= $linecount; $ii++) {
 					$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii+1);
 				}
 			}
@@ -3217,7 +3218,8 @@ class Facture extends CommonInvoice
 				// Reorder if child line
 				if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
 				elseif($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
-					for ($ii = $ranktouse; $ii <= count($this->lines); $ii++) {
+					$linecount = count($this->lines);
+					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
 						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
 					}
 				}
