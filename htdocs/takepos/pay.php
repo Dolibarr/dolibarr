@@ -129,7 +129,8 @@ if ($invoiceid > 0) {
 	<?php
 	if ($invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 		if (empty($conf->global->$keyforstripeterminalbank)) { ?>
-const config = {simulated: true, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'} //false, location: '{{LOCATION_ID}}'
+		const config = {simulated: <?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?> true <?php } else { ?> false <?php } ?>
+		<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>} 
   terminal.discoverReaders(config).then(function(discoverResult) {
 	if (discoverResult.error) {
 	  console.log('Failed to discover: ', discoverResult.error);
@@ -377,8 +378,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		console.log("Pay with terminal ", amountpayed);
 
 		fetchPaymentIntentClientSecret(amountpayed).then(function(client_secret) {
-			<?php if (empty($servicestatus) && empty($conf->global->$keyforstripeterminalbank)) { ?>
-	  terminal.setSimulatorConfiguration({testCardNumber: '4242424242424242'});
+			<?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?>
+	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
 			<?php } ?>
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
