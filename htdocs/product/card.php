@@ -246,8 +246,6 @@ if (empty($reshook)) {
 				$db->begin();
 
 				// Recopy some data
-				//$object->client = $object->client | $productOrigin->client;
-				//$object->fournisseur = $object->fournisseur | $productOrigin->fournisseur;
 				$listofproperties = array(
 					'ref',
 					'ref_ext',
@@ -310,7 +308,7 @@ if (empty($reshook)) {
 
 				// Move links
 				if (!$error) {
-					// This list is also into the api_products.class.php
+					// TODO add this functionality into the api_products.class.php
 					// TODO Mutualise the list into object product.class.php
 					$objects = array(
 						'Categorie' => '/categories/class/categorie.class.php',
@@ -327,11 +325,8 @@ if (empty($reshook)) {
 						'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
 						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
-						// 'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
 						'Delivery' => '/delivery/class/delivery.class.php',
-						// 'Project' => '/projet/class/project.class.php',
-						// 'Ticket' => '/ticket/class/ticket.class.php',
-						// 'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
 					);
 
 					//First, all core objects must update their tables
@@ -382,6 +377,7 @@ if (empty($reshook)) {
 
 				if (!$error) {
 					// We finally remove the old product
+					// TODO merge attached files from old product into new one before delete
 					if ($productOrigin->delete($user) < 1) {
 						$error++;
 					}
