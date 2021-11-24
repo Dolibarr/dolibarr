@@ -311,21 +311,23 @@ if (empty($reshook)) {
 					// TODO add this functionality into the api_products.class.php
 					// TODO Mutualise the list into object product.class.php
 					$objects = array(
+						'ActionComm' => '/comm/action/class/actioncomm.class.php',
+						'Bom' => '/bom/class/bom.class.php',
 						// do not use Categorie, it cause foreign key error, merge is done before
 						//'Categorie' => '/categories/class/categorie.class.php',
-						'Propal' => '/comm/propal/class/propal.class.php',
 						'Commande' => '/commande/class/commande.class.php',
-						'Facture' => '/compta/facture/class/facture.class.php',
-						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
-						'Bom' => '/bom/class/bom.class.php',
-						'Contrat' => '/contrat/class/contrat.class.php',
-						'Reception' => '/reception/class/reception.class.php',
-						'FichinterRec' => '/fichinter/class/fichinterrec.class.php',
 						'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+						'Contrat' => '/contrat/class/contrat.class.php',
+						'Delivery' => '/delivery/class/delivery.class.php',
+						'Facture' => '/compta/facture/class/facture.class.php',
 						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+						'FichinterRec' => '/fichinter/class/fichinterrec.class.php',
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-						'Delivery' => '/delivery/class/delivery.class.php',
+						'Propal' => '/comm/propal/class/propal.class.php',
+						'Reception' => '/reception/class/reception.class.php',
+						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 					);
 
 					//First, all core objects must update their tables
