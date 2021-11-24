@@ -518,7 +518,7 @@ $action_buttons = array(
 $numpad = $conf->global->TAKEPOS_NUMPAD;
 if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
 print '<span id="card-present-alert">';
-dol_htmloutput_mesg($langs->trans('SearchingStripeTerminal', 'Stripe'), '', 'warning', 1);
+dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal...', 'Stripe'), '', 'warning', 1);
 print '</span>';
 }
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
