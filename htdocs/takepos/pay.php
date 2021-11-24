@@ -388,10 +388,12 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
 		// Placeholder for handling result.error
+		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+result.error.message+'</div>';
 	  } else {
 		  console.log('terminal.collectPaymentMethod', result.paymentIntent);
 		  terminal.processPayment(result.paymentIntent).then(function(result) {
 		  if (result.error) {
+			document.getElementById("card-present-alert").innerHTML = '<div class="error">'+result.error.message+'</div>';  
 			console.log(result.error)
 		} else if (result.paymentIntent) {
 			  paymentIntentId = result.paymentIntent.id;
@@ -399,6 +401,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			  capturePaymentIntent(paymentIntentId).then(function(client_secret) {
 				if (result.error) {
 				// Placeholder for handling result.error
+				document.getElementById("card-present-alert").innerHTML = '<div class="error">'+result.error.message+'</div>';
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
 			console.log("Capture paymentIntent successfull "+paymentIntentId);
@@ -518,7 +521,7 @@ $action_buttons = array(
 $numpad = $conf->global->TAKEPOS_NUMPAD;
 if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
 print '<span id="card-present-alert">';
-dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal...', 'Stripe'), '', 'warning', 1);
+dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
 print '</span>';
 }
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
