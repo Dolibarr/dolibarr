@@ -323,7 +323,6 @@ if (empty($reshook)) {
 						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
 						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
 						'FichinterRec' => '/fichinter/class/fichinterrec.class.php',
-						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
 						'Propal' => '/comm/propal/class/propal.class.php',
 						'Reception' => '/reception/class/reception.class.php',
