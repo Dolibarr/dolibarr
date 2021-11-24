@@ -157,10 +157,13 @@ if ($invoiceid > 0) {
   });
 		<?php } else { ?>
 	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
+		document.getElementById("card-present-alert").innerHTML = '<?php dol_htmloutput_mesg($langs->trans('SearchingStripeTerminal', 'Stripe'), '', 'warning', 1); ?>';
 		if (connectResult.error) {
-		  console.log('Failed to connect: ', connectResult.error);
+		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';	
+		  	console.log('Failed to connect: ', connectResult.error);
 		} else {
-		  console.log('Connected to reader: ', connectResult.reader.label);
+		document.getElementById("card-present-alert").innerHTML = '';
+			console.log('Connected to reader: ', connectResult.reader.label);
 		  if (document.getElementById("StripeTerminal")) {
 			  document.getElementById("StripeTerminal").innerHTML = '<button type="button" class="calcbutton2" onclick="ValidateStripeTerminal();"><span class="fa fa-2x fa-credit-card iconwithlabel"></span><br>'+connectResult.reader.label+'</button>';
 			}
@@ -467,7 +470,7 @@ if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 ?>
 </script>
 
-<div style="position:relative; padding-top: 20px; left:5%; height:150px; width:90%;">
+<div style="position:relative; padding-top: 20px; left:5%; height:140px; width:90%;">
 	<div class="paymentbordline paymentbordlinetotal center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans('TotalTTC'); ?>: <span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span>
 	</div>
@@ -495,7 +498,9 @@ if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 	}
 	?>
 </div>
-
+<div style="position:absolute; left:5%; width:90%;">
+	<?php //print '<span id="card-present-alert"></span>'; ?>
+</div>
 <div style="position:absolute; left:5%; height:52%; width:90%;">
 <?php
 $action_buttons = array(
@@ -513,7 +518,7 @@ $action_buttons = array(
 	),
 );
 $numpad = $conf->global->TAKEPOS_NUMPAD;
-
+print '<span id="card-present-alert"></span>';
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').');">'.($numpad == 0 ? '8' : '20').'</button>';
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').');">'.($numpad == 0 ? '9' : '50').'</button>';
