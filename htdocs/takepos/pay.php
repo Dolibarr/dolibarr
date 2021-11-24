@@ -159,7 +159,6 @@ if ($invoiceid > 0) {
   });
 		<?php } else { ?>
 	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
-		document.getElementById("card-present-alert").innerHTML = '<?php dol_htmloutput_mesg($langs->trans('SearchingStripeTerminal', 'Stripe'), '', 'warning', 1); ?>';
 		if (connectResult.error) {
 		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';	
 			  console.log('Failed to connect: ', connectResult.error);
@@ -500,9 +499,6 @@ if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 	}
 	?>
 </div>
-<div style="position:absolute; left:5%; width:90%;">
-	<?php //print '<span id="card-present-alert"></span>'; ?>
-</div>
 <div style="position:absolute; left:5%; height:52%; width:90%;">
 <?php
 $action_buttons = array(
@@ -520,7 +516,11 @@ $action_buttons = array(
 	),
 );
 $numpad = $conf->global->TAKEPOS_NUMPAD;
-print '<span id="card-present-alert"></span>';
+if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+print '<span id="card-present-alert">';
+dol_htmloutput_mesg($langs->trans('SearchingStripeTerminal', 'Stripe'), '', 'warning', 1);
+print '</span>';
+}
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').');">'.($numpad == 0 ? '8' : '20').'</button>';
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').');">'.($numpad == 0 ? '9' : '50').'</button>';
