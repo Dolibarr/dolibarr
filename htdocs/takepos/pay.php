@@ -144,8 +144,10 @@ if ($invoiceid > 0) {
 	  
 	  terminal.connectReader(selectedReader).then(function(connectResult) {
 		if (connectResult.error) {
+		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';
 		  console.log('Failed to connect: ', connectResult.error);
 		} else {
+		document.getElementById("card-present-alert").innerHTML = '';
 		  console.log('Connected to reader: ', connectResult.reader.label);
 		  if (document.getElementById("StripeTerminal")) {
 			  document.getElementById("StripeTerminal").innerHTML = '<button type="button" class="calcbutton2" onclick="ValidateStripeTerminal();"><span class="fa fa-2x fa-credit-card iconwithlabel"></span><br>'+connectResult.reader.label+'</button>';
