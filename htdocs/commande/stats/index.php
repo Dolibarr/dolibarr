@@ -46,7 +46,9 @@ if ($mode == 'supplier' && !$user->rights->fournisseur->commande->lire) {
 	accessforbidden();
 }
 
-$object_status = GETPOST('object_status', 'intcomma');
+$object_status = GETPOST('object_status', 'array');
+$object_status = implode(',', $object_status);
+
 $typent_id = GETPOST('typent_id', 'int');
 $categ_id = GETPOST('categ_id', 'categ_id');
 
@@ -95,12 +97,12 @@ dol_mkdir($dir);
 $stats = new CommandeStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 if ($mode == 'customer') {
 	if ($object_status != '' && $object_status >= -1) {
-		$stats->where .= ' AND c.fk_statut IN ('.$db->escape(implode(',', $object_status)).')';
+		$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
-		$stats->where .= ' AND c.fk_statut IN ('.$db->escape(implode(',', $object_status)).')';
+		$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
 }
 
