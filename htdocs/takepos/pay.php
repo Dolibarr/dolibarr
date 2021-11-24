@@ -385,13 +385,13 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			<?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
 			<?php } ?>
-		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('Payment'); ?></div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentWaiting'); ?></div>';	
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
 		// Placeholder for handling result.error
 		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 	  } else {
-		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth">PaymentInProgress</div>';
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentInProgress'); ?></div>';
 		  console.log('terminal.collectPaymentMethod', result.paymentIntent);
 		  terminal.processPayment(result.paymentIntent).then(function(result) {
 		  if (result.error) {
