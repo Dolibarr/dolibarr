@@ -473,7 +473,8 @@ Following changes may create regressions for some external modules, but were nec
 * Removed deprecated substitution key  __REFCLIENT__  (replaced with __REF_CLIENT__)
 * Removed constant MAIN_COUNTRIES_IN_EEC. You can now set if country is in Europe or not from the dictionary of countries.
 * v14 seems to work correctly on PHP v8 but it generates a lot of verbose warnings. Currently, v14 i snot yet officialy supported with PHP 8.
-
+* To execute shell or command line command, your code must never use method like exec, shell_exec, popen, .. but must use the built-in 
+  method executeCLI() available into core/class/utils.class.php  
 
 
 ***** ChangeLog for 13.0.5 compared to 13.0.4 *****
