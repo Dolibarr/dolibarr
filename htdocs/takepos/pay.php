@@ -160,7 +160,7 @@ if ($invoiceid > 0) {
 		<?php } else { ?>
 	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
 		if (connectResult.error) {
-		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';	
 			  console.log('Failed to connect: ', connectResult.error);
 		} else {
 		document.getElementById("card-present-alert").innerHTML = '';
@@ -385,17 +385,17 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			<?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
 			<?php } ?>
-		document.getElementById("card-present-alert").innerHTML = '<div class="warning">PaymentWaiting</div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth">PaymentWaiting</div>';	
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
 		// Placeholder for handling result.error
-		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+result.error.message+'</div>';
+		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 	  } else {
-		document.getElementById("card-present-alert").innerHTML = '<div class="warning">PaymentInProgress</div>';
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth">PaymentInProgress</div>';
 		  console.log('terminal.collectPaymentMethod', result.paymentIntent);
 		  terminal.processPayment(result.paymentIntent).then(function(result) {
 		  if (result.error) {
-			document.getElementById("card-present-alert").innerHTML = '<div class="error">'+result.error.message+'</div>';  
+			document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';  
 			console.log(result.error)
 		} else if (result.paymentIntent) {
 			  paymentIntentId = result.paymentIntent.id;
@@ -403,10 +403,11 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			  capturePaymentIntent(paymentIntentId).then(function(client_secret) {
 				if (result.error) {
 				// Placeholder for handling result.error
-				document.getElementById("card-present-alert").innerHTML = '<div class="error">'+result.error.message+'</div>';
+				document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
-			console.log("Capture paymentIntent successfull "+paymentIntentId);
+				//document.getElementById("card-present-alert").innerHTML = '<div class="ok">PaymentValidated</div>';  
+				console.log("Capture paymentIntent successfull "+paymentIntentId);
 				  amountpayed = amountpayed / 100;
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
