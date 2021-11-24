@@ -162,7 +162,7 @@ if ($invoiceid > 0) {
 		document.getElementById("card-present-alert").innerHTML = '<?php dol_htmloutput_mesg($langs->trans('SearchingStripeTerminal', 'Stripe'), '', 'warning', 1); ?>';
 		if (connectResult.error) {
 		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';	
-		  	console.log('Failed to connect: ', connectResult.error);
+			  console.log('Failed to connect: ', connectResult.error);
 		} else {
 		document.getElementById("card-present-alert").innerHTML = '';
 			console.log('Connected to reader: ', connectResult.reader.label);
