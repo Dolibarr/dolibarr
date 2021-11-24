@@ -2206,17 +2206,17 @@ class ActionComm extends CommonObject
 	/**
 	 *  Function used to replace a product id with another one.
 	 *
-	 *  @param DoliDB $db Database handler
+	 *  @param DoliDB $dbs Database handler
 	 *  @param int $origin_id Old product id
 	 *  @param int $dest_id New product id
 	 *  @return bool
 	 */
-	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . ' WHERE elementtype="product" AND fk_element = '.((int) $origin_id);
-
-		if (!$db->query($sql)) {
-			//$this->errors = $db->lasterror();
+		// using $dbs, not $this->db because function is static
+		if (!$dbs->query($sql)) {
+			//$this->errors = $dbs->lasterror();
 			return false;
 		}
 
