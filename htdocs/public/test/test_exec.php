@@ -76,7 +76,7 @@ if ($f) {
 	print "Failed to open file ".$file."<br>\n";
 }
 
-exec('ls /dev/std*; sleep 1;', $out, $ret);
+exec('cat /aaa; ls /dev/std*; sleep 1;', $out, $ret);
 print $ret."<br>\n";
 print_r($out);
 
