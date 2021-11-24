@@ -344,7 +344,7 @@ function DisplayPositionCard(&$object)
 //	}
 //
 //
-//	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+//	print '</div><div class="fichehalfright">';
 //
 //	$MAXEVENT = 10;
 //
@@ -355,7 +355,7 @@ function DisplayPositionCard(&$object)
 //	$formactions = new FormActions($db);
 //	$somethingshown = $formactions->showactions($object, '', $object->id, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for thirdparty
 //
-//	print '</div></div></div>';
+//	print '</div></div>';
 //}
 
 
@@ -373,19 +373,18 @@ if ($action !== 'edit' && $action !== 'create') {
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
-	$morehtmlright = '<a href="' . dol_buildpath('/hrm/position_agenda.php', 1) . '?id=' . $object->id . '">';
-	$morehtmlright .= $langs->trans("SeeAll");
-	$morehtmlright .= '</a>';
+	$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/hrm/position_agenda.php?id='.$object->id);
+
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, $object->element . '@' . $object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
+	$somethingshown = $formactions->showactions($object, $object->element . '@' . $object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 

@@ -47,3 +47,4 @@ KnowledgeRecord = Stavka
 KnowledgeRecordExtraFields = Extrafields for Article
 GroupOfTicket=Group of tickets
 YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

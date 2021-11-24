@@ -282,4 +282,5 @@ UsageOrganizeEvent=Utilisation: Organisation d'événements
 PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classer le projet comme étant clos lorsque toutes ses tâches sont terminées (progression 100%%)
 PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Remarque : les projets existants avec toutes les tâches terminées à 100 %% ne seront pas affectés : vous devrez les fermer manuellement. Cette option n’affecte que les projets ouverts.
 SelectLinesOfTimeSpentToInvoice=Sélectionnez les lignes de temps consacré non facturées, puis l'action groupée "Générer la facture" pour les facturer
-ProjectTasksWithoutTimeSpent=Project tasks without time spent
+ProjectTasksWithoutTimeSpent=Tâches de projet sans temps consommé
+FormForNewLeadDesc=Veuillez remplir ce formulaire de contact ou écrivez un e-mail à <b>%s</b>.

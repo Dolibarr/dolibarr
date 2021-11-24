@@ -2563,11 +2563,11 @@ if ($action == 'create') {
 		}
 
 		// Confirmation set paid
-		if ($action == 'paid' && $resteapayer <= 0) {
+		if ($action == 'paid' && ($resteapayer <= 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) && $resteapayer == $object->total_ttc))) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
 		}
 
-		if ($action == 'paid' && $resteapayer > 0) {
+		if ($action == 'paid' && $resteapayer > 0 && (empty($conf->global->SUPPLIER_INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) || $resteapayer != $object->total_ttc)) {
 			$close = array();
 			// Code
 			$i = 0;
@@ -2688,9 +2688,10 @@ if ($action == 'create') {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -2720,8 +2721,12 @@ if ($action == 'create') {
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
-			$facusing->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			if ($object->fk_facture_source > 0) {
+				$facusing->fetch($object->fk_facture_source);
+				print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			} else {
+				print ' ('.$langs->transnoentities("CorrectedInvoiceNotFound").')';
+			}
 		}
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
@@ -2948,7 +2953,6 @@ if ($action == 'create') {
 		print '</div>';
 
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -3327,7 +3331,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
 
 		print '<div class="clearboth"></div><br>';
 
@@ -3497,14 +3500,17 @@ if ($action == 'create') {
 				}
 
 				// Classify paid
-				if (($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && (($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
-					|| ($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && empty($discount->id))
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && (
+						($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT && ($resteapayer <= 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) && $object->total_ttc == $resteapayer))) ||
+						($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $resteapayer >= 0) ||
+						($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->total_ttc > 0 && ($resteapayer == 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) && $object->total_ttc == $resteapayer)))
+					)
 				) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 				}
 
 				// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
-				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0) {
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (empty($conf->global->SUPPLIER_INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) || $object->total_ttc != $resteapayer)) {
 					if ($totalpaye > 0 || $totalcreditnotes > 0) {
 						// If one payment or one credit note was linked to this invoice
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
@@ -3574,17 +3580,14 @@ if ($action == 'create') {
 					$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice_supplier'));
 					$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-					print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-					//print '</td><td valign="top" width="50%">';
-					//print '<br>';
+					print '</div><div class="fichehalfright">';
 
 					// List of actions on element
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 					$formactions = new FormActions($db);
 					$somethingshown = $formactions->showactions($object, 'invoice_supplier', $socid, 1, 'listaction'.($genallowed ? 'largetitle' : ''));
 
-					print '</div></div></div>';
-					//print '</td></tr></table>';
+					print '</div></div>';
 				}
 			}
 		}

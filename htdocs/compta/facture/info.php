@@ -62,6 +62,14 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $field
  * View
  */
 
+if (empty($object->id)) {
+	llxHeader();
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
+
 $form = new Form($db);
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
@@ -112,9 +120,10 @@ if (!empty($conf->projet->enabled)) {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			$morehtmlref .= $proj->ref;
-			$morehtmlref .= '</a>';
+			$morehtmlref .= ' : '.$proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= ' - '.$proj->title;
+			}
 		} else {
 			$morehtmlref .= '';
 		}

@@ -44,12 +44,20 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 /* ============================================================================== */
 
 
-div.divButAction {
+/*div.divButAction {
 	margin-bottom: 1.4em;
-}
+}*/
+
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
-div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
+div.tabsAction > div.divButAction > span.butAction,
+div.tabsAction > div.divButAction > span.butActionDelete,
+div.tabsAction > div.divButAction > span.butActionRefused,
+div.tabsAction > div.divButAction > a.butAction,
+div.tabsAction > div.divButAction > a.butActionDelete,
+div.tabsAction > div.divButAction > a.butActionRefused {
 	margin-bottom: 1.4em !important;
+	margin-right: 0px !important;
 }
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
 	margin-bottom: 0 !important;
@@ -81,9 +89,8 @@ span.butAction, span.butActionDelete {
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
-	/* color: #fff; */
-	/* background: rgb(<?php echo $colorbackhmenu1 ?>); */
 	color: #444;
+
 	/* border: 1px solid #aaa; */
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 
@@ -251,6 +258,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	text-align: center;
 	cursor: pointer;
 	color: #999 !important;
+
 	border: 1px solid #ccc;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -351,7 +359,7 @@ a.btnTitle.btnTitleSelected {
 }
 
 .btnTitle:hover .btnTitle-label{
-	color: #ffffff;
+	color:var(--btncolorborderhover);
 }
 div.pagination .btnTitle:hover .btnTitle-label{
 	color: rgb(<?php print $colortextlink; ?>);

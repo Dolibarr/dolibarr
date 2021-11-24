@@ -90,7 +90,6 @@ $datelivraison = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ordersuppliercard', 'globalcard'));
@@ -124,6 +123,8 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
+
 // Common permissions
 $usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
 $usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
@@ -136,7 +137,11 @@ $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($us
 $usercanapprove			= $user->rights->fournisseur->commande->approuver;
 $usercanapprovesecond	= $user->rights->fournisseur->commande->approve2;
 $usercanorder			= $user->rights->fournisseur->commande->commander;
-$usercanreceived		= $user->rights->fournisseur->commande->receptionner;
+if (empty($conf->reception->enabled)) {
+	$usercanreceive = $user->rights->fournisseur->commande->receptionner;
+} else {
+	$usercanreceive = $user->rights->reception->creer;
+}
 
 // Permissions for includes
 $permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -2012,9 +2017,10 @@ if ($action == 'create') {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -2249,7 +2255,6 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -2308,7 +2313,6 @@ if ($action == 'create') {
 	}*/
 
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -2640,7 +2644,7 @@ if ($action == 'create') {
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order', 'order_supplier'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			if ($action == 'classifyreception') {
 				if ($usercanreceived && ($object->statut == CommandeFournisseur::STATUS_ORDERSENT || $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY)) {
@@ -2686,7 +2690,7 @@ if ($action == 'create') {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'order_supplier', $socid, 1, 'listaction'.($genallowed ? 'largetitle' : ''));
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		/*

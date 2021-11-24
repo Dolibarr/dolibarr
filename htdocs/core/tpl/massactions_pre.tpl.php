@@ -38,17 +38,17 @@ if ($massaction == 'predelete') {
 if ($massaction == 'preaffecttag') {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$categ = new Categorie($db);
-	$categ_types=array();
-	$categ_type_array=$categ->getMapList();
+	$categ_types = array();
+	$categ_type_array = $categ->getMapList();
 	foreach ($categ_type_array as $categdef) {
-		if (isset($object) && $categdef['obj_table']==$object->table_element) {
+		if (isset($object) && $categdef['obj_table'] == $object->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
 			}
 		}
-		if (isset($objecttmp) && $categdef['obj_table']==$objecttmp->table_element) {
+		if (isset($objecttmp) && $categdef['obj_table'] == $objecttmp->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
 			}
 		}
 	}
@@ -57,12 +57,12 @@ if ($massaction == 'preaffecttag') {
 	if (!empty($categ_types)) {
 		foreach ($categ_types as $categ_type) {
 			$cate_arbo = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 1);
-			$formquestion[]=array('type' => 'other',
+			$formquestion[] = array('type' => 'other',
 					'name' => 'affecttag_'.$categ_type['code'],
 					'label' => $langs->trans("Tag").' '.$categ_type['label'],
 					'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $cate_arbo, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, null, null, '60%'));
 		}
-		$formquestion[]=array('type' => 'other',
+		$formquestion[] = array('type' => 'other',
 				'name' => 'affecttag_type',
 				'label' => '',
 				'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",", array_keys($categ_types)).'"/>');
@@ -147,7 +147,7 @@ if ($massaction == 'presend') {
 	// $formmail->withfile = 2; Not yet supported in mass action
 	$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"
 	if ($objecttmp->element != 'societe') {
-		$formmail->withfile = '<span class="hideonsmartphone">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
+		$formmail->withfile = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
 		$formmail->withmaindocfile = - 1; // Add a checkbox "Attach also main document" but not checked by default
 	}
 	$formmail->withbody = 1;

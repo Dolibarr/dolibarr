@@ -56,7 +56,6 @@ ErrorNoAccountancyModuleLoaded=Módulo de Contabilidade não ativado
 ErrorExportDuplicateProfil=Este nome de perfil já existe para este lote de exportação.
 ErrorLDAPSetupNotComplete=A correspondência Dolibarr-LDAP não está completa.
 ErrorLDAPMakeManualTest=foi criado unn Arquivo .ldif na pasta %s. Trate de gastor manualmente este Arquivo a partir da linha de comandos para Obter mais detalles acerca do error.
-ErrorRecordHasAtLeastOneChildOfType=Object tem pelo menos um filho do tipo %s
 ErrorModuleRequireJavascript=Javascript não deve ser desativado para ter esse recurso funcionando. Para ativar / desativar o Javascript, vá ao menu Home-> Configuração-> Display.
 ErrorPasswordsMustMatch=Deve existir correspondência entre as senhas digitadas
 ErrorContactEMail=Ocorreu um erro técnico. Por favor, entre em contato com o administrador para o seguinte e-mail <b>%s</b> e forneça o código de erro <b>%s</b> em sua mensagem ou adicione uma cópia da tela desta página.

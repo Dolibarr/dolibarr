@@ -61,8 +61,6 @@ if ($nolinesbefore) {
 	print '<td class="linecoldescription minwidth500imp">';
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
 	print '</td>';
-	// Linked BOM
-	print '<td class="linecolBOM">'.$langs->trans('BOM').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		print '<td class="linecoluseunit left">';
@@ -90,15 +88,14 @@ print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 
 // Predefined product/service
 if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-	if ($forceall >= 0 && $freelines) {
-		echo '<br>';
+	if (!empty($conf->global->BOM_SUB_BOM)) {
+		print $langs->trans("Product");
 	}
 	echo '<span class="prod_entry_mode_predef">';
-	$filtertype = '';
-	if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) {
-		$filtertype = '1';
+	$filtertype = 0;
+	if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->STOCK_SUPPORT_SERVICES)) {
+		$filtertype = -1;
 	}
-
 	$statustoshow = -1;
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 		// hide products in closed warehouse, but show products for internal transfer
@@ -109,10 +106,13 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 
 	echo '</span>';
 }
-$coldisplay++;
-print '<td class="bordertop nobottom linecolbom">';
-print '<select id="bom_select" name="bom_select"><options value="-1"></options></select>';
+if (!empty($conf->global->BOM_SUB_BOM)) {
+	print '<br>'.$langs->trans("or").' '.$langs->trans("BOM");
+	// TODO Add component to select a BOM
+	print '<select id="bom_select" name="bom_select"><options value="-1"></options></select>';
+}
 print '</td>';
+
 
 $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
@@ -134,7 +134,7 @@ print '</td>';
 
 $coldisplay++;
 print '<td class="bordertop nobottom nowrap linecollost right">';
-print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency") ?GETPOST("efficiency", 'alpha') : 1).'">';
+print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="'.((GETPOSTISSET("efficiency") && $action == 'addline') ?GETPOST("efficiency", 'alpha') : 1).'">';
 print '</td>';
 
 $coldisplay++;

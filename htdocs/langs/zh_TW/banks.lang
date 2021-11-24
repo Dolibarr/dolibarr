@@ -182,3 +182,4 @@ BankColorizeMovementName2=貸款方動作的背景顏色
 IfYouDontReconcileDisableProperty=如果您不對某些銀行帳戶進行銀行對帳，請在其上禁用屬性“ %s”以刪除此警告。
 NoBankAccountDefined=未定義銀行帳戶
 NoRecordFoundIBankcAccount=No record found in bank account. Commonly, this occurs when a record has been deleted manually from the list of transaction in the bank account (for example during a reconciliation of the bank account). Another reason is that the payment was recorded when the module "%s" was disabled.
+AlreadyOneBankAccount=Already one bank account defined

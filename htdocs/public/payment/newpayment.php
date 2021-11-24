@@ -1591,7 +1591,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			print ' ('.$langs->trans("ToComplete");
 		}
 		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
+			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 		}
 		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 			print ')';
@@ -1752,7 +1752,7 @@ if ($source == 'donation') {
 			print ' ('.$langs->trans("ToComplete");
 		}
 		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
+			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 		}
 		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 			print ')';

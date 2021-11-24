@@ -243,6 +243,7 @@ if (empty($reshook)) {
 }
 
 
+
 /*
  * View
  */
@@ -573,38 +574,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';
 		}
-		?>
-		<script>
-			let select_product_val;
-			let current_bom_id = <?php echo $object->id?>;
-			//On change on the bom select
-			$('#idprod').on('change', function () {
-				select_product_val = $('#idprod').select2().val();
-
-				//Ajax to set all options without reloading the page
-				$.ajax({
-					url: 'script/interface.php'
-					, method: 'POST'
-					, dataType: 'text'
-					, data: {
-						action: 'select_BOM'
-						, select_product_val: select_product_val
-						, current_bom_id: current_bom_id
-					}
-				}).done(function (data) {
-					//To remove all options of the bom select on change
-					$('#bom_select').get(0).length = 0;
-
-					//To set options for the bom select on change
-					let options = JSON.parse(data)
-					for (let key in options) {
-						let opt = new Option(options[key], key);
-						$('#bom_select').append(opt)
-					}
-				})
-			})
-		</script>
-		<?php
 		print '</div>';
 
 		print "</form>\n";
@@ -612,9 +581,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		<script type="text/javascript" language="javascript">
 			$(document).ready(function() {
-
+				// When clicking on collapse
 				$(".collapse_bom").click(function() {
-
+					console.log("We click on collapse");
 					var id_bom_line = $(this).attr('id').replace('collapse-', '');
 					if($(this).text().indexOf('+') > 0) {
 						$('[parentid="'+ id_bom_line +'"]').show();
@@ -628,14 +597,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					return false;
 				});
 
-				//To Show all the sub bom lines
+				// To Show all the sub bom lines
 				$("#show_all").click(function() {
+					console.log("We click on show all");
 					$("[class^=sub_bom_lines]").show();
 					$("[class^=collapse_bom]").html('(-)&nbsp;');
 					return false;
 				});
-				//To Hide all the sub bom lines
+
+				// To Hide all the sub bom lines
 				$("#hide_all").click(function() {
+					console.log("We click on hide all");
 					$("[class^=sub_bom_lines]").hide();
 					$("[class^=collapse_bom]").html('(+)&nbsp;');
 					return false;
@@ -765,14 +737,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.DOL_URL_ROOT.'/bom/bom_agenda.php?id='.$object->id.'">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/bom/bom_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, $object->element, 0, 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div></div>';
 	}

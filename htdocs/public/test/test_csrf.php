@@ -5,7 +5,7 @@
 
 This is a form to test if a CSRF exists into a Dolibarr page.<br>
 <br>
-- Change url to send request to into this file (server B, hard coded page)<br>
+- Change url to send request to into this file (URL to a hard coded page on a server B)<br>
 - Open this form into a virtual server A.<br>
 - Send the request to the virtual server B by clicking submit.<br>
 - Check that Anticsrf protection is triggered.<br>

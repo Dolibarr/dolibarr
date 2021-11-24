@@ -258,12 +258,12 @@ print '
 					window.getSelection().removeAllRanges();
 
 					/* Show message */
-					var lastchild = this.parentNode.lastChild;
+					var lastchild = this.parentNode.lastChild;		/* .parentNode is clipboardCP and last child is clipboardCPText */
 					var tmp = lastchild.innerHTML
 					if (succeed) {
-						lastchild.innerHTML = \''.dol_escape_js($langs->trans('CopiedToClipboard')).'\';
+						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
 					} else {
-						lastchild.innerHTML = \''.dol_escape_js($langs->trans('Error')).'\';
+						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('Error')).'</div>\';
 					}
 					setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
 				});

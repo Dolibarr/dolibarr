@@ -83,8 +83,8 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$appli .= " ".DOL_VERSION;
 }
 
-if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
-	$appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
+	$appli .= "<br>".$langs->trans("LevelOfFeature").': '.getDolGlobalInt('MAIN_FEATURES_LEVEL');
 }
 
 $logouttext = '';
@@ -158,7 +158,7 @@ if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OP
 		}
 	}
 	$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
-	$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
+	$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank" rel="noopener noreferrer">';
 	//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 	$text.='<span class="fa fa-print atoplogin"></span>';
 	$text.='</a>';
@@ -191,7 +191,7 @@ if (empty($conf->global->MAIN_HELP_DISABLELINK) && empty($conf->global->MAIN_OPT
 		$title=$appli.'<br>';
 		$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 		if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-		$text.='<a class="help" target="_blank" rel="noopener" href="';
+		$text.='<a class="help" target="_blank" rel="noopener noreferrer" href="';
 		if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
 		else $text.=sprintf($helpbaseurl,$helppage);
 		$text.='">';
