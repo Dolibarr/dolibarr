@@ -894,7 +894,7 @@ if ($resql) {
 			print '<tr class="liste_titre">';
 			foreach ($arrayfields as $key => $val) {
 				if (!empty($val['checked'])) {
-					if($key == 'duration') {
+					if ($key == 'duration') {
 						print '<td class="right">'.$totalduration.' '.$langs->trans('DurationDays').'</td>';
 					} else {
 						print '<td/>';
