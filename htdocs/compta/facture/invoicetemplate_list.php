@@ -329,7 +329,11 @@ if ($search_status != '' && $search_status >= -1) {
 $sql .= dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
 $sql .= dolSqlDateFilter('f.date_when', $search_day_date_when, $search_month_date_when, $search_year_date_when);
 
-$sql .= $db->order($sortfield, $sortorder);
+$tmpsortfield = $sortfield;
+if ($tmpsortfield == 'recurring') {
+	$tmpsortfield = 'f.frequency';
+}
+$sql .= $db->order($tmpsortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
