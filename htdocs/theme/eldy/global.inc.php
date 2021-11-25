@@ -505,7 +505,8 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
-.button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
+.button:not(.bordertransp):not(.buttonpayment),
+.buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 3px;
 	margin-top: 3px;
 	margin-left: 5px;
@@ -3297,8 +3298,13 @@ input.button[name="upload"] {
 	padding: 5px !important;
 	font-size: 0.9em;
 }
-input.button.smallpaddingimp {
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
+}
+input.buttonreset {
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding: 8px 15px;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;

@@ -438,6 +438,24 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
+#mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
+	background: var(--butactionbg);
+	color: #FFF !important;
+	border-radius: 3px;
+	border-collapse: collapse;
+	border: none;
+	text-shadow: none;
+	text-transform: uppercase;
+	font-weight: bold;
+	margin: 0em 0.9em;
+	padding: 0.6em 0.7em;
+	line-height: 17px;
+}
+#mainbody input.button:not(.buttongen):not(.bordertransp):hover, #mainbody a.button:not(.buttongen):not(.bordertransp):hover {
+	-webkit-box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+	box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+}
+
 input.button.massactionconfirmed {
 	margin: 4px;
 }
@@ -4366,7 +4384,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 40px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
+.widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }

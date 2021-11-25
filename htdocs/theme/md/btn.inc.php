@@ -44,10 +44,6 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 /* ============================================================================== */
 
 
-/*div.divButAction {
-	margin-bottom: 1.4em;
-}*/
-
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butAction,
@@ -82,6 +78,7 @@ span.butAction, span.butActionDelete {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
+	line-height: 1.8em;
 
 	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;

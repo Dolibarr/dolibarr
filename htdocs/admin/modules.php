@@ -303,7 +303,7 @@ llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-$arrayofnatures = array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
+$arrayofnatures = array('core'=>$langs->transnoentitiesnoconv("NativeModules"), 'external'=>$langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
 $arrayofwarnings = array(); // Array of warning each module want to show when activated
 $arrayofwarningsext = array(); // Array of warning each module want to show when we activate an external module
 $filename = array();
@@ -564,7 +564,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
 	$moreforfilter .= ' ';
-	$moreforfilter .= '<input type="submit" name="buttonreset" class="butActionDelete noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+	$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset butActionDelete noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 
@@ -597,6 +597,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$oldfamily = '';
 	$foundoneexternalmodulewithupdate = 0;
 	$linenum = 0;
+	$atleastonequalified = 0;
+	$atleastoneforfamily = 0;
+
 	foreach ($orders as $key => $value) {
 		$linenum++;
 		$tab = explode('_', $value);
@@ -685,7 +688,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 		}
 
-		// Load all lang files of module
+		$atleastonequalified++;
+
+		// Load all language files of the qualified module
 		if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
 			foreach ($objMod->langfiles as $domain) {
 				$langs->load($domain);
@@ -970,6 +975,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print "</table>\n";
 			print '</div>';
 		}
+	}
+
+	if (!$atleastonequalified) {
+		print '<br><span class="opacitymedium">'.$langs->trans("NoDeployedModulesFoundWithThisSearchCriteria").'</span><br><br>';
 	}
 
 	print dol_get_fiche_end();
