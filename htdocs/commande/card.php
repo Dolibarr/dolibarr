@@ -209,7 +209,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if ($object->statut >= Commande::STATUS_VALIDATED && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if ($object->statut >= Commande::STATUS_VALIDATED && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1 && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1922,7 +1922,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$text = $langs->trans('ConfirmDeleteOrder', $object->ref);
 			$formquestion = array();
-			if ($object->statut >= Commande::STATUS_VALIDATED && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if ($object->statut >= Commande::STATUS_VALIDATED && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1 && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
