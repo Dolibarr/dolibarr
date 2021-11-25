@@ -2,4 +2,5 @@
 StatusReceptionCanceled=Cancelado
 StatusReceptionProcessed=Procesada
 StatusReceptionProcessedShort=Procesada
+ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the Purchase Order record.
 NoMorePredefinedProductToDispatch=No hay más productos solicitados pendientes por recibir

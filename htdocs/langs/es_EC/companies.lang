@@ -52,7 +52,6 @@ No_Email=Rechazar correos masivos
 Town=Ciudad
 Poste=Posición
 VATIsUsed=Impuesto a las ventas utilizado
-VATIsUsedWhenSelling=Esto define si este tercero incluye un impuesto a la venta o no cuando realiza una factura a sus propios clientes.
 VATIsNotUsed=Impuesto a las ventas no utilizado
 CopyAddressFromSoc=Copiar dirección de detalles de cliente/proveedor
 ThirdpartyNotCustomerNotSupplierSoNoRef=Ni cliente, Ni vendedor, no hay objetos de referencia disponibles.

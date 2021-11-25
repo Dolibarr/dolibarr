@@ -58,6 +58,7 @@ ManagePartnership=Hamkorlikni boshqarish
 BacklinkNotFoundOnPartnerWebsite=Backlink sherik veb-saytida topilmadi
 ConfirmClosePartnershipAsk=Haqiqatan ham ushbu hamkorlikni bekor qilmoqchimisiz?
 PartnershipType=Hamkorlik turi
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
@@ -76,6 +77,10 @@ YourPartnershipWillSoonBeCanceledContent=Sizning hamkorligingiz yaqinda bekor qi
 YourPartnershipRefusedContent=Sizning sheriklik so'rovingiz rad etilganligi haqida xabar beramiz.
 YourPartnershipAcceptedContent=Sizga sheriklik so'rovingiz qabul qilinganligi to'g'risida xabar beramiz.
 YourPartnershipCanceledContent=Sizning hamkorligingiz bekor qilinganligi haqida xabar beramiz.
+
+CountLastUrlCheckError=Oxirgi URL tekshiruvidagi xatolar soni
+LastCheckBacklink=URLni oxirgi tekshirish sanasi
+ReasonDeclineOrCancel=Rad etish sababi
 
 #
 # Status

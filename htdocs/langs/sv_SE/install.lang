@@ -206,7 +206,7 @@ MigrationUserPhotoPath=Migrering av bildvägar för användare
 MigrationFieldsSocialNetworks=Migrering av användarnas fält sociala nätverk (%s)
 MigrationReloadModule=Ladda om modulen %s
 MigrationResetBlockedLog=Återställningsmodul BlockedLog för v7-algoritmen
-MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
+MigrationImportOrExportProfiles=Migrering av import- eller exportprofiler (%s)
 ShowNotAvailableOptions=Visa otillgängliga alternativ
 HideNotAvailableOptions=Dölj otillgängliga alternativ
 ErrorFoundDuringMigration=Fel (er) rapporterades under migreringsprocessen så nästa steg är inte tillgängligt. För att ignorera fel kan du <a href="%s"> klicka här </a>, men programmet eller vissa funktioner kanske inte fungerar korrekt tills felen har lösts.

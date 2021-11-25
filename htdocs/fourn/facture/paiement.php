@@ -555,14 +555,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyRemainderToPay').'</td>';
+							print '<td class="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
 						}
 						print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 						print '<td class="right">'.$langs->trans('AlreadyPaid').'</td>';
 						print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
 						print '<td class="center">'.$langs->trans('PaymentAmount').'</td>';
-						if (!empty($conf->multicurrency->enabled)) {
-							print '<td class="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
-						}
 						print '</tr>';
 
 						$total = 0;
@@ -657,6 +655,24 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 									print price($sign * $multicurrency_remaintopay);
 								}
 								print '</td>';
+
+								print '<td class="right">';
+								// Add remind multicurrency amount
+								$namef = 'multicurrency_amount_'.$objp->facid;
+								$nameRemain = 'multicurrency_remain_'.$objp->facid;
+								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
+									if ($action != 'add_paiement') {
+										if (!empty($conf->use_javascript_ajax)) {
+											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+										}
+											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
+											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+									} else {
+										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
+										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+									}
+								}
+								print "</td>";
 							}
 
 							print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
@@ -690,29 +706,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 							print "</td>";
 
-							// Multicurrency Price
-							if (!empty($conf->multicurrency->enabled)) {
-								print '<td class="right">';
-
-								// Add remind multicurrency amount
-								$namef = 'multicurrency_amount_'.$objp->facid;
-								$nameRemain = 'multicurrency_remain_'.$objp->facid;
-
-								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									if ($action != 'add_paiement') {
-										if (!empty($conf->use_javascript_ajax)) {
-											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
-										}
-											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
-									} else {
-										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
-									}
-								}
-								print "</td>";
-							}
-
 							print "</tr>\n";
 							$total += $objp->total_ht;
 							$total_ttc += $objp->total_ttc;
@@ -730,6 +723,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
+								print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 							}
 							print '<td class="right"><b>'.price($sign * $total_ttc).'</b></td>';
 							print '<td class="right"><b>'.price($sign * $totalrecu);
@@ -742,9 +736,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print	'</b></td>';
 							print '<td class="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
 							print '<td class="center" id="result" style="font-weight: bold;"></td>'; // Autofilled
-							if (!empty($conf->multicurrency->enabled)) {
-								print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
-							}
 							print "</tr>\n";
 						}
 						print "</table>\n";

@@ -637,11 +637,15 @@ if ($result) {
 		}
 
 		// Manage Deposit
-		if ($objp->description == "(DEPOSIT)") {
-			$accountdeposittoventilated = new AccountingAccount($db);
-			$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
-			$objp->code_sell_l = $accountdeposittoventilated->ref;
-			$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
+		if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT)) {
+			if ($objp->description == "(DEPOSIT)" || $objp->ftype == $facture_static::TYPE_DEPOSIT) {
+				$accountdeposittoventilated = new AccountingAccount($db);
+				$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+				$objp->code_sell_l = $accountdeposittoventilated->ref;
+				$objp->code_sell_p = '';
+				$objp->code_sell_t = '';
+				$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
+			}
 		}
 
 		if (!empty($objp->code_sell_p)) {

@@ -37,8 +37,8 @@ OtherInfo=معلومات اخرى
 DeleteCptCategory=إزالة حساب المحاسبة من المجموعة
 ConfirmDeleteCptCategory=هل أنت متأكد أنك تريد إزالة هذا الحساب المحاسبي من مجموعة حسابات المحاسبة؟
 JournalizationInLedgerStatus=حالة اليوميات
-AlreadyInGeneralLedger=تم نقله بالفعل في دفاتر اليومية المحاسبية ودفتر الأستاذ
-NotYetInGeneralLedger=لم يتم نقله الى دفاتر اليومية المحاسبية ودفتر الأستاذ
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=المجموعة فارغة ، تحقق من إعداد مجموعة المحاسبة المخصصة
 DetailByAccount=إظهار التفاصيل حسب الحساب
 AccountWithNonZeroValues=الحسابات ذات القيم غير الصفرية
@@ -48,7 +48,8 @@ CountriesNotInEEC=ليس ضمن دول الاتحاد الأوروبي
 CountriesInEECExceptMe=البلدان في المجموعة الاقتصادية الأوروبية باستثناء %s
 CountriesExceptMe=جميع الدول باستثناء %s
 AccountantFiles=تصدير مستندات المصدر
-ExportAccountingSourceDocHelp=باستخدام هذه الأداة ، يمكنك تصدير الأحداث  (القائمة وملفات PDF) التي تم استخدامها لإنشاء المحاسبة الخاصة بك. لتصدير دفاتر اليومية الخاصة بك ، استخدم إدخال القائمة %s - %s.
+ExportAccountingSourceDocHelp=باستخدام هذه الأداة ، يمكنك تصدير الأحداث  (في شكل قائمة او بصيغة ملفات متنقلة ) التي تم استخدامها لإنشاء قيودك المحاسبية .
+ExportAccountingSourceDocHelp2=لتصدير دفاترك المحاسبية ، إستخدم القائمة %s - %s .
 VueByAccountAccounting=عرض حسب الحساب المحاسبي
 VueBySubAccountAccounting=عرض حسب الحساب المحاسبة الفرعي
 
@@ -245,9 +246,9 @@ DescThirdPartyReport=راجع هنا قائمة العملاء والموردي�
 ListAccounts=قائمة الحسابات المحاسبية
 UnknownAccountForThirdparty=حساب طرف ثالث غير معروف. سوف نستخدم %s
 UnknownAccountForThirdpartyBlocking=حساب طرف ثالث غير معروف. خطأ في المنع
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=حساب طرف ثالث غير محدد أو طرف ثالث غير معروف. سوف نستخدم %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=طرف ثالث غير معروف ودفتر الأستاذ الفرعي غير محدد في الدفعة. سنبقي قيمة حساب دفتر الأستاذ الفرعي فارغة.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=حساب طرف ثالث غير محدد أو طرف ثالث غير معروف. خطأ في المنع.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=حساب طرف ثالث وحساب قيد الانتظار غير معرّفين. خطأ في المنع
 PaymentsNotLinkedToProduct=الدفع غير مرتبط بأي منتج / خدمة
 OpeningBalance=الرصيد الافتتاحي
@@ -297,7 +298,7 @@ NoNewRecordSaved=لا مزيد من التسجيل لليوميات
 ListOfProductsWithoutAccountingAccount=قائمة المنتجات غير مرتبطة بأي حساب
 ChangeBinding=تغيير الربط
 Accounted=حسب في دفتر الأستاذ
-NotYetAccounted=Not yet accounted in the ledger
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=عرض البرنامج التعليمي
 NotReconciled=لم يتم تسويتة
 WarningRecordWithoutSubledgerAreExcluded=تحذير ، كل العمليات التي لم يتم تحديد حساب دفتر الأستاذ الفرعي لها تتم تصفيتها واستبعادها من طريقة العرض هذه
@@ -328,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=تعطيل الربط والتحويل �
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=تعطيل الربط والتحويل في المحاسبة على تقارير المصروفات (لن يتم أخذ تقارير المصروفات في الاعتبار في المحاسبة)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=تصدير مسودة دفتر اليومية
 Modelcsv=نموذج التصدير
@@ -338,11 +339,11 @@ Modelcsv_normal=تصدير كلاسيكي
 Modelcsv_CEGID=Export for CEGID Expert Comptabilité
 Modelcsv_COALA=Export for Sage Coala
 Modelcsv_bob50=Export for Sage BOB 50
-Modelcsv_ciel=Export for Sage Ciel Compta or Compta Evolution
+Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
-Modelcsv_agiris=Export for Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
@@ -350,9 +351,10 @@ Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=معرف دليل الحسابات
 
 ## Tools - Init accounting account on product / service
@@ -417,8 +419,8 @@ FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
 FECFormatPieceRef=Piece ref (PieceRef)
 FECFormatPieceDate=Piece date creation (PieceDate)
 FECFormatLabelOperation=Label operation (EcritureLib)
-FECFormatDebit=Debit (Debit)
-FECFormatCredit=Credit (Credit)
+FECFormatDebit=مدين (مدين)
+FECFormatCredit=دائن (دائن)
 FECFormatReconcilableCode=Reconcilable code (EcritureLet)
 FECFormatReconcilableDate=Reconcilable date (DateLet)
 FECFormatValidateDate=Piece date validated (ValidDate)
@@ -430,4 +432,4 @@ WarningReportNotReliable=تحذير ، هذا التقرير لا يستند إ�
 ExpenseReportJournal=تقرير دفتر المصاريف
 InventoryJournal=دفتر الجرد
 
-NAccounts=%s accounts
+NAccounts=%s حساباً

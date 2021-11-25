@@ -1,0 +1,91 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Жоспарланған жұмысты оқу
+Permission23102 = Жоспарланған тапсырманы жасаңыз/жаңартыңыз
+Permission23103 = Жоспарланған тапсырманы жою
+Permission23104 = Жоспарланған тапсырманы орындау
+# Admin
+CronSetup=Жұмысты басқаруды жоспарлау
+URLToLaunchCronJobs=Браузерден cron білікті тапсырмаларын тексеруге және іске қосуға арналған URL
+OrToLaunchASpecificJob=Немесе браузерден белгілі бір жұмысты тексеру және іске қосу үшін
+KeyForCronAccess=Cron тапсырмаларын іске қосатын URL үшін қауіпсіздік кілті
+FileToLaunchCronJobs=Білікті cron тапсырмаларын тексеруге және іске қосуға арналған пәрмен жолы
+CronExplainHowToRunUnix=Unix ортасында пәрмен жолын әр 5 минут сайын іске қосу үшін келесі crontab жазбасын пайдалану керек
+CronExplainHowToRunWin=Microsoft (tm) Windows ортасында сіз әрбір 5 минут сайын пәрмен жолын іске қосу үшін Жоспарланған тапсырмалар құралдарын пайдалана аласыз
+CronMethodDoesNotExists=%s класында %s әдісі жоқ
+CronMethodNotAllowed=%s класының %s әдісі тыйым салынған әдістердің қара тізімінде
+CronJobDefDesc=Cron жұмыс профильдері модуль дескриптор файлында анықталады. Модуль белсендірілгенде, олар жүктеледі және қол жетімді болады, осылайша сіз %s әкімші құралдарының мәзірінен тапсырмаларды басқара аласыз.
+CronJobProfiles=Алдын ала анықталған cron жұмыс профильдерінің тізімі
+# Menu
+EnabledAndDisabled=Қосылған және өшірілген
+# Page list
+CronLastOutput=Ең соңғы шығыс шығысы
+CronLastResult=Соңғы нәтиже коды
+CronCommand=Пәрмен
+CronList=Жоспарланған тапсырмалар
+CronDelete=Жоспарланған тапсырмаларды жою
+CronConfirmDelete=Бұл жоспарланған тапсырмаларды шынымен жойғыңыз келе ме?
+CronExecute=Жоспарланған жұмысты іске қосыңыз
+CronConfirmExecute=Бұл жоспарланған тапсырмаларды дәл қазір орындағыңыз келе ме?
+CronInfo=Жоспарланған жұмыс модулі тапсырмаларды автоматты түрде орындау үшін оларды жоспарлауға мүмкіндік береді. Жұмыстарды қолмен де бастауға болады.
+CronTask=Жұмыс
+CronNone=Ешқайсысы
+CronDtStart=Бұрын емес
+CronDtEnd=Кейін емес
+CronDtNextLaunch=Келесі орындау
+CronDtLastLaunch=Соңғы орындаудың басталу күні
+CronDtLastResult=Соңғы орындаудың аяқталу күні
+CronFrequency=Жиілік
+CronClass=Сынып
+CronMethod=Әдіс
+CronModule=Модуль
+CronNoJobs=Жұмыс орындары тіркелмеген
+CronPriority=Басымдық
+CronLabel=Заттаңба
+CronNbRun=Іске қосу саны
+CronMaxRun=Іске қосудың максималды саны
+CronEach=Әр
+JobFinished=Жұмыс басталды және аяқталды
+Scheduled=Жоспарланған
+#Page card
+CronAdd= Жұмыс орындарын қосыңыз
+CronEvery=Әр тапсырманы орындаңыз
+CronObject=Жасалатын инстанция/нысан
+CronArgs=Параметрлер
+CronSaveSucess=Сәтті сақтаңыз
+CronNote=Пікір
+CronFieldMandatory=%s өрістері міндетті болып табылады
+CronErrEndDateStartDt=Аяқталу күні басталу күнінен бұрын болуы мүмкін емес
+StatusAtInstall=Модульді орнату кезіндегі күй
+CronStatusActiveBtn=Кесте
+CronStatusInactiveBtn=Өшіру
+CronTaskInactive=Бұл жұмыс өшірілген (жоспарланбаған)
+CronId=Id
+CronClassFile=Файл атауы сыныппен
+CronModuleHelp=Dolibarr модуль каталогының атауы (сонымен қатар сыртқы Dolibarr модулімен жұмыс). <BR> Мысалы, Dolibarr Product объектісін алу әдісін шақыру үшін /htdocs /<u> product </u> /class/product.class.php, модульдің мәні a0342fccfda19be8 a0494e9bz8 өнім
+CronClassFileHelp=Жүктелетін салыстырмалы жол мен файл атауы (жол веб -сервердің каталогына қатысты). <BR> Мысалы, Dolibarr Өнім объектісінің алу әдісін шақыру үшін htdocs/product/class/<u> product.class.php </u>, сынып файлының атауының мәні a0342fccfda19bz8 өнім болып табылады a049271
+CronObjectHelp=Жүктелетін объект атауы. <BR> Мысалы, Dolibarr Product объектісінің алу әдісін шақыру үшін /htdocs/product/class/product.class.php, сынып файл атауының мәні <br> <i> Өнім </i>
+CronMethodHelp=Іске қосылатын объект әдісі. <BR> Мысалы, Dolibarr Product объектісінің алу әдісін шақыру үшін /htdocs/product/class/product.class.php, әдіс мәні <br> <i> </i> алу
+CronArgsHelp=Әдіс аргументтері. <BR> Мысалы, Dolibarr Product объектісін алу әдісін шақыру үшін /htdocs/product/class/product.class.php, параметрлердің мәні <br> <i> 0, ProductRef a0az064758b болуы мүмкін.
+CronCommandHelp=Орындалатын жүйелік пәрмен жолы.
+CronCreateJob=Жаңа жоспарланған жұмысты құру
+CronFrom=Қайдан
+# Info
+# Common
+CronType=Жұмыс түрі
+CronType_method=PHP класының шақыру әдісі
+CronType_command=Shell командасы
+CronCannotLoadClass=%s сынып файлын жүктеу мүмкін емес (%s класын пайдалану үшін)
+CronCannotLoadObject=%s сынып файлы жүктелді, бірақ оған %s нысаны табылмады
+UseMenuModuleToolsToAddCronJobs=Жоспарланған тапсырмаларды көру және өңдеу үшін «<a href="%s"> Басты бет - Әкімші құралдары - </a> жоспарланған тапсырмалар» мәзіріне өтіңіз.
+JobDisabled=Жұмыс өшірілген
+MakeLocalDatabaseDumpShort=Жергілікті дерекқордың резервтік көшірмесі
+MakeLocalDatabaseDump=Жергілікті мәліметтер қорының қоқысын жасаңыз. Параметрлер: қысу ('gz' немесе 'bz' немесе 'none'), сақтық көшірме түрі ('mysql', 'pgsql', 'auto'), 1, 'auto' немесе файл атауы, сақталатын резервтік файлдар саны
+WarningCronDelayed=Назар аударыңыз, өнімділік мақсатында, қосылған тапсырмаларды орындаудың келесі күні қандай болса да, сіздің жұмысыңыз іске қосылмас бұрын максималды %s сағатқа кешіктірілуі мүмкін.
+DATAPOLICYJob=Деректерді тазартушы және анонимайзер
+JobXMustBeEnabled=%s тапсырмасы қосылуы керек
+# Cron Boxes
+LastExecutedScheduledJob=Соңғы орындалған жоспарланған тапсырма
+NextScheduledJobExecute=Орындалатын келесі жоспарланған тапсырма
+NumberScheduledJobError=Қате жоспарланған тапсырмалар саны
