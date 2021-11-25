@@ -493,3 +493,10 @@ ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
 
 ALTER TABLE llx_entrepot ADD COLUMN warehouse_usage integer DEFAULT 1;
 
+-- add action trigger
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_CREATE','User created','Executed when a user is created','user',301);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_MODIFY','User update','Executed when a user is updated','user',302);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_DELETE','User update','Executed when a user is deleted','user',303);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_NEW_PASSWORD','User update','Executed when a user is change password','user',304);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_ENABLEDISABLE','User update','Executed when a user is enable or disable','user',305);
