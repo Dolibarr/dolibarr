@@ -217,7 +217,7 @@ if (empty($reshook)) {
 			}
 		}
 		if (!$error) {
-			$result = $object->delete($user,0,$idwarehouse);
+			$result = $object->delete($user, 0, $idwarehouse);
 			if ($result > 0) {
 				header('Location: list.php?restore_lastsearch_values=1');
 				exit;
@@ -1912,7 +1912,6 @@ if ($action == 'create' && $usercancreate) {
 
 		// Confirmation to delete
 		if ($action == 'delete') {
-
 			$qualified_for_stock_change = 0;
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);

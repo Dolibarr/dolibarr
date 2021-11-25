@@ -2323,7 +2323,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user		User object
 	 *  @param      int		$lineid		Id of line to delete
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
-	 * 
+	 *
 	 */
 	public function deleteline($user = null, $lineid = 0)
 	{
@@ -3394,8 +3394,8 @@ class Commande extends CommonOrder
 			$error++;
 		}
 
-		
-		// If stock decrementation is set on validate order 
+
+		// If stock decrementation is set on validate order
 		if ($this->statut == self::STATUS_VALIDATED && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 			$result = 0;
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
