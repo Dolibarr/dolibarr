@@ -364,7 +364,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</th>';
 		print '<th class="right">';
 		$url = 'https://www.dolistore.com/9-skins';
-		print '<a href="'.$url.'" target="_blank">';
+		print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
 		print $langs->trans('DownloadMoreSkins');
 		print '</a>';
 		print '</th></tr>';

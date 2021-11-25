@@ -41,7 +41,7 @@ function showOnlineSignatureUrl($type, $ref)
 	} else {
 		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercentminusx" value="'.$url.'">';
 	}
-	$out .= '<a class="" href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
 	$out .= ajax_autoselect("onlinesignatureurl", 0);
 	return $out;

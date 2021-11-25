@@ -70,7 +70,7 @@ create table llx_facturedet
   fk_user_modif     integer,                						-- user making last change
 
   fk_multicurrency				integer,
-  multicurrency_code			varchar(255),
+  multicurrency_code			varchar(3),
   multicurrency_subprice		double(24,8) DEFAULT 0,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva		double(24,8) DEFAULT 0,

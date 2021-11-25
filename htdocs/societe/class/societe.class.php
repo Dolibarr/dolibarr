@@ -3762,7 +3762,7 @@ class Societe extends CommonObject
 			}
 
 			if ($url) {
-				return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+				return '<a target="_blank" rel="noopener noreferrer" href="'.$url.'">'.$langs->trans("Check").'</a>';
 			}
 		} else {
 			return $hookmanager->resPrint;

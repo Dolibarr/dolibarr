@@ -265,8 +265,8 @@ OtherResources=Other resources
 ExternalResources=External Resources
 SocialNetworks=Social Networks
 SocialNetworkId=Social Network ID
-ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Here are some resources for getting help and support with Dolibarr.
 HelpCenterDesc2=Some of these resources are only available in <b>english</b>.
 CurrentMenuHandler=Current menu handler
@@ -762,6 +762,7 @@ Permission121=Read third parties linked to user
 Permission122=Create/modify third parties linked to user
 Permission125=Delete third parties linked to user
 Permission126=Export third parties
+Permission130=Create/modify third parties payment information
 Permission141=Read all projects and tasks (also private projects for which I am not a contact)
 Permission142=Create/modify all projects and tasks (also private projects for which I am not a contact)
 Permission144=Delete all projects and tasks (also private projects i am not contact for)
@@ -2210,3 +2211,5 @@ IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, yo
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sales tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
 MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria

@@ -523,7 +523,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 				}
 				print '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$redirection.'">';
-				print '<a href="'.$redirection.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
+				print '<a href="'.$redirection.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
 				print '</td>';
 				print '</tr>';
 			}
