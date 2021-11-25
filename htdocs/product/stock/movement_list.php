@@ -459,7 +459,7 @@ if ($action == "transfert_stock" && !$cancel) {
 			}
 		}
 	}
-}m.lalanne
+}
 
 
 /*
