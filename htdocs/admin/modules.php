@@ -563,8 +563,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
-	$moreforfilter .= ' ';
-	$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset butActionDelete noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+	if ($search_keyword || $search_status || $search_nature || $search_version) {
+		$moreforfilter .= ' ';
+		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+	}
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 

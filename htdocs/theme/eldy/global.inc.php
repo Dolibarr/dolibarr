@@ -3308,6 +3308,9 @@ input.buttonreset {
 	margin-top: 3px;
 	margin-bottom: 3px;
 	padding: 8px 15px;
+	text-decoration: underline;
+	color: var(--colortextlink);
+	cursor: pointer;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
