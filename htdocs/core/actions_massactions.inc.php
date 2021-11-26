@@ -1320,7 +1320,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	if (!$error)
 	{
 		if ($nbok > 1) setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-		else setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+		elseif ($nbok > 0) setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+		else setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
 		$db->commit();
 	}
 	else
