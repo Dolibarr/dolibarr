@@ -179,9 +179,9 @@ if ($errormsg) {
 	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 }
 
-// Redirect t backup page
-header("Location: dolibarr_export.php");
-
-$time_end = time();
+// Redirect to calling page
+$returnto = 'dolibarr_export.php';
 
 $db->close();
+
+header("Location: ".$returnto);
