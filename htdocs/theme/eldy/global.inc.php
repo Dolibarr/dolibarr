@@ -608,6 +608,9 @@ button:focus {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
+.line-height-large {
+	line-height: 1.8em;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;

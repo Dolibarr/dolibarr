@@ -783,6 +783,9 @@ div.floatright
 button:focus {
 	outline: none;
 }
+.line-height-large {
+	line-height: 1.8em;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
