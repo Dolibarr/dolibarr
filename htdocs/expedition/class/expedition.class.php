@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
- * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
@@ -366,50 +366,40 @@ class Expedition extends CommonObject
 			{
 				// Insert of lines
 				$num = count($this->lines);
-				for ($i = 0; $i < $num; $i++)
-				{
-					if (!isset($this->lines[$i]->detail_batch))
-					{	// no batch management
-						if (!$this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) > 0)
-						{
+				for ($i = 0; $i < $num; $i++) {
+					if (!isset($this->lines[$i]->detail_batch)) {	// no batch management
+						if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0) {
 							$error++;
 						}
 					} else {	// with batch management
-						if (!$this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) > 0)
-						{
+						if ($this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) <= 0) {
 							$error++;
 						}
 					}
 				}
 
-				if (!$error && $this->id && $this->origin_id)
-				{
+				if (!$error && $this->id && $this->origin_id) {
 					$ret = $this->add_object_linked();
-					if (!$ret)
-					{
+					if (!$ret) {
 						$error++;
 					}
 				}
 
 				// Actions on extra fields
-				if (!$error)
-				{
+				if (!$error) {
 					$result = $this->insertExtraFields();
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$error++;
 					}
 				}
 
-				if (!$error && !$notrigger)
-				{
+				if (!$error && !$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('SHIPPING_CREATE', $user);
 					if ($result < 0) { $error++; }
 					// End call triggers
 
-					if (!$error)
-					{
+					if (!$error) {
 						$this->db->commit();
 						return $this->id;
 					} else {
@@ -423,7 +413,6 @@ class Expedition extends CommonObject
 					}
 				} else {
 					$error++;
-					$this->error = $this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -3;
 				}
