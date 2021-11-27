@@ -730,21 +730,24 @@ if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
 	print '</td></tr>'."\n";
 }
 
-if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-	// $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
+if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
+	$amount = 0;
+	$typeid = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 
-	// Set amount for the subscription
-	$amountbytype = $adht->amountByType(1);
-	$amount = !empty($amountbytype[GETPOST('typeid', 'int')]) ? $amountbytype[GETPOST('typeid', 'int')] : (isset($amount) ? $amount : 0);
-
-	if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+	// Set amount for the subscription:
+	// - First check the amount of the member type.
+	$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+	$amount = empty($amountbytype[$typeid]) ? (isset($amount) ? $amount : 0) : $amountbytype[$typeid];
+	// - If not found, take the default amount
+	if (empty($amount) && !empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
 	}
-
-	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-		$amount = $amount ? $amount : (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : $conf->global->MEMBER_NEWFORM_AMOUNT);
+	// - If not set, we accept ot have amount defined as parameter (for backward compatibility).
+	if (empty($amount)) {
+		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 	}
 
+	// Clean the amount
 	$amount = price2num($amount);
 
 	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
@@ -758,6 +761,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	print ' '.$langs->trans("Currency".$conf->currency);
 	print '</td></tr>';
 }
+
 print "</table>\n";
 
 print dol_get_fiche_end();
