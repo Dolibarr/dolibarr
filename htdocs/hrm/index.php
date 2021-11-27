@@ -153,7 +153,7 @@ if (!empty($conf->holiday->enabled)) {
 		print '<table class="noborder nohover centpercent">';
 		print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
 		print '<tr class="oddeven">';
-		print '<td colspan="3">';
+		print '<td>';
 
 		$out = '';
 		$nb_holiday = 0;
@@ -163,8 +163,9 @@ if (!empty($conf->holiday->enabled)) {
 			$nb_holiday += $nb_type;
 			$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
 		}
-		print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
-		print $out;
+		$balancetoshow = $langs->trans('SoldeCPUser', '{s1}');
+		print '<div class="valignmiddle div-balanceofleave">'.str_replace('{s1}', img_picto('', 'holiday', 'class="paddingleft pictofixedwidth"').'<span class="balanceofleave valignmiddle'.($nb_holiday > 0 ? ' amountpaymentcomplete' : ($nb_holiday < 0 ? ' amountremaintopay' : ' amountpaymentneutral')).'">'.round($nb_holiday, 5).'</span>', $balancetoshow).'</div>';
+		print '<span class="opacitymedium">'.$out.'</span>';
 
 		print '</td>';
 		print '</tr>';

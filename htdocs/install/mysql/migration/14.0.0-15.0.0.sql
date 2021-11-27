@@ -300,6 +300,8 @@ CREATE TABLE llx_hrm_job_user(
     fk_user_modif integer
 ) ENGINE=innodb;
 
+ALTER TABLE llx_hrm_job_user ADD COLUMN abort_comment varchar(255);
+
 ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_rowid (rowid);
 -- ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_ref (ref);
 

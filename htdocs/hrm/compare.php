@@ -36,20 +36,24 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-ini_set('display_errors', 1);
-
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm.lib.php';
 
-$permissiontoread = $user->rights->hrm->compare->read;
+$permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare->read;
+$permissiontoadd = 0;
 if (empty($conf->hrm->enabled)) accessforbidden();
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
 
 $langs->load('hrm');
+
+
+
+/*
+ * View
+ */
 
 $css = array();
 $css[] = '/hrm/css/style.css';
