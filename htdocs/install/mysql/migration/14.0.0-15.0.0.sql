@@ -306,17 +306,6 @@ ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_rowid (rowid);
 -- ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_ref (ref);
 
 
-create table llx_hrm_job_user_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_job_user_extrafields ADD INDEX idx_position_fk_object(fk_object);
-
-
 
 CREATE TABLE llx_hrm_skill
 (
@@ -360,19 +349,10 @@ CREATE TABLE llx_hrm_skilldet
     rankorder integer
 ) ENGINE=innodb;
 
+ALTER TABLE llx_hrm_skilldet ADD COLUMN rankorder integer NOT NULL DEFAULT '1';
+
 ALTER TABLE llx_hrm_skilldet ADD INDEX idx_hrm_skilldet_rowid (rowid);
 ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
-
-create table llx_hrm_skilldet_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_skilldet_extrafields ADD INDEX idx_skilldet_fk_object(fk_object);
-
 
 CREATE TABLE llx_hrm_skillrank
 (
