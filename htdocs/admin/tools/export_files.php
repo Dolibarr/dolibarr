@@ -127,10 +127,18 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
+if ($export_type == 'externalmodule' && ! empty($what)) {
+	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
+} else {
+	$fulldirtocompress = DOL_DATA_ROOT;
+}
+$dirtoswitch = dirname($fulldirtocompress);
+$dirtocompress = basename($fulldirtocompress);
+
 if ($compression == 'zip') {
 	$file .= '.zip';
 	$excludefiles = '/(\.back|\.old|\.log|[\/\\\]temp[\/\\\]|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
-	$ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, $excludefiles);
+	$ret = dol_compress_dir($fulldirtocompress, $outputdir."/".$file, $compression, $excludefiles);
 	if ($ret < 0) {
 		if ($ret == -2) {
 			$langs->load("errors");
@@ -147,7 +155,7 @@ if ($compression == 'zip') {
 
 	$file .= '.tar';
 	// We also exclude '/temp/' dir and 'documents/admin/documents'
-	$cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
+	$cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dol_sanitizePathName($dirtoswitch)." ".dol_sanitizeFileName($dirtocompress);
 
 	$result = $utils->executeCLI($cmd, $outputfile);
 
@@ -177,11 +185,13 @@ if ($compression == 'zip') {
 
 if ($errormsg) {
 	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
+} else {
+	setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
 }
+
+$db->close();
 
 // Redirect to calling page
 $returnto = 'dolibarr_export.php';
-
-$db->close();
 
 header("Location: ".$returnto);

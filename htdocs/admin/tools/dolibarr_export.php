@@ -145,6 +145,8 @@ print "<!-- Dump of a server -->\n";
 print '<form method="post" action="export.php" name="dump">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
+print '<input type="hidden" name="page_y" value="" />';
+
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
 print '<span class="opacitymedium">';
@@ -498,7 +500,6 @@ print "<!--</fieldset>--> <!-- End destination -->\n";
 print '<br>';
 print '<div class="center">';
 print '<input type="submit" class="button reposition" value="'.$langs->trans("GenerateBackup").'" id="buttonGo">';
-print '<input type="hidden" name="page_y" value="'.GETPOST('page_y', 'int').'">';
 print '<br>';
 print '<br>';
 

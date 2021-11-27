@@ -216,8 +216,7 @@ if ($errormsg) {
 	}*/
 }
 
+$db->close();
 
 // Redirect to backup page
 header("Location: dolibarr_export.php".(GETPOST('page_y', 'int') ? '?page_y='.GETPOST('page_y', 'int') : ''));
-
-$db->close();
