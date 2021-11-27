@@ -478,7 +478,7 @@ if ($num > 0) {
 		if (empty($obj)) {
 			break;
 		}
-		if (!verifCond($obj->test)) {
+		if (isset($obj->test) && !verifCond($obj->test)) {
 			continue; // Discard line with test = false
 		}
 
