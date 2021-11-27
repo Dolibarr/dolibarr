@@ -154,10 +154,12 @@ if ($compression == 'zip') {
 	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out'; // File used with popen method
 
 	$file .= '.tar';
-	// We also exclude '/temp/' dir and 'documents/admin/documents'
-	$cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dol_sanitizePathName($dirtoswitch)." ".dol_sanitizeFileName($dirtocompress);
 
-	$result = $utils->executeCLI($cmd, $outputfile);
+	// We also exclude '/temp/' dir and 'documents/admin/documents'
+	// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+	$cmd = "tar -cf ".escapeshellcmd($outputdir."/".$file)." --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='documents/admin/documents' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
+
+	$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 	$retval = $result['error'];
 	if ($result['result'] || !empty($retval)) {
