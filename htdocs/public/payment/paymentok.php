@@ -412,7 +412,7 @@ if ($ispaymentok) {
 
 			$currencyCodeType = $_SESSION['currencyCodeType'];
 
-			dol_syslog("FinalPaymentAmt=".$FinalPaymentAmt." paymentTypeId=".$paymentTypeId, LOG_DEBUG, 0, '_payment');
+			dol_syslog("FinalPaymentAmt=".$FinalPaymentAmt." paymentTypeId=".$paymentTypeId." currencyCodeType=".$currencyCodeType, LOG_DEBUG, 0, '_payment');
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
@@ -439,6 +439,9 @@ if ($ispaymentok) {
 						}
 					}
 				}
+
+				// Security protection:
+				// TODO check that currency is same ?
 
 				if (! $error) {
 					// We validate the member (no effect if it is already validated)
@@ -1683,6 +1686,8 @@ if ($ispaymentok) {
 
 
 print "\n</div>\n";
+
+print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)."  -->\n";
 
 
 htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
