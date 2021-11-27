@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie einen externen / absol
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Wählen Sie aus, ob die verlinkte Seite auf der aktuellen Registerkarte oder auf einer neuen Registerkarte geöffnet werden soll.
 BookmarksManagement=Verwalten von Lesezeichen
 BookmarksMenuShortCut=STRG + Umschalt + m
+NoBookmarks=Keine Lesezeichen definiert

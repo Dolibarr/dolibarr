@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Mare
 TicketSeverityShortBLOCKING=Critic, blocant
 
+TicketCategoryShortOTHER=Altele
+
 ErrorBadEmailAddress=Câmpul '%s' este incorect
 MenuTicketMyAssign=Tichetele mele
 MenuTicketMyAssignNonClosed=Tichetele mele deschise
@@ -180,7 +182,7 @@ MessageSuccessfullyAdded=Tichet adăugat
 TicketMessageSuccessfullyAdded=Mesaj adăugat cu succes
 TicketMessagesList=Listă de mesaje
 NoMsgForThisTicket=Niciun mesaj pentru acest tichet
-Properties=Clasificare
+TicketProperties=Clasificare
 LatestNewTickets=Ultimele %s cele mai noi tichete (necitite)
 TicketSeverity=Gravitate
 ShowTicket=Vedeți tichetul
@@ -316,6 +318,7 @@ BoxTicketLastXDays=Numărul de tichete noi după zile din ultimele %s zile
 BoxTicketLastXDayswidget = Numărul de tichete noi pe zile în ultimele X zile
 BoxNoTicketLastXDays=Niciun tichet nou în ultimele %s zile
 BoxNumberOfTicketByDay=Număr tichete noi după zi
-BoxNewTicketVSClose=Numărul de tichete noi de astăzi comparativ cu tichetele închise de astăzi
+BoxNewTicketVSClose=Nr. tichete versus tichete închise (azi)
 TicketCreatedToday=Tichet creat azi
 TicketClosedToday=Tichet închis azi
+KMFoundForTicketGroup=Am găsit subiecte și întrebări frecvente care pot răspunde la întrebarea ta, te rugăm să le verifici înainte de trimiterea tichetului

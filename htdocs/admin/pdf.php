@@ -196,6 +196,12 @@ $arraydetailsforpdffoot = array(
 	3 => $langs->transnoentitiesnoconv('DisplayCompanyInfoAndManagers')
 );
 
+$arraylistofpdfformat = array(
+	0 => $langs->transnoentitiesnoconv('PDF 1.7'),
+	1 => $langs->transnoentitiesnoconv('PDF/A-1b'),
+	3 => $langs->transnoentitiesnoconv('PDF/A-3b'),
+);
+
 $s = $langs->trans("LibraryToBuildPDF")."<br>";
 $i = 0;
 $pdf = pdf_getInstance('A4');
@@ -540,11 +546,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_USE_A');
-} else {
-	print $form->selectyesno('PDF_USE_A', (empty($conf->global->PDF_USE_A) ? 0 : $conf->global->PDF_USE_A), 1);
-}
+print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, (empty($conf->global->PDF_USE_A) ? 0 : $conf->global->PDF_USE_A));
 print '</td></tr>';
 
 print '</table>';

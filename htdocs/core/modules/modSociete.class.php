@@ -197,6 +197,13 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
 
+		$r++;
+		$this->rights[$r][0] = 130;
+		$this->rights[$r][1] = 'Modify thirdparty information payment';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'thirdparty_paymentinformation_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'write';
+
 		// 262 : Restrict access to sales representative
 		$r++;
 		$this->rights[$r][0] = 262;
@@ -757,7 +764,7 @@ class modSociete extends DolibarrModules
 			'sr.bank' => "Bank",
 			'sr.code_banque' => "BankCode",
 			'sr.code_guichet' => "DeskCode",
-			'sr.number' => "BankAccountNumber*",
+			'sr.number' => "BankAccountNumber",
 			'sr.cle_rib' => "BankAccountNumberKey",
 			'sr.bic' => "BIC",
 			'sr.iban_prefix' => "IBAN",
@@ -766,6 +773,7 @@ class modSociete extends DolibarrModules
 			'sr.owner_address' => "BankAccountOwnerAddress",
 			'sr.default_rib' => 'Default',
 			'sr.rum' => 'RUM',
+			'sr.frstrecur' => "WithdrawMode",
 			'sr.type' => "Type ban is defaut",
 		);
 
@@ -797,6 +805,7 @@ class modSociete extends DolibarrModules
 			'sr.owner_address' => 'address of account holder',
 			'sr.default_rib' => '1 (default account) / 0 (not default)',
 			'sr.rum' => 'RUM code',
+			'sr.frstrecur' => 'FRST',
 			'sr.type' => 'ban',
 		);
 

@@ -1926,7 +1926,7 @@ class Form
 				$sql .= " WHERE u.entity IS NOT NULL";
 			}
 		} else {
-			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
 				$sql .= " ON ug.fk_user = u.rowid";
 				$sql .= " WHERE ug.entity = ".$conf->entity;
@@ -2414,7 +2414,7 @@ class Form
 			}
 		}
 
-		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
+		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.duration, p.fk_price_expression";
 		if (count($warehouseStatusArray)) {
 			$selectFieldsGrouped = ", sum(".$this->db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
 		} else {
@@ -2436,8 +2436,8 @@ class Form
 		//Price by customer
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
-			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.ref_customer as custref';
-			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custref";
+			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref';
+			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref";
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -2658,6 +2658,9 @@ class Form
 							$objp->remise_percent = $objp2->remise_percent;
 							$objp->remise = $objp2->remise;
 
+							//$objp->tva_tx is not overwritten by $objp2 value
+							//$objp->default_vat_code is not overwritten by $objp2 value
+
 							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel, $filterkey);
 
 							$j++;
@@ -2709,8 +2712,9 @@ class Form
 	}
 
 	/**
-	 * constructProductListOption.
+	 * Function to forge the string with OPTIONs of SELECT.
 	 * This define value for &$opt and &$optJson.
+	 * This function is called by select_produits_list().
 	 *
 	 * @param 	resource	$objp			    Resultset of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
@@ -2740,6 +2744,7 @@ class Form
 		$outprice_ttc = '';
 		$outpricebasetype = '';
 		$outtva_tx = '';
+		$outdefault_vat_code = '';
 		$outqty = 1;
 		$outdiscount = 0;
 
@@ -2866,9 +2871,9 @@ class Form
 		$found = 0;
 
 		// Multiprice
-		// If we need a particular price level (from 1 to 6)
+		// If we need a particular price level (from 1 to n)
 		if (empty($hidepriceinlabel) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
-			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
+			$sql = "SELECT price, price_ttc, price_base_type, tva_tx, default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
 			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
@@ -2892,7 +2897,13 @@ class Form
 					$outprice_ht = price($objp2->price);
 					$outprice_ttc = price($objp2->price_ttc);
 					$outpricebasetype = $objp2->price_base_type;
-					$outtva_tx = $objp2->tva_tx;
+					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+						$outtva_tx = $objp2->tva_tx;						// We use the vat rate on line of multiprice
+						$outdefault_vat_code = $objp2->default_vat_code;	// We use the vat code on line of multiprice
+					} else {
+						$outtva_tx = $objp->tva_tx;							// We use the vat rate of product, not the one on line of multiprice
+						$outdefault_vat_code = $objp->default_vat_code;		// We use the vat code or product, not the one on line of multiprice
+					}
 				}
 			} else {
 				dol_print_error($this->db);
@@ -2919,7 +2930,8 @@ class Form
 			$outprice_ht = price($objp->unitprice);
 			$outprice_ttc = price($objp->unitprice * (1 + ($objp->tva_tx / 100)));
 			$outpricebasetype = $objp->price_base_type;
-			$outtva_tx = $objp->tva_tx;
+			$outtva_tx = $objp->tva_tx;							// This value is the value on product when constructProductListOption is called by select_produits_list even if other field $objp-> are from table price_by_qty
+			$outdefault_vat_code = $objp->default_vat_code;		// This value is the value on product when constructProductListOption is called by select_produits_list even if other field $objp-> are from table price_by_qty
 		}
 		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1) {
 			$opt .= " (".price($objp->unitprice, 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit").")"; // Do not use strtolower because it breaks utf8 encoding
@@ -2947,6 +2959,7 @@ class Form
 				$outprice_ttc = price($objp->custprice_ttc);
 				$outpricebasetype = $objp->custprice_base_type;
 				$outtva_tx = $objp->custtva_tx;
+				$outdefault_vat_code = $objp->custdefault_vat_code;
 			}
 		}
 
@@ -2963,6 +2976,7 @@ class Form
 			$outprice_ttc = price($objp->price_ttc);
 			$outpricebasetype = $objp->price_base_type;
 			$outtva_tx = $objp->tva_tx;
+			$outdefault_vat_code = $objp->default_vat_code;
 		}
 
 		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
@@ -3011,7 +3025,9 @@ class Form
 			'price_ht'=>price2num($outprice_ht),
 			'price_ttc'=>price2num($outprice_ttc),
 			'pricebasetype'=>$outpricebasetype,
-			'tva_tx'=>$outtva_tx, 'qty'=>$outqty,
+			'tva_tx'=>$outtva_tx,
+			'default_vat_code'=>$outdefault_vat_code,
+			'qty'=>$outqty,
 			'discount'=>$outdiscount,
 			'duration_value'=>$outdurationvalue,
 			'duration_unit'=>$outdurationunit,
@@ -4905,8 +4921,9 @@ class Form
 			$formconfirm .= ($question ? '<div class="confirmmessage">'.img_help('', '').' '.$question.'</div>' : '');
 			$formconfirm .= '</div>'."\n";
 
-			$formconfirm .= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
+			$formconfirm .= "\n<!-- begin code of popup for formconfirm page=".$page." -->\n";
 			$formconfirm .= '<script type="text/javascript">'."\n";
+			$formconfirm .= "/* Code for the jQuery('#dialogforpopup').dialog() */\n";
 			$formconfirm .= 'jQuery(document).ready(function() {
             $(function() {
             	$( "#'.$dialogconfirm.'" ).dialog(

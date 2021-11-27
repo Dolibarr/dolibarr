@@ -22,7 +22,7 @@ ProductService=Mahsulot yoki xizmat
 AllProducts=Barcha mahsulotlar va xizmatlar
 ChooseProduct/Service=Mahsulot yoki xizmatni tanlang
 ForceBuyingPriceIfNull=Agar aniqlanmagan bo'lsa, sotib olish / tannarxni sotish narxiga majburlang
-ForceBuyingPriceIfNullDetails=Agar biz yangi qator qo'shganimizda sotib olish / tannarxi taqdim etilmasa va ushbu parametr "ON" bo'lsa, margin yangi satrda 0 ga teng bo'ladi (sotib olish / tannarx narxi = sotish narxi). Agar ushbu parametr "OFF" bo'lsa (tavsiya etiladi), margin sukut bo'yicha taklif qilingan qiymatga teng bo'ladi (va agar standart qiymat topilmasa, 100% bo'lishi mumkin).
+ForceBuyingPriceIfNullDetails=Agar biz yangi qatorni qo'shganimizda sotib olish/tannarx bahosi ko'rsatilmagan bo'lsa va bu parametr "ON" bo'lsa, marja yangi satrda 0%% bo'ladi (sotib olish/tannarx = sotish narxi). Agar bu parametr "O'chirilgan" bo'lsa (tavsiya etiladi), marj sukut bo'yicha taklif qilingan qiymatga teng bo'ladi (agar standart qiymat topilmasa, 100%% bo'lishi mumkin).
 MARGIN_METHODE_FOR_DISCOUNT=Global chegirmalar uchun margin usuli
 UseDiscountAsProduct=Mahsulot sifatida
 UseDiscountAsService=Xizmat sifatida

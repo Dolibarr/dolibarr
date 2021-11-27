@@ -160,7 +160,7 @@ $title = $langs->trans("BackupDumpWizard");
 
 print load_fiche_titre($title);
 
-print '<table class="'.(!empty($useinecm) ? 'nobordernopadding' : 'liste noborderbottom').' nohover centpercent">';
+print '<table class="'.(!empty($useinecm) ? 'nobordernopadding' : 'liste').' nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
@@ -569,7 +569,7 @@ print '<div id="backupfilesleft" class="fichehalfleft">';
 
 print load_fiche_titre($title ? $title : $langs->trans("BackupZipWizard"));
 
-print '<label for="zipfilename_template">'.$langs->trans("FileNameToGenerate").'</label><br>';
+print '<label for="zipfilename_template" class="line-height-large paddingbottom">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix = 'documents';
 $ext = 'zip';
 $file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M");
@@ -617,7 +617,7 @@ print '</div>';
 
 print '</div>';
 
-print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
+print '<div id="backupfileright" class="fichehalfright" style="height:250px; overflow: auto;">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));

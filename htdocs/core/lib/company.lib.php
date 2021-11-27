@@ -295,7 +295,7 @@ function societe_prepare_head(Societe $object)
 		// Notifications
 		if (!empty($conf->notification->enabled)) {
 			$nbNotif = 0;
-			// Enable caching of thirdrparty count notifications
+			// Enable caching of thirdparty count notifications
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 			$cachekey = 'count_notifications_thirdparty_'.$object->id;
 			$dataretrieved = dol_getcache($cachekey);

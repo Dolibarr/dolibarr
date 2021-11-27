@@ -3,7 +3,7 @@ PaypalSetup=PayPal moduļa iestatīšana
 PaypalDesc=Šis modulis ļauj klientiem veikt maksājumus, izmantojot <a href="http://www.paypal.com" target="_blank"> PayPal </a>. To var izmantot īpašam maksājumam vai maksājumam, kas saistīts ar Dolibarr objektu (rēķins, pasūtījums, ...)
 PaypalOrCBDoPayment=Maksājiet ar PayPal (karti vai PayPal)
 PaypalDoPayment=Maksāt ar PayPal
-PAYPAL_API_SANDBOX=Mode tests / sandbox
+PAYPAL_API_SANDBOX=Režīma pārbaude/smilšu kaste
 PAYPAL_API_USER=API lietotājvārds
 PAYPAL_API_PASSWORD=API parole
 PAYPAL_API_SIGNATURE=API paraksts

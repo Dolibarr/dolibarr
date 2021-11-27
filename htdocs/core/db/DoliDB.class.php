@@ -77,7 +77,8 @@ abstract class DoliDB implements Database
 	 */
 	public function ifsql($test, $resok, $resko)
 	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
+		//return 'IF('.$test.','.$resok.','.$resko.')';		// Not sql standard
+		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
 	}
 
 	/**
@@ -233,7 +234,7 @@ abstract class DoliDB implements Database
 	 * Define sort criteria of request
 	 *
 	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
-	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
 	public function order($sortfield = null, $sortorder = null)
@@ -318,10 +319,10 @@ abstract class DoliDB implements Database
 	/**
 	 * Return first result from query as object
 	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
-	 * Dont add LIMIT to your query, it will be added by this method.
+	 * Dont add LIMIT to your query, it will be added by this method
 	 *
-	 * @param 	string 			$sql 	The sql query string
-	 * @return 	bool|object				Result of fetch_object
+	 * @param 	string 				$sql 	The sql query string
+	 * @return 	bool|int|object    			False on failure, 0 on empty, object on success
 	 */
 	public function getRow($sql)
 	{
@@ -329,14 +330,19 @@ abstract class DoliDB implements Database
 
 		$res = $this->query($sql);
 		if ($res) {
-			return $this->fetch_object($res);
+			$obj = $this->fetch_object($res);
+			if ($obj) {
+				return $obj;
+			} else {
+				return 0;
+			}
 		}
 
 		return false;
 	}
 
 	/**
-	 * return all results from query as an array of objects
+	 * Return all results from query as an array of objects
 	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
 	 * be carefull with this method use it only with some limit of results to avoid performences loss.
 	 *

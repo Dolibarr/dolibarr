@@ -1,7 +1,0 @@
-# Dolibarr language file - Source file is en_US - printing
-Module64000Name=Direct Printing
-Module64000Desc=Enable Direct Printing System
-PrintingSetup=Setup of Direct Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer without needing to open the document in another application.
-MenuDirectPrinting=Direct Printing jobs
-DirectPrint=Direct print

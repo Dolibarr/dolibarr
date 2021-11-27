@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=外部/絶対リンク (https://URL)
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=リンクされたページを現在のタブで開くか、新規タブで開くかを選択 
 BookmarksManagement=ブックマークの管理
 BookmarksMenuShortCut=Ctrl +シフト+ m
+NoBookmarks=ブックマークが未定義

@@ -339,7 +339,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<tr class="liste_titre nodrag nodrop">';
 		// Rank
-		print '<td>'.$langs->trans('Rank').'</td>';
+		print '<td>'.$langs->trans('Position').'</td>';
 		// Product ref
 		print '<td>'.$langs->trans('ComposedProduct').'</td>';
 		// Product label
@@ -401,8 +401,8 @@ if ($id > 0 || !empty($ref)) {
 					$totalline = price2num($value['nb'] * ($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MT');
 					$total += $totalline;
 
-					print '<td class="right">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x' : '').price($unitline, '', '', 0, 0, -1, $conf->currency));
+					print '<td class="right nowraponall">';
+					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
 					print '</td>';
 
 					// Best selling price
@@ -414,11 +414,11 @@ if ($id > 0 || !empty($ref)) {
 						$totalsell += $totallinesell;
 					}
 					print '<td class="right" colspan="2">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x' : ''));
+					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
 					if (is_numeric($pricesell)) {
-						print price($pricesell, '', '', 0, 0, -1, $conf->currency);
+						print '<span class="amount">'.price($pricesell, '', '', 0, 0, -1, $conf->currency).'</span>';
 					} else {
-						print $langs->trans($pricesell);
+						print '<span class="opacitymedium">'.$langs->trans($pricesell).'</span>';
 					}
 					print '</td>';
 
@@ -603,6 +603,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add_prod">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
+
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<th class="liste_titre">'.$langs->trans("ComposedProduct").'</td>';

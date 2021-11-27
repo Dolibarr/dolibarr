@@ -310,20 +310,22 @@ $help_url = '';
 llxHeader('', $langs->trans('Inventory'), $help_url);
 
 
-// Disable button Generate movement if data were not saved
+// Disable button Generate movement if data were modified and not saved
 print '<script type="text/javascript" language="javascript">
 function disablebuttonmakemovementandclose() {
 	console.log("Disable button idbuttonmakemovementandclose until we save");
 	jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
+	jQuery("#idbuttonmakemovementandclose").attr(\'title\',\''.dol_escape_js($langs->trans("SaveQtyFirst")).'\');
 	jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
 };
 
 jQuery(document).ready(function() {
-
 	jQuery(".realqty").keyup(function() {
+		console.log("keyup on realqty");
 		disablebuttonmakemovementandclose();
 	});
 	jQuery(".realqty").change(function() {
+		console.log("change on realqty");
 		disablebuttonmakemovementandclose();
 	});
 });
@@ -480,7 +482,7 @@ if ($object->id > 0) {
 			// Save
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&token='.newToken().'" title="'.dol_escape_htmltag("SaveQtyFirst").'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
+					print '<a class="butAction" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MakeMovementsAndClose")).'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
 				}
@@ -522,10 +524,9 @@ if ($object->id > 0) {
 							var objecttofill = $("#"+object.id+"_input")[0];
 							objecttofill.value = object.innerText;
 						})
-						console.log("Values filled");
-						console.log("Disable button idbuttonmakemovementandclose until we save");
-						jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
-						jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
+						console.log("Values filled (after click on fillwithexpected)");
+						disablebuttonmakemovementandclose();
+						return false;
 			        });';
 			print '});';
 			print '</script>';
@@ -639,12 +640,14 @@ if ($object->id > 0) {
 	//Call method to undo changes in real qty
 	print '<script>';
 	print 'jQuery(document).ready(function() {
-		$(".undochangesqty").on("click",function undochangesqty(){
+		$(".undochangesqty").on("click",function undochangesqty() {
+			console.log("Clear value of inventory line");
 			id = this.id;
 			id = id.split("_")[1];
 			tmpvalue = $("#id_"+id+"_input_tmp").val()
 			$("#id_"+id+"_input")[0].value = tmpvalue;
-			document.forms["formrecord"].submit();
+			disablebuttonmakemovementandclose();
+			return false;	/* disable submit */
 		});
 	});';
 	print '</script>';
@@ -667,7 +670,7 @@ if ($object->id > 0) {
 		print '</td>';
 	}
 	print '<td class="right">'.$langs->trans("ExpectedQty").'</td>';
-	print '<td class="center">';
+	print '<td class="right">';
 	print $form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp"));
 	print '</td>';
 	if ($object->status == $object::STATUS_VALIDATED) {
@@ -692,7 +695,7 @@ if ($object->id > 0) {
 			print '</td>';
 		}
 		print '<td class="right"></td>';
-		print '<td class="center">';
+		print '<td class="right">';
 		print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 		print '</td>';
 		// Actions
@@ -764,17 +767,22 @@ if ($object->id > 0) {
 			print '</td>';
 
 			// Real quantity
-			print '<td class="center">';
+			print '<td class="right">';
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$qty_view = GETPOST("id_".$obj->rowid) && price2num(GETPOST("id_".$obj->rowid), 'MS') >= 0 ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
-				if (!$hasinput && $qty_view !== null && $obj->qty_stock != $qty_view) {
+
+				//if (!$hasinput && $qty_view !== null && $obj->qty_stock != $qty_view) {
+				if ($qty_view != '') {
 					$hasinput = true;
 				}
 
+				print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty reposition marginrightonly" title="'.dol_escape_htmltag($langs->trans("Clear")).'">';
+				print img_picto('', 'eraser', 'class="opacitymedium"');
+				print '</a>';
 				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
+
 				print '<td class="right">';
-				print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty"><span class="fas fa-undo pictoundo" ></span></a> &nbsp';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
 				print '</td>';
 				$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
@@ -801,10 +809,13 @@ if ($object->id > 0) {
 
 	print '</div>';
 
+
 	// Call method to disable the button if no qty entered yet for inventory
+
 	if ($object->status != $object::STATUS_VALIDATED || !$hasinput) {
 		print '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
+						console.log("Call disablebuttonmakemovementandclose because status = '.((int) $object->status).' or $hasinput = '.((int) $hasinput).'");
 						disablebuttonmakemovementandclose();
 					});
 				</script>';

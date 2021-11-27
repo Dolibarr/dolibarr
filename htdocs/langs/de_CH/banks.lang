@@ -39,7 +39,6 @@ SaveStatementOnly=Speichere nur den Kontoauszug
 ReconciliationLate=Ausgleich verspätet
 OnlyOpenedAccount=Nur offene Konten
 LinkedToAConciliatedTransaction=Verküpft mit einer ausgeglichenen Transaktion
-StatusAccountOpened=Offen
 AddBankRecord=Neue Transaktion
 AddBankRecordLong=Neue Transaktion manuell
 Conciliated=Ausgeglichen

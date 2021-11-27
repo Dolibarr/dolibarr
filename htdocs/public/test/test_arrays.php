@@ -22,19 +22,22 @@ if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
 }
 
-
 require '../../main.inc.php';
 
+// Security
 if ($dolibarr_main_prod) {
 	accessforbidden();
 }
 
-$usedolheader = 1; // 1 = Test inside a dolibarr page, 0 = Use hard coded header
+
+
+/*
+ * View
+ */
 
 $form = new Form($db);
 
-
-
+$usedolheader = 1; // 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
 // HEADER
 //--------

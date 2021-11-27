@@ -182,3 +182,4 @@ BankColorizeMovementName2=Kredīta aprites fona krāsa
 IfYouDontReconcileDisableProperty=Ja dažos bankas kontos neveicat bankas saskaņošanu, atspējojiet rekvizītu "%s", lai noņemtu šo brīdinājumu.
 NoBankAccountDefined=Nav noteikts bankas konts
 NoRecordFoundIBankcAccount=Bankas kontā nav atrasts neviens ieraksts. Parasti tas notiek, ja ieraksts ir manuāli izdzēsts no bankas konta darījumu saraksta (piemēram, bankas konta saskaņošanas laikā). Vēl viens iemesls ir tas, ka maksājums tika reģistrēts, kad tika atspējots modulis "%s".
+AlreadyOneBankAccount=Viens bankas konts jau ir definēts
