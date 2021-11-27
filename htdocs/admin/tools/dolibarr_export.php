@@ -162,14 +162,15 @@ $title = $langs->trans("BackupDumpWizard");
 
 print load_fiche_titre($title);
 
-print '<table class="'.(!empty($useinecm) ? 'nobordernopadding' : 'liste').' nohover centpercent">';
+print '<table class="liste nohover centpercent noborderbottom">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
 print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
-print '<table class="centpercent">';
+
+print '<table class="centpercent noborderbottom">';
 print '<tr>';
 print '<td class="tdtop">';
 
@@ -399,11 +400,15 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
+print '</td></tr>';
+print '</table>';
+
+
 
 print '<!--<fieldset>';
 print '<legend>'.$langs->trans("Destination").'</legend> -->';
 print '<br>';
-print '<label for="filename_template">'.$langs->trans("FileNameToGenerate").'</label>';
+print '<label for="filename_template" class="line-height-large">'.$langs->trans("FileNameToGenerate").'</label>';
 print '<br>';
 $prefix = 'dump';
 $ext = '.sql';
@@ -439,9 +444,9 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	//     'label' => $langs->trans("FormatZip")
 	// );
 	$compression['bz'] = array(
-		'function' => 'bzopen',
-		'id' => 'radio_compression_bzip',
-		'label' => $langs->trans("Bzip2")
+	'function' => 'bzopen',
+	'id' => 'radio_compression_bzip',
+	'label' => $langs->trans("Bzip2")
 	);
 	$compression['zstd'] = array(
 		'function' => 'zstd_compress',
@@ -533,8 +538,6 @@ if (!empty($_SESSION["commandbackuptorun"])) {
 
 print "</div> <!-- end div center button -->\n";
 
-print '</td></tr>';
-print '</table>';
 
 print "</div> 	<!-- end div fichehalfleft -->\n";
 
