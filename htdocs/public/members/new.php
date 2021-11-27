@@ -386,35 +386,25 @@ if (empty($reshook) && $action == 'add') {
 			}
 
 			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-				$urlback = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-
 				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
 					// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
 					// It is not so important because a test is done on return of payment validation.
-					$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-				} elseif (price2num(GETPOST('amount', 'alpha'))) {
-					$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
 				}
+
+				$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
 
 				if (GETPOST('email')) {
 					$urlback .= '&email='.urlencode(GETPOST('email'));
 				}
-				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-						$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-					} else {
-						$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-					}
-				}
-
 				if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
 					$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
 				}
+			} else {
+				if (!empty($entity)) {
+					$urlback .= '&entity='.((int) $entity);
+				}
 			}
 
-			if (!empty($entity)) {
-				$urlback .= '&entity='.((int) $entity);
-			}
 			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 		} else {
 			$error++;

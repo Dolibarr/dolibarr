@@ -1461,9 +1461,12 @@ if ($source == 'member' || $source == 'membersubscription') {
 	$langs->load("members");
 
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 	$member = new Adherent($db);
+	$adht = new AdherentType($db);
+
 	$result = $member->fetch('', $ref);
 	if ($result <= 0) {
 		$mesg = $member->error;
@@ -1471,6 +1474,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 	} else {
 		$member->fetch_thirdparty();
 		$subscription = new Subscription($db);
+
+		$adht->fetch($member->typeid);
 	}
 	$object = $member;
 
@@ -1479,6 +1484,11 @@ if ($source == 'member' || $source == 'membersubscription') {
 		if (GETPOST("amount", 'alpha')) {
 			$amount = GETPOST("amount", 'alpha');
 		}
+		// If amount still not defined, we take amount of the type of member
+		if (empty($amount)) {
+			$amount = $adht->amount;
+		}
+
 		$amount = price2num($amount, 'MT');
 	}
 
