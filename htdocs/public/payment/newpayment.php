@@ -768,9 +768,23 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 			setEventMessages($paymentintent->status, null, 'errors');
 			$action = '';
 		} else {
-			// TODO We can alse record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
+			// TODO We can also record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
 			// Note that with other old Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
 			//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
+
+			// Get here amount and currency used for payment and force value into $amount and $currency so the real amount is saved into session instead
+			// of the amount and currency retreived from the POST.
+			if (!empty($paymentintent->currency) && !empty($paymentintent->amount)) {
+				$currency = strtoupper($paymentintent->currency);
+				$amount = $paymentintent->amount;
+
+				// Correct the amount according to unit of currency
+				// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
+				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (!in_array($currency, $arrayzerounitcurrency)) {
+					$amount = $amount / 100;
+				}
+			}
 		}
 	}
 

@@ -343,6 +343,9 @@ if (empty($FinalPaymentAmt)) {
 if (empty($paymentType)) {
 	$paymentType     = $_SESSION["paymentType"];
 }
+if (empty($currencyCodeType)) {
+	$currencyCodeType = $_SESSION['currencyCodeType'];
+}
 
 $fulltag = $FULLTAG;
 $tmptag = dolExplodeIntoArray($fulltag, '.', '=');
@@ -403,14 +406,11 @@ if ($ispaymentok) {
 				$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 			}
 			if (empty($paymentTypeId)) {
-				$paymentType = $_SESSION["paymentType"];
 				if (empty($paymentType)) {
 					$paymentType = 'CB';
 				}
 				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 			}
-
-			$currencyCodeType = $_SESSION['currencyCodeType'];
 
 			dol_syslog("FinalPaymentAmt=".$FinalPaymentAmt." paymentTypeId=".$paymentTypeId." currencyCodeType=".$currencyCodeType, LOG_DEBUG, 0, '_payment');
 
@@ -435,13 +435,19 @@ if ($ispaymentok) {
 							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') differs from value expected for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
 							$postactionmessages[] = $errmsg;
 							$ispostactionok = -1;
-							dol_syslog("Failed to validate member: ".$errmsg, LOG_ERR, 0, '_payment');
+							dol_syslog("Failed to validate member (bad amount check): ".$errmsg, LOG_ERR, 0, '_payment');
 						}
 					}
 				}
 
 				// Security protection:
-				// TODO check that currency is same ?
+				if ($currencyCodeType && $currencyCodeType != $conf->currency) {	// Check that currency is the good one
+					$error++;
+					$errmsg = 'Value of currencyCodeType ('.$currencyCodeType.') differs from value expected for membership ('.$conf->currency.'). May be a hack to try to pay a different amount ?';
+					$postactionmessages[] = $errmsg;
+					$ispostactionok = -1;
+					dol_syslog("Failed to validate member (bad currency check): ".$errmsg, LOG_ERR, 0, '_payment');
+				}
 
 				if (! $error) {
 					// We validate the member (no effect if it is already validated)
@@ -766,14 +772,11 @@ if ($ispaymentok) {
 				$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 			}
 			if (empty($paymentTypeId)) {
-				$paymentType = $_SESSION["paymentType"];
 				if (empty($paymentType)) {
 					$paymentType = 'CB';
 				}
 				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 			}
-
-			$currencyCodeType = $_SESSION['currencyCodeType'];
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
@@ -866,12 +869,9 @@ if ($ispaymentok) {
 			if ($paymentmethod == 'paypal') $paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
 			if ($paymentmethod == 'stripe') $paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 			if (empty($paymentTypeId)) {
-				$paymentType = $_SESSION["paymentType"];
 				if (empty($paymentType)) $paymentType = 'CB';
 				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 			}
-
-			$currencyCodeType = $_SESSION['currencyCodeType'];
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($conf->facture->enabled)) {
@@ -964,8 +964,6 @@ if ($ispaymentok) {
 		$don = new Don($db);
 		$result = $don->fetch((int) $tmptag['DON']);
 		if ($result) {
-			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
-
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
 				$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
@@ -977,14 +975,11 @@ if ($ispaymentok) {
 				$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 			}
 			if (empty($paymentTypeId)) {
-				$paymentType = $_SESSION["paymentType"];
 				if (empty($paymentType)) {
 					$paymentType = 'CB';
 				}
 				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 			}
-
-			$currencyCodeType = $_SESSION['currencyCodeType'];
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
@@ -1074,8 +1069,6 @@ if ($ispaymentok) {
 		$object = new Facture($db);
 		$result = $object->fetch($ref);
 		if ($result) {
-			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
-
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
 				$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
@@ -1087,14 +1080,11 @@ if ($ispaymentok) {
 				$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 			}
 			if (empty($paymentTypeId)) {
-				$paymentType = $_SESSION["paymentType"];
 				if (empty($paymentType)) {
 					$paymentType = 'CB';
 				}
 				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 			}
-
-			$currencyCodeType = $_SESSION['currencyCodeType'];
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
@@ -1271,14 +1261,11 @@ if ($ispaymentok) {
 				$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
 			}
 			if (empty($paymentTypeId)) {
-				$paymentType = $_SESSION["paymentType"];
 				if (empty($paymentType)) {
 					$paymentType = 'CB';
 				}
 				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 			}
-
-			$currencyCodeType = $_SESSION['currencyCodeType'];
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
@@ -1687,7 +1674,7 @@ if ($ispaymentok) {
 
 print "\n</div>\n";
 
-print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)."  -->\n";
+print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
 
 
 htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
