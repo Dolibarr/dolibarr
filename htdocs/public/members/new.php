@@ -174,6 +174,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -386,10 +387,17 @@ if (empty($reshook) && $action == 'add') {
 
 			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
 				if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all') {
+					// The default behaviour
 					$urlback = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
+
+					if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
+						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
+						// It is not so important because a test is done on return of payment validation.
+						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+					} elseif (price2num(GETPOST('amount', 'alpha'))) {
 						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
 					}
+
 					if (GETPOST('email')) {
 						$urlback .= '&email='.urlencode(GETPOST('email'));
 					}
@@ -400,7 +408,7 @@ if (empty($reshook) && $action == 'add') {
 							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 						}
 					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox') {
+					/*} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox') {
 					$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
 					if (price2num(GETPOST('amount', 'alpha'))) {
 						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -415,7 +423,7 @@ if (empty($reshook) && $action == 'add') {
 							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 						}
 					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal') {
+					} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal') {
 					$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
 					if (price2num(GETPOST('amount', 'alpha'))) {
 						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -430,7 +438,7 @@ if (empty($reshook) && $action == 'add') {
 							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 						}
 					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe') {
+					} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe') {
 					$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
 					if (price2num(GETPOST('amount', 'alpha'))) {
 						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -445,6 +453,7 @@ if (empty($reshook) && $action == 'add') {
 							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 						}
 					}
+					*/
 				} else {
 					dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
 					exit;
@@ -452,7 +461,7 @@ if (empty($reshook) && $action == 'add') {
 			}
 
 			if (!empty($entity)) {
-				$urlback .= '&entity='.$entity;
+				$urlback .= '&entity='.((int) $entity);
 			}
 			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 		} else {
@@ -733,7 +742,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	}
 
 	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-		$amount = $amount ? $amount : (GETPOST('amount') ? price2num(GETPOST('amount'), 'MT', 2) : $conf->global->MEMBER_NEWFORM_AMOUNT);
+		$amount = $amount ? $amount : (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : $conf->global->MEMBER_NEWFORM_AMOUNT);
 	}
 
 	$amount = price2num($amount);
