@@ -386,7 +386,7 @@ if ($ispaymentok) {
 		$adht = new AdherentType($db);
 		$object = new Adherent($db);
 
-		$result1 = $object->fetch($tmptag['MEM']);
+		$result1 = $object->fetch((int) $tmptag['MEM']);
 		$result2 = $adht->fetch($object->typeid);
 
 		dol_syslog("We have to process member with id=".$tmptag['MEM']." result1=".$result1." result2=".$result2, LOG_DEBUG, 0, '_payment');
@@ -416,14 +416,41 @@ if ($ispaymentok) {
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
-				$result = ($object->status == $object::STATUS_EXCLUDED) ? -1 : $object->validate($user); // if membre is excluded (status == -2) the new validation is not possible
-				if ($result < 0 || empty($object->datevalid)) {
-					$error++;
-					$errmsg = $object->error;
-					$postactionmessages[] = $errmsg;
-					$postactionmessages = array_merge($postactionmessages, $object->errors);
-					$ispostactionok = -1;
-					dol_syslog("Failed to validate member: ".$errmsg, LOG_ERR, 0, '_payment');
+				// Security protection:
+				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {	// If we didn't allow members to choose their membership amount
+					if ($object->status == $object::STATUS_DRAFT) {		// If the member is not yet validated, we check that the amount is the same as expected.
+						$typeid = $object->typeid;
+
+						// Set amount for the subscription:
+						// - First check the amount of the member type.
+						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
+						// - If not found, take the default amount
+						if (empty($amountexpected) && !empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+							$amountexpected = $conf->global->MEMBER_NEWFORM_AMOUNT;
+						}
+
+						if ($amountexpected && $amountexpected != $FinalPaymentAmt) {
+							$error++;
+							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') differs from value expected for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
+							$postactionmessages[] = $errmsg;
+							$ispostactionok = -1;
+							dol_syslog("Failed to validate member: ".$errmsg, LOG_ERR, 0, '_payment');
+						}
+					}
+				}
+
+				if (! $error) {
+					// We validate the member (no effect if it is already validated)
+					$result = ($object->status == $object::STATUS_EXCLUDED) ? -1 : $object->validate($user); // if membre is excluded (status == -2) the new validation is not possible
+					if ($result < 0 || empty($object->datevalid)) {
+						$error++;
+						$errmsg = $object->error;
+						$postactionmessages[] = $errmsg;
+						$postactionmessages = array_merge($postactionmessages, $object->errors);
+						$ispostactionok = -1;
+						dol_syslog("Failed to validate member: ".$errmsg, LOG_ERR, 0, '_payment');
+					}
 				}
 
 				// Subscription informations
@@ -721,7 +748,7 @@ if ($ispaymentok) {
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($tmptag['INV']);
+		$result = $object->fetch((int) $tmptag['INV']);
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
@@ -827,7 +854,7 @@ if ($ispaymentok) {
 	} elseif (array_key_exists('ORD', $tmptag) && $tmptag['ORD'] > 0) {
 		include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 		$object = new Commande($db);
-		$result = $object->fetch($tmptag['ORD']);
+		$result = $object->fetch((int) $tmptag['ORD']);
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
@@ -932,7 +959,7 @@ if ($ispaymentok) {
 	} elseif (array_key_exists('DON', $tmptag) && $tmptag['DON'] > 0) {
 		include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 		$don = new Don($db);
-		$result = $don->fetch($tmptag['DON']);
+		$result = $don->fetch((int) $tmptag['DON']);
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
@@ -1141,7 +1168,7 @@ if ($ispaymentok) {
 					if (!$error) {
 						// Validating the attendee
 						$attendeetovalidate = new ConferenceOrBoothAttendee($db);
-						$resultattendee = $attendeetovalidate->fetch($tmptag['ATT']);
+						$resultattendee = $attendeetovalidate->fetch((int) $tmptag['ATT']);
 						if ($resultattendee < 0) {
 							$error++;
 							setEventMessages(null, $attendeetovalidate->errors, "errors");
@@ -1325,7 +1352,7 @@ if ($ispaymentok) {
 					if (!$error) {
 						// Putting the booth to "suggested" state
 						$booth = new ConferenceOrBooth($db);
-						$resultbooth = $booth->fetch($tmptag['BOO']);
+						$resultbooth = $booth->fetch((int) $tmptag['BOO']);
 						if ($resultbooth < 0) {
 							$error++;
 							setEventMessages(null, $booth->errors, "errors");
@@ -1490,12 +1517,12 @@ if ($ispaymentok) {
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 		$content = "";
 		if (array_key_exists('MEM', $tmptag)) {
-			$url = $urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
+			$url = $urlwithroot."/adherents/subscription.php?rowid=".((int) $tmptag['MEM']);
 			$content .= '<strong>'.$companylangs->trans("PaymentSubscription")."</strong><br><br>\n";
 			$content .= $companylangs->trans("MemberId").': <strong>'.$tmptag['MEM']."</strong><br>\n";
 			$content .= $companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		} elseif (array_key_exists('INV', $tmptag)) {
-			$url = $urlwithroot."/compta/facture/card.php?id=".$tmptag['INV'];
+			$url = $urlwithroot."/compta/facture/card.php?id=".((int) $tmptag['INV']);
 			$content .= '<strong>'.$companylangs->trans("Payment")."</strong><br><br>\n";
 			$content .= $companylangs->trans("InvoiceId").': <strong>'.$tmptag['INV']."</strong><br>\n";
 			//$content.=$companylangs->trans("ThirdPartyId").': '.$tmptag['CUS']."<br>\n";

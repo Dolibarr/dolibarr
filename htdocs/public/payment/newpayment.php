@@ -184,11 +184,12 @@ if ($source == 'organizedeventregistration') {
 }
 
 
-$paymentmethod = GETPOST('paymentmethod', 'alphanohtml') ?GETPOST('paymentmethod', 'alphanohtml') : ''; // Empty in most cases. Defined when a payment mode is forced
+$paymentmethod = GETPOST('paymentmethod', 'alphanohtml') ? GETPOST('paymentmethod', 'alphanohtml') : ''; // Empty in most cases. Defined when a payment mode is forced
 $validpaymentmethod = array();
 
 // Detect $paymentmethod
 foreach ($_POST as $key => $val) {
+	$reg = array();
 	if (preg_match('/^dopayment_(.*)$/', $key, $reg)) {
 		$paymentmethod = $reg[1];
 		break;
@@ -480,7 +481,7 @@ if ($action == 'dopayment') {
 
 // Called when choosing Stripe mode.
 // When using the Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
-// When using the PaymentIntent API architecture, the Stripe customer is already created when creating PaymentIntent when showing payment page and the payment is already ok.
+// When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
 if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$amountstripe = $amount;
 
@@ -1325,7 +1326,7 @@ if ($source == 'contractline') {
 
 	$qty = 1;
 	if (GETPOST('qty')) {
-		$qty = GETPOST('qty');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 	}
 
 	// Creditor
