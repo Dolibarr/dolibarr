@@ -1363,7 +1363,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		// Description short of product line
 		$libelleproduitservice = $label;
 		if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
-			if (!dol_textishtml($libelleproduitservice)){
+			if (!dol_textishtml($libelleproduitservice)) {
 				$libelleproduitservice = str_replace("\n", '__N__', $libelleproduitservice);
 			}
 			$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
@@ -1495,14 +1495,14 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	if (!empty($ref_prodserv) && !empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) {
-		if (!dol_textishtml($libelleproduitservice)){
+		if (!dol_textishtml($libelleproduitservice)) {
 			$libelleproduitservice = str_replace("\n", '__N__', $libelleproduitservice);
 		}
 		$ref_prodserv = '<b>'.$ref_prodserv.'</b>';
 		// $prefix_prodserv and $ref_prodser are not HTML var
-	} 
+	}
 	$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
-	
+
 	// Add an additional description for the category products
 	if (!empty($conf->global->CATEGORY_ADD_DESC_INTO_DOC) && $idprod && !empty($conf->categorie->enabled)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -1533,7 +1533,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
 		if (!empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) {
-			if (!dol_textishtml($libelleproduitservice)){
+			if (!dol_textishtml($libelleproduitservice)) {
 				$libelleproduitservice = str_replace("\n", '__N__', $libelleproduitservice);
 			}
 			$libelleproduitservice .= '<b style="color:#333666;" ><em>'."__N__</b> ".$period.'</em>';

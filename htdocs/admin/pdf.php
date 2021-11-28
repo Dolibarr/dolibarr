@@ -173,7 +173,7 @@ if ($action == 'update') {
 	if (GETPOSTISSET('PDF_BOLD_PRODUCT_LABEL')) {
 		dolibarr_set_const($db, "PDF_BOLD_PRODUCT_LABEL", GETPOST('PDF_BOLD_PRODUCT_LABEL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
-	if (GETPOSTISSET('PDF_BOLD_PRODUCT_REF_AND_PERIOD')){
+	if (GETPOSTISSET('PDF_BOLD_PRODUCT_REF_AND_PERIOD')) {
 		dolibarr_set_const($db, "PDF_BOLD_PRODUCT_REF_AND_PERIOD", GETPOST('PDF_BOLD_PRODUCT_REF_AND_PERIOD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
