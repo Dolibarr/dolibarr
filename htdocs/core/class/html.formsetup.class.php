@@ -121,7 +121,7 @@ class FormSetup
 	}
 
 	/**
-	 * Generae an attributes string form an input array
+	 * Generate an attributes string form an input array
 	 * @param array $attributes an array of attributes keys and values,
 	 * @return string
 	 */
@@ -690,7 +690,7 @@ class FormSetupItem
 	 */
 	public function generateInputField()
 	{
-		global $conf, $user;
+		global $conf;
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
