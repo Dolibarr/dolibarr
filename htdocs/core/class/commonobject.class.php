@@ -860,7 +860,7 @@ abstract class CommonObject
 		if (!empty($conf->socialnetworks->enabled)) {
 			$outsocialnetwork = '';
 
-			if (!empty($this->socialnetworks) && is_countable($this->socialnetworks) && count($this->socialnetworks) > 0) {
+			if (!empty($this->socialnetworks) && is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
 				$socialnetworksdict = getArrayOfSocialNetworks();
 				foreach ($this->socialnetworks as $key => $value) {
 					if ($value) {
