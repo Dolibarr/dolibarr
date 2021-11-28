@@ -105,6 +105,7 @@ NEW: Use an ajax call for the clicktodial feature instead of href link.
 NEW: when multiple order linked to facture, show list into note.
 NEW: when we delete several objects with massaction, if somes object has child we must see which objects are concerned and nevertheless delete objects which can be deleted
 NEW: Editing a page in website module keep old page with name .back
+NEW: External backups can be downloaded from the "About info page".
 
 
 For developers:

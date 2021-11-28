@@ -499,7 +499,7 @@ if ($result && $action == "dl" && !$error) {
 		$zip->addFromString('transactions.csv', $log);
 		$zip->close();
 
-		///Then download the zipped file.
+		// Then download the zipped file.
 		header('Content-Type: application/zip');
 		header('Content-disposition: attachment; filename='.basename($zipname));
 		header('Content-Length: '.filesize($zipname));

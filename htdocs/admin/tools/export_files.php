@@ -138,7 +138,23 @@ $dirtocompress = basename($fulldirtocompress);
 if ($compression == 'zip') {
 	$file .= '.zip';
 	$excludefiles = '/(\.back|\.old|\.log|[\/\\\]temp[\/\\\]|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
-	$ret = dol_compress_dir($fulldirtocompress, $outputdir."/".$file, $compression, $excludefiles);
+
+	//var_dump($fulldirtocompress);
+	//var_dump($outputdir."/".$file);exit;
+
+	$rootdirinzip = '';
+	if ($export_type == 'externalmodule' && !empty($what)) {
+		$rootdirinzip = $what;
+
+		global $dolibarr_allow_download_external_modules;
+		if (empty($dolibarr_allow_download_external_modules)) {
+			print 'Download of external modules is not allowed by $dolibarr_allow_download_external_modules in conf.php file';
+			$db->close();
+			exit();
+		}
+	}
+
+	$ret = dol_compress_dir($fulldirtocompress, $outputdir."/".$file, $compression, $excludefiles, $rootdirinzip);
 	if ($ret < 0) {
 		if ($ret == -2) {
 			$langs->load("errors");
@@ -183,17 +199,37 @@ if ($compression == 'zip') {
 			unlink($outputdir."/".$file);
 		}
 	}
-}
-
-if ($errormsg) {
-	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 } else {
-	setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
+	$errormsg = 'Bad value for compression method';
+	print $errormsg;
 }
 
-$db->close();
+if ($export_type != 'externalmodule' || empty($what)) {
+	if ($errormsg) {
+		setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
+	} else {
+		setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
+	}
 
-// Redirect to calling page
-$returnto = 'dolibarr_export.php';
+	$db->close();
 
-header("Location: ".$returnto);
+	// Redirect to calling page
+	$returnto = 'dolibarr_export.php';
+
+	header("Location: ".$returnto);
+	exit();
+} else {
+	$zipname = $outputdir."/".$file;
+
+	// Then download the zipped file.
+	header('Content-Type: application/zip');
+	header('Content-disposition: attachment; filename='.basename($zipname));
+	header('Content-Length: '.filesize($zipname));
+	readfile($zipname);
+
+	dol_delete_file($zipname);
+
+	$db->close();
+
+	exit();
+}
