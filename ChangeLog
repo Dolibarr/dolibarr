@@ -105,6 +105,7 @@ NEW: Use an ajax call for the clicktodial feature instead of href link.
 NEW: when multiple order linked to facture, show list into note.
 NEW: when we delete several objects with massaction, if somes object has child we must see which objects are concerned and nevertheless delete objects which can be deleted
 NEW: Editing a page in website module keep old page with name .back
+NEW: External backups can be downloaded from the "About info page".
 
 
 For developers:
@@ -140,6 +141,8 @@ Following changes may create regressions for some external modules, but were nec
 * The method static ActionComm::getActions($db, ...) is no more static. Use $actioncomm->getActions(...) instead (without $db param). 
 * The 'action=delete&file=...' has been replaced with 'action=deletefile&file=...' to avoid confusion with deletion of object lines.
 * Method getDictvalue has been renamed into getDictionaryValue to match camel case rule.
+* To execute shell or command line command, your code must never use method like exec, shell_exec, popen, .. but must use the built-in 
+  method executeCLI() available into core/class/utils.class.php  
 
 
 
@@ -614,7 +617,8 @@ Following changes may create regressions for some external modules, but were nec
 * Removed deprecated substitution key  __REFCLIENT__  (replaced with __REF_CLIENT__)
 * Removed constant MAIN_COUNTRIES_IN_EEC. You can now set if country is in Europe or not from the dictionary of countries.
 * v14 seems to work correctly on PHP v8 but it generates a lot of verbose warnings. Currently, v14 i snot yet officialy supported with PHP 8.
-
+* To execute shell or command line command, your code must never use method like exec, shell_exec, popen, .. but must use the built-in 
+  method executeCLI() available into core/class/utils.class.php  
 
 
 ***** ChangeLog for 13.0.5 compared to 13.0.4 *****

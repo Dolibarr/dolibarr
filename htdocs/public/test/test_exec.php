@@ -62,11 +62,26 @@ if ($dolibarr_main_prod) {
  * View
  */
 
-print 'session_status='.session_status().' (after main.inc.php)';
-print '<br>';
+echo "Test<br>\n";
+$out='';
+$ret=0;
 
-//print 'a'.$_SESSION['disablemodules'].'b';
+$file = '/tmp/aaa';
+$f=fopen($file, 'r');
+if ($f) {
+	$s=fread($f, 4096);
+	print $s;
+	fclose($f);
+} else {
+	print "Failed to open file ".$file."<br>\n";
+}
 
-print "\n<br>This page is visible. It means you are not locked by another page called in same session.";
+exec('cat /aaa; ls /dev/std*; sleep 1;', $out, $ret);
+print $ret."<br>\n";
+print_r($out);
 
-//session_write_close();
+$ret = 0;
+$out = null;
+exec('/usr/bin/clamdscan --fdpass filethatdoesnotexists.php', $out, $ret);
+print $ret."<br>\n";
+print_r($out);

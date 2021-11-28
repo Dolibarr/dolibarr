@@ -543,14 +543,13 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Return list of amount by type id
+	 *  Return the array of all amounts per membership type id
 	 *
 	 *  @param	int		$status			Filter on status of type
-	 *  @return array					List of types of members
+	 *  @return array					Array of membership type
 	 */
 	public function amountByType($status = null)
 	{
-
 		global $conf, $langs;
 
 		$amountbytype = array();
@@ -578,6 +577,7 @@ class AdherentType extends CommonObject
 		} else {
 			print $this->db->error();
 		}
+
 		return $amountbytype;
 	}
 

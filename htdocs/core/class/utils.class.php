@@ -636,7 +636,6 @@ class Utils
 			$execmethod = 1;
 		}
 		//$execmethod=1;
-
 		dol_syslog("Utils::executeCLI execmethod=".$execmethod." system:".$command, LOG_DEBUG);
 		$output_arr = array();
 
