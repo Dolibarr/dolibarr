@@ -225,6 +225,9 @@ if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {
 if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
+if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
+	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTExpenseReport'));
+}
 if (!empty($conf->agenda->enabled)) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
