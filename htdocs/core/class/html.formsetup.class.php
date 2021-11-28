@@ -80,12 +80,6 @@ class FormSetup
 
 
 	/**
-	 * the value of action attribute of form
-	 * @var string
-	 */
-	public $formAction;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
