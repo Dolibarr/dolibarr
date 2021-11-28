@@ -835,7 +835,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
 
-				// We should also exclude non expected attributes
+				// We should also exclude non expected HTML attributes and clean content of some attributes.
 				if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
 					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
 					$out = trim(dol_string_onlythesehtmlattributes($out));
@@ -6476,9 +6476,27 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		if (is_object($dom)) {
 			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
 				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
-					// Delete attribute if not into allowed_attributes
-					if (! empty($attrs->item($ii)->name) && ! in_array($attrs->item($ii)->name, $allowed_attributes)) {
-						$els->item($i)->removeAttribute($attrs->item($ii)->name);
+					//var_dump($attrs->item($ii));
+					if (! empty($attrs->item($ii)->name)) {
+						// Delete attribute if not into allowed_attributes
+						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+							$els->item($i)->removeAttribute($attrs->item($ii)->name);
+						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+							$valuetoclean = $attrs->item($ii)->value;
+
+							do {
+								$oldvaluetoclean = $valuetoclean;
+								$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
+								$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
+								if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
+									$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
+									$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
+									$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+								}
+							} while ($oldvaluetoclean != $valuetoclean);
+
+							$attrs->item($ii)->value = $valuetoclean;
+						}
 					}
 				}
 			}
