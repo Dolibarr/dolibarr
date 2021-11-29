@@ -1033,14 +1033,14 @@ if ($id) {
 		}
 
 		// Classify 'paid'
-		// If at least one payment was already done ($object->amount - $resteapayer >  0) or if amount is negative, we allow to classify as paid.
-		if ($object->paye == 0 && ((($object->amount - $resteapayer) > 0 && $object->amount > 0) || ($object->amount <= 0)) && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
+		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
+		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $user->rights->salaries->write) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
 		if ($user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 		}
 
 		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {
