@@ -389,8 +389,10 @@ foreach ($demoprofiles as $profilearray) {
 					print '<!-- id='.$val->numero.' -->';
 					print '<div class="nowrap">';
 					print '<input type="checkbox" class="checkbox valignmiddle paddingright" id="id'.$modulekeyname.'" name="'.$modulekeyname.'" value="1" title="'.dol_escape_htmltag($val->getName()).'"';
+					$disabled = '';
 					if (in_array($modulekeyname, $alwaysuncheckedmodules)) {
-						print ' disabled';
+						$disabled = 'disabled';
+						print ' '.$disabled;
 					}
 					if (!in_array($modulekeyname, $alwaysuncheckedmodules) && (!in_array($modulekeyname, $listofdisabledmodules) || in_array($modulekeyname, $alwayscheckedmodules))) {
 						print ' checked';
@@ -403,7 +405,7 @@ foreach ($demoprofiles as $profilearray) {
 					} else {
 						print img_picto('', 'generic', 'class="pictofixedwidth paddingleft"');
 					}*/
-					print '<label for="id'.$modulekeyname.'" class="inline-block demomaxoveflow valignmiddle paddingleft" title="'.dol_escape_htmltag($val->getName()).'">'.$val->getName().'</label><br>';
+					print '<label for="id'.$modulekeyname.'" class="inline-block demomaxoveflow valignmiddle paddingleft'.($disabled ? ' opacitymedium' : '').'" title="'.dol_escape_htmltag($val->getName()).'">'.$val->getName().'</label><br>';
 					print '</div>';
 					//if ($modulo == ($nbcolsmod - 1)) print '</tr>';
 					$j++;
