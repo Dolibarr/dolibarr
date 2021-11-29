@@ -284,7 +284,8 @@ class Dolistore
 				$download_link .= '<br><br><a target="_blank" href="'.urlencode($this->shop_url.$product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
 			}
 
-			//checking versions
+			// Set and check version
+			$version = '';
 			if ($this->version_compare($product->dolibarr_min, DOL_VERSION) <= 0) {
 				if ($this->version_compare($product->dolibarr_max, DOL_VERSION) >= 0) {
 					//compatible
@@ -319,14 +320,21 @@ class Dolistore
 			//.'<br><a class="inline-block valignmiddle" target="_blank" href="'.$this->shop_url.$product->id.'"><span class="details button">'.$langs->trans("SeeInMarkerPlace").'</span></a>
 
 			//output template
-			$html .= '<tr class="app oddeven '.dol_escape_htmltag($compatible).'">
-                <td class="center" width="210"><div class="newAppParent">'.dol_escape_htmltag($newapp.$images).'</div></td>
-                <td class="margeCote"><h2 class="appTitle">'.dol_escape_htmltag($product->name->language[$this->lang - 1])
-						.'<br><small>'.dol_escape_htmltag($version).'</small></h2>
-                    <small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.dol_escape_htmltag($product->reference).' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product->id).'</small><br><br>'.dol_escape_htmltag($product->description_short->language[$this->lang - 1]).'</td>';
+			$html .= '<tr class="app oddeven '.dol_escape_htmltag($compatible).'">';
+			$html .= '<td class="center" width="210"><div class="newAppParent">';
+			$html .= $newapp.$images;	// No dol_escape_htmltag, it is already escape html
+			$html .= '</div></td>';
+			$html .= '<td class="margeCote"><h2 class="appTitle">';
+			$html .= dol_escape_htmltag($product->name->language[$this->lang - 1]);
+			$html .= '<br><small>';
+			$html .= $version;			// No dol_escape_htmltag, it is already escape html
+			$html .= '</small></h2>';
+			$html .= '<small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.dol_escape_htmltag($product->reference).' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product->id).'</small><br><br>'.dol_escape_htmltag($product->description_short->language[$this->lang - 1]).'</td>';
 			// do not load if display none
 			//$html .= '<td style="display:none;" class="long_description">'.$product->description->language[$this->lang - 1].'</td>';
-			$html .= '<td class="margeCote center">'.dol_escape_htmltag($price).'</td>';
+			$html .= '<td class="margeCote center">';
+			$html .= $price;
+			$html .= '</td>';
 			$html .= '<td class="margeCote">'.$download_link.'</td>';
 			$html .= '</tr>';
 		}

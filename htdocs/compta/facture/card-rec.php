@@ -1066,7 +1066,7 @@ if ($action == 'create') {
 
 		// Autogeneration
 		$title = $langs->trans("Recurrence");
-		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$title, '', '');
+		print load_fiche_titre(img_picto('', 'recurring', 'class="pictofixedwidth"').$title, '', '');
 
 		print dol_get_fiche_head(null, '', '', 0);
 
@@ -1457,7 +1457,7 @@ if ($action == 'create') {
 
 		print '<table class="border centpercent tableforfield">';
 
-		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
+		print '<tr><td colspan="2">'.img_picto('', 'recurring', 'class="pictofixedwidth"').$title.'</td></tr>';
 
 		// if "frequency" is empty or = 0, the reccurence is disabled
 		print '<tr><td style="width: 50%">';
