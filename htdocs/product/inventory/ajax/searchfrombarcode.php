@@ -50,8 +50,6 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 require '../../../main.inc.php';
-//include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
-$object = new Inventory($db);
 
 
 $action = GETPOST("action", "alpha");
@@ -87,12 +85,11 @@ if ($action == "existbarcode" && !empty($barcode)) {
 		} else {
 			$response = array('status'=>'success','message'=>'Warehouse found','warehouse'=>$warehouseid);
 		}
-		$response = json_encode($response);
 	} else {
-		$response = "No results found for barcode";
+		$response = array('status'=>'error','errorcode'=>'NotFound','message'=>"No results found for barcode");
 	}
 } else {
-	$response = "Error on action";
+	$response = array('status'=>'error','errorcode'=>'ActionError','message'=>"Error on action");
 }
-
+$response = json_encode($response);
 echo $response;
