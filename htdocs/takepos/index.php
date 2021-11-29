@@ -134,7 +134,7 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
 }
 ?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
-<script language="javascript">
+<script type="text/javascript">
 <?php
 $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 

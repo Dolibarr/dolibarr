@@ -385,7 +385,7 @@ print "<br><br>\n";
  * Edit parameters
  */
 if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
 			document.form_index.action.value="updateedit";

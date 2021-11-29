@@ -2250,7 +2250,7 @@ if ($action == 'create') {
 						}
 
 						print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
-						print '<script language="javascript">'."\n";
+						print '<script type="text/javascript">'."\n";
 						print '$(document).ready(function() {
         				        $( ".auploadnewfilenow" ).click(function() {
         				            jQuery(".truploadnewfilenow").toggle();
@@ -2405,7 +2405,7 @@ if ($action == 'create') {
 				}
 
 				print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
-				print '<script language="javascript">'."\n";
+				print '<script type="text/javascript">'."\n";
 				print '$(document).ready(function() {
 				        $( ".auploadnewfilenow" ).click(function() {
 							console.log("We click on toggle of auploadnewfilenow");

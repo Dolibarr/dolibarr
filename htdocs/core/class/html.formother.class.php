@@ -1194,7 +1194,7 @@ class FormOther
 
 		// Javascript code for dynamic actions
 		if (!empty($conf->use_javascript_ajax)) {
-			$selectboxlist .= '<script type="text/javascript" language="javascript">
+			$selectboxlist .= '<script type="text/javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
