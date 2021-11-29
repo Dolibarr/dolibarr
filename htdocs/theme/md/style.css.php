@@ -2676,7 +2676,7 @@ a.tmenuimage:focus {
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 14px;
+	font-size: 1.2em;
 	vertical-align: middle;
 }
 .login_table_title {
