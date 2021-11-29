@@ -3421,7 +3421,7 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 2px 4px 2px 4px;
+	padding: 4px 4px 4px 4px;
 	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
