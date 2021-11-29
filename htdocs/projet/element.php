@@ -1016,6 +1016,9 @@ foreach ($listofreferent as $key => $value) {
 			}
 		}
 
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
+
+
 		if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, !empty($project_field) ? $project_field : 'fk_projet');
 			if ($selectList < 0) {
@@ -1045,6 +1048,30 @@ foreach ($listofreferent as $key => $value) {
 				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
 			$addform .= '<div>';
+		}
+		if (is_array($elementarray) && !count($elementarray) > 0 && $key == "order_supplier") {
+			$addform = '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
+						 <span id="textBtnShow" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("CanceledShown").'</span><span id="minus-circle" class="fa fa-eye valignmiddle paddingleft"></span>
+						 </a>
+						 <script>
+						 $("#btnShow").on("click", function () {
+							console.log("We click to show or hide the canceled lines");
+							var attr = $(this).attr("data-canceledarehidden");
+							if (typeof attr !== "undefined" && attr !== false) {
+								console.log("Show canceled");
+								$(".tr_canceled").show();
+								$("#textBtnShow").text("'.dol_escape_js($langs->trans("CanceledShown")).'");
+								$("#btnShow").removeAttr("data-canceledarehidden");
+								$("#minus-circle").removeClass("fa-eye-slash").addClass("fa-eye");
+							} else {
+								console.log("Hide canceled");
+								$(".tr_canceled").hide();
+								$("#textBtnShow").text("'.dol_escape_js($langs->trans("CanceledHidden")).'");
+								$("#btnShow").attr("data-canceledarehidden", 1);
+								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
+							}
+						 });
+						 </script></div> '.$addform;
 		}
 
 		print load_fiche_titre($langs->trans($title), $addform, '');
@@ -1113,7 +1140,6 @@ foreach ($listofreferent as $key => $value) {
 		}
 		print '</tr>';
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
@@ -1168,9 +1194,16 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->close_code) && $element->close_code == 'replaced') {
 						$qualifiedfortotal = false; // Replacement invoice, do not include into total
 					}
+				} elseif ($key == 'order_supplier' && $element->status == 7) {
+					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				print '<tr class="oddeven">';
+				if ($key == "order_supplier" && $element->status == 7) {
+					print '<tr class="oddeven tr_canceled" style=display:none>';
+				} else {
+					print '<tr class="oddeven" >';
+				}
+
 
 				// Remove link
 				print '<td style="width: 24px">';

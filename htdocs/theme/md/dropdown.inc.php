@@ -370,7 +370,9 @@ a.top-menu-dropdown-link {
 	content: "\f0da";
 	color: rgba(0,0,0,0.3);
 }
-
+.multicompany-item::before {
+	content: none !important;
+}
 
 .dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;

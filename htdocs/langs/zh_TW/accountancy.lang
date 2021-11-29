@@ -37,8 +37,8 @@ OtherInfo=其他資訊
 DeleteCptCategory=從群組移除會計帳戶
 ConfirmDeleteCptCategory=您確定要從會計帳戶組中刪除此會計帳戶嗎？
 JournalizationInLedgerStatus=日誌狀態
-AlreadyInGeneralLedger=已經轉移到會計日記帳和分類帳中
-NotYetInGeneralLedger=尚未轉移到結帳日記帳和分類帳中
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=群組是空的，檢查個人化會計群組的設定
 DetailByAccount=依帳戶顯示細節
 AccountWithNonZeroValues=非零值的帳戶
@@ -274,7 +274,7 @@ DescVentilSupplier=請在此處查詢綁定或尚未綁定到產品會計帳戶�
 DescVentilDoneSupplier=請在此處查詢供應商發票行及其會計帳戶的清單
 DescVentilTodoExpenseReport=關聯費用報表行數還沒準備好要關聯費用會計項目
 DescVentilExpenseReport=在此查閱費用報表行數是否關聯到費用會計項目的清單
-DescVentilExpenseReportMore=如果您在費用報告類型上設定會計帳戶，則應用程序將能夠在費用報告和會計科目表的會計帳戶之間進行所有綁定，只需點擊按鈕<strong>“ %s”即可</strong> 。如果未在費用字典中設定帳戶，或者您仍有某些行未綁定到任何帳戶，則必須從選單“ <strong>%s</strong> ”進行手動綁定。
+DescVentilExpenseReportMore=如果您在費用報表類型上設定會計帳戶，則應用程序將能夠在費用報表和會計科目表的會計帳戶之間進行所有綁定，只需點擊按鈕<strong>“ %s”即可</strong> 。如果未在費用字典中設定帳戶，或者您仍有某些行未綁定到任何帳戶，則必須從選單“ <strong>%s</strong> ”進行手動綁定。
 DescVentilDoneExpenseReport=在此查閱費用報表的清單及其費用會計項目。
 
 Closure=年度關閉
@@ -298,7 +298,7 @@ NoNewRecordSaved=沒有交易可記錄
 ListOfProductsWithoutAccountingAccount=清單中的產品沒有指定任何會計項目
 ChangeBinding=修改關聯性
 Accounted=計入總帳
-NotYetAccounted=Not yet accounted in the ledger
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=顯示教程
 NotReconciled=未對帳
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=匯出日記帳草稿
 Modelcsv=匯出模式
@@ -343,7 +343,7 @@ Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=匯出為Quadratus QuadraCompta
 Modelcsv_ebp=匯出為EBP
 Modelcsv_cogilog=匯出為Cogilog
-Modelcsv_agiris=匯出到Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=LD Compta（v9）（測試）匯出
 Modelcsv_LDCompta10=LD Compta用之匯出（v10及更高版本）
 Modelcsv_openconcerto=匯出為OpenConcerto（測試）
@@ -351,9 +351,10 @@ Modelcsv_configurable=匯出為可設置CSV
 Modelcsv_FEC=匯出為FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=匯出為Sage 50 Switzerland
-Modelcsv_winfic=匯出Winfic-eWinfic-WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=會計項目表ID
 
 ## Tools - Init accounting account on product / service

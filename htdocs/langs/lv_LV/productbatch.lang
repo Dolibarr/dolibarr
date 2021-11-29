@@ -37,7 +37,8 @@ ManufacturingDate=Ražošanas datums
 DestructionDate=Iznīcināšanas datums
 FirstUseDate=Pirmās lietošanas datums
 QCFrequency=Kvalitātes kontroles biežums (dienās)
-
+ShowAllLots=Rādīt visas partijas
+HideLots=Slēpt daudz
 #Traceability - qc status
 OutOfOrder=Nedarbojas
 InWorkingOrder=Darba kārtībā

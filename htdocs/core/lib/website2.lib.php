@@ -523,7 +523,7 @@ function showWebsiteTemplates(Website $website)
 	print '</th>';
 	print '<th class="right">';
 	$url = 'https://www.dolistore.com/43-web-site-templates';
-	print '<a href="'.$url.'" target="_blank">';
+	print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
 	print $langs->trans('DownloadMoreSkins');
 	print '</a>';
 	print '</th></tr>';

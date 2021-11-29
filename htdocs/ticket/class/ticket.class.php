@@ -492,6 +492,13 @@ class Ticket extends CommonObject
 				}
 			}
 
+			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
+				// add creator as contributor
+				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
+					$error++;
+				}
+			}
+
 			//Update extrafield
 			if (!$error) {
 				$result = $this->insertExtraFields();

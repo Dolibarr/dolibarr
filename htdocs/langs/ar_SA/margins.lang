@@ -22,7 +22,7 @@ ProductService=المنتج أو الخدمة
 AllProducts=جميع المنتجات والخدمات
 ChooseProduct/Service=اختيار المنتج أو الخدمة
 ForceBuyingPriceIfNull=فرض سعر  شراء / تكلفة إلى سعر البيع إذا لم يتم تحديدها
-ForceBuyingPriceIfNullDetails=إذا لم يتم تحديد سعر / تكلفة الشراء عند إضافة بند جديد، وتم "تشغيل" هذا الخيار ، فإن الهامش على البند المضاف سيكون صفراَ (سعر /لتكلفة الشراء  = سعر البيع). إذا تم  "إيقاف" هذا الخيار(مستحسن)، فإن الهامش يساوي القيمة الاولية المقترحة (وربما تكون 100% إذا لم توجد قيمة اولية).
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=طريقة الهامش للخصومات العالمية
 UseDiscountAsProduct=كمنتج
 UseDiscountAsService=كخدمة

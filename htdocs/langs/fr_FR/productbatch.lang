@@ -37,8 +37,8 @@ ManufacturingDate=Date de fabrication
 DestructionDate=Date de destruction
 FirstUseDate=Date de première mise en service
 QCFrequency=Fréquence du contrôle qualité (en jours)
-ShowAllLots=Show all lots
-HideLots=Hide lots
+ShowAllLots=Afficher tous les lots
+HideLots=Masquer les lots
 #Traceability - qc status
 OutOfOrder=Hors d'usage
 InWorkingOrder=En état de marche

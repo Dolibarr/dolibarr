@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Direktni ispis
-Module64000Desc=Omogući sistem direktnog ispisa
-PrintingSetup=Podešavanje sistema direktnog ispisa
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer without needing to open the document in another application.
-MenuDirectPrinting=Zadaci direktnog ispisa
-DirectPrint=Direktni ispis
+Module64000Name=One click Printing
+Module64000Desc=Enable One click Printing System
+PrintingSetup=Setup of One click Printing System
+PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
+MenuDirectPrinting=One click Printing jobs
+DirectPrint=One click Print
 PrintingDriverDesc=Configuration variables for printing driver.
 ListDrivers=Popis upravljačkih programa
 PrintTestDesc=Popis pisača.

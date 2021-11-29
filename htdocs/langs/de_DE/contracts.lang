@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - contracts
-ContractsArea=Übersicht Verträge / Abonnements
+ContractsArea=Übersicht Verträge/Abonnements
 ListOfContracts=Liste der Verträge
 AllContracts=Alle Verträge
 ContractCard=Vertrag - Übersicht
@@ -36,7 +36,7 @@ CloseAContract=Schließen eines Vertrages
 ConfirmDeleteAContract=Möchten Sie diesen Vertrag und alle verbundenen Dienste wirklich löschen?
 ConfirmValidateContract=Möchten Sie diesen Vertrag wirklich unter dem Namen <b>%s</b> freigeben?
 ConfirmActivateAllOnContract=Dies wird alle Dienstleistungen aktivieren (Die noch nicht aktiv sind). Sollen wirklich alle Dienstleistungen aktiviert werden?
-ConfirmCloseContract=Die beendet alle Dienstleistungen (aktiv oder nicht). Wollen Sie diesen Vertrag deaktivieren ?
+ConfirmCloseContract=Es werden alle Leistungen geschlossen (auch laufende). Möchten Sie diesen Vertrag wirklich schließen?
 ConfirmCloseService=Möchten Sie diesen Service wirklich mit Datum <b>%s</b> deaktivieren?
 ValidateAContract=Einen Vertrag freigeben
 ActivateService=Service aktivieren
@@ -78,7 +78,7 @@ DeleteContractLine=Vertragsposition löschen
 ConfirmDeleteContractLine=Möchten Sie diese Position wirklich löschen?
 MoveToAnotherContract=In einen anderen Vertrag verschieben
 ConfirmMoveToAnotherContract=Haben Sie einen neuen Vertrag für das Verschieben gewählt und möchten Sie diesen Vorgang jetzt durchführen.
-ConfirmMoveToAnotherContractQuestion=Auswählen, in welchen bestehenden Vertrag (oder Partner) diese Dienstleistung verschoben werden soll !
+ConfirmMoveToAnotherContractQuestion=Auswählen, in welchen bestehenden Vertrag (desselben Geschäftspartners) diese Dienstleistung verschoben werden soll !
 PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
 ExpiredSince=Abgelaufen seit
 NoExpiredServices=Keine abgelaufen aktiven Dienste
