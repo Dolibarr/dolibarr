@@ -1500,9 +1500,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		}
 		$ref_prodserv = '<b>'.$ref_prodserv.'</b>';
 		// $prefix_prodserv and $ref_prodser are not HTML var
-	} 
+	}
 	$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
-	
+
 	// Add an additional description for the category products
 	if (!empty($conf->global->CATEGORY_ADD_DESC_INTO_DOC) && $idprod && !empty($conf->categorie->enabled)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
