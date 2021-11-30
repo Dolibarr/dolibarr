@@ -1363,7 +1363,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		// Description short of product line
 		$libelleproduitservice = $label;
 		if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
-			if (!dol_textishtml($libelleproduitservice)){
+			if (!dol_textishtml($libelleproduitservice)) {
 				$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
 			}
 			$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
@@ -1495,7 +1495,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	if (!empty($ref_prodserv) && !empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) {
-		if (!dol_textishtml($libelleproduitservice)){
+		if (!dol_textishtml($libelleproduitservice)) {
 			$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
 		}
 		$ref_prodserv = '<b>'.$ref_prodserv.'</b>';
@@ -1533,7 +1533,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
 		if (!empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) {
-			if (!dol_textishtml($libelleproduitservice)){
+			if (!dol_textishtml($libelleproduitservice)) {
 				$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
 			}
 			$libelleproduitservice .= '<br><b style="color:#333666;" ><em>'.$period.'</em></b>';
