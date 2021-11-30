@@ -227,7 +227,12 @@ function PrintCategories(first) {
 			continue;
 		}
 		$("#catdivdesc"+i).show();
-		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
+		<?php
+		if ($conf->global->TAKEPOS_SHOW_CATEGORY_DESCRIPTION == 1) { ?>
+			$("#catdesc"+i).html(categories[parseInt(i)+parseInt(first)]['label'].bold() + ' - ' + ['description']);
+		<?php } else { ?>
+			$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
+		<?php }	?>
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).attr('class', 'wrapper');
@@ -261,7 +266,12 @@ function MoreCategories(moreorless) {
 			continue;
 		}
 		$("#catdivdesc"+i).show();
-		$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
+		<?php
+		if ($conf->global->TAKEPOS_SHOW_CATEGORY_DESCRIPTION == 1) { ?>
+			$("#catdesc"+i).html(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label'].bold() + ' - ' + categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['description']);
+		<?php } else { ?>
+			$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
+		<?php } ?>
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
