@@ -224,7 +224,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-$stringtoshow = '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();

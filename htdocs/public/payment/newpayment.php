@@ -2311,7 +2311,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
 
 			// Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
-			print '<script type="text/javascript" language="javascript">'."\n";
+			print '<script type="text/javascript">'."\n";
 
 			if (!empty($conf->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$amountstripe = $amount;

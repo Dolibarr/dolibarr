@@ -134,7 +134,7 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
 }
 ?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
-<script language="javascript">
+<script type="text/javascript">
 <?php
 $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
@@ -789,7 +789,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=LIQ", function() {
 	});
 }
 

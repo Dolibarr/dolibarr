@@ -1050,7 +1050,7 @@ print "\n".'</form>';
 print "\n";
 
 // Add js code to manage click on a box
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".onclickopenref").click(function() {
 		var ref=$(this).attr(\'ref\');

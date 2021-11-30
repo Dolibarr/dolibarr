@@ -160,7 +160,7 @@ if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_
 	            	</script>';
 
 	// This ajax service is called only when a directory $selecteddir is opened but not when closed.
-	//print '<script language="javascript">';
+	//print '<script type="text/javascript">';
 	//print "loadandshowpreview('".dol_escape_js($selecteddir)."');";
 	//print '</script>';
 }
