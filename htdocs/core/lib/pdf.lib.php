@@ -1363,6 +1363,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		// Description short of product line
 		$libelleproduitservice = $label;
 		if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
+			// Adding <b> may convert the original string into a HTML string. Sowe have to first
+			// convert \n into <br> we text is not already HTML.
 			if (!dol_textishtml($libelleproduitservice)) {
 				$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
 			}
@@ -1377,7 +1379,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
 			$tmparrayofsubproducts = reset($prodser->sousprods);
 			foreach ($tmparrayofsubproducts as $subprodval) {
-				$libelleproduitservice .= "__N__ * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')';
+				$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')');
 			}
 		}
 	}
@@ -1421,7 +1423,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				}
 				if (empty($hidedesc)) {
 					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST)) {
-						$libelleproduitservice = $desc."__N__".$libelleproduitservice;
+						$libelleproduitservice = dol_concatdesc($desc, $libelleproduitservice);
 					} else {
 						if (!empty($conf->global->HIDE_LABEL_VARIANT_PDF) && $prodser->isVariant()) {
 							$libelleproduitservice = $desc;
