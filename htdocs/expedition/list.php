@@ -211,6 +211,39 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+// If massaction is close
+if ($massaction == 'classifyclose')
+{
+	$error=0;
+	$selectids = GETPOST('toselect', 'array');
+	foreach ($selectids as $selectid)
+	{
+	//	$object->fetch($selectid);
+		$object->fetch($selectid);
+		$result = $object->setClosed();
+
+	}
+
+	$massaction = $action = 'classifyclose';				
+
+	if ($result < 0)
+	{
+		$error++;
+	}
+
+
+	if (!$error)
+	{
+		$db->commit();
+
+		setEventMessage($langs->trans("Close Done"));
+		header('Location: '.$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		$db->rollback();
+		exit;
+	}
+}
 
 /*
  * View
@@ -473,7 +506,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $arrayofmassactions = array(
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	//'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
+	'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if (in_array($massaction, array('presend'))) {
