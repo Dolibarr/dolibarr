@@ -1048,13 +1048,19 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertFalse($verifcond, 'Test a false comparison');
 
 		$verifcond=verifCond('$conf->facture->enabled');
-		$this->assertTrue($verifcond, 'Test that conf property of a module report true when enabled');
+		$this->assertTrue($verifcond, 'Test that the conf property of a module reports true when enabled');
 
 		$verifcond=verifCond('$conf->moduledummy->enabled');
-		$this->assertFalse($verifcond, 'Test that conf property of a module report false when disabled');
+		$this->assertFalse($verifcond, 'Test that the conf property of a module reports false when disabled');
+
+		$verifcond=verifCond(0);
+		$this->assertFalse($verifcond, 'Test that verifConf(0) return False');
+
+		$verifcond=verifCond("0");
+		$this->assertFalse($verifcond, 'Test that verifConf("0") return False');
 
 		$verifcond=verifCond('');
-		$this->assertTrue($verifcond);
+		$this->assertTrue($verifcond, 'Test that verifConf("") return False (special case)');
 	}
 
 	/**

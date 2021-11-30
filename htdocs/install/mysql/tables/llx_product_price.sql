@@ -48,7 +48,7 @@ create table llx_product_price
   import_key 		varchar(14),
   
   fk_multicurrency		integer,
-  multicurrency_code	varchar(255),
+  multicurrency_code	varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_price	double(24,8) DEFAULT NULL,
   multicurrency_price_ttc	double(24,8) DEFAULT NULL

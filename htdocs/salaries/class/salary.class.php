@@ -367,7 +367,7 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Employee"));
 			return -4;
 		}
-		if ($this->amount < 0 || $this->amount == '') {
+		if ($this->amount == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}

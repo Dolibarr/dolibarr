@@ -348,7 +348,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Add realtime total information
 		if (!empty($conf->use_javascript_ajax)) {
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print '$(document).ready(function () {
             			setPaiementCode();
 

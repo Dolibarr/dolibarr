@@ -196,21 +196,21 @@ class modHRM extends DolibarrModules
 		$r = 0;
 
 		// Skill / Job / Position
-		$this->rights[$r][0] = 4010; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4001; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->all->read)
 		$r++;
 
-		$this->rights[$r][0] = 4011; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4002; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->all->write)
 		$r++;
 
-		$this->rights[$r][0] = 4012; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4003; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
@@ -226,7 +226,7 @@ class modHRM extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 4021; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify your own evaluation'; // Permission label
+		$this->rights[$r][1] = 'Create/modify your evaluation'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->write)
@@ -240,7 +240,7 @@ class modHRM extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 4023; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete all evaluations'; // Permission label
+		$this->rights[$r][1] = 'Delete evaluations'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->delete)

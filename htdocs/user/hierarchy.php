@@ -217,7 +217,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 }
 
 //
-/*print '<script type="text/javascript" language="javascript">
+/*print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	function init_myfunc()
 	{

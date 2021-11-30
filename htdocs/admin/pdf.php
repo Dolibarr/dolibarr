@@ -170,6 +170,13 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('PDF_BOLD_PRODUCT_LABEL')) {
+		dolibarr_set_const($db, "PDF_BOLD_PRODUCT_LABEL", GETPOST('PDF_BOLD_PRODUCT_LABEL', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('PDF_BOLD_PRODUCT_REF_AND_PERIOD')) {
+		dolibarr_set_const($db, "PDF_BOLD_PRODUCT_REF_AND_PERIOD", GETPOST('PDF_BOLD_PRODUCT_REF_AND_PERIOD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -496,6 +503,22 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_REF');
 } else {
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF : 0, 1);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_BOLD_PRODUCT_LABEL');
+} else {
+	print $form->selectyesno('PDF_BOLD_PRODUCT_LABEL', (!empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) ? $conf->global->PDF_BOLD_PRODUCT_LABEL : 0, 1);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_BOLD_PRODUCT_REF_AND_PERIOD');
+} else {
+	print $form->selectyesno('PDF_BOLD_PRODUCT_REF_AND_PERIOD', (!empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) ? $conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD : 0, 1);
 }
 print '</td></tr>';
 
