@@ -142,7 +142,7 @@ $linkback = '';
 print load_fiche_titre($langs->trans('ExportOptions'), $linkback, 'accountancy');
 
 
-print "\n".'<script type="text/javascript" language="javascript">'."\n";
+print "\n".'<script type="text/javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
 print '    function initfields()'."\n";
 print '    {'."\n";

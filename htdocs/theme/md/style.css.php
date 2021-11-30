@@ -1444,6 +1444,10 @@ table[summary="list_of_modules"] .fa-cog {
 	min-width: 100px;
 }
 
+.linkedcol-date {
+	text-align: center;
+}
+
 .img-skinthumb {
 	width: 160px;
 	height: 100px;
