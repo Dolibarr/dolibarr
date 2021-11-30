@@ -335,7 +335,11 @@ function LoadProducts(position, issubcat) {
 				var titlestring = <?php echo $titlestring; ?>;
 				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
 					echo '$("#prodivdesc"+ishow).show();';
-					echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
+					if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) {
+						echo '$("#prodesc"+ishow).html(data[parseInt(idata)][\'ref\'].bold() + \' - \' + data[parseInt(idata)][\'label\']);';
+					} else {
+						echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
+					}
 					echo '$("#proimg"+ishow).attr("title", titlestring);';
 					echo '$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata][\'id\']);';
 				} else {
@@ -401,7 +405,12 @@ function MoreProducts(moreorless) {
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
 				$("#prodivdesc"+ishow).show();
-				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				<?php
+				if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) { ?>
+					$("#prodesc"+ishow).html(data[parseInt(idata)]['ref'].bold() + ' - ' + data[parseInt(idata)]['label']);
+				<?php } else { ?>
+					$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				<?php } ?>
 				$("#probutton"+ishow).text(data[parseInt(idata)]['label']);
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
@@ -579,7 +588,12 @@ function Search2(keyCodeForEnter) {
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
 					?>
 					var titlestring = <?php echo $titlestring; ?>;
-					$("#prodesc" + i).text(data[i]['label']);
+					<?php
+				if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) { ?>
+					$("#prodesc" + i).html(data[i]['ref'].bold() + ' - ' + data[i]['label']);
+					<?php } else { ?>
+						$("#prodesc" + i).text(data[i]['label']);
+					<?php } ?>
 					$("#prodivdesc" + i).show();
 					$("#probutton" + i).text(data[i]['label']);
 					$("#probutton" + i).show();
