@@ -222,7 +222,7 @@ if (empty($conf->use_javascript_ajax)) {
 	// Add env of ckeditor
 	// This is to show how CKEditor detect browser to understand why editor is disabled or not. To help debug.
 	/*
-		print '<br><script language="javascript">
+		print '<br><script type="text/javascript">
 		function jsdump(obj, id) {
 			var out = \'\';
 			for (var i in obj) {

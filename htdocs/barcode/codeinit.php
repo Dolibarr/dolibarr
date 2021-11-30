@@ -224,7 +224,7 @@ if ($conf->societe->enabled) {
 // For products
 if ($conf->product->enabled || $conf->product->service) {
 	// Example 1 : Adding jquery code
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
 	function confirm_erase() {
 		return confirm("'.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'");
 	}
