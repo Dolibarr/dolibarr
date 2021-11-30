@@ -8159,9 +8159,9 @@ function verifCond($strToEvaluate)
 	global $leftmenu;
 	global $rights; // To export to dol_eval function
 
-	//print $strRights."<br>\n";
+	//print $strToEvaluate."<br>\n";
 	$rights = true;
-	if ($strToEvaluate !== '') {
+	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		$str = 'if(!('.$strToEvaluate.')) { $rights = false; }';
 		dol_eval($str); // The dol_eval must contains all the global $xxx used into a condition
 	}
