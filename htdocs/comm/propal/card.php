@@ -1701,7 +1701,7 @@ if ($action == 'create') {
 	// Delivery date (or manufacturing)
 	print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
 	print '<td>';
-	if (!empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) {
+	if (isset($conf->global->DATE_LIVRAISON_WEEK_DELAY) && is_numeric($conf->global->DATE_LIVRAISON_WEEK_DELAY)) {
 		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
