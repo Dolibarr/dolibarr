@@ -568,7 +568,7 @@ if (empty($reshook)) {
 			if ($ret > 0) {
 				$log_action = $langs->trans('TicketInitialMessageModified')." \n";
 				// include the Diff class
-				dol_include_once('/ticket/class/utils_diff.class.php');
+				dol_include_once('/core/class/utils_diff.class.php');
 				// output the result of comparing two files as plain text
 				$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
