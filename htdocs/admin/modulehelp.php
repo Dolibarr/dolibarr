@@ -262,6 +262,11 @@ if ($ip) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
 	$text .= $ip;
 }
+$lastactivationversion = $tmp['lastactivationversion'];
+if ($lastactivationversion) {
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
+	$text .= $lastactivationversion;
+}
 
 $moreinfo = $text;
 
