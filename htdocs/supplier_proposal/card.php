@@ -1249,7 +1249,7 @@ if ($action == 'create') {
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {
-		// Currency Get From Supplier 
+		// Currency Get From Supplier
 		if (!empty($societe->multicurrency_code)) {
 			$currency_code = $societe->multicurrency_code;
 		}
