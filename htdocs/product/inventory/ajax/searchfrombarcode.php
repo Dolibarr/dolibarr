@@ -21,7 +21,10 @@
  */
 
 if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
 }
 if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
@@ -35,32 +38,28 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
-// Do not check anti CSRF attack test
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', '1');
-}
-// If there is no need to load and show top and left menu
-if (!defined("NOLOGIN")) {
-	define("NOLOGIN", '1');
-}
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
-if (!defined('NOBROWSERNOTIF')) {
-	define('NOBROWSERNOTIF', '1');
-}
 require '../../../main.inc.php';
-
+require_once DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php";
+$warehouse = new Entrepot($db);
 
 $action = GETPOST("action", "alpha");
 $barcode = GETPOST("barcode", "aZ09");
 $product = GETPOST("product");
 $response = "";
+
 $fk_entrepot = GETPOST("fk_entrepot", "int");
+$fk_inventory = GETPOST("fk_inventory", "int");
+$fk_product = GETPOST("fk_product", "int");
+$reelqty = GETPOST("reelqty", "int");
+$qtyview = GETPOST("Qty", "int");
+$batch = GETPOST("batch","int");
+
 $warehousefound = 0;
 $warehouseid = 0;
+$objectreturn = array();
+
 if ($action == "existbarcode" && !empty($barcode)) {
-	$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode";
+	$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode,ps.reel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 	$sql .= " WHERE p.barcode = '".$db->escape($barcode)."'";
 	if (!empty($fk_entrepot)) {
@@ -68,13 +67,18 @@ if ($action == "existbarcode" && !empty($barcode)) {
 	}
 	$result = $db->query($sql);
 	if ($result) {
-		$nbline = $db->num_rows($resql);
+		$nbline = $db->num_rows($result);
 		for ($i=0; $i < $nbline; $i++) {
-			$object = $db->fetch_object($resql);
+			$object = $db->fetch_object($result);
 			if ($barcode == $object->barcode) {
-				if (!empty($object->fk_entrepot) && $product["Warehouse"] == $object->fk_entrepot) {
+				$warehouse->fetch(0,$product["Warehouse"]);
+				if (!empty($object->fk_entrepot) && $warehouse->id == $object->fk_entrepot) {
 					$warehousefound++;
 					$warehouseid = $object->fk_entrepot;
+					$fk_product = $object->fk_product;
+					$reelqty = $object->reel;
+
+					$objectreturn = array('fk_warehouse'=>$warehouseid,'fk_product'=>$fk_product,'reelqty'=>$reelqty);
 				}
 			}
 		}
@@ -83,7 +87,7 @@ if ($action == "existbarcode" && !empty($barcode)) {
 		} elseif ($warehousefound > 1) {
 			$response = array('status'=>'error','errorcode'=>'TooManyWarehouse','message'=>'Too many warehouse found');
 		} else {
-			$response = array('status'=>'success','message'=>'Warehouse found','warehouse'=>$warehouseid);
+			$response = array('status'=>'success','message'=>'Warehouse found','object'=>$objectreturn);
 		}
 	} else {
 		$response = array('status'=>'error','errorcode'=>'NotFound','message'=>"No results found for barcode");
@@ -91,5 +95,30 @@ if ($action == "existbarcode" && !empty($barcode)) {
 } else {
 	$response = array('status'=>'error','errorcode'=>'ActionError','message'=>"Error on action");
 }
+
+if ($action == "addnewlineproduct") {
+	require_once DOL_DOCUMENT_ROOT."/product/inventory/class/inventory.class.php";
+	$inventoryline = new InventoryLine($db);
+	if (!empty($fk_inventory)) {
+		$inventoryline->fk_inventory = $fk_inventory;
+
+		$inventoryline->fk_warehouse = $fk_entrepot;
+		$inventoryline->fk_product = $fk_product;
+		$inventoryline->qty_stock = $reelqty;
+		$inventoryline->qty_view = $qtyview;
+		$inventoryline->batch = $batch;
+		$inventoryline->datec = dol_now();
+
+		$result = $inventoryline->create($user);
+		if ($result > 0) {
+			$response = array('status'=>'success','message'=>'Success on creating line');
+		}else {
+			$response = array('status'=>'error','errorcode'=>'ErrorCreation','message'=>"Error on line creation");
+		}
+	}else {
+		$response = array('status'=>'error','errorcode'=>'NoIdForInventory','message'=>"No id for inventory");
+	}
+}
+
 $response = json_encode($response);
 echo $response;
