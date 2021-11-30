@@ -52,7 +52,7 @@ $fk_inventory = GETPOST("fk_inventory", "int");
 $fk_product = GETPOST("fk_product", "int");
 $reelqty = GETPOST("reelqty", "int");
 $qtyview = GETPOST("Qty", "int");
-$batch = GETPOST("batch","int");
+$batch = GETPOST("batch", "int");
 
 $warehousefound = 0;
 $warehouseid = 0;
@@ -71,7 +71,7 @@ if ($action == "existbarcode" && !empty($barcode)) {
 		for ($i=0; $i < $nbline; $i++) {
 			$object = $db->fetch_object($result);
 			if ($barcode == $object->barcode) {
-				$warehouse->fetch(0,$product["Warehouse"]);
+				$warehouse->fetch(0, $product["Warehouse"]);
 				if (!empty($object->fk_entrepot) && $warehouse->id == $object->fk_entrepot) {
 					$warehousefound++;
 					$warehouseid = $object->fk_entrepot;
@@ -112,10 +112,10 @@ if ($action == "addnewlineproduct") {
 		$result = $inventoryline->create($user);
 		if ($result > 0) {
 			$response = array('status'=>'success','message'=>'Success on creating line');
-		}else {
+		} else {
 			$response = array('status'=>'error','errorcode'=>'ErrorCreation','message'=>"Error on line creation");
 		}
-	}else {
+	} else {
 		$response = array('status'=>'error','errorcode'=>'NoIdForInventory','message'=>"No id for inventory");
 	}
 }
