@@ -74,6 +74,7 @@ if ($mine) {
 	$search_task_user = $user->id;
 	$mine = 0;
 }
+$type = GETPOST('type');
 
 $search_date_startday = GETPOST('search_date_startday', 'int');
 $search_date_startmonth = GETPOST('search_date_startmonth', 'int');

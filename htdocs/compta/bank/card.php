@@ -343,7 +343,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
 	if ($conf->use_javascript_ajax) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print 'jQuery(document).ready(function () {
                     jQuery("#selecttype").change(function() {
                         document.formsoc.action.value="create";
@@ -831,7 +831,7 @@ if ($action == 'create') {
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {
                         jQuery("#selecttype").change(function() {
                             document.formsoc.action.value="edit";

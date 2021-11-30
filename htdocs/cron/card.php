@@ -263,7 +263,7 @@ if ($action == 'create') {
 }
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print 'jQuery(document).ready(function () {
                     function initfields()
                     {

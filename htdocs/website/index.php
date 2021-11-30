@@ -2367,7 +2367,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 							}
 							if ($tmpshortlangcode != $shortlangcode) {
 								$xhtmllink = $domtree->createElement('xhtml:link', '');
-								$xhtmllink->setAttribute("rel", "alternante");
+								$xhtmllink->setAttribute("rel", "alternate");
 								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
 								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php'));
 								$url->appendChild($xhtmllink);
@@ -2646,7 +2646,7 @@ if (!GETPOST('hide_websitemenu')) {
 		$out .= ajax_combobox('website');
 
 		if (!empty($conf->use_javascript_ajax)) {
-			$out .= '<script language="javascript">';
+			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '	jQuery("#website").change(function () {';
 			$out .= '   	console.log("We select "+jQuery("#website option:selected").val());';
@@ -2826,7 +2826,7 @@ if (!GETPOST('hide_websitemenu')) {
 				$urltocreatenewpage = $_SERVER["PHP_SELF"].'?action=createcontainer&website='.$website->ref;
 
 				if (!empty($conf->use_javascript_ajax)) {
-					$out .= '<script language="javascript">';
+					$out .= '<script type="text/javascript">';
 					$out .= 'jQuery(document).ready(function () {';
 					$out .= '	jQuery("#pageid").change(function () {';
 					$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
@@ -3144,7 +3144,7 @@ if (!GETPOST('hide_websitemenu')) {
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone') {
 			// Adding jquery code to change on the fly url of preview ext
 			if (!empty($conf->use_javascript_ajax)) {
-				print '<script type="text/javascript" language="javascript">
+				print '<script type="text/javascript">
                     jQuery(document).ready(function() {
                 		jQuery("#websiteinputurl").keyup(function() {
                             console.log("Website external url modified "+jQuery("#previewsiteurl").val());
@@ -3984,7 +3984,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	}
 
 	if ($action == 'createcontainer') {
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 			jQuery(document).ready(function() {
 				var disableautofillofalias = 0;
 				jQuery("#WEBSITE_TITLE").keyup(function() {

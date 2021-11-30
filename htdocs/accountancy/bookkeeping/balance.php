@@ -241,7 +241,7 @@ if ($action != 'export_csv') {
 	if (empty($reshook)) {
 		$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			jQuery("#exportcsvbutton").click(function() {
 				event.preventDefault();
