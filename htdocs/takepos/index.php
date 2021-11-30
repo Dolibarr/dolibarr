@@ -589,7 +589,7 @@ function Search2(keyCodeForEnter) {
 					?>
 					var titlestring = <?php echo $titlestring; ?>;
 					<?php
-				if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) { ?>
+					if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) { ?>
 					$("#prodesc" + i).html(data[i]['ref'].bold() + ' - ' + data[i]['label']);
 					<?php } else { ?>
 						$("#prodesc" + i).text(data[i]['label']);
