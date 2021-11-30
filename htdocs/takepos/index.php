@@ -300,7 +300,11 @@ function LoadProducts(position, issubcat) {
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent) {
 			$("#prodivdesc"+ishow).show();
-			$("#prodesc"+ishow).text(val.label);
+			<?php if ($conf->global->TAKEPOS_SHOW_CATEGORY_DESCRIPTION == 1) { ?>
+				$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
+			<?php } else { ?>
+				$("#prodesc"+ishow).text(val.label);
+			<?php } ?>
 			$("#probutton"+ishow).text(val.label);
 			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
