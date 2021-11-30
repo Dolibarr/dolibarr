@@ -1249,6 +1249,10 @@ if ($action == 'create') {
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {
+		// Currency Get From Supplier 
+		if (!empty($societe->multicurrency_code)) {
+			$currency_code = $societe->multicurrency_code;
+		}
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
