@@ -52,7 +52,7 @@ if ($user->socid) {
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+		$object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
 }
 
 $result = restrictedArea($user, 'facture', $object->id);
