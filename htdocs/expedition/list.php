@@ -212,28 +212,23 @@ if (empty($reshook)) {
 }
 
 // If massaction is close
-if ($massaction == 'classifyclose')
-{
+if ($massaction == 'classifyclose') {
 	$error=0;
 	$selectids = GETPOST('toselect', 'array');
-	foreach ($selectids as $selectid)
-	{
-	//	$object->fetch($selectid);
+	foreach ($selectids as $selectid) {
+		//	$object->fetch($selectid);
 		$object->fetch($selectid);
 		$result = $object->setClosed();
-
 	}
 
-	$massaction = $action = 'classifyclose';				
+	$massaction = $action = 'classifyclose';
 
-	if ($result < 0)
-	{
+	if ($result < 0) {
 		$error++;
 	}
 
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 
 		setEventMessage($langs->trans("Close Done"));
