@@ -172,9 +172,10 @@ class Products extends DolibarrApi
 	 * @param  bool   $ids_only   			Return only IDs of product instead of all properties (faster, above all if list is long)
 	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
 	 * @param  bool   $pagination_data   	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param  int    $includestockdata		Load also information about stock (slower)
 	 * @return array                		Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0)
 	{
 		global $db, $conf;
 
@@ -249,6 +250,21 @@ class Products extends DolibarrApi
 				if (!$ids_only) {
 					$product_static = new Product($this->db);
 					if ($product_static->fetch($obj->rowid)) {
+						if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
+							$product_static->load_stock();
+
+							if (is_array($product_static->stock_warehouse)) {
+								foreach ($product_static->stock_warehouse as $keytmp => $valtmp) {
+									if (is_array($product_static->stock_warehouse[$keytmp]->detail_batch)) {
+										foreach ($product_static->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
+											unset($product_static->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
+										}
+									}
+								}
+							}
+						}
+
+
 						$obj_ret[] = $this->_cleanObjectDatas($product_static);
 					}
 				} else {
@@ -1948,6 +1964,7 @@ class Products extends DolibarrApi
 		if (empty(DolibarrApiAccess::$user->rights->stock->lire)) {
 			unset($object->stock_reel);
 			unset($object->stock_theorique);
+			unset($object->stock_warehouse);
 		}
 
 		return $object;
