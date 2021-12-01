@@ -59,7 +59,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("StatisticsOfReceptions"), '', 'dollyrevert');
 
-
+$dir = (!empty($conf->reception->multidir_temp[$conf->entity]) ? $conf->reception->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
 
 $stats = new ReceptionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
@@ -78,6 +78,7 @@ if (empty($user->rights->societe->client->voir) || $user->socid) {
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
+$fileurlnb = '';
 if (!$mesg) {
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
