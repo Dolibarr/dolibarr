@@ -417,7 +417,7 @@ print '</tr>';
 
 // Show bugtrack link
 print '<tr class="oddeven"><td>'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
-print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="'.(empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK).'">';
+print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="'.(empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? 'github' : $conf->global->MAIN_BUGTRACK_ENABLELINK).'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
