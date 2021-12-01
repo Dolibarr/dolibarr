@@ -957,7 +957,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$tmp = json_decode($obj->note, true);
 			}
 			if ($obj) {
-				return array('authorid'=>$tmp['authorid'], 'ip'=>$tmp['ip'], 'lastactivationdate'=>$this->db->jdate($obj->tms));
+				return array(
+					'authorid' => $tmp['authorid'],
+					'ip' => $tmp['ip'],
+					'lastactivationdate' => $this->db->jdate($obj->tms),
+					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
+				);
 			}
 		}
 
@@ -991,7 +996,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err++;
 		}
 
-		$note = json_encode(array('authorid'=>(is_object($user) ? $user->id : 0), 'ip'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR'])));
+		$note = json_encode(
+			array(
+				'authorid' => (is_object($user) ? $user->id : 0),
+				'ip' => (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']),
+				'lastactivationversion' => $this->version,
+			)
+		);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, value, visible, entity, note) VALUES";
 		$sql .= " (".$this->db->encrypt($this->const_name);

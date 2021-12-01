@@ -1194,7 +1194,7 @@ class FormOther
 
 		// Javascript code for dynamic actions
 		if (!empty($conf->use_javascript_ajax)) {
-			$selectboxlist .= '<script type="text/javascript" language="javascript">
+			$selectboxlist .= '<script type="text/javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
@@ -1381,12 +1381,13 @@ class FormOther
 
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || $selected == $obj->$keyfield) {
-						print '<option value="'.$obj->$keyfield.'" selected>';
+					if ($selected == $obj->rowid || $selected == $obj->{$keyfield}) {
+						print '<option value="'.$obj->{$keyfield}.'" selected>';
 					} else {
-						print '<option value="'.$obj->$keyfield.'">';
+						print '<option value="'.$obj->{$keyfield}.'">';
 					}
-					print $obj->$labelfield;
+					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != ($dictionarytable.$obj->{$labelfield}) ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
+					print $label;
 					print '</option>';
 					$i++;
 				}
