@@ -183,13 +183,7 @@ function showDirectPublicLink($object)
  */
 function generate_random_id($car = 16)
 {
-	$string = "";
-	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	srand((double) microtime() * 1000000);
-	for ($i = 0; $i < $car; $i++) {
-		$string .= $chaine[rand() % strlen($chaine)];
-	}
-	return $string;
+	return substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyz', mt_rand(1, $car))), 1, $car);
 }
 
 /**
