@@ -51,8 +51,9 @@ $fk_entrepot = GETPOST("fk_entrepot", "int");
 $fk_inventory = GETPOST("fk_inventory", "int");
 $fk_product = GETPOST("fk_product", "int");
 $reelqty = GETPOST("reelqty", "int");
-$qtyview = GETPOST("Qty", "int");
+$qtyview = GETPOST("qty", "int");
 $batch = GETPOST("batch", "int");
+$mode = GETPOST("mode", "aZ");
 
 $warehousefound = 0;
 $warehouseid = 0;
@@ -106,7 +107,9 @@ if ($action == "addnewlineproduct") {
 		$inventoryline->fk_product = $fk_product;
 		$inventoryline->qty_stock = $reelqty;
 		$inventoryline->qty_view = $qtyview;
-		$inventoryline->batch = $batch;
+		if ($mode == "lotserial") {
+			$inventoryline->batch = $batch;
+		}
 		$inventoryline->datec = dol_now();
 
 		$result = $inventoryline->create($user);

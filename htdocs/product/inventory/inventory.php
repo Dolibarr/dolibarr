@@ -548,8 +548,8 @@ if ($object->id > 0) {
 				var barcodeproductqty = $("input[name=barcodeproductqty]").val();
 				var textarea = $("textarea[name=barcodelist]").val();
 				var textarray = textarea.split("\n");
+				var tabproduct = [];
 				if(textarray[0] != ""){
-					var tabproduct = [];
 					$(".expectedqty").each(function(){
 						id = this.id;
 						warehouse = $("#"+id+"_warehouse").children().first().text();
@@ -579,7 +579,7 @@ if ($object->id > 0) {
 								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"barcode",true);
 								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial",true);
 								break;
-							case "barcodeforproduct": //TODO: create product !exist + ajout
+							case "barcodeforproduct":
 								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"barcode");
 								break;
 							case "barcodeforlotserial":
@@ -595,7 +595,7 @@ if ($object->id > 0) {
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
 							if(product.hasOwnProperty("reelqty")){
 								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "action":"addnewlineproduct","fk_entrepot":product.Warehouse,"batch":Batch,"fk_inventory":'.dol_escape_js($object->id).',"fk_product":product.fk_product,"reelqty":product.reelqty,"qty":product.Qty},
+									data: { "action":"addnewlineproduct","fk_entrepot":product.Warehouse,"batch":product.Batch,"fk_inventory":'.dol_escape_js($object->id).',"fk_product":product.fk_product,"reelqty":product.reelqty,"qty":product.Qty},
 									type: \'POST\',
 									async: false,
 									success: function(response) {
@@ -666,10 +666,8 @@ if ($object->id > 0) {
 					}
 				})
 				if(BarcodeIsInProduct==0 && newproductrow){
-					//addproduct to tabproduct
-					tabproduct.push({\'Id\':tabproduct.length-1,\'Warehouse\':newproductrow.fk_warehouse,\'Barcode\':element,\'Batch\':"",\'Qty\':1,\'fetched\':true,\'reelqty\':object.reelqty});
+					tabproduct.push({\'Id\':tabproduct.length-1,\'Warehouse\':newproductrow.fk_warehouse,\'Barcode\':element,\'Batch\':element,\'Qty\':barcodeproductqty,\'fetched\':true,\'reelqty\':newproductrow.reelqty,\'fk_product\':newproductrow.fk_product,\'mode\':mode});
 				}
-				return tabproduct;
 			}
 			';
 			print '</script>';
