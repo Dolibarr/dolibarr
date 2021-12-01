@@ -39,6 +39,7 @@ $langs->loadLangs(array("orders", "receptions"));
 $reception = new Reception($db);
 
 // Security check
+$socid = '';
 if ($user->socid) {
 	$socid = $user->socid;
 }
