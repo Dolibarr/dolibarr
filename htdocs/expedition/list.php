@@ -771,6 +771,7 @@ print "</tr>\n";
 $typenArray = $formcompany->typent_array(1);
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 

@@ -1141,6 +1141,7 @@ $arrayofuniqueproduct = array();
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 
@@ -1301,9 +1302,6 @@ while ($i < min($num, $limit)) {
 	}
 	print '</td>';
 	if (!$i) {
-		if (!isset($totalarray['nbfield'])) {
-			$totalarray['nbfield'] = 0;
-		}
 		$totalarray['nbfield']++;
 	}
 

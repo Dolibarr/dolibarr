@@ -196,6 +196,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $title = $langs->trans("ListOfWarehouses");
 
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -622,9 +623,6 @@ while ($i < min($num, $limit)) {
 			}
 			print '</td>';
 			if (!$i) {
-				if (!isset($totalarray['nbfield'])) {
-					$totalarray['nbfield'] = 0;
-				}
 				$totalarray['nbfield']++;
 			}
 			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
