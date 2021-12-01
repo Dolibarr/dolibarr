@@ -229,7 +229,7 @@ function PrintCategories(first) {
 		$("#catdivdesc"+i).show();
 		<?php
 		if ($conf->global->TAKEPOS_SHOW_CATEGORY_DESCRIPTION == 1) { ?>
-			$("#catdesc"+i).html(categories[parseInt(i)+parseInt(first)]['label'].bold() + ' - ' + ['description']);
+			$("#catdesc"+i).html(categories[parseInt(i)+parseInt(first)]['label'].bold() + ' - ' + categories[parseInt(i)+parseInt(first)]['description']);
 		<?php } else { ?>
 			$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
 		<?php }	?>
