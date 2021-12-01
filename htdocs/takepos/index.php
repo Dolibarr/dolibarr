@@ -1186,12 +1186,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 
 	<div class="row2<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		print 'withhead';
-					} ?>"
-					<?php
-					if ($conf->global->TAKEPOS_NO_CATEGORY == 1) {
-						print '';
-					}
-					?>>
+					} ?>">
 
 		<!--  Show categories -->
 		<?php
