@@ -1098,6 +1098,7 @@ if (empty($reshook)) {
 			$arrayoffiles = GETPOST('attachfile', 'array');
 			if (is_array($arrayoffiles) && !empty($arrayoffiles[0])) {
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+				$entityprefix = ($conf->entity != '1') ? $conf->entity.'/' : '';
 				$relativepath = 'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
 				$ecmfiles = new EcmFiles($db);
 				$ecmfiles->fetch(0, '', $relativepath);
