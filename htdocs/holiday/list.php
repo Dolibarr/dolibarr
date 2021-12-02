@@ -890,14 +890,15 @@ if ($resql) {
 			$i++;
 		}
 
+		// Add a line for total if there is a total to show
 		if (!empty($arrayfields['duration']['checked'])) {
-			print '<tr class="liste_titre">';
+			print '<tr class="total">';
 			foreach ($arrayfields as $key => $val) {
 				if (!empty($val['checked'])) {
 					if ($key == 'duration') {
 						print '<td class="right">'.$totalduration.' '.$langs->trans('DurationDays').'</td>';
 					} else {
-						print '<td/>';
+						print '<td></td>';
 					}
 				}
 			}
