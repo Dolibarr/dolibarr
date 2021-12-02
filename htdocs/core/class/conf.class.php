@@ -167,15 +167,16 @@ class Conf
 	 * Load setup values into conf object (read llx_const) for a specified entity
 	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
 	 *
+	 * @param	DoliDB	$db			Database handler
 	 * @param	int		$entity		Entity to get
 	 * @return	int					< 0 if KO, >= 0 if OK
 	 */
-	public function setEntityValues($entity)
+	public function setEntityValues($db, $entity)
 	{
 		if ($this->entity != $entity) {
 			// If we ask to reload setup for a new entity
 			$this->entity = $entity;
-			return $this->setValues($this->db);
+			return $this->setValues($db);
 		}
 
 		return 0;
