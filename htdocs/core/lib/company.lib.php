@@ -1323,6 +1323,145 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	return $i;
 }
 
+/**
+ * 		Show html area for list of contacts projects
+ *
+ *		@param	Conf		$conf			Object conf
+ * 		@param	Translate	$langs			Object langs
+ * 		@param	DoliDB		$db				Database handler
+ * 		@param	Object		$object			Third party object
+ *      @return	int                         1 if OK, -1 if KO
+ */
+function show_contacts_projects($conf, $langs, $db, $object) {
+	global $user;
+
+	$i = -1;
+
+	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+		$langs->load("projects");
+
+		print "\n";
+		print load_fiche_titre($langs->trans("ProjectsDedicatedToThirdPartyContact"), '', '');
+		print '<div class="div-table-responsive">';
+		print "\n".'<table class="noborder" width=100%>';
+
+		$sql  = "SELECT t.rowid, t.lastname";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields AS ef";
+		$sql .= " ON (t.rowid = ef.fk_object)";
+		$sql .= " WHERE t.fk_soc =" . $object->id;
+		$sql .= " AND t.statut = 1";
+
+		$result = $db->query($sql);
+
+		// third Party contact
+		if ($result) {
+			$num = $db->num_rows($result);
+
+			if ($num > 0) {
+				$contactsByThirdParty = array();
+				while ($obj = $db->fetch_object($result)) {
+					array_push($contactsByThirdParty, $obj);
+				}
+
+				$arrayIdContact = array();
+				foreach ($contactsByThirdParty as $contactId) {
+					array_push($arrayIdContact, $contactId->rowid);
+				}
+
+				// Projects contacts
+				if (count($arrayIdContact) > 0) {
+					$sql  = "SELECT pp.rowid as id, pp.ref, pp.title, t.lastname AS lastname, t.rowid as socid, pp.dateo, pp.datee";
+					$sql .= " FROM ".MAIN_DB_PREFIX."projet pp, ".MAIN_DB_PREFIX."c_type_contact tc, ".MAIN_DB_PREFIX."element_contact ec";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople t ON ec.fk_socpeople = t.rowid";
+					$sql .= " WHERE ec.fk_c_type_contact = tc.rowid";
+					$sql .= " AND ec.element_id = pp.rowid";
+					$sql .= " AND pp.entity IN (".getEntity('project').")";
+					$sql .= " AND t.rowid IN (";
+					foreach ($arrayIdContact as $key => $id) {
+						if ($key !== array_key_last($arrayIdContact))
+							$sql .= $id . ", ";
+
+						else if ($key === array_key_last($arrayIdContact))
+							$sql .= $id . ")";
+					}
+					$sql .= " AND t.entity IN(1) AND tc.source != 'internal' ;";
+					$result = $db->query($sql);
+				}
+			}
+		}
+
+		if ($result) {
+			$num = $db->num_rows($result);
+
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Ref").'</td>';
+			print '<td>'.$langs->trans("Name").'</td>';
+			print '<td>'.$langs->trans("Contacts").'</td>';
+			print '<td class="center">'.$langs->trans("DateStart").'</td>';
+			print '<td class="center">'.$langs->trans("DateEnd").'</td>';
+			print '</tr>';
+
+			if ($num > 0) {
+
+				$contactsProjects = array();
+				while ($obj = $db->fetch_object($result)) {
+					array_push($contactsProjects, $obj);
+				}
+
+				$arrayProject = array();
+				foreach ($contactsProjects as $contactId) {
+					$arrayProject[$contactId->id] = $contactId;
+				}
+
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+				$projecttmp = new Project($db);
+				$contact = new Contact($db);
+
+				foreach ($arrayProject as $element) {
+					$projecttmp->fetch($element->id);
+					$contact->fetch($element->socid);
+
+					// To verify role of users
+					$userAccess = $projecttmp->restrictedProjectArea($user);
+
+					if ($user->rights->projet->lire && $userAccess > 0) {
+						print '<tr class="oddeven">';
+
+						// Ref
+						print '<td>';
+						print $projecttmp->getNomUrl(1);
+						print '</td>';
+
+						// Label
+						print '<td>'.$element->title.'</td>';
+						// Contact
+						print '<td>'. $contact->getNomUrl(1, '', 16) . '</td>';
+						// Date start
+						print '<td class="center">'.dol_print_date($db->jdate($element->dateo), "day").'</td>';
+						// Date end
+						print '<td class="center">'.dol_print_date($db->jdate($element->datee), "day").'</td>';
+					}
+
+					$i = 0;
+				}
+			} else {
+				print '<tr class="oddeven"><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			}
+			$db->free($result);
+		} else {
+			dol_print_error($db);
+		}
+		print "</table>";
+		print '</div>';
+
+		print "<br>\n";
+	}
+
+	return $i;
+}
+
 
 /**
  *    	Show html area with actions to do

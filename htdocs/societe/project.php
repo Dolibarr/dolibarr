@@ -143,6 +143,9 @@ if ($socid) {
 
 	// Projects list
 	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
+
+	// Projects list of contacts
+	$result = show_contacts_projects($conf, $langs, $db, $object);
 }
 
 // End of page
