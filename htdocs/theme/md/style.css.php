@@ -4642,6 +4642,25 @@ div.ui-tooltip.mytooltip {
 	/*background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);*/
 	line-height: 1.6em;
+	min-width: 550px;
+}
+@media only screen and (max-width: 768px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 400px;
+	}
+}
+@media only screen and (max-width: 480px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 300px;
+	}
+}
+@media only screen and (max-width: 320px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 230px;
+	}
 }
 
 

@@ -83,7 +83,6 @@ class Notify
 		'ACTION_CREATE'
 	);
 
-
 	/**
 	 *	Constructor
 	 *
@@ -92,6 +91,7 @@ class Notify
 	public function __construct($db)
 	{
 		$this->db = $db;
+		$this->arrayofnotifsupported = self::$arrayofnotifsupported;
 	}
 
 
@@ -437,10 +437,10 @@ class Notify
 					$notifcodedefid = $obj->adid;
 					$trackid = '';
 					if ($obj->type_target == 'tocontactid') {
-						$trackid = 'con'.$obj->id;
+						$trackid = 'con'.$obj->cid;
 					}
 					if ($obj->type_target == 'touserid') {
-						$trackid = 'use'.$obj->id;
+						$trackid = 'use'.$obj->cid;
 					}
 
 					if (dol_strlen($obj->email)) {
