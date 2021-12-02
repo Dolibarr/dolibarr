@@ -91,7 +91,6 @@ class Notify
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->arrayofnotifsupported = self::$arrayofnotifsupported;
 	}
 
 
@@ -346,7 +345,7 @@ class Notify
 		global $dolibarr_main_url_root;
 		global $action;
 
-		if (!in_array($notifcode, $this->arrayofnotifsupported)) {
+		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
 			return 0;
 		}
 
