@@ -1443,7 +1443,6 @@ function show_contacts_projects($conf, $langs, $db, $object) {
 						// Date end
 						print '<td class="center">'.dol_print_date($db->jdate($element->datee), "day").'</td>';
 					}
-
 					$i = 0;
 				}
 			} else {
