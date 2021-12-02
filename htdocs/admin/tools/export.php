@@ -189,15 +189,16 @@ if ($what == 'mysql')
         $ok=0;
         dol_syslog("Run command ".$fullcommandcrypted);
         $handlein = popen($fullcommandclear, 'r');
-        while (!feof($handlein))
-        {
-            $read = fgets($handlein);
-            fwrite($handle,$read);
-            if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
-            elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
+        if ($handlein) {
+	        while (!feof($handlein))
+	        {
+	            $read = fgets($handlein);
+	            fwrite($handle,$read);
+	            if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
+	            elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
+	        }
+	        pclose($handlein);
         }
-        pclose($handlein);
-
         if ($compression == 'none') fclose($handle);
         if ($compression == 'gz')   gzclose($handle);
         if ($compression == 'bz')   bzclose($handle);
