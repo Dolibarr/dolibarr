@@ -84,6 +84,7 @@ if ($action=="split") {
 		$db->query($sql);
 	} elseif ($split==0) { // Unsplit line
 		$invoice = new Facture($db);
+		if ($place=="SPLIT") $place="0"; // Avoid move line to the same place (from SPLIT to SPLIT place)
 		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 		if ($ret > 0) {
 			$placeid = $invoice->id;
