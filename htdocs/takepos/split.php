@@ -137,7 +137,7 @@ if ($invoiceid > 0) {
 	}
 }
 
-$arrayofcss = array('/takepos/css/pos.css.php', '/takepos/css/split.css.php');
+$arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs = array();
 
 $head = '';
