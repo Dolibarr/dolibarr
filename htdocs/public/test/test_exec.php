@@ -78,7 +78,7 @@ if ($f) {
 
 print '<br><br>'."\n";
 
-exec('cat /test.txt; ls /dev/std*; id; sleep 1;', $out, $ret);
+exec('cat /test.txt; ls /dev/std*; sleep 1;', $out, $ret);
 print $ret."<br>\n";
 print_r($out);
 
