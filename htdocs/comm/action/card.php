@@ -1075,7 +1075,7 @@ if ($action == 'create') {
 		print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 		print '</div>';
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{
@@ -1554,7 +1554,7 @@ if ($id > 0) {
 			print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 			print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 			print '</div>';
-			print '<script type="text/javascript" language="javascript">
+			print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{

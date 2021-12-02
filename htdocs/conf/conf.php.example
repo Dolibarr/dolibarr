@@ -331,6 +331,12 @@ $dolibarr_cron_allow_cli='0';
 // Examples:
 // $dolibarr_strict_mode=0;
 
+// dolibarr_allow_download_external_modules
+// Provide a link to download the zip of an external modules installed into custom directory from the web admin.
+// Default value: 0
+// Examples:
+// $dolibarr_allow_download_external_modules=0;
+
 
 
 //#################################

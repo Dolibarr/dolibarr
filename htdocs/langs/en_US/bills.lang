@@ -280,6 +280,7 @@ SetMode=Set Payment Type
 SetRevenuStamp=Set revenue stamp
 Billed=Billed
 RecurringInvoices=Recurring invoices
+RecurringInvoice=Recurring invoice
 RepeatableInvoice=Template invoice
 RepeatableInvoices=Template invoices
 Repeatable=Template

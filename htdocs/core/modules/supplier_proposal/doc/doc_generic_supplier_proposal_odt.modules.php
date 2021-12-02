@@ -211,7 +211,9 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 

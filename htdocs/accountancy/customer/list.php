@@ -738,7 +738,7 @@ if ($db->type == 'mysqli') {
 }
 
 // Add code to auto check the box when we select an account
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".codeventil").change(function() {
 		var s=$(this).attr("id").replace("codeventil", "")

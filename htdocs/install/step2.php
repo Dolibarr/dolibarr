@@ -154,8 +154,8 @@ if ($action == "set") {
 
 	/**************************************************************************************
 	 *
-	 * Chargement fichiers tables/*.sql (non *.key.sql)
-	 * A faire avant les fichiers *.key.sql
+	 * Load files tables/*.sql (not the *.key.sql). Files with '-xxx' in name are excluded (they will be loaded during activation o fmodule 'xxx').
+	 * To do before the files *.key.sql
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createtables) {
@@ -169,7 +169,7 @@ if ($action == "set") {
 		$tabledata = array();
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && !preg_match('/\.key\.sql$/i', $file)) {
+				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && !preg_match('/\.key\.sql$/i', $file) && !preg_match('/\-/', $file)) {
 					$tablefound++;
 					$tabledata[] = $file;
 				}
@@ -252,8 +252,8 @@ if ($action == "set") {
 
 	/***************************************************************************************
 	 *
-	 * Chargement fichiers tables/*.key.sql
-	 * A faire apres les fichiers *.sql
+	 * Load files tables/*.key.sql. Files with '-xxx' in name are excluded (they will be loaded during activation o fmodule 'xxx').
+	 * To do after the files *.sql
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createkeys) {
@@ -267,7 +267,7 @@ if ($action == "set") {
 		$tabledata = array();
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && preg_match('/\.key\.sql$/i', $file)) {
+				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && preg_match('/\.key\.sql$/i', $file) && !preg_match('/\-/', $file)) {
 					$tablefound++;
 					$tabledata[] = $file;
 				}
@@ -372,7 +372,7 @@ if ($action == "set") {
 
 	/***************************************************************************************
 	 *
-	 * Chargement fichier functions.sql
+	 * Lod the file 'functions.sql'
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createfunctions) {
@@ -449,7 +449,7 @@ if ($action == "set") {
 
 	/***************************************************************************************
 	 *
-	 * Load files data/*.sql
+	 * Load files data/*.sql. Files with '-xxx' in name are excluded (they will be loaded during activation o fmodule 'xxx').
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createdata) {
@@ -463,7 +463,7 @@ if ($action == "set") {
 		$tabledata = array();
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file)) {
+				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && !preg_match('/\-/', $file)) {
 					if (preg_match('/^llx_accounting_account_/', $file)) {
 						continue; // We discard data file of chart of account. Will be loaded when a chart is selected.
 					}

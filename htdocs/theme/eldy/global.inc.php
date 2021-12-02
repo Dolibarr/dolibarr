@@ -486,7 +486,11 @@ input:-webkit-autofill {
 input:-moz-placeholder { color: #ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
-fieldset { border: 1px solid #AAAAAA !important; }
+fieldset {
+	border: 1px solid #AAAAAA !important;
+	padding-inline-start: 2em;
+	padding-inline-end: 2em;
+}
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
@@ -607,6 +611,9 @@ button:focus {
 }
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
+}
+.line-height-large {
+	line-height: 1.8em;
 }
 
 th .button {
@@ -1674,6 +1681,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	div.statusref {
 		padding-right: 10px;
+		max-width: 55%;
 	   }
 	div.statusref img {
 		padding-right: 3px !important;
@@ -3305,6 +3313,9 @@ input.buttonreset {
 	margin-top: 3px;
 	margin-bottom: 3px;
 	padding: 8px 15px;
+	text-decoration: underline;
+	color: var(--colortextlink);
+	cursor: pointer;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;

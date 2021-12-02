@@ -62,13 +62,11 @@ class Notify
 	 */
 	public $fk_project;
 
-	// Les codes actions sont definis dans la table llx_notify_def
-
-	// codes actions supported are
-	// @todo defined also into interface_50_modNotification_Notification.class.php
-	public $arrayofnotifsupported = array(
+	// This codes actions are defined into table llx_notify_def
+	static public $arrayofnotifsupported = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
+		'ORDER_CREATE',
 		'ORDER_VALIDATE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',

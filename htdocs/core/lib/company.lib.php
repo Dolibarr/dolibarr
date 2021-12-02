@@ -274,6 +274,7 @@ function societe_prepare_head(Societe $object)
 
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
 		if (!empty($user->rights->partnership->read)) {
+			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
 			$head[$h][0] = DOL_URL_ROOT.'/societe/partnership.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("Partnership");

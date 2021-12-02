@@ -1526,7 +1526,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				$heightpopup = 400;
 				print "\n";
-				print '<script language="JavaScript" type="text/javascript">';
+				print '<script type="text/javascript">';
 				print "function CheckVAT(a) {\n";
 				print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
 				print "}\n";
@@ -2239,7 +2239,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 					$heightpopup = 400;
 					print "\n";
-					print '<script language="JavaScript" type="text/javascript">';
+					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
 					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
 					print "}\n";
@@ -2673,7 +2673,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 					$heightpopup = 400;
 					print "\n";
-					print '<script language="JavaScript" type="text/javascript">';
+					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
 					print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
 					print "}\n";

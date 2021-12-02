@@ -751,6 +751,9 @@ $url = DOL_URL_ROOT.'/projet/card.php?action=create';
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
+if ($search_usage_event_organization == 1) {
+	$url .= '&usage_organize_event=1';
+}
 $newcardbutton = dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->rights->projet->creer);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

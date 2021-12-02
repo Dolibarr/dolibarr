@@ -550,7 +550,7 @@ abstract class CommonObject
 			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
 			return -1;
 		}
-		if ($ref || $ref_ext) {
+		if ($ref || $ref_ext) {		// Because the same ref can exists in 2 different entities, we force the current one in priority
 			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 
@@ -869,7 +869,7 @@ abstract class CommonObject
 		if (!empty($conf->socialnetworks->enabled)) {
 			$outsocialnetwork = '';
 
-			if (!empty($this->socialnetworks) && is_countable($this->socialnetworks) && count($this->socialnetworks) > 0) {
+			if (!empty($this->socialnetworks) && is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
 				$socialnetworksdict = getArrayOfSocialNetworks();
 				foreach ($this->socialnetworks as $key => $value) {
 					if ($value) {
@@ -4872,13 +4872,9 @@ abstract class CommonObject
 				$reshook = 0;
 				//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
 				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
-					if (empty($line->fk_parent_line)) {
-						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
-						$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					} else {
-						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines, 'fk_parent_line'=>$line->fk_parent_line);
-						$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
+					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
+					$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
@@ -7862,7 +7858,7 @@ abstract class CommonObject
 
 						switch ($mode) {
 							case "view":
-								$out .= $extrafields->showOutputField($key, $value);
+								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
 								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);

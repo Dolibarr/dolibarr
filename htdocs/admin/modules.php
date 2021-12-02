@@ -526,7 +526,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter = '<div class="valignmiddle">';
 
-	$moreforfilter .= '<div class="floatright right pagination --module-list"><ul><li>';
+	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
 	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
 	$moreforfilter .= dolGetButtonTitleSeparator();
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
@@ -563,8 +563,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
-	$moreforfilter .= ' ';
-	$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset butActionDelete noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+	if ($search_keyword || $search_status || $search_nature || $search_version) {
+		$moreforfilter .= ' ';
+		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+	}
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 
@@ -1060,7 +1062,9 @@ if ($mode == 'marketplace') {
 
 			<div id="category-tree-left">
 				<ul class="tree">
-					<?php echo dol_escape_htmltag($dolistore->get_categories()); ?>
+					<?php
+					echo $dolistore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content
+					?>
 				</ul>
 			</div>
 			<div id="listing-content">

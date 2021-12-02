@@ -76,7 +76,7 @@ $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_fax = GETPOST("search_fax", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
 if (!empty($conf->mailing->enabled)) {
-	$search_no_email = GETPOST("search_no_email", 'int');
+	$search_no_email = GETPOSTISSET("search_no_email") ? GETPOST("search_no_email", 'int') : -1;
 } else {
 	$search_no_email = -1;
 }

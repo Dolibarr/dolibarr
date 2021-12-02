@@ -916,6 +916,8 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	$upload_dir = $conf->contrat->multidir_output[$object->entity];

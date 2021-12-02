@@ -153,7 +153,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 <br><hr><br>Example 1 : Standard table/thead/tbody/tr/th-td (no class pair/impair on td) => Use this if you need the drag and drop for lines or for long result tables<br>
 
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 /*jQuery(document).ready(function() {
 $(document).ready(function() {
 	var table = $('#tablelines3').DataTable( {

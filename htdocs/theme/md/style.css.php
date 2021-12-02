@@ -688,7 +688,11 @@ input[type=checkbox], input[type=radio] {
 input:-moz-placeholder { color:#ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
-fieldset { border: 1px solid #AAAAAA !important; }
+fieldset { 
+	border: 1px solid #AAAAAA !important; 
+	padding-inline-start: 2em;
+	padding-inline-end: 2em;
+}
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
@@ -782,6 +786,9 @@ div.floatright
 }
 button:focus {
 	outline: none;
+}
+.line-height-large {
+	line-height: 1.8em;
 }
 
 th .button {
@@ -1437,6 +1444,10 @@ table[summary="list_of_modules"] .fa-cog {
 	min-width: 100px;
 }
 
+.linkedcol-date {
+	text-align: center;
+}
+
 .img-skinthumb {
 	width: 160px;
 	height: 100px;
@@ -1737,6 +1748,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	div.statusref {
 		padding-right: 10px;
+		max-width: 55%;
 	   }
 	div.statusref img {
 		padding-right: 3px !important;
@@ -1803,7 +1815,7 @@ td.showDragHandle {
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
-	padding-bottom: 10px;
+	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-left: 229px;
 	padding-top: 16px;
@@ -2668,7 +2680,7 @@ a.tmenuimage:focus {
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 14px;
+	font-size: 1.2em;
 	vertical-align: middle;
 }
 .login_table_title {
@@ -3363,6 +3375,14 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
 	padding: 4px !important;
 }
+input.buttonreset {
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding: 8px 15px;
+	text-decoration: underline;
+	color: var(--colortextlink);
+	cursor: pointer;
+}
 
 .notopnoleft {
 	border-collapse: collapse;
@@ -3405,7 +3425,7 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 2px 4px 2px 4px;
+	padding: 4px 4px 4px 4px;
 	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
@@ -3903,8 +3923,7 @@ div.liste_titre_bydiv {
 	display: table;
 	padding: 2px 0px 2px 0;
 	box-shadow: none;
-	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
-	width: calc(100%);
+	width: calc(100% - 2px);	/* -3px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
