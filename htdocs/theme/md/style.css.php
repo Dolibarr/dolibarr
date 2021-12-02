@@ -3182,12 +3182,12 @@ div.tabBar {
 	margin: 0px 0px 18px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
-	border-right: 1px solid #BBB;
-	border-left: 1px solid #BBB;
+	border-right: 1px solid #CCC;
+	border-left: 1px solid #CCC;
 	border-top: 1px solid #CCC;
+	border-bottom: 1px solid #CCC;
 	width: auto;
 	background: var(--colorbacktabcard1);
-	border-bottom: 1px solid #aaa;
 }
 
 div.tabBar tr.titre td {
