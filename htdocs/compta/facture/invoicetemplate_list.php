@@ -692,6 +692,10 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$totalarray['val']['f.total_ht'] = 0;
+		$totalarray['val']['f.total_tva'] = 0;
+		$totalarray['val']['f.total_ttc'] = 0;
 		while ($i < min($num, $limit)) {
 			$objp = $db->fetch_object($resql);
 			if (empty($objp)) {
@@ -701,7 +705,7 @@ if ($resql) {
 			$companystatic->id = $objp->socid;
 			$companystatic->name = $objp->name;
 
-			$invoicerectmp->id = $objp->id ? $objp->id : $objp->facid;
+			$invoicerectmp->id = !empty($objp->id) ? $objp->id : $objp->facid;
 			$invoicerectmp->frequency = $objp->frequency;
 			$invoicerectmp->suspended = $objp->suspended;
 			$invoicerectmp->unit_frequency = $objp->unit_frequency;
