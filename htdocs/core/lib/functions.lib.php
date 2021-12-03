@@ -3604,7 +3604,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
-				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
+				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'website', 'workstation',
@@ -3650,7 +3650,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house',
+				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house', 'recurring'=>'history',
 				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
@@ -8082,7 +8082,7 @@ function verifCond($strRights)
 
 	//print $strRights."<br>\n";
 	$rights = true;
-	if ($strRights !== '') {
+	if (isset($strRights) && $strRights !== '') {
 		$str = 'if(!('.$strRights.')) { $rights = false; }';
 		dol_eval($str); // The dol_eval must contains all the global $xxx used into a condition
 	}

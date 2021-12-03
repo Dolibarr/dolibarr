@@ -650,8 +650,9 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
 	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
-		$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
-		$head[$h][1] .= img_warning($langs->trans("YouMustEnableOneModule"));
+		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
+		$head[$h][1] = $langs->trans("AvailableModules");
+		$head[$h][1] .= $form->textwithpicto('', $langs->trans("YouMustEnableOneModule").'.<br><br><span class="opacitymedium">'.$desc.'</span>', 1, warning);
 	} else {
 		//$head[$h][1] = $langs->trans("AvailableModules").$form->textwithpicto('<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>', $desc, 1, 'help', '', 1, 3);
 		$head[$h][1] = $langs->trans("AvailableModules").'<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>';

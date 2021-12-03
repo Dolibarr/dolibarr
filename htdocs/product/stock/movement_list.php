@@ -1163,10 +1163,10 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
-			print '<td>';
+			print '<td class="nowraponall">';
 			print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 			print $objp->mid;
-			print '</td>'; // This is primary not movement id
+			print '</td>'; // This is primary key not movement ref
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date
