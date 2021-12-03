@@ -608,7 +608,7 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<span class="opacitymedium paddingleft">'.$langs->trans("Everybody").'</span>';
 	print '</span>';
 	print '</th>';
-	print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
+	print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
 }
 print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
