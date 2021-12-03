@@ -223,6 +223,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				$holidaystatic->id = $obj->rowid;
 				$holidaystatic->ref = $obj->ref;
 				$holidaystatic->statut = $obj->status;
+				$holidaystatic->date_debut = $db->jdate($obj->date_start);
 
 				$userstatic->id = $obj->uid;
 				$userstatic->lastname = $obj->lastname;
@@ -243,7 +244,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
 				print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
+				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3, $holidaystatic->date_debut).'</td>';
 				print '</tr>';
 
 				$i++;
