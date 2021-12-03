@@ -66,7 +66,7 @@ echo "Test<br>\n";
 $out='';
 $ret=0;
 
-$file = '/tmp/aaa';
+$file = '/tmp/test.txt';
 $f=fopen($file, 'r');
 if ($f) {
 	$s=fread($f, 4096);
@@ -76,9 +76,13 @@ if ($f) {
 	print "Failed to open file ".$file."<br>\n";
 }
 
-exec('cat /aaa; ls /dev/std*; sleep 1;', $out, $ret);
+print '<br><br>'."\n";
+
+exec('cat /test.txt; ls /dev/std*; sleep 1;', $out, $ret);
 print $ret."<br>\n";
 print_r($out);
+
+print '<br><br>'."\n";
 
 $ret = 0;
 $out = null;
