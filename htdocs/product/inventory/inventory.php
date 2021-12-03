@@ -541,7 +541,10 @@ if ($object->id > 0) {
 	if ($action == 'updatebyscaning') {
 		if ($permissiontoadd) {
 			print '<script>';
-			print 'function barcodescannerjs(){
+
+			print '
+			var errortab = [];
+			function barcodescannerjs(){
 				console.log("We catch inputs in sacnner box");
 				var selectaddorreplace = $("select[name=selectaddorreplace]").val();
 				var barcodemode = $("input[name=barcodemode]:checked").val();
@@ -561,9 +564,9 @@ if ($object->id > 0) {
 						productbatchcode = $("#"+id+"_batch").text();
 						if(barcodemode != "barcodeforproduct"){
 							tabproduct.forEach(product=>{
-								if(product.Batch == productbatchcode){
-									alert("'.$langs->trans('ErrorSameBatchNumber').': "+productbatchcode);
-									throw"'.$langs->trans('ErrorSameBatchNumber').': "+productbatchcode;
+								if(product.Batch != "" && product.Batch == productbatchcode){
+									alert("'.$langs->transnoentities('ErrorSameBatchNumber').': "+productbatchcode);
+									throw"'.$langs->transnoentities('ErrorSameBatchNumber').': "+productbatchcode;
 								}
 							})
 						}
@@ -590,32 +593,41 @@ if ($object->id > 0) {
 								throw "'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
 						}
 					});
-					tabproduct.forEach(product => {
-						if(product.Qty!=0){
-							console.log("We change #"+product.Id+"_input to match input in scanner box");
-							if(product.hasOwnProperty("reelqty")){
-								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "action":"addnewlineproduct","fk_entrepot":product.Warehouse,"batch":product.Batch,"fk_inventory":'.dol_escape_js($object->id).',"fk_product":product.fk_product,"reelqty":product.reelqty,"qty":product.Qty},
-									type: \'POST\',
-									async: false,
-									success: function(response) {
-										response = JSON.parse(response);
-										if(response.status == "success"){
-											console.log(response.message);
-										}else{
-											console.error(response.message);
-										}
-									},
-									error : function(output) {
-									   console.error("Error on barcodeserialforproduct function");
-									},
-								});
-							} else {
-								$("#"+product.Id+"_input").val(product.Qty);
+					if (Object.keys(errortab).length < 1){
+						tabproduct.forEach(product => {
+							if(product.Qty!=0){
+								console.log("We change #"+product.Id+"_input to match input in scanner box");
+								if(product.hasOwnProperty("reelqty")){
+									$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
+										data: { "action":"addnewlineproduct","fk_entrepot":product.Warehouse,"batch":product.Batch,"fk_inventory":'.dol_escape_js($object->id).',"fk_product":product.fk_product,"reelqty":product.reelqty,"qty":product.Qty},
+										type: \'POST\',
+										async: false,
+										success: function(response) {
+											response = JSON.parse(response);
+											if(response.status == "success"){
+												console.log(response.message);
+											}else{
+												console.error(response.message);
+											}
+										},
+										error : function(output) {
+											console.error("Error on barcodeserialforproduct function");
+										},
+									});
+								} else {
+									$("#"+product.Id+"_input").val(product.Qty);
+								}
 							}
-						}
-					})
-					document.forms["formrecord"].submit();
+						})
+						document.forms["formrecord"].submit();
+					}else{
+						let stringerror = "";
+						errortab.forEach(element => {
+							stringerror += (element + ",")
+						});
+						stringerror = stringerror.slice(0, -1);
+						alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
+					}
 				}
 
 			}
@@ -625,7 +637,7 @@ if ($object->id > 0) {
 				newproductrow=0
 				tabproduct.forEach(product => {
 					$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-						data: { "action":"existbarcode",'.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.',':'').'"barcode":element,"product":product},
+						data: { "action":"existbarcode",'.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.',':'').'"barcode":element,"product":product,"mode":mode},
 						type: \'POST\',
 						async: false,
 						success: function(response) {
@@ -636,7 +648,10 @@ if ($object->id > 0) {
 									newproductrow = response.object;
 								}
 							}else{
-								console.error(response.message);
+								if (!errortab.includes(element)){
+									errortab.push(element);
+									console.error(response.message);
+								}
 							}
 						},
 						error : function(output) {

@@ -60,18 +60,25 @@ $warehouseid = 0;
 $objectreturn = array();
 
 if ($action == "existbarcode" && !empty($barcode)) {
-	$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode,ps.reel";
-	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
-	$sql .= " WHERE p.barcode = '".$db->escape($barcode)."'";
+	if (!empty($mode) && $mode == "lotserial") {
+		$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode, ps.reel, pb.batch";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps ON pb.fk_product_stock = ps.rowid JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
+		$sql .= " WHERE pb.batch = '".$db->escape($barcode)."'";
+	} else {
+		$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode,ps.reel";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
+		$sql .= " WHERE p.barcode = '".$db->escape($barcode)."'";
+	}
 	if (!empty($fk_entrepot)) {
-		$sql .= "AND ps.fk_entrepot = '".$db->escape($fk_entrepot)."'";
+		$sql .= " AND ps.fk_entrepot = '".$db->escape($fk_entrepot)."'";
 	}
 	$result = $db->query($sql);
 	if ($result) {
 		$nbline = $db->num_rows($result);
 		for ($i=0; $i < $nbline; $i++) {
 			$object = $db->fetch_object($result);
-			if ($barcode == $object->barcode) {
+			if (($mode == "barcode" && $barcode == $object->barcode) || ($mode == "lotserial" && $barcode == $object->batch)) {
 				$warehouse->fetch(0, $product["Warehouse"]);
 				if (!empty($object->fk_entrepot) && $warehouse->id == $object->fk_entrepot) {
 					$warehousefound++;
