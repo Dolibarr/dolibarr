@@ -104,17 +104,6 @@ class FormSetup
 	}
 
 	/**
-	 * a quick method to sanitize html attributes
-	 * @param string $var the string to sanitize
-	 * @return string
-	 */
-	static public function sanitizeHtmlAttribute($var)
-	{
-		$var = preg_replace("/\r|\n/", "", $var);
-		return htmlspecialchars($var, ENT_QUOTES);
-	}
-
-	/**
 	 * Generate an attributes string form an input array
 	 * @param array $attributes an array of attributes keys and values,
 	 * @return string
@@ -127,7 +116,7 @@ class FormSetup
 				if (is_array($value) || is_object($value)) {
 					continue;
 				}
-				$Aattr[] = $attribute.'="'.self::sanitizeHtmlAttribute($value).'"';
+				$Aattr[] = $attribute.'="'.dol_escape_htmltag($value).'"';
 			}
 		}
 
@@ -164,7 +153,7 @@ class FormSetup
 				// generate hidden values from $this->formHiddenInputs
 				if (!empty($this->formHiddenInputs) && is_array($this->formHiddenInputs)) {
 					foreach ($this->formHiddenInputs as $hiddenKey => $hiddenValue) {
-						$out.= '<input type="hidden" name="'.self::sanitizeHtmlAttribute($hiddenKey).'" value="' . self::sanitizeHtmlAttribute($hiddenValue) . '">';
+						$out.= '<input type="hidden" name="'.dol_escape_htmltag($hiddenKey).'" value="' . dol_escape_htmltag($hiddenValue) . '">';
 					}
 				}
 			}
