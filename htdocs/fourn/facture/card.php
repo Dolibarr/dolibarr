@@ -1995,7 +1995,7 @@ if ($action == 'create') {
 		if (empty($conf->global->INVOICE_DISABLE_DEPOSIT)) {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOST('type') == 3 ? ' checked' : '') . '> ';
-			print '<script type="text/javascript" language="javascript">
+			print '<script type="text/javascript">
 			jQuery(document).ready(function() {
     			jQuery("#typestandardinvoice, #valuestandardinvoice").click(function() {
     				jQuery("#radio_standard").prop("checked", true);
@@ -2077,7 +2077,7 @@ if ($action == 'create') {
 			$tmp='<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked' : '');
 			if (! $options) $tmp.=' disabled';
 			$tmp.='> ';
-			print '<script type="text/javascript" language="javascript">
+			print '<script type="text/javascript">
 			jQuery(document).ready(function() {
 				jQuery("#fac_replacement").change(function() {
 					jQuery("#radio_replacement").prop("checked", true);
@@ -2149,7 +2149,7 @@ if ($action == 'create') {
 				}
 				$tmp .= '> ';
 				// Show credit note options only if we checked credit note
-				print '<script type="text/javascript" language="javascript">
+				print '<script type="text/javascript">
    				jQuery(document).ready(function() {
    					if (! jQuery("#radio_creditnote").is(":checked"))
    					{

@@ -1021,7 +1021,7 @@ if ($action == 'create') {
 
 			$numAsked = count($object->lines);
 
-			print '<script type="text/javascript" language="javascript">'."\n";
+			print '<script type="text/javascript">'."\n";
 			print 'jQuery(document).ready(function() {'."\n";
 			print 'jQuery("#autofill").click(function() {';
 			$i = 0;

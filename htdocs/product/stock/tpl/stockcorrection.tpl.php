@@ -41,7 +41,7 @@ if (empty($id)) {
 	$id = $object->id;
 }
 
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			function init_price()
 			{

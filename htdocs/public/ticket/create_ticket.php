@@ -297,7 +297,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 					if (is_array($object->array_options) && count($object->array_options) > 0) {
 						foreach ($object->array_options as $key => $value) {
 							$key = substr($key, 8); // remove "options_"
-							$message_admin .= '<li>'.$langs->trans($extrafields->attributes[$object->element]['label'][$key]).' : '.$extrafields->showOutputField($key, $value).'</li>';
+							$message_admin .= '<li>'.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' : '.$extrafields->showOutputField($key, $value, '', $object->table_element).'</li>';
 						}
 					}
 					$message_admin .= '</ul>';

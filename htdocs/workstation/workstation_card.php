@@ -161,7 +161,7 @@ llxHeader('', $title, $help_url);
 
 // jquery code
 ?>
-	<script type="text/javascript" language="javascript">
+	<script type="text/javascript">
 
 		jQuery(document).ready(function() {
 			jQuery("#type").change(function() {
