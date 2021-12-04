@@ -330,6 +330,8 @@ if ($action == 'creditnote' && $user->rights->facture->creer) {
 	$creditnote = new Facture($db);
 	$creditnote->socid = $invoice->socid;
 	$creditnote->date = dol_now();
+	$creditnote->module_source = 'takepos';
+	$creditnote->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 	$creditnote->type = Facture::TYPE_CREDIT_NOTE;
 	$creditnote->fk_facture_source = $placeid;
 	$creditnote->remise_absolue = $invoice->remise_absolue;
@@ -581,7 +583,7 @@ if ($action == "freezone") {
 if ($action == "addnote") {
 	$desc = GETPOST('addnote', 'alpha');
 	if ($idline==0) {
-		$invoice->update_note_public($desc);
+		$invoice->update_note($desc, '_public');
 	} else foreach ($invoice->lines as $line) {
 		if ($line->id == $idline) {
 			$result = $invoice->updateline($line->id, $desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -891,7 +893,7 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 	}
 
 	if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS')) {
-		$sectionwithinvoicelink .= '<script language="javascript">$("#buttonprint").click();</script>';
+		$sectionwithinvoicelink .= '<script type="text/javascript">$("#buttonprint").click();</script>';
 	}
 }
 
@@ -903,7 +905,7 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 $form = new Form($db);
 
 ?>
-<script language="javascript">
+<script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
 var placeid=<?php echo ($placeid > 0 ? $placeid : 0); ?>;
@@ -1159,7 +1161,7 @@ $( document ).ready(function() {
 		$result = $adh->fetch('', '', $invoice->socid);
 		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			if (empty($adh->statut)) {
+			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED ) {
 				$s .= "<s>";
 			}
 			$s .= $adh->getFullName($langs);
@@ -1175,7 +1177,7 @@ $( document ).ready(function() {
 					$s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 				}
 			}
-			if (empty($adh->statut)) {
+			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
 				$s .= "</s>";
 			}
 		} else {
@@ -1543,7 +1545,7 @@ if ($placeid > 0) {
 				$htmlforlines .= '</td>';
 			}
 			$htmlforlines .= '</tr>'."\n";
-			$htmlforlines .= empty($htmlsupplements[$line->id]) ? '' : empty($htmlsupplements[$line->id]);
+			$htmlforlines .= empty($htmlsupplements[$line->id]) ? '' : $htmlsupplements[$line->id];
 
 			print $htmlforlines;
 		}

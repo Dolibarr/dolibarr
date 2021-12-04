@@ -119,7 +119,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 					}
 					//if (!empty($objp->$key))
 					//    $objp->array_options[$tmpkey] = $objp->$key;
-					//$objp->array_options[$tmpkey] = $extrafields->showOutputField($key, $objp->$tmpkey, '', 1); //$objp->$tmpkey;
+					//$objp->array_options[$tmpkey] = $extrafields->showOutputField($key, $objp->$tmpkey, '', $object->table_element); //$objp->$tmpkey;
 				}
 			}
 

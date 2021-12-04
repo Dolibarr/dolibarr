@@ -20,7 +20,6 @@ CloseAContract=Cerrar contrato
 ConfirmDeleteAContract=¿Estás seguro que quieres eliminar este contrato y todos sus servicios?
 ConfirmValidateContract=¿Estás seguro que quieres validar este contrato bajo el nombre <b>%s</b>?
 ConfirmActivateAllOnContract=Esto activará todos los servicios (aún no activos). ¿Estás seguro que quieres activar todos los servicios?
-ConfirmCloseContract=Esto cerrará todos los servicios (activos o no). ¿Estás seguro que quieres cerrar este contrato?
 ConfirmCloseService=¿Estás seguro que quieres cerrar este servicio con fecha <b>%s</b>?
 ValidateAContract=Validar contrato
 ActivateService=Activar servicio

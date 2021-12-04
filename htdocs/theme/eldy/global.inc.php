@@ -298,6 +298,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	cursor: pointer;
 	max-width: 350px;
 }
+input.short {
+	width: 40px;
+}
 .nofocusvisible:focus-visible {
 	outline: none;
 }
@@ -483,7 +486,11 @@ input:-webkit-autofill {
 input:-moz-placeholder { color: #ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
-fieldset { border: 1px solid #AAAAAA !important; }
+fieldset {
+	border: 1px solid #AAAAAA !important;
+	padding-inline-start: 2em;
+	padding-inline-end: 2em;
+}
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
@@ -502,7 +509,8 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
-.button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
+.button:not(.bordertransp):not(.buttonpayment),
+.buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 3px;
 	margin-top: 3px;
 	margin-left: 5px;
@@ -604,6 +612,9 @@ button:focus {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
+.line-height-large {
+	line-height: 1.8em;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
@@ -679,6 +690,12 @@ textarea.centpercent {
 }
 .alignstart {
 	text-align: start;
+}
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
 }
 .left {
 	text-align: <?php print $left; ?>;
@@ -1077,7 +1094,7 @@ select.flat.selectlimit {
 	max-width: 62px;
 }
 .selectlimit, .marginrightonly {
-	margin-right: 10px !important;
+	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
 	margin-<?php echo $left; ?>: 10px !important;
@@ -1211,7 +1228,7 @@ select.flat.selectlimit {
 }
 
 /* Styles for amount on card */
-table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaintopay {
+table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaintopay, table.paymenttable td.amountremaintopayback {
 	padding-top: 0px;
 	padding-bottom: 0px;
 }
@@ -1423,7 +1440,7 @@ table[summary="list_of_modules"] .fa-cog {
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ width: 250px; }
-.titlefieldmiddle { width: 50%; }
+.titlefieldmiddle { width: 45%; }
 .titlefieldmax45 { max-width: 45%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
@@ -1446,6 +1463,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 150px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
@@ -1465,6 +1483,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -1662,6 +1681,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	div.statusref {
 		padding-right: 10px;
+		max-width: 55%;
 	   }
 	div.statusref img {
 		padding-right: 3px !important;
@@ -1683,7 +1703,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -1963,7 +1983,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -1974,14 +1994,11 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
 	} ?>
-}
-div.fichetwothirdright div.ficheaddleft {
-	 padding-<?php echo $left; ?>: 28px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -2036,9 +2053,6 @@ div.secondcolumn div.box {
 		float: none;
 		width: auto;
 		padding-bottom: 6px;
-	}
-	div.fichetwothirdright div.ficheaddleft {
-		padding-left: 0;
 	}
 	div.fichehalfleft {
 		float: none;
@@ -2266,7 +2280,7 @@ img.photorefnoborder {
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
-div#id-top {
+#id-top {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
@@ -2788,7 +2802,6 @@ img.login, img.printer, img.entity {
 	height: <?php echo $disableimages ? '26' : '30'; ?>px;
 	border-radius: 50%;
 	background-size: contain;
-	background-size: contain;
 	border: 1px solid;
 	border-color: rgba(255, 255, 255, 0.2);
 }
@@ -2868,7 +2881,7 @@ input.vmenusearchselectcombo[type=text] {
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; }
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active,
 span.vmenu, span.vmenu:link, span.vmenu:visited, span.vmenu:hover, span.vmenu:active { font-weight: bold;  }	/* bold = 600, 500 is ko with Edge on 1200x960 */
-font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
+span.vmenudisabled, font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: var(--colortextbackvmenu); }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
@@ -2877,12 +2890,12 @@ a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	color: #202020;
 	margin: 1px 1px 1px 6px;
 }
-font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa; }
+span.vsmenudisabled, font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
 	white-space: nowrap;
 }
-font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
+span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; color: #aaa; text-decoration: none; }
@@ -3293,8 +3306,16 @@ input.button[name="upload"] {
 	padding: 5px !important;
 	font-size: 0.9em;
 }
-input.button.smallpaddingimp {
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
+}
+input.buttonreset {
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding: 8px 15px;
+	text-decoration: underline;
+	color: var(--colortextlink);
+	cursor: pointer;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
@@ -3381,6 +3402,30 @@ td.border, div.tagtable div div.border {
 .table-val-border-col {
 	width:auto;
 }
+
+/* To have left column sticky */
+/*.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
+	position: sticky;
+	left: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+*/
+
+/* To have right column sticky */
+/*.tagtable td.actioncolumn, .tagtable th.actioncolumn {
+	position: sticky-right;
+	right: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+*/
 
 
 /* Main boxes */
@@ -3996,8 +4041,8 @@ div.tabBar .noborder {
 /* Prepare to remove class pair - impair */
 
 .noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(bottom, var(----colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
@@ -4011,8 +4056,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 }
 
 .noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair2) 0%, var(--colorbacklinepair2) 100%);
@@ -4040,9 +4085,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 0px;
 	padding-left: 0px;
 	padding-bottom: 10px;
-}
-.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
-	border: none;
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
@@ -4471,7 +4513,7 @@ div.titre {
 }
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
-	font-size: 1.05em;
+	font-size: 1.1em;
 	/* text-transform: uppercase; */
 	/* font-weight: 600; */
 }
@@ -4646,8 +4688,28 @@ div.ui-tooltip.mytooltip {
 	background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);
 	line-height: 1.6em;
-	min-width: 200px;
+	min-width: 550px;
 }
+@media only screen and (max-width: 768px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 400px;
+	}
+}
+@media only screen and (max-width: 480px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 300px;
+	}
+}
+@media only screen and (max-width: 320px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 230px;
+	}
+}
+
+
 
 
 
@@ -4765,7 +4827,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 .unvisible {
@@ -5561,6 +5623,8 @@ div#ecm-layout-center {
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
+	text-align: start;
+	word-break: break-word;
 }
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;
@@ -6879,6 +6943,29 @@ div.clipboardCPValue.hidewithsize {
 	display: none;
 }
 
+/* To make a div popup, we must use a position aboluste inside a position relative */
+.clipboardCPText {
+	position: relative;
+}
+.clipboardCPTextDivInside {
+	position: absolute;
+	background: #f8f8fa;
+	color: #888;
+	border: 1px solid #E0E0E0;
+	opacity: 1;
+	z-index: 20;
+	padding: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+	top: -5px;
+	left: 0px;
+	border-radius: 5px;
+	white-space: nowrap;
+	font-size: 0.9em;
+	box-shadow: 1px 1px 6px #ddd;
+}
+
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -7036,7 +7123,7 @@ div.clipboardCPValue.hidewithsize {
 		padding-left: 20px;
 		padding-right: 20px;
 		padding-bottom: 16px;
-		top: inherit !important;
+		top: auto;
 		left: 0 !important;
 		text-align: center;
 		vertical-align: middle;

@@ -24,7 +24,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
@@ -102,7 +102,7 @@ class ConferenceOrBooth extends ActionComm
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'id' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'integer', 'label'=>'Ref', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"Help text", 'showoncombobox'=>'1',),
@@ -195,11 +195,11 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function setPercentageFromStatus()
 	{
-		if ($this->status==self::STATUS_DONE) {
-			$this->percentage=100;
+		if ($this->status == self::STATUS_DONE) {
+			$this->percentage = 100;
 		}
-		if ($this->status==self::STATUS_DRAFT) {
-			$this->percentage=0;
+		if ($this->status == self::STATUS_DRAFT) {
+			$this->percentage = 0;
 		}
 	}
 
@@ -211,12 +211,12 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function setActionCommFields(User $user)
 	{
-		$this->userownerid=$user->id;
-		$this->type_id=$this->fk_action;
-		$this->socid=$this->fk_soc;
-		$this->datef=$this->datep2;
-		$this->note_private=$this->note;
-		$this->fk_user_author=$this->fk_user_author;
+		$this->userownerid = $user->id;
+		$this->type_id = $this->fk_action;
+		$this->socid = $this->fk_soc;
+		$this->datef = $this->datep2;
+		$this->note_private = $this->note;
+		$this->fk_user_author = $this->fk_user_author;
 	}
 
 	/**
@@ -226,9 +226,9 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function getActionCommFields()
 	{
-		$this->fk_action=$this->type_id;
-		$this->fk_soc=$this->socid;
-		$this->datep2=$this->datef;
+		$this->fk_action = $this->type_id;
+		$this->fk_soc = $this->socid;
+		$this->datep2 = $this->datef;
 	}
 
 	/**
@@ -383,7 +383,7 @@ class ConferenceOrBooth extends ActionComm
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_CONFIRMED) {
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -408,48 +408,14 @@ class ConferenceOrBooth extends ActionComm
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CONFERENCEORBOOTH_VALIDATE', $user);
-			if ($result < 0) $error++;
-			// End call triggers
-		}
-
-		if (!$error) {
-			$this->oldref = $this->ref;
-
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
-				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'conferenceorbooth/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'conferenceorbooth/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
-
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$oldref;
-				$dirdest = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref;
-				if (!$error && file_exists($dirsource)) {
-					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
-
-					if (@rename($dirsource, $dirdest)) {
-						dol_syslog("Rename ok");
-						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry) {
-							$dirsource = $fileentry['name'];
-							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-							$dirsource = $fileentry['path'].'/'.$dirsource;
-							$dirdest = $fileentry['path'].'/'.$dirdest;
-							@rename($dirsource, $dirdest);
-						}
-					}
-				}
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Set new ref and current status
 		if (!$error) {
-			$this->ref = $num;
 			$this->status = self::STATUS_CONFIRMED;
 		}
 
@@ -576,7 +542,7 @@ class ConferenceOrBooth extends ActionComm
 			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
-			if ($option=='withproject') {
+			if ($option == 'withproject') {
 				$url .= '&withproject=1';
 			}
 		}

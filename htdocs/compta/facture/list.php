@@ -116,7 +116,7 @@ $search_date_startyear = GETPOST('search_date_startyear', 'int');
 $search_date_endday = GETPOST('search_date_endday', 'int');
 $search_date_endmonth = GETPOST('search_date_endmonth', 'int');
 $search_date_endyear = GETPOST('search_date_endyear', 'int');
-$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
 $search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
@@ -124,7 +124,7 @@ $search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
 $search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
 $search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
 $search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
-$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
+$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear); // Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
 $search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
 $search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
@@ -242,10 +242,10 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>292),
 	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>295),
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>296), // Not enabled by default because slow
-	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
 	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
@@ -380,11 +380,11 @@ if ($action == 'makepayment_confirm' && $user->rights->facture->paiement) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 	if (!empty($arrayofselected)) {
-		$bankid=GETPOST('bankid', 'int');
-		$paiementid=GETPOST('paiementid', 'int');
-		$paiementdate=dol_mktime(12, 0, 0, GETPOST('datepaimentmonth', 'int'), GETPOST('datepaimentday', 'int'), GETPOST('datepaimentyear', 'year'));
+		$bankid = GETPOST('bankid', 'int');
+		$paiementid = GETPOST('paiementid', 'int');
+		$paiementdate = dol_mktime(12, 0, 0, GETPOST('datepaimentmonth', 'int'), GETPOST('datepaimentday', 'int'), GETPOST('datepaimentyear', 'year'));
 		foreach ($arrayofselected as $toselectid) {
-			$errorpayment=0;
+			$errorpayment = 0;
 			$facture = new Facture($db);
 			$result = $facture->fetch($toselectid);
 			if ($result < 0) {
@@ -397,7 +397,7 @@ if ($action == 'makepayment_confirm' && $user->rights->facture->paiement) {
 					$totaldeposits = $facture->getSumDepositsUsed();
 					$totalpay = $paiementAmount + $totalcreditnotes + $totaldeposits;
 					$remaintopay = price2num($facture->total_ttc - $totalpay);
-					if ($remaintopay!=0) {
+					if ($remaintopay != 0) {
 						$resultBank = $facture->setBankAccount($bankid);
 						if ($resultBank < 0) {
 							setEventMessage($facture->error, 'errors');
@@ -410,12 +410,12 @@ if ($action == 'makepayment_confirm' && $user->rights->facture->paiement) {
 							$paiement->paiementid = $paiementid;
 							$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
 							if ($paiement_id < 0) {
-								setEventMessage($facture->ref . ' ' . $paiement->error, 'errors');
+								setEventMessage($facture->ref.' '.$paiement->error, 'errors');
 								$errorpayment++;
 							} else {
 								$result = $paiement->addPaymentToBank($user, 'payment', '', $bankid, '', '');
 								if ($result < 0) {
-									setEventMessages($facture->ref . ' ' . $paiement->error, $paiement->errors, 'errors');
+									setEventMessages($facture->ref.' '.$paiement->error, $paiement->errors, 'errors');
 									$errorpayment++;
 								}
 							}
@@ -555,7 +555,7 @@ $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as u
 if (!$sall) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
 }
-if ($search_categ_cus && $search_categ_cus!=-1) {
+if ($search_categ_cus && $search_categ_cus != -1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
@@ -592,7 +592,7 @@ if ($search_product_category > 0) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -606,7 +606,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_product_category > 0) {
@@ -675,12 +675,6 @@ if (strlen(trim($search_country))) {
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty != '-1') {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
-}
-if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
-}
-if ($search_company_alias) {
-	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_montant_ht != '') {
 	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
@@ -801,7 +795,7 @@ if (!$sall) {
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
 	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
-	if ($search_categ_cus && $search_categ_cus!=-1) {
+	if ($search_categ_cus && $search_categ_cus != -1) {
 		$sql .= ", cc.fk_categorie, cc.fk_soc";
 	}
 	// Add fields from extrafields
@@ -821,7 +815,7 @@ if (!$sall) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= !empty($hookmanager->resPrint) ? (" HAVING 1=1 " . $hookmanager->resPrint) : "";
+$sql .= !empty($hookmanager->resPrint) ? (" HAVING 1=1 ".$hookmanager->resPrint) : "";
 
 $sql .= ' ORDER BY ';
 $listfield = explode(',', $sortfield);
@@ -914,7 +908,7 @@ if ($resql) {
 	if ($search_date_valid_endyear) {
 		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
 	}
-	if ($search_datelimit_startday)	{
+	if ($search_datelimit_startday) {
 		$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
 	}
 	if ($search_datelimit_startmonth) {
@@ -1059,7 +1053,7 @@ if ($resql) {
 			$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 		}
 	}
-	if (in_array($massaction, array('presend', 'predelete' ,'makepayment'))) {
+	if (in_array($massaction, array('presend', 'predelete', 'makepayment'))) {
 		$arrayofmassactions = array();
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -1097,7 +1091,7 @@ if ($resql) {
 	$trackid = 'inv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-	if ($massaction=='makepayment') {
+	if ($massaction == 'makepayment') {
 		$formconfirm = '';
 		$formquestion = array(
 			// 'text' => $langs->trans("ConfirmClone"),
@@ -1719,7 +1713,13 @@ if ($resql) {
 
 			print '<tr class="oddeven"';
 			if ($contextpage == 'poslist') {
-				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();});"';
+				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
+				if (strpos($obj->ref, 'PROV') !== false) {
+					//If is a draft invoice, load var to be able to add products
+					$place = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
+					print 'parent.place=\''.$place.'\'';
+				}
+				print '});"';
 			}
 			print '>';
 

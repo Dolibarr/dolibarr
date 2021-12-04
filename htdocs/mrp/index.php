@@ -147,7 +147,7 @@ if ($conf->use_javascript_ajax) {
 print '<br>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 /*
  * Last modified BOM
@@ -245,7 +245,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array(
 	//'type' => $type,

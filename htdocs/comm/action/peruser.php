@@ -80,13 +80,13 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (!$user->rights->agenda->myactions->read) {
+if (empty($user->rights->agenda->myactions->read)) {
 	accessforbidden();
 }
-if (!$user->rights->agenda->allactions->read) {
+if (empty($user->rights->agenda->allactions->read)) {
 	$canedit = 0;
 }
-if (!$user->rights->agenda->allactions->read || $filter == 'mine') {  // If no permission to see all, we show only affected to me
+if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
@@ -387,7 +387,6 @@ if ($conf->use_javascript_ajax) {
 	$s .= 'jQuery(".family_birthday").toggle();'."\n";
 	if ($action == "show_week" || $action == "show_month" || empty($action)) {
 		$s .= 'jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
-		$s .= 'var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
 	}
 	$s .= '});'."\n";
 	$s .= '</script>'."\n";
@@ -533,7 +532,7 @@ $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
 $sql .= ' ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
 // We must filter on resource table
@@ -584,7 +583,7 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project = ".((int) $pid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
@@ -802,7 +801,7 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 
 while ($currentdaytoshow < $lastdaytoshow) {
-	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
+	echo '<table class="centpercent noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
 	echo '<td class="nopaddingtopimp nopaddingbottomimp nowraponsmartphone">';
@@ -829,7 +828,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		// Filter on days
 		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
 		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">'.$langs->trans("DaysOfWeek").'</span>';
-		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a">';
+		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) {
 			print ' - ';
@@ -1051,7 +1050,7 @@ print "\n".'</form>';
 print "\n";
 
 // Add js code to manage click on a box
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".onclickopenref").click(function() {
 		var ref=$(this).attr(\'ref\');

@@ -134,7 +134,7 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
 }
 ?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
-<script language="javascript">
+<script type="text/javascript">
 <?php
 $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
@@ -789,7 +789,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=LIQ", function() {
 	});
 }
 
@@ -820,9 +820,11 @@ $( document ).ready(function() {
 	if ($_SESSION["takeposterminal"] == "") {
 		print "ModalBox('ModalTerminal');";
 	}
+
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-		$sql .= " entity = ".$conf->entity." AND ";
+		$sql .= " entity = ".((int) $conf->entity)." AND ";
+		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -1104,8 +1106,10 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 }
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-$sql .= " entity = ".$conf->entity." AND ";
+$sql .= " entity = ".((int) $conf->entity)." AND ";
+$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -1119,14 +1123,24 @@ if ($resql) {
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
-$reshook = $hookmanager->executeHooks('ActionButtons');
-if (!empty($reshook)) {
-	if (is_array($reshook) && !isset($reshook['title'])) {
-		foreach ($reshook as $reshook) {
-			$menus[$r++] = $reshook;
+$parameters = array('menus'=>$menus);
+$reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
+if ($reshook == 0) {  //add buttons
+	if (is_array($hookmanager->resArray) ) {
+		foreach ($hookmanager->resArray as $resArray) {
+			foreach ($resArray as $butmenu) {
+				$menus[$r++] = $butmenu;
+			}
 		}
-	} else {
-		$menus[$r++] = $reshook;
+	} elseif ($reshook == 1) {
+		$r = 0; //replace buttons
+		if (is_array($hookmanager->resArray) ) {
+			foreach ($hookmanager->resArray as $resArray) {
+				foreach ($resArray as $butmenu) {
+					$menus[$r++] = $butmenu;
+				}
+			}
+		}
 	}
 }
 

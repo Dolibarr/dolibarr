@@ -68,21 +68,26 @@ print '	var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUE
 print '	var time_js_next_test;'."\n";
 ?>
 
-/* Check if permission ok */
-if (Notification.permission !== "granted") {
-	console.log("Ask Notification.permission");
-	Notification.requestPermission()
+/* Check if Notification is supported */
+if ("Notification" in window) {
+	/* Check if permission ok */
+	if (Notification.permission !== "granted") {
+		console.log("Ask Notification.permission");
+		Notification.requestPermission()
+	}
+
+	/* Launch timer */
+
+	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
+	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
+	var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
+
+	setTimeout(first_execution, time_first_execution * 1000);
+	time_js_next_test = nowtime + time_first_execution;
+	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
+} else {
+	console.log("This browser in this context does not support Notification.");
 }
-
-/* Launch timer */
-
-// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
-//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
-var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
-
-setTimeout(first_execution, time_first_execution * 1000);
-time_js_next_test = nowtime + time_first_execution;
-console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
 
 
 function first_execution() {

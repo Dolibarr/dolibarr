@@ -1183,7 +1183,7 @@ class Project extends CommonObject
 
 		$label = '';
 		if ($option != 'nolink') {
-			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+			$label = img_picto('', $this->picto, 'class="pictofixedwidth"').' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
 		}
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
@@ -1252,7 +1252,7 @@ class Project extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip pictofixedwidth"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1601,19 +1601,23 @@ class Project extends CommonObject
 
 				foreach (array('internal', 'external') as $source) {
 					$tab = $origin_project->liste_contact(-1, $source);
-
-					foreach ($tab as $contacttoadd) {
-						$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source'], $notrigger);
-						if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							$langs->load("errors");
-							$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-							$error++;
-						} else {
-							if ($clone_project->error != '') {
-								$this->error .= $clone_project->error;
+					if (is_array($tab) && count($tab)>0) {
+						foreach ($tab as $contacttoadd) {
+							$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source'], $notrigger);
+							if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+								$langs->load("errors");
+								$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 								$error++;
+							} else {
+								if ($clone_project->error != '') {
+									$this->error .= $clone_project->error;
+									$error++;
+								}
 							}
 						}
+					} elseif ($tab < 0) {
+						$this->error .= $origin_project->error;
+						$error++;
 					}
 				}
 			}
@@ -1660,7 +1664,7 @@ class Project extends CommonObject
 				foreach ($tasksarray as $tasktoclone) {
 					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
 					if ($result_clone <= 0) {
-						$this->error .= $result_clone->error;
+						$this->error .= $taskstatic->error;
 						$error++;
 					} else {
 						$new_task_id = $result_clone;
@@ -1714,6 +1718,7 @@ class Project extends CommonObject
 		global $user, $langs, $conf;
 
 		$error = 0;
+		$result = 0;
 
 		$taskstatic = new Task($this->db);
 
@@ -2010,7 +2015,7 @@ class Project extends CommonObject
 		//$socid=$user->socid;
 
 		$projectsListId = null;
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 		}
 
@@ -2102,7 +2107,7 @@ class Project extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " WHERE";
 		$sql .= " p.entity IN (".getEntity('project').")";
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 			$sql .= "AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}

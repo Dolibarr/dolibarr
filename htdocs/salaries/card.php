@@ -48,6 +48,8 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $confirm = GETPOST('confirm');
 
 $label = GETPOST('label', 'alphanohtml');
@@ -76,7 +78,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
 
-$object = new Salary($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 
@@ -98,6 +99,7 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
 restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
 
@@ -105,9 +107,39 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  * Actions
  */
 
-if ($cancel) {
-	header("Location: list.php");
-	exit;
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
+	$error = 0;
+
+	$backurlforlist = dol_buildpath('/salaries/list.php', 1);
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = dol_buildpath('/salaries/card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		/*var_dump($cancel);
+		 var_dump($backtopage);exit;*/
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
 }
 
 // Link to a project
@@ -231,7 +263,10 @@ if ($action == 'add' && empty($cancel)) {
 		$db->begin();
 
 		$ret = $object->create($user);
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			var_dump($ret);
+			$error++;
+		}
 		if (!empty($auto_create_paiement) && !$error) {
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
@@ -405,8 +440,7 @@ llxHeader("", $title, $help_url);
 $form = new Form($db);
 if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
-if ($id) {
-	$object = new Salary($db);
+if ($id > 0) {
 	$result = $object->fetch($id);
 	if ($result <= 0) {
 		dol_print_error($db);
@@ -440,11 +474,17 @@ if ($action == 'create') {
 	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
 	print load_fiche_titre($langs->trans("NewSalary"), '', 'salary');
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print /** @lang JavaScript */'
 			$(document).ready(function () {
 				let onAutoCreatePaiementChange = function () {
@@ -525,10 +565,12 @@ if ($action == 'create') {
 	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
 	print '</tr>';
 
+
 	print '<tr><td colspan="2"><hr></td></tr>';
 
+
 	// Auto create payment
-	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
+	print '<tr><td><label for="auto_create_paiement">'.$langs->trans('AutomaticCreationPayment').'</label></td>';
 	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_paiement) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";	// Date payment
 
 	// Bank
@@ -631,7 +673,7 @@ if ($action == 'create') {
 						);
 
 					} else {
-						alert("'.$langs->trans("FillFieldFirst").'");
+						alert("'.dol_escape_js($langs->trans("FillFieldFirst")).'");
 					}
 		});
 
@@ -750,9 +792,10 @@ if ($id) {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -854,7 +897,6 @@ if ($id) {
 	print '</div>';
 
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	$nbcols = 3;
 	if (!empty($conf->banque->enabled)) {
@@ -957,18 +999,17 @@ if ($id) {
 
 	print '</div>';
 	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
+	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
 		print $form->buttonsSaveCancel();
 		print "</form>";
 	}
 
-	print dol_get_fiche_end();
-
+	$resteapayer = price2num($resteapayer, 'MT');
 
 	/*
 	 * Action bar
@@ -987,23 +1028,19 @@ if ($id) {
 		}
 
 		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->salaries->write) {
+		if ($object->paye == 0 && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $user->rights->salaries->write) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/paiement_salary.php?id=".$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment")."</a></div>";
 		}
 
 		// Classify 'paid'
-		if ($object->paye == 0
-			&& (
-				(round($resteapayer) <= 0 && $object->amount > 0)
-				|| (round($resteapayer) >= 0 && $object->amount < 0)
-			)
-			&& $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
+		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
+		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $user->rights->salaries->write) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
 		if ($user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 		}
 
 		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {

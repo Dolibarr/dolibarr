@@ -303,7 +303,7 @@ llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-$arrayofnatures = array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
+$arrayofnatures = array('core'=>$langs->transnoentitiesnoconv("NativeModules"), 'external'=>$langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
 $arrayofwarnings = array(); // Array of warning each module want to show when activated
 $arrayofwarningsext = array(); // Array of warning each module want to show when we activate an external module
 $filename = array();
@@ -526,7 +526,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter = '<div class="valignmiddle">';
 
-	$moreforfilter .= '<div class="floatright right pagination --module-list"><ul><li>';
+	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
 	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
 	$moreforfilter .= dolGetButtonTitleSeparator();
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
@@ -542,7 +542,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
 	$moreforfilter .= '</div>';
-	if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 		$array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
 		if ($conf->global->MAIN_FEATURES_LEVEL < 0) {
 			$array_version['deprecated'] = $langs->trans("Deprecated");
@@ -563,8 +563,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
-	$moreforfilter .= ' ';
-	$moreforfilter .= '<input type="submit" name="buttonreset" class="butActionDelete noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+	if ($search_keyword || $search_status || $search_nature || $search_version) {
+		$moreforfilter .= ' ';
+		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+	}
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 
@@ -597,6 +599,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$oldfamily = '';
 	$foundoneexternalmodulewithupdate = 0;
 	$linenum = 0;
+	$atleastonequalified = 0;
+	$atleastoneforfamily = 0;
+
 	foreach ($orders as $key => $value) {
 		$linenum++;
 		$tab = explode('_', $value);
@@ -685,7 +690,9 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 		}
 
-		// Load all lang files of module
+		$atleastonequalified++;
+
+		// Load all language files of the qualified module
 		if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
 			foreach ($objMod->langfiles as $domain) {
 				$langs->load($domain);
@@ -972,6 +979,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		}
 	}
 
+	if (!$atleastonequalified) {
+		print '<br><span class="opacitymedium">'.$langs->trans("NoDeployedModulesFoundWithThisSearchCriteria").'</span><br><br>';
+	}
+
 	print dol_get_fiche_end();
 
 	print '<br>';
@@ -1000,9 +1011,9 @@ if ($mode == 'marketplace') {
 
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://www.dolistore.com';
-	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
 	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span></td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 	print '</tr>';
 
 	print "</table>\n";
@@ -1051,7 +1062,9 @@ if ($mode == 'marketplace') {
 
 			<div id="category-tree-left">
 				<ul class="tree">
-					<?php echo dol_escape_htmltag($dolistore->get_categories()); ?>
+					<?php
+					echo $dolistore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content
+					?>
 				</ul>
 			</div>
 			<div id="listing-content">
@@ -1081,7 +1094,7 @@ if ($mode == 'deploy') {
 		$allowonlineinstall = false;
 	}
 
-	$fullurl = '<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
+	$fullurl = '<a href="'.$urldolibarrmodules.'" target="_blank" rel="noopener noreferrer">'.$urldolibarrmodules.'</a>';
 	$message = '';
 	if (!empty($allowonlineinstall)) {
 		if (!in_array('/custom', explode(',', $dolibarr_main_url_root_alt))) {
@@ -1273,10 +1286,10 @@ if ($mode == 'develop') {
 	print '<tr class="oddeven" height="80">'."\n";
 	$url = 'https://partners.dolibarr.org';
 	print '<td class="left">';
-	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
+	print'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
 	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 	print '</tr>';
 
 	print "</table>\n";

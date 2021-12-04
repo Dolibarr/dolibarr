@@ -970,8 +970,8 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $date_end_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
 
 	public $buy_price_ht;
-	public $buyprice;		// For backward compatibility
-	public $pa_ht;			// For backward compatibility
+	public $buyprice; // For backward compatibility
+	public $pa_ht; // For backward compatibility
 
 	public $marge_tx;
 	public $marque_tx;

@@ -12,8 +12,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, please use GitHub security advisory at https://github.com/Dolibarr/dolibarr/security/advisories/new (if you have permissions) or alternatively send an email to security@dolibarr.org (for everybody)
-
+To report a vulnerability, please use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new) (if you have permissions) or alternatively send an email to security@dolibarr.org (for everybody)
 
 ## Hunting vulnerabilities on Dolibarr
 
@@ -23,7 +22,7 @@ If you believe you've found a security bug in our service, we are happy to work 
 
 Any type of denial of service attacks is strictly forbidden, as well as any interference with network equipment and Dolibarr infrastructure.
 
-We recommand to install Dolibarr ERP CRM on your own server (as most Open Source software, download and use is free: https://www.dolibarr.org/download) to get access on every side of application.
+We recommand to install Dolibarr ERP CRM on your own server (as most Open Source software, download and use is free: [https://www.dolibarr.org/download](https://www.dolibarr.org/download)) to get access on every side of application.
 
 ### User Agent
 
@@ -31,8 +30,7 @@ If you try to find bug on Dolibarr, we recommend to append to your user-agent he
 
 ### Account access
 
-You can install the web application yourself on your own platform/server so you get full access to application and sources. Download the zip of the files to put into your own web server virtual host from https://www.dolibarr.org/download
-
+You can install the web application yourself on your own platform/server so you get full access to application and sources. Download the zip of the files to put into your own web server virtual host from [https://www.dolibarr.org/download](https://www.dolibarr.org/download)
 
 ## Eligibility and Responsible Disclosure
 
@@ -45,7 +43,6 @@ You must send a clear textual description of the report along with steps to repr
 You must avoid tests that could cause degradation or interruption of our service (refrain from using automated tools, and limit yourself about requests per second), that's why we recommand to install softwate on your own platform.
 
 You must not leak, manipulate, or destroy any user data of third parties to find your vulnerability.
-
 
 ## Scope for qualified vulnerabilities
 
@@ -64,7 +61,6 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 
 Scope is the web application (back office) and the APIs.
 
-
 ## Qualifying vulnerabilities for reporting
 
 * Remote code execution (RCE)
@@ -80,7 +76,6 @@ Scope is the web application (back office) and the APIs.
 * "HTTP Host Header" XSS
 * Software version disclosure (for non admin users only)
 * Stack traces or path disclosure (for non admin users only)
-
 
 ## Non-qualifying vulnerabilities for reporting
 
@@ -99,4 +94,3 @@ Scope is the web application (back office) and the APIs.
 * Software version or private IP disclosure when logged user is admin
 * Stack traces or path disclosure when logged user is admin
 * Any vulnerabilities due to a configuration different than the one defined into chapter "Scope for qualified vulnerabilities".
-

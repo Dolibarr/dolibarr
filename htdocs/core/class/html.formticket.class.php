@@ -1,17 +1,18 @@
 <?php
-/* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Juanjo Menent			<jmenent@2byte.es>
+/* Copyright (C) 2013-2015 Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2016      Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019      Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -365,7 +366,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript" language="javascript">';
+			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
@@ -508,11 +509,13 @@ class FormTicket
 			print '</tr>';
 		}
 
-		if (!empty($conf->projet->enabled) && !$this->ispublic) {
-			$formproject = new FormProjets($this->db);
-			print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
-			print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
-			print '</td></tr>';
+		if ($subelement != 'project') {
+			if (!empty($conf->projet->enabled) && !$this->ispublic) {
+				$formproject = new FormProjets($this->db);
+				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
+				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print '</td></tr>';
+			}
 		}
 
 		// Other attributes
@@ -753,6 +756,8 @@ class FormTicket
 
 			print ajax_combobox('select'.$htmlname);
 		} elseif ($htmlname!='') {
+			$selectedgroups = array();
+			$groupvalue = "";
 			$groupticket=GETPOST($htmlname, 'aZ09');
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			if (!empty($groupticket)) {
@@ -1199,7 +1204,7 @@ class FormTicket
 		$send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 
 		// Example 1 : Adding jquery code
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			send_email=' . $send_email.';
 			if (send_email) {
@@ -1399,7 +1404,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript" language="javascript">';
+			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';

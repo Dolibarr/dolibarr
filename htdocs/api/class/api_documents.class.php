@@ -497,11 +497,11 @@ class Documents extends DolibarrApi
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
 		} else {
 			if (($object->id) > 0 && !empty($modulepart)) {
-				require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($this->db);
 				$result = $ecmfile->fetchAll('', '', 0, 0, array('t.src_object_type' => $modulepart, 't.src_object_id' => $object->id));
 				if ($result < 0) {
-					throw new RestException(503, 'Error when retrieve ecm list : ' . $this->db->lasterror());
+					throw new RestException(503, 'Error when retrieve ecm list : '.$this->db->lasterror());
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
 					$filearray['ecmfiles_infos'] = $ecmfile->lines;
 				}

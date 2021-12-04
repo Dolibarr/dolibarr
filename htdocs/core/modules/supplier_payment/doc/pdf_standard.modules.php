@@ -132,7 +132,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->db = $db;
 		$this->name = "standard";
 		$this->description = $langs->trans('DocumentModelStandardPDF');
-		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -317,8 +317,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Incoterm
 				$height_incoterms = 0;

@@ -235,7 +235,7 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -317,7 +317,6 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent">';
@@ -336,7 +335,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -404,8 +402,8 @@ if ($id > 0 || !empty($ref)) {
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
-			if ($projectstatic->societe->id) {
-				print $projectstatic->societe->getNomUrl(1);
+			if ($projectstatic->thirdparty->id) {
+				print $projectstatic->thirdparty->getNomUrl(1);
 			} else {
 				print '&nbsp;';
 			}
@@ -543,7 +541,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
@@ -583,7 +581,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 
 		print '</div>';
@@ -639,7 +636,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -647,7 +644,7 @@ if ($id > 0 || !empty($ref)) {
 		$defaultthirdpartyid = $socid > 0 ? $socid : $object->project->socid;
 		$formactions->showactions($object, 'task', $defaultthirdpartyid, 1, '', 10, 'withproject='.$withproject);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 }
 

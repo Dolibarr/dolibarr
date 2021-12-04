@@ -520,7 +520,7 @@ if ($tabname[$id]) {
 		if ($valuetoshow != '') {
 			print '<td class="'.$class.'">';
 			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-				print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				print '<a href="'.$tabhelp[$id][$value].'">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 			} elseif (!empty($tabhelp[$id][$value])) {
 				print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
 			} else {
@@ -744,7 +744,7 @@ if ($resql) {
 				print '<td></td>';
 			} else {
 				$tmpaction = 'view';
-				$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				$error = $hookmanager->error; $errors = $hookmanager->errors;

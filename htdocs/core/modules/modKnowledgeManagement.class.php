@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021 SuperAdmin
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  * 	\defgroup   knowledgemanagement     Module KnowledgeManagement
  *  \brief      KnowledgeManagement module descriptor.
  *
- *  \file       htdocs/knowledgemanagement/core/modules/modKnowledgeManagement.class.php
+ *  \file       htdocs/core/modules/modKnowledgeManagement.class.php
  *  \ingroup    knowledgemanagement
  *  \brief      Description and activation file for module KnowledgeManagement
  */

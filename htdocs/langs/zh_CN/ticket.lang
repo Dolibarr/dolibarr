@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=其他
+
 ErrorBadEmailAddress=字段'%s'不正确
 MenuTicketMyAssign=我的票据
 MenuTicketMyAssignNonClosed=我的有效票据
@@ -180,7 +182,7 @@ MessageSuccessfullyAdded=新增票据
 TicketMessageSuccessfullyAdded=消息已成功添加
 TicketMessagesList=消息列表
 NoMsgForThisTicket=此票证没有消息
-Properties=分类
+TicketProperties=Classification
 LatestNewTickets=最新%s最新票据（未读）
 TicketSeverity=严重
 ShowTicket=看票
@@ -316,6 +318,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

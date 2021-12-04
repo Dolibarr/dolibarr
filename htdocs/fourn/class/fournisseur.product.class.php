@@ -635,7 +635,7 @@ class ProductFournisseur extends Product
 	 *    @param	int		$limit		Limit
 	 *    @param	int		$offset		Offset
 	 *    @param	int		$socid		Filter on a third party id
-	 *    @return	array				Array of Products with new properties to define supplier price
+	 *    @return	array				Array of ProductFournisseur with new properties to define supplier price
 	 */
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{

@@ -313,8 +313,8 @@ class pdf_standard extends ModeleExpenseReport
 
 				$tab_top = 95;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 65 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;

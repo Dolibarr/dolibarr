@@ -343,7 +343,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
 	if ($conf->use_javascript_ajax) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print 'jQuery(document).ready(function () {
                     jQuery("#selecttype").change(function() {
                         document.formsoc.action.value="create";
@@ -429,7 +429,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("Web").'</td>';
 	print '<td>';
 	print img_picto('', 'globe', 'class="pictofixedwidth"');
-	print '<input class="minwidth300" type="text" class="flat" name="url" value="'.GETPOST("url").'">';
+	print '<input class="minwidth300 widthcentpercentminusx maxwidth500" type="text" class="flat" name="url" value="'.GETPOST("url").'">';
 	print '</td></tr>';
 
 	// Tags-Categories
@@ -698,7 +698,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -797,7 +796,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
 
 		print '<div class="clearboth"></div>';
 
@@ -833,7 +831,7 @@ if ($action == 'create') {
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {
                         jQuery("#selecttype").change(function() {
                             document.formsoc.action.value="edit";

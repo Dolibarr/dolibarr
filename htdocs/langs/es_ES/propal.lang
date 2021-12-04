@@ -89,4 +89,11 @@ IdProposal=ID de Presupuesto
 IdProduct=ID del Producto
 PrParentLine=Presupuesto de línea principal
 LineBuyPriceHT=Precio de compra Importe neto de impuestos por línea
-
+SignPropal=Accept proposal
+RefusePropal=Rechazar presupuesto
+Sign=Firma
+PropalAlreadySigned=Proposal already accepted
+PropalAlreadyRefused=Presupuesto ya rechazado
+PropalSigned=Proposal accepted
+PropalRefused=Presupuesto rechazado
+ConfirmRefusePropal=¿Está seguro de querer rechazar este presupuesto?

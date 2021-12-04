@@ -197,7 +197,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -258,7 +260,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				}
 			}
 
-			$dir = $conf->usergroup->dir_output;
+			$dir = $conf->user->dir_output.'/usergroups';
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

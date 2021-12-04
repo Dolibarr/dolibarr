@@ -152,11 +152,11 @@ print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("ApiExporerIs").':</span><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer')) {
 	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a></div><br>\n";
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a></div><br>\n";
 	print '<div class="opacitymediumxxx"><br><span class="opacitymedium">'.$langs->trans("SwaggerDescriptionFile").':</span><br>';
 	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
 	//$urlswaggerreal = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY='.$user->api_key;
-	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank">'.$urlswagger."</a></div><br>\n";
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank" rel="noopener noreferrer">'.$urlswagger."</a></div><br>\n";
 	print '</div>';
 } else {
 	$langs->load("errors");

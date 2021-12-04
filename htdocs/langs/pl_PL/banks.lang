@@ -182,3 +182,4 @@ BankColorizeMovementName2=Kolor tła dla przesunięcia kredytu
 IfYouDontReconcileDisableProperty=Jeśli nie dokonasz uzgodnień bankowych na niektórych kontach bankowych, wyłącz na nich właściwość „%s”, aby usunąć to ostrzeżenie.
 NoBankAccountDefined=Nie zdefiniowano konta bankowego
 NoRecordFoundIBankcAccount=Nie znaleziono rekordu na koncie bankowym. Często dzieje się tak, gdy rekord został ręcznie usunięty z listy transakcji na rachunku bankowym (na przykład podczas uzgadniania rachunku bankowego). Innym powodem jest to, że płatność została zarejestrowana, gdy moduł „%s” był wyłączony.
+AlreadyOneBankAccount=Already one bank account defined

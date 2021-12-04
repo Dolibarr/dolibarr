@@ -244,7 +244,7 @@ class DolEditor
 				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
 				$out .= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.' reposition">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
 				$out .= '</div>';
-				$out .= '<script type="text/javascript" language="javascript">'."\n";
+				$out .= '<script type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function() {'."\n";
 				$out .= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;									// Init status bar. Need lib ext-statusbar
@@ -281,7 +281,7 @@ class DolEditor
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 
-			$out .= '<script type="text/javascript" language="javascript">'."\n";
+			$out .= '<script type="text/javascript">'."\n";
 			$out .= 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 
 				    aceEditor.session.setMode("ace/mode/'.$format.'");

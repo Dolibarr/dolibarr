@@ -118,6 +118,7 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 $projectRequired = $conf->projet->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+$fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
@@ -138,6 +139,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'expensereport', $object->id, 'expensereport');
+
+$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -1155,6 +1158,12 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
 		}
 
+		// If no file associated
+		if ($fileRequired && $fk_ecm_files == 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		}
+
 		if (!$error) {
 			$type = 0; // TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
@@ -1339,7 +1348,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->expensereport->dir_output;
-	$permissiontoadd = $user->rights->expensereport->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1850,7 +1858,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
@@ -1903,7 +1910,7 @@ if ($action == 'create') {
 				$nbcols++;
 			}
 
-			print '<table class="noborder paymenttable" width="100%">';
+			print '<table class="noborder paymenttable centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
@@ -1924,7 +1931,7 @@ if ($action == 'create') {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-			$sql .= " WHERE e.rowid = '".$id."'";
+			$sql .= " WHERE e.rowid = ".((int) $id);
 			$sql .= " AND p.fk_expensereport = e.rowid";
 			$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 			$sql .= " ORDER BY dp";
@@ -2004,7 +2011,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '</div>';
-			print '</div>';
 
 			print '<div class="clearboth"></div><br>';
 
@@ -2050,6 +2056,11 @@ if ($action == 'create') {
 				// Picture
 				print '<td>';
 				print '</td>';
+
+				// Information if theres a rule restriction
+				print '<td>';
+				print '</td>';
+
 				// Ajout des boutons de modification/suppression
 				if (($object->status < 2 || $object->status == 99) && $user->rights->expensereport->creer) {
 					print '<td class="right"></td>';
@@ -2138,7 +2149,7 @@ if ($action == 'create') {
 									$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
 									if (empty($urlforhref)) {
 										$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
-										print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+										print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 									} else {
 										print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 									}
@@ -2190,6 +2201,10 @@ if ($action == 'create') {
 						}
 						print '</td>';
 
+						print '<td class="nowrap right">';
+						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '&nbsp;';
+						print '</td>';
+
 						// Ajout des boutons de modification/suppression
 						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
 							print '<td class="nowrap right">';
@@ -2209,7 +2224,7 @@ if ($action == 'create') {
 
 					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
-						$colspan = 10;
+						$colspan = 11;
 						if (!empty($conf->projet->enabled)) {
 							$colspan++;
 						}
@@ -2235,7 +2250,7 @@ if ($action == 'create') {
 						}
 
 						print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
-						print '<script language="javascript">'."\n";
+						print '<script type="text/javascript">'."\n";
 						print '$(document).ready(function() {
         				        $( ".auploadnewfilenow" ).click(function() {
         				            jQuery(".truploadnewfilenow").toggle();
@@ -2336,6 +2351,9 @@ if ($action == 'create') {
 						print '<td class="center">';
 						//print $line->fk_ecm_files;
 						print '</td>';
+						// Information if theres a rule restriction
+						print '<td class="center">';
+						print '</td>';
 
 						print '<td>';
 						print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
@@ -2351,7 +2369,7 @@ if ($action == 'create') {
 
 			 // Add a new line
 			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer) {
-				$colspan = 11;
+				$colspan = 12;
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					$colspan++;
 				}
@@ -2387,7 +2405,7 @@ if ($action == 'create') {
 				}
 
 				print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
-				print '<script language="javascript">'."\n";
+				print '<script type="text/javascript">'."\n";
 				print '$(document).ready(function() {
 				        $( ".auploadnewfilenow" ).click(function() {
 							console.log("We click on toggle of auploadnewfilenow");
@@ -2444,6 +2462,7 @@ if ($action == 'create') {
 				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right">'.$langs->trans('Qty').'</td>';
+				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
@@ -2745,13 +2764,13 @@ if ($action != 'presend') {
 	}
 	*/
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'expensereport', null);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // Presend form

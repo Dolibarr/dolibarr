@@ -66,16 +66,12 @@ $originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('o
 $note_public = GETPOST('note_public', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
 
+$error = 0;
+
 //PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('interventioncard', 'globalcard'));
@@ -96,10 +92,14 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
+
 $permissionnote = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->ficheinter->creer; // Used by the include of actions_dellink.inc.php
-
-$error = 0;
 
 
 /*
@@ -837,6 +837,10 @@ if ($action == 'create') {
 			$note_private = (!empty($objectsrc->note) ? $objectsrc->note : (!empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private', 'restricthtml')));
 			$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public', 'restricthtml'));
 
+			// Replicate extrafields
+			$objectsrc->fetch_optionals();
+			$object->array_options = $objectsrc->array_options;
+
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
@@ -1155,9 +1159,10 @@ if ($action == 'create') {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -1246,7 +1251,6 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -1260,7 +1264,6 @@ if ($action == 'create') {
 
 	print "</table>";
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -1668,14 +1671,14 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'fichinter', $socid, 1);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 
