@@ -92,7 +92,7 @@ class mymodulewidget1 extends ModeleBoxes
 	public function __construct(DoliDB $db, $param = '')
 	{
 		global $user, $conf, $langs;
-		
+
 		// Translations
 		$langs->loadLangs(array("boxes", "mymodule@mymodule"));
 
