@@ -123,9 +123,17 @@ $sql .= " soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as t
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " spe.accountancy_code_customer as code_compta,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " spe2.accountancy_code_customer as code_compta_parent_company,";
+		$sql .= " spe2.accountancy_code_supplier as code_compta_fournisseur_parent_company,";
+	}
 } else {
 	$sql .= " soc.code_compta,";
 	$sql .= " soc.code_compta_fournisseur,";
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " soc2.code_compta as code_compta_parent_company,";
+		$sql .= " soc2.code_compta_fournisseur as code_compta_fournisseur_parent_company,";
+	}
 }
 $sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, u.statut as userstatus,";
 $sql .= " bu2.type as typeop_user,";
@@ -137,8 +145,14 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid A
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu4 ON bu4.fk_bank = b.rowid AND bu4.type='payment_supplier'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc on bu1.url_id=soc.rowid";
+if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+	$sql .= " JOIN ".MAIN_DB_PREFIX."societe as soc2 ON soc2.rowid = soc.parent AND soc.parent IS NOT NULL";
+}
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = soc.rowid AND spe.entity = " . ((int) $conf->entity);
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe2 ON spe2.fk_soc = soc.parent AND soc.parent IS NOT NULL AND spe2.entity = " . ((int) $conf->entity);
+	}
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on bu2.url_id=u.rowid";
 $sql .= " WHERE ba.fk_accountancy_journal=".((int) $id_journal);
@@ -248,10 +262,18 @@ if ($result) {
 		// Set accountancy code for thirdparty (example: '411CU...' or '411' if no subledger account defined on customer)
 		$compta_soc = 'NotDefined';
 		if ($lineisapurchase > 0) {
-			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+				$compta_soc = (($obj->code_compta_fournisseur_parent_company != "") ? $obj->code_compta_fournisseur_parent_company : $account_supplier);
+			} else {
+				$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
+			}
 		}
 		if ($lineisasale > 0) {
-			$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $account_customer);
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+				$compta_soc = (!empty($obj->code_compta_parent_company) ? $obj->code_compta_parent_company : $account_customer);
+			} else {
+				$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $account_customer);
+			}
 		}
 
 		$tabcompany[$obj->rowid] = array(

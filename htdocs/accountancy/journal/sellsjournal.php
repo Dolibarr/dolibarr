@@ -111,9 +111,17 @@ $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " spe.accountancy_code_customer as code_compta,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " spe2.accountancy_code_customer as code_compta_parent_company,";
+		$sql .= " spe2.accountancy_code_supplier as code_compta_fournisseur_parent_company,";
+	}
 } else {
 	$sql .= " s.code_compta as code_compta,";
 	$sql .= " s.code_compta_fournisseur,";
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " s2.code_compta as code_compta_parent_company,";
+		$sql .= " s2.code_compta_fournisseur as code_compta_fournisseur_parent_company,";
+	}
 }
 $sql .= " p.rowid as pid, p.ref as pref, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -129,13 +137,19 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+	$sql .= " JOIN ".MAIN_DB_PREFIX."societe as s2 ON s2.rowid = s.parent AND s.parent IS NOT NULL";
+}
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe2 ON spe2.fk_soc = s.parent AND s.parent IS NOT NULL AND spe2.entity = " . ((int) $conf->entity);
+	}
 }
 $sql .= " WHERE fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).')'; // We don't share object for accountancy, we use source object sharing
 $sql .= " AND f.fk_statut > 0";
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Non common setup
+if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Non-common setup
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
 } else {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
@@ -183,7 +197,11 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$compta_soc = (!empty($obj->code_compta)) ? $obj->code_compta : $cptcli;
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+			$compta_soc = (!empty($obj->code_compta_parent_company)) ? $obj->code_compta_parent_company : $cptcli;
+		} else {
+			$compta_soc = (!empty($obj->code_compta)) ? $obj->code_compta : $cptcli;
+		}
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {

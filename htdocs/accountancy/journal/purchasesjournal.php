@@ -109,9 +109,17 @@ $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " spe.accountancy_code_customer as code_compta,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " spe2.accountancy_code_customer as code_compta_parent_company,";
+		$sql .= " spe2.accountancy_code_supplier as code_compta_fournisseur_parent_company,";
+	}
 } else {
 	$sql .= " s.code_compta as code_compta,";
 	$sql .= " s.code_compta_fournisseur,";
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " s2.code_compta as code_compta_parent_company,";
+		$sql .= " s2.code_compta_fournisseur as code_compta_fournisseur_parent_company,";
+	}
 }
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_buy,";
@@ -127,8 +135,14 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+	$sql .= " JOIN ".MAIN_DB_PREFIX."societe as s2 ON s2.rowid = s.parent AND s.parent IS NOT NULL";
+}
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+	if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe2 ON spe2.fk_soc = s.parent AND s.parent IS NOT NULL AND spe2.entity = " . ((int) $conf->entity);
+	}
 }
 $sql .= " WHERE f.fk_statut > 0";
 $sql .= " AND fd.fk_code_ventilation > 0";
@@ -178,7 +192,11 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && !empty($conf->global->ACCOUNTING_USE_PARENT_COMPANY)) {
+			$compta_soc = ($obj->code_compta_fournisseur_parent_company != "") ? $obj->code_compta_fournisseur_parent_company : $cptfour;
+		} else {
+			$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
+		}
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
