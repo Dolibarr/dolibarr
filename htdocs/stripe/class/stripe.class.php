@@ -378,7 +378,7 @@ class Stripe extends CommonObject
 
 		$paymentintent = null;
 
-		if (is_object($object) && !empty($conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND)) {
+		if (is_object($object) && !empty($conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND) && empty($conf->global->STRIPE_CARD_PRESENT)) {
 			// Warning. If a payment was tried and failed, a payment intent was created.
 			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
@@ -452,6 +452,9 @@ class Stripe extends CommonObject
 			if (!empty($conf->global->STRIPE_SOFORT)) {
 				$paymentmethodtypes[] = "sofort";
 			}
+			if (!empty($conf->global->STRIPE_CARD_PRESENT)) {
+				$paymentmethodtypes = array("card_present");
+			}
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
@@ -483,6 +486,10 @@ class Stripe extends CommonObject
 			}
 			if (!empty($conf->global->STRIPE_KLARNA)) {
 				unset($dataforintent['setup_future_usage']);
+			}
+			if (!empty($conf->global->STRIPE_CARD_PRESENT)) {
+				unset($dataforintent['setup_future_usage']);
+				$dataforintent["capture_method"] = 'manual';
 			}
 			if (!is_null($payment_method)) {
 				$dataforintent["payment_method"] = $payment_method;

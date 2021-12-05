@@ -322,8 +322,8 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		});
 	}
 
-	function fetchPaymentIntentClientSecret(amount) {
-	  const bodyContent = JSON.stringify({ amount: amount });
+	function fetchPaymentIntentClientSecret(amount, invoiceid) {
+	  const bodyContent = JSON.stringify({ amount : amount, invoiceid : invoiceid });
   <?php
 	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&servicestatus='.$servicestatus;
 	if (!empty($stripeacc)) $urlpaymentintent .= '&stripeacc='.$stripeacc;
@@ -378,10 +378,10 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		if (amountpayed == 0) {
 			amountpayed = <?php echo $invoice->getRemainToPay(); ?>;
 		}
-		amountpayed = amountpayed * 100;
+
 		console.log("Pay with terminal ", amountpayed);
 
-		fetchPaymentIntentClientSecret(amountpayed).then(function(client_secret) {
+		fetchPaymentIntentClientSecret(amountpayed, invoiceid).then(function(client_secret) {
 			<?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
 			<?php } ?>
@@ -408,7 +408,6 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			  } else {
 				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>'; 
 				console.log("Capture paymentIntent successfull "+paymentIntentId);
-				  amountpayed = amountpayed / 100;
 				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
