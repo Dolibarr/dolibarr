@@ -549,21 +549,19 @@ if ($num > 0) {
 		}
 		print '</td>';
 
-		$datefromto = (empty($obj->datestart) ? '' : dol_print_date($db->jdate($obj->datestart), 'dayhour', 'tzserver')).' - '.(empty($obj->dateend) ? '' : dol_print_date($db->jdate($obj->dateend), 'dayhour', 'tzserver'));
-
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center">';
 		if (!empty($obj->datestart)) {
 			print dol_print_date($db->jdate($obj->datestart), 'dayhour', 'tzserver');
 		}
 		print '</td>';
 
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center">';
 		if (!empty($obj->dateend)) {
 			print dol_print_date($db->jdate($obj->dateend), 'dayhour', 'tzserver');
 		}
 		print '</td>';
 
-		print '<td class="right" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="right">';
 		if (!empty($obj->nbrun)) {
 			print $obj->nbrun;
 		} else {
@@ -574,15 +572,17 @@ if ($num > 0) {
 		}
 		print '</td>';
 
+		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhour', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhour', 'tzserver'));
+
 		// Date start last run
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastrun)) {
 			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
 		}
 		print '</td>';
 
 		// Duration
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
 			print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
 			//print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
@@ -590,7 +590,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Return code of last run
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if ($obj->lastresult != '') {
 			if (empty($obj->lastresult)) {
 				print $obj->lastresult;
