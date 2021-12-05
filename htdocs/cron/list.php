@@ -549,19 +549,21 @@ if ($num > 0) {
 		}
 		print '</td>';
 
-		print '<td class="center">';
+		$datefromto = (empty($obj->datestart) ? '' : dol_print_date($db->jdate($obj->datestart), 'dayhour', 'tzserver')).' - '.(empty($obj->dateend) ? '' : dol_print_date($db->jdate($obj->dateend), 'dayhour', 'tzserver'));
+
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($obj->datestart)) {
 			print dol_print_date($db->jdate($obj->datestart), 'dayhour', 'tzserver');
 		}
 		print '</td>';
 
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($obj->dateend)) {
 			print dol_print_date($db->jdate($obj->dateend), 'dayhour', 'tzserver');
 		}
 		print '</td>';
 
-		print '<td class="right">';
+		print '<td class="right" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($obj->nbrun)) {
 			print $obj->nbrun;
 		} else {
