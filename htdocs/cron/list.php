@@ -572,7 +572,7 @@ if ($num > 0) {
 		}
 		print '</td>';
 
-		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhour', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhour', 'tzserver'));
+		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
 
 		// Date start last run
 		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
