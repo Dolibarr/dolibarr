@@ -1514,7 +1514,7 @@ class ExtraFields
 			$label = $this->attribute_label[$key];
 			$type = $this->attribute_type[$key];
 			$help = ''; // Not supported with old syntax
-			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+			$hidden = 0; // hidden option only available for new syntax
 		}
 
 		if ($hidden) {
