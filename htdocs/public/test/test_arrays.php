@@ -26,7 +26,7 @@ if (!defined("NOLOGIN")) {
 require '../../main.inc.php';
 
 if ($dolibarr_main_prod) {
-	accessforbidden();
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
 $usedolheader = 1; // 1 = Test inside a dolibarr page, 0 = Use hard coded header

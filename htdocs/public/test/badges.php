@@ -27,7 +27,7 @@ require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 if ($dolibarr_main_prod) {
-	accessforbidden();
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
 ?>
