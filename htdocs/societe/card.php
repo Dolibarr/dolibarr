@@ -1561,7 +1561,7 @@ else
 		}
 
 		// Other attributes
-		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => 3);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		// Assign a sale representative
@@ -2206,7 +2206,7 @@ else
 			}
 
 			// Other attributes
-			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => 3);
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
             // Webservices url/key

@@ -7096,18 +7096,17 @@ abstract class CommonObject
 					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
 				}
 
-				$colspan = '';
+				$colspan = 1;
 				if (is_array($params) && count($params) > 0) {
-					if (array_key_exists('cols', $params)) {
-						$colspan = $params['cols'];
+					if (array_key_exists('cols', $params) && is_numeric($params['cols'])) {
+						$colspan = intval($params['cols']);
 					}
 					elseif (array_key_exists('colspan', $params)) {	// For backward compatibility. Use cols instead now.
 						$reg = array();
 						if (preg_match('/colspan="(\d+)"/', $params['colspan'], $reg)) {
-							$colspan = $reg[1];
-						}
-						else {
-							$colspan = $params['colspan'];
+							$colspan = intval($reg[1]);
+						} elseif (is_numeric($params['colspan'])) {
+							$colspan = intval($params['colspan']);
 						}
 					}
 				}
@@ -7151,7 +7150,7 @@ abstract class CommonObject
                         }
                     }
 
-					$out .= $extrafields->showSeparator($key, $this, ($colspan + 1));
+					$out .= $extrafields->showSeparator($key, $this, $colspan + 1);
 				}
 				else
 				{
@@ -7173,7 +7172,9 @@ abstract class CommonObject
 
 					$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
 
-					if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan = '0'; }
+					if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) {
+						$colspan = 0;
+					}
 
 					if ($action == 'selectlines') { $colspan++; }
 
