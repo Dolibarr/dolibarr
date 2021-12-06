@@ -1149,7 +1149,6 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$action = '';
 		$hookmanager->executeHooks('pdf_pagefoot', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if (!empty($hookmanager->resPrint) and $hidefreetext == 0) {
-
 			$mycustomfooter = $hookmanager->resPrint;
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
@@ -1173,10 +1172,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
 			$posy -= $mycustomfooterheight - 3;
-		}
-
-		// Else default footer
-		else {
+		} else { 
+			// Else default footer
 			$marginwithfooter = $marge_basse + $freetextheight + (!empty($line1) ? 3 : 0) + (!empty($line2) ? 3 : 0) + (!empty($line3) ? 3 : 0) + (!empty($line4) ? 3 : 0);
 			$posy = $marginwithfooter + 0;
 
