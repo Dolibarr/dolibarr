@@ -3607,7 +3607,7 @@ div.refidno  {
 	font-weight: normal;
 	  color: var(--refidnocolor);
 	  font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	  line-height: 21px;
+	  line-height: 1.4em;
 }
 div.refidno form {
 	display: inline-block;
