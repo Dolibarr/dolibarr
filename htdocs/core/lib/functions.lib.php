@@ -1170,6 +1170,10 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 function dol_string_unaccent($str)
 {
 	if (utf8_check($str)) {
+		if (extension_loaded('intl')) {
+			$transliterator = \Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;', \Transliterator::FORWARD);
+			return $transliterator->transliterate($str);
+		}
 		// See http://www.utf8-chartable.de/
 		$string = rawurlencode($str);
 		$replacements = array(
