@@ -2055,7 +2055,8 @@ class ExtraFields
 			foreach ($extralabels as $key => $value)
 			{
 				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) continue;
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && ! GETPOSTISSET('options_'.$key)) continue;
+                //when unticking boolean field, it's not set in POST
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && ! GETPOSTISSET('options_'.$key) && $this->attributes[$object->table_element]['type'][$key] != 'boolean') continue;
 
 				$key_type = $this->attributes[$object->table_element]['type'][$key];
 				if ($key_type == 'separate') continue;
