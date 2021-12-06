@@ -51,7 +51,6 @@ $fk_entrepot = GETPOST("fk_entrepot", "int");
 $fk_inventory = GETPOST("fk_inventory", "int");
 $fk_product = GETPOST("fk_product", "int");
 $reelqty = GETPOST("reelqty", "int");
-$qtyview = GETPOST("qty", "int");
 $batch = GETPOST("batch", "int");
 $mode = GETPOST("mode", "aZ");
 
@@ -72,6 +71,9 @@ if ($action == "existbarcode" && !empty($barcode)) {
 	}
 	if (!empty($fk_entrepot)) {
 		$sql .= " AND ps.fk_entrepot = '".$db->escape($fk_entrepot)."'";
+	}
+	if (!empty($fk_product)) {
+		$sql .= " AND ps.fk_product = '".$db->escape($fk_product)."'";
 	}
 	$result = $db->query($sql);
 	if ($result) {
@@ -113,15 +115,14 @@ if ($action == "addnewlineproduct") {
 		$inventoryline->fk_warehouse = $fk_entrepot;
 		$inventoryline->fk_product = $fk_product;
 		$inventoryline->qty_stock = $reelqty;
-		$inventoryline->qty_view = $qtyview;
-		if ($mode == "lotserial") {
+		if (!empty($batch)) {
 			$inventoryline->batch = $batch;
 		}
 		$inventoryline->datec = dol_now();
 
 		$result = $inventoryline->create($user);
 		if ($result > 0) {
-			$response = array('status'=>'success','message'=>'Success on creating line');
+			$response = array('status'=>'success','message'=>'Success on creating line','id_line'=>$result);
 		} else {
 			$response = array('status'=>'error','errorcode'=>'ErrorCreation','message'=>"Error on line creation");
 		}
