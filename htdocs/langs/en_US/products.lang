@@ -408,3 +408,5 @@ mandatoryHelper=Message to the user on the need to enter a start date and an end
 DefaultBOM=Default BOM
 DefaultBOMDesc=The default BOM recommended to use to manufacture this product. This field can be set only if nature of product is '%s'.
 Rank=Rank
+SwitchOnSaleStatus=Switch on sale status
+SwitchOnPurchaseStatus=Switch on purchase status

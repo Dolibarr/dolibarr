@@ -4132,12 +4132,13 @@ abstract class CommonObject
 	 *      Set status of an object
 	 *
 	 *      @param	int		$status			Status to set
-	 *      @param	int		$elementId		Id of element to force (use this->id by default)
+	 *      @param	int		$elementId		Id of element to force (use this->id by default if null)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
-	 *      @param	string	$trigkey		Trigger key to use for trigger
+	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it not recommended and is deprecated.
+	 *      @param	string	$fieldstatus	Name of status field in this->table_element
 	 *      @return int						<0 if KO, >0 if OK
 	 */
-	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '')
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
 	{
 		global $user, $langs, $conf;
 
@@ -4148,7 +4149,6 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		$fieldstatus = "fk_statut";
 		if ($elementTable == 'facture_rec') {
 			$fieldstatus = "suspended";
 		}
@@ -4217,9 +4217,16 @@ abstract class CommonObject
 			if (!$error) {
 				$this->db->commit();
 
-				if (empty($savElementId)) {    // If the element we update was $this (so $elementId is null)
-					$this->statut = $status;
-					$this->status = $status;
+				if (empty($savElementId)) {
+					// If the element we update is $this (so $elementId was provided as null)
+					if ($fieldstatus == 'tosell') {
+						$this->status = $status;
+					} elseif ($fieldstatus == 'tobuy') {
+						$this->status_buy = $status;
+					} else {
+						$this->statut = $status;
+						$this->status = $status;
+					}
 				}
 
 				return 1;
