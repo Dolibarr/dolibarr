@@ -1245,7 +1245,6 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Other attributes
-	$parameters = array('colspan' => ' colspan="3"');
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 	// Note
