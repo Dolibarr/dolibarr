@@ -1915,7 +1915,7 @@ if ($action == 'create') {
 						if ($lines[$i]->product->status_batch) {
 							include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 							$lot = new Productlot($db);
-							$lot->fetch(0,$lines[$i]->fk_product,$lines[$i]->batch);
+							$lot->fetch(0, $lines[$i]->fk_product, $lines[$i]->batch);
 							$detail .= $lot->getNomUrl(1);
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");

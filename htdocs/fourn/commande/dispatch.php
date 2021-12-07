@@ -1005,8 +1005,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right">';
 						if ($objp->tobatch == 2) {
 							print $langs->trans('UniqueSN');
-						}
-						else {
+						} else {
 							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
 						}
 						print '</td>';
