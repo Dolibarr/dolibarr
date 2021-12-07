@@ -10,7 +10,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Ferran Marcet         	<fmarcet@2byte.es>
+ * Copyright (C) 2018-2021  Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2904,11 +2904,11 @@ class CommandeFournisseur extends CommonOrder
                 if ($obj->fk_user_approve)  $this->user_approve_id = $obj->fk_user_approve;
                 if ($obj->fk_user_approve2) $this->user_approve_id2 = $obj->fk_user_approve2;
 
-                $this->date_creation     = $this->db->idate($obj->datec);
-                $this->date_modification = $this->db->idate($obj->datem);
-                $this->date_approve      = $this->db->idate($obj->datea);
-                $this->date_approve2     = $this->db->idate($obj->datea2);
-                $this->date_validation   = $this->db->idate($obj->date_validation);
+                $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_modification = $this->db->jdate($obj->datem);
+                $this->date_approve      = $this->db->jdate($obj->datea);
+                $this->date_approve2     = $this->db->jdate($obj->datea2);
+                $this->date_validation   = $this->db->jdate($obj->date_validation);
             }
             $this->db->free($result);
         }

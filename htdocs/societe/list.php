@@ -294,6 +294,7 @@ if (empty($reshook))
 		$search_town = "";
 		$search_zip = "";
 		$search_state = "";
+		$search_region = "";
 		$search_country = '';
 		$search_email = '';
 		$search_phone = '';
@@ -421,7 +422,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
 if (!empty($search_categ_cus)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 if (!empty($search_categ_sup)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
@@ -554,6 +555,7 @@ if ($search_fax != '')     $param .= "&search_fax=".urlencode($search_fax);
 if ($search_email != '')   $param .= "&search_email=".urlencode($search_email);
 if ($search_url != '')     $param .= "&search_url=".urlencode($search_url);
 if ($search_state != '')   $param .= "&search_state=".urlencode($search_state);
+if ($search_region != '')   $param .= "&search_region=".urlencode($search_region);
 if ($search_country != '') $param .= "&search_country=".urlencode($search_country);
 if ($search_customer_code != '') $param .= "&search_customer_code=".urlencode($search_customer_code);
 if ($search_supplier_code != '') $param .= "&search_supplier_code=".urlencode($search_supplier_code);

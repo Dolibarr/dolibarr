@@ -1668,6 +1668,11 @@ if (empty($reshook))
 										$discount->tva_tx = $lines[$i]->tva_tx;
 										$discount->fk_user = $user->id;
 										$discount->description = $desc;
+                                        $discount->multicurrency_subprice = abs($lines[$i]->multicurrency_subprice);
+                                        $discount->multicurrency_amount_ht = abs($lines[$i]->multicurrency_total_ht);
+                                        $discount->multicurrency_amount_tva = abs($lines[$i]->multicurrency_total_tva);
+                                        $discount->multicurrency_amount_ttc = abs($lines[$i]->multicurrency_total_ttc);
+
 										$discountid = $discount->create($user);
 										if ($discountid > 0) {
 											$result = $object->insert_discount($discountid); // This include link_to_invoice
@@ -2822,6 +2827,7 @@ if (empty($reshook))
  * View
  */
 
+
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -3749,6 +3755,15 @@ if ($action == 'create')
 }
 elseif ($id > 0 || !empty($ref))
 {
+	if (empty($object->id)) {
+		llxHeader();
+		$langs->load('errors');
+		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound");
+		echo ' <a href="javascript:history.go(-1)">'.$langs->trans('GoBack').'</div>';
+		llxFooter();
+		exit;
+	}
+
 	/*
 	 * Show object in view mode
 	 */
