@@ -272,10 +272,10 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	}
 }
 
-
 // Set the handler of session
-if (ini_get('session.save_handler') == 'user') {
-	require_once 'core/lib/phpsessionindb.lib.php';
+// if (ini_get('session.save_handler') == 'user')
+if ($php_session_save_handler == 'db') {
+	require_once 'core/lib/phpsessionin'.$php_session_save_handler.'.lib.php';
 }
 
 // Init session. Name of session is specific to Dolibarr instance.
@@ -294,7 +294,8 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 if (!defined('NOSESSION')) {
 	session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	session_name($sessionname);
-	session_start();
+	session_start();	// This call the open and read of session handler
+	//exit;	// this exist generates a call to write and close
 }
 
 
