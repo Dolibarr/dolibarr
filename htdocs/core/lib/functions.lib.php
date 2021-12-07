@@ -1569,7 +1569,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
 	$out .= '<!-- Add js code to open dialog popup on dialog -->';
-	$out .= '<script language="javascript">
+	$out .= '<script type="text/javascript">
 				jQuery(document).ready(function () {
 					jQuery(".button_'.$name.'").click(function () {
 						console.log("Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'")
@@ -3650,7 +3650,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
-				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'vat', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
@@ -3797,7 +3797,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'other'=>'#ddd',
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
 				//'shipment'=>'#a69944',
-				'security'=>'#999', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
+				'security'=>'#999', 'square'=>'#888', 'stop-circle'=>'#888', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
 				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa', 'region'=>'#aaa', 'state'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
@@ -4490,7 +4490,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 
 		if ($textfordropdown) {
 			$tmpresult = '<span class="'.$class.'text opacitymedium cursorpointer">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
-			$tmpresult .= '<script type="text/javascript" language="javascript">
+			$tmpresult .= '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery(".'.$class.'text").click(function() {
 						console.log("toggle text");
@@ -8159,9 +8159,9 @@ function verifCond($strToEvaluate)
 	global $leftmenu;
 	global $rights; // To export to dol_eval function
 
-	//print $strRights."<br>\n";
+	//print $strToEvaluate."<br>\n";
 	$rights = true;
-	if ($strToEvaluate !== '') {
+	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		$str = 'if(!('.$strToEvaluate.')) { $rights = false; }';
 		dol_eval($str); // The dol_eval must contains all the global $xxx used into a condition
 	}

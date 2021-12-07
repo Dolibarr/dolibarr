@@ -1444,6 +1444,10 @@ table[summary="list_of_modules"] .fa-cog {
 	min-width: 100px;
 }
 
+.linkedcol-date {
+	text-align: center;
+}
+
 .img-skinthumb {
 	width: 160px;
 	height: 100px;
@@ -2676,7 +2680,7 @@ a.tmenuimage:focus {
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 14px;
+	font-size: 1.2em;
 	vertical-align: middle;
 }
 .login_table_title {
@@ -3178,12 +3182,12 @@ div.tabBar {
 	margin: 0px 0px 18px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
-	border-right: 1px solid #BBB;
-	border-left: 1px solid #BBB;
+	border-right: 1px solid #CCC;
+	border-left: 1px solid #CCC;
 	border-top: 1px solid #CCC;
+	border-bottom: 1px solid #CCC;
 	width: auto;
 	background: var(--colorbacktabcard1);
-	border-bottom: 1px solid #aaa;
 }
 
 div.tabBar tr.titre td {
@@ -4638,6 +4642,25 @@ div.ui-tooltip.mytooltip {
 	/*background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);*/
 	line-height: 1.6em;
+	min-width: 550px;
+}
+@media only screen and (max-width: 768px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 400px;
+	}
+}
+@media only screen and (max-width: 480px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 300px;
+	}
+}
+@media only screen and (max-width: 320px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 230px;
+	}
 }
 
 
@@ -5532,6 +5555,8 @@ div#ecm-layout-center {
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
+	text-align: start;
+	word-break: break-word;
 }
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;

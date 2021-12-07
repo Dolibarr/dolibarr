@@ -351,7 +351,7 @@ print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, ''
 if (empty($conf->use_javascript_ajax)) {
 	print '<input type="submit" class="button buttongen button-save" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 } else {
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
         		console.log("Reload for "+jQuery("#objecttype").val());

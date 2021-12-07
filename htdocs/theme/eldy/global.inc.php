@@ -3607,7 +3607,7 @@ div.refidno  {
 	font-weight: normal;
 	  color: var(--refidnocolor);
 	  font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	  line-height: 21px;
+	  line-height: 1.4em;
 }
 div.refidno form {
 	display: inline-block;
@@ -4688,8 +4688,28 @@ div.ui-tooltip.mytooltip {
 	background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);
 	line-height: 1.6em;
-	min-width: 200px;
+	min-width: 550px;
 }
+@media only screen and (max-width: 768px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 400px;
+	}
+}
+@media only screen and (max-width: 480px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 300px;
+	}
+}
+@media only screen and (max-width: 320px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 230px;
+	}
+}
+
+
 
 
 
@@ -5603,6 +5623,8 @@ div#ecm-layout-center {
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
+	text-align: start;
+	word-break: break-word;
 }
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;

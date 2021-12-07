@@ -355,6 +355,25 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->rights->{$rightskey}->creer;
 	$uploaddir = $conf->product->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if (!$error && $massaction == 'switchonsalestatus' && $permissiontoadd) {
+		$product = new Product($db);
+		foreach ($toselect as $toselectid) {
+			$result = $product->fetch($toselectid);
+			if ($result > 0 && $product->id > 0) {
+				$product->setStatut($product->status ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'tosell');
+			}
+		}
+	}
+	if (!$error && $massaction == 'switchonpurchasestatus' && $permissiontoadd) {
+		$product = new Product($db);
+		foreach ($toselect as $toselectid) {
+			$result = $product->fetch($toselectid);
+			if ($result > 0 && $product->id > 0) {
+				$product->setStatut($product->status_buy ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'tobuy');
+			}
+		}
+	}
 }
 
 
@@ -710,6 +729,8 @@ if ($resql) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if ($user->rights->{$rightskey}->creer) {
+		$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
+		$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
 		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 	}
 	if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {

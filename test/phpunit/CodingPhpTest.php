@@ -213,12 +213,11 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'multicurrency.class.php',
 					'productbatch.class.php',
 					'reception.class.php',
-					'societe.class.php'
 				))) {
-					// Must not found $db->
+					// Must not find $db->
 					$ok=true;
 					$matches=array();
-					// Check string $db-> inside a class.php file (it should be $this->db-> insto such classes)
+					// Check string $db-> inside a class.php file (it should be $this->db-> into such classes)
 					preg_match_all('/'.preg_quote('$db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
 					foreach ($matches as $key => $val) {
 						$ok=false;

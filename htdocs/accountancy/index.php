@@ -100,7 +100,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 		$showtutorial .= ' '.$langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
-		$showtutorial .= '<script type="text/javascript" language="javascript">
+		$showtutorial .= '<script type="text/javascript">
 	    jQuery(document).ready(function() {
 	        jQuery("#show_hide").click(function () {
 	            jQuery( "#idfaq" ).toggle({

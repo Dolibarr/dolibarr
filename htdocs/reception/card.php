@@ -969,7 +969,7 @@ if ($action == 'create') {
 			}
 
 
-			print '<script type="text/javascript" language="javascript">
+			print '<script type="text/javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function() {';
 			$i = 1;

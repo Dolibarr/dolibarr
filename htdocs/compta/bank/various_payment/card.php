@@ -342,7 +342,7 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 if ($action == 'create') {
 	// Update fields properties in realtime
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
             			setPaymentType();
             			$("#selectpaymenttype").change(function() {

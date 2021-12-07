@@ -550,7 +550,7 @@ abstract class CommonObject
 			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
 			return -1;
 		}
-		if ($ref || $ref_ext) {
+		if ($ref || $ref_ext) {		// Because the same ref can exists in 2 different entities, we force the current one in priority
 			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 
@@ -869,7 +869,7 @@ abstract class CommonObject
 		if (!empty($conf->socialnetworks->enabled)) {
 			$outsocialnetwork = '';
 
-			if (!empty($this->socialnetworks) && is_countable($this->socialnetworks) && count($this->socialnetworks) > 0) {
+			if (!empty($this->socialnetworks) && is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
 				$socialnetworksdict = getArrayOfSocialNetworks();
 				foreach ($this->socialnetworks as $key => $value) {
 					if ($value) {
@@ -4132,12 +4132,13 @@ abstract class CommonObject
 	 *      Set status of an object
 	 *
 	 *      @param	int		$status			Status to set
-	 *      @param	int		$elementId		Id of element to force (use this->id by default)
+	 *      @param	int		$elementId		Id of element to force (use this->id by default if null)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
-	 *      @param	string	$trigkey		Trigger key to use for trigger
+	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it not recommended and is deprecated.
+	 *      @param	string	$fieldstatus	Name of status field in this->table_element
 	 *      @return int						<0 if KO, >0 if OK
 	 */
-	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '')
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
 	{
 		global $user, $langs, $conf;
 
@@ -4148,7 +4149,6 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		$fieldstatus = "fk_statut";
 		if ($elementTable == 'facture_rec') {
 			$fieldstatus = "suspended";
 		}
@@ -4217,9 +4217,16 @@ abstract class CommonObject
 			if (!$error) {
 				$this->db->commit();
 
-				if (empty($savElementId)) {    // If the element we update was $this (so $elementId is null)
-					$this->statut = $status;
-					$this->status = $status;
+				if (empty($savElementId)) {
+					// If the element we update is $this (so $elementId was provided as null)
+					if ($fieldstatus == 'tosell') {
+						$this->status = $status;
+					} elseif ($fieldstatus == 'tobuy') {
+						$this->status_buy = $status;
+					} else {
+						$this->statut = $status;
+						$this->status = $status;
+					}
 				}
 
 				return 1;
@@ -4872,13 +4879,9 @@ abstract class CommonObject
 				$reshook = 0;
 				//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
 				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
-					if (empty($line->fk_parent_line)) {
-						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
-						$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					} else {
-						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines, 'fk_parent_line'=>$line->fk_parent_line);
-						$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
+					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
+					$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
