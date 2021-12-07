@@ -9,6 +9,7 @@
  * Copyright (C) 2017-2020 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,9 +338,34 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
+					$fk_product = GETPOST($prod, 'int');
+					$product = new Product($db);
+					if ($product->fetch($fk_product) > 0) {
+						if ($product->status_batch == 2) {
+							$serials = explode($conf->global->PRODUCTBATCH_SERIALS_SEPARATOR, GETPOST($lot, 'alpha'));
+							if (count($serials) != GETPOST($qty)) {
+								setEventMessages($langs->trans("WrongCountOfSerialsForQty", $product->ref), '', 'errors');
+								$error++;
+							}
+							if ($error == 0) {
+								foreach ($serials as $sn) {
+									$result = $object->dispatchProduct($user, $fk_product, 1, GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, $sn, GETPOST($fk_commandefourndet, 'int'), $notrigger);
+									if ($result < 0) {
+										setEventMessages($object->error, $object->errors, 'errors');
+										$error++;
+										break;
+									}
+								}
+							}
+						} else {
+							$result = $object->dispatchProduct($user, $fk_product, GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+							if ($result < 0) {
+								setEventMessages($object->error, $object->errors, 'errors');
+								$error++;
+							}
+						}
+					} else {
+						setEventMessages($product->error, $product->errors, 'errors');
 						$error++;
 					}
 
@@ -909,7 +935,11 @@ if ($id > 0 || !empty($ref)) {
 							print '</td>';
 
 							print '<td>';
-							print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'">';
+							if ($objp->tobatch == 1) { // lot number
+								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'" >';
+							} elseif ($objp->tobatch == 2) { // allow multiple serial numbers
+								print '<textarea class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'">'.GETPOST('lot_number'.$suffix).'</textarea>';
+							}
 							print '</td>';
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								print '<td class="nowraponall">';
@@ -973,13 +1003,20 @@ if ($id > 0 || !empty($ref)) {
 
 						// Qty to dispatch
 						print '<td class="right">';
-						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
+						if ($objp->tobatch == 2) {
+							print $langs->trans('UniqueSN');
+						}
+						else {
+							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
+						}
 						print '</td>';
 
 						print '<td>';
 						if (!empty($conf->productbatch->enabled) && $objp->tobatch > 0) {
 							$type = 'batch';
-							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+							if ($objp->tobatch == 1) {
+								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+							}
 						} else {
 							$type = 'dispatch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');

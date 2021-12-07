@@ -12,6 +12,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2021       Noé Cendrier            <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -932,7 +933,6 @@ if ($action == 'create') {
 
 				// with batch module enabled
 				if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
-					$numAsked++;
 
 					// eat-by date dispatch
 					// $numline=$reg[2] + 1; // line of product
@@ -945,7 +945,18 @@ if ($action == 'create') {
 					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
 					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
 					$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' =>GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+					if (preg_match('/'.$conf->global->PRODUCTBATCH_SERIALS_SEPARATOR.'/', GETPOST($lot, 'alpha'))) {
+						$serials = explode($conf->global->PRODUCTBATCH_SERIALS_SEPARATOR, GETPOST($lot, 'alpha'));
+						foreach ($serials as $serialnumber) {
+							if (! empty($serialnumber)) {
+								$numAsked++;
+								$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(1, 'MS'), 'ent' =>GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> $serialnumber);
+							}
+						}
+					} else {
+						$numAsked++;
+						$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' =>GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+					}
 				}
 
 				// If create form is coming from same page, it means that post was sent but an error occured
@@ -1902,7 +1913,10 @@ if ($action == 'create') {
 						print '<td>';
 						$detail = '';
 						if ($lines[$i]->product->status_batch) {
-							$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
+							include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+							$lot = new Productlot($db);
+							$lot->fetch(0,$lines[$i]->fk_product,$lines[$i]->batch);
+							$detail .= $lot->getNomUrl(1);
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
 							}
@@ -1911,7 +1925,7 @@ if ($action == 'create') {
 							}
 							$detail .= '<br>';
 
-							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $detail);
+							print $detail;
 						} else {
 							print $langs->trans("NA");
 						}
