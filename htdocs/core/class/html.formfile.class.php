@@ -1676,6 +1676,12 @@ class FormFile
 		} elseif ($modulepart == 'tax') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 			$object_instance = new ChargeSociales($this->db);
+		} elseif ($modulepart == 'tax-vat') {
+			include_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+			$object_instance = new Tva($this->db);
+		} elseif ($modulepart == 'salaries') {
+			include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+			$object_instance = new Salary($this->db);
 		} elseif ($modulepart == 'project') {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$object_instance = new Project($this->db);
@@ -1723,6 +1729,7 @@ class FormFile
 		}
 
 		//var_dump($filearray);
+		//var_dump($object_instance);
 
 		// Get list of files stored into database for same relative directory
 		$relativepathfromroot = preg_replace('/'.preg_quote(DOL_DATA_ROOT.'/', '/').'/', '', $upload_dir);
@@ -1752,7 +1759,7 @@ class FormFile
 				// To show ref or specific information according to view to show (defined by $modulepart)
 				// $modulepart can be $object->table_name (that is 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 				$reg = array();
-				if ($modulepart == 'company' || $modulepart == 'tax') {
+				if ($modulepart == 'company' || $modulepart == 'tax' || $modulepart == 'tax-vat' || $modulepart == 'salaries') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
 					$id = (isset($reg[1]) ? $reg[1] : '');
 				} elseif ($modulepart == 'invoice_supplier') {

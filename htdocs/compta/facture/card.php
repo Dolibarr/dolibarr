@@ -92,6 +92,8 @@ $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $fac_rec = GETPOST('fac_rec', 'int');
+$facid = GETPOST('facid', 'int');
+$ref_client = GETPOST('ref_client', 'int');
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -2771,7 +2773,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->facture->multidir_output[$object->entity];
+	$upload_dir = $conf->facture->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity];
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -3555,7 +3557,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 
-	if ($conf->global->INVOICE_USE_RETAINED_WARRANTY) {
+	if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 		$rwStyle = 'display:none;';
 		if (in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)) {
 			$rwStyle = '';
@@ -3631,7 +3633,7 @@ if ($action == 'create') {
 	// Incoterms
 	if (!empty($conf->incoterm->enabled)) {
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->label_incoterms) ? $objectsrc->label_incoterms : '', 1).'</label></td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
 		$incoterm_id = GETPOST('incoterm_id');
 		$incoterm_location = GETPOST('location_incoterms');
@@ -3644,7 +3646,7 @@ if ($action == 'create') {
 	}
 
 	// Other attributes
-	$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="2"', 'cols' => '2', 'socid'=>$socid);
+	$parameters = array('objectsrc' => !empty($objectsrc) ? $objectsrc : 0, 'colspan' => ' colspan="2"', 'cols' => '2', 'socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {

@@ -266,3 +266,4 @@ WarehouseId=Warehouse ID
 WarehouseRef=Warehouse Ref
 SaveQtyFirst=Save the real inventoried quantities first, before asking creation of the stock movement.
 InventoryStartedShort=Started
+ErrorOnElementsInventory=Scan was aborted due to following barcode or batch number on error

@@ -1049,15 +1049,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps,PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Create tables and keys required by module.
-	 * Files module.sql and module.key.sql with create table and create keys
-	 * commands must be stored in directory reldir='/module/sql/'
-	 * This function is called by this->init
+	 * Create tables and keys required by module:
+	 * - Files module.sql files with create table instructions
+	 * - Then files modules.key.sql with create keys instructions
+	 * - Then data_xxx.sql (usualy provided by external modules only)
+	 * - Then update_xxx.sql (usualy provided by external modules only)
+	 * Files must be stored in directory defined by reldir (Example: '/install/mysql/tables' or '/module/sql/')
+	 * This function is usually called by the this->init of module descriptors.
 	 *
-	 * @param  string $reldir Relative directory where to scan files
-	 * @return int             <=0 if KO, >0 if OK
+	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/tables' or '/module/sql/'
+	 * @param	string	$onlywithsuffix		Only with the defined suffix
+	 * @return 	int             			<=0 if KO, >0 if OK
 	 */
-	protected function _load_tables($reldir)
+	protected function _load_tables($reldir, $onlywithsuffix = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -1088,6 +1092,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 					sort($files);
 					foreach ($files as $file) {
+						if ($onlywithsuffix) {
+							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+								continue;
+							} else {
+								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+							}
+						}
 						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
 							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 							if ($result <= 0) {
@@ -1105,6 +1117,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 					sort($files);
 					foreach ($files as $file) {
+						if ($onlywithsuffix) {
+							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+								continue;
+							} else {
+								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+							}
+						}
 						if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
 							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 							if ($result <= 0) {
@@ -1122,6 +1142,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 					sort($files);
 					foreach ($files as $file) {
+						if ($onlywithsuffix) {
+							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+								continue;
+							} else {
+								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+							}
+						}
 						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
 							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 							if ($result <= 0) {
@@ -1139,6 +1167,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 					sort($files);
 					foreach ($files as $file) {
+						if ($onlywithsuffix) {
+							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+								continue;
+							} else {
+								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+							}
+						}
 						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
 							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 							if ($result <= 0) {

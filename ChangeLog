@@ -133,7 +133,7 @@ NEW: printFieldListFrom hook call on several lists
 NEW: Use lang selector when using a field key 'lang' in modulebuilder
 NEW: we need to be able to put more filters on deleteByParentField() function
 NEW: make it easier to set the `keyword`, `keywords` and `description` attributes of an ecm file object
-
+NEW: Experimental feature to manage user sessions in database
 
  
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
@@ -146,6 +146,7 @@ Following changes may create regressions for some external modules, but were nec
   method executeCLI() available into core/class/utils.class.php  
 * Class file expeditionbatch.class.php renamed to expeditionlinebatch.class.php
 * ExpeditionLineBatch::fetchAll is not static anymore and first parameter $db is removed
+* ExtraFields->showOutputField parameter 4 'extrafieldsobjectkey' is now required
 
 
 

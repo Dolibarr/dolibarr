@@ -805,7 +805,7 @@ if (!$sall) {
 		}
 	}
 	// Add GroupBy from hooks
-	$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+	$parameters = array('all' => !empty($all) ? $all : 0, 'fieldstosearchall' => $fieldstosearchall);
 	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
@@ -1650,7 +1650,7 @@ if ($resql) {
 
 			$facturestatic->note_public = $obj->note_public;
 			$facturestatic->note_private = $obj->note_private;
-			if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_WARRANTY) {
+			if (!empty($conf->global->INVOICE_USE_SITUATION) && !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 				 $facturestatic->retained_warranty = $obj->retained_warranty;
 				 $facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
 				 $facturestatic->situation_final = $obj->retained_warranty_date_limit;
@@ -1846,8 +1846,8 @@ if ($resql) {
 			}
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->name_alias).'">';
-				print dol_escape_htmltag($obj->name_alias);
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag((!empty($obj->name_alias)) ? $obj->name_alias : '').'">';
+				print dol_escape_htmltag((!empty($obj->name_alias) ? $obj->name_alias : ''));
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
