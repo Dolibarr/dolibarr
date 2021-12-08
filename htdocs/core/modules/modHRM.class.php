@@ -56,7 +56,7 @@ class modHRM extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "HRM";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -196,21 +196,21 @@ class modHRM extends DolibarrModules
 		$r = 0;
 
 		// Skill / Job / Position
-		$this->rights[$r][0] = 4010; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4001; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->all->read)
 		$r++;
 
-		$this->rights[$r][0] = 4011; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4002; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->all->write)
 		$r++;
 
-		$this->rights[$r][0] = 4012; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4003; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete skill/job/position'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'all';
@@ -226,7 +226,7 @@ class modHRM extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 4021; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify your own evaluation'; // Permission label
+		$this->rights[$r][1] = 'Create/modify your evaluation'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->write)
@@ -240,7 +240,7 @@ class modHRM extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 4023; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete all evaluations'; // Permission label
+		$this->rights[$r][1] = 'Delete evaluations'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->delete)
@@ -268,10 +268,10 @@ class modHRM extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		/*$result = $this->_load_tables('/hrm/sql/');
+		$result = $this->_load_tables('/install/mysql/tables/', 'hrm');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
-		}*/
+		}
 
 		$sql = array();
 

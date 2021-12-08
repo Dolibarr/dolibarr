@@ -753,7 +753,7 @@ if ($result) {
 	print '</table>';
 	print '</div>';
 
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function init_savebutton()
         	{

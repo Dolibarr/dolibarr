@@ -212,7 +212,7 @@ $help_url = '';
 llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code
-// print '<script type="text/javascript" language="javascript">
+// print '<script type="text/javascript">
 // jQuery(document).ready(function() {
 // 	function init_myfunc()
 // 	{

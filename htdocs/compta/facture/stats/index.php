@@ -102,7 +102,7 @@ if ($mode == 'customer') {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
 	if (is_array($custcats) && !empty($custcats)) {
-		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat OmdN (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
 	}
 }
@@ -341,7 +341,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
-print $form->selectarray('year', $arrayyears, $year, 0);
+print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';

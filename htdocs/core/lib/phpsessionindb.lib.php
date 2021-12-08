@@ -29,15 +29,29 @@
 /**
  * The session open handler called by PHP whenever a session is initialized.
  *
- * @param	string	$database_name  Database NamedConstraint
- * @param	string	$table_name		Table name
+ * @param	string	$save_path      Value of session.save_path into php.ini
+ * @param	string	$session_name	Session name (Example: 'DOLSESSID_xxxxxx')
  * @return	boolean					Always true
  */
-function dolSessionOpen($database_name, $table_name)
+function dolSessionOpen($save_path, $session_name)
 {
-	global $conf, $dbsession;
+	global $dbsession;
 
-	$dbsession = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	global $dolibarr_main_db_type, $dolibarr_main_db_host;
+	global $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name, $dolibarr_main_db_port;
+
+	global $dolibarr_session_db_type, $dolibarr_session_db_host;
+	global $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_port;
+
+	if (empty($dolibarr_session_db_type)) {	$dolibarr_session_db_type = $dolibarr_main_db_type; }
+	if (empty($dolibarr_session_db_host)) {	$dolibarr_session_db_host = $dolibarr_main_db_host; }
+	if (empty($dolibarr_session_db_user)) {	$dolibarr_session_db_user = $dolibarr_main_db_user; }
+	if (empty($dolibarr_session_db_pass)) {	$dolibarr_session_db_pass = $dolibarr_main_db_pass; }
+	if (empty($dolibarr_session_db_name)) {	$dolibarr_session_db_name = $dolibarr_main_db_name; }
+	if (empty($dolibarr_session_db_port)) {	$dolibarr_session_db_port = $dolibarr_main_db_port; }
+	//var_dump('open '.$database_name.' '.$table_name);
+
+	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_port);
 
 	return true;
 }
@@ -51,8 +65,10 @@ function dolSessionOpen($database_name, $table_name)
 function dolSessionRead($sess_id)
 {
 	global $dbsession;
+	global $sessionlastvalueread;
+	global $sessionidfound;
 
-	$sql = "SELECT session_variable FROM ".MAIN_DB_PREFIX."session";
+	$sql = "SELECT session_id, session_variable FROM ".MAIN_DB_PREFIX."session";
 	$sql .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
 
 	// Execute the query
@@ -60,10 +76,16 @@ function dolSessionRead($sess_id)
 	$num_rows = $dbsession->num_rows($resql);
 	if ($num_rows == 0) {
 		// No session found - return an empty string
+		$sessionlastvalueread = '';
+		$sessionidfound = '';
 		return '';
 	} else {
 		// Found a session - return the serialized string
 		$obj = $dbsession->fetch_object($resql);
+		$sessionlastvalueread = $obj->session_variable;
+		$sessionidfound = $obj->session_id;
+		//var_dump($sessionlastvalueread);
+		//var_dump($sessionidfound);
 		return $obj->session_variable;
 	}
 }
@@ -79,41 +101,83 @@ function dolSessionRead($sess_id)
 function dolSessionWrite($sess_id, $val)
 {
 	global $dbsession;
+	global $sessionlastvalueread;
+	global $sessionidfound;
 
-	$time_stamp = dol_now();
+	/*var_dump('write '.$sess_id);
+	var_dump($val);
+	var_dump('sessionlastvalueread='.$sessionlastvalueread.' sessionidfound='.$sessionidfound);
+	*/
 
-	$sql = "SELECT session_id FROM ".MAIN_DB_PREFIX."session";
-	$sql .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
+	//$sessionlastvalueread='';
+	if ($sessionlastvalueread != $val) {
+		$time_stamp = dol_now();
 
-	// Execute the query
-	$resql = $dbsession->query($sql);
-	$num_rows = $dbsession->num_rows($resql);
-	if ($num_rows == 0) {
-		// No session found, insert a new one
-		$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
-		$insert_query .= "(session_id, session_variable, last_accessed)";
-		$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."')";
-		$dbsession->query($insert_query);
-	} else {
-		// Existing session found - Update the session variables
-		$update_query = "UPDATE ".MAIN_DB_PREFIX."session";
-		$update_query .= "SET session_variable = '".$dbsession->escape($val)."',";
-		$update_query .= " last_accessed = '".$dbsession->idate($time_stamp)."'";
-		$update_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
-		$dbsession->query($update_query);
+		if (empty($sessionidfound)) {
+			// No session found, insert a new one
+			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
+			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."')";
+
+			$result = $dbsession->query($insert_query);
+			if (!$result) {
+				dol_print_error($dbsession);
+				return false;
+			}
+		} else {
+			if ($sessionidfound != $sess_id) {
+				// oops. How can this happen ?
+				dol_print_error($dbsession, 'Oops sess_id received in dolSessionWrite differs from the cache value $sessionidfound. How can this happen ?');
+				return false;
+			}
+			/*$sql = "SELECT session_id, session_variable FROM ".MAIN_DB_PREFIX."session";
+			$sql .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
+
+			// Execute the query
+			$resql = $dbsession->query($sql);
+			$num_rows = $dbsession->num_rows($resql);
+			if ($num_rows == 0) {
+			// No session found, insert a new one
+			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
+			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."')";
+			var_dump($insert_query);
+			$result = $dbsession->query($insert_query);
+			if (!$result) {
+				dol_print_error($dbsession);
+				return false;
+			}
+			} else {
+			*/
+			// Existing session found - Update the session variables
+			$update_query = "UPDATE ".MAIN_DB_PREFIX."session";
+			$update_query .= " SET session_variable = '".$dbsession->escape($val)."',";
+			$update_query .= " last_accessed = '".$dbsession->idate($time_stamp)."',";
+			$update_query .= " remote_ip = '".$dbsession->escape(getUserRemoteIP())."',";
+			$update_query .= " user_agent = '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."'";
+			$update_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
+
+			$result = $dbsession->query($update_query);
+			if (!$result) {
+				dol_print_error($dbsession);
+				return false;
+			}
+		}
 	}
+
 	return true;
 }
 
 /**
  * This function is executed on shutdown of the session.
  *
- * @param	string		$sess_id	Session ID
  * @return	boolean					Always returns true.
  */
-function dolSessionClose($sess_id)
+function dolSessionClose()
 {
 	global $dbsession;
+
+	//var_dump('close');
 
 	$dbsession->close();
 
@@ -129,6 +193,8 @@ function dolSessionClose($sess_id)
 function dolSessionDestroy($sess_id)
 {
 	global $dbsession;
+
+	//var_dump('destroy');
 
 	$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
 	$delete_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";

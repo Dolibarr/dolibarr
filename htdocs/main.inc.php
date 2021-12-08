@@ -272,10 +272,10 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	}
 }
 
-
 // Set the handler of session
-if (ini_get('session.save_handler') == 'user') {
-	require_once 'core/lib/phpsessionindb.lib.php';
+// if (ini_get('session.save_handler') == 'user')
+if ($php_session_save_handler == 'db') {
+	require_once 'core/lib/phpsessionin'.$php_session_save_handler.'.lib.php';
 }
 
 // Init session. Name of session is specific to Dolibarr instance.
@@ -294,7 +294,8 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 if (!defined('NOSESSION')) {
 	session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	session_name($sessionname);
-	session_start();
+	session_start();	// This call the open and read of session handler
+	//exit;	// this exist generates a call to write and close
 }
 
 
@@ -1894,7 +1895,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				}
 			}
 			$qs .= (($qs && $morequerystring) ? '&' : '').$morequerystring;
-			$text = '<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs ? '&' : '').'optioncss=print" target="_blank">';
+			$text = '<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs ? '&' : '').'optioncss=print" target="_blank" rel="noopener noreferrer">';
 			//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-print atoplogin valignmiddle"></span>';
 			$text .= '</a>';
@@ -1934,7 +1935,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 						$title .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
 					}
 				}
-				$text .= '<a class="help" target="_blank" rel="noopener" href="';
+				$text .= '<a class="help" target="_blank" rel="noopener noreferrer" href="';
 				if ($mode == 'wiki') {
 					$text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				} else {
@@ -2817,7 +2818,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 			if ($doliurl) {
-				print '<a class="help" target="_blank" rel="noopener" href="'.$doliurl.'">';
+				print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$doliurl.'">';
 			} else {
 				print '<span class="help">';
 			}
@@ -2885,7 +2886,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
-			print '<a class="help" target="_blank" rel="noopener" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
+			print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
 			print '</div>';
 		}
 

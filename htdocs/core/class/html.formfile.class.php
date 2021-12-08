@@ -442,7 +442,8 @@ class FormFile
 		}
 
 		$printer = 0;
-		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {	// The direct print feature is implemented only for such elements
+		// The direct print feature is implemented only for such elements
+		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
 			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ?true:false;
 		}
 
@@ -887,7 +888,7 @@ class FormFile
 
 					$mime = dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) {
-						$out .= ' target="_blank"';
+						$out .= ' target="_blank" rel="noopener noreferrer"';
 					}
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
@@ -944,7 +945,7 @@ class FormFile
 							$out .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer) {
-							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
 							$out .= ($param ? '&'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
@@ -976,7 +977,7 @@ class FormFile
 				foreach ($link_list as $file) {
 					$out .= '<tr class="oddeven">';
 					$out .= '<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
-					$out .= '<a data-ajax="false" href="'.$file->url.'" target="_blank">';
+					$out .= '<a data-ajax="false" href="'.$file->url.'" target="_blank" rel="noopener noreferrer">';
 					$out .= $file->label;
 					$out .= '</a>';
 					$out .= '</td>';
@@ -1106,7 +1107,7 @@ class FormFile
 				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
-					$tmpout .= ' target="_blank"';
+					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
 				}
 				$tmpout .= '>';
 				$tmpout .= img_mime($relativepath, $file["name"]);
@@ -1410,7 +1411,7 @@ class FormFile
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
 							if (empty($urlforhref)) {
 								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
-								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
@@ -1675,6 +1676,12 @@ class FormFile
 		} elseif ($modulepart == 'tax') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 			$object_instance = new ChargeSociales($this->db);
+		} elseif ($modulepart == 'tax-vat') {
+			include_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+			$object_instance = new Tva($this->db);
+		} elseif ($modulepart == 'salaries') {
+			include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+			$object_instance = new Salary($this->db);
 		} elseif ($modulepart == 'project') {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$object_instance = new Project($this->db);
@@ -1722,6 +1729,7 @@ class FormFile
 		}
 
 		//var_dump($filearray);
+		//var_dump($object_instance);
 
 		// Get list of files stored into database for same relative directory
 		$relativepathfromroot = preg_replace('/'.preg_quote(DOL_DATA_ROOT.'/', '/').'/', '', $upload_dir);
@@ -1751,7 +1759,7 @@ class FormFile
 				// To show ref or specific information according to view to show (defined by $modulepart)
 				// $modulepart can be $object->table_name (that is 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 				$reg = array();
-				if ($modulepart == 'company' || $modulepart == 'tax') {
+				if ($modulepart == 'company' || $modulepart == 'tax' || $modulepart == 'tax-vat' || $modulepart == 'salaries') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
 					$id = (isset($reg[1]) ? $reg[1] : '');
 				} elseif ($modulepart == 'invoice_supplier') {
@@ -2091,7 +2099,7 @@ class FormFile
 			} else {
 				print '<td>';
 				print img_picto('', 'globe').' ';
-				print '<a data-ajax="false" href="'.$link->url.'" target="_blank">';
+				print '<a data-ajax="false" href="'.$link->url.'" target="_blank" rel="noopener noreferrer">';
 				print dol_escape_htmltag($link->label);
 				print '</a>';
 				print '</td>'."\n";

@@ -411,18 +411,21 @@ class pdf_sponge extends ModelePDFFactures
 				}
 				$pagenb++;
 
+				// Output header (logo, ref and address blocks). This is first call for first page.
 				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90 + $top_shift;
+				// You can add more thing undr header here, if you increase top_shift too.
+				// TODO
+
+				// $tab_top is y where we must continue content (90 = 42 + 48: 42 is height of logo and ref, 48 is address blocks)
+				$tab_top = 90 + $top_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
-				$tab_height = 130 - $top_shift;
-				$tab_height_newpage = 150;
-				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-					$tab_height_newpage -= $top_shift;
-				}
+
+				// Define heigth of table for lines (for first page)
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				$nexY = $tab_top - 1;
 
@@ -447,7 +450,7 @@ class pdf_sponge extends ModelePDFFactures
 					}
 				}
 
-				// Displays notes
+				// Displays notes. Here we are still on code eecuted only for the first page.
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE)) {
 					// Get first sale rep
@@ -560,8 +563,8 @@ class pdf_sponge extends ModelePDFFactures
 						}
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-					} else // No pagebreak
-					{
+					} else {
+						// No pagebreak
 						$pdf->commitTransaction();
 						$posyafter = $pdf->GetY();
 						$height_note = $posyafter - $tab_top;
@@ -594,7 +597,7 @@ class pdf_sponge extends ModelePDFFactures
 				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-				// Table simulation to know the height of the title line
+				// Table simulation to know the height of the title line (this set this->tableTitleHeight)
 				$pdf->startTransaction();
 				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 				$pdf->rollbackTransaction(true);
@@ -1853,11 +1856,11 @@ class pdf_sponge extends ModelePDFFactures
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *  Show top header of page.
+	 *  Show top header of page. This include the logo, ref and address blocs
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Facture		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @return	void

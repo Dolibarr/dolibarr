@@ -893,7 +893,7 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 	}
 
 	if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS')) {
-		$sectionwithinvoicelink .= '<script language="javascript">$("#buttonprint").click();</script>';
+		$sectionwithinvoicelink .= '<script type="text/javascript">$("#buttonprint").click();</script>';
 	}
 }
 
@@ -905,7 +905,7 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 $form = new Form($db);
 
 ?>
-<script language="javascript">
+<script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
 var placeid=<?php echo ($placeid > 0 ? $placeid : 0); ?>;
@@ -1241,10 +1241,11 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 		$label = $obj->label;
 		$floor = $obj->floor;
 	}
-	// In phone version only show when is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
-		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".$label."</b><br>";
-		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".$floor."</b>";
+		// If not on smartphone version or if it is the invoice page
+		//print 'mobilepage='.$mobilepage;
+		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".($label ? $label : '?')."</b><br>";
+		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".($floor ? $floor : '?')."</b>";
 	} elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		print $mysoc->name;
 	} elseif ($mobilepage == "cats") {

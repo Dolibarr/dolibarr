@@ -1075,7 +1075,7 @@ if ($action == 'create') {
 		print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 		print '</div>';
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{
@@ -1247,7 +1247,9 @@ if ($action == 'create') {
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
 		}
+
 		$tid = GETPOSTISSET("projecttaskid") ? GETPOST("projecttaskid", 'int') : (GETPOSTISSET("taskid") ? GETPOST("taskid", 'int') : '');
+
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
@@ -1552,7 +1554,7 @@ if ($id > 0) {
 			print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 			print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 			print '</div>';
-			print '<script type="text/javascript" language="javascript">
+			print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{

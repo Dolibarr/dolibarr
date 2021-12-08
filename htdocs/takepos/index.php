@@ -134,7 +134,7 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
 }
 ?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
-<script language="javascript">
+<script type="text/javascript">
 <?php
 $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
@@ -627,18 +627,24 @@ function Search2(keyCodeForEnter) {
 }
 
 function Edit(number) {
+	console.log("We click on PAD on number="+number);
 
-	if (typeof(selectedtext) == "undefined") return;	// We click on an action on the number pad but there is no line selected
+	if (typeof(selectedtext) == "undefined") {
+		return;	// We click on an action on the number pad but there is no line selected
+	}
 
 	var text=selectedtext+"<br> ";
+
 
 	if (number=='c'){
 		editnumber="";
 		Refresh();
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
+		$("#price").html("<?php echo $langs->trans("Price"); ?>");
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
 		return;
 	}
 	else if (number=='qty'){
-		console.log("Edit "+number);
 		if (editaction=='qty' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -654,7 +660,6 @@ function Edit(number) {
 		}
 	}
 	else if (number=='p'){
-		console.log("Edit "+number);
 		if (editaction=='p' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updateprice&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -670,7 +675,6 @@ function Edit(number) {
 		}
 	}
 	else if (number=='r'){
-		console.log("Edit "+number);
 		if (editaction=='r' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updatereduction&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -708,6 +712,7 @@ function Edit(number) {
 	}
 	$('#'+selectedline).find("td:first").html(text+editnumber);
 }
+
 
 function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder");
@@ -789,7 +794,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=LIQ", function() {
 	});
 }
 

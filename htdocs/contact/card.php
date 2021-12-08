@@ -620,7 +620,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
 			if ($conf->use_javascript_ajax) {
-				print "\n".'<script type="text/javascript" language="javascript">'."\n";
+				print "\n".'<script type="text/javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="create";
@@ -798,7 +798,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
 				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
-					print "\n".'<script type="text/javascript" language="javascript">'."\n";
+					print "\n".'<script type="text/javascript">'."\n";
 					print '$(document).ready(function () {
 							$("#email").keyup(function() {
 								if ($(this).val()!="") {
@@ -924,7 +924,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
 			if ($conf->use_javascript_ajax) {
-				print "\n".'<script type="text/javascript" language="javascript">'."\n";
+				print "\n".'<script type="text/javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="edit";
@@ -1071,7 +1071,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
 				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
-					print "\n".'<script type="text/javascript" language="javascript">'."\n";
+					print "\n".'<script type="text/javascript">'."\n";
 
 					print '
 					jQuery(document).ready(function () {

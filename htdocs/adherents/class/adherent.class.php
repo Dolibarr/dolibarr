@@ -1398,6 +1398,7 @@ class Adherent extends CommonObject
 
 				$this->photo = $obj->photo;
 				$this->statut = $obj->statut;
+				$this->status = $obj->statut;
 				$this->public = $obj->public;
 
 				$this->datec = $this->db->jdate($obj->datec);
