@@ -1170,7 +1170,7 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 function dol_string_unaccent($str)
 {
 	global $conf;
-	
+
 	if (utf8_check($str)) {
 		if (extension_loaded('intl') && !empty($conf->global->MAIN_UNACCENT_USE_TRANSLITERATOR)) {
 			$transliterator = \Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;', \Transliterator::FORWARD);
