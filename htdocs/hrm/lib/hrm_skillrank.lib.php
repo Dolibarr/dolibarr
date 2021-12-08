@@ -113,46 +113,50 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 
 	// On charge les différentes notes possibles pour la compétence $fk_skill
 	$skilldet = new Skilldet($db);
-	$Lines = $skilldet->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_skill = '.$fk_skill));
+	$Lines = $skilldet->fetchAll('ASC', 'rankorder', 0, 0, array('customsql'=>'fk_skill = '.$fk_skill));
 
+	if (!is_array($Lines) && $Lines<0) {
+		setEventMessages($skilldet->error, $skilldet->errors, 'errors');
+	}
 	if (empty($Lines)) return $langs->trans('SkillHasNoLines');
 
 	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.(empty($selected_rank) ? ' selected' : '').'">0</span>';
+	if (is_array($Lines) && !empty($Lines)) {
+		foreach ($Lines as $line) {
+			$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
+			if ($line->rank > $MaxNumberSkill) {
+				continue;
+			}
 
-	foreach ($Lines as $line) {
-		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
-		if ($line->rank > $MaxNumberSkill) {
-			continue;
+			$ret .= '<span title="' . $line->description . '" class="radio_js_bloc_number ' . $inputname . '_' . $line->fk_skill;
+			$ret .= $line->rank == $selected_rank ? ' selected' : '';
+			$ret .= '">' . $line->rank . '</span>';
 		}
 
-		$ret.= '<span title="'.$line->description.'" class="radio_js_bloc_number '.$inputname.'_'.$line->fk_skill;
-		$ret.= $line->rank == $selected_rank ? ' selected' : '';
-		$ret.= '">'.$line->rank.'</span>';
-	}
-
-	if ($mode == 'edit') {
-		$ret.= '
-		<input type="hidden" id="'.$inputname.'_'.$fk_skill.'" name="'.$inputname.'['.$fk_skill.']" value="'.$selected_rank.'">
+		if ($mode == 'edit') {
+			$ret .= '
+		<input type="hidden" id="' . $inputname . '_' . $fk_skill . '" name="' . $inputname . '[' . $fk_skill . ']" value="' . $selected_rank . '">
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$(".radio_js_bloc_number").tooltip();
 				var error,same;
-				$(".'.$inputname.'_'.$fk_skill.'").on("click",function(){
+				$(".' . $inputname . '_' . $fk_skill . '").on("click",function(){
 					same=false;
 					val = $(this).html();
 					if($(this).hasClass("selected"))same=true;
-					$(".'.$inputname.'_'.$fk_skill.'").removeClass("selected");
+					$(".' . $inputname . '_' . $fk_skill . '").removeClass("selected");
 					if(same)
 					{
-						$("#'.$inputname.'_'.$fk_skill.'").val("");
+						$("#' . $inputname . '_' . $fk_skill . '").val("");
 					}else {
 						$(this).addClass("selected");
-						$("#'.$inputname.'_'.$fk_skill.'").val(val);
+						$("#' . $inputname . '_' . $fk_skill . '").val(val);
 					}
 				});
 
 			});
 		</script>';
+		}
 	}
 
 	return $ret;
