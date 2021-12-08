@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2021 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2021 	   Antonin MARCHAL      <antonin@letempledujeu.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,11 +73,23 @@ if (empty($reshook)) {
 			$dn = $object->_load_ldap_dn($info);
 			$olddn = $dn; // We can say that old dn = dn as we force synchro
 
+			//For compatibility with Samba 4 AD
+			if ($ldap->serverType == "activedirectory") {
+				if (intval($object->statut) === 1) {
+					$info['userAccountControl'] = 512; 			//Account disabled
+				} else {
+					$info['userAccountControl'] = 546; 			//Account enabled
+				}
+			}
+
 			$result = $ldap->update($dn, $info, $user, $olddn);
 		}
 
 		if ($result >= 0) {
 			setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
+			if ($ldap->serverType == "activedirectory") {
+				setEventMessages($langs->trans("PasswordMustBeChangedToBeSynchronized"), null, 'warnings');
+			}
 		} else {
 			setEventMessages($ldap->error, $ldap->errors, 'errors');
 		}
