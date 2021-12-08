@@ -1148,7 +1148,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs'=>$outputlangs);
 		$action = '';
 		$hookmanager->executeHooks('pdf_pagefoot', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (!empty($hookmanager->resPrint) and $hidefreetext == 0) {
+		if (!empty($hookmanager->resPrint) && $hidefreetext == 0) {
 			$mycustomfooter = $hookmanager->resPrint;
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
