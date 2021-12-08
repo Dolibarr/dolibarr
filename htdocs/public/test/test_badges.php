@@ -1,45 +1,30 @@
 <?php
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1); // File must be accessed by logon page so without login
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+//define("NOLOGIN",1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', '1');
-}
-session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
-// Security
 if ($dolibarr_main_prod) {
-	accessforbidden();
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
-
-/*
- * View
- */
-
-llxHeader('', 'Documentation and examples for theme');
 ?>
+<!doctype html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Documentation and examples for theme.">
+
+	<link href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php" rel="stylesheet">
+  </head>
+  <body class="docpage" style="padding: 20px;">
+
+  <main  role="main"  >
 		  <h1 class="bd-title" id="content">Badges</h1>
 		  <p class="bd-lead">Documentation and examples for badges, our small count and labeling component.</p>
 
@@ -339,4 +324,5 @@ llxHeader('', 'Documentation and examples for theme');
 
 		</main>
 
-<?php llxFooter();
+  </body>
+</html>

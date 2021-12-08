@@ -1948,7 +1948,8 @@ class ExtraFields
 				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) {
 					continue;
 				}
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key)) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && $this->attributes[$object->table_element]['type'][$key] != 'boolean') {
+					//when unticking boolean field, it's not set in POST
 					continue;
 				}
 

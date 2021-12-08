@@ -26,7 +26,7 @@ require '../../main.inc.php';
 
 // Security
 if ($dolibarr_main_prod) {
-	accessforbidden();
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
 
