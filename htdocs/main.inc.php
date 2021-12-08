@@ -274,7 +274,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 
 // Set the handler of session
 // if (ini_get('session.save_handler') == 'user')
-if ($php_session_save_handler == 'db') {
+if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
 	require_once 'core/lib/phpsessionin'.$php_session_save_handler.'.lib.php';
 }
 
