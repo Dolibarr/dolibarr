@@ -2041,9 +2041,10 @@ if ($action == 'create') {
 		print "</tr>\n";
 		print '</thead>';
 
+		$outputlangs = $langs;
+
 		if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 			$object->fetch_thirdparty();
-			$outputlangs = $langs;
 			$newlang = '';
 			if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
@@ -2103,7 +2104,7 @@ if ($action == 'create') {
 
 		// Loop on each product to send/sent
 		for ($i = 0; $i < $num_prod; $i++) {
-			$parameters = array('i' => $i, 'line' => $lines[$i], 'line_id' => $line_id, 'num' => $num_prod, 'alreadysent' => $alreadysent, 'editColspan' => !empty($editColspan) ? $editColspan : 0, 'outputlangs' => !empty($outputlangs) ? $outputlangs: '');
+			$parameters = array('i' => $i, 'line' => $lines[$i], 'line_id' => $line_id, 'num' => $num_prod, 'alreadysent' => $alreadysent, 'editColspan' => !empty($editColspan) ? $editColspan : 0, 'outputlangs' => $outputlangs);
 			$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
