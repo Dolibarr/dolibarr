@@ -121,6 +121,26 @@ class BonPrelevement extends CommonObject
 		$this->fetched = 0;
 	}
 
+	/**
+	*	Remove any illegal characters for SEPA
+	*
+	*	@param	string	$str			String to remove illegal chars
+	*	@return string   	       		Cleaned string
+	*
+	*/
+	public static function removeIllegalChars($str)
+	{
+		/*
+			Valid XML Characters:
+			a b c d e f g h i j k l m n o p q r s t u v w x y z
+			A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+			0 1 2 3 4 5 6 7 8 9
+			/ – ? : ( ) . , ‘ +
+			Space
+		*/
+		return preg_replace('/[^A-Za-z0-9 \.,\-\/\+():?]/', '', dol_string_unaccent($str));
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Add invoice to withdrawal
@@ -1552,7 +1572,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '			<NbOfTxs>'.$i.'</NbOfTxs>'.$CrLf);
 				fputs($this->file, '			<CtrlSum>'.$this->total.'</CtrlSum>'.$CrLf);
 				fputs($this->file, '			<InitgPty>'.$CrLf);
-				fputs($this->file, '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf);
+				fputs($this->file, '				<Nm>'.strtoupper($this->removeIllegalChars($this->raison_sociale)).'</Nm>'.$CrLf);
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
@@ -1668,7 +1688,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '			<NbOfTxs>'.$i.'</NbOfTxs>'.$CrLf);
 				fputs($this->file, '			<CtrlSum>'.$this->total.'</CtrlSum>'.$CrLf);
 				fputs($this->file, '			<InitgPty>'.$CrLf);
-				fputs($this->file, '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf);
+				fputs($this->file, '				<Nm>'.strtoupper($this->removeIllegalChars($this->raison_sociale)).'</Nm>'.$CrLf);
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
@@ -1918,11 +1938,11 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '					</FinInstnId>'.$CrLf;
 			$XML_DEBITOR .= '				</DbtrAgt>'.$CrLf;
 			$XML_DEBITOR .= '				<Dbtr>'.$CrLf;
-			$XML_DEBITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
+			$XML_DEBITOR .= '					<Nm>'.dolEscapeXML(strtoupper($this->removeIllegalChars($row_nom))).'</Nm>'.$CrLf;
 			$XML_DEBITOR .= '					<PstlAdr>'.$CrLf;
 			$XML_DEBITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-			$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
-			$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
+			$addressline1 = $this->removeIllegalChars(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
+			$addressline2 = $this->removeIllegalChars(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
 			if (trim($addressline1)) {
 				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
 			}
@@ -1969,11 +1989,11 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					</FinInstnId>'.$CrLf;
 			$XML_CREDITOR .= '				</CdtrAgt>'.$CrLf;
 			$XML_CREDITOR .= '				<Cdtr>'.$CrLf;
-			$XML_CREDITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
+			$XML_CREDITOR .= '					<Nm>'.dolEscapeXML(strtoupper($this->removeIllegalChars($row_nom))).'</Nm>'.$CrLf;
 			$XML_CREDITOR .= '					<PstlAdr>'.$CrLf;
 			$XML_CREDITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-			$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
-			$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
+			$addressline1 = $this->removeIllegalChars(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
+			$addressline2 = $this->removeIllegalChars(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
 			if (trim($addressline1)) {
 				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
 			}
@@ -2141,11 +2161,11 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
 				$XML_SEPA_INFO .= '			<ReqdColltnDt>'.$dateTime_ETAD.'</ReqdColltnDt>'.$CrLf;
 				$XML_SEPA_INFO .= '			<Cdtr>'.$CrLf;
-				$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Nm>'.strtoupper($this->removeIllegalChars($this->raison_sociale)).'</Nm>'.$CrLf;
 				$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-				$addressline1 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => "")));
-				$addressline2 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => "")));
+				$addressline1 = $this->removeIllegalChars(strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => "")));
+				$addressline2 = $this->removeIllegalChars(strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => "")));
 				if ($addressline1) {
 					$XML_SEPA_INFO .= '					<AdrLine>'.$addressline1.'</AdrLine>'.$CrLf;
 				}
@@ -2207,11 +2227,11 @@ class BonPrelevement extends CommonObject
 				*/
 				$XML_SEPA_INFO .= '			<ReqdExctnDt>'.dol_print_date($dateTime_ETAD, 'dayrfc').'</ReqdExctnDt>'.$CrLf;
 				$XML_SEPA_INFO .= '			<Dbtr>'.$CrLf;
-				$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Nm>'.strtoupper($this->removeIllegalChars($this->raison_sociale)).'</Nm>'.$CrLf;
 				$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-				$addressline1 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => "")));
-				$addressline2 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => "")));
+				$addressline1 = $this->removeIllegalChars(strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => "")));
+				$addressline2 = $this->removeIllegalChars(strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => "")));
 				if ($addressline1) {
 					$XML_SEPA_INFO .= '					<AdrLine>'.$addressline1.'</AdrLine>'.$CrLf;
 				}
