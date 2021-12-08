@@ -96,6 +96,7 @@ $search_level = GETPOST("search_level", "array");
 $search_stcomm = GETPOST('search_stcomm', 'int');
 
 if ($search_status == '') $search_status = 1; // always display active customer first
+if ($search_no_email == '') $search_no_email = -1;
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -418,7 +419,7 @@ if (count($search_roles) > 0) {
 	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
 }
 if ($search_no_email != -1 && $search_no_email > 0) $sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) > 0";
-if ($search_no_email != -1 && $search_no_email == 0) $sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) = 0";
+if ($search_no_email != -1 && $search_no_email == 0) $sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) = 0 AND p.email IS NOT NULL  AND p.email <> ''";
 if ($search_status != '' && $search_status >= 0) $sql .= " AND p.statut = ".$db->escape($search_status);
 if ($search_import_key)             $sql .= natural_search("p.import_key", $search_import_key);
 if ($type == "o")        // filtre sur type
