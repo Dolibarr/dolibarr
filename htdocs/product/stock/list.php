@@ -78,7 +78,7 @@ if (!$sortorder) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->inventory->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('stocklist'));
 
 // Fetch optionals attributes and labels
@@ -196,6 +196,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $title = $langs->trans("ListOfWarehouses");
 
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -228,7 +229,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (!empty($conf->categorie->enabled)) {
 	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_WAREHOUSE, "t.rowid");
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON t.rowid = ps.fk_entrepot";
@@ -473,7 +474,7 @@ foreach ($object->fields as $key => $val) {
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(!empty($search[$key])?$search[$key]:'').'">';
 		}
 		print '</td>';
 	}

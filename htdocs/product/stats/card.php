@@ -276,7 +276,7 @@ if ($result || !($id > 0)) {
 	print '<br>';
 
 	// Generation of graphs
-	$dir = (!empty($conf->product->multidir_temp[$object->entity]) ? $conf->product->multidir_temp[$object->entity] : $conf->service->multidir_temp[$object->entity]);
+	$dir = (!empty($conf->product->multidir_temp[$conf->entity]) ? $conf->product->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 	if ($object->id > 0) {  // We are on statistics for a dedicated product
 		if (!file_exists($dir.'/'.$object->id)) {
 			if (dol_mkdir($dir.'/'.$object->id) < 0) {
