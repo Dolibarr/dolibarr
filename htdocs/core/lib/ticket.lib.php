@@ -178,16 +178,16 @@ function showDirectPublicLink($object)
 /**
  *  Generate a random id
  *
- *  @param  int $car Length of string to generate key
+ *  @param  int 	$car 	Length of string to generate key
  *  @return string
  */
 function generate_random_id($car = 16)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	srand((double) microtime() * 1000000);
+	mt_srand((double) microtime() * 1000000);
 	for ($i = 0; $i < $car; $i++) {
-		$string .= $chaine[rand() % strlen($chaine)];
+		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}
 	return $string;
 }
