@@ -1403,6 +1403,9 @@ class Expedition extends CommonObject
 
 			$langs->load("agenda");
 
+			// we try deletion of batch line even if module batch not enabled in case of the module were enabled and disabled previously
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
+
 			// Loop on each product line to add a stock movement
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
@@ -1422,12 +1425,9 @@ class Expedition extends CommonObject
 					// we do not log origin because it will be deleted
 					$mouvS->origin = null;
 					// get lot/serial
-					$lotArray = null;
-					if ($conf->productbatch->enabled) {
-						$lotArray = ExpeditionLineBatch::fetchAll($this->db, $obj->expeditiondet_id);
-						if (!is_array($lotArray)) {
-							$error++; $this->errors[] = "Error ".$this->db->lasterror();
-						}
+					$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
+					if (!is_array($lotArray)) {
+						$error++; $this->errors[] = "Error ".$this->db->lasterror();
 					}
 					if (empty($lotArray)) {
 						// no lot/serial
@@ -1458,9 +1458,8 @@ class Expedition extends CommonObject
 			}
 		}
 
-		// delete batch expedition line (we try deletion even if module not enabled in case of the module were enabled and disabled previously)
+		// delete batch expedition line
 		if (!$error) {
-			$shipmentlinebatch = ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}

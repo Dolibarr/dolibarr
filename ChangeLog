@@ -144,6 +144,9 @@ Following changes may create regressions for some external modules, but were nec
 * Method getDictvalue has been renamed into getDictionaryValue to match camel case rule.
 * To execute shell or command line command, your code must never use method like exec, shell_exec, popen, .. but must use the built-in 
   method executeCLI() available into core/class/utils.class.php  
+* Class file expeditionbatch.class.php renamed to expeditionlinebatch.class.php
+* ExpeditionLineBatch::fetchAll is not static anymore and first parameter $db is removed
+* ExtraFields->showOutputField parameter 4 'extrafieldsobjectkey' is now required
 
 
 
