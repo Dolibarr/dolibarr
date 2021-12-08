@@ -4488,14 +4488,14 @@ abstract class CommonObject
 				$qty = $line->qty ? $line->qty : 0;
 			}
 
-			$weight = $line->weight ? $line->weight : 0;
+			$weight = !empty($line->weight) ? $line->weight : 0;
 			($weight == 0 && !empty($line->product->weight)) ? $weight = $line->product->weight : 0;
-			$volume = $line->volume ? $line->volume : 0;
+			$volume = !empty($line->volume) ? $line->volume : 0;
 			($volume == 0 && !empty($line->product->volume)) ? $volume = $line->product->volume : 0;
 
-			$weight_units = $line->weight_units;
+			$weight_units = !empty($line->weight_units) ? $line->weight_units : 0;
 			($weight_units == 0 && !empty($line->product->weight_units)) ? $weight_units = $line->product->weight_units : 0;
-			$volume_units = $line->volume_units;
+			$volume_units = !empty($line->volume_units) ? $line->volume_units : 0;
 			($volume_units == 0 && !empty($line->product->volume_units)) ? $volume_units = $line->product->volume_units : 0;
 
 			$weightUnit = 0;
