@@ -788,6 +788,8 @@ if ($id > 0 || !empty($ref)) {
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 									// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
+			$conf->cache['product'] = array();
+
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
@@ -815,11 +817,20 @@ if ($id > 0 || !empty($ref)) {
 						print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $products_dispatched[$objp->rowid].'">';
 						print '<tr class="oddeven">';
 
-						$linktoprod = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"), 'product').' '.$objp->ref.'</a>';
+						if (empty($conf->cache['product'][$objp->fk_product])) {
+							$tmpproduct = new Product($db);
+							$tmpproduct->fetch($objp->fk_product);
+							$conf->cache['product'][$objp->fk_product] = $tmpproduct;
+						} else {
+							$tmpproduct = $conf->cache['product'][$objp->fk_product];
+						}
+
+						$linktoprod = $tmpproduct->getNomUrl(1);
 						$linktoprod .= ' - '.$objp->label."\n";
 
 						if (!empty($conf->productbatch->enabled)) {
 							if ($objp->tobatch) {
+								// Product
 								print '<td>';
 								print $linktoprod;
 								print "</td>";
@@ -831,6 +842,7 @@ if ($id > 0 || !empty($ref)) {
 									print '<td class="dispatch_dluo"></td>';
 								}
 							} else {
+								// Product
 								print '<td>';
 								print $linktoprod;
 								print "</td>";
@@ -1150,10 +1162,11 @@ if ($id > 0 || !empty($ref)) {
 			print '<table id="dispatch_received_products" class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
+			// Reception ref
 			if ($conf->reception->enabled) {
 				print '<td>'.$langs->trans("Reception").'</td>';
 			}
-
+			// Product
 			print '<td>'.$langs->trans("Product").'</td>';
 			print '<td>'.$langs->trans("DateCreation").'</td>';
 			print '<td>'.$langs->trans("DateDeliveryPlanned").'</td>';
@@ -1181,8 +1194,13 @@ if ($id > 0 || !empty($ref)) {
 
 			print "</tr>\n";
 
+
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
+
+				$tmpproduct->id = $objp->fk_product;
+				$tmpproduct->ref = $objp->ref;
+				$tmpproduct->label = $objp->label;
 
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid) {
 					print '<form name="editdispatchedlines" id="editdispatchedlines" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#line_'.GETPOST('lineid', 'int').'" method="POST">
@@ -1194,6 +1212,7 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<tr class="oddeven" id="line_'.$objp->dispatchlineid.'" >';
 
+				// Reception ref
 				if (!empty($conf->reception->enabled)) {
 					print '<td>';
 					if (!empty($objp->fk_reception)) {
@@ -1205,8 +1224,16 @@ if ($id > 0 || !empty($ref)) {
 					print "</td>";
 				}
 
+				// Product
 				print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"), 'product').' '.$objp->ref.'</a>';
+				if (empty($conf->cache['product'][$objp->fk_product])) {
+					$tmpproduct = new Product($db);
+					$tmpproduct->fetch($objp->fk_product);
+					$conf->cache['product'][$objp->fk_product] = $tmpproduct;
+				} else {
+					$tmpproduct = $conf->cache['product'][$objp->fk_product];
+				}
+				print $tmpproduct->getNomUrl(1);
 				print ' - '.$objp->label;
 				print "</td>\n";
 				print '<td>'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
