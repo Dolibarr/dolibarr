@@ -520,7 +520,6 @@ if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 for ($idw = 0; $idw < 7; $idw++)
 {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
-	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
 
 	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
 	//$tmparray = dol_getdate($dayinloop);
