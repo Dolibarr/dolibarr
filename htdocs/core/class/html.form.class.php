@@ -4810,7 +4810,7 @@ class Form
 						$moreonecolumn .= '</div>'."\n";
 					} elseif ($input['type'] == 'hidden') {
 						// Do nothing more, already added by a previous loop
-					} else {
+					} elseif (!empty($input['type'])) {
 						$more .= 'Error type '.$input['type'].' for the confirm box is not a supported type';
 					}
 				}
