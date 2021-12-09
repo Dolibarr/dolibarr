@@ -1067,12 +1067,12 @@ if ($action == 'create') {
 
 			if ($conf->prelevement->enabled) {
 				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
-				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.$object->ics.'"></td></tr>';
+				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.(GETPOSTISSET('ics') ? GETPOST('ics', 'alpha') : $object->ics).'"></td></tr>';
 			}
 
 			if ($conf->paymentbybanktransfer->enabled) {
 				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
-				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.$object->ics_transfer.'"></td></tr>';
+				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alpha') : $object->ics_transfer).'"></td></tr>';
 			}
 
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
