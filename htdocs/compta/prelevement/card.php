@@ -383,7 +383,7 @@ if ($id > 0 || $ref) {
 
 		$urladd = "&id=".urlencode($id);
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-		    $urladd .= '&limit='.urlencode($limit);
+			$urladd .= '&limit='.urlencode($limit);
 		}
 
 		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
