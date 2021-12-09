@@ -99,7 +99,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Seems to no be used and replaced with $action == 'infocredit'
+	// Seems to not be used and replaced with $action == 'infocredit'
 	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes') {
 		if ($object->statut == 2) {
 			$res = -1;
