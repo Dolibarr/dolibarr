@@ -815,7 +815,7 @@ if (!$sall) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= !empty($hookmanager->resPrint) ? (" HAVING 1=1 ".$hookmanager->resPrint) : "";
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $sql .= ' ORDER BY ';
 $listfield = explode(',', $sortfield);

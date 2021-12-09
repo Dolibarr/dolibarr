@@ -209,7 +209,7 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * @var int ID
 	 */
-	public $fk_account;
+	public $fk_account;		// default bank account
 
 	public $mode_reglement_id;
 	public $mode_reglement_code;
