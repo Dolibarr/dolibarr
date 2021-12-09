@@ -1241,10 +1241,11 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 		$label = $obj->label;
 		$floor = $obj->floor;
 	}
-	// In phone version only show when is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
-		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".$label."</b><br>";
-		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".$floor."</b>";
+		// If not on smartphone version or if it is the invoice page
+		//print 'mobilepage='.$mobilepage;
+		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".($label ? $label : '?')."</b><br>";
+		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".($floor ? $floor : '?')."</b>";
 	} elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		print $mysoc->name;
 	} elseif ($mobilepage == "cats") {

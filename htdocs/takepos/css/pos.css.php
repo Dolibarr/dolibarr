@@ -352,7 +352,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: calc(45% - 50px);
-	padding-top: 5px;
+	padding-top: 9px;
 }
 
 .row2{
@@ -377,8 +377,6 @@ div.paymentbordline
 	/* background-color:white; */
 	padding-top: 1px;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 	min-height: 180px;
 }
 
@@ -390,8 +388,6 @@ div.paymentbordline
 	box-sizing: border-box;
 	padding-top: 0;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 	min-height: 180px;
 }
 
@@ -402,8 +398,6 @@ div.paymentbordline
 	box-sizing: border-box;
 	padding-top: 0;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 }
 
 .div4{
@@ -414,8 +408,6 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top: 10px;
 	padding-bottom: 10px;
-	padding-right: 5px;
-	padding-left: 5px;
 }
 
 .div5{
@@ -426,9 +418,19 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top:10px;
 	padding-bottom:10px;
+}
+
+.div1, .div2, .div3, .div4, .div5 {
 	padding-right: 5px;
 	padding-left: 5px;
 }
+.div1, .div4 {
+	padding-left: 8px;
+}
+.div3, .div5 {
+	padding-right: 8px;
+}
+
 
 tr.selected, tr.selected td {
 	/* font-weight: bold; */
@@ -518,11 +520,29 @@ div.description_content {
 	margin-left: 4px;
 	font-size: 1.3em;
 }
+.topnav div.login_block_user {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 50px;
+	height: 50px;
+}
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {
+	width: 30px;
+	height: 30px;
+	vertical-align: middle;
+}
 
 @media screen and (max-width: 767px) {
 	.topnav .login_block_other a {
 		padding: 5px 5px;
 		font-size: 1.2em;
+	}
+
+	.div1, .div4 {
+		padding-left: 5px;
+	}
+	.div3, .div5 {
+		padding-right: 5px;
 	}
 }
 
@@ -628,6 +648,7 @@ div#moreinfo, div#infowarehouse {
 
 	.topnav input[type="text"] {
 		max-width: 90px;
+		font-size: 1.15em;
 	}
 
 	.topnav-right {

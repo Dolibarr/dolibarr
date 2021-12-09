@@ -56,7 +56,7 @@ class modHRM extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "HRM";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -268,10 +268,10 @@ class modHRM extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		/*$result = $this->_load_tables('/hrm/sql/');
+		$result = $this->_load_tables('/install/mysql/tables/', 'hrm');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
-		}*/
+		}
 
 		$sql = array();
 

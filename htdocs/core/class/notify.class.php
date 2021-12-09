@@ -83,7 +83,6 @@ class Notify
 		'ACTION_CREATE'
 	);
 
-
 	/**
 	 *	Constructor
 	 *
@@ -346,7 +345,7 @@ class Notify
 		global $dolibarr_main_url_root;
 		global $action;
 
-		if (!in_array($notifcode, $this->arrayofnotifsupported)) {
+		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
 			return 0;
 		}
 
@@ -437,10 +436,10 @@ class Notify
 					$notifcodedefid = $obj->adid;
 					$trackid = '';
 					if ($obj->type_target == 'tocontactid') {
-						$trackid = 'con'.$obj->id;
+						$trackid = 'con'.$obj->cid;
 					}
 					if ($obj->type_target == 'touserid') {
-						$trackid = 'use'.$obj->id;
+						$trackid = 'use'.$obj->cid;
 					}
 
 					if (dol_strlen($obj->email)) {

@@ -102,8 +102,11 @@ $search_roles = GETPOST("search_roles", 'array');
 $search_level = GETPOST("search_level", "array");
 $search_stcomm = GETPOST('search_stcomm', 'int');
 
-if ($search_status == '') {
+if ($search_status === '') {
 	$search_status = 1; // always display active customer first
+}
+if ($search_no_email === '') {
+	$search_no_email = -1;
 }
 
 $optioncss = GETPOST('optioncss', 'alpha');

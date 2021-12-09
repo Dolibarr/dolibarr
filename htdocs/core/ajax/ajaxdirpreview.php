@@ -204,6 +204,8 @@ if ($type == 'directory') {
 		'contract',
 		'product',
 		'tax',
+		'tax-vat',
+		'salaries',
 		'project',
 		'project_task',
 		'fichinter',
@@ -225,6 +227,7 @@ if ($type == 'directory') {
 	// TODO change for multicompany sharing
 	if ($module == 'company') {
 		$upload_dir = $conf->societe->dir_output;
+		$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts.
 	} elseif ($module == 'invoice') {
 		$upload_dir = $conf->facture->dir_output;
 	} elseif ($module == 'invoice_supplier') {
@@ -243,6 +246,11 @@ if ($type == 'directory') {
 		$upload_dir = $conf->product->dir_output;
 	} elseif ($module == 'tax') {
 		$upload_dir = $conf->tax->dir_output;
+		$excludefiles[] = '^vat$'; // The subdir 'vat' contains files of vats.
+	} elseif ($module == 'tax-vat') {
+		$upload_dir = $conf->tax->dir_output.'/vat';
+	} elseif ($module == 'salaries') {
+		$upload_dir = $conf->salaries->dir_output;
 	} elseif ($module == 'project') {
 		$upload_dir = $conf->projet->dir_output;
 	} elseif ($module == 'project_task') {
@@ -279,10 +287,6 @@ if ($type == 'directory') {
 		}
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
-
-		if ($module == 'company') {
-			$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts with no id of thirdparty.
-		}
 
 		$filter = preg_quote($search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);

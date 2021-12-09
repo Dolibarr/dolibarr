@@ -1488,7 +1488,7 @@ class ExtraFields
 	 * @param   string	$key            		Key of attribute
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), function uses the new method to get extrafields data
+	 * @param	string	$extrafieldsobjectkey	Required (for example $object->table_element).
 	 * @return	string							Formated value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
@@ -1510,11 +1510,9 @@ class ExtraFields
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		} else {
-			// Old usage
-			$label = $this->attribute_label[$key];
-			$type = $this->attribute_type[$key];
-			$help = ''; // Not supported with old syntax
-			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+			// Old usage not allowed anymore
+			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_WARNING);
+			return '';
 		}
 
 		if ($hidden) {
@@ -1948,7 +1946,8 @@ class ExtraFields
 				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) {
 					continue;
 				}
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key)) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && $this->attributes[$object->table_element]['type'][$key] != 'boolean') {
+					//when unticking boolean field, it's not set in POST
 					continue;
 				}
 

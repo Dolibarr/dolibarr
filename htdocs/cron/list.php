@@ -572,15 +572,17 @@ if ($num > 0) {
 		}
 		print '</td>';
 
+		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
+
 		// Date start last run
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastrun)) {
 			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
 		}
 		print '</td>';
 
 		// Duration
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
 			print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
 			//print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
@@ -588,7 +590,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Return code of last run
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if ($obj->lastresult != '') {
 			if (empty($obj->lastresult)) {
 				print $obj->lastresult;

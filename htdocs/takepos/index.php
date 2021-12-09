@@ -627,18 +627,24 @@ function Search2(keyCodeForEnter) {
 }
 
 function Edit(number) {
+	console.log("We click on PAD on number="+number);
 
-	if (typeof(selectedtext) == "undefined") return;	// We click on an action on the number pad but there is no line selected
+	if (typeof(selectedtext) == "undefined") {
+		return;	// We click on an action on the number pad but there is no line selected
+	}
 
 	var text=selectedtext+"<br> ";
+
 
 	if (number=='c'){
 		editnumber="";
 		Refresh();
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
+		$("#price").html("<?php echo $langs->trans("Price"); ?>");
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
 		return;
 	}
 	else if (number=='qty'){
-		console.log("Edit "+number);
 		if (editaction=='qty' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -654,7 +660,6 @@ function Edit(number) {
 		}
 	}
 	else if (number=='p'){
-		console.log("Edit "+number);
 		if (editaction=='p' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updateprice&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -670,7 +675,6 @@ function Edit(number) {
 		}
 	}
 	else if (number=='r'){
-		console.log("Edit "+number);
 		if (editaction=='r' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updatereduction&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -708,6 +712,7 @@ function Edit(number) {
 	}
 	$('#'+selectedline).find("td:first").html(text+editnumber);
 }
+
 
 function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder");
@@ -885,7 +890,8 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);" placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT.'/'; ?>';"><span class="fas fa-home"></span></a>
+				<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
+				<span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>
 				<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 				<?php } ?>

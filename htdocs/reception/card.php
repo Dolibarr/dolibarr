@@ -85,6 +85,7 @@ if (empty($origin_id)) {
 }
 $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOST('lineid', 'int') ?GETPOST('lineid', 'int') : '';
+$facid = GETPOST('facid', 'int');
 
 $action	= GETPOST('action', 'alpha');
 //Select mail models is same action as presend
@@ -1750,7 +1751,7 @@ if ($action == 'create') {
 
 		// Loop on each product to send/sent
 		for ($i = 0; $i < $num_prod; $i++) {
-			print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
+			print '<!-- origin line id = '.(!empty($lines[$i]->origin_line_id) ? $lines[$i]->origin_line_id : 0).' -->'; // id of order line
 			print '<tr class="oddeven">';
 
 			// #
@@ -1775,7 +1776,7 @@ if ($action == 'create') {
 				$text .= ' - '.$label;
 				$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
 				print $form->textwithtooltip($text, $description, 3, '', '', $i);
-				print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
+				print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
 				if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
 					print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
 				}
@@ -1924,7 +1925,7 @@ if ($action == 'create') {
 
 			// Weight
 			print '<td class="center">';
-			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
+			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
 				print $lines[$i]->product->weight * $lines[$i]->qty.' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units);
 			} else {
 				print '&nbsp;';
@@ -1933,7 +1934,7 @@ if ($action == 'create') {
 
 			// Volume
 			print '<td class="center">';
-			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
+			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
 				print $lines[$i]->product->volume * $lines[$i]->qty.' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units);
 			} else {
 				print '&nbsp;';
@@ -1964,7 +1965,7 @@ if ($action == 'create') {
 			print "</tr>";
 
 			// Display lines extrafields
-			if (is_array($extralabelslines) && count($extralabelslines) > 0) {
+			if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
 				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
 				$line->id = $lines[$i]->id;

@@ -975,7 +975,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  */
 function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0)
 {
-	global $conf, $user, $mysoc;
+	global $conf, $user, $mysoc, $hookmanager;
 
 	$outputlangs->load("dict");
 	$line = '';
@@ -1143,50 +1143,82 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 
-	$marginwithfooter = $marge_basse + $freetextheight + (!empty($line1) ? 3 : 0) + (!empty($line2) ? 3 : 0) + (!empty($line3) ? 3 : 0) + (!empty($line4) ? 3 : 0);
-	$posy = $marginwithfooter + 0;
+	// For customize footer
+	if (is_object($hookmanager)) {
+		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs'=>$outputlangs);
+		$action = '';
+		$hookmanager->executeHooks('pdf_pagefoot', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if (!empty($hookmanager->resPrint) && $hidefreetext == 0) {
+			$mycustomfooter = $hookmanager->resPrint;
+			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
-	if ($line) {	// Free text
-		$pdf->SetXY($dims['lm'], -$posy);
-		if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {   // by default
-			$pdf->MultiCell(0, 3, $line, 0, $align, 0);
+			$marginwithfooter = $marge_basse + $freetextheight + $mycustomfooterheight;
+			$posy = $marginwithfooter + 0;
+
+			if ($line) {	// Free text
+				$pdf->SetXY($dims['lm'], -$posy);
+				if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {   // by default
+					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
+				} else {
+					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+				}
+				$posy -= $freetextheight;
+			}
+
+			$pdf->SetY(-$posy);
+			$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
+			$posy--;
+
+			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
+
+			$posy -= $mycustomfooterheight - 3;
 		} else {
-			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+			// Else default footer
+			$marginwithfooter = $marge_basse + $freetextheight + (!empty($line1) ? 3 : 0) + (!empty($line2) ? 3 : 0) + (!empty($line3) ? 3 : 0) + (!empty($line4) ? 3 : 0);
+			$posy = $marginwithfooter + 0;
+
+			if ($line) {	// Free text
+				$pdf->SetXY($dims['lm'], -$posy);
+				if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {   // by default
+					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
+				} else {
+					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+				}
+				$posy -= $freetextheight;
+			}
+
+			$pdf->SetY(-$posy);
+			$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
+			$posy--;
+
+			if (!empty($line1)) {
+				$pdf->SetFont('', 'B', 7);
+				$pdf->SetXY($dims['lm'], -$posy);
+				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
+				$posy -= 3;
+				$pdf->SetFont('', '', 7);
+			}
+
+			if (!empty($line2)) {
+				$pdf->SetFont('', 'B', 7);
+				$pdf->SetXY($dims['lm'], -$posy);
+				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
+				$posy -= 3;
+				$pdf->SetFont('', '', 7);
+			}
+
+			if (!empty($line3)) {
+				$pdf->SetXY($dims['lm'], -$posy);
+				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
+			}
+
+			if (!empty($line4)) {
+				$posy -= 3;
+				$pdf->SetXY($dims['lm'], -$posy);
+				$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
+			}
 		}
-		$posy -= $freetextheight;
 	}
-
-	$pdf->SetY(-$posy);
-	$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
-	$posy--;
-
-	if (!empty($line1)) {
-		$pdf->SetFont('', 'B', 7);
-		$pdf->SetXY($dims['lm'], -$posy);
-		$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line1, 0, 'C', 0);
-		$posy -= 3;
-		$pdf->SetFont('', '', 7);
-	}
-
-	if (!empty($line2)) {
-		$pdf->SetFont('', 'B', 7);
-		$pdf->SetXY($dims['lm'], -$posy);
-		$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line2, 0, 'C', 0);
-		$posy -= 3;
-		$pdf->SetFont('', '', 7);
-	}
-
-	if (!empty($line3)) {
-		$pdf->SetXY($dims['lm'], -$posy);
-		$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line3, 0, 'C', 0);
-	}
-
-	if (!empty($line4)) {
-		$posy -= 3;
-		$pdf->SetXY($dims['lm'], -$posy);
-		$pdf->MultiCell($dims['wk'] - $dims['rm'] - $dims['lm'], 2, $line4, 0, 'C', 0);
-	}
-
 	// Show page nb only on iso languages (so default Helvetica font)
 	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
 		$pdf->SetXY($dims['wk'] - $dims['rm'] - 15, -$posy);
