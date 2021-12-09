@@ -1414,7 +1414,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		} else {
 			if (dol_textishtml($libelleproduitservice) && !dol_textishtml($desc)) {
-				str_replace("\n", '<br>', $desc);
+				$desc = str_replace("\n", '<br>', $desc);
 			}
 			if ($idprod) {
 				// Check if description must be output
