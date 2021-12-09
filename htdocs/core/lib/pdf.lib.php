@@ -1413,9 +1413,6 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		} else {
-			if (dol_textishtml($libelleproduitservice) && !dol_textishtml($desc)) {
-				$desc = str_replace("\n", '<br>', $desc);
-			}
 			if ($idprod) {
 				// Check if description must be output
 				if (!empty($object->element)) {
@@ -1431,12 +1428,12 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 						if (!empty($conf->global->HIDE_LABEL_VARIANT_PDF) && $prodser->isVariant()) {
 							$libelleproduitservice = $desc;
 						} else {
-							$libelleproduitservice .= $desc;
+							$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 						}
 					}
 				}
 			} else {
-				$libelleproduitservice .= $desc;
+				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 			}
 		}
 	}
