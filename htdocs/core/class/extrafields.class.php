@@ -1065,6 +1065,7 @@ class ExtraFields
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 			$out .= '<option value="0">&nbsp;</option>';
+			$out .= '<option value="-2">' . '- '. $langs->trans("selectEmpty") . ' -'. '</option>';
 			foreach ($param['options'] as $key => $val) {
 				if ((string) $key == '') {
 					continue;
