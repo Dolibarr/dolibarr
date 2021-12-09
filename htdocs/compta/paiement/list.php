@@ -528,10 +528,7 @@ while ($i < min($num, $limit)) {
 
 	// Date
 	if (!empty($arrayfields['p.datep']['checked'])) {
-		$dateformatforpayment = 'day';
-		if (!empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) {
-			$dateformatforpayment = 'dayhour';
-		}
+		$dateformatforpayment = 'dayhour';
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
