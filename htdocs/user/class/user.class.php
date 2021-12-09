@@ -786,9 +786,10 @@ class User extends CommonObject
 	{
 		global $conf, $user, $langs;
 
-		$entity = (!empty($entity) ? $entity : $conf->entity);
+		$entity = (empty($entity) ? $conf->entity : $entity);
 
-		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
+		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity, $notrigger for user id=".$this->id);
+
 		$error = 0;
 		$whereforadd = '';
 
@@ -797,7 +798,7 @@ class User extends CommonObject
 		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
-			// Si on a demande ajout d'un droit en particulier, on recupere les caracteristiques (module, perms et subperms) de ce droit.
+			// If we ask to add a given permission, we first load properties of this permission (module, perms and subperms).
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
@@ -817,9 +818,9 @@ class User extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			// Where pour la liste des droits a ajouter
+			// Define the where for the permission to add
 			$whereforadd = "id=".((int) $rid);
-			// Ajout des droits induits
+			// Add also inherited permissions
 			if (!empty($subperms)) {
 				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
 			} elseif (!empty($perms)) {
@@ -848,7 +849,7 @@ class User extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($whereforadd) && $whereforadd != 'allmodules') {
-				$sql .= " AND ".$whereforadd;
+				$sql .= " AND (".$whereforadd.")";	// Note: parenthesis are important because wheretoand can contains OR. Also note that $whereforadd is already sanitized
 			}
 
 			$result = $this->db->query($sql);
