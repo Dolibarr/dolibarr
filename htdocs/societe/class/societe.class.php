@@ -3713,7 +3713,7 @@ class Societe extends CommonObject
 				$url = 'http://www.societe.com/cgi-bin/search?champs='.$strippedIdProf1; // See also http://avis-situation-sirene.insee.fr/
 			}
 			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
-				$url = 'https://beta.companieshouse.gov.uk/company/'.$strippedIdProf1;
+				$url = 'https://find-and-update.company-information.service.gov.uk/search?q='.$strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'ES') {
 				$url = 'http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$strippedIdProf1;
