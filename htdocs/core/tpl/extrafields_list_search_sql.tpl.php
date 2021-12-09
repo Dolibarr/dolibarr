@@ -66,10 +66,9 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				$crit = implode(' ', $crit); // natural_search() expects a string
 			} elseif ($typ === 'select' and is_string($crit) and strpos($crit, ' ') === false) {
 
-				if ($crit == -2){
+				if ($crit == -2) {
 					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." = 0 OR ".$extrafieldsobjectprefix.$tmpkey." IS NULL)";
-				}
-				else {
+				} else {
 					$sql .= " AND (" . $extrafieldsobjectprefix . $tmpkey . " = '" . $db->escape($crit) . "')";
 				}
 				continue;
