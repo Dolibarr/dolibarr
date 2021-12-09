@@ -67,6 +67,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 $type = $object->type;
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -86,9 +87,10 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'confirm_delete') {
+		$savtype = $object->type;
 		$res = $object->delete($user);
 		if ($res > 0) {
-			if ($object->type == 'bank-transfer') {
+			if ($savtype == 'bank-transfer') {
 				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
 			} else {
 				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');

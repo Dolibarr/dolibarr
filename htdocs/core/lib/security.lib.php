@@ -566,6 +566,14 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (empty($user->rights->adherent->supprimer)) {
 					$deleteok = 0;
 				}
+			} elseif ($feature == 'paymentbybanktransfer') {
+				if (empty($user->rights->paymentbybanktransfer->create)) {	// There is no delete permission
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'prelevement') {
+				if (empty($user->rights->prelevement->bons->creer)) {		// There is no delete permission
+					$deleteok = 0;
+				}
 			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels
 				foreach ($feature2 as $subfeature) {
 					if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) {
