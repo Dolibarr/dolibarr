@@ -849,7 +849,7 @@ class User extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($whereforadd) && $whereforadd != 'allmodules') {
-				$sql .= " AND (".$whereforadd.")";	// Note: parenthesis are important because wheretoand can contains OR. Also note that $whereforadd is already sanitized
+				$sql .= " AND (".$whereforadd.")";	// Note: parenthesis are important because whereforadd can contains OR. Also note that $whereforadd is already sanitized
 			}
 
 			$result = $this->db->query($sql);
@@ -975,7 +975,7 @@ class User extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($wherefordel) && $wherefordel != 'allmodules') {
-				$sql .= " AND ".$wherefordel;
+				$sql .= " AND (".$wherefordel.")";	// Note: parenthesis are important because wherefordel can contains OR. Also note that $wherefordel is already sanitized
 			}
 
 			// avoid admin can remove his own important rights
