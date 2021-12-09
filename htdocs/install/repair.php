@@ -1180,7 +1180,8 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 	foreach ($conf->modules as $key => $val) {
 		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
-	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module NOT IN ('.$db->sanitize($listofmods, 1).') AND id > 100000';
+
+	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
 
 	$resql = $db->query($sql);
 	if ($resql) {
