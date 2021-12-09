@@ -378,6 +378,9 @@ if ($id > 0 || $ref) {
 		$i = 0;
 
 		$urladd = "&id=".urlencode($id);
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$urladd .= '&limit='.urlencode($limit);
+		}
 
 		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
 		print '<input type="hidden" name="id" value="'.$id.'"/>';
@@ -387,6 +390,12 @@ if ($id > 0 || $ref) {
 		}
 		if (!empty($limit)) {
 			print '<input type="hidden" name="limit" value="'.$limit.'"/>';
+		}
+		if (!empty($sortfield)) {
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+		}
+		if (!empty($sortorder)) {
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
