@@ -8528,7 +8528,7 @@ abstract class CommonObject
 					}
 				}
 			} else {
-				$queryarray[$field] = $this->{$field};
+				$queryarray[$field] = !empty($this->{$field}) ? $this->{$field} : 0;
 			}
 
 			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) {
