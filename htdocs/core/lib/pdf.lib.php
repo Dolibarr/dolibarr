@@ -1460,12 +1460,12 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 						if (!empty($conf->global->HIDE_LABEL_VARIANT_PDF) && $prodser->isVariant()) {
 							$libelleproduitservice = $desc;
 						} else {
-							$libelleproduitservice .= $desc;
+							$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 						}
 					}
 				}
 			} else {
-				$libelleproduitservice .= $desc;
+				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 			}
 		}
 	}
