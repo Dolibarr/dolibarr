@@ -58,7 +58,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 $title = $langs->trans("Bookmarks");
 
 // URL http://mydolibarr/core/bookmarks_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Bookmarks access -->'."\n";
+$head = '<!-- Bookmarks -->'."\n";	// This is used by DoliDroid to know page is a bookmark selection page
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
