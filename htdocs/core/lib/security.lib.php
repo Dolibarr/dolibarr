@@ -909,9 +909,11 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		$reshook = $hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
+			$langs->loadLangs(array("errors"));
 			if ($user->login) {
 				print $langs->trans("CurrentLogin").': <span class="error">'.$user->login.'</span><br>';
 				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
+				print $langs->trans("ErrorForbidden4");
 			} else {
 				print $langs->trans("ErrorForbidden3");
 			}

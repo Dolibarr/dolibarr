@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Fails to get RSS feed. Try to add constant MAIN_SIMPLEX
 ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Permission for this login can be defined by your Dolibarr administrator from menu %s->%s.
 ErrorForbidden3=It seems that Dolibarr is not used through an authenticated session. Take a look at Dolibarr setup documentation to know how to manage authentications (htaccess, mod_auth or other...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Class Imagick is not found in this PHP. No preview can be available. Administrators can disable this tab from menu Setup - Display.
 ErrorRecordAlreadyExists=Record already exists
 ErrorLabelAlreadyExists=This label already exists

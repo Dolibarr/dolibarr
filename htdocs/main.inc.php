@@ -1166,7 +1166,7 @@ if (!defined('NOLOGIN')) {
 	// Check if user is active
 	if ($user->statut < 1) {
 		// If not active, we refuse the user
-		$langs->load("other");
+		$langs->loadLangs(array("errors", "other"));
 		dol_syslog("Authentication KO as login is disabled", LOG_NOTICE);
 		accessforbidden($langs->trans("ErrorLoginDisabled"));
 		exit;
