@@ -530,11 +530,6 @@ if ($includeproductswithoutdesiredqty == 'on') {
 	$includeproductswithoutdesiredqtychecked = 'checked';
 }
 
-// Add where from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);

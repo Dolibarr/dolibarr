@@ -312,7 +312,7 @@ if (empty($reshook)) {
 			$object->public      = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}

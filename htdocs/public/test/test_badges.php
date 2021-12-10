@@ -1,33 +1,15 @@
 <?php
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1); // File must be accessed by logon page so without login
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+//define("NOLOGIN",1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
-
-session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 if ($dolibarr_main_prod) {
-	accessforbidden();
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
 ?>
