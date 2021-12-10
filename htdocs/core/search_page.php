@@ -58,7 +58,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 $title = $langs->trans("Search");
 
 // URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Quick access -->'."\n";
+$head = '<!-- Quick access -->'."\n";	// This is used by DoliDroid to know page is a search page
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);

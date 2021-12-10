@@ -73,11 +73,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<div class="divsearchfield">';
 
 		// Type
-		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;" title="'.$langs->trans("ActionType").'"></span>';
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
+		print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
 		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
 		print '</div>';
 

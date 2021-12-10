@@ -217,6 +217,7 @@ if ($action == 'delete_action') {
 /*
  * View
  */
+
 $parameters = array(
 	'socid' => $socid,
 	'status' => $status,

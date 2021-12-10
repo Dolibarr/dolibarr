@@ -1058,6 +1058,9 @@ body[class*="colorblind-"] .text-success{
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
+.fawidth30 {
+	width: 20px;
+}
 .floatnone {
 	float: none !important;
 }

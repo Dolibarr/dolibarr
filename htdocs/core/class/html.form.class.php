@@ -2080,7 +2080,7 @@ class Form
 			if ($num) {
 				// Enhance with select2
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname);
+				$out = ajax_combobox($htmlname).$out;
 			}
 		} else {
 			dol_print_error($this->db);
