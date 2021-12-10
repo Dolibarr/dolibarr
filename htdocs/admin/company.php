@@ -417,7 +417,7 @@ print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->tra
 print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_TOWN) ? $conf->global->MAIN_INFO_SOCIETE_TOWN : ''))).'"></td></tr>'."\n";
 
 // Country
-print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
+print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td>';
 print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 print $form->select_country($mysoc->country_id, 'country_id', '', 0);
 if ($user->admin) {
@@ -425,7 +425,7 @@ if ($user->admin) {
 }
 print '</td></tr>'."\n";
 
-print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td>';
+print '<tr class="oddeven"><td class="wordbreak"><label for="state_id">'.$langs->trans("State").'</label></td><td>';
 $state_id = 0;
 if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
 	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
