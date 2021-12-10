@@ -425,14 +425,14 @@ if ($user->admin) {
 }
 print '</td></tr>'."\n";
 
-print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
+print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td>';
 $state_id = 0;
 if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
 	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 	$state_id = $tmp[0];
 }
 print img_picto('', 'state', 'class="pictofixedwidth"');
-print $formcompany->select_state($state_id, $mysoc->country_code, 'state_id');
+print $formcompany->select_state($state_id, $mysoc->country_code, 'state_id', 'maxwidth200onsmartphone minwidth300');
 print '</td></tr>'."\n";
 
 // Currency
