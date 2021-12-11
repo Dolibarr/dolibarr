@@ -476,3 +476,6 @@ ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
 ALTER TABLE llx_entrepot ADD COLUMN warehouse_usage integer DEFAULT 1;
 
 ALTER TABLE llx_session MODIFY COLUMN user_agent VARCHAR(255) NULL;
+
+ALTER TABLE llx_inventorydet ADD COLUMN fk_movement integer NULL;
+
