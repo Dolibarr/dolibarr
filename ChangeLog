@@ -147,6 +147,8 @@ Following changes may create regressions for some external modules, but were nec
 * Class file expeditionbatch.class.php renamed to expeditionlinebatch.class.php
 * ExpeditionLineBatch::fetchAll is not static anymore and first parameter $db is removed
 * ExtraFields->showOutputField parameter 4 'extrafieldsobjectkey' is now required
+* CommonObject method add_object_linked now sets targettype to 'mymodule_myobject' iso 'myobject', 
+  you can use hook 'setLinkedObjectSourceTargetType' to set your usual targettype
 
 
 
