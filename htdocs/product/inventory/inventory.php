@@ -160,7 +160,7 @@ if (empty($reshook)) {
 						}
 
 						// Update line with id of stock movement
-						$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX.'inventorydet SET fk_movement = '.((int) $idstockmove).' WHERE rowid = '.$line->rowid;
+						$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventorydet SET fk_movement = ".((int) $idstockmove)." WHERE rowid = ".((int) $line->rowid);
 						$resqlupdate = $db->query($sqlupdate);
 						if (! $resqlupdate) {
 							$error++;
