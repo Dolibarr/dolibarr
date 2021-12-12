@@ -420,20 +420,20 @@ if (!empty($filter_opcloture) && $filter_opcloture != -1) {
 	$param .= '&amp;filter_opcloture='.urlencode($filter_opcloture);
 }
 if ($filter_dateouvertureprevue_start != '') {
-	$param .= '&amp;opouvertureprevueday='.$opouvertureprevueday.'&amp;opouvertureprevuemonth='.$opouvertureprevuemonth.'&amp;opouvertureprevueyear='.$opouvertureprevueyear;
+	$param .= '&amp;opouvertureprevueday='.((int) $opouvertureprevueday).'&amp;opouvertureprevuemonth='.((int) $opouvertureprevuemonth).'&amp;opouvertureprevueyear='.((int) $opouvertureprevueyear);
 }
 if ($filter_date1_start != '') {
-	$param .= '&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
+	$param .= '&amp;op1day='.((int) $op1day).'&amp;op1month='.((int) $op1month).'&amp;op1year='.((int) $op1year);
 }
 if ($filter_date2_start != '') {
-	$param .= '&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
+	$param .= '&amp;op2day='.((int) $op2day).'&amp;op2month='.((int) $op2month).'&amp;op2year='.((int) $op2year);
 }
 if ($filter_datecloture_start != '') {
-	$param .= '&amp;opclotureday='.$op2day.'&amp;opcloturemonth='.$op2month.'&amp;opclotureyear='.$op2year;
+	$param .= '&amp;opclotureday='.((int) $op2day).'&amp;opcloturemonth='.((int) $op2month).'&amp;opclotureyear='.((int) $op2year);
 }
 
 if ($optioncss != '') {
-	$param .= '&optioncss='.$optioncss;
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -489,9 +489,9 @@ $moreforfilter = '';
 if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
+	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-	$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
 
@@ -618,7 +618,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofoperators = array('<'=>'<', '>'=>'>');
-	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $filter_opouvertureprevue, 1);
+	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $filter_opouvertureprevue, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_dateouvertureprevue = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
 	print $form->selectDate($filter_dateouvertureprevue, 'opouvertureprevue', 0, 0, 1, '', 1, 0);
@@ -627,7 +627,7 @@ if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofoperators = array('<'=>'<', '>'=>'>');
-	print $form->selectarray('filter_op1', $arrayofoperators, $filter_op1, 1);
+	print $form->selectarray('filter_op1', $arrayofoperators, $filter_op1, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date1 = dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
 	print $form->selectDate($filter_date1, 'op1', 0, 0, 1, '', 1, 0);
@@ -636,7 +636,7 @@ if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
 if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofoperators = array('<'=>'<', '>'=>'>');
-	print $form->selectarray('filter_op2', $arrayofoperators, $filter_op2, 1);
+	print $form->selectarray('filter_op2', $arrayofoperators, $filter_op2, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date2 = dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
 	print $form->selectDate($filter_date2, 'op2', 0, 0, 1, '', 1, 0);
@@ -645,7 +645,7 @@ if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
 if (!empty($arrayfields['cd.date_cloture']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofoperators = array('<'=>'<', '>'=>'>');
-	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1);
+	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date_cloture = dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
 	print $form->selectDate($filter_date_cloture, 'opcloture', 0, 0, 1, '', 1, 0);

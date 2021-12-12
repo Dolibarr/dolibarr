@@ -7961,19 +7961,19 @@ class Form
 	/**
 	 *	Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
-	 *	@param	string	$htmlname		Name of select
-	 *	@param	array	$array			Array with key+value
-	 *	@param	array	$selected		Array with key+value preselected
-	 *	@param	int		$key_in_label   1 to show key like in "[key] value"
-	 *	@param	int		$value_as_key   1 to use value as key
-	 *	@param  string	$morecss        Add more css style
-	 *	@param  int		$translate		Translate and encode value
-	 *  @param	int		$width			Force width of select box. May be used only when using jquery couch. Example: 250, 95%
-	 *  @param	string	$moreattrib		Add more options on select component. Example: 'disabled'
-	 *  @param	string	$elemtype		Type of element we show ('category', ...). Will execute a formating function on it. To use in readonly mode if js component support HTML formatting.
-	 *  @param	string	$placeholder	String to use as placeholder
-	 *  @param	int		$addjscombo		Add js combo
-	 *	@return	string					HTML multiselect string
+	 *	@param	string		$htmlname		Name of select
+	 *	@param	array		$array			Array with key+value
+	 *	@param	array		$selected		Array with key+value preselected
+	 *	@param	int			$key_in_label   1 to show key like in "[key] value"
+	 *	@param	int			$value_as_key   1 to use value as key
+	 *	@param  string		$morecss        Add more css style
+	 *	@param  int			$translate		Translate and encode value
+	 *  @param	int|string	$width			Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
+	 *  @param	string		$moreattrib		Add more options on select component. Example: 'disabled'
+	 *  @param	string		$elemtype		Type of element we show ('category', ...). Will execute a formating function on it. To use in readonly mode if js component support HTML formatting.
+	 *  @param	string		$placeholder	String to use as placeholder
+	 *  @param	int			$addjscombo		Add js combo
+	 *	@return	string						HTML multiselect string
 	 *  @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
 	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)

@@ -342,7 +342,7 @@ a.top-menu-dropdown-link {
 	display: block !important;
 	box-sizing: border-box;
 	width: 100%;
-	padding: .25rem 1.5rem .25rem 1rem;
+	padding: .3em 1.5em .4em 1em;
 	clear: both;
 	font-weight: 400;
 	color: #212529  !important;
@@ -372,6 +372,10 @@ a.top-menu-dropdown-link {
 }
 .multicompany-item::before {
 	content: none !important;
+}
+
+.dropdown-item.bookmark-item-external::before {
+	content: "\f35d";
 }
 
 .dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
