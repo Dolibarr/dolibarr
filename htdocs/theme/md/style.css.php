@@ -2717,7 +2717,7 @@ form#login {
 	border: none;
 	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
-	margin-left: 18px;
+	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
 }

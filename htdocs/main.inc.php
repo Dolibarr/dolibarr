@@ -302,7 +302,6 @@ if (!defined('NOSESSION')) {
 // Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
 
-
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
 if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 	$ok = 0;
@@ -362,6 +361,12 @@ if (isset($_SERVER["HTTP_USER_AGENT"])) {
 	if ($conf->browser->layout == 'phone') {
 		$conf->dol_no_mouse_hover = 1;
 	}
+}
+
+// If theme is forced
+if (GETPOST('theme', 'aZ09')) {
+	$conf->theme = GETPOST('theme', 'aZ09');
+	$conf->css = "/theme/".$conf->theme."/style.css.php";
 }
 
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
@@ -1088,6 +1093,7 @@ if (!defined('NOLOGIN')) {
 		$conf->css = "/theme/".$conf->theme."/style.css.php";
 	}
 }
+
 
 // Case forcing style from url
 if (GETPOST('theme', 'alpha')) {
