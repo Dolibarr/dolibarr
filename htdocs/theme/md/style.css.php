@@ -6854,6 +6854,29 @@ div.clipboardCPValue.hidewithsize {
 }
 
 
+/* ============================================================================== */
+/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* ============================================================================== */
+
+.radio_js_bloc_number {
+	display:inline-block;
+	padding:5px 7px;
+	min-width:20px;
+	border-radius:3px;
+	border:1px solid #ccc;
+	background:#eee;
+	color:#555;
+	cursor:pointer;
+	margin:2px;
+	text-align:center;
+}
+.radio_js_bloc_number.selected {
+	transition:0.2s ease background;
+	background:#888;
+	color:#fff;
+	border-color:#555;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */

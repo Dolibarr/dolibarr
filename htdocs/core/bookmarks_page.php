@@ -55,6 +55,18 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  * View
  */
 
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
+	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public');
+	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	// HTTP/1.0
+	header('Pragma: token=public');
+} else {
+	// HTTP/1.0
+	header('Cache-Control: no-cache');
+}
+
 $title = $langs->trans("Bookmarks");
 
 // URL http://mydolibarr/core/bookmarks_page?dol_use_jmobile=1 can be used for tests
