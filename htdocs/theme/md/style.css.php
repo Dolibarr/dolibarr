@@ -1050,6 +1050,9 @@ body[class*="colorblind-"] .text-success{
 .editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
 	color: var(--colortexttitle) !important;
 }
+a.editfielda.nohover *:hover:before {
+	color: #ccc !important;
+}
 
 .size15x { font-size: 1.5em !important; }
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }

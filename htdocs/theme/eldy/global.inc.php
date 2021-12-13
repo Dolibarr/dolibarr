@@ -884,6 +884,10 @@ body[class*="colorblind-"] .text-success{
 .editfieldlang:hover {
 	color: var(--colortexttitle) !important;
 }
+a.editfielda.nohover *:hover:before {
+	color: #ccc !important;
+}
+
 .fawidth30 {
 	width: 20px;
 }
