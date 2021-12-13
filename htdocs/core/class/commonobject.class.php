@@ -6972,19 +6972,19 @@ abstract class CommonObject
 						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && $action == 'view') {
 							$out .= '<td></td>';
 						}
-						$out .= '<td class="wordbreak';
+						$out .= '<td';
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
 						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
-							$out .= '">';
+							$out .= '>';
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							else $out .= $labeltoshow;
 							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
 						} else {
-							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
-							$out .= '">';
+							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '  class="fieldrequired"';
+							$out .= '>';
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							else $out .= $labeltoshow;
 						}
