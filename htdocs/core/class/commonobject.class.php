@@ -4881,7 +4881,7 @@ abstract class CommonObject
 				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
 					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
-					$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
