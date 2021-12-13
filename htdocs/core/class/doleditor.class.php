@@ -55,8 +55,8 @@ class DolEditor
 	 *  @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
 	 *  @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
 	 *  @param  string	$toolbarlocation       			Where bar is stored :
-	 *                       		                    'In' each window has its own toolbar
-	 *                              		            'Out:name' share toolbar into the div called 'name'
+	 *                       		                    'In' = each window has its own toolbar
+	 *                              		            'Out:name' = share toolbar into the div called 'name'
 	 *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
 	 *  @param	int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
@@ -155,10 +155,20 @@ class DolEditor
 				} else {
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
+
+				$pluginstodisable = 'flash';
+				if (!empty($conf->dol_optimize_smallscreen)) {
+					$pluginstodisable .= ',scayt,wsc,find,undo';
+				}
+				if (empty($conf->global->FCKEDITOR_ENABLE_WSC)) {	// spellchecker has end of life december 2021
+					$pluginstodisable .= ',wsc';
+				}
+				$scaytautostartup = '';
 				if (!empty($conf->global->FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP)) {
 					$scaytautostartup = 'scayt_autoStartup: true,';
+					$scaytautostartup .= 'scayt_sLang: \''.dol_escape_js($langs->getDefaultLang()).'\',';
 				} else {
-					$scaytautostartup = '/*scayt is disable*/'; // Disable by default
+					$pluginstodisable .= ',scayt';
 				}
 
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
@@ -168,11 +178,12 @@ class DolEditor
             			$(document).ready(function () {
 							/* console.log("Run ckeditor"); */
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
-                            /* should be editor=CKEDITOR.replace but what if serveral editors ? */
-                            CKEDITOR.replace(\''.$this->htmlname.'\',
+                            /* should be editor=CKEDITOR.replace but what if there is several editors ? */
+                            tmpeditor = CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						/* property:xxx is same than CKEDITOR.config.property = xxx */
             						customConfig : ckeditorConfig,
+									removePlugins : \''.$pluginstodisable.'\',
             						readOnly : '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',
@@ -185,25 +196,22 @@ class DolEditor
             						height: '.$this->height.',
                                     skin: \''.$skin.'\',
                                     '.$scaytautostartup.'
-                                    scayt_sLang: \''.$langs->getDefaultLang().'\',
                                     language: \''.$langs->defaultlang.'\',
                                     textDirection: \''.$langs->trans("DIRECTION").'\',
-                                    on :
-                                            {
+                                    on : {
                                                 instanceReady : function( ev )
                                                 {
                                                     // Output paragraphs as <p>Text</p>.
-                                                    this.dataProcessor.writer.setRules( \'p\',
-                                                        {
-                                                            indent : false,
-                                                            breakBeforeOpen : true,
-                                                            breakAfterOpen : false,
-                                                            breakBeforeClose : false,
-                                                            breakAfterClose : true
-                                                        });
+                                                    this.dataProcessor.writer.setRules( \'p\', {
+                                                        indent : false,
+                                                        breakBeforeOpen : true,
+                                                        breakAfterOpen : false,
+                                                        breakBeforeClose : false,
+                                                        breakAfterClose : true
+                                                    });
                                                 }
-                                            },
-											disableNativeSpellChecker: '.(empty($conf->global->CKEDITOR_NATIVE_SPELLCHECKER) ? 'true' : 'false');
+                                          },
+									disableNativeSpellChecker: '.(empty($conf->global->CKEDITOR_NATIVE_SPELLCHECKER) ? 'true' : 'false');
 
 				if ($this->uselocalbrowser) {
 					$out .= ','."\n";
@@ -226,8 +234,10 @@ class DolEditor
                                filebrowserImageWindowWidth : \'900\',
                                filebrowserImageWindowHeight : \'500\'';
 				}
-				$out .= '	})'.$morejs;
-				$out .= '});'."\n";
+				$out .= '	})'.$morejs;	// end CKEditor.replace
+				// Show the CKEditor javascript object once loaded is ready 'For debug)
+				//$out .= '; CKEDITOR.on(\'instanceReady\', function(ck) { ck.editor.removeMenuItem(\'maximize\'); ck.editor.removeMenuItem(\'Undo\'); ck.editor.removeMenuItem(\'undo\'); console.log(ck.editor); console.log(ck.editor.toolbar[0]); }); ';
+				$out .= '});'."\n";	// end document.ready
 				$out .= '</script>'."\n";
 			}
 		}
