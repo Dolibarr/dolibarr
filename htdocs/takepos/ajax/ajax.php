@@ -67,13 +67,21 @@ if ($action == 'getProducts') {
 	if ($result > 0) {
 		$prods = $object->getObjectsInCateg("product", 0, 0, 0, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC');
 		// Removed properties we don't need
+		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
 			foreach ($prods as $prod) {
+				if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
+					$prod->load_stock('nobatch,novirtual');
+					if ($prod->stock_warehouse[$conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']}]->real <= 0) {
+						continue;
+					}
+				}
 				unset($prod->fields);
 				unset($prod->db);
+				$res[] = $prod;
 			}
 		}
-		echo json_encode($prods);
+		echo json_encode($res);
 	} else {
 		echo 'Failed to load category with id='.$category;
 	}
@@ -109,12 +117,24 @@ if ($action == 'getProducts') {
 		}
 	}
 
-	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price FROM '.MAIN_DB_PREFIX.'product as p';
+	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price ';
+	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
+		$sql .= ', reel';
+	}
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
+	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
+		$sql .= ' ON p.rowid = ps.fk_product';
+	}
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND tosell = 1';
+	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
+		$sql .= ' AND reel > 0';
+		$sql .= ' AND fk_entrepot ='.$conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']};
+	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
 	$resql = $db->query($sql);
 	if ($resql) {
