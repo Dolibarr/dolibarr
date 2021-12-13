@@ -147,6 +147,11 @@ if ($action == 'presend')
 		$formmail->fromname = '';
 		$formmail->fromtype = 'special';
 	}
+	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
 
 	$formmail->trackid=$trackid;
 	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
