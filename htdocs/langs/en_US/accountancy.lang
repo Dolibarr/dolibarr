@@ -286,7 +286,7 @@ ValidateMovements=Validate movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=Bind Automatically
-AutomaticBindingDone=Automatic binding done
+AutomaticBindingDone=Automatic bindings done (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
