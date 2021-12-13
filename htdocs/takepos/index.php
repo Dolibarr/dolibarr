@@ -1190,7 +1190,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 
 		<!--  Show categories -->
 		<?php
-			if ($conf->global->TAKEPOS_NO_CATEGORY == 1) {
+			if ($conf->global->TAKEPOS_HIDE_CATEGORY == 1) {
 				print '<div class="div4" style= "display: none;">';
 			} else {
 				print '<div class="div4">';
@@ -1232,13 +1232,13 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		</div>
 
 		<!--  Show product -->
-		<div class="div5"<?php if ($conf->global->TAKEPOS_NO_CATEGORY == 1) {
+		<div class="div5"<?php if ($conf->global->TAKEPOS_HIDE_CATEGORY == 1) {
 			print ' style="width:100%;"';
 		} ?>>
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
-		if ($conf->global->TAKEPOS_NO_CATEGORY == 1) {
+		if ($conf->global->TAKEPOS_HIDE_CATEGORY == 1) {
 			print '<div class="wrapper2" id="prodiv'.$count.'"  ';
 		} else {
 			print '<div class="wrapper2" id="prodiv'.$count.'" ';
