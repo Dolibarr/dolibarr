@@ -286,7 +286,7 @@ ValidateMovements=Valider les mouvements
 DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
 
 ValidateHistory=Lier automatiquement
-AutomaticBindingDone=Liaisons automatiques faites (%s)
+AutomaticBindingDone=Liaison automatique faite
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crédit = %s

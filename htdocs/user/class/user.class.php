@@ -786,10 +786,9 @@ class User extends CommonObject
 	{
 		global $conf, $user, $langs;
 
-		$entity = (empty($entity) ? $conf->entity : $entity);
+		$entity = (!empty($entity) ? $entity : $conf->entity);
 
-		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity, $notrigger for user id=".$this->id);
-
+		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
 		$error = 0;
 		$whereforadd = '';
 
@@ -798,7 +797,7 @@ class User extends CommonObject
 		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
-			// If we ask to add a given permission, we first load properties of this permission (module, perms and subperms).
+			// Si on a demande ajout d'un droit en particulier, on recupere les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
@@ -818,9 +817,9 @@ class User extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			// Define the where for the permission to add
+			// Where pour la liste des droits a ajouter
 			$whereforadd = "id=".((int) $rid);
-			// Add also inherited permissions
+			// Ajout des droits induits
 			if (!empty($subperms)) {
 				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
 			} elseif (!empty($perms)) {
@@ -849,7 +848,7 @@ class User extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($whereforadd) && $whereforadd != 'allmodules') {
-				$sql .= " AND (".$whereforadd.")";	// Note: parenthesis are important because whereforadd can contains OR. Also note that $whereforadd is already sanitized
+				$sql .= " AND ".$whereforadd;
 			}
 
 			$result = $this->db->query($sql);
@@ -975,7 +974,7 @@ class User extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($wherefordel) && $wherefordel != 'allmodules') {
-				$sql .= " AND (".$wherefordel.")";	// Note: parenthesis are important because wherefordel can contains OR. Also note that $wherefordel is already sanitized
+				$sql .= " AND ".$wherefordel;
 			}
 
 			// avoid admin can remove his own important rights
@@ -1075,14 +1074,12 @@ class User extends CommonObject
 
 		// First user permissions
 		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur,";
-		$sql .= " ".MAIN_DB_PREFIX."rights_def as r";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
+		$sql .= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql .= " WHERE r.id = ur.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-			// on old version, we use entity defined into table r
 			$sql .= " AND r.entity IN (0,".(!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
 		} else {
-			// we must now use entity into table ur
 			$sql .= " AND ur.entity = ".((int) $conf->entity);
 		}
 		$sql .= " AND ur.fk_user= ".((int) $this->id);

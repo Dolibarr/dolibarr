@@ -85,9 +85,13 @@ class modHRM extends DolibarrModules
 			// Set this to 1 if module has its own theme directory (theme)
 			'theme' => 0,
 			// Set this to relative path of css file if module has its own css file
-			'css' => array(),
+			'css' => array(
+				'/hrm/css/radio_js_number.css',
+			),
 			// Set this to relative path of js file if module must load a js on all pages
-			'js' => array(),
+			'js' => array(
+				//   '/hrm/js/hrm.js.php',
+			),
 
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,

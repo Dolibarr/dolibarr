@@ -445,7 +445,7 @@ class Entrepot extends CommonObject
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE entity IN (".getEntity('stock').")";
+			$sql .= " WHERE entity = ".$conf->entity;
 			if ($ref) {
 				$sql .= " AND ref = '".$this->db->escape($ref)."'";
 			}

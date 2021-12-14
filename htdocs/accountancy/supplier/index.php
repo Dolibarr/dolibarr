@@ -117,8 +117,6 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 
 if ($action == 'validatehistory') {
 	$error = 0;
-	$nbbinddone = 0;
-
 	$db->begin();
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
@@ -275,8 +273,6 @@ if ($action == 'validatehistory') {
 					$error++;
 					setEventMessages($db->lasterror(), null, 'errors');
 					break;
-				} else {
-					$nbbinddone++;
 				}
 			}
 
@@ -288,7 +284,7 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
 }
 

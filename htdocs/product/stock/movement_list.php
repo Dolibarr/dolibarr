@@ -49,6 +49,9 @@ if (!empty($conf->productbatch->enabled)) {
 	$langs->load("productbatch");
 }
 
+// Security check
+$result = restrictedArea($user, 'stock');
+
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $msid = GETPOST('msid', 'int');
@@ -59,6 +62,10 @@ $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+
+// Security check
+//$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
+$result = restrictedArea($user, 'stock');
 
 $idproduct = GETPOST('idproduct', 'int');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -139,18 +146,6 @@ if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 	unset($arrayfields['pl.eatby']);
 }
 
-
-$tmpwarehouse = new Entrepot($db);
-if ($id > 0 || !empty($ref)) {
-	$tmpwarehouse->fetch($id, $ref);
-	$id = $tmpwarehouse->id;
-}
-
-
-// Security check
-//$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
-$result = restrictedArea($user, 'stock');
-
 // Security check
 if (!$user->rights->stock->mouvement->lire) {
 	accessforbidden();
@@ -221,6 +216,9 @@ if (empty($reshook)) {
 }
 
 if ($action == 'update_extras') {
+	$tmpwarehouse = new Entrepot($db);
+	$tmpwarehouse->fetch($id);
+
 	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse);
 
 	// Fill array 'array_options' with data from update form

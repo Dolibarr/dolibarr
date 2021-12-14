@@ -266,11 +266,10 @@ class FormCompany extends Form
 	 *    @param	int		$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
-	 *    @param	string	$morecss			Add more css
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country()
 	 */
-	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
+	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -297,7 +296,7 @@ class FormCompany extends Form
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!empty($htmlname)) {
-				$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+				$out .= '<select id="'.$htmlname.'" class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'">';
 			}
 			if ($country_codeid) {
 				$out .= '<option value="0">&nbsp;</option>';

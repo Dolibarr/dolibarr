@@ -81,7 +81,7 @@ if (GETPOST('acction', 'aZ') == 'switchentity') {
 $title = $langs->trans("Multicompanies");
 
 // URL http://mydolibarr/core/multicompany_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Multicompany selection -->'."\n";	// This is used by DoliDroid to know page is a multicompany selection page
+$head = '<!-- Multicompany access -->'."\n";
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);

@@ -93,7 +93,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  */
 
 if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
-	// Clean database by removing binding done on non existing or no more existing accounts
+	// Clean database
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql1 .= " SET fk_code_ventilation = 0";
@@ -119,8 +119,6 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 
 if ($action == 'validatehistory') {
 	$error = 0;
-	$nbbinddone = 0;
-
 	$db->begin();
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
@@ -279,8 +277,6 @@ if ($action == 'validatehistory') {
 					$error++;
 					setEventMessages($db->lasterror(), null, 'errors');
 					break;
-				} else {
-					$nbbinddone++;
 				}
 			}
 
@@ -292,7 +288,7 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
 }
 

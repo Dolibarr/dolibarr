@@ -1055,9 +1055,6 @@ body[class*="colorblind-"] .text-success{
 .editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
 	color: var(--colortexttitle) !important;
 }
-a.editfielda.nohover *:hover:before {
-	color: #ccc !important;
-}
 
 .size15x { font-size: 1.5em !important; }
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
@@ -1066,9 +1063,6 @@ a.editfielda.nohover *:hover:before {
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
-.fawidth30 {
-	width: 20px;
-}
 .floatnone {
 	float: none !important;
 }
@@ -2725,7 +2719,7 @@ form#login {
 	border: none;
 	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
-	margin-left: 5px;
+	margin-left: 18px;
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
@@ -6861,29 +6855,6 @@ div.clipboardCPValue.hidewithsize {
 	box-shadow: 1px 1px 6px #ddd;
 }
 
-
-/* ============================================================================== */
-/* CSS style used for hrm skill/rank (may be we can remove this)                  */
-/* ============================================================================== */
-
-.radio_js_bloc_number {
-	display:inline-block;
-	padding:5px 7px;
-	min-width:20px;
-	border-radius:3px;
-	border:1px solid #ccc;
-	background:#eee;
-	color:#555;
-	cursor:pointer;
-	margin:2px;
-	text-align:center;
-}
-.radio_js_bloc_number.selected {
-	transition:0.2s ease background;
-	background:#888;
-	color:#fff;
-	border-color:#555;
-}
 
 
 /* ============================================================================== */
