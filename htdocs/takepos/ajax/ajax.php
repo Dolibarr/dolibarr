@@ -133,7 +133,7 @@ if ($action == 'getProducts') {
 	$sql .= ' AND tosell = 1';
 	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
 		$sql .= ' AND reel > 0';
-		$sql .= ' AND fk_entrepot ='.$db->escape($conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']});
+		$sql .= " AND fk_entrepot = '" . $db->escape($conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']}) . "'";
 		
 	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
