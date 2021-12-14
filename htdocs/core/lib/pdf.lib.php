@@ -1418,10 +1418,6 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 	// Description long of product line
 	if (!empty($desc) && ($desc != $label)) {
-		if ($libelleproduitservice && empty($hidedesc)) {
-			$libelleproduitservice .= '__N__';
-		}
-
 		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
@@ -1460,12 +1456,12 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 						if (!empty($conf->global->HIDE_LABEL_VARIANT_PDF) && $prodser->isVariant()) {
 							$libelleproduitservice = $desc;
 						} else {
-							$libelleproduitservice .= $desc;
+							$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 						}
 					}
 				}
 			} else {
-				$libelleproduitservice .= $desc;
+				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 			}
 		}
 	}
@@ -1547,7 +1543,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Adding the descriptions if they are filled
 			$desccateg = $cate->description;
 			if ($desccateg) {
-				$libelleproduitservice .= '__N__'.$desccateg;
+				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desccateg);
 			}
 		}
 	}
@@ -1572,7 +1568,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 			$libelleproduitservice .= '<br><b style="color:#333666;" ><em>'.$period.'</em></b>';
 		} else {
-			$libelleproduitservice .= "__N__".$period;
+			$libelleproduitservice = dol_concatdesc($libelleproduitservice, $period);
 		}
 		//print $libelleproduitservice;
 	}

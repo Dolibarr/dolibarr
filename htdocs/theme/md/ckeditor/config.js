@@ -61,7 +61,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Undo','Redo','-','Find','Replace'],
 	 	['CreateDiv','ShowBlocks'],
 	    ['Format','Font','FontSize'],
-	 	['Bold','Italic','Underline','Strike','Superscript','-','TextColor','RemoveFormat'],
+	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar'],
@@ -75,7 +75,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],
-	 	['Bold','Italic','Underline','Strike','Superscript','-','TextColor','RemoveFormat'],
+	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],

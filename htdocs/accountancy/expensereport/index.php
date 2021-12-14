@@ -131,8 +131,10 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
+		$nbbinddone = $db->affected_rows($resql1);
+
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone), null, 'mesgs');
 	}
 }
 

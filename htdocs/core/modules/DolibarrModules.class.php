@@ -1736,10 +1736,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Adds access rights
 	 *
-	 * @param  int $reinitadminperms If 1, we also grant them to all admin users
-	 * @param  int $force_entity     Force current entity
-	 * @param  int $notrigger        1=Does not execute triggers, 0= execute triggers
-	 * @return int                     Error count (0 if OK)
+	 * @param  int $reinitadminperms 	If 1, we also grant them to all admin users
+	 * @param  int $force_entity     	Force current entity
+	 * @param  int $notrigger        	1=Does not execute triggers, 0= execute triggers
+	 * @return int                     	Error count (0 if OK)
 	 */
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
 	{
@@ -1761,16 +1761,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
+
 			if ($obj !== null && !empty($obj->value) && !empty($this->rights)) {
+				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
-					$r_id       = $this->rights[$key][0];
+					$r_id       = $this->rights[$key][0];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
 					$r_desc     = $this->rights[$key][1];
 					$r_type     = isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';
 					$r_def      = empty($this->rights[$key][3]) ? 0 : $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
 					$r_subperms = isset($this->rights[$key][5]) ? $this->rights[$key][5] : '';
-					$r_modul = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
+					$r_modul = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
 
 					if (empty($r_type)) {
 						$r_type = 'w';
@@ -1823,21 +1826,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 					// If we want to init permissions on admin users
 					if ($reinitadminperms) {
-						if (!class_exists('User')) {
-							include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-						}
 						$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
 						dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
+
 						$resqlseladmin = $this->db->query($sql, 1);
+
 						if ($resqlseladmin) {
 							$num = $this->db->num_rows($resqlseladmin);
 							$i = 0;
 							while ($i < $num) {
-								  $obj2 = $this->db->fetch_object($resqlseladmin);
-								  dol_syslog(get_class($this)."::insert_permissions Add permission to user id=".$obj2->rowid);
+								$obj2 = $this->db->fetch_object($resqlseladmin);
+								dol_syslog(get_class($this)."::insert_permissions Add permission id '.$r_id.' to user id=".$obj2->rowid);
 
-								  $tmpuser = new User($this->db);
-								  $result = $tmpuser->fetch($obj2->rowid);
+								$tmpuser = new User($this->db);
+								$result = $tmpuser->fetch($obj2->rowid);
 								if ($result > 0) {
 									$tmpuser->addrights($r_id, '', '', 0, 1);
 								} else {

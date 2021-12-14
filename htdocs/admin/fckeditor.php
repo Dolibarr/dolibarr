@@ -192,7 +192,7 @@ if (empty($conf->use_javascript_ajax)) {
 		if ($linkstomode) {
 			$linkstomode .= ' - ';
 		}
-		$linkstomode .= '<a href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
+		$linkstomode .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
 		if ($mode == $newmode) {
 			$linkstomode .= '<strong>';
 		}

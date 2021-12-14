@@ -884,6 +884,10 @@ body[class*="colorblind-"] .text-success{
 .editfieldlang:hover {
 	color: var(--colortexttitle) !important;
 }
+a.editfielda.nohover *:hover:before {
+	color: #ccc !important;
+}
+
 .fawidth30 {
 	width: 20px;
 }
@@ -1645,6 +1649,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -6965,6 +6970,29 @@ div.clipboardCPValue.hidewithsize {
 	box-shadow: 1px 1px 6px #ddd;
 }
 
+
+/* ============================================================================== */
+/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* ============================================================================== */
+
+.radio_js_bloc_number {
+	display:inline-block;
+	padding:5px 7px;
+	min-width:20px;
+	border-radius:3px;
+	border:1px solid #ccc;
+	background:#eee;
+	color:#555;
+	cursor:pointer;
+	margin:2px;
+	text-align:center;
+}
+.radio_js_bloc_number.selected {
+	transition:0.2s ease background;
+	background:#888;
+	color:#fff;
+	border-color:#555;
+}
 
 
 /* ============================================================================== */
