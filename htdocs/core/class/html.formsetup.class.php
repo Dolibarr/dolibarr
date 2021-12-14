@@ -45,7 +45,7 @@ class FormSetup
 	protected $maxItemRank;
 
 	/**
-	 * this is an html string display before output form
+	 * this is an html string display before output form 
 	 * @var string
 	 */
 	public $htmlBeforeOutputForm = '';
