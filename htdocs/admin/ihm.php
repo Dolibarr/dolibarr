@@ -204,7 +204,7 @@ if ($action == 'update') {
 		$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BTNACTION'), array()))));
 		if ($val == '') {
 			dolibarr_del_const($db, 'THEME_ELDY_BTNACTION', $conf->entity);
-		}else {
+		} else {
 			dolibarr_set_const($db, 'THEME_ELDY_BTNACTION', $val, 'chaine', 0, '', $conf->entity);
 		}
 	}
