@@ -211,7 +211,7 @@ input, select {
 	margin-top: 1px;
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
-	background: var(--butactionbg);
+	background: rgb(<?php echo $butactionbg ?>);
 	color: #FFF !important;
 	border-radius: 3px;
 	border-collapse: collapse;
@@ -358,7 +358,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg) !important;
+	border: 2px solid rgb(<?php echo $butactionbg ?>) !important;
 	margin: 0 0.45em !important;
 }
 
