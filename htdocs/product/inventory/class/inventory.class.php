@@ -626,7 +626,7 @@ class Inventory extends CommonObject
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_RECORDED) {
-			$statusType = 'status5';
+			$statusType = 'status6';
 		}
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);

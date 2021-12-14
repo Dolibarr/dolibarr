@@ -1071,7 +1071,7 @@ class MouvementStock extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
+	 *	@param	string	$option				On what the link point to ('' = Tab of stock movement of warehouse, 'movements' = list of movements)
 	 *  @param	integer	$notooltip			1=Disable tooltip
 	 *  @param	int		$maxlen				Max length of visible user name
 	 *  @param  string  $morecss            Add more css on link
@@ -1082,16 +1082,21 @@ class MouvementStock extends CommonObject
 		global $langs, $conf, $db;
 
 		$result = '';
-		$companylink = '';
 
-		$label = '<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
+		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
 		$label .= '<div width="100%">';
 		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
-		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.$this->qty;
+		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.($this->qty > 0 ? '+' : '').$this->qty;
 		$label .= '</div>';
 
-		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
-		$link .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
+		// Link to page of warehouse tab
+		if ($option == 'movements') {
+			$url = DOL_URL_ROOT.'/product/stock/movement_list.php?search_ref='.$this->id;
+		} else {
+			$url = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id;
+		}
+
+		$link = '<a href="'.$url.'"'.($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
 		$link .= '>';
 		$linkend = '</a>';
 

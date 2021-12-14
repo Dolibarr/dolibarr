@@ -4174,8 +4174,15 @@ abstract class CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
 		$sql .= " SET ".$fieldstatus." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
-		if ($status == 1 && $elementTable == 'expensereport') {
+		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields
+		if ($status == 1 && in_array($elementTable, array('expensereport', 'inventory'))) {
 			$sql .= ", fk_user_valid = ".((int) $user->id);
+		}
+		if ($status == 1 && in_array($elementTable, array('expensereport'))) {
+			$sql .= ", date_valid = '".$this->db->idate(dol_now())."'";
+		}
+		if ($status == 1 && in_array($elementTable, array('inventory'))) {
+			$sql .= ", date_validation = '".$this->db->idate(dol_now())."'";
 		}
 		$sql .= " WHERE rowid=".((int) $elementId);
 
