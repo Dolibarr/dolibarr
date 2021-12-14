@@ -133,3 +133,4 @@ SplitSale=分割販売
 PrintWithoutDetailsButton=「詳細なしで印刷」ボタンを追加
 PrintWithoutDetailsLabelDefault=詳細なしで印刷する場合のデフォルトの行ラベル
 PrintWithoutDetails=詳細なしで印刷
+YearNotDefined=Year is not defined

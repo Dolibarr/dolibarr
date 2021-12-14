@@ -58,6 +58,7 @@ ManagePartnership=ການຄຸ້ມຄອງການຮ່ວມມື
 BacklinkNotFoundOnPartnerWebsite=ບໍ່ພົບລິງຍ້ອນກັບຢູ່ໃນເວັບໄຊທ partner ຂອງຄູ່ຮ່ວມງານ
 ConfirmClosePartnershipAsk=ເຈົ້າແນ່ໃຈບໍວ່າເຈົ້າຕ້ອງການຍົກເລີກການຮ່ວມມືນີ້?
 PartnershipType=ປະເພດຫຸ້ນສ່ວນ
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

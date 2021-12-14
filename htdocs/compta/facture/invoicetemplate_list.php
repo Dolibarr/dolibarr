@@ -131,7 +131,7 @@ $arrayfields = array(
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentTerm", 'checked'=>0),
-	'recurring'=>array('label'=>"RecurringInvoiceTemplate", 'checked'=>1),
+	'recurring'=>array('label'=>"RecurringInvoice", 'checked'=>1),
 	'f.frequency'=>array('label'=>"Frequency", 'checked'=>1),
 	'f.unit_frequency'=>array('label'=>"FrequencyUnit", 'checked'=>1),
 	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
@@ -329,7 +329,11 @@ if ($search_status != '' && $search_status >= -1) {
 $sql .= dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
 $sql .= dolSqlDateFilter('f.date_when', $search_day_date_when, $search_month_date_when, $search_year_date_when);
 
-$sql .= $db->order($sortfield, $sortorder);
+$tmpsortfield = $sortfield;
+if ($tmpsortfield == 'recurring') {
+	$tmpsortfield = 'f.frequency';
+}
+$sql .= $db->order($tmpsortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -723,8 +727,9 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Is it a recurring invoice
 			if (!empty($arrayfields['recurring']['checked'])) {
-				print '<td class="center">'.yn($objp->frequency ? 1 : 0).'</td>';
+				print '<td class="center">'.($objp->frequency ? img_picto($langs->trans("Frequency").': '.$objp->frequency.' '.$objp->unit_frequency, 'recurring', 'class="opacitymedium"').' ' : '').yn($objp->frequency ? 1 : 0).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

@@ -133,3 +133,4 @@ SplitSale=拆分銷售
 PrintWithoutDetailsButton=增加"不列印詳細資訊"按鈕
 PrintWithoutDetailsLabelDefault=預設列印行標籤時不包含詳細資訊
 PrintWithoutDetails=不列印詳細資訊
+YearNotDefined=Year is not defined

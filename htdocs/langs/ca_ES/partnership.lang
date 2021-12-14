@@ -58,6 +58,7 @@ ManagePartnership=Gestioneu l'associació
 BacklinkNotFoundOnPartnerWebsite=Enllaç de retrocés no trobat al lloc web associat
 ConfirmClosePartnershipAsk=Esteu segur que voleu cancel·lar aquesta associació?
 PartnershipType=Tipus de col·laboració
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

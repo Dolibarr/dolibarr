@@ -133,3 +133,4 @@ SplitSale=Verkauf aufteilen
 PrintWithoutDetailsButton=Schaltfläche "Drucken ohne Details" hinzufügen
 PrintWithoutDetailsLabelDefault=Einzelposition standardmäßig ohne Details drucken
 PrintWithoutDetails=Drucken ohne Details
+YearNotDefined=Jahr ist nicht definiert

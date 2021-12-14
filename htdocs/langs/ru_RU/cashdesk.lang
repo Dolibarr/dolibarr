@@ -133,3 +133,4 @@ SplitSale=Сплит продажа
 PrintWithoutDetailsButton=Добавить кнопку «Распечатать без деталей»
 PrintWithoutDetailsLabelDefault=Метка линии по умолчанию при печати без деталей
 PrintWithoutDetails=Печать без деталей
+YearNotDefined=Year is not defined

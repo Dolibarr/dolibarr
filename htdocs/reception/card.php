@@ -1557,9 +1557,8 @@ if ($action == 'create') {
 		print '</tr>';
 
 		// Tracking Number
-
 		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->reception->creer, 'string', $object->tracking_number);
+		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->reception->creer, 'safehtmlstring', $object->tracking_number);
 		print '</td></tr>';
 
 		// Incoterms
@@ -1641,7 +1640,14 @@ if ($action == 'create') {
 			}
 			print '</td>';
 		} else {
-			if ($object->statut <= 1) {
+			$statusreceived = $object::STATUS_CLOSED;
+			if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION")) {
+				$statusreceived = $object::STATUS_VALIDATED;
+			}
+			if (getDolGlobalInt("STOCK_CALCULATE_ON_RECEPTION_CLOSE")) {
+				$statusreceived = $object::STATUS_CLOSED;
+			}
+			if ($object->statut < $statusreceived) {
 				print '<td class="center">'.$langs->trans("QtyToReceive").'</td>';
 			} else {
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
@@ -1980,14 +1986,14 @@ if ($action == 'create') {
 			if ($object->statut == Reception::STATUS_DRAFT && $num_prod > 0) {
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer))
 				 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate))) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'">'.$langs->trans("Validate").'</a>';
 				} else {
 					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
-			// Edit
+			// Back to draft
 			if ($object->statut == Reception::STATUS_VALIDATED && $user->rights->reception->creer) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modif&token='.newToken().'">'.$langs->trans('SetToDraft').'</a></div>';
 			}
 
 			// TODO add alternative status

@@ -186,7 +186,7 @@ foreach ($fulltree as $key => $val) {
 			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
 			: $categstatic->getObjectsInCateg($type, 1);
 
-		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
+		$counter = "<td class='left' width='40px;'>".(is_array($elements) ? count($elements) : '0')."</td>";
 	}
 
 	$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
