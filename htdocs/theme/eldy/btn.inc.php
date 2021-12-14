@@ -64,7 +64,7 @@ span.butAction, span.butActionDelete {
 	font-size: 0.9em;
 }
 .butAction {
-	background: var(--butactionbg);
+	background: rgb(<?php echo $butactionbg ?>);
 	color: #FFF !important;
 	/* background: rgb(230, 232, 239); */
 }
