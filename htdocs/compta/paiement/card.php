@@ -381,7 +381,9 @@ if ($resql)
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	//Add Margin
-	print '<td class="right">'.$langs->trans('Margin').'</td>';	
+	if (!empty($conf->margin->enabled)) {
+		print '<td class="right">'.$langs->trans('Margin').'</td>';	
+	}
 	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
 	print '<td class="right">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
@@ -437,7 +439,9 @@ if ($resql)
 			print '<td class="right">'.price($objp->amount).'</td>';
 
 			// Add margin
-			print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
+			if (!empty($conf->margin->enabled)) {
+				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
+			}
 
 			// Remain to pay
 			print '<td class="right">'.price($remaintopay).'</td>';
