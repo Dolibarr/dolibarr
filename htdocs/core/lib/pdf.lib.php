@@ -35,6 +35,8 @@
  *	\ingroup    core
  */
 
+include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+
 
 /**
  *  Return array head with list of tabs to view object informations.
