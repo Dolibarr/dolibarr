@@ -382,7 +382,7 @@ if ($resql)
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	//Add Margin
 	if (!empty($conf->margin->enabled)) {
-		print '<td class="right">'.$langs->trans('Margin').'</td>';	
+		print '<td class="right">'.$langs->trans('Margin').'</td>';
 	}
 	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
 	print '<td class="right">'.$langs->trans('Status').'</td>';
