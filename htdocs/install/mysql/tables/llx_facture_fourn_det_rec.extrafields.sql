@@ -15,7 +15,7 @@
 --
 -- ===================================================================
 
-create table llx_facturedet_extrafields
+create table llx_facture_fourn_det_rec_extrafields
 (
     rowid            integer AUTO_INCREMENT PRIMARY KEY,
     tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
