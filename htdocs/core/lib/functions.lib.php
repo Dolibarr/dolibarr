@@ -40,6 +40,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
 /**
  * Return dolibarr global constant string value
