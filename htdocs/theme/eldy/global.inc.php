@@ -1303,10 +1303,12 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .div-table-responsive, .div-table-responsive-no-min {
 	overflow-x: auto;
 	min-height: 0.01%;
-	background: var(--colorbacktabcard1);
-	border-radius: 15px;		
-	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
-	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
+	<?php if (!empty($conf->global->THEME_ELDY_RADIUS)){?>
+		background: var(--colorbacktabcard1);
+		border-radius: 15px;		
+		-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+		box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	<?php } ?>
 }
 .div-table-responsive {
 	line-height: 120%;
@@ -2016,15 +2018,20 @@ div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 14px);\n";
 	} ?>
-	background: var(--colorbacktabcard1);
-	border-radius: 15px;
-	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
-	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
+	<?php if (!empty($conf->global->THEME_ELDY_RADIUS)){?>
+		background: var(--colorbacktabcard1);
+		border-radius: 15px;
+		-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+		box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	<?php } ?>
 }
-div.boxhalfleft{
-	border-radius: 0;
-	box-shadow: none;
-}
+<?php if (!empty($conf->global->THEME_ELDY_RADIUS)){?>
+	div.boxhalfleft{
+		border-radius: 0;
+		box-shadow: none;
+	}
+<?php } ?>
+
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "float: ".$right.";\n";
@@ -2032,10 +2039,12 @@ div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 14px);\n";
 	} ?>
-	background: var(--colorbacktabcard1);
-	border-radius: 15px;
-	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
-	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
+	<?php if (!empty($conf->global->THEME_ELDY_RADIUS)){?>
+		background: var(--colorbacktabcard1);
+		border-radius: 15px;
+		-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+		box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	<?php } ?>
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout == 'phone') {
@@ -2043,10 +2052,12 @@ div.fichehalfright {
 	} ?>
 }
 
-div.boxhalfright{
-	border-radius: 0;
-	box-shadow: none;
-}
+<?php if (!empty($conf->global->THEME_ELDY_RADIUS)){?>
+	div.boxhalfright{
+		border-radius: 0;
+		box-shadow: none;
+	}
+<?php } ?>
 
 /*div.firstcolumn div.box {
 	padding-right: 10px;
@@ -2226,10 +2237,12 @@ div.arearefnobottom {
 }
 div.heightref {
 	min-height: 80px;
-	background: var(--colorbacktabcard1);
-	border-radius: 15px;
-	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
-	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
+	<?php if (!empty($conf->global->THEME_ELDY_RADIUS)){?>
+		background: var(--colorbacktabcard1);
+		border-radius: 15px;
+		-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+		box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	<?php } ?>
 }
 div.divphotoref {
 	padding-<?php echo $right; ?>: 30px;
@@ -2263,9 +2276,11 @@ div.statusrefbis {
 	   vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
-	/* border: 1px solid #DDD;
-	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
-	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
+	/* border: 1px solid #DDD;*/
+	<?php if (empty($conf->global->THEME_ELDY_RADIUS)){?>
+		-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+		box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	<?php } ?>
 	padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -2294,7 +2309,9 @@ img.photorefnoborder {
 }
 .underbanner {
 	/*border-bottom: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);*/
-	/* border-bottom: 2px solid var(--colorbackhmenu1); */
+	<?php if (empty($conf->global->THEME_ELDY_RADIUS)){?>
+		border-bottom: 2px solid var(--colorbackhmenu1);
+	<?php } ?>
 }
 .trextrafieldseparator td, .trextrafields_collapse_last td {
 	/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
@@ -3134,6 +3151,9 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
+	<?php if (empty($conf->global->THEME_ELDY_RADIUS)){?>
+		background: var(--colorbacktabcard1);
+	<?php } ?>
 }
 div.tabBar tr.titre td {
 	padding-top: 20px;
@@ -3240,6 +3260,10 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important;
 	border-top: 3px solid var(--colorbackhmenu1) !important;
+	<?php if (!empty($conf->global->THEME_ELDY_RADIUS)){?>
+		border-radius: 15px 15px 0 0;
+	<?php } ?>
+	
 }
 .tabunactive, a.tab#unactive {
 	border-right: 1px solid transparent;
