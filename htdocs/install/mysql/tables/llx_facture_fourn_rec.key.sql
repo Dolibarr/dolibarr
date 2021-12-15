@@ -24,6 +24,6 @@ ALTER TABLE llx_facture_fourn_rec ADD INDEX idx_facture_fourn_rec_fk_soc (fk_soc
 ALTER TABLE llx_facture_fourn_rec ADD INDEX idx_facture_fourn_rec_fk_user_author (fk_user_author);
 ALTER TABLE llx_facture_fourn_rec ADD INDEX idx_facture_fourn_rec_fk_projet (fk_projet);
 
-ALTER TABLE llx_facture_fourn_rec ADD CONSTRAINT fk_facture_four_rec_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
-ALTER TABLE llx_facture_fourn_rec ADD CONSTRAINT fk_facture_four_rec_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
-ALTER TABLE llx_facture_fourn_rec ADD CONSTRAINT fk_facture_four_rec_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+ALTER TABLE llx_facture_fourn_rec ADD CONSTRAINT fk_facture_fourn_rec_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_facture_fourn_rec ADD CONSTRAINT fk_facture_fourn_rec_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_facture_fourn_rec ADD CONSTRAINT fk_facture_fourn_rec_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
