@@ -777,7 +777,7 @@ if ($object->id > 0) {
 
 	// Request to show lines of inventory (prefilled after start/validate step)
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
-	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
+	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 
@@ -804,6 +804,7 @@ if ($object->id > 0) {
 				$cacheOfWarehouses[$warehouse_static->id] = $warehouse_static;
 			}
 
+			// Load real stock we have now
 			if (isset($cacheOfProducts[$obj->fk_product])) {
 				$product_static = $cacheOfProducts[$obj->fk_product];
 			} else {
@@ -812,7 +813,7 @@ if ($object->id > 0) {
 
 				$option = 'nobatch';
 				$option .= ',novirtual';
-				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
+				$product_static->load_stock($option); // Load stock_reel + stock_warehouse.
 
 				$cacheOfProducts[$product_static->id] = $product_static;
 			}
@@ -859,6 +860,13 @@ if ($object->id > 0) {
 				print '<input type="hidden" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			} else {
 				print $obj->qty_view;
+				print '</td>';
+				print '<td class="nowraponall right">';
+				if ($obj->fk_movement > 0) {
+					$stockmovment = new MouvementStock($db);
+					$stockmovment->fetch($obj->fk_movement);
+					print $stockmovment->getNomUrl(1, 'movements');
+				}
 				print '</td>';
 			}
 			print '</tr>';
