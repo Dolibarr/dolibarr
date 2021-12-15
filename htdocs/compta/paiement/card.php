@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->margin->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
@@ -379,6 +380,8 @@ if ($resql)
 	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) print '<td>'.$langs->trans('Entity').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	//Add Margin
+	print '<td class="right">'.$langs->trans('Margin').'</td>';	
 	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
 	print '<td class="right">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
@@ -393,6 +396,14 @@ if ($resql)
 
 			$invoice = new Facture($db);
 			$invoice->fetch($objp->facid);
+
+			// Add Margin
+			if (!empty($conf->margin->enabled)) {
+				$formmargin = new FormMargin($db);
+				$marginInfo = array();
+				$invoice->fetch_lines();
+				$marginInfo = $formmargin->getMarginInfosArray($invoice);
+			}
 
 			$paiement = $invoice->getSommePaiement();
 			$creditnotes = $invoice->getSumCreditNotesUsed();
@@ -424,6 +435,9 @@ if ($resql)
 
 			// Amount payed
 			print '<td class="right">'.price($objp->amount).'</td>';
+
+			// Add margin
+			print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
 
 			// Remain to pay
 			print '<td class="right">'.price($remaintopay).'</td>';
