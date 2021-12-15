@@ -61,6 +61,7 @@ create table llx_facture_fourn
   fk_user_valid			integer,                       -- user validating
   fk_user_closing		integer,					   -- user closing
 
+  fk_fac_rec_source		integer,					   -- facture rec source
   fk_facture_source		integer,                       -- facture origine si facture avoir
   fk_projet				integer,                       -- projet auquel est associee la facture
 
