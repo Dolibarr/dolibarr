@@ -1303,6 +1303,10 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .div-table-responsive, .div-table-responsive-no-min {
 	overflow-x: auto;
 	min-height: 0.01%;
+	background: var(--colorbacktabcard1);
+	border-radius: 15px;		
+	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
 }
 .div-table-responsive {
 	line-height: 120%;
@@ -2012,6 +2016,14 @@ div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 14px);\n";
 	} ?>
+	background: var(--colorbacktabcard1);
+	border-radius: 15px;
+	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
+}
+div.boxhalfleft{
+	border-radius: 0;
+	box-shadow: none;
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {
@@ -2020,11 +2032,20 @@ div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "width: calc(50% - 14px);\n";
 	} ?>
+	background: var(--colorbacktabcard1);
+	border-radius: 15px;
+	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout == 'phone') {
 		print "margin-top: 10px;\n";
 	} ?>
+}
+
+div.boxhalfright{
+	border-radius: 0;
+	box-shadow: none;
 }
 
 /*div.firstcolumn div.box {
@@ -2205,6 +2226,10 @@ div.arearefnobottom {
 }
 div.heightref {
 	min-height: 80px;
+	background: var(--colorbacktabcard1);
+	border-radius: 15px;
+	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
 }
 div.divphotoref {
 	padding-<?php echo $right; ?>: 30px;
@@ -2238,9 +2263,9 @@ div.statusrefbis {
 	   vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
-	/* border: 1px solid #DDD; */
+	/* border: 1px solid #DDD;
 	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
-	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2); */
 	padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -2268,7 +2293,7 @@ img.photorefnoborder {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
+	/*border-bottom: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);*/
 	/* border-bottom: 2px solid var(--colorbackhmenu1); */
 }
 .trextrafieldseparator td, .trextrafields_collapse_last td {
@@ -3109,7 +3134,6 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
-	background: var(--colorbacktabcard1);
 }
 div.tabBar tr.titre td {
 	padding-top: 20px;
