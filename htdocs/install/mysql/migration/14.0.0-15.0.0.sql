@@ -592,7 +592,7 @@ CREATE TABLE llx_facture_fourn_det_rec
 
 ALTER TABLE llx_facture_fourn_det_rec ADD CONSTRAINT fk_facture_fourn_det_rec_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
-CREATE TABLE llx_facturedet_extrafields
+CREATE TABLE llx_facture_fourn_det_rec_extrafields
 (
     rowid            integer AUTO_INCREMENT PRIMARY KEY,
     tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -600,4 +600,4 @@ CREATE TABLE llx_facturedet_extrafields
     import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
 
-ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
+ALTER TABLE llx_facture_fourn_det_rec_extrafields ADD INDEX idx_facture_fourn_det_rec_extrafields (fk_object);
