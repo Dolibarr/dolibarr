@@ -297,7 +297,7 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_ref)     $sql .= natural_search('sp.ref', $search_ref);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-if ($search_login)  $sql .= natural_search('u.login', $search_login);
+if ($search_login)  $sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 if ($search_montant_ht) $sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search("sp.tva", $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql .= natural_search("sp.total", $search_montant_ttc, 1);
