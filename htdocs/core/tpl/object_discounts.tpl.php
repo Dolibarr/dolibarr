@@ -40,8 +40,8 @@ if (!isset($absolute_creditnote)) {
 }
 
 // Relative and absolute discounts
-$addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditRelativeDiscount").'</a>';
-$addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditGlobalDiscounts").'</a>';
+$addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'&action=create&token='.newToken().'">'.$langs->trans("EditRelativeDiscount").'</a>';
+$addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'&action=create&token='.newToken().'">'.$langs->trans("EditGlobalDiscounts").'</a>';
 $viewabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("ViewAvailableGlobalDiscounts").'</a>';
 
 $fixedDiscount = $thirdparty->remise_percent;
