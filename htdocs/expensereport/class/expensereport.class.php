@@ -999,7 +999,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ' de.fk_ecm_files,';
 		$sql .= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql .= ' de.total_localtax1, de.total_localtax2, de.rule_warning_message,';
-		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
+		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees, ctf.accountancy_code as accountancy_code_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
@@ -1043,6 +1043,7 @@ class ExpenseReport extends CommonObject
 
 				$deplig->type_fees_code     = empty($objp->code_type_fees) ? 'TF_OTHER' : $objp->code_type_fees;
 				$deplig->type_fees_libelle  = $objp->libelle_type_fees;
+				$deplig->type_fees_accountancy_code = $objp->accountancy_code_type_fees;
 
 				$deplig->tva_tx             = $objp->tva_tx;
 				$deplig->vatrate            = $objp->tva_tx;
@@ -2579,6 +2580,7 @@ class ExpenseReportLine
 
 	public $type_fees_code;
 	public $type_fees_libelle;
+	public $type_fees_accountancy_code;
 
 	public $projet_ref;
 	public $projet_title;
