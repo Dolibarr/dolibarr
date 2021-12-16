@@ -20,7 +20,7 @@
 create table llx_stock_mouvement
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datem           datetime,						-- Date and hour of movement
   fk_product      integer NOT NULL,				-- Id of product
   batch           varchar(128) DEFAULT NULL,	-- Lot or serial number

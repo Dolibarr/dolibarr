@@ -43,7 +43,6 @@ NbOfLinesImported=Nombre de lignes importées avec succès: <b>%s</b>.
 DataComeFromNoWhere=La valeur à insérer vient de nulle part dans le fichier source.
 DataComeFromFileFieldNb=La valeur à insérer provient du numéro de champ <b>%s</b> dans le fichier source.
 DataIsInsertedInto=Les données provenant du fichier source seront insérées dans le champ suivant:
-DataCodeIDSourceIsInsertedInto=L'identifiant de la ligne parent trouvée à partir du code, sera inséré dans le champ suivant:
 SourceRequired=La valeur des données est obligatoire
 SourceExample=Exemple de valeur de données possible
 ExampleAnyRefFoundIntoElement=Toute référence pour l'élément <b>%s</b>

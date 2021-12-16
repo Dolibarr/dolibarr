@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Toimittajat
 SuppliersInvoice=Vendor invoice
+SupplierInvoices=Toimittajan laskut
 ShowSupplierInvoice=Show Vendor Invoice
 NewSupplier=New vendor
 History=Historia
@@ -38,10 +39,11 @@ MenuOrdersSupplierToBill=Purchase orders to invoice
 NbDaysToDelivery=Delivery delay (days)
 DescNbDaysToDelivery=The longest delivery delay of the products from this order
 SupplierReputation=Vendor reputation
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Älä tilaa
 NotTheGoodQualitySupplier=Low quality
 ReputationForThisProduct=Maine
 BuyerName=Ostajan nimi
 AllProductServicePrices=Kaikkien tuotteiden / palveluiden hinnat
-AllProductReferencesOfSupplier=All product / service references of vendor
+AllProductReferencesOfSupplier=All references of vendor
 BuyingPriceNumShort=Vendor prices

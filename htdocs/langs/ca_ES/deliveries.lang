@@ -27,5 +27,7 @@ Recipient=Destinatari
 ErrorStockIsNotEnough=No hi ha estoc suficient
 Shippable=Es pot enviar
 NonShippable=No es pot enviar
+ShowShippableStatus=Mostra l'estat d'enviament
 ShowReceiving=Mostra el rebut d'entrega
 NonExistentOrder=Comanda inexistent
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantitats d’estoc ja assignades en línies anteriors

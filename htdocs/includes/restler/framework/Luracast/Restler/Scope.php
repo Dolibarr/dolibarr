@@ -1,4 +1,6 @@
 <?php
+
+
 namespace Luracast\Restler;
 
 /**
@@ -11,7 +13,7 @@ namespace Luracast\Restler;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class Scope
 {
@@ -45,8 +47,8 @@ class Scope
         //API classes
         'Resources'          => 'Luracast\Restler\Resources',
         'Explorer'           => 'Luracast\Restler\Explorer\v2\Explorer',
-        'Explorer1'           => 'Luracast\Restler\Explorer\v1\Explorer',
-        'Explorer2'           => 'Luracast\Restler\Explorer\v2\Explorer',
+        'Explorer1'          => 'Luracast\Restler\Explorer\v1\Explorer',
+        'Explorer2'          => 'Luracast\Restler\Explorer\v2\Explorer',
 
         //Cache classes
         'HumanReadableCache' => 'Luracast\Restler\HumanReadableCache',
@@ -120,6 +122,7 @@ class Scope
                 $r = new $fullName();
                 static::$instances[$name] = (object)array('instance' => $r);
                 if ($name != 'Restler') {
+                    /** @var Restler restler */
                     $r->restler = static::get('Restler');
                     $m = Util::nestedValue($r->restler, 'apiMethodInfo', 'metadata');
                     if ($m) {
@@ -138,15 +141,14 @@ class Scope
         }
         if (
             $r instanceof iUseAuthentication &&
-            static::get('Restler')->_authVerified &&
+            $r->restler && $r->restler->_authVerified &&
             !isset(static::$instances[$name]->authVerified)
         ) {
             static::$instances[$name]->authVerified = true;
-            $r->__setAuthenticationStatus
-            (static::get('Restler')->_authenticated);
+            $r->__setAuthenticationStatus($r->restler->_authenticated);
         }
         if (isset(static::$instances[$name]->initPending)) {
-            $m = Util::nestedValue(static::get('Restler'), 'apiMethodInfo', 'metadata');
+            $m = Util::nestedValue($r->restler, 'apiMethodInfo', 'metadata');
             $fullName = $name;
             if (class_exists($name)) {
                 $shortName = Util::getShortName($name);
@@ -194,15 +196,15 @@ class Scope
      */
     public static function resolve($className, array $scope)
     {
-        if (empty($className) || !is_string($className))
+        if (empty($className) || !is_string($className)) {
             return false;
+        }
 
         if (self::isPrimitiveDataType($className)) {
             return false;
         }
 
         $divider = '\\';
-        $qualified = false;
         if ($className[0] == $divider) {
             $qualified = trim($className, $divider);
         } elseif (array_key_exists($className, $scope)) {
@@ -210,18 +212,21 @@ class Scope
         } else {
             $qualified = $scope['*'] . $className;
         }
-        if (class_exists($qualified))
+        if (class_exists($qualified)) {
             return $qualified;
+        }
         if (isset(static::$classAliases[$className])) {
             $qualified = static::$classAliases[$className];
-            if (class_exists($qualified))
+            if (class_exists($qualified)) {
                 return $qualified;
+            }
         }
         return false;
     }
 
     /**
      * @param string $stringName
+     *
      * @return boolean
      */
     private static function isPrimitiveDataType($stringName)

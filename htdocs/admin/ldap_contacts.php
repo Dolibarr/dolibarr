@@ -35,8 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -44,43 +45,75 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
-{
+if ($action == 'setvalue' && $user->admin) {
 	$error = 0;
 
 	$db->begin();
 
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_DN', GETPOST("contactdn"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_DN', GETPOST("contactdn"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_NAME', GETPOST("fieldname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FIRSTNAME', GETPOST("fieldfirstname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_COMPANY', GETPOST("fieldcompany"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_MAIL', GETPOST("fieldmail"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_PHONE', GETPOST("fieldphone"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_HOMEPHONE', GETPOST("fieldhomephone"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ADDRESS', GETPOST("fieldaddress"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ZIP', GETPOST("fieldzip"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_TOWN', GETPOST("fieldtown"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_COUNTRY', GETPOST("fieldcountry"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_NAME', GETPOST("fieldname"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FIRSTNAME', GETPOST("fieldfirstname"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_COMPANY', GETPOST("fieldcompany"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_MAIL', GETPOST("fieldmail"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_PHONE', GETPOST("fieldphone"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_HOMEPHONE', GETPOST("fieldhomephone"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ADDRESS', GETPOST("fieldaddress"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ZIP', GETPOST("fieldzip"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_TOWN', GETPOST("fieldtown"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_COUNTRY', GETPOST("fieldcountry"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
 	// This one must be after the others
 	$valkey = '';
 	$key = GETPOST("key");
-	if ($key) $valkey = $conf->global->$key;
-	if (!dolibarr_set_const($db, 'LDAP_KEY_CONTACTS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+	if ($key) {
+		$valkey = $conf->global->$key;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_KEY_CONTACTS', $valkey, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		dol_print_error($db);
 	}
@@ -102,18 +135,17 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
-if (!function_exists("ldap_connect"))
-{
+if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-dol_fiche_head($head, 'contacts', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'contacts', $langs->trans("LDAPSetup"), -1);
 
 
 print $langs->trans("LDAPDescContact").'<br>';
 print '<br>';
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -123,14 +155,16 @@ print '<td colspan="4">'.$langs->trans("LDAPSynchronizeContacts").'</td>';
 print "</tr>\n";
 
 // DN Pour les contacts
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPContactDn").'</span></td><td>';
+print '<!-- LDAP_CONTACT_DN -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPContactDn").'</span></td><td>';
 print '<input size="48" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
 print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPContactObjectClassList").'</span></td><td>';
+print '<!-- LDAP_CONTACT_OBJECT_CLASS -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPContactObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_CONTACT_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPContactObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -141,7 +175,7 @@ print '<br>';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td>'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
 print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
@@ -248,9 +282,9 @@ print '</table>';
 
 print info_admin($langs->trans("LDAPDescValues"));
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 
@@ -267,10 +301,8 @@ $objectclass = $conf->global->LDAP_CONTACT_OBJECT_CLASS;
 show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 
 
-if (function_exists("ldap_connect"))
-{
-	if ($_GET["action"] == 'test')
-	{
+if (function_exists("ldap_connect")) {
+	if ($_GET["action"] == 'test') {
 		// Creation objet
 		$object = new Contact($db);
 		$object->initAsSpecimen();
@@ -279,8 +311,7 @@ if (function_exists("ldap_connect"))
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
 
@@ -288,17 +319,14 @@ if (function_exists("ldap_connect"))
 			$result2 = $ldap->add($dn, $info, $user); // Now the test
 			$result3 = $ldap->delete($dn); // Clean what we did
 
-			if ($result2 > 0)
-			{
+			if ($result2 > 0) {
 				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
-			}
-			else
-			{
+				print '<span class="ok">'.$langs->trans("LDAPSynchroOK").'</span><br>';
+			} else {
 				print img_picto('', 'error').' ';
-				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
-				print '</font><br>';
+				print '</span><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -306,13 +334,11 @@ if (function_exists("ldap_connect"))
 			print "LDAP input file used for test:<br><br>\n";
 			print nl2br($ldap->dump_content($dn, $info));
 			print "\n<br>";
-		}
-		else
-		{
+		} else {
 			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</font><br>';
+			print '</span><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

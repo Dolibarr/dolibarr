@@ -29,13 +29,13 @@ require_once DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 $idcontact = GETPOST('idc');
 
 if (!empty($idcontact)) {
-    $contact = new Contact($db);
-    $contact->fetch($idcontact);
-    DataPolicy::sendMailDataPolicyContact($contact);
+	$contact = new Contact($db);
+	$contact->fetch($idcontact);
+	DataPolicy::sendMailDataPolicyContact($contact);
 } else {
-    $contacts = new DataPolicy($db);
-    $contacts->getAllContactNotInformed();
-    $contacts->getAllCompaniesNotInformed();
-    $contacts->getAllAdherentsNotInformed();
-    echo $langs->trans('AllAgreementSend');
+	$contacts = new DataPolicy($db);
+	$contacts->getAllContactNotInformed();
+	$contacts->getAllCompaniesNotInformed();
+	$contacts->getAllAdherentsNotInformed();
+	echo $langs->trans('AllAgreementSend');
 }

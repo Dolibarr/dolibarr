@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/fichinter/class/fichinter.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -75,181 +74,181 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testFichinterCreate
-     *
-     * @return	int
-     */
-    public function testFichinterCreate()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testFichinterCreate
+	 *
+	 * @return	int
+	 */
+	public function testFichinterCreate()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Fichinter($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+		$localobject->initAsSpecimen();
+		$result=$localobject->create($user);
 
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-    	return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * testFichinterFetch
-     *
-     * @param	int		$id		Id of intervention
-     * @return	int
-     *
-     * @depends	testFichinterCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testFichinterFetch($id)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testFichinterFetch
+	 *
+	 * @param	int		$id		Id of intervention
+	 * @return	int
+	 *
+	 * @depends	testFichinterCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFichinterFetch($id)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Fichinter($this->savdb);
-    	$result=$localobject->fetch($id);
+		$result=$localobject->fetch($id);
 
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 
-    	return $localobject;
-    }
+		return $localobject;
+	}
 
-    /**
-     * testFichinterValid
-     *
-     * @param	Fichinter		$localobject		Intervention
-     * @return	int
-     *
-     * @depends	testFichinterFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testFichinterValid($localobject)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testFichinterValid
+	 *
+	 * @param	Fichinter		$localobject		Intervention
+	 * @return	int
+	 *
+	 * @depends	testFichinterFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFichinterValid($localobject)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->setValid($user);
-    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$result=$localobject->setValid($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-    	$this->assertLessThan($result, 0);
-    	return $localobject;
-    }
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-    /**
-     * testFichinterValid
-     *
-     * @param	Object	$localobject	Object intervention
-     * @return	int
-     *
-     * @depends testFichinterValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testFichinterOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testFichinterValid
+	 *
+	 * @param	Fichinter	$localobject	Object intervention
+	 * @return	int
+	 *
+	 * @depends testFichinterValid
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFichinterOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
+		/*$result=$localobject->setstatus(0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		*/
 
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
+		$localobject->info($localobject->id);
+		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertNotEquals($localobject->date_creation, '');
 
-        return $localobject->id;
-    }
+		return $localobject->id;
+	}
 
-    /**
-     * testFichinterDelete
-     *
-     * @param	int		$id		Id of intervention
-     * @return	int
-     *
-     * @depends	testFichinterOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testFichinterDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testFichinterDelete
+	 *
+	 * @param	int		$id		Id of intervention
+	 * @return	int
+	 *
+	 * @depends	testFichinterOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFichinterDelete($id)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localobject=new Fichinter($this->savdb);
-    	$result=$localobject->fetch($id);
+		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
-    }
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

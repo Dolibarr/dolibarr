@@ -32,7 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque', '', '');
 
 
@@ -46,7 +48,7 @@ $accountstatic = new Account($db);
 
 llxHeader('', $langs->trans("ChequesArea"));
 
-print load_fiche_titre($langs->trans("ChequesArea"), '', 'bank_account');
+print load_fiche_titre($langs->trans("ChequesArea"), '', $checkdepositstatic->picto);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -67,23 +69,21 @@ print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
 if ($resql) {
-    if ($row = $db->fetch_row($resql)) {
-        $num = $row[0];
-    }
-    print '<tr class="oddeven">';
-    print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
-    print '<td class="right">';
-    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
-    print '</td></tr>';
-    print "</table>\n";
-}
-else
-{
-    dol_print_error($db);
+	if ($row = $db->fetch_row($resql)) {
+		$num = $row[0];
+	}
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
+	print '<td class="right">';
+	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+	print '</td></tr>';
+	print "</table>\n";
+} else {
+	dol_print_error($db);
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 $max = 10;
 
@@ -99,8 +99,8 @@ $sql .= " ORDER BY bc.date_bordereau DESC, rowid DESC";
 $sql .= $db->plimit($max);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
@@ -111,11 +111,10 @@ if ($resql)
 	print '<th class="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
-	while ($objp = $db->fetch_object($resql))
-	{
-        $checkdepositstatic->id = $objp->rowid;
-        $checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
-	    $checkdepositstatic->statut = $objp->statut;
+	while ($objp = $db->fetch_object($resql)) {
+		$checkdepositstatic->id = $objp->rowid;
+		$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+		$checkdepositstatic->statut = $objp->statut;
 
 		$accountstatic->id = $objp->bid;
 		$accountstatic->ref = $objp->bref;
@@ -128,26 +127,25 @@ if ($resql)
 
 		print '<tr class="oddeven">'."\n";
 
-		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$checkdepositstatic->getNomUrl(1).'</td>';
 		print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
-		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
 		print '<td class="right">'.$objp->nbcheque.'</td>';
-		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 		print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
 
 		print '</tr>';
 	}
 	print "</table>";
+	print '</div>';
 
 	$db->free($resql);
-}
-else
-{
-    dol_print_error($db);
+} else {
+	dol_print_error($db);
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

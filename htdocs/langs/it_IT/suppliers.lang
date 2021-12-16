@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Fornitori
 SuppliersInvoice=Fattura fornitore
+SupplierInvoices=Fatture Fornitore
 ShowSupplierInvoice=Vedi fattura fornitore
 NewSupplier=Nuovo fornitore
 History=Storico
@@ -38,10 +39,11 @@ MenuOrdersSupplierToBill=Ordini d'acquisto da fatturare
 NbDaysToDelivery=Tempi di consegna (giorni)
 DescNbDaysToDelivery=Il tempo di consegna più lungo dei prodotti di questo ordine
 SupplierReputation=Reputazione fornitore
+ReferenceReputation=Reputazione di riferimento
 DoNotOrderThisProductToThisSupplier=Non ordinare
 NotTheGoodQualitySupplier=Bassa qualità
 ReputationForThisProduct=Reputazione
 BuyerName=Nome acquirente
 AllProductServicePrices=Prezzi dei prodotti / servizi
-AllProductReferencesOfSupplier=Referenze dei prodotti / servizi del fornitore
+AllProductReferencesOfSupplier=Tutti i riferimenti del fornitore
 BuyingPriceNumShort=Prezzi fornitore

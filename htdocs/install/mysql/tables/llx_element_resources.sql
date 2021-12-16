@@ -28,5 +28,5 @@ CREATE TABLE llx_element_resources
   mandatory		  integer,
   duree				real,               -- total duration of using ressource
   fk_user_create  integer,
-  tms             timestamp
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

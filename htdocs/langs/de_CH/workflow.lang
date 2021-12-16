@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Workflow Moduleinstellungen
 WorkflowDesc=Grundsätzlich sind alle Abläufe frei definierbar. Trotzdem kannst du hier einige vorgefertigte Abläufe aktivieren.
 ThereIsNoWorkflowToModify=Für die aktiven Module sind keine Workflow - Änderungen möglich.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erzeuge automatisch eine Kundenbestellung, sobald die Offerte unterzeichnet ist (Positionen und Beträge, wie offeriert).

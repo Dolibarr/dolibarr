@@ -77,6 +77,6 @@ DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE=Kundes saldo
 DOL_VALUE_MYSOC_NAME=Ditt firmanavn
 VendorLastname=Leverandørs etternavn
 VendorFirstname=Leverandørs fornavn
-VendorEmail=Vendor email
+VendorEmail=Leverandørens e-post
 DOL_VALUE_CUSTOMER_POINTS=Kundepoeng
 DOL_VALUE_OBJECT_POINTS=Objektpoeng

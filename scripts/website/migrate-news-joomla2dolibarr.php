@@ -22,6 +22,10 @@
  * \brief Migrate news from a Joomla databse into a Dolibarr website
  */
 
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -59,7 +63,17 @@ include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 
+
+/*
+ * Main
+ */
+
 $langs->load('main');
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
+}
 
 $joomlaserverinfoarray = preg_split('/(:|@|\/)/', $joomlaserverinfo);
 $joomlalogin = $joomlaserverinfoarray[0];
@@ -80,8 +94,7 @@ $websiteid = $website->id;
 $importid = dol_print_date(dol_now(), 'dayhourlog');
 
 $dbjoomla = getDoliDBInstance('mysqli', $joomlahost, $joomlalogin, $joomlapass, $joomladatabase, $joomlaport);
-if ($dbjoomla->error)
-{
+if ($dbjoomla->error) {
 	dol_print_error($dbjoomla, "host=".$joomlahost.", port=".$joomlaport.", user=".$joomlalogin.", databasename=".$joomladatabase.", ".$dbjoomla->error);
 	exit(-1);
 }
@@ -122,10 +135,14 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 		$title = $obj->title;
 		//$description = dol_string_nohtmltag($obj->introtext);
 		$description = trim(dol_trunc(dol_string_nohtmltag($obj->metadesc), 250));
-		if (empty($description)) $description = trim(dol_trunc(dol_string_nohtmltag($obj->introtext), 250));
+		if (empty($description)) {
+			$description = trim(dol_trunc(dol_string_nohtmltag($obj->introtext), 250));
+		}
 
 		$htmltext = "";
-		if ($blogpostheader) $htmltext .= $blogpostheader."\n";
+		if ($blogpostheader) {
+			$htmltext .= $blogpostheader."\n";
+		}
 		$htmltext .= '<section id="mysectionnewsintro" contenteditable="true">'."\n";
 		$htmltext .= $obj->introtext;
 		$htmltext .= '</section>'."\n";
@@ -135,7 +152,9 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 			$htmltext .= $obj->fulltext;
 			$htmltext .= "</section>";
 		}
-		if ($blogpostfooter) $htmltext .= "\n".$blogpostfooter;
+		if ($blogpostfooter) {
+			$htmltext .= "\n".$blogpostfooter;
+		}
 
 		$language = ($forcelang ? $forcelang : ($obj->language && $obj->language != '*' ? $obj->language : 'en'));
 		$keywords = $obj->metakey;

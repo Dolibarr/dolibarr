@@ -26,16 +26,19 @@ require '../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'loan'));
 
 // Security check
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters LOAN_*
 $list = array(
@@ -48,26 +51,22 @@ $list = array(
  * Actions
  */
 
-if ($action == 'update')
-{
-    $error = 0;
+if ($action == 'update') {
+	$error = 0;
 
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -77,7 +76,9 @@ if ($action == 'update')
 llxHeader();
 
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+if (!empty($conf->accounting->enabled)) {
+	$formaccounting = new FormAccounting($db);
+}
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigLoan'), $linkback, 'title_setup');
@@ -94,8 +95,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans('Options').'</td>';
 print "</tr>\n";
 
-foreach ($list as $key)
-{
+foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -104,12 +104,9 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	if (!empty($conf->accounting->enabled))
-	{
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	}
-	else
-	{
+	if (!empty($conf->accounting->enabled)) {
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
+	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 	print '</td></tr>';
@@ -120,7 +117,7 @@ print '</tr>';
 print '</form>';
 print "</table>\n";
 
-print '<br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
 // End of page
 llxFooter();

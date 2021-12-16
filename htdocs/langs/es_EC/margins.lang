@@ -13,7 +13,6 @@ SalesRepresentativeMargins=Márgenes del representante de ventas
 UserMargins=Márgenes de usuario
 ChooseProduct/Service=Elija un producto o servicio
 ForceBuyingPriceIfNull=Forzar la compra/precio de coste al precio de venta si no se define
-ForceBuyingPriceIfNullDetails=Si el precio de compra/costo no está definido, y esta opción "ON", el margen será cero en línea (precio de compra/costo = precio de venta), de lo contrario ("OFF"), el margen será igual al valor predeterminado sugerido.
 MARGIN_METHODE_FOR_DISCOUNT=Método de margen para descuentos globales
 UseDiscountOnTotal=En subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define si un descuento global se trata como un producto, un servicio o sólo en el subtotal para el cálculo del margen.

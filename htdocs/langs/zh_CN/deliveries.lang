@@ -27,5 +27,7 @@ Recipient=接收方
 ErrorStockIsNotEnough=库存不足
 Shippable=可运输
 NonShippable=不可运输
+ShowShippableStatus=Show shippable status
 ShowReceiving=显示送达回执
 NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

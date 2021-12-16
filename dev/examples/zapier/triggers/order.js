@@ -17,7 +17,7 @@ const subscribeHook = (z, bundle) => {
     const options = {
         url: url,
         method: 'POST',
-        body: JSON.stringify(data)
+        body: data,
     };
 
     // You may return a promise or a normal data structure from any perform method.
@@ -90,7 +90,7 @@ module.exports = {
     noun: 'Order',
     display: {
         label: 'New Order',
-        description: 'Trigger when a new order with action is done in Dolibarr.'
+        description: 'Triggers when a new order with action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
@@ -101,6 +101,7 @@ module.exports = {
         inputFields: [
             {
                 key: 'action',
+                required: true,
                 type: 'string',
                 helpText: 'Which action of order this should trigger on.',
                 choices: {
@@ -136,11 +137,11 @@ module.exports = {
         // outputFields: () => { return []; }
         // Alternatively, a static field definition should be provided, to specify labels for the fields
         outputFields: [
-            {key: 'id', label: 'ID'},
-            {key: 'createdAt', label: 'Created At'},
+            {key: 'id', type: "integer", label: 'ID'},
+            {key: 'createdAt', type: "integer", label: 'Created At'},
             {key: 'name', label: 'Name'},
             {key: 'directions', label: 'Directions'},
-            {key: 'authorId', label: 'Author ID'},
+            {key: 'authorId', type: "integer", label: 'Author ID'},
             {key: 'module', label: 'Module'},
             {key: 'action', label: 'Action'}
         ]

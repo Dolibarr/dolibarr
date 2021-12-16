@@ -31,12 +31,11 @@ TicketDictType=Tiket - Jenis
 TicketDictCategory=Tiket - Grup
 TicketDictSeverity=Tiket - Tingkat Permasalahan
 TicketDictResolution=Tiket - Resolusi
-TicketTypeShortBUGSOFT=Logika Tidak Berfungsi 
-TicketTypeShortBUGHARD=Materi Tidak Berfungsi
-TicketTypeShortCOM=Pertanyaan komersial
 
+TicketTypeShortCOM=Pertanyaan komersial
 TicketTypeShortHELP=Permintaan bantuan fungsional
-TicketTypeShortISSUE=Masalah, bug, atau masalah
+TicketTypeShortISSUE=Masalah atau bug
+TicketTypeShortPROBLEM=Masalah
 TicketTypeShortREQUEST=Ubah atau tingkatkan permintaan
 TicketTypeShortPROJET=Proyek
 TicketTypeShortOTHER=Lainnya
@@ -44,7 +43,9 @@ TicketTypeShortOTHER=Lainnya
 TicketSeverityShortLOW=Rendah
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Tinggi
-TicketSeverityShortBLOCKING=Kritis/Memblokir
+TicketSeverityShortBLOCKING=Kritis, Memblokir
+
+TicketCategoryShortOTHER=Lainnya
 
 ErrorBadEmailAddress=Bidang '%s' salah
 MenuTicketMyAssign=Tiket saya
@@ -56,24 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Pengguna yang ditugaskan
 TypeContact_ticket_external_SUPPORTCLI=Kontak pelanggan/pelacakan kejadian
 TypeContact_ticket_external_CONTRIBUTOR=Kontributor eksternal
 
-OriginEmail=Sumber email
+OriginEmail=Email Reporter
 Notify_TICKET_SENTBYMAIL=Kirim pesan tiket melalui email
 
 # Status
-NotRead=Tidak membaca
 Read=Baca
 Assigned=Ditugaskan
 InProgress=Sedang berlangsung
-NeedMoreInformation=Menunggu informasi
+NeedMoreInformation=Menunggu tanggapan reporter
+NeedMoreInformationShort=Menunggu balasan
 Answered=Dijawab
 Waiting=Menunggu
-Closed=Ditutup
+SolvedClosed=Terpecahkan
 Deleted=Dihapus
 
 # Dict
 Type=Tipe
-Category=Kode analitik
 Severity=Kerasnya
+TicketGroupIsPublic=Grup bersifat publik
+TicketGroupIsPublicDesc=Jika grup tiket bersifat publik, grup tersebut akan terlihat dalam formulir saat membuat tiket dari antarmuka publik
 
 # Email templates
 MailToSendTicketMessage=Untuk mengirim email dari pesan tiket
@@ -118,8 +120,8 @@ TicketsShowModuleLogo=Tampilkan logo modul di antarmuka publik
 TicketsShowModuleLogoHelp=Aktifkan opsi ini untuk menyembunyikan modul logo di halaman-halaman antarmuka publik
 TicketsShowCompanyLogo=Tampilkan logo perusahaan di antarmuka publik
 TicketsShowCompanyLogoHelp=Aktifkan opsi ini untuk menyembunyikan logo perusahaan utama di halaman-halaman antarmuka publik
-TicketsEmailAlsoSendToMainAddress=Juga kirim pemberitahuan ke alamat email utama
-TicketsEmailAlsoSendToMainAddressHelp=Aktifkan opsi ini untuk mengirim email ke alamat "Email pemberitahuan dari" (lihat penyiapan di bawah)
+TicketsEmailAlsoSendToMainAddress=Kirim juga pemberitahuan ke alamat email utama
+TicketsEmailAlsoSendToMainAddressHelp=Aktifkan opsi ini untuk juga mengirim email ke alamat yang ditentukan dalam pengaturan "%s" (lihat tab "%s")
 TicketsLimitViewAssignedOnly=Batasi tampilan untuk tiket yang ditetapkan untuk pengguna saat ini (tidak berlaku untuk pengguna eksternal, selalu terbatas pada pihak ketiga tempat mereka bergantung)
 TicketsLimitViewAssignedOnlyHelp=Hanya tiket yang ditetapkan untuk pengguna saat ini yang akan terlihat. Tidak berlaku untuk pengguna dengan hak pengelolaan tiket.
 TicketsActivatePublicInterface=Aktifkan antarmuka publik
@@ -127,13 +129,13 @@ TicketsActivatePublicInterfaceHelp=Antarmuka publik memungkinkan setiap pengunju
 TicketsAutoAssignTicket=Secara otomatis menetapkan pengguna yang membuat tiket
 TicketsAutoAssignTicketHelp=Saat membuat tiket, pengguna dapat secara otomatis ditugaskan ke tiket.
 TicketNumberingModules=Modul penomoran tiket
+TicketsModelModule=Templat dokumen untuk tiket
 TicketNotifyTiersAtCreation=Beri tahu pihak ketiga saat membuat
-TicketGroup=Kelompok
 TicketsDisableCustomerEmail=Selalu nonaktifkan email saat tiket dibuat dari antarmuka publik
-TicketsPublicNotificationNewMessage=Kirim email saat pesan baru ditambahkan
+TicketsPublicNotificationNewMessage=Kirim email ketika pesan/komentar baru ditambahkan ke tiket
 TicketsPublicNotificationNewMessageHelp=Kirim email ketika pesan baru ditambahkan dari antarmuka publik (ke pengguna yang ditetapkan atau email notifikasi ke (pembaruan) dan/atau email notifikasi ke)
 TicketPublicNotificationNewMessageDefaultEmail=Email pemberitahuan ke (perbarui)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Kirim email pemberitahuan pesan baru ke alamat ini jika tiket tidak memiliki pengguna yang ditugaskan atau pengguna tidak memiliki email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Kirim email ke alamat ini untuk setiap pemberitahuan pesan baru jika tiket tidak memiliki pengguna yang ditetapkan atau jika pengguna tidak memiliki email yang dikenal.
 #
 # Index & list page
 #
@@ -162,7 +164,7 @@ CreatedBy=Dibuat oleh
 NewTicket=Tiket Baru
 SubjectAnswerToTicket=Jawaban tiket
 TicketTypeRequest=Jenis permintaan
-TicketCategory=Kode analitik
+TicketCategory=Kategorisasi tiket
 SeeTicket=Lihat tiket
 TicketMarkedAsRead=Tiket telah ditandai sebagai sudah dibaca
 TicketReadOn=Baca terus
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=Tiket ditambahkan
 TicketMessageSuccessfullyAdded=Pesan berhasil ditambahkan
 TicketMessagesList=Daftar pesan
 NoMsgForThisTicket=Tidak ada pesan untuk tiket ini
-Properties=Klasifikasi
+TicketProperties=Klasifikasi
 LatestNewTickets=Tiket terbaru %s terbaru (tidak dibaca)
 TicketSeverity=Kerasnya
 ShowTicket=Lihat tiket
 RelatedTickets=Tiket terkait
 TicketAddIntervention=Buat intervensi
-CloseTicket=Tutup tiket
-CloseATicket=Tutup tiket
+CloseTicket=Tutup|Pecahkan tiket
+AbandonTicket=Abaikan tiket
+CloseATicket=Tutup|Pecahkan tiket
 ConfirmCloseAticket=Konfirmasikan penutupan tiket
+ConfirmAbandonTicket=Apakah Anda mengkonfirmasi penutupan tiket dengan status 'Abandonned'
 ConfirmDeleteTicket=Harap konfirmasi penghapusan tiket
 TicketDeletedSuccess=Tiket dihapus dengan sukses
 TicketMarkedAsClosed=Tiket ditandai sebagai ditutup
@@ -213,6 +217,7 @@ TicketMessageHelp=Hanya teks ini yang akan disimpan dalam daftar pesan di kartu 
 TicketMessageSubstitutionReplacedByGenericValues=Variabel substitusi digantikan oleh nilai generik.
 TimeElapsedSince=Waktu berlalu sejak itu
 TicketTimeToRead=Waktu berlalu sebelum membaca
+TicketTimeElapsedBeforeSince=Waktu berlalu sebelum / sejak
 TicketContacts=Tiket kontak
 TicketDocumentsLinked=Dokumen terkait dengan tiket
 ConfirmReOpenTicket=Konfirmasikan kembali tiket ini?
@@ -235,7 +240,6 @@ TicketLogStatusChanged=Status berubah: %s menjadi %s
 TicketNotNotifyTiersAtCreate=Tidak memberi tahu perusahaan saat membuat
 Unread=Belum dibaca
 TicketNotCreatedFromPublicInterface=Tidak tersedia. Tiket tidak dibuat dari antarmuka publik.
-PublicInterfaceNotEnabled=Antarmuka publik tidak diaktifkan
 ErrorTicketRefRequired=Diperlukan nama referensi tiket
 
 #
@@ -307,3 +311,14 @@ BoxLastModifiedTicket=Tiket modifikasi terbaru
 BoxLastModifiedTicketDescription=Tiket termodifikasi %s terbaru
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Tidak ada tiket yang dimodifikasi baru-baru ini
+BoxTicketType=Distribusi tiket terbuka berdasarkan jenis
+BoxTicketSeverity=Jumlah tiket terbuka berdasarkan tingkat keparahan
+BoxNoTicketSeverity=Tidak ada tiket yang dibuka
+BoxTicketLastXDays=Jumlah tiket baru menurut hari terakhir %s hari
+BoxTicketLastXDayswidget = Jumlah tiket baru menurut hari X hari terakhir
+BoxNoTicketLastXDays=Tidak ada tiket baru dalam %s hari terakhir
+BoxNumberOfTicketByDay=Jumlah tiket baru per hari
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Tiket dibuat hari ini
+TicketClosedToday=Tiket ditutup hari ini
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

@@ -259,6 +259,7 @@ export list="
 	--ignore-table=$base.llx_dolireport_plot
 	--ignore-table=$base.llx_dolireport_report
 	--ignore-table=$base.llx_domain
+	--ignore-table=$base.llx_ecommerce_category
 	--ignore-table=$base.llx_ecommerce_commande
 	--ignore-table=$base.llx_ecommerce_facture
 	--ignore-table=$base.llx_ecommerce_product

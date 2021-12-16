@@ -1,0 +1,40 @@
+Module68000Name = Déclaration d'échanges intracommunautaires
+Module68000Desc = Gestion des déclarations d'échanges intracommunautaires (y compris l'export aux formats DEB/DES des douanes françaises)
+IntracommReportSetup = Configuration du module 'Déclaration des échanges intracommunautaires' - intracommreport
+IntracommReportAbout = A propos du module 'Déclaration des échanges intracommunautaires' - intracommreport
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditionsa
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+
+# Menu
+MenuIntracommReport=Déclaration d'échanges intracommunautaires
+MenuIntracommReportNew=Nouvelle déclaration
+MenuIntracommReportList=Liste
+
+# View
+NewDeclaration=Nouvelle déclaration
+Declaration=Déclaration
+AnalysisPeriod=Période d'analyse
+TypeOfDeclaration=Type de Déclaration
+DEB=Déclaration d'échange de biens (DEB)
+DES=Déclaration d'échange de services (DES)
+
+# Export page
+IntracommReportTitle=Préparation d'un fichier XML au format du portail des Douanes Françaises.
+
+# List
+IntracommReportList=Liste des déclarations produites
+IntracommReportNumber=Numéro de déclaration
+IntracommReportPeriod=Période d'analyse
+IntracommReportTypeDeclaration=Type de Déclaration
+IntracommReportDownload=Télécharger le fichier XML
+
+# Invoice
+IntracommReportTransportMode=Mode de transport

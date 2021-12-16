@@ -87,7 +87,7 @@ create table llx_mailing_unsubscribe
   unsubscribegroup	varchar(128) DEFAULT '',
   ip				varchar(128),
   date_creat		datetime,                            -- creation date
-  tms               timestamp
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;
 
 ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
@@ -223,7 +223,7 @@ CREATE TABLE llx_bom_bom(
 	qty double(24,8),
 	efficiency double(8,4),
 	date_creation datetime NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	date_valid datetime, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
@@ -240,7 +240,7 @@ ALTER TABLE llx_bom_bom ADD COLUMN date_valid datetime;
 create table llx_bom_bom_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -266,7 +266,7 @@ ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL;
 create table llx_bom_bomline_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -335,7 +335,7 @@ UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos
 create table llx_reception
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   ref                   varchar(30)        NOT NULL,
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   fk_soc                integer            NOT NULL,
@@ -383,7 +383,7 @@ ALTER TABLE llx_reception ADD INDEX idx_reception_fk_shipping_method (fk_shippin
 create table llx_reception_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;

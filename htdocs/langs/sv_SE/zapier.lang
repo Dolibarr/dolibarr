@@ -13,16 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#
-# Generic
-#
-
-# Module label 'ModuleZapierForDolibarrName'
-ModuleZapierForDolibarrName = Zapier for Dolibarr
-# Module description 'ModuleZapierForDolibarrDesc'
-ModuleZapierForDolibarrDesc = Zapier for Dolibarr module
-
-#
-# Admin page
-#
-ZapierForDolibarrSetup = Setup of Zapier for Dolibarr
+ModuleZapierForDolibarrName = Zapier för Dolibarr
+ModuleZapierForDolibarrDesc = Zapier för Dolibarr-modul
+ZapierForDolibarrSetup=Installation av Zapier för Dolibarr
+ZapierDescription=Gränssnitt med Zapier
+ZapierAbout=Om modulen Zapier
+ZapierSetupPage=Det finns inget behov av en installation på Dolibarr-sidan för att använda Zapier. Du måste dock skapa och publicera ett paket på zapier för att kunna använda Zapier med Dolibarr. Se dokumentation på <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> denna wiki-sida </a>.

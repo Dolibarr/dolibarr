@@ -14,7 +14,6 @@ CreateDolibarrThirdParty=Maak Derden
 CreateInternalUserDesc=Met dit formulier kunt u een interne gebruiker in uw bedrijf / organisatie maken. Om een externe gebruiker (klant, leverancier enz.) Aan te maken, gebruikt u de knop 'Maak Dolibarr Gebruiker aan' van de contactkaart van die partij.
 ConfirmCreateContact=Weet u zeker dat u een Dolibarr account wilt maken voor deze contactpersoon?
 ConfirmCreateThirdParty=Weet u zeker dat u een 'derde' wilt maken voor dit lid?
-NbOfPermissions=Aantal toestemmingen
 UserAccountancyCode=Gebruikers boekhoudingscode
 UserLogoff=Gebruiker logout
 DateEmploymentEnd=Einddatum tewerkstelling

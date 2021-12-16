@@ -74,7 +74,7 @@ ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
 
--- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
@@ -108,7 +108,7 @@ create table llx_product_customer_price
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec					datetime,
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product			integer NOT NULL,
   fk_soc				integer NOT NULL,
   price						double(24,8) DEFAULT 0,
@@ -164,7 +164,7 @@ ALTER TABLE llx_product ADD COLUMN tobatch tinyint DEFAULT 0 NOT NULL;
 
 CREATE TABLE llx_product_batch (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product_stock integer NOT NULL,
   eatby datetime DEFAULT NULL,
   sellby datetime DEFAULT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE llx_expeditiondet_batch (
 --DROP TABLE llx_payment_salary
 CREATE TABLE llx_payment_salary (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user integer NOT NULL,
   datep date,
   datev date,
@@ -229,7 +229,7 @@ ALTER TABLE llx_projet_task_time ADD thm double(24,8) AFTER fk_user;
 create table llx_categories_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -283,7 +283,7 @@ CREATE TABLE llx_resource
   fk_code_type_resource varchar(32),
   note_public     		text,
   note_private    		text,
-  tms         			timestamp
+  tms         			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;
 
 ALTER TABLE llx_resource ADD INDEX fk_code_type_resource_idx (fk_code_type_resource);
@@ -298,7 +298,7 @@ CREATE TABLE llx_element_resources
   busy			  integer,
   mandatory		  integer,
   fk_user_create   integer,
-  tms             timestamp
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;
 
 ALTER TABLE llx_element_resources ADD UNIQUE INDEX idx_element_resources_idx1 (resource_id, resource_type, element_id, element_type);

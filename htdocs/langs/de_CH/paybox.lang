@@ -6,6 +6,5 @@ SetupPayBoxToHavePaymentCreatedAutomatically=Paybox mit der URL <b>%s</b> einric
 YourPaymentHasBeenRecorded=Diese Seite bestätigt, dass Ihre Zahlung erfasst wurde. Vielen Dank.
 YourPaymentHasNotBeenRecorded=Hoppla, deine Zahlung wurde nicht ausgeführt und die Transaktion abgebrochen...
 PAYBOX_CGI_URL_V2=Url für das Paybox Zahlungsmodul "CGI Modul"
-VendorName=Name des Anbieters
 PAYBOX_PAYONLINE_SENDEMAIL=Email - Adresse für Zahlungsbestätigungen und -fehler
 PAYBOX_HMAC_KEY=HMAC - Schlüssel

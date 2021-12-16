@@ -26,7 +26,7 @@ create table llx_facture_rec
   entity             integer DEFAULT 1 NOT NULL,	 -- multi company id
   fk_soc             integer NOT NULL,
   datec              datetime,            -- date de creation
-  tms				 timestamp,           -- date creation/modification
+  tms				 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,           -- last modification date
 
   suspended          integer DEFAULT 0,					-- 1=suspended
   
@@ -36,11 +36,11 @@ create table llx_facture_rec
   remise_absolue     real     DEFAULT 0,
   
   vat_src_code		 varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
-  tva                double(24,8)     DEFAULT 0,
+  total_tva          double(24,8)     DEFAULT 0,
   localtax1			 double(24,8)     DEFAULT 0,           -- amount localtax1
   localtax2          double(24,8)     DEFAULT 0,           -- amount localtax2
   revenuestamp       double(24,8)     DEFAULT 0,			 -- amount total revenuestamp
-  total              double(24,8)     DEFAULT 0,
+  total_ht           double(24,8)     DEFAULT 0,
   total_ttc          double(24,8)     DEFAULT 0,
 
   fk_user_author     integer,             -- user creating
@@ -57,7 +57,7 @@ create table llx_facture_rec
   modelpdf           varchar(255),
 
   fk_multicurrency          integer,
-  multicurrency_code        varchar(255),
+  multicurrency_code        varchar(3),
   multicurrency_tx          double(24,8) DEFAULT 1,
   multicurrency_total_ht    double(24,8) DEFAULT 0,
   multicurrency_total_tva   double(24,8) DEFAULT 0,

@@ -419,19 +419,19 @@ update llx_actioncomm set elementtype='order' where elementtype='commande';
 update llx_actioncomm set elementtype='contract' where elementtype='contrat';
 
 
-alter table llx_propal add column   tms             timestamp after fk_projet;
+alter table llx_propal add column   tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after fk_projet;
 
 
 create table llx_product_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL
 ) ENGINE=innodb;
 create table llx_societe_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL
 ) ENGINE=innodb;
 
@@ -487,7 +487,7 @@ ALTER TABLE llx_don ADD   phone           varchar(24) after email;
 ALTER TABLE llx_element_element MODIFY sourcetype varchar(32) NOT NULL;
 ALTER TABLE llx_element_element MODIFY targettype varchar(32) NOT NULL;
 
-ALTER TABLE llx_societe_prices MODIFY tms timestamp NULL;
+ALTER TABLE llx_societe_prices MODIFY tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 -- ALTER TABLE llx_societe_prices ALTER COLUMN tms DROP NOT NULL;
 
 -- Fix: It seems this is missing for some users

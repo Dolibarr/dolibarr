@@ -23,7 +23,7 @@ create table llx_budget_lines
   fk_project_ids	varchar(180) NOT NULL,		-- 'IDS:x,y' = List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project 'Projects to come'. 'FILTER:ref=*ABC' or 'FILTER:categid=123' = Can also be a dynamic rule to select projects.
   amount			double(24,8) NOT NULL,
   datec        		datetime,
-  tms           	timestamp,
+  tms           	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat 	integer,
   fk_user_modif 	integer,
   import_key    	integer  

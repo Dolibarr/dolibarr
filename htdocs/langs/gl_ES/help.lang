@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real-time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help Center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
+CommunitySupport=Asistencia Forums e Wiki
+EMailSupport=Asistencia E-Mail
+RemoteControlSupport=Asistencia por soporte externo
+OtherSupport=Outros tipos de asistencia
+ToSeeListOfAvailableRessources=Contactar/ver recursos dispoñibles:
+HelpCenter=Centro de soporte
+DolibarrHelpCenter=Centro de soporte e axuda Dolibarr
+ToGoBackToDolibarr=Do contrario, <a href="%s">faga clic aquí para continuar usando Dolibarr</a>.
+TypeOfSupport=Tipo de soporte
+TypeSupportCommunauty=Comunitario (gratuito)
 TypeSupportCommercial=Comercial
 TypeOfHelp=Tipo
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+NeedHelpCenter=¿Precisa axuda ou soporte?
+Efficiency=Eficacia
+TypeHelpOnly=Só axuda
+TypeHelpDev=Axuda+Desenvolvemento
+TypeHelpDevForm=Axuda+Desenvolvemento+Formación
+BackToHelpCenter=Do contrario, <a href="%s">volte á páxina de inicio do Centro de axuda</a>.
+LinkToGoldMember=Pode chamar a un dos formadores preseleccionados por Dolibarr para o seu idioma (%s) facendo clic no seu Widget (o estado e o prezo máximo actualízanse automáticamente):
+PossibleLanguages=Idiomas dispoñibles
+SubscribeToFoundation=Axude ao proxecto Dolibarr, subscríbase á asociación Dolibarr
+SeeOfficalSupport=Para obter soporte oficial Dolibarr no seu idioma: <br><b><a href="%s" target="_blank">%s</a></b>

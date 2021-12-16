@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - accountancy
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
