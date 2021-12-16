@@ -119,6 +119,9 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 
 if ($action == 'validatehistory') {
 	$error = 0;
+	$nbbinddone = 0;
+	$notpossible = 0;
+
 	$db->begin();
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
@@ -154,14 +157,13 @@ if ($action == 'validatehistory') {
 	} else {
 		$sql .= " s.accountancy_code_sell as company_code_sell";
 	}
-
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";	// the main table
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
@@ -172,8 +174,7 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
-	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
-	$sql .= " AND l.product_type <= 2";
+	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0 AND l.product_type <= 2 AND f.entity = ".((int) $conf->entity);
 	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 	}
@@ -254,7 +255,7 @@ if ($action == 'validatehistory') {
 			$suggestedid = 0;
 
 			$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
-			if (!is_array($return) && $return<0) {
+			if (!is_array($return) && $return < 0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {
 				$suggestedid = $return['suggestedid'];
@@ -278,9 +279,14 @@ if ($action == 'validatehistory') {
 					setEventMessages($db->lasterror(), null, 'errors');
 					break;
 				}
+			} else {
+				$notpossible++;
 			}
 
 			$i++;
+		}
+		if ($num_lines > 10000) {
+			$notpossible += ($num_lines - 10000);
 		}
 	}
 
@@ -289,6 +295,7 @@ if ($action == 'validatehistory') {
 	} else {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, 'mesgs');
 	}
 }
 

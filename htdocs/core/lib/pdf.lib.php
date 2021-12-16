@@ -35,6 +35,8 @@
  *	\ingroup    core
  */
 
+include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+
 
 /**
  *  Return array head with list of tabs to view object informations.
@@ -707,9 +709,12 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 
 	// Add a background image on document only if good setup of const
 	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF) && ($conf->global->MAIN_USE_BACKGROUND_ON_PDF != '-1')) {		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
-		$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
-		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
-		$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+		$filepath = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF;
+		if (file_exists($filepath)) {
+			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
+			$pdf->Image($filepath, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
+			$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+		}
 	}
 }
 

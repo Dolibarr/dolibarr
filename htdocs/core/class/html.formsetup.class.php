@@ -45,6 +45,41 @@ class FormSetup
 	protected $maxItemRank;
 
 	/**
+	 * this is an html string display before output form
+	 * @var string
+	 */
+	public $htmlBeforeOutputForm = '';
+
+	/**
+	 * this is an html string display after output form
+	 * @var string
+	 */
+	public $htmlAfterOutputForm = '';
+
+	/**
+	 * this is an html string display on buttons zone
+	 * @var string
+	 */
+	public $htmlOutputMoreButton = '';
+
+
+	/**
+	 *
+	 * @var array
+	 */
+	public $formAttributes = array(
+		'action' => '', // set in __construct
+		'method' => 'POST'
+	);
+
+	/**
+	 * an list of hidden inputs used only in edit mode
+	 * @var array
+	 */
+	public $formHiddenInputs = array();
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -55,6 +90,11 @@ class FormSetup
 		global $langs;
 		$this->db = $db;
 		$this->form = new Form($this->db);
+		$this->formAttributes['action'] = $_SERVER["PHP_SELF"];
+
+		$this->formHiddenInputs['token'] = newToken();
+		$this->formHiddenInputs['action'] = 'update';
+
 
 		if ($outputLangs) {
 			$this->langs = $outputLangs;
@@ -62,6 +102,27 @@ class FormSetup
 			$this->langs = $langs;
 		}
 	}
+
+	/**
+	 * Generate an attributes string form an input array
+	 * @param array $attributes an array of attributes keys and values,
+	 * @return string
+	 */
+	static public function generateAttributesStringFromArray($attributes)
+	{
+		$Aattr = array();
+		if (is_array($attributes)) {
+			foreach ($attributes as $attribute => $value) {
+				if (is_array($value) || is_object($value)) {
+					continue;
+				}
+				$Aattr[] = $attribute.'="'.dol_escape_htmltag($value).'"';
+			}
+		}
+
+		return !empty($Aattr)?implode(' ', $Aattr):'';
+	}
+
 
 	/**
 	 * @param bool $editMode true will display output on edit mod
@@ -83,12 +144,70 @@ class FormSetup
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		} else {
-			$out = '<input type="hidden" name="token" value="' . newToken() . '">';
+			$out = '<!-- Start generateOutput from FormSetup class  -->';
+			$out.= $this->htmlBeforeOutputForm;
+
 			if ($editMode) {
-				$out .= '<input type="hidden" name="action" value="update">';
+				$out.= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+
+				// generate hidden values from $this->formHiddenInputs
+				if (!empty($this->formHiddenInputs) && is_array($this->formHiddenInputs)) {
+					foreach ($this->formHiddenInputs as $hiddenKey => $hiddenValue) {
+						$out.= '<input type="hidden" name="'.dol_escape_htmltag($hiddenKey).'" value="' . dol_escape_htmltag($hiddenValue) . '">';
+					}
+				}
 			}
 
-			$out .= '<table class="noborder centpercent">';
+			// generate output table
+			$out .= $this->generateTableOutput($editMode);
+
+
+			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+
+			if ($reshook > 0) {
+				return $hookmanager->resPrint;
+			} elseif ($editMode) {
+				$out .= '<br>'; // Todo : remove this <br/> by adding style to form-setup-button-container css class in all themes
+				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
+				$out.= $this->htmlOutputMoreButton;
+				$out .= '<input class="button button-save" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
+				$out .= '</div>';
+			}
+
+			if ($editMode) {
+				$out .= '</form>';
+			}
+
+			$out.= $this->htmlAfterOutputForm;
+
+			return $out;
+		}
+	}
+
+	/**
+	 * @param bool $editMode true will display output on edit mod
+	 * @return string
+	 */
+	public function generateTableOutput($editMode = false)
+	{
+		global $hookmanager, $action;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+		$parameters = array(
+			'editMode' => $editMode
+		);
+		$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateTableOutput', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		} else {
+			$out = '<table class="noborder centpercent">';
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
 			$out .= '	<td class="titlefield">' . $this->langs->trans("Parameter") . '</td>';
@@ -247,7 +366,7 @@ class FormSetup
 	public function exportItemsAsParamsArray()
 	{
 		$arrayofparameters = array();
-		foreach ($this->items as $key => $item) {
+		foreach ($this->items as $item) {
 			$arrayofparameters[$item->confKey] = array(
 				'type' => $item->getType(),
 				'enabled' => $item->enabled
@@ -554,7 +673,7 @@ class FormSetupItem
 	 */
 	public function generateInputField()
 	{
-		global $conf, $user;
+		global $conf;
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;

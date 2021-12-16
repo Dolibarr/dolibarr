@@ -2094,8 +2094,22 @@ if ($action == 'create') {
 							print '</td>';
 						}
 
+						$titlealt = '';
+						if (!empty($conf->accounting->enabled)) {
+							$accountingaccount = new AccountingAccount($db);
+							$resaccountingaccount = $accountingaccount->fetch(0, $line->type_fees_accountancy_code, 1);
+							//$titlealt .= '<span class="opacitymedium">';
+							$titlealt .= $langs->trans("AccountancyCode").': ';
+							if ($resaccountingaccount > 0) {
+								$titlealt .= $accountingaccount->account_number;
+							} else {
+								$titlealt .= $langs->trans("NotFound");
+							}
+							//$titlealt .= '</span>';
+						}
+
 						// Type of fee
-						print '<td class="center">';
+						print '<td class="center" title="'.dol_escape_htmltag($titlealt).'">';
 						$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 						print $labeltype;
 						print '</td>';
@@ -2109,8 +2123,10 @@ if ($action == 'create') {
 
 						// Comment
 						print '<td class="left">'.dol_nl2br($line->comments).'</td>';
+
 						// VAT rate
 						print '<td class="right">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
+
 						// Unit price HT
 						print '<td class="right">';
 						if (!empty($line->value_unit_ht)) {
