@@ -39,7 +39,9 @@ $id = GETPOST("facid", "int");
 $ref = GETPOST("ref", 'alpha');
 
 $object = new Facture($db);
-$object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
 
 
 /*
