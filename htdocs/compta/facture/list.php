@@ -537,7 +537,7 @@ if ($search_multicurrency_tx != '') $sql .= natural_search('f.multicurrency_tx',
 if ($search_multicurrency_montant_ht != '') $sql .= natural_search('f.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
 if ($search_multicurrency_montant_vat != '') $sql .= natural_search('f.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
 if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
-if ($search_login) $sql .= natural_search('u.login', $search_login);
+if ($search_login) $sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 if ($search_categ_cus > 0) $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)   $sql .= " AND cc.fk_categorie IS NULL";
 if ($search_status != '-1' && $search_status != '')

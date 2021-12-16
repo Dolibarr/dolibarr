@@ -490,7 +490,7 @@ if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $se
 if (!empty($search_product_ref))   $sql .= natural_search('p.ref', $search_product_ref);
 if (!empty($search_product))       $sql .= natural_search('p.label', $search_product);
 if ($search_warehouse != '' && $search_warehouse != '-1')          $sql .= natural_search('e.rowid', $search_warehouse, 2);
-if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
+if (!empty($search_user))          $sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
 if (!empty($product_id))           $sql .= natural_search('p.rowid', $product_id);
 if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
