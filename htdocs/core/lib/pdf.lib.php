@@ -1937,7 +1937,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			if ($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)
 			{
 				$prev_progress = 0;
-				if (method_exists($object, 'get_prev_progress'))
+				if (method_exists($object->lines[$i], 'get_prev_progress'))
 				{
 			 		$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}
