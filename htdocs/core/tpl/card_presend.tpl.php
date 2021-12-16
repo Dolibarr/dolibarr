@@ -143,6 +143,13 @@ if ($action == 'presend') {
 		$formmail->fromtype = 'special';
 	}
 
+	$formmail->trackid=$trackid;
+	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+	{
+		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
+	}
+
 
 
 	$formmail->trackid = $trackid;
