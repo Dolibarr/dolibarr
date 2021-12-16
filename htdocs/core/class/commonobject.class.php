@@ -5308,7 +5308,7 @@ abstract class CommonObject
 							 // Set the public "share" key
 							$setsharekey = false;
 							if ($this->element == 'propal') {
-								$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL; // Replace this with 1 when feature to make online signature is ok
+								$useonlinesignature = 1; // Replace this with 1 when feature to make online signature is ok
 								if ($useonlinesignature) {
 									$setsharekey = true;
 								}
