@@ -209,7 +209,7 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * @var int ID
 	 */
-	public $fk_account;
+	public $fk_account;		// default bank account
 
 	public $mode_reglement_id;
 	public $mode_reglement_code;
@@ -2147,10 +2147,12 @@ class FactureFournisseur extends CommonInvoice
 		$line->context = $this->context;
 
 		$line->description = $desc;
-		$line->subprice = $pu_ht;
-		$line->pu_ht = $pu_ht;
-		$line->pu_ttc = $pu_ttc;
-		$line->qty = $qty;
+
+		$line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
+		$line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
+		$line->pu_ht = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
+		$line->pu_ttc = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ttc) : $pu_ttc); // For credit note, unit price always negative, always positive otherwise
+
 		$line->remise_percent = $remise_percent;
 		$line->ref_supplier = $ref_supplier;
 
@@ -2163,11 +2165,13 @@ class FactureFournisseur extends CommonInvoice
 		$line->localtax2_tx = $txlocaltax2;
 		$line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 		$line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
+
 		$line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht);
 		$line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva);
 		$line->total_localtax1 = $total_localtax1;
 		$line->total_localtax2 = $total_localtax2;
 		$line->total_ttc = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ttc) : $total_ttc);
+
 		$line->fk_product = $idproduct;
 		$line->product_type = $product_type;
 		$line->info_bits = $info_bits;
@@ -2270,6 +2274,7 @@ class FactureFournisseur extends CommonInvoice
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
@@ -2286,8 +2291,8 @@ class FactureFournisseur extends CommonInvoice
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
-				$this->date_creation     = $this->db->idate($obj->datec);
-				$this->date_modification = $this->db->idate($obj->datem);
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
 				//$this->date_validation   = $obj->datev; // This field is not available. Should be store into log table and using this function should be replaced with showing content of log (like for supplier orders)
 			}
 			$this->db->free($result);

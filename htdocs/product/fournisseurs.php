@@ -1211,7 +1211,7 @@ END;
 									$obj = $db->fetch_object($resql);
 									foreach ($extralabels as $key => $value) {
 										if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-											print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key})."</td>";
+											print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_fournisseur_price')."</td>";
 										}
 									}
 								}

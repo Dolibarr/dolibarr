@@ -327,7 +327,7 @@ if (empty($reshook)) {
 			$object->public      = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -953,7 +953,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print load_fiche_titre($langs->trans("NewMember"), '', $object->picto);
 
 		if ($conf->use_javascript_ajax) {
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="create";
@@ -1183,7 +1183,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 
 		if ($conf->use_javascript_ajax) {
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {
 				jQuery("#selectcountry_id").change(function() {
 					document.formsoc.action.value="edit";

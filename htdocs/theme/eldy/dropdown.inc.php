@@ -364,6 +364,10 @@ a.top-menu-dropdown-link {
 	content: "\f0da";
 	/* color: rgba(0,0,0,0.3); */
 }
+.multicompany-item::before {
+	content: none !important;
+}
+
 .dropdown-item.bookmark-item-external::before {
 	content: "\f35d";
 }

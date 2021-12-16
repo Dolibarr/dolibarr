@@ -303,19 +303,10 @@ CREATE TABLE llx_hrm_job_user(
     fk_user_modif integer
 ) ENGINE=innodb;
 
+ALTER TABLE llx_hrm_job_user ADD COLUMN abort_comment varchar(255);
+
 ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_rowid (rowid);
 -- ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_ref (ref);
-
-
-create table llx_hrm_job_user_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_job_user_extrafields ADD INDEX idx_position_fk_object(fk_object);
 
 
 
@@ -361,19 +352,10 @@ CREATE TABLE llx_hrm_skilldet
     rankorder integer
 ) ENGINE=innodb;
 
+ALTER TABLE llx_hrm_skilldet ADD COLUMN rankorder integer NOT NULL DEFAULT '1';
+
 ALTER TABLE llx_hrm_skilldet ADD INDEX idx_hrm_skilldet_rowid (rowid);
 ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
-
-create table llx_hrm_skilldet_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_skilldet_extrafields ADD INDEX idx_skilldet_fk_object(fk_object);
-
 
 CREATE TABLE llx_hrm_skillrank
 (
@@ -457,8 +439,46 @@ INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (102, 'BAN', 'Ba
 INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (103, 'IDE', 'iDeal',      1, 0);
 INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (104, 'GIR', 'Giropay',    1, 0);
 
+ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
+
+
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_commande MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_commandedet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_contratdet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_expensereport_det MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_expensereport MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facture_fourn MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facture_rec MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facture MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facturedet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_paiement_facture MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_paiementfourn_facturefourn MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_product_fournisseur_price_log MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_product_price_by_qty MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_product_price MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_propal MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_propaldet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_societe MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_supplier_proposal MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_supplier_proposaldet MODIFY COLUMN multicurrency_code varchar(3);
+
 ALTER TABLE llx_propal ADD COLUMN online_sign_ip varchar(48);
 ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
 
-ALTER TABLE llx_entrepot ADD COLUMN usage integer DEFAULT 1;
+ALTER TABLE llx_entrepot ADD COLUMN warehouse_usage integer DEFAULT 1;
+
+ALTER TABLE llx_session MODIFY COLUMN user_agent VARCHAR(255) NULL;
+
+ALTER TABLE llx_inventorydet ADD COLUMN fk_movement integer NULL;
 

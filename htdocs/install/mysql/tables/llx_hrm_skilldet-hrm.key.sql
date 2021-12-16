@@ -16,11 +16,12 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_hrm_skilldet(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	description text,
-	fk_user_creat integer NOT NULL,
-	fk_user_modif integer,
-	fk_skill integer NOT NULL,
-	rankorder integer
-) ENGINE=innodb;
+-- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_hrm_skilldet ADD INDEX idx_hrm_skilldet_rowid (rowid);
+ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+-- END MODULEBUILDER INDEXES
+
+--ALTER TABLE llx_hrm_skilldet ADD UNIQUE INDEX uk_hrm_skilldet_fieldxy(fieldx, fieldy);
+
+ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_skill FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill(rowid);
+

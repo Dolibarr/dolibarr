@@ -348,7 +348,7 @@ if ($moreforfilter) {
 
 $varpage = empty($contextpage) ? $_SERVER['PHP_SELF'] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-if ($massactionbutton) {
+if (!empty($massactionbutton)) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
 
@@ -497,10 +497,7 @@ while ($i < min($num, $limit)) {
 
 	// Date
 	if (!empty($arrayfields['p.datep']['checked'])) {
-		$dateformatforpayment = 'day';
-		if (!empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) {
-			$dateformatforpayment = 'dayhour';
-		}
+		$dateformatforpayment = 'dayhour';
 		print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

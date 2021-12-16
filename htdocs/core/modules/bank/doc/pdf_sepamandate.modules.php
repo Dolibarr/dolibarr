@@ -198,9 +198,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
-				$tab_height = 200;
 				$tab_top_newpage = 40;
-				$tab_height_newpage = 210;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				if (!empty($object->note_public)) {

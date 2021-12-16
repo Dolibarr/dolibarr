@@ -550,7 +550,7 @@ abstract class CommonObject
 			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
 			return -1;
 		}
-		if ($ref || $ref_ext) {
+		if ($ref || $ref_ext) {		// Because the same ref can exists in 2 different entities, we force the current one in priority
 			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 
@@ -869,7 +869,7 @@ abstract class CommonObject
 		if (!empty($conf->socialnetworks->enabled)) {
 			$outsocialnetwork = '';
 
-			if (!empty($this->socialnetworks) && is_countable($this->socialnetworks) && count($this->socialnetworks) > 0) {
+			if (!empty($this->socialnetworks) && is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {
 				$socialnetworksdict = getArrayOfSocialNetworks();
 				foreach ($this->socialnetworks as $key => $value) {
 					if ($value) {
@@ -4132,12 +4132,13 @@ abstract class CommonObject
 	 *      Set status of an object
 	 *
 	 *      @param	int		$status			Status to set
-	 *      @param	int		$elementId		Id of element to force (use this->id by default)
+	 *      @param	int		$elementId		Id of element to force (use this->id by default if null)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
-	 *      @param	string	$trigkey		Trigger key to use for trigger
+	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it not recommended and is deprecated.
+	 *      @param	string	$fieldstatus	Name of status field in this->table_element
 	 *      @return int						<0 if KO, >0 if OK
 	 */
-	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '')
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
 	{
 		global $user, $langs, $conf;
 
@@ -4148,7 +4149,6 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		$fieldstatus = "fk_statut";
 		if ($elementTable == 'facture_rec') {
 			$fieldstatus = "suspended";
 		}
@@ -4174,8 +4174,15 @@ abstract class CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
 		$sql .= " SET ".$fieldstatus." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
-		if ($status == 1 && $elementTable == 'expensereport') {
+		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields
+		if ($status == 1 && in_array($elementTable, array('expensereport', 'inventory'))) {
 			$sql .= ", fk_user_valid = ".((int) $user->id);
+		}
+		if ($status == 1 && in_array($elementTable, array('expensereport'))) {
+			$sql .= ", date_valid = '".$this->db->idate(dol_now())."'";
+		}
+		if ($status == 1 && in_array($elementTable, array('inventory'))) {
+			$sql .= ", date_validation = '".$this->db->idate(dol_now())."'";
 		}
 		$sql .= " WHERE rowid=".((int) $elementId);
 
@@ -4217,9 +4224,16 @@ abstract class CommonObject
 			if (!$error) {
 				$this->db->commit();
 
-				if (empty($savElementId)) {    // If the element we update was $this (so $elementId is null)
-					$this->statut = $status;
-					$this->status = $status;
+				if (empty($savElementId)) {
+					// If the element we update is $this (so $elementId was provided as null)
+					if ($fieldstatus == 'tosell') {
+						$this->status = $status;
+					} elseif ($fieldstatus == 'tobuy') {
+						$this->status_buy = $status;
+					} else {
+						$this->statut = $status;
+						$this->status = $status;
+					}
 				}
 
 				return 1;
@@ -4481,14 +4495,14 @@ abstract class CommonObject
 				$qty = $line->qty ? $line->qty : 0;
 			}
 
-			$weight = $line->weight ? $line->weight : 0;
+			$weight = !empty($line->weight) ? $line->weight : 0;
 			($weight == 0 && !empty($line->product->weight)) ? $weight = $line->product->weight : 0;
-			$volume = $line->volume ? $line->volume : 0;
+			$volume = !empty($line->volume) ? $line->volume : 0;
 			($volume == 0 && !empty($line->product->volume)) ? $volume = $line->product->volume : 0;
 
-			$weight_units = $line->weight_units;
+			$weight_units = !empty($line->weight_units) ? $line->weight_units : 0;
 			($weight_units == 0 && !empty($line->product->weight_units)) ? $weight_units = $line->product->weight_units : 0;
-			$volume_units = $line->volume_units;
+			$volume_units = !empty($line->volume_units) ? $line->volume_units : 0;
 			($volume_units == 0 && !empty($line->product->volume_units)) ? $volume_units = $line->product->volume_units : 0;
 
 			$weightUnit = 0;
@@ -4848,7 +4862,7 @@ abstract class CommonObject
 	 */
 	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
 	{
-		global $langs, $hookmanager, $conf, $form;
+		global $langs, $hookmanager, $conf, $form, $action;
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
@@ -4872,13 +4886,9 @@ abstract class CommonObject
 				$reshook = 0;
 				//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
 				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
-					if (empty($line->fk_parent_line)) {
-						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
-						$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					} else {
-						$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines, 'fk_parent_line'=>$line->fk_parent_line);
-						$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
+					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
+					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
@@ -7817,7 +7827,7 @@ abstract class CommonObject
 
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'editline')) {
+							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="wordbreak';
@@ -7862,7 +7872,7 @@ abstract class CommonObject
 
 						switch ($mode) {
 							case "view":
-								$out .= $extrafields->showOutputField($key, $value);
+								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
 								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
@@ -8197,7 +8207,7 @@ abstract class CommonObject
 							if ($urladvanced) {
 								$return .= '<a href="'.$urladvanced.'">';
 							} else {
-								$return .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+								$return .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 							}
 						}
 
@@ -8525,6 +8535,8 @@ abstract class CommonObject
 					}
 				}
 			} else {
+				// Note: If $this->{$field} is not defined, it means there is a bug into definition of ->fields or a missing declaration of property
+				// We should keep the warning generated by this because it is a bug somewhere else in code, not here.
 				$queryarray[$field] = $this->{$field};
 			}
 

@@ -287,7 +287,7 @@ if (empty($reshook)) {
 			$object->usage_organize_event = (GETPOST('usage_organize_event', 'alpha') == 'on' ? 1 : 0);
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -712,7 +712,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '</form>';
 
 	// Change probability from status
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
         	{
@@ -1170,7 +1170,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		}
 
 		print '<!-- Javascript to manage opportunity status change -->';
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
             jQuery(document).ready(function() {
             	function change_percent()
             	{

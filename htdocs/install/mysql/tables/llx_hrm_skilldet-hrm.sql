@@ -16,14 +16,11 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
--- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_hrm_evaluationdet ADD INDEX idx_hrm_evaluationdet_rowid (rowid);
-ALTER TABLE llx_hrm_evaluationdet ADD CONSTRAINT llx_hrm_evaluationdet_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
-ALTER TABLE llx_hrm_evaluationdet ADD INDEX idx_hrm_evaluationdet_fk_skill (fk_skill);
-ALTER TABLE llx_hrm_evaluationdet ADD INDEX idx_hrm_evaluationdet_fk_evaluation (fk_evaluation);
--- END MODULEBUILDER INDEXES
-
---ALTER TABLE llx_hrm_evaluationdet ADD UNIQUE INDEX uk_hrm_evaluationdet_fieldxy(fieldx, fieldy);
-
---ALTER TABLE llx_hrm_evaluationdet ADD CONSTRAINT llx_hrm_evaluationdet_fk_field FOREIGN KEY (fk_field) REFERENCES llx_hrm_myotherobject(rowid);
-
+CREATE TABLE llx_hrm_skilldet(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_skill integer NOT NULL,
+	rankorder integer NOT NULL DEFAULT '1',
+	description text,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer
+) ENGINE=innodb;

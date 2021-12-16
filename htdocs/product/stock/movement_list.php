@@ -49,9 +49,6 @@ if (!empty($conf->productbatch->enabled)) {
 	$langs->load("productbatch");
 }
 
-// Security check
-$result = restrictedArea($user, 'stock');
-
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $msid = GETPOST('msid', 'int');
@@ -63,11 +60,8 @@ $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 
-// Security check
-//$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
-$result = restrictedArea($user, 'stock');
-
 $idproduct = GETPOST('idproduct', 'int');
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_date_startday = GETPOST('search_date_startday', 'int');
 $search_date_startmonth = GETPOST('search_date_startmonth', 'int');
 $search_date_startyear = GETPOST('search_date_startyear', 'int');
@@ -87,6 +81,8 @@ $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 $search_fk_projet=GETPOST("search_fk_projet", 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
+$type = GETPOST("type", "int");
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -142,6 +138,18 @@ if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 	unset($arrayfields['pl.eatby']);
 }
+
+
+$tmpwarehouse = new Entrepot($db);
+if ($id > 0 || !empty($ref)) {
+	$tmpwarehouse->fetch($id, $ref);
+	$id = $tmpwarehouse->id;
+}
+
+
+// Security check
+//$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
+$result = restrictedArea($user, 'stock');
 
 // Security check
 if (!$user->rights->stock->mouvement->lire) {
@@ -213,9 +221,6 @@ if (empty($reshook)) {
 }
 
 if ($action == 'update_extras') {
-	$tmpwarehouse = new Entrepot($db);
-	$tmpwarehouse->fetch($id);
-
 	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse);
 
 	// Fill array 'array_options' with data from update form
@@ -498,7 +503,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql .= " ".MAIN_DB_PREFIX."product as p,";
 $sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
@@ -543,7 +548,7 @@ if ($search_warehouse != '' && $search_warehouse != '-1') {
 	$sql .= natural_search('e.rowid', $search_warehouse, 2);
 }
 if (!empty($search_user)) {
-	$sql .= natural_search('u.login', $search_user);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 }
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);
@@ -1138,6 +1143,7 @@ $arrayofuniqueproduct = array();
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 

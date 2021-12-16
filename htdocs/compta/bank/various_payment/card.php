@@ -342,7 +342,7 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 if ($action == 'create') {
 	// Update fields properties in realtime
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
             			setPaymentType();
             			$("#selectpaymenttype").change(function() {
@@ -415,7 +415,7 @@ if ($action == 'create') {
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($accountid, "accountid", 0, '', 2); // Affiche liste des comptes courant
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($accountid, "accountid", 0, '', 2, '', 0, '', 1); 	// Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -490,9 +490,8 @@ if ($action == 'create') {
 		$langs->load("projects");
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-
-		$numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 

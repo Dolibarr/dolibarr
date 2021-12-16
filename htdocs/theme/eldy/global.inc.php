@@ -486,7 +486,11 @@ input:-webkit-autofill {
 input:-moz-placeholder { color: #ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
-fieldset { border: 1px solid #AAAAAA !important; }
+fieldset {
+	border: 1px solid #AAAAAA !important;
+	padding-inline-start: 2em;
+	padding-inline-end: 2em;
+}
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
@@ -505,7 +509,8 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
-.button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
+.button:not(.bordertransp):not(.buttonpayment),
+.buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 3px;
 	margin-top: 3px;
 	margin-left: 5px;
@@ -606,6 +611,9 @@ button:focus {
 }
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
+}
+.line-height-large {
+	line-height: 1.8em;
 }
 
 th .button {
@@ -876,6 +884,10 @@ body[class*="colorblind-"] .text-success{
 .editfieldlang:hover {
 	color: var(--colortexttitle) !important;
 }
+a.editfielda.nohover *:hover:before {
+	color: #ccc !important;
+}
+
 .fawidth30 {
 	width: 20px;
 }
@@ -1455,6 +1467,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 150px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
@@ -1474,6 +1487,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -1635,6 +1649,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -1671,6 +1686,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	div.statusref {
 		padding-right: 10px;
+		max-width: 55%;
 	   }
 	div.statusref img {
 		padding-right: 3px !important;
@@ -2867,11 +2883,18 @@ input.vmenusearchselectcombo[type=text] {
 .searchform input { font-size: 16px; }
 
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
+	white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>;
+}
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active,
 span.vmenu, span.vmenu:link, span.vmenu:visited, span.vmenu:hover, span.vmenu:active { font-weight: bold;  }	/* bold = 600, 500 is ko with Edge on 1200x960 */
-font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
-a.vmenu:link, a.vmenu:visited { color: var(--colortextbackvmenu); }
+span.vmenudisabled, font.vmenudisabled  {
+	/* bold = 600, 500 is ko with Edge on 1200x960 */
+	font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap;
+}
+a.vmenu:link, a.vmenu:visited {
+	color: var(--colortextbackvmenu);
+}
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	font-family: <?php print $fontlist ?>;
@@ -2879,15 +2902,19 @@ a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	color: #202020;
 	margin: 1px 1px 1px 6px;
 }
-font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa; }
+span.vsmenudisabled, font.vsmenudisabled {
+	font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa;
+}
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
 	white-space: nowrap;
 }
-font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
+span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; color: #aaa; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
+	text-align: <?php print $left; ?>; color: #aaa; text-decoration: none;
+}
 .helppresent, .helppresent:hover {
 	/* color: #f3e4ac !important; */
 }
@@ -3295,8 +3322,16 @@ input.button[name="upload"] {
 	padding: 5px !important;
 	font-size: 0.9em;
 }
-input.button.smallpaddingimp {
+input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
+}
+input.buttonreset {
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding: 8px 15px;
+	text-decoration: underline;
+	color: var(--colortextlink);
+	cursor: pointer;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
@@ -3588,7 +3623,7 @@ div.refidno  {
 	font-weight: normal;
 	  color: var(--refidnocolor);
 	  font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	  line-height: 21px;
+	  line-height: 1.4em;
 }
 div.refidno form {
 	display: inline-block;
@@ -4669,8 +4704,28 @@ div.ui-tooltip.mytooltip {
 	background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);
 	line-height: 1.6em;
-	min-width: 200px;
+	min-width: 550px;
 }
+@media only screen and (max-width: 768px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 400px;
+	}
+}
+@media only screen and (max-width: 480px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 300px;
+	}
+}
+@media only screen and (max-width: 320px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 230px;
+	}
+}
+
+
 
 
 
@@ -5584,6 +5639,8 @@ div#ecm-layout-center {
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
+	text-align: start;
+	word-break: break-word;
 }
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;
@@ -6924,6 +6981,29 @@ div.clipboardCPValue.hidewithsize {
 	box-shadow: 1px 1px 6px #ddd;
 }
 
+
+/* ============================================================================== */
+/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* ============================================================================== */
+
+.radio_js_bloc_number {
+	display:inline-block;
+	padding:5px 7px;
+	min-width:20px;
+	border-radius:3px;
+	border:1px solid #ccc;
+	background:#eee;
+	color:#555;
+	cursor:pointer;
+	margin:2px;
+	text-align:center;
+}
+.radio_js_bloc_number.selected {
+	transition:0.2s ease background;
+	background:#888;
+	color:#fff;
+	border-color:#555;
+}
 
 
 /* ============================================================================== */

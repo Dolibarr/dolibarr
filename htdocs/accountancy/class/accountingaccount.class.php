@@ -166,7 +166,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param 	int 	       $rowid 				    Id
 	 * @param 	string 	       $account_number 	        Account number
-	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active char of account
+	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active chart of account
 	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
 	 * @return 	int                                     <0 if KO, 0 if not found, Id of record if OK and found
 	 */
@@ -874,7 +874,7 @@ class AccountingAccount extends CommonObject
 			}
 
 			// Manage Deposit
-			if ($factureDet->desc == "(DEPOSIT)") {
+			if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 				$accountdeposittoventilated = new self($this->db);
 				$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
 				if ($result < 0) {

@@ -1098,6 +1098,7 @@ if (empty($reshook)) {
 			$arrayoffiles = GETPOST('attachfile', 'array');
 			if (is_array($arrayoffiles) && !empty($arrayoffiles[0])) {
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+				$entityprefix = ($conf->entity != '1') ? $conf->entity.'/' : '';
 				$relativepath = 'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
 				$ecmfiles = new EcmFiles($db);
 				$ecmfiles->fetch(0, '', $relativepath);
@@ -2093,8 +2094,22 @@ if ($action == 'create') {
 							print '</td>';
 						}
 
+						$titlealt = '';
+						if (!empty($conf->accounting->enabled)) {
+							$accountingaccount = new AccountingAccount($db);
+							$resaccountingaccount = $accountingaccount->fetch(0, $line->type_fees_accountancy_code, 1);
+							//$titlealt .= '<span class="opacitymedium">';
+							$titlealt .= $langs->trans("AccountancyCode").': ';
+							if ($resaccountingaccount > 0) {
+								$titlealt .= $accountingaccount->account_number;
+							} else {
+								$titlealt .= $langs->trans("NotFound");
+							}
+							//$titlealt .= '</span>';
+						}
+
 						// Type of fee
-						print '<td class="center">';
+						print '<td class="center" title="'.dol_escape_htmltag($titlealt).'">';
 						$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 						print $labeltype;
 						print '</td>';
@@ -2108,8 +2123,10 @@ if ($action == 'create') {
 
 						// Comment
 						print '<td class="left">'.dol_nl2br($line->comments).'</td>';
+
 						// VAT rate
 						print '<td class="right">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
+
 						// Unit price HT
 						print '<td class="right">';
 						if (!empty($line->value_unit_ht)) {
@@ -2149,7 +2166,7 @@ if ($action == 'create') {
 									$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
 									if (empty($urlforhref)) {
 										$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
-										print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+										print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 									} else {
 										print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 									}
@@ -2250,7 +2267,7 @@ if ($action == 'create') {
 						}
 
 						print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
-						print '<script language="javascript">'."\n";
+						print '<script type="text/javascript">'."\n";
 						print '$(document).ready(function() {
         				        $( ".auploadnewfilenow" ).click(function() {
         				            jQuery(".truploadnewfilenow").toggle();
@@ -2405,7 +2422,7 @@ if ($action == 'create') {
 				}
 
 				print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
-				print '<script language="javascript">'."\n";
+				print '<script type="text/javascript">'."\n";
 				print '$(document).ready(function() {
 				        $( ".auploadnewfilenow" ).click(function() {
 							console.log("We click on toggle of auploadnewfilenow");
