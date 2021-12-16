@@ -43,6 +43,12 @@ $ref = GETPOST("ref", 'alpha');
  * View
  */
 
+$object = new Facture($db);
+$object->fetch($id, $ref);
+$object->fetch_thirdparty();
+
+$object->info($object->id);
+
 if (empty($object->id)) {
 	llxHeader();
 	$langs->load('errors');
@@ -56,12 +62,6 @@ $form = new Form($db);
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
-
-$object = new Facture($db);
-$object->fetch($id, $ref);
-$object->fetch_thirdparty();
-
-$object->info($object->id);
 
 $head = facture_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill');
