@@ -99,42 +99,69 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 
 if ($action == 'validatehistory') {
 	$error = 0;
+	$nbbinddone = 0;
+	$notpossible = 0;
+
 	$db->begin();
 
 	// Now make the binding
-	if ($db->type == 'pgsql') {
-		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det";
-		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
-		$sql1 .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t, ".MAIN_DB_PREFIX."accounting_account as accnt , ".MAIN_DB_PREFIX."accounting_system as syst";
-		$sql1 .= " WHERE ".MAIN_DB_PREFIX."expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity);
-		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code = accnt.account_number";
-		$sql1 .= " AND ".MAIN_DB_PREFIX."expensereport_det.fk_code_ventilation = 0";
-		if ($validatemonth && $validateyear) {
-			$sql1 .= dolSqlDateFilter('date', 0, $validatemonth, $validateyear);
-		}
-	} else {
-		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd, ".MAIN_DB_PREFIX."c_type_fees as t, ".MAIN_DB_PREFIX."accounting_account as accnt , ".MAIN_DB_PREFIX."accounting_system as syst";
-		$sql1 .= " SET erd.fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.((int) $conf->entity);
-		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code=accnt.account_number";
-		$sql1 .= " AND erd.fk_code_ventilation = 0";
-		if ($validatemonth && $validateyear) {
-			$sql1 .= dolSqlDateFilter('erd.date', 0, $validatemonth, $validateyear);
-		}
+	$sql1 = "SELECT erd.rowid, accnt.rowid as suggestedid";
+	$sql1 .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
+	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as t ON erd.fk_c_type_fees = t.id";
+	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as accnt ON t.accountancy_code = accnt.account_number AND accnt.active = 1 AND accnt.entity =".((int) $conf->entity);
+	$sql1 .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as syst ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND syst.active = 1,';
+	$sql1 .= " ".MAIN_DB_PREFIX."expensereport as er";
+	$sql1 .= " WHERE erd.fk_expensereport = er.rowid AND er.entity = ".((int) $conf->entity);
+	$sql1 .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";
+	if ($validatemonth && $validateyear) {
+		$sql1 .= dolSqlDateFilter('erd.date', 0, $validatemonth, $validateyear);
 	}
 
 	dol_syslog('htdocs/accountancy/expensereport/index.php');
 
-	$resql1 = $db->query($sql1);
-	if (!$resql1) {
+	$result = $db->query($sql1);
+	if (!$result) {
 		$error++;
-		$db->rollback();
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
-		$nbbinddone = $db->affected_rows($resql1);
+		$num_lines = $db->num_rows($result);
 
+		$i = 0;
+		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
+			$objp = $db->fetch_object($result);
+
+			$lineid = $objp->rowid;
+			$suggestedid = $objp->suggestedid;
+
+			if ($suggestedid > 0) {
+				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."expensereport_det";
+				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
+				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND rowid = ".((int) $lineid);
+
+				$resqlupdate = $db->query($sqlupdate);
+				if (!$resqlupdate) {
+					$error++;
+					setEventMessages($db->lasterror(), null, 'errors');
+					break;
+				} else {
+					$nbbinddone++;
+				}
+			} else {
+				$notpossible++;
+			}
+
+			$i++;
+		}
+		if ($num_lines > 10000) {
+			$notpossible += ($num_lines - 10000);
+		}
+	}
+
+	if ($error) {
+		$db->rollback();
+	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone', $nbbinddone, $notpossible), null, 'mesgs');
 	}
 }
 
@@ -157,7 +184,7 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);

@@ -1319,19 +1319,15 @@ class Mo extends CommonObject
 
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				/*if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
-				{
-					if (empty($line->fk_parent_line))
-					{
-						$parameters = array('line'=>$line, 'i'=>$i);
-						$action = '';
-						$result = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
+				$reshook = 0;
+				if (is_object($hookmanager)) {
+					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
+					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
-				else
-				{*/
+				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
-				//}
+				}
 
 				$i++;
 			}

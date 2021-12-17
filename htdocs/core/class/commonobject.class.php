@@ -4862,7 +4862,7 @@ abstract class CommonObject
 	 */
 	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
 	{
-		global $langs, $hookmanager, $conf, $form;
+		global $langs, $hookmanager, $conf, $form, $action;
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
@@ -4888,7 +4888,7 @@ abstract class CommonObject
 				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
 					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
-					$reshook = $hookmanager->executeHooks('printOriginObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
@@ -5308,7 +5308,7 @@ abstract class CommonObject
 							 // Set the public "share" key
 							$setsharekey = false;
 							if ($this->element == 'propal') {
-								$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL; // Replace this with 1 when feature to make online signature is ok
+								$useonlinesignature = 1; // Replace this with 1 when feature to make online signature is ok
 								if ($useonlinesignature) {
 									$setsharekey = true;
 								}

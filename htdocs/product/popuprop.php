@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('commande', 'propal', 'bills', 'other'));
+$langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
