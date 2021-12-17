@@ -65,11 +65,6 @@ class FactureFournisseurRec extends CommonInvoice
     public $picto = 'bill';
 
     /**
-     * @var int Entity
-     */
-    public $entity;
-
-    /**
      * {@inheritdoc}
      */
     protected $table_ref_field = 'titre';
@@ -78,53 +73,53 @@ class FactureFournisseurRec extends CommonInvoice
      * @var string The label of recurring invoice
      */
     public $titre;
-
+    public $ref_supplier;
+    public $entity;
     public $socid;
-    public $number;
-    public $date;
-    public $remise;
+    public $date_creation;
+    public $date_modification;
+    public $suspended;
     public $libelle;
-
-    /**
-     * @deprecated
-     * @see $total_ht
-     */
-    public $total;
-
-    /**
-     * @deprecated
-     * @see $total_tva
-     */
-    public $tva;
-
-    public $date_last_gen;
-    public $date_when;
-    public $nb_gen_done;
-    public $nb_gen_max;
-
+    public $amount;
+    public $remise;
+    public $vat_src_code;
+    public $localtax1;
+    public $localtax2;
+    public $total_ht;
+    public $total_tva;
+    public $total_ttc;
     public $user_author;
+    public $user_modif;
+    public $fk_projet;
+    public $fk_account;
 
-    /**
-     * @var int Frequency
-     */
-    public $frequency;
+    public $cond_reglement_code;
+    public $cond_reglement_id;
+    public $cond_reglement_doc;
+    public $cond_reglement;
+    public $mode_reglement_code;
+    public $mode_reglement_id;
+    public $mode_reglement;
+    public $date_lim_reglement;
 
-    /**
-     * @var string Unit frequency
-     */
-    public $unit_frequency;
+    public $note_public;
+    public $note_private;
+    public $model_pdf;
 
-    public $rang;
-    public $special_code;
+    public $fk_multicurrency;
+    public $mutlicurrency_code;
+    public $mutlicurrency_tx;
+    public $mutlicurrency_total_ht;
+    public $mutlicurrency_total_tva;
+    public $mutlicurrency_total_ttc;
 
     public $usenewprice = 0;
-
-    public $date_lim_reglement;
-    public $cond_reglement_code; // Code in llx_c_paiement
-    public $mode_reglement_code; // Code in llx_c_paiement
-
-    public $suspended; // status
-
+    public $frequency;
+    public $unit_frequency;
+    public $date_when;
+    public $date_last_gen;
+    public $nb_gen_done;
+    public $nb_gen_max;
     public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
     public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
@@ -229,7 +224,7 @@ class FactureFournisseurRec extends CommonInvoice
      *    Create a predefined supplier invoice
      *
      * @param User $user User object
-     * @param FactureFournisseur $facFournId
+     * @param int $facFournId
      * @param int $notrigger No trigger
      * @return        int                    <0 if KO, id of invoice created if OK
      */
@@ -297,7 +292,7 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ', generate_pdf';
             $sql .= ') VALUES (';
             $sql .= "'".$this->db->escape($this->titre)."'";
-            $sql .= "'".$this->db->escape($facfourn_src->ref_supplier)."'";
+            $sql .= ", '".(!empty($facfourn_src->ref_supplier) ? $facfourn_src->ref_supplier : '')."'";
             $sql .= ', ' . $conf->entity;
             $sql .= ', ' . (int) $facfourn_src->socid;
             $sql .= ", '".$this->db->idate($now)."'";
@@ -310,7 +305,7 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ', ' .(!empty($facfourn_src->fk_account) ? $facfourn_src->fk_account : 'NULL');
             $sql .= ', ' .($facfourn_src->cond_reglement_id > 0 ? (int) $facfourn_src->cond_reglement_id : 'NULL');        
             $sql .= ', ' .($facfourn_src->mode_reglement_id > 0 ? (int) $facfourn_src->mode_reglement_id : 'NULL');        
-            $sql .= ', ' .($facfourn_src->date_echeance > 0 ? (int) $facfourn_src->date_echeance : 'NULL');                         // date_lim_reglement 
+            $sql .= ", '".($facfourn_src->date_echeance > 0 ? $this->db->idate($facfourn_src->date_echeance) : 'NULL')."'";                         // date_lim_reglement
             $sql .= ', ' .(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : 'NULL');                  // Fields declarded on creation         
             $sql .= ', ' .(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : 'NULL');                    // Fields declarded on creation
             $sql .= ', ' .(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : 'NULL');                        // Fields declarded on creation
@@ -378,8 +373,8 @@ class FactureFournisseurRec extends CommonInvoice
                         if ($result2 > 0) {
                             // Extrafields
                             if (method_exists($facfourn_src->lines[$i], 'fetch_optionals')) {
-                                $facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->id);
-                                $objectline->array_options = $facsrc->lines[$i]->array_options;
+                                $facfourn_src->lines[$i]->fetch_optionals($facfourn_src->lines[$i]->id);
+                                $objectline->array_options = $facfourn_src->lines[$i]->array_options;
                             }
 
                             $result = $objectline->insertExtraFields();
@@ -512,88 +507,88 @@ class FactureFournisseurRec extends CommonInvoice
      */
     public function fetch($rowid, $ref = '', $ref_ext = '')
     {
-        $sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc';
-        $sql .= ', f.remise_percent, f.remise_absolue, f.remise';
-        $sql .= ', f.date_lim_reglement as dlr';
-        $sql .= ', f.note_private, f.note_public, f.fk_user_author';
-        $sql .= ', f.modelpdf as model_pdf';
-        $sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
-        $sql .= ', f.fk_account';
-        $sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
-        $sql .= ', f.generate_pdf';
-        $sql .= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
+        $sql = 'SELECT f.rowid, f.titre, f.ref_supplier, f.entity, f.fk_soc';
+        $sql .= ', f.datec, f.tms, f.suspended';
+        $sql .= ', f.libelle, f.amount, f.remise';
+        $sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
+        $sql .= ', f.total_tva, f.total_ht, f.total_ttc';
+        $sql .= ', f.fk_user_author, f.fk_user_modif';
+        $sql .= ', f.fk_projet, f.fk_account';
         $sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql .= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
-        //$sql.= ', el.fk_source';
-        $sql .= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
+        $sql .= ', f.date_lim_reglement';
+        $sql .= ', f.note_private, f.note_public, f.modelpdf';
+        $sql .= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
+        $sql .= ', f.usenewprice, f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
+        $sql .= ', f.generate_pdf';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_rec as f';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
-        //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
         $sql .= ' WHERE f.entity IN ('.getEntity('invoice').')';
         if ($rowid) {
-            $sql .= ' AND f.rowid='.((int) $rowid);
+            $sql .= ' AND f.rowid='. (int) $rowid;
         } elseif ($ref) {
             $sql .= " AND f.titre='".$this->db->escape($ref)."'";
         } else {
             $sql .= ' AND f.rowid = 0';
         }
-        /* This field are not used for template invoice
-         if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
-         */
 
         $result = $this->db->query($sql);
         if ($result) {
             if ($this->db->num_rows($result)) {
                 $obj = $this->db->fetch_object($result);
 
-                $this->id                     = $obj->rowid;
-                $this->entity                 = $obj->entity;
-                $this->titre                  = $obj->title; // deprecated
-                $this->title                  = $obj->title;
-                $this->ref                    = $obj->title;
-                $this->suspended              = $obj->suspended;
-                $this->remise_percent         = $obj->remise_percent;
-                $this->remise_absolue         = $obj->remise_absolue;
-                $this->remise                 = $obj->remise;
-                $this->total_ht               = $obj->total_ht;
-                $this->total_tva              = $obj->total_tva;
-                $this->total_localtax1        = $obj->localtax1;
-                $this->total_localtax2        = $obj->localtax2;
-                $this->total_ttc              = $obj->total_ttc;
-                $this->socid                  = $obj->fk_soc;
-                $this->date_lim_reglement     = $this->db->jdate($obj->dlr);
-                $this->mode_reglement_id      = $obj->fk_mode_reglement;
-                $this->mode_reglement_code    = $obj->mode_reglement_code;
-                $this->mode_reglement         = $obj->mode_reglement_libelle;
-                $this->cond_reglement_id      = $obj->fk_cond_reglement;
-                $this->cond_reglement_code    = $obj->cond_reglement_code;
-                $this->cond_reglement         = $obj->cond_reglement_libelle;
-                $this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
-                $this->fk_project             = $obj->fk_project;
-                $this->fk_account             = $obj->fk_account;
-                $this->note_private           = $obj->note_private;
-                $this->note_public            = $obj->note_public;
-                $this->user_author            = $obj->fk_user_author;
-                $this->modelpdf               = $obj->model_pdf; // deprecated
-                $this->model_pdf              = $obj->model_pdf;
-                //$this->special_code = $obj->special_code;
-                $this->frequency			  = $obj->frequency;
-                $this->unit_frequency = $obj->unit_frequency;
-                $this->date_when			  = $this->db->jdate($obj->date_when);
-                $this->date_last_gen = $this->db->jdate($obj->date_last_gen);
-                $this->nb_gen_done			  = $obj->nb_gen_done;
-                $this->nb_gen_max = $obj->nb_gen_max;
-                $this->usenewprice			  = $obj->usenewprice;
-                $this->auto_validate = $obj->auto_validate;
-                $this->generate_pdf = $obj->generate_pdf;
+                $this->id                       = $obj->rowid;
+                $this->titre                    = $obj->titre;
+                $this->ref_supplier             = $obj->ref_supplier;
+                $this->entity                   = $obj->entity;
+                $this->socid                    = $obj->fk_soc;
+                $this->date_creation            = $obj->datec;
+                $this->date_modification        = $obj->tms;
+                $this->suspended                = $obj->suspended;
+                $this->libelle                  = $obj->libelle;
+                $this->amount                   = $obj->amount;
+                $this->remise                   = $obj->remise;
+                $this->vat_src_code             = $obj->vat_src_code;
+                $this->total_localtax1          = $obj->localtax1;
+                $this->total_localtax2          = $obj->localtax2;
+                $this->total_ht                 = $obj->total_ht;
+                $this->total_tva                = $obj->total_tva;
+                $this->total_ttc                = $obj->total_ttc;
+                $this->user_author              = $obj->fk_user_author;
+                $this->user_modif               = $obj->fk_user_modif;
+                $this->fk_project               = $obj->fk_project;
+                $this->fk_account               = $obj->fk_account;
+                $this->mode_reglement_id        = $obj->fk_mode_reglement;
+                $this->mode_reglement_code      = $obj->mode_reglement_code;
+                $this->mode_reglement           = $obj->mode_reglement_libelle;
+                $this->cond_reglement_id        = $obj->fk_cond_reglement;
+                $this->cond_reglement_code      = $obj->cond_reglement_code;
+                $this->cond_reglement           = $obj->cond_reglement_libelle;
+                $this->cond_reglement_doc       = $obj->cond_reglement_libelle_doc;
+                $this->date_lim_reglement       = $this->db->jdate($obj->date_lim_reglement);
+                $this->note_private             = $obj->note_private;
+                $this->note_public              = $obj->note_public;
+                $this->model_pdf                = $obj->model_pdf;
 
                 // Multicurrency
                 $this->fk_multicurrency 		= $obj->fk_multicurrency;
-                $this->multicurrency_code = $obj->multicurrency_code;
+                $this->multicurrency_code       = $obj->multicurrency_code;
                 $this->multicurrency_tx 		= $obj->multicurrency_tx;
-                $this->multicurrency_total_ht = $obj->multicurrency_total_ht;
+                $this->multicurrency_total_ht   = $obj->multicurrency_total_ht;
                 $this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
                 $this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+
+                $this->usenewprice			    = $obj->usenewprice;
+                $this->frequency			    = $obj->frequency;
+                $this->unit_frequency           = $obj->unit_frequency;
+                $this->date_when			    = $this->db->jdate($obj->date_when);
+                $this->date_last_gen            = $this->db->jdate($obj->date_last_gen);
+                $this->nb_gen_done			    = $obj->nb_gen_done;
+                $this->nb_gen_max               = $obj->nb_gen_max;
+                $this->auto_validate            = $obj->auto_validate;
+                $this->generate_pdf             = $obj->generate_pdf;
+
 
                 if ($this->statut == self::STATUS_DRAFT) {
                     $this->brouillon = 1;
@@ -663,9 +658,9 @@ class FactureFournisseurRec extends CommonInvoice
         $sql .= ' l.fk_unit, l.fk_contract_line,';
         $sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
         $sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
-        $sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det_rec as l';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-        $sql .= ' WHERE l.fk_facture = '.((int) $this->id);
+        $sql .= ' WHERE l.fk_facture = '. (int) $this->id;
         $sql .= ' ORDER BY l.rang';
 
         dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);

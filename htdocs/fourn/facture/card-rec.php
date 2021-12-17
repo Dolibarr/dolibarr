@@ -219,7 +219,7 @@ if (empty($reshook)) {
 
             // Get first contract linked to invoice used to generate template (facid is id of source invoice)
             if (GETPOST('facid', 'int') > 0) {
-                $srcObject = new Facture($db);
+                $srcObject = new FactureFournisseur($db);
                 $srcObject->fetch(GETPOST('facid', 'int'));
 
                 $srcObject->fetchObjectLinked();
@@ -235,7 +235,7 @@ if (empty($reshook)) {
 
             $db->begin();
 
-            $oldinvoice = new Facture($db);
+            $oldinvoice = new FactureFournisseur($db);
             $oldinvoice->fetch(GETPOST('facid', 'int'));
 
             $result = $object->create($user, $oldinvoice->id);
@@ -1175,35 +1175,34 @@ if ($action == 'create') {
 
         $head = invoice_rec_prepare_head($object);
 
-        print dol_get_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill'); // Add a div
+        print dol_get_fiche_head($head, 'card', $langs->trans('RepeatableInvoice'), -1, 'bill'); // Add a div
 
         // Recurring invoice content
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans('BackToList').'</a>';
 
         $morehtmlref = '';
+        //TODO :  Droits
         if ($action != 'editref') {
-            $morehtmlref .= $form->editfieldkey($object->ref, 'ref', $object->ref, $object, $user->rights->facture->creer, '', '', 0, 2);
+            $morehtmlref .= $form->editfieldkey($object->titre, 'ref', $object->titre, $object, $user->rights->facture->creer, '', '', 0, 2);
         } else {
-            $morehtmlref .= $form->editfieldval('', 'ref', $object->ref, $object, $user->rights->facture->creer, 'string');
+            $morehtmlref .= $form->editfieldval('', 'ref', $object->titre, $object, $user->rights->facture->creer, 'string');
         }
-
         $morehtmlref .= '<div class="refidno">';
-        // Ref customer
-        //$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', 0, 1);
-        //$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', null, null, '', 1);
+
         // Thirdparty
         $morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+
         // Project
         if (!empty($conf->projet->enabled)) {
-            $langs->load("projects");
+            $langs->load('projects');
             $morehtmlref .= '<br>'.$langs->trans('Project').' ';
+            //TODO :  Droits
             if ($user->rights->facture->creer) {
                 if ($action != 'classify') {
                     $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
                 }
                 if ($action == 'classify') {
-                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                     $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                     $morehtmlref .= '<input type="hidden" name="action" value="classin">';
                     $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1215,11 +1214,11 @@ if ($action == 'create') {
                 }
             } else {
                 if (!empty($object->fk_project)) {
-                    $proj = new Project($db);
-                    $proj->fetch($object->fk_project);
-                    $morehtmlref .= ' : '.$proj->getNomUrl(1);
-                    if ($proj->title) {
-                        $morehtmlref .= ' - '.$proj->title;
+                    $project = new Project($db);
+                    $project->fetch($object->fk_project);
+                    $morehtmlref .= ' : '.$project->getNomUrl(1);
+                    if ($project->title) {
+                        $morehtmlref .= ' - '.$project->title;
                     }
                 } else {
                     $morehtmlref .= '';
@@ -1238,11 +1237,11 @@ if ($action == 'create') {
 
         print '<table class="border centpercent tableforfield">';
 
-        print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>';
+        print '<tr><td class="titlefield">'.$langs->trans('Author').'</td><td>';
         print $author->getNomUrl(-1);
         print "</td></tr>";
 
-        print '<tr><td>'.$langs->trans("AmountHT").'</td>';
+        print '<tr><td>'.$langs->trans('AmountHT').'</td>';
         print '<td>'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).'</td>';
         print '</tr>';
 
@@ -1273,7 +1272,7 @@ if ($action == 'create') {
         }
         print '</tr></table>';
         print '</td><td>';
-        if ($object->type != Facture::TYPE_CREDIT_NOTE) {
+        if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE) {
             if ($action == 'editconditions') {
                 $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
             } else {
@@ -1397,8 +1396,8 @@ if ($action == 'create') {
         print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
         print $langs->trans('BankAccount');
         print '<td>';
-        if (($action != 'editbankaccount') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT) {
-            print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+        if ($action != 'editbankaccount' && $user->rights->facture->creer && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
+            print '<td class="right"><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
         }
         print '</tr></table>';
         print '</td><td>';
@@ -1415,8 +1414,8 @@ if ($action == 'create') {
         print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
         print $langs->trans('Model');
         print '<td>';
-        if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT) {
-            print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
+        if ($action != 'editmodelpdf' && $user->rights->facture->creer && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
+            print '<td class="right"><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=editmodelpdf&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
         }
         print '</tr></table>';
         print '</td><td>';
@@ -1428,7 +1427,7 @@ if ($action == 'create') {
                 $list[] = str_replace(':', '|', $k).':'.$model;
             }
             $select = 'select;'.implode(',', $list);
-            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
+            print $form->editfieldval($langs->trans('Model'), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
         } else {
             print $object->model_pdf;
         }
