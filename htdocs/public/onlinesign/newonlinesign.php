@@ -21,6 +21,7 @@
  *     	\file       htdocs/public/onlinesign/newonlinesign.php
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
+ *					Example of URL: https://localhost/public/onlinesign/newonlinesign.php?ref=PR...
  */
 
 if (!defined('NOLOGIN')) {
@@ -352,10 +353,12 @@ if ($action == "dosign" && empty($cancel)) {
 	print '</div>';
 	print '<input type="button" class="button" id="signpropal" value="'.$langs->trans("Sign").'">';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+
+	// Add js code managed into the div #signature
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-	  $("#signature").jSignature({color:"#000",lineWidth:4});
+	  $("#signature").jSignature({ color:"#000", lineWidth:4, height: 180});
 
 	  $("#signature").on("change",function(){
 		$("#clearsignature").css("display","");
@@ -370,13 +373,13 @@ if ($action == "dosign" && empty($cancel)) {
 					data: {
 						"action" : "importSignature",
 						"signaturebase64" : signature,
-						"ref" : "'.$REF.'",
+						"ref" : "'.dol_escape_js($REF).'",
 						"mode" : "propale",
 					},
 					success: function(response) {
 						if(response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["SELF"].'?ref='.$ref.'&message=signed");
+							window.location.replace("'.$_SERVER["SELF"].'?ref='.urlencode($ref).'&message=signed");
 						}else{
 							console.error(response);
 						}
