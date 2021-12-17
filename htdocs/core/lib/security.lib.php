@@ -227,6 +227,10 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	if ($features == 'product') {
 		$features = 'produit';
 	}
+	if ($features == 'banque') {
+		$parentfortableentity = 'fk_account@bank_account';
+	}
+
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
