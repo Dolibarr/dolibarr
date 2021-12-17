@@ -7249,6 +7249,10 @@ div.clipboardCPValue.hidewithsize {
 		padding-left: 12px;
 		padding-right: 12px;
 	}
+
+	.a-mesure, .a-mesure-disabled {
+		text-align: center;
+	}
 }
 
 @media only screen and (max-width: 320px)

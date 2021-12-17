@@ -688,8 +688,8 @@ input[type=checkbox], input[type=radio] {
 input:-moz-placeholder { color:#ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
-fieldset { 
-	border: 1px solid #AAAAAA !important; 
+fieldset {
+	border: 1px solid #AAAAAA !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
 }
@@ -2959,8 +2959,8 @@ div.vmenu, td.vmenu {
 .searchform { padding-top: 10px; }
 .searchform .bordertransp { border: 0; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { 
-	white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; 
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
+	white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
 }
 span.vmenudisabled, font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
 a.vmenu:link, a.vmenu:visited {
@@ -2968,8 +2968,8 @@ a.vmenu:link, a.vmenu:visited {
 }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
-span.vsmenudisabled, font.vsmenudisabled { 
-	font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; 
+span.vsmenudisabled, font.vsmenudisabled {
+	font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -2978,7 +2978,7 @@ a.vsmenu:link, a.vsmenu:visited {
 span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
-	text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; 
+	text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none;
 }
 
 .helppresentcircle {
@@ -6997,7 +6997,7 @@ div.clipboardCPValue.hidewithsize {
 		border-right: 1px solid rgba(0,0,0,0.3);
 		top: auto;
 	}
-	
+
 	div#tmenu_tooltip {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 		display:none;
@@ -7069,6 +7069,17 @@ div.clipboardCPValue.hidewithsize {
 		border-left: unset;
 		boerder-right: unset;
 		padding-left: 5px;
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		display: block;
+		margin-bottom: 6px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		text-align: center;
 	}
 }
 
