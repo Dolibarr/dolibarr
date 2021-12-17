@@ -35,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if (!empty($conf->banque->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
+if (!empty($conf->margin->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
@@ -359,9 +362,14 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
+	
 	print '<td>'.$langs->trans('Company').'</td>';
 	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 		print '<td>'.$langs->trans('Entity').'</td>';
+	}
+	//Add Margin
+	if (!empty($conf->margin->enabled)) {
+		print '<td class="right">'.$langs->trans('Margin').'</td>';
 	}
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
@@ -377,6 +385,14 @@ if ($resql) {
 
 			$invoice = new Facture($db);
 			$invoice->fetch($objp->facid);
+
+			// Add Margin
+			if (!empty($conf->margin->enabled)) {
+				$formmargin = new FormMargin($db);
+				$marginInfo = array();
+				$invoice->fetch_lines();
+				$marginInfo = $formmargin->getMarginInfosArray($invoice);
+			}
 
 			$paiement = $invoice->getSommePaiement();
 			$creditnotes = $invoice->getSumCreditNotesUsed();
@@ -403,6 +419,12 @@ if ($resql) {
 				print $mc->label;
 				print '</td>';
 			}
+
+			// Add margin
+			if (!empty($conf->margin->enabled)) {
+				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
+			}
+
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($objp->total_ttc).'</span></td>';
 
