@@ -838,7 +838,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				// We should also exclude non expected HTML attributes and clean content of some attributes.
 				if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
 					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
-					$out = trim(dol_string_onlythesehtmlattributes($out));
+					$out = dol_string_onlythesehtmlattributes($out);
 				}
 
 				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
@@ -6458,7 +6458,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 
 /**
  *	Clean a string from some undesirable HTML tags.
- *  Note. Not as secured as dol_string_onlythesehtmltags().
+ *  Note: Complementary to dol_string_onlythesehtmltags().
+ *  This method is used for example when option MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES is set to 1.
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	array	$allowed_attributes		Array of tags not allowed
@@ -6469,10 +6470,11 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = array("allow", "allowfullscreen", "alt", "class", "contenteditable", "data-html", "frameborder", "height", "href", "id", "name", "src", "style", "target", "title", "width"))
 {
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
-		$stringtoclean = '<html><body>'.$stringtoclean.'</body></html>';
+		$stringtoclean = '<?xml encoding="UTF-8"><html><body>'.$stringtoclean.'</body></html>';
 
-		$dom = new DOMDocument();
+		$dom = new DOMDocument(null, 'UTF-8');
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+
 		if (is_object($dom)) {
 			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
 				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
@@ -6505,9 +6507,10 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$return = $dom->saveHTML();
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
 
-		$return = preg_replace('/^<html><body>/', '', $return);
-		$return = preg_replace('/<\/body><\/html>$/', '', $return);
-		return $return;
+		$return = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $return);
+		$return = preg_replace('/^'.preg_quote('<html><body>', '/').'/', '', $return);
+		$return = preg_replace('/'.preg_quote('</body></html>', '/').'$/', '', $return);
+		return trim($return);
 	} else {
 		return $stringtoclean;
 	}
