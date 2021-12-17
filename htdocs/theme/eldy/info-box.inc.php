@@ -150,13 +150,14 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	cursor: default;
 
 	font-size: 10px;
-	line-height: 22px;
-	padding: 0px 3px;
+	line-height: 1.5em;
+	padding: 4px 3px;
 	text-align: center;
 	opacity: 1;
 	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
 	transition: opacity 0.5s, visibility 0s 0.5s;
 }
+
 .box-flex-item.info-box-module.--disabled {
 	/* opacity: 0.6; */
 }
@@ -330,15 +331,15 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #b06080 !important;
 }
 /* Color for customer object */
-.infobox-propal:not(.pictotitle),
-.infobox-facture:not(.pictotitle),
-.infobox-commande:not(.pictotitle) {
+.infobox-propal:not(.pictotitle):not(.error),
+.infobox-facture:not(.pictotitle):not(.error),
+.infobox-commande:not(.pictotitle):not(.error) {
 	color: #65953d !important;
 }
 /* Color for vendor object */
-.infobox-supplier_proposal:not(.pictotitle),
-.infobox-invoice_supplier:not(.pictotitle),
-.infobox-order_supplier:not(.pictotitle){
+.infobox-supplier_proposal:not(.pictotitle):not(.error),
+.infobox-invoice_supplier:not(.pictotitle):not(.error),
+.infobox-order_supplier:not(.pictotitle):not(.error) {
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{

@@ -205,7 +205,9 @@ class doc_generic_user_odt extends ModelePDFUser
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -325,7 +327,7 @@ class doc_generic_user_odt extends ModelePDFUser
 
 				// Recipient name
 				if (!empty($usecontact)) {
-					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;

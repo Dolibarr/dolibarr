@@ -68,6 +68,7 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier'))) {
 	$colspan++; // With this, there is a column move button
 }
+
 //print $object->element;
 // Lines for extrafield
 $objectline = null;
@@ -673,15 +674,27 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		$("#prod_entry_mode_predef").click();
 		<?php
 	}
-	?>
 
+	if (in_array($this->table_element_line, array('propaldet', 'commandedet', 'facturedet'))) { ?>
+	$("#date_start, #date_end").focusout(function() {
+		let type = $(this).attr('type');
+		let mandatoryP = $(this).attr('mandatoryperiod');
+		if (type == 1 && mandatoryP == 1) {
+			if ($(this).val() == ''  && !$(this).hasClass('inputmandatory')) {
+				$(this).addClass('inputmandatory');
+			}else{
+				$(this).removeClass('inputmandatory');
+			}
+		}
+	});
+		<?php
+	} ?>
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
 		console.log("Call method change() after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
 
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
-
 		jQuery('#trlinefordates').show();
 
 		<?php
@@ -703,6 +716,26 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?> },
 					function(data) {
 						console.log("Load unit price end, we got value "+data.price_ht);
+
+						$('#date_start').removeAttr('type');
+						$('#date_end').removeAttr('type');
+						$('#date_start').attr('type', data.type);
+						$('#date_end').attr('type', data.type);
+
+						$('#date_start').removeAttr('mandatoryperiod');
+						$('#date_end').removeAttr('mandatoryperiod');
+						$('#date_start').attr('mandatoryperiod', data.mandatory_period);
+						$('#date_end').attr('mandatoryperiod', data.mandatory_period);
+
+						// service and we setted mandatory_period to true
+						if (data.mandatory_period == 1 && data.type == 1) {
+							jQuery('#date_start').addClass('inputmandatory');
+							jQuery('#date_end').addClass('inputmandatory');
+						}else{
+							jQuery('#date_start').removeClass('inputmandatory');
+							jQuery('#date_end').removeClass('inputmandatory');
+						}
+
 						jQuery("#price_ht").val(data.price_ht);
 						<?php
 						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
@@ -984,6 +1017,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 		jQuery("#fournprice_predef").hide();
 	}
+
 	function setforpredef() {
 		console.log("Call setforpredef. We hide some fields and show dates");
 		jQuery("#select_type").val(-1);

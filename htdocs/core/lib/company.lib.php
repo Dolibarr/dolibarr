@@ -274,6 +274,7 @@ function societe_prepare_head(Societe $object)
 
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
 		if (!empty($user->rights->partnership->read)) {
+			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
 			$head[$h][0] = DOL_URL_ROOT.'/societe/partnership.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("Partnership");
@@ -295,7 +296,7 @@ function societe_prepare_head(Societe $object)
 		// Notifications
 		if (!empty($conf->notification->enabled)) {
 			$nbNotif = 0;
-			// Enable caching of thirdrparty count notifications
+			// Enable caching of thirdparty count notifications
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 			$cachekey = 'count_notifications_thirdparty_'.$object->id;
 			$dataretrieved = dol_getcache($cachekey);
@@ -724,7 +725,7 @@ function getFormeJuridiqueLabel($code)
 function getCountriesInEEC()
 {
 	// List of all country codes that are in europe for european vat rules
-	// List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
+	// List found on https://ec.europa.eu/taxation_customs/territorial-status-eu-countries-and-certain-territories_en
 	global $conf, $db;
 	$country_code_in_EEC = array();
 
@@ -879,7 +880,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 					$i++;
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($result);
 		} else {
@@ -1295,7 +1296,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 			// Edit
 			if ($user->rights->societe->contact->creer) {
-				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 				print img_edit();
 				print '</a>';
 			}
@@ -1446,8 +1447,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", o.ref";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
-			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && $filterobj->table_element && $filterobj->element) {
+			if (!empty($filterobj->fields['ref'])) {
+				$sql .= ", o.ref";
+			} elseif (!empty($filterobj->fields['label'])) {
+				$sql .= ", o.label";
+			}
 		}
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -1482,7 +1487,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (is_array($filterobj->fields['ref']) || is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
 		}
 
@@ -1524,7 +1529,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (is_array($filterobj->fields['ref']) || is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
 				// Generic case
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
@@ -1725,7 +1730,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if ($donetodo) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
-				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&socid='.$filterobj->id.'&status=done">';
+				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
 			}
 			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
 			$tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
@@ -2003,7 +2008,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->code_client).'">'.$obj->code_client.'</td>';
 
 			print '<td class="center">';
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit&token='.newToken().'">';
 			print img_edit();
 			print '</a></td>';
 

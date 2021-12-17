@@ -349,9 +349,9 @@ foreach ($arrayoftype as $key => $val) {
 }
 print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
 if (empty($conf->use_javascript_ajax)) {
-	print '<input type="submit" class="button buttongen" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
+	print '<input type="submit" class="button buttongen button-save" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 } else {
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
         		console.log("Reload for "+jQuery("#objecttype").val());
@@ -456,7 +456,7 @@ if ($mode == 'graph') {
 	print '</div>';
 }
 print '<div class="divadvancedsearchfield">';
-print '<input type="submit" class="button buttongen" value="'.$langs->trans("Refresh").'">';
+print '<input type="submit" class="button buttongen button-save" value="'.$langs->trans("Refresh").'">';
 print '</div>';
 print '</div>';
 print '</form>';

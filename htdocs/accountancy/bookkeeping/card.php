@@ -433,7 +433,7 @@ if ($action == 'create') {
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="3">';
@@ -460,7 +460,7 @@ if ($action == 'create') {
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -487,7 +487,7 @@ if ($action == 'create') {
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -512,10 +512,10 @@ if ($action == 'create') {
 
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Doc type
 		if (!empty($object->doc_type)) {
@@ -591,7 +591,7 @@ if ($action == 'create') {
 		*/
 		print "</table>\n";
 
-		print '</div></div><!-ee-->';
+		print '</div>';
 
 		print dol_get_fiche_end();
 
@@ -618,9 +618,10 @@ if ($action == 'create') {
 			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
 			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
 
-			print '<table class="noborder centpercent">';
-
 			if (count($object->linesmvt) > 0) {
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder centpercent">';
+
 				$total_debit = 0;
 				$total_credit = 0;
 
@@ -670,8 +671,14 @@ if ($action == 'create') {
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
 					} else {
-						$accountingaccount->fetch(null, $line->numero_compte, true);
-						print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 0).'</td>';
+						$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
+						print '<td>';
+						if ($resultfetch > 0) {
+							$accountingaccount->getNomUrl(0, 1, 1, '', 0);
+						} else {
+							print $line->numero_compte.' <span class="warning">('.$langs->trans("AccountRemovedFromCurrentChartOfAccount").')</span>';
+						}
+						print '</td>';
 						print '<td>'.length_accounta($line->subledger_account);
 						if ($line->subledger_label) {
 							print ' - <span class="opacitymedium">'.$line->subledger_label.'</span>';
@@ -681,10 +688,14 @@ if ($action == 'create') {
 						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
 						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
 
-						print '<td class="center">';
+						print '<td class="center nowraponall">';
 						if (empty($line->date_export) && empty($line->date_validation)) {
 							print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
 							print img_edit('', 0, 'class="marginrightonly"');
+							print '</a> &nbsp;';
+						} else {
+							print '<a class="editfielda nohover cursornotallowed reposition disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
+							print img_edit($langs->trans("ForbiddenTransactionAlreadyExported"), 0, 'class="marginrightonly"');
 							print '</a> &nbsp;';
 						}
 
@@ -696,9 +707,13 @@ if ($action == 'create') {
 
 							print '<a href="' . $_SERVER["PHP_SELF"] . '?action=' . $actiontodelete . '&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
 							print img_delete();
+							print '</a>';
+						} else {
+							print '<a class="editfielda nohover cursornotallowed disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
+							print img_delete($langs->trans("ForbiddenTransactionAlreadyValidated"));
+							print '</a>';
 						}
 
-						print '</a>';
 						print '</td>';
 					}
 					print "</tr>\n";
@@ -733,11 +748,15 @@ if ($action == 'create') {
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
 						print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 						print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-						print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
+						print '<td>';
+						print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
+						print '</td>';
 						print '</tr>';
 					}
-					print '</table>';
 				}
+
+				print '</table>';
+				print '</div>';
 
 				if ($mode == '_tmp' && $action == '') {
 					print '<br>';
@@ -753,8 +772,9 @@ if ($action == 'create') {
 
 					print "</div>";
 				}
-				print '</form>';
 			}
+
+			print '</form>';
 		}
 	} else {
 		print load_fiche_titre($langs->trans("NoRecords"));

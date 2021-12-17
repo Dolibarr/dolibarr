@@ -201,6 +201,10 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Create supplier invoice object
 	 *
+	 * Note: soc_id = dolibarr_order_id
+	 *
+	 * Example: {'ref': 'auto', 'ref_supplier': '7985630', 'socid': 1, 'note': 'Inserted with Python', 'order_supplier': 1, 'date': '2021-07-28'}
+	 *
 	 * @param array $request_data Request datas
 	 *
 	 * @return int  ID of supplier invoice
@@ -524,6 +528,10 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Add a line to given supplier invoice
+	 *
+	 * Note: socid = dolibarr_order_id, pu_ht = net price, remise = discount
+	 *
+	 * Example: {'socid': 1, 'qty': 1, 'pu_ht': 21.0, 'tva_tx': 25.0, 'fk_product': '1189', 'product_type': 0, 'remise_percent': 1.0, 'vat_src_code': None}
 	 *
 	 * @param int   $id             Id of supplier invoice to update
 	 * @param array $request_data   supplier invoice line data

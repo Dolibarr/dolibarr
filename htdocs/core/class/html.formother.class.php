@@ -77,7 +77,10 @@ class FormOther
 		$out .= '<input type="radio" name="barcodemode" value="barcodeforproduct"> Scan a product barcode<br>';
 		$out .= '<input type="radio" name="barcodemode" value="barcodeforlotserial"> Scan a product lot or serial number<br>';
 
-		$out .= $langs->trans("QtyToAddAfterBarcodeScan").' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
+		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
+		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
+		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
 		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
@@ -542,7 +545,6 @@ class FormOther
 		$resql_usr = $this->db->query($sql_usr);
 		if ($resql_usr) {
 			$userstatic = new User($this->db);
-			$showstatus = 1;
 
 			while ($obj_usr = $this->db->fetch_object($resql_usr)) {
 				$userstatic->id = $obj_usr->rowid;
@@ -863,9 +865,9 @@ class FormOther
 		                  }
 				        },
 						function(color, context) { console.log("close"); },
-						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex);';
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
 				if ($setpropertyonselect) {
-					$out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.$setpropertyonselect.'\', \'#\'+hex);';
+					$out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', \'#\'+hex);';
 				}
 						$out .= '},
 						function(color, context) { console.log("cancel"); }
@@ -1195,7 +1197,7 @@ class FormOther
 
 		// Javascript code for dynamic actions
 		if (!empty($conf->use_javascript_ajax)) {
-			$selectboxlist .= '<script type="text/javascript" language="javascript">
+			$selectboxlist .= '<script type="text/javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
@@ -1382,12 +1384,13 @@ class FormOther
 
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || $selected == $obj->$keyfield) {
-						print '<option value="'.$obj->$keyfield.'" selected>';
+					if ($selected == $obj->rowid || $selected == $obj->{$keyfield}) {
+						print '<option value="'.$obj->{$keyfield}.'" selected>';
 					} else {
-						print '<option value="'.$obj->$keyfield.'">';
+						print '<option value="'.$obj->{$keyfield}.'">';
 					}
-					print $obj->$labelfield;
+					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != ($dictionarytable.$obj->{$labelfield}) ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
+					print $label;
 					print '</option>';
 					$i++;
 				}

@@ -89,7 +89,7 @@ if ($object->element == 'stock') {
 print '<td class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td>';
 print img_picto('', 'stock').$formproduct->selectWarehouses(GETPOST('id_entrepot_destination'), 'id_entrepot_destination', 'warehouseopen,warehouseinternal', 1);
 print '</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td colspan="3"><input type="text" name="nbpiece" size="10" value="'.dol_escape_htmltag(GETPOST("nbpiece")).'"></td>';
+print '<tr><td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td colspan="3"><input type="text" name="nbpiece" class="center maxwidth75" value="'.dol_escape_htmltag(GETPOST("nbpiece")).'"></td>';
 print '</tr>';
 
 // Serial / Eat-by date
@@ -124,13 +124,16 @@ if (!empty($conf->productbatch->enabled) &&
 }
 
 // Label
-$valformovementlabel = (GETPOST("label") ?GETPOST("label") : $langs->trans("MovementTransferStock", $productref));
+$valformovementlabel = (GETPOST("label") ? GETPOST("label") : $langs->trans("MovementTransferStock", $productref));
 print '<tr>';
 print '<td>'.$langs->trans("MovementLabel").'</td>';
 print '<td>';
-print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag($valformovementlabel).'">';
+print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 print '</td>';
-print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+print '<td>'.$langs->trans("InventoryCode").'</td>';
+print '<td>';
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+print '</td>';
 print '</tr>';
 
 print '</table>';

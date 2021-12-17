@@ -75,8 +75,13 @@ if ($complete == 'na' || $complete == -2) {
 	$complete = -1;
 }
 
-$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
-$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+if ($fulldayevent) {
+	$datep = dol_mktime('00', '00', 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+	$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+} else {
+	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -278,8 +283,20 @@ if (empty($reshook) && $action == 'add') {
 		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
 		$object->label = GETPOST('label', 'alphanohtml');
-		$object->fk_element = GETPOST("fk_element", 'int');
-		$object->elementtype = GETPOST("elementtype", 'alpha');
+
+		if (GETPOST("elementtype", 'alpha')) {
+			$modulecodetouseforpermissioncheck = GETPOST("elementtype", 'alpha');
+
+			$hasPermissionOnLinkedObject = 0;
+			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
+				$hasPermissionOnLinkedObject = 1;
+			}
+			if ($hasPermissionOnLinkedObject) {
+				$object->fk_element = GETPOST("fk_element", 'int');
+				$object->elementtype = GETPOST("elementtype", 'alpha');
+			}
+		}
+
 		if (!GETPOST('label')) {
 			if (GETPOST('actioncode', 'aZ09') == 'AC_RDV' && $contact->getFullName($langs)) {
 				$object->label = $langs->transnoentitiesnoconv("TaskRDVWith", $contact->getFullName($langs));
@@ -520,8 +537,20 @@ if (empty($reshook) && $action == 'update') {
 		}
 		$object->fk_project  = GETPOST("projectid", 'int');
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
-		$object->fk_element	 = GETPOST("fk_element", "int");
-		$object->elementtype = GETPOST("elementtype", "alphanohtml");
+
+		if (GETPOST("elementtype", 'alpha')) {
+			$modulecodetouseforpermissioncheck = GETPOST("elementtype", 'alpha');
+
+			$hasPermissionOnLinkedObject = 0;
+			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
+				$hasPermissionOnLinkedObject = 1;
+			}
+			if ($hasPermissionOnLinkedObject) {
+				$object->fk_element = GETPOST("fk_element", 'int');
+				$object->elementtype = GETPOST("elementtype", 'alpha');
+			}
+		}
+
 		if (!$datef && $percentage == 100) {
 			$error++; $donotclearsession = 1;
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
@@ -580,7 +609,7 @@ if (empty($reshook) && $action == 'update') {
 		}
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 		if ($ret < 0) {
 			$error++;
 		}
@@ -943,7 +972,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="donotclearsession" value="1">';
 	print '<input type="hidden" name="page_y" value="">';
 	if ($backtopage) {
-		print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
+		print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : dol_htmlentities($_SERVER["HTTP_REFERER"])).'">';
 	}
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 		print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
@@ -1046,7 +1075,7 @@ if ($action == 'create') {
 		print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 		print '</div>';
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{
@@ -1191,7 +1220,7 @@ if ($action == 'create') {
 		print img_picto('', 'project', 'class="pictofixedwidth"');
 		print $formproject->select_projects((empty($societe->id) ? '' : $societe->id), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 
-		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(empty($societe->id) ? '' : $societe->id).'&action=create&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
+		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(empty($societe->id) ? '' : $societe->id).'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
 		print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		$urloption = '?action=create&donotclearsession=1';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
@@ -1218,7 +1247,9 @@ if ($action == 'create') {
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
 		}
-		$tid = GETPOST("projecttaskid") ? GETPOST("projecttaskid") : '';
+
+		$tid = GETPOSTISSET("projecttaskid") ? GETPOST("projecttaskid", 'int') : (GETPOSTISSET("taskid") ? GETPOST("taskid", 'int') : '');
+
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
@@ -1226,12 +1257,28 @@ if ($action == 'create') {
 	// Object linked
 	if (!empty($origin) && !empty($originid)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
-		print '<td colspan="3">'.dolGetElementUrl($originid, $origin, 1).'</td></tr>';
-		print '<input type="hidden" name="fk_element" value="'.GETPOST('originid', 'int').'">';
-		print '<input type="hidden" name="elementtype" value="'.GETPOST('origin').'">';
-		print '<input type="hidden" name="originid" value="'.GETPOST('originid', 'int').'">';
-		print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
+
+		$hasPermissionOnLinkedObject = 0;
+		if ($user->hasRight($origin, 'read')) {
+			$hasPermissionOnLinkedObject = 1;
+		}
+		//var_dump('origin='.$origin.' originid='.$originid.' $hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
+
+		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
+			// We do not use link for object that already contains a hard coded field to make links with agenda events
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
+			print '<td colspan="3">';
+			if ($hasPermissionOnLinkedObject) {
+				print dolGetElementUrl($originid, $origin, 1);
+				print '<input type="hidden" name="fk_element" value="'.$originid.'">';
+				print '<input type="hidden" name="elementtype" value="'.$origin.'">';
+				print '<input type="hidden" name="originid" value="'.$originid.'">';
+				print '<input type="hidden" name="origin" value="'.$origin.'">';
+			} else {
+				print '<!-- no permission on object to link '.$origin.' id '.$originid.' -->';
+			}
+			print '</td></tr>';
+		}
 	}
 
 	$reg = array();
@@ -1258,7 +1305,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	print '</table>';
@@ -1429,7 +1476,7 @@ if ($id > 0) {
 		print '<input type="hidden" name="ref_ext" value="'.$object->ref_ext.'">';
 		print '<input type="hidden" name="page_y" value="">';
 		if ($backtopage) {
-			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
+			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : dol_htmlentities($_SERVER["HTTP_REFERER"])).'">';
 		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 			print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
@@ -1507,7 +1554,7 @@ if ($id > 0) {
 			print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 			print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 			print '</div>';
-			print '<script type="text/javascript" language="javascript">
+			print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{
@@ -1648,7 +1695,7 @@ if ($id > 0) {
 			print img_picto('', 'project', 'class="paddingrightonly"');
 			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500');
 			if ($numprojet == 0) {
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			}
 			print '</td></tr>';
 		}
@@ -1816,23 +1863,23 @@ if ($id > 0) {
 		$linkback = '';
 		// Link to other agenda views
 		$linkback .= img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
 		$linkback .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
 		$linkback .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
 		$linkback .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
 		$linkback .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
 
 		//$linkback.=$out;
 
@@ -1847,7 +1894,7 @@ if ($id > 0) {
 			if ($user->rights->agenda->allactions->create ||
 				(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1864,9 +1911,7 @@ if ($id > 0) {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= ' - '.$proj->title;
 					}
@@ -2128,7 +2173,7 @@ if ($id > 0) {
 		if ($action != 'edit') {
 			if ($user->rights->agenda->allactions->create ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}
@@ -2167,12 +2212,12 @@ if ($id > 0) {
 			$delallowed = $user->rights->agenda->myactions->create;
 
 
-			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
+			print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $langs->getDefaultLang());
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 	}
 }

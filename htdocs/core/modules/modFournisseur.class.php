@@ -34,7 +34,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modFournisseur extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -430,8 +429,8 @@ class modFournisseur extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"OrderId", 'f.ref'=>"Ref", 'f.ref_supplier'=>"RefSupplier", 'f.date_creation'=>"DateCreation", 'f.date_commande'=>"OrderDate", 'f.date_livraison'=>"DateDeliveryPlanned",
-			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.fk_statut'=>'Status', 'f.date_approve'=>'DateApprove', 'f.date_approve2'=>'DateApprove2',
-			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.fk_statut'=>'Status', 'f.date_valid'=>'DateValidation', 'f.date_approve'=>'DateApprove', 'f.date_approve2'=>'DateApprove2',
+			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'uv.login'=>'UserValidation', 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC",
 			'fd.total_tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
@@ -451,13 +450,13 @@ class modFournisseur extends DolibarrModules
 			's.rowid'=>"company", 's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.cp'=>'Text', 's.ville'=>'Text', 'c.code'=>'Text', 's.tel'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text', 's.tva_intra'=>'Text', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text",
 			'f.date_creation'=>"Date", 'f.date_commande'=>"Date", 'f.date_livraison'=>"Date", 'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric",
-			'f.fk_statut'=>'Status', 'f.date_approve'=>'Date', 'f.date_approve2'=>'Date', 'f.note_public'=>"Text", 'f.note_private'=>"Text", 'fd.description'=>"Text",
+			'f.fk_statut'=>'Status', 'f.date_valid'=>'Date', 'f.date_approve'=>'Date', 'f.date_approve2'=>'Date', 'f.note_public'=>"Text", 'f.note_private'=>"Text", 'fd.description'=>"Text",
 			'fd.tva_tx'=>"Numeric", 'fd.qty'=>"Numeric", 'fd.remise_percent'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.total_tva'=>"Numeric",
 			'fd.product_type'=>'Numeric', 'fd.ref'=>'Text', 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 's.phone'=>'company', 's.siren'=>'company',
-			's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company', 's.tva_intra'=>'company', 'ua1.login'=>'user',
+			's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company', 's.tva_intra'=>'company', 'uv.login'=>'user', 'ua1.login'=>'user',
 			'ua2.login'=>'user', 'fd.rowid'=>'order_line', 'fd.description'=>"order_line", 'fd.tva_tx'=>"order_line", 'fd.qty'=>"order_line", 'fd.remise_percent'=>"order_line",
 			'fd.total_ht'=>"order_line", 'fd.total_ttc'=>"order_line", 'fd.total_tva'=>"order_line", 'fd.product_type'=>'order_line', 'fd.ref'=>'order_line', 'fd.fk_product'=>'product',
 			'p.ref'=>'product', 'p.label'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
@@ -484,6 +483,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'commande_fournisseur as f';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON uv.rowid = f.fk_user_valid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua1 ON ua1.rowid = f.fk_user_approve';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua2 ON ua2.rowid = f.fk_user_approve2';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur_extrafields as extra ON f.rowid = extra.fk_object,';

@@ -81,7 +81,12 @@ $help_url = '';
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 
-if ($conf->accounting->enabled) {
+if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
+	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
+
+	print '<span class="opacitymedium">'.$langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices")."</span>\n";
+	print "<br>";
+} elseif ($conf->accounting->enabled) {
 	$step = 0;
 
 	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
@@ -95,7 +100,7 @@ if ($conf->accounting->enabled) {
 		$showtutorial .= ' '.$langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
-		$showtutorial .= '<script type="text/javascript" language="javascript">
+		$showtutorial .= '<script type="text/javascript">
 	    jQuery(document).ready(function() {
 	        jQuery("#show_hide").click(function () {
 	            jQuery( "#idfaq" ).toggle({
@@ -258,7 +263,8 @@ if ($conf->accounting->enabled) {
 } else {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
-	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span><br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
+	print "<br>";
 }
 
 // End of page

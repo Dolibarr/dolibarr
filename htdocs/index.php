@@ -26,7 +26,7 @@
  */
 
 
-define('CSRFCHECK_WITH_TOKEN', 1);	// We force need to use a token to login when making a POST
+define('CSRFCHECK_WITH_TOKEN', 1); // We force need to use a token to login when making a POST
 
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -337,6 +337,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			),
 		'supplier_proposal' =>
 			array(
+				'lang' => 'supplier_proposal',
 				'groupName' => 'SupplierProposals',
 				'globalStatsKey' => 'askprice',
 				'stats' =>
@@ -486,6 +487,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			}
 
 			if (!empty($boards)) {
+				if (!empty($groupElement['lang'])) {
+					$langs->load($groupElement['lang']);
+				}
 				$groupName = $langs->trans($groupElement['groupName']);
 				$groupKeyLowerCase = strtolower($groupKey);
 				$nbTotalForGroup = 0;
@@ -535,9 +539,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$openedDashBoard .= '<div class="info-box-line">';
 
 					if (!empty($board->labelShort)) {
-						$infoName = '<span title="'.$board->label.'">'.$board->labelShort.'</span>';
+						$infoName = '<span class="marginrightonly" title="'.$board->label.'">'.$board->labelShort.'</span>';
 					} else {
-						$infoName = $board->label;
+						$infoName = '<span class="marginrightonly">'.$board->label.'</span>';
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
@@ -557,9 +561,11 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$nbtodClass = '';
 					if ($board->nbtodo > 0) {
 						$nbtodClass = 'badge badge-info';
+					} else {
+						$nbtodClass = 'opacitymedium';
 					}
 
-					$openedDashBoard .= '			<a href="'.$board->url.'" class="info-box-text info-box-text-a">'.$infoName.' : <span class="'.$nbtodClass.' classfortooltip" title="'.$board->label.'" >'.$board->nbtodo.'</span>';
+					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">'.$infoName.'<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$board->label.'" >'.$board->nbtodo.'</span>';
 					if ($textLate) {
 						if ($board->url_late) {
 							$openedDashBoard .= '</a>';
@@ -572,7 +578,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$openedDashBoard .= '</a>'."\n";
 
 					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
-						$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text">'.$langs->trans('Total').' : '.price($board->total).'</a>';
+						$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text">'.$langs->trans('Total').' '.price($board->total).'</a>';
 					}
 					$openedDashBoard .= '</div>'."\n";
 				}

@@ -339,6 +339,7 @@ if ($action == 'replacesiteconfirm') {
 }
 
 $usercanedit = $user->rights->website->write;
+$permissiontoadd = $user->rights->website->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 $permissiontodelete = $user->rights->website->delete;
 
 
@@ -515,7 +516,7 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $userca
 				}
 
 				// Save page of content
-				$result = dolSavePageContent($filetpl, $object, $objectpage);
+				$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
 				if ($result) {
 					$nbreplacement++;
 					//var_dump($objectpage->content);exit;
@@ -1107,7 +1108,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 			}
 
 			// Save page of content
-			$result = dolSavePageContent($filetpl, $object, $objectpage);
+			$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
 			if ($result) {
 				setEventMessages($langs->trans("Saved"), null, 'mesgs');
 			} else {
@@ -1231,7 +1232,7 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 }
 
 // Delete page (from website page menu)
-if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
+if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete && !GETPOST('file_manager')) {
 	$error = 0;
 
 	$db->begin();
@@ -1850,7 +1851,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 
 
 		// Save page of content
-		$result = dolSavePageContent($filetpl, $object, $objectpage);
+		$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
 		if ($result) {
 			setEventMessages($langs->trans("Saved"), null, 'mesgs');
 
@@ -1945,7 +1946,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 				//var_dump($filetpl);
 				//exit;
 
-				dolSavePageContent($filetpl, $tmpwebsite, $resultpage);
+				dolSavePageContent($filetpl, $tmpwebsite, $resultpage, 1);
 
 				// Switch on the new page if web site of new page/container is same
 				if (empty($newwebsiteid) || $newwebsiteid == $object->id) {
@@ -2366,7 +2367,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 							}
 							if ($tmpshortlangcode != $shortlangcode) {
 								$xhtmllink = $domtree->createElement('xhtml:link', '');
-								$xhtmllink->setAttribute("rel", "alternante");
+								$xhtmllink->setAttribute("rel", "alternate");
 								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
 								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php'));
 								$url->appendChild($xhtmllink);
@@ -2645,7 +2646,7 @@ if (!GETPOST('hide_websitemenu')) {
 		$out .= ajax_combobox('website');
 
 		if (!empty($conf->use_javascript_ajax)) {
-			$out .= '<script language="javascript">';
+			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '	jQuery("#website").change(function () {';
 			$out .= '   	console.log("We select "+jQuery("#website option:selected").val());';
@@ -2668,7 +2669,7 @@ if (!GETPOST('hide_websitemenu')) {
 			print ' &nbsp; ';
 
 			//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcss" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "Properties" : "EditCss")).'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcss&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "Properties" : "EditCss")).'</a>';
 
 			$importlabel = $langs->trans("ImportSite");
 			$exportlabel = $langs->trans("ExportSite");
@@ -2825,7 +2826,7 @@ if (!GETPOST('hide_websitemenu')) {
 				$urltocreatenewpage = $_SERVER["PHP_SELF"].'?action=createcontainer&website='.$website->ref;
 
 				if (!empty($conf->use_javascript_ajax)) {
-					$out .= '<script language="javascript">';
+					$out .= '<script type="text/javascript">';
 					$out .= 'jQuery(document).ready(function () {';
 					$out .= '	jQuery("#pageid").change(function () {';
 					$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
@@ -2964,10 +2965,10 @@ if (!GETPOST('hide_websitemenu')) {
 				print ' &nbsp; ';
 
 				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "Properties" : "EditPageMeta")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "Properties" : "EditPageMeta")).'</a>';
 
 				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "HTML" : "EditHTMLSource")).'</a>';
 
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
@@ -3123,7 +3124,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>'; // end websitetools
 
 		print '<span class="websitehelp">';
-		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
+		if ($action == 'editsource' || $action == 'editcontent' || GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
 			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
 			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
@@ -3143,7 +3144,7 @@ if (!GETPOST('hide_websitemenu')) {
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone') {
 			// Adding jquery code to change on the fly url of preview ext
 			if (!empty($conf->use_javascript_ajax)) {
-				print '<script type="text/javascript" language="javascript">
+				print '<script type="text/javascript">
                     jQuery(document).ready(function() {
                 		jQuery("#websiteinputurl").keyup(function() {
                             console.log("Website external url modified "+jQuery("#previewsiteurl").val());
@@ -3825,7 +3826,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</td><td>';
 	if ($action != 'createcontainer') {
 		// Has translation pages
-		$sql = 'SELECT rowid, lang from '.MAIN_DB_PREFIX.'website_page where fk_page = '.((int) $objectpage->id);
+		$sql = "SELECT rowid, lang from ".MAIN_DB_PREFIX."website_page where fk_page = ".((int) $objectpage->id);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num_rows = $db->num_rows($resql);
@@ -3983,7 +3984,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	}
 
 	if ($action == 'createcontainer') {
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 			jQuery(document).ready(function() {
 				var disableautofillofalias = 0;
 				jQuery("#WEBSITE_TITLE").keyup(function() {
@@ -4341,7 +4342,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					// Edit properties, HTML sources, status
 					print '<td class="tdwebsitesearchresult right nowraponall">';
 					$disabled = '';
-					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&token='.newToken().'&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
@@ -4349,7 +4350,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<a class="editfielda marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
 
 					$disabled = '';
-					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&token='.newToken().'&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
@@ -4408,7 +4409,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					// Container url and label
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].$param;
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&token='.newToken().'&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 
 					// Language

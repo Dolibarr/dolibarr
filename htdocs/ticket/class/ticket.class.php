@@ -263,7 +263,7 @@ class Ticket extends CommonObject
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty", 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
 		'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-1, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>-1, 'enabled'=>1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToProject"),
-		'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),
+		//'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),	// what is this ?
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
 		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
 		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1, 'css'=>'tdoverflowmax125'),
@@ -271,7 +271,7 @@ class Ticket extends CommonObject
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
 		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
-		'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>1),
+		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'$conf->global->TICKET_ENABLE_RESOLUTION', 'position'=>550, 'notnull'=>1),
 		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
@@ -492,6 +492,13 @@ class Ticket extends CommonObject
 				}
 			}
 
+			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
+				// add creator as contributor
+				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
+					$error++;
+				}
+			}
+
 			//Update extrafield
 			if (!$error) {
 				$result = $this->insertExtraFields();
@@ -589,6 +596,7 @@ class Ticket extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
 				$this->track_id = $obj->track_id;
 				$this->fk_soc = $obj->fk_soc;
@@ -704,7 +712,7 @@ class Ticket extends CommonObject
 		if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
 		}
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
@@ -728,7 +736,7 @@ class Ticket extends CommonObject
 				}
 			}
 		}
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		} elseif ($user->socid) {
 			$sql .= " AND t.fk_soc = ".((int) $user->socid);
@@ -1102,7 +1110,7 @@ class Ticket extends CommonObject
 		$this->status = 0;
 		$this->resolution = '1';
 		$this->progress = '10';
-		$this->timing = '30';
+		//$this->timing = '30';
 		$this->type_code = 'TYPECODE';
 		$this->category_code = 'CATEGORYCODE';
 		$this->severity_code = 'SEVERITYCODE';
@@ -1257,12 +1265,12 @@ class Ticket extends CommonObject
 	/**
 	 * Return status label of object
 	 *
-	 * @param      int		$mode     	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @return     string    			Label
+	 * @param      	int		$mode     	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return     	string    			Label
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->libStatut($this->fk_statut, $mode);
+		return $this->libStatut($this->fk_statut, $mode, 0, $this->progress);
 	}
 
 
@@ -1273,9 +1281,10 @@ class Ticket extends CommonObject
 	 *    @param      string 	$status      Id status
 	 *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    @param	  int		$notooltip	 1=No tooltip
+	 *    @param	  int		$progress	 Progression (0 to 100)
 	 *    @return     string     			 Label
 	 */
-	public function LibStatut($status, $mode = 0, $notooltip = 0)
+	public function LibStatut($status, $mode = 0, $notooltip = 0, $progress = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1300,8 +1309,8 @@ class Ticket extends CommonObject
 		} elseif ($status == self::STATUS_CLOSED) {
 			$statusType = 'status6';
 		} else {
-			$labelStatus = $langs->trans('Unknown');
-			$labelStatusShort = $langs->trans('Unknown');
+			$labelStatus = 'Unknown';
+			$labelStatusShort = 'Unknown';
 			$statusType = 'status0';
 			$mode = 0;
 		}
@@ -1311,7 +1320,15 @@ class Ticket extends CommonObject
 			$params = array('tooltip' => 'no');
 		}
 
-		return dolGetStatus($langs->trans($labelStatus), $langs->trans($labelStatusShort), '', $statusType, $mode, '', $params);
+		$labelStatus = $langs->transnoentitiesnoconv($labelStatus);
+		$labelStatusShort = $langs->transnoentitiesnoconv($labelStatusShort);
+
+		if ($status == self::STATUS_IN_PROGRESS && $progress > 0) {
+			$labelStatus .= ' ('.round($progress).'%)';
+			$labelStatusShort .= ' ('.round($progress).'%)';
+		}
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
 
 
@@ -1344,7 +1361,7 @@ class Ticket extends CommonObject
 		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
 		$label .= '<b>'.$langs->trans('Subject').':</b> '.$this->subject;
 
-		$url = dol_buildpath('/ticket/card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1676,7 +1693,7 @@ class Ticket extends CommonObject
 		$actioncomm->userassigned = array($user->id);
 		$actioncomm->userownerid = $user->id;
 		$actioncomm->datep = $now;
-		$actioncomm->percentage = 100;
+		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
 		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_element = $this->id;
 
@@ -2850,7 +2867,7 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
-		if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$user->socid) {
+		if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -2916,7 +2933,7 @@ class Ticket extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";

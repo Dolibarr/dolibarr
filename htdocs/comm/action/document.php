@@ -140,18 +140,18 @@ if ($object->id > 0) {
 	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
 	$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-	$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
+	$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list">'.$langs->trans("BackToList").'</a>';
 
 	// Link to other agenda views
 	$out = '';
 	$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
 	$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="hideonsmartphone pictoactionview"');
-	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
 	$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
 	$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+	$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
 	$linkback .= $out;
 
@@ -166,9 +166,7 @@ if ($object->id > 0) {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			$morehtmlref .= $proj->ref;
-			$morehtmlref .= '</a>';
+			$morehtmlref .= ' : '.$proj->getNomUrl(1);
 			if ($proj->title) {
 				$morehtmlref .= ' - '.$proj->title;
 			}
@@ -201,9 +199,9 @@ if ($object->id > 0) {
 	// Date start
 	print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 	if (!$object->fulldayevent) {
-		print dol_print_date($object->datep, 'dayhour');
+		print dol_print_date($object->datep, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datep, 'day');
+		print dol_print_date($object->datep, 'day', 'tzuser');
 	}
 	if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));
@@ -214,9 +212,9 @@ if ($object->id > 0) {
 	// Date end
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 	if (!$object->fulldayevent) {
-		print dol_print_date($object->datef, 'dayhour');
+		print dol_print_date($object->datef, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datef, 'day');
+		print dol_print_date($object->datef, 'day', 'tzuser');
 	}
 	if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));

@@ -408,6 +408,7 @@ class pdf_cyan extends ModelePDFPropales
 						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
 
 						$tab_top = $nexY + 6;
+						$height_incoterms += 4;
 					}
 				}
 
@@ -537,8 +538,8 @@ class pdf_cyan extends ModelePDFPropales
 						}
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-					} else // No pagebreak
-					{
+					} else {
+						// No pagebreak
 						$pdf->commitTransaction();
 						$posyafter = $pdf->GetY();
 						$height_note = $posyafter - $tab_top;
@@ -1731,7 +1732,7 @@ class pdf_cyan extends ModelePDFPropales
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1739,7 +1740,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$mode =  'target';
+			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
 
 			// Show recipient

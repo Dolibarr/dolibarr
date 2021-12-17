@@ -115,6 +115,8 @@ if (!$action) {
 
 if ($source == 'organizedeventregistration') {
 	// Finding the Attendee
+	$attendee = new ConferenceOrBoothAttendee($db);
+
 	$invoiceid = GETPOST('ref', 'int');
 	$invoice = new Facture($db);
 
@@ -123,14 +125,28 @@ if ($source == 'organizedeventregistration') {
 	if ($resultinvoice <= 0) {
 		setEventMessages(null, $invoice->errors, "errors");
 	} else {
+		/*
+		$attendeeid = 0;
+
 		$invoice->fetchObjectLinked();
 		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
 
 		if (is_array($linkedAttendees)) {
 			$linkedAttendees = array_values($linkedAttendees);
+			$attendeeid = $linkedAttendees[0];
+		}*/
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+		$sql .= " WHERE fk_invoice = ".((int) $invoiceid);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$attendeeid = $obj->rowid;
+			}
+		}
 
-			$attendee = new ConferenceOrBoothAttendee($db);
-			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+		if ($attendeeid > 0) {
+			$resultattendee = $attendee->fetch($attendeeid);
 
 			if ($resultattendee <= 0) {
 				setEventMessages(null, $attendee->errors, "errors");
@@ -168,11 +184,12 @@ if ($source == 'organizedeventregistration') {
 }
 
 
-$paymentmethod = GETPOST('paymentmethod', 'alphanohtml') ?GETPOST('paymentmethod', 'alphanohtml') : ''; // Empty in most cases. Defined when a payment mode is forced
+$paymentmethod = GETPOST('paymentmethod', 'alphanohtml') ? GETPOST('paymentmethod', 'alphanohtml') : ''; // Empty in most cases. Defined when a payment mode is forced
 $validpaymentmethod = array();
 
 // Detect $paymentmethod
 foreach ($_POST as $key => $val) {
+	$reg = array();
 	if (preg_match('/^dopayment_(.*)$/', $key, $reg)) {
 		$paymentmethod = $reg[1];
 		break;
@@ -464,7 +481,7 @@ if ($action == 'dopayment') {
 
 // Called when choosing Stripe mode.
 // When using the Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
-// When using the PaymentIntent API architecture, the Stripe customer is already created when creating PaymentIntent when showing payment page and the payment is already ok.
+// When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
 if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$amountstripe = $amount;
 
@@ -751,9 +768,23 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 			setEventMessages($paymentintent->status, null, 'errors');
 			$action = '';
 		} else {
-			// TODO We can alse record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
+			// TODO We can also record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
 			// Note that with other old Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
 			//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
+
+			// Get here amount and currency used for payment and force value into $amount and $currency so the real amount is saved into session instead
+			// of the amount and currency retreived from the POST.
+			if (!empty($paymentintent->currency) && !empty($paymentintent->amount)) {
+				$currency = strtoupper($paymentintent->currency);
+				$amount = $paymentintent->amount;
+
+				// Correct the amount according to unit of currency
+				// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
+				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (!in_array($currency, $arrayzerounitcurrency)) {
+					$amount = $amount / 100;
+				}
+			}
 		}
 	}
 
@@ -937,7 +968,9 @@ if (!$source) {
 
 	// Creditor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
@@ -1009,13 +1042,17 @@ if ($source == 'order') {
 
 	// Creditor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow2"><b>'.$order->thirdparty->name.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$order->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
@@ -1133,13 +1170,17 @@ if ($source == 'invoice') {
 
 	// Creditor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow2"><b>'.$invoice->thirdparty->name.'</b>';
+	print '</td><td class="CTableRow2">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print '<b>'.$invoice->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
@@ -1299,7 +1340,7 @@ if ($source == 'contractline') {
 
 	$qty = 1;
 	if (GETPOST('qty')) {
-		$qty = GETPOST('qty');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 	}
 
 	// Creditor
@@ -1434,9 +1475,12 @@ if ($source == 'member' || $source == 'membersubscription') {
 	$langs->load("members");
 
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 	$member = new Adherent($db);
+	$adht = new AdherentType($db);
+
 	$result = $member->fetch('', $ref);
 	if ($result <= 0) {
 		$mesg = $member->error;
@@ -1444,6 +1488,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 	} else {
 		$member->fetch_thirdparty();
 		$subscription = new Subscription($db);
+
+		$adht->fetch($member->typeid);
 	}
 	$object = $member;
 
@@ -1452,6 +1498,11 @@ if ($source == 'member' || $source == 'membersubscription') {
 		if (GETPOST("amount", 'alpha')) {
 			$amount = GETPOST("amount", 'alpha');
 		}
+		// If amount still not defined, we take amount of the type of member
+		if (empty($amount)) {
+			$amount = $adht->amount;
+		}
+
 		$amount = price2num($amount, 'MT');
 	}
 
@@ -1565,7 +1616,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			print ' ('.$langs->trans("ToComplete");
 		}
 		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
+			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 		}
 		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 			print ')';
@@ -1726,7 +1777,7 @@ if ($source == 'donation') {
 			print ' ('.$langs->trans("ToComplete");
 		}
 		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
+			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 		}
 		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 			print ')';
@@ -1840,7 +1891,7 @@ if ($source == 'organizedeventregistration') {
 	print '</td></tr>'."\n";
 
 	if (! is_object($attendee->project)) {
-		$text = 'ErrorProjectotFound';
+		$text = 'ErrorProjectNotFound';
 	} else {
 		$text = $langs->trans("PaymentEvent").' - '.$attendee->project->title;
 	}
@@ -2260,7 +2311,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
 
 			// Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
-			print '<script type="text/javascript" language="javascript">'."\n";
+			print '<script type="text/javascript">'."\n";
 
 			if (!empty($conf->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$amountstripe = $amount;

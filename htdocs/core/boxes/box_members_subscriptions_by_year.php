@@ -67,7 +67,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !($user->rights->adherent->lire);
+		$this->hidden = !(!empty($conf->adherent->enabled) && $user->rights->adherent->lire);
 	}
 
 	/**
@@ -111,7 +111,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 				$i = 0;
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
-					$year = dol_print_date($this->db->jdate($objp->dateh), "%Y", 'gmt');
+					$year = dol_print_date($this->db->jdate($objp->dateh), "%Y");
 					$Total[$year] = (isset($Total[$year]) ? $Total[$year] : 0) + $objp->subscription;
 					$Number[$year] = (isset($Number[$year]) ? $Number[$year] : 0) + 1;
 					$tot += $objp->subscription;

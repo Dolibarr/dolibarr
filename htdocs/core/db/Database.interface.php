@@ -178,6 +178,14 @@ interface Database
 	public function escape($stringtoencode);
 
 	/**
+	 * Escape a string to insert data
+	 *
+	 * @param   string $stringtoencode String to escape
+	 * @return  string                        String escaped
+	 */
+	public function escapeunderscore($stringtoencode);
+
+	/**
 	 * Sanitize a string for SQL forging
 	 *
 	 * @param   string $stringtosanitize 		String to escape

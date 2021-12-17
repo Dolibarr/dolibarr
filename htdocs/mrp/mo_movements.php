@@ -328,7 +328,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -468,7 +468,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= natural_search('e.rowid', $search_warehouse, 2);
 	}
 	if (!empty($search_user)) {
-		$sql .= natural_search('u.login', $search_user);
+		$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 	}
 	if (!empty($search_batch)) {
 		$sql .= natural_search('m.batch', $search_batch);

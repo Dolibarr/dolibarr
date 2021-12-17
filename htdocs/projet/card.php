@@ -224,7 +224,7 @@ if (empty($reshook)) {
 				$db->commit();
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--|__ID__/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 					$backtopage = $backtopage.'&projectid='.$object->id; // Old method
 					header("Location: ".$backtopage);
 					exit;
@@ -287,7 +287,7 @@ if (empty($reshook)) {
 			$object->usage_organize_event = (GETPOST('usage_organize_event', 'alpha') == 'on' ? 1 : 0);
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -536,12 +536,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	// Ref
 	$suggestedref = (GETPOST("ref") ? GETPOST("ref") : $defaultref);
-	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="25" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td class><input class="maxwidth150onsmartphone" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
 	print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("ProjectLabel").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("ProjectLabel").'</span></td><td><input class="width500 maxwidth150onsmartphone" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
@@ -712,7 +712,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '</form>';
 
 	// Change probability from status
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
         	{
@@ -926,8 +926,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<td>';
 			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle', 0, 1);
 			print '<div id="divtocloseproject" class="inline-block valign" style="display: none;"> &nbsp; &nbsp; ';
-			print '<input type="checkbox" id="inputcloseproject" name="closeproject" /> ';
-			print $langs->trans("AlsoCloseAProject");
+			print '<input type="checkbox" id="inputcloseproject" name="closeproject" />';
+			print '<label for="inputcloseproject">'.$langs->trans("AlsoCloseAProject").'</label>';
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -948,11 +948,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 		print $form->selectDate($object->date_start ? $object->date_start : -1, 'projectstart', 0, 0, 0, '', 1, 0);
-		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
+		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" id="reportdate" name="reportdate" value="yes" ';
 		if ($comefromclone) {
 			print ' checked ';
 		}
-		print '/> '.$langs->trans("ProjectReportDate");
+		print '/><label for="reportdate">'.$langs->trans("ProjectReportDate").'</label>';
 		print '</td></tr>';
 
 		// Date end
@@ -1006,13 +1006,13 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		$morehtmlref .= dol_escape_htmltag($object->title);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : ';
-		if ($object->thirdparty->id > 0) {
+		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 			$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -1129,10 +1129,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Description
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -1148,7 +1147,6 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -1172,7 +1170,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		}
 
 		print '<!-- Javascript to manage opportunity status change -->';
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
             jQuery(document).ready(function() {
             	function change_percent()
             	{
@@ -1254,7 +1252,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
 				}
@@ -1263,7 +1261,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Validate
 			if ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
 				}
@@ -1281,7 +1279,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Reopen
 			if ($object->statut == Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
 				}
@@ -1343,7 +1341,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Delete
 			if ($user->rights->projet->supprimer || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer)) {
 				if ($userDelete > 0 || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer)) {
-					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
 				}
@@ -1372,20 +1370,18 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.DOL_URL_ROOT.'/projet/info.php?id='.$object->id.'">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/projet/info.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'project', 0, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, 'project', 0, 1, '', $MAXEVENT, '', $morehtmlcenter);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 	// Presend form

@@ -645,7 +645,7 @@ if ($sql_select) {
 	print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
+	print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</span></td></tr>';
 
 	print "</table>";
 } else {
@@ -653,7 +653,7 @@ if ($sql_select) {
 
 	print '<table class="liste centpercent">'."\n";
 
-	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span></td></tr>';
 
 	print "</table>";
 }

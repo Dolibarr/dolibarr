@@ -67,7 +67,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -101,20 +101,18 @@ if (empty($conf->eventorganization->enabled)) {
 
 $tmpthirdparty = new Societe($db);
 
-$listOfConferences = $listOfBooths = '<tr><td>'.$langs->trans('Label').'</td>
-										  <td>'.$langs->trans('Type').'</td>
-										  <td>'.$langs->trans('DateStart').'</td>
-									      <td>'.$langs->trans('DateEnd').'</td>
-									      <td>'.$langs->trans('Thirdparty').'</td>
-									      <td>'.$langs->trans('Note').'</td></tr>';
+$listOfConferences = '<tr><td>'.$langs->trans('Label').'</td>';
+$listOfConferences .= '<td>'.$langs->trans('Type').'</td>';
+$listOfConferences .= '<td>'.$langs->trans('ThirdParty').'</td>';
+$listOfConferences .= '<td>'.$langs->trans('Note').'</td></tr>';
 
-$sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle
+$sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle as label
 		FROM ".MAIN_DB_PREFIX."actioncomm as a
 		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
 		WHERE a.status<2";
 
 $sqlforconf = $sql." AND ca.module='conference@eventorganization'";
-$sqlforbooth = $sql." AND ca.module='booth@eventorganization'";
+//$sqlforbooth = $sql." AND ca.module='booth@eventorganization'";
 
 // For conferences
 $result = $db->query($sqlforconf);
@@ -132,12 +130,13 @@ while ($i < $db->num_rows($result)) {
 		$thirdpartyname = '';
 	}
 
-	$listOfConferences .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
+	$listOfConferences .= '<tr><td>'.$obj->label.'</td><td>'.$obj->label.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
 	$listOfConferences .= '<td><button type="submit" name="vote" value="'.$obj->id.'" class="button">'.$langs->trans("Vote").'</button></td></tr>';
 	$i++;
 }
 
 // For booths
+/*
 $result = $db->query($sqlforbooth);
 $i = 0;
 while ($i < $db->num_rows($result)) {
@@ -157,6 +156,7 @@ while ($i < $db->num_rows($result)) {
 	$listOfBooths .= '<td><button type="submit" name="vote" value="'.$obj->id.'" class="button">'.$langs->trans("Vote").'</button></td></tr>';
 	$i++;
 }
+*/
 
 // Get vote result
 $idvote = GETPOST("vote");
@@ -275,19 +275,20 @@ $text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'
 print $text;
 print '</table>'."\n";
 
-print dol_get_fiche_head('');
 
-print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
+print '<table cellpadding="10" id="conferences" border="1" class="center">'."\n";
 print '<th colspan="7">'.$langs->trans("ListOfSuggestedConferences").'</th>';
-print $listOfConferences.'</br>';
+print $listOfConferences.'<br>';
 print '</table>'."\n";
 
-print '</br>';
+/*
+print '<br>';
 
 print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
 print '<th colspan="7">'.$langs->trans("ListOfSuggestedBooths").'</th>';
-print $listOfBooths.'</br>';
+print $listOfBooths.'<br>';
 print '</table>'."\n";
+*/
 
 $object = null;
 

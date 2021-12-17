@@ -208,8 +208,6 @@ class pdf_standard extends ModelePDFStock
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
-		$nblines = count($object->lines);
-
 		if ($conf->stock->dir_output) {
 			// Definition of $dir and $file
 			if ($object->specimen) {
@@ -295,14 +293,10 @@ class pdf_standard extends ModelePDFStock
 				$tab_top = 80 + $top_shift;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 
-				$tab_height = 130;
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 
-				/* ************************************************************************** */
-				/*                                                                            */
-				/* Show list of product in warehouse                                          */
-				/*                                                                            */
-				/* ************************************************************************** */
+				// Show list of product in warehouse                                          */
 
 				$totalunit = 0;
 				$totalvalue = $totalvaluesell = 0;

@@ -152,8 +152,6 @@ if (empty($reshook)) {
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -202,7 +200,7 @@ if (!empty($withproject)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire) {
+	if (empty($user->rights->projet->all->lire)) {
 		$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 		$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -284,7 +282,6 @@ if (!empty($withproject)) {
 	print '</div>';
 
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent">';
@@ -343,7 +340,6 @@ if (!empty($withproject)) {
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -527,7 +523,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 				}
 				print '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$redirection.'">';
-				print '<a href="'.$redirection.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
+				print '<a href="'.$redirection.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
 				print '</td>';
 				print '</tr>';
 			}
@@ -558,16 +554,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=presend&mode=init#formmailbeforetitle');
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
 
-			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=edit', '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=edit&token='.newToken().'', '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&socid='.$object->socid.'&action=clone&object=scrumsprint', '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&action=delete', '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&action=delete&token='.newToken().'', '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
 		}
 		print '</div>'."\n";
 	}

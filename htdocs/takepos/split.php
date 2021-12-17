@@ -84,6 +84,7 @@ if ($action=="split") {
 		$db->query($sql);
 	} elseif ($split==0) { // Unsplit line
 		$invoice = new Facture($db);
+		if ($place=="SPLIT") $place="0"; // Avoid move line to the same place (from SPLIT to SPLIT place)
 		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 		if ($ret > 0) {
 			$placeid = $invoice->id;
@@ -103,12 +104,10 @@ if ($action=="split") {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
-				echo $sql;
 				$db->query($sql);
 			}
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
-		echo $sql;
 		$db->query($sql);
 	}
 	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
@@ -139,7 +138,7 @@ if ($invoiceid > 0) {
 	}
 }
 
-$arrayofcss = array('/takepos/css/pos.css.php', '/takepos/css/split.css.php');
+$arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs = array();
 
 $head = '';
@@ -167,11 +166,11 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
 <script>
 function Split(selectedline, split) {
 	$.ajax({
-		url: "split.php?action=split&line="+selectedline+"&split="+split,
+		url: "split.php?action=split&line="+selectedline+"&split="+split+"&place=<?php echo $place;?>",
 		context: document.body
 	}).done(function() {
 		$("#currentplace").load("invoice.php?place="+parent.place+"&invoiceid="+parent.invoiceid, function() {
-			$('.posinvoiceline').click(function(){
+			$('#currentplace').find('.posinvoiceline').click(function(){
 				Split(this.id, 1);
 			});
 		});
@@ -184,6 +183,11 @@ function Split(selectedline, split) {
 }
 
 $( document ).ready(function() {
+	if (parent.place=='SPLIT') {
+		parent.place=0;
+		parent.invoiceid=0;
+		parent.Refresh();
+	}
 	$("#currentplace").load("invoice.php?place="+parent.place+"&invoiceid="+parent.invoiceid, function() {
 		$('#currentplace').find('.posinvoiceline')
 		.click(function(){
@@ -197,7 +201,7 @@ $( document ).ready(function() {
 		});
 	});
 
-	if (parent.place=='SPLIT') parent.place=0;
+	
 
 	$("#headersplit1").html("<?php echo $langs->trans("Place");?> "+parent.place);
 	$("#headersplit2").html("<?php echo $langs->trans("SplitSale");?>");

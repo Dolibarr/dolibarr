@@ -37,7 +37,8 @@ ManufacturingDate=Tillverkningsdatum
 DestructionDate=Raseringsdatum
 FirstUseDate=Första användningsdatum
 QCFrequency=Kvalitetskontrollsperiod (i dagar)
-
+ShowAllLots=Show all lots
+HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Ej tillgänglig
 InWorkingOrder=I fungerande skick

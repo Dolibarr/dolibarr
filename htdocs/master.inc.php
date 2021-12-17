@@ -161,8 +161,9 @@ if (!defined('NOREQUIREDB')) {
 }
 
 // Now database connexion is known, so we can forget password
-//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in a lot of pages
+//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in some other pages
 unset($conf->db->pass); // This is to avoid password to be shown in memory/swap dump
+
 
 /*
  * Object $user
@@ -171,9 +172,9 @@ if (!defined('NOREQUIREUSER')) {
 	$user = new User($db);
 }
 
+
 /*
  * Load object $conf
- * After this, all parameters conf->global->CONSTANTS are loaded
  */
 
 // By default conf->entity is 1, but we change this if we ask another value.
@@ -190,15 +191,12 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');
 }
-
 // Sanitize entity
 if (!is_numeric($conf->entity)) {
 	$conf->entity = 1;
 }
-
-//print "We work with data into entity instance number '".$conf->entity."'";
-
 // Here we read database (llx_const table) and define $conf->global->XXX var.
+//print "We work with data into entity instance number '".$conf->entity."'";
 $conf->setValues($db);
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.

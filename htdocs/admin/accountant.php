@@ -91,16 +91,16 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 
-$countrynotdefined = '<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
+$countrynotdefined = '<span class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</span>';
 
 print '<span class="opacitymedium">'.$langs->trans("AccountantDesc")."</span><br>\n";
-print "<br>\n";
+print "<br><br>\n";
 
 /**
  * Edit parameters
  */
 if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
 			document.form_index.action.value="updateedit";
@@ -115,7 +115,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 // Name
 print '<tr class="oddeven"><td><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';

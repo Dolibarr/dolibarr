@@ -597,7 +597,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}
@@ -632,7 +632,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	if ($sortorder) {
 		$url .= '&page='.urlencode($sortorder);
 	}
-	print '<a class="editfielda reposition marginrightonly marginleftonly" href="'.$url.'&action=edit&rowid='.$obj->rowid.'">'.img_edit().'</a>';
+	print '<a class="editfielda reposition marginrightonly marginleftonly" href="'.$url.'&action=edit&token='.newToken().'&rowid='.$obj->rowid.'">'.img_edit().'</a>';
 	//print ' &nbsp; ';
 	print '<a class=" marginrightonly marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>  &nbsp; ';
 	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

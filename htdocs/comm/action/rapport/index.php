@@ -163,7 +163,7 @@ if ($resql) {
 
 			// Button to build doc
 			print '<td class="center">';
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&page='.((int) $page).'&month='.((int) $obj->month).'&year='.((int) $obj->year).'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
 			print '</td>';
 
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
@@ -185,10 +185,7 @@ if ($resql) {
 				// Show file name with link to download
 				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 				$mime = dol_mimetype($relativepath, '', 0);
-				if (preg_match('/text/', $mime)) {
-					$out .= ' target="_blank"';
-				}
-				$out .= ' target="_blank">';
+				$out .= ' target="_blank" rel="noopener noreferrer">';
 				$out .= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);
 				$out .= $filearray["name"];
 				$out .= '</a>'."\n";

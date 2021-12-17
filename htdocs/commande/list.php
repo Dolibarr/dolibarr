@@ -309,13 +309,14 @@ if ($action == 'validate' && $permissiontoadd) {
 						$idwarehouse = 0;
 					}
 					if ($objecttmp->valid($user, $idwarehouse)) {
-						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($langs->trans('hasBeenValidated', $objecttmp->ref), 'mesgs');
 					} else {
 						setEventMessage($langs->trans('CantBeValidated'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$langs->load("errors");
+					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
 					$error++;
 				}
 			} else {
@@ -339,13 +340,14 @@ if ($action == 'shipped' && $permissiontoadd) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->statut == 1) {
 					if ($objecttmp->cloture($user)) {
-						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($langs->trans('PassedInClosedStatus', $objecttmp->ref), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($langs->trans('CantBeClosed'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$langs->load("errors");
+					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
 					$error++;
 				}
 			} else {
@@ -426,7 +428,7 @@ $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multic
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
-$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method,';
 $sql .= ' c.fk_input_reason';
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
@@ -450,7 +452,7 @@ if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ', '.MAIN_DB_PREFIX.'commande as c';
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 }
 if ($sall || $search_product_category > 0) {
@@ -463,7 +465,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
 
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -484,7 +486,7 @@ if ($search_product_category > 0) {
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -551,7 +553,7 @@ if ($search_state) {
 if ($search_country) {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
-if ($search_type_thirdparty) {
+if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_company) {
@@ -627,6 +629,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -793,7 +800,7 @@ if ($resql) {
 	if ($search_country != '') {
 		$param .= '&search_country='.urlencode($search_country);
 	}
-	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
+	if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
 	if ($search_product_category != '') {
@@ -826,6 +833,11 @@ if ($resql) {
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 	// List of mass actions available
 	$arrayofmassactions = array(
@@ -955,14 +967,14 @@ if ($resql) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view other users
 	if ($user->rights->user->user->lire) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
@@ -971,14 +983,14 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, 'maxwidth300 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
@@ -986,7 +998,7 @@ if ($resql) {
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Warehouse');
-		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle);
+		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
@@ -1343,10 +1355,25 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	}
 
+	$totalarray = array(
+		'nbfield' => 0,
+		'val' => array(
+			'c.total_ht' => 0,
+			'c.total_tva' => 0,
+			'c.total_ttc' => 0,
+		),
+		'pos' => array(),
+	);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array(
+		'arrayfields' => $arrayfields,
+		'param' => $param,
+		'sortfield' => $sortfield,
+		'sortorder' => $sortorder,
+		'totalarray' => &$totalarray,
+	);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['c.datec']['checked'])) {
@@ -1386,7 +1413,6 @@ if ($resql) {
 	$generic_product = new Product($db);
 	$userstatic = new User($db);
 	$i = 0;
-	$totalarray = array('nbfield' => 0, 'val' => array(), 'pos' => array());
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -1695,8 +1721,8 @@ if ($resql) {
 		$userstatic->login = $obj->login;
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->firstname = $obj->firstname;
-		$userstatic->email = $obj->email;
-		$userstatic->statut = $obj->statut;
+		$userstatic->email = $obj->user_email;
+		$userstatic->statut = $obj->user_statut;
 		$userstatic->entity = $obj->entity;
 		$userstatic->photo = $obj->photo;
 		$userstatic->office_phone = $obj->office_phone;

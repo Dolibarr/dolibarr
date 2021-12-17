@@ -54,6 +54,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 
 $facid = GETPOST('facid', 'int');
 
+$action = GETPOST('action', 'aZ09');
 $gift = GETPOST('gift', 'int');
 
 if (empty($user->rights->takepos->run)) {
@@ -119,7 +120,7 @@ if (!empty($conf->global->TAKEPOS_HEADER) || !empty($conf->global->{$constFreeTe
 	if (!empty($conf->global->{$constFreeText})) {
 		$newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
 	}
-	print $newfreetext;
+	print nl2br($newfreetext);
 }
 ?>
 </p>
@@ -169,33 +170,46 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 	</thead>
 	<tbody>
 	<?php
-	foreach ($object->lines as $line) {
-		?>
-	<tr>
-		<td>
-		<?php if (!empty($line->product_label)) {
-			echo $line->product_label;
-		} else {
-			echo $line->description;
-		} ?>
-		</td>
-		<td class="right"><?php echo $line->qty; ?></td>
-		<td class="right"><?php if ($gift != 1) {
-			echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
-						  } ?></td>
-		<?php
-		if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
-					<td class="right"><?php if ($gift != 1) {
-						echo price($line->total_ht, 1);
-									  } ?></td>
+	if ($action == 'without_details') {
+		$qty = GETPOST('qty', 'int') > 0 ? GETPOST('qty', 'int') : 1;
+		print '<tr>';
+		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
+		print '<td class="right">' . $qty . '</td>';
+		print '<td class="right">' . price(price2num($object->total_ttc / $qty, 'MU'), 1) . '</td>';
+		if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) {
+			print '<td class="right">' . price($object->total_ht, 1) . '</td>';
+		}
+		print '<td class="right">' . price($object->total_ttc, 1) . '</td>';
+		print '</tr>';
+	} else {
+		foreach ($object->lines as $line) {
+			?>
+		<tr>
+			<td>
+			<?php if (!empty($line->product_label)) {
+				echo $line->product_label;
+			} else {
+				echo $line->description;
+			} ?>
+			</td>
+			<td class="right"><?php echo $line->qty; ?></td>
+			<td class="right"><?php if ($gift != 1) {
+				echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
+							  } ?></td>
+			<?php
+			if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
+						<td class="right"><?php if ($gift != 1) {
+							echo price($line->total_ht, 1);
+										  } ?></td>
+				<?php
+			}
+			?>
+			<td class="right"><?php if ($gift != 1) {
+				echo price($line->total_ttc, 1);
+							  } ?></td>
+		</tr>
 			<?php
 		}
-		?>
-		<td class="right"><?php if ($gift != 1) {
-			echo price($line->total_ttc, 1);
-						  } ?></td>
-	</tr>
-		<?php
 	}
 	?>
 	</tbody>

@@ -260,6 +260,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			);
 
 			$listtables = $db->DDLListTables($conf->db->name, '');
+
 			foreach ($listtables as $val) {
 				// Database prefix filter
 				if (preg_match('/^'.MAIN_DB_PREFIX.'/', $val)) {
@@ -283,7 +284,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 						$db->free($resql);
 					} else {
 						if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE') {
-							print '<tr><td colspan="2"><span class="error">'.dol_escape_htmltag($sql).' : '.dol_escape_htmltag($db->lasterror())."</font></td></tr>\n";
+							print '<tr><td colspan="2"><span class="error">'.dol_escape_htmltag($sql).' : '.dol_escape_htmltag($db->lasterror())."</span></td></tr>\n";
 						}
 					}
 				}

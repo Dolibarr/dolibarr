@@ -34,17 +34,21 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files required by the page
 $langs->load("companies");
 
-// Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
+
+// Security check
+if ($user->socid > 0) {
+	if ($object->fk_soc > 0 && $object->fk_soc != $user->socid) {
+		accessforbidden();
+	}
+}
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
 
 $permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 

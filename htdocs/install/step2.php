@@ -141,7 +141,7 @@ if ($action == "set") {
 	$requestnb = 0;
 
 	// To disable some code, so you can call step2 with url like
-	// http://localhost/dolibarrnew/install/step2.php?action=set&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
+	// http://localhost/dolibarrnew/install/step2.php?action=set&token='.newToken().'&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
 	$createtables = isset($_GET['createtables']) ?GETPOST('createtables') : 1;
 	$createkeys = isset($_GET['createkeys']) ?GETPOST('createkeys') : 1;
 	$createfunctions = isset($_GET['createfunctions']) ?GETPOST('createfunction') : 1;
@@ -154,8 +154,8 @@ if ($action == "set") {
 
 	/**************************************************************************************
 	 *
-	 * Chargement fichiers tables/*.sql (non *.key.sql)
-	 * A faire avant les fichiers *.key.sql
+	 * Load files tables/*.sql (not the *.key.sql). Files with '-xxx' in name are excluded (they will be loaded during activation o fmodule 'xxx').
+	 * To do before the files *.key.sql
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createtables) {
@@ -169,7 +169,7 @@ if ($action == "set") {
 		$tabledata = array();
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && !preg_match('/\.key\.sql$/i', $file)) {
+				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && !preg_match('/\.key\.sql$/i', $file) && !preg_match('/\-/', $file)) {
 					$tablefound++;
 					$tabledata[] = $file;
 				}
@@ -252,8 +252,8 @@ if ($action == "set") {
 
 	/***************************************************************************************
 	 *
-	 * Chargement fichiers tables/*.key.sql
-	 * A faire apres les fichiers *.sql
+	 * Load files tables/*.key.sql. Files with '-xxx' in name are excluded (they will be loaded during activation o fmodule 'xxx').
+	 * To do after the files *.sql
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createkeys) {
@@ -267,7 +267,7 @@ if ($action == "set") {
 		$tabledata = array();
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && preg_match('/\.key\.sql$/i', $file)) {
+				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && preg_match('/\.key\.sql$/i', $file) && !preg_match('/\-/', $file)) {
 					$tablefound++;
 					$tabledata[] = $file;
 				}
@@ -372,7 +372,7 @@ if ($action == "set") {
 
 	/***************************************************************************************
 	 *
-	 * Chargement fichier functions.sql
+	 * Lod the file 'functions.sql'
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createfunctions) {
@@ -449,7 +449,7 @@ if ($action == "set") {
 
 	/***************************************************************************************
 	 *
-	 * Load files data/*.sql
+	 * Load files data/*.sql. Files with '-xxx' in name are excluded (they will be loaded during activation o fmodule 'xxx').
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createdata) {
@@ -463,7 +463,7 @@ if ($action == "set") {
 		$tabledata = array();
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file)) {
+				if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && !preg_match('/\-/', $file)) {
 					if (preg_match('/^llx_accounting_account_/', $file)) {
 						continue; // We discard data file of chart of account. Will be loaded when a chart is selected.
 					}
@@ -570,19 +570,27 @@ dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step2: end");
 
+// Force here a value we need after because master.inc.php is not loaded into step2.
+// This code must be similar with the one into main.inc.php
+$conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id); // Unique id of instance
 
-$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno" value="checked" checked="true"> ';
+$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+
+$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((!empty($conf->global->MAIN_FIRST_PING_OK_ID) && $conf->global->MAIN_FIRST_PING_OK_ID == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
 $out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';
 
 $out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';
 $out .= '<script type="text/javascript">';
 $out .= 'jQuery(document).ready(function(){';
-$out .= '  document.cookie = "DOLINSTALLNOPING_'.md5($dolibarr_main_instance_unique_id).'=0; path=/"'."\n";
+$out .= '  document.cookie = "DOLINSTALLNOPING_'.$hash_unique_id.'=0; path=/"'."\n";
 $out .= '  jQuery("#dolibarrpingno").click(function() {';
 $out .= '    if (! $(this).is(\':checked\')) {';
 $out .= '      console.log("We uncheck anonymous ping");';
-$out .= '      document.cookie = "DOLINSTALLNOPING_'.md5($dolibarr_main_instance_unique_id).'=1; path=/"'."\n";
-$out .= '    }';
+$out .= '      document.cookie = "DOLINSTALLNOPING_'.$hash_unique_id.'=1; path=/"'."\n";
+$out .= '    } else {'."\n";
+$out .= '      console.log("We check anonymous ping");';
+$out .= '      document.cookie = "DOLINSTALLNOPING_'.$hash_unique_id.'=0; path=/"'."\n";
+$out .= '    }'."\n";
 $out .= '  });';
 $out .= '});';
 $out .= '</script>';

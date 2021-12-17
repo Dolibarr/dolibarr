@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2015  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2021  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -107,7 +107,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 		if ($dir = opendir($newpath)) {
 			$filedate = '';
 			$filesize = '';
-
+			$fileperm = '';
 			while (false !== ($file = readdir($dir))) {        // $file is always a basename (into directory $newpath)
 				if (!utf8_check($file)) {
 					$file = utf8_encode($file); // To be sure data is stored in utf8 in memory
@@ -1971,6 +1971,9 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 		} elseif ($mode == 'bz') {
 			$foundhandler = 1;
 			$compressdata = bzcompress($data, 9);
+		} elseif ($mode == 'zstd') {
+			$foundhandler = 1;
+			$compressdata = zstd_compress($data, 9);
 		} elseif ($mode == 'zip') {
 			if (class_exists('ZipArchive') && !empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS)) {
 				$foundhandler = 1;
@@ -2001,11 +2004,15 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 					// Skip directories (they would be added automatically)
 					if (!$file->isDir()) {
 						// Get real and relative path for current file
-						$filePath = $file->getRealPath();
-						$relativePath = substr($filePath, strlen($rootPath) + 1);
+						$filePath = $file->getPath();				// the full path with filename using the $inputdir root.
+						$fileName = $file->getFilename();
+						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
+
+						//$relativePath = substr($fileFullRealPath, strlen($rootPath) + 1);
+						$relativePath = substr(($filePath ? $filePath.'/' : '').$fileName, strlen($rootPath) + 1);
 
 						// Add current file to archive
-						$zip->addFile($filePath, $relativePath);
+						$zip->addFile($fileFullRealPath, $relativePath);
 					}
 				}
 
@@ -2193,22 +2200,29 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				}
 
 				// Create recursive directory iterator
+				// This does not return symbolic links
 				/** @var SplFileInfo[] $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($inputdir),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
 
+				//var_dump($inputdir);
 				foreach ($files as $name => $file) {
 					// Skip directories (they would be added automatically)
 					if (!$file->isDir()) {
 						// Get real and relative path for current file
-						$filePath = $file->getRealPath();
-						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen($inputdir) + 1);
+						$filePath = $file->getPath();				// the full path with filename using the $inputdir root.
+						$fileName = $file->getFilename();
+						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						if (empty($excludefiles) || !preg_match($excludefiles, $filePath)) {
+						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($fileFullRealPath, strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr(($filePath ? $filePath.'/' : '').$fileName, strlen($inputdir) + 1);
+
+						//var_dump($filePath);var_dump($fileFullRealPath);var_dump($relativePath);
+						if (empty($excludefiles) || !preg_match($excludefiles, $fileFullRealPath)) {
 							// Add current file to archive
-							$zip->addFile($filePath, $relativePath);
+							$zip->addFile($fileFullRealPath, $relativePath);
 						}
 					}
 				}
@@ -2495,7 +2509,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if ($fuser->rights->categorie->{$lire}) {
+		if ($fuser->rights->categorie->{$lire} || $fuser->rights->takepos->run) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->categorie->multidir_output[$entity].'/'.$original_file;
@@ -2719,13 +2733,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/sending/".$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos('sending/', $original_file) === 0 ? '' : 'sending/').$original_file;
+		//$original_file = $conf->expedition->dir_output."/".$original_file;
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/receipt/".$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos('receipt/', $original_file) === 0 ? '' : 'receipt/').$original_file;
 	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
 		// Wrapping pour les actions
 		if ($fuser->rights->agenda->myactions->{$read} || preg_match('/^specimen/i', $original_file)) {
@@ -2863,6 +2878,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->admin) {
 			$accessallowed = 1; // If user is admin
 		}
+
 		$tmpmodulepart = explode('-', $modulepart);
 		if (!empty($tmpmodulepart[1])) {
 				$modulepart = $tmpmodulepart[0];
@@ -2942,6 +2958,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		);
 		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
 		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['original_file'])) {
+				$original_file = $hookmanager->resArray['original_file'];
+			}
 			if (!empty($hookmanager->resArray['accessallowed'])) {
 				$accessallowed = $hookmanager->resArray['accessallowed'];
 			}

@@ -91,6 +91,7 @@ $modules_files = array();
 $modules_fullpath = array();
 $modulesdir = dolGetModulesDirs();
 $rights_ids = array();
+$arrayofpermissions = array();
 
 foreach ($modulesdir as $dir) {
 	$handle = @opendir(dol_osencode($dir));
@@ -155,7 +156,7 @@ foreach ($modules as $key => $module) {
 			if (empty($rights[0])) {
 				continue;
 			}
-
+			$arrayofpermissions[$rights[0]] = array('label'=> 'user->rights->'.$module->rights_class.'->'.$rights[4].(empty($rights[5]) ? '' : '->'.$rights[5]));
 			$permission[] = $rights[0];
 
 			array_push($rights_ids, $rights[0]);
@@ -336,8 +337,10 @@ foreach ($moduleList as $module) {
 		$idperms = '';
 
 		foreach ($module->permission as $permission) {
-			$idperms .= ($idperms ? ", " : "").$permission;
 			$translationKey = "Permission".$permission;
+			$labelpermission = $langs->trans($translationKey);
+			$labelpermission .= ' : '.$arrayofpermissions[$permission]['label'];
+			$idperms .= ($idperms ? ", " : "").'<span title="'.$labelpermission.'">'.$permission.'</a>';
 
 			if (!empty($conf->global->MAIN_SHOW_PERMISSION)) {
 				if (empty($langs->tab_translate[$translationKey])) {

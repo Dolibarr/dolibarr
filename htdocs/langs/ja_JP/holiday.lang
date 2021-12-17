@@ -113,7 +113,7 @@ ErrorMailNotSend=メールの送信中にエラーが発生した：
 NoticePeriod=通知期間
 #Messages
 HolidaysToValidate=休暇申請を検証する
-HolidaysToValidateBody=以下は検証するための休暇申請です
+HolidaysToValidateBody=以下は検証するための休暇申請 
 HolidaysToValidateDelay=この休暇申請は、%s日未満の期間内に行われる。
 HolidaysToValidateAlertSolde=この休暇申請を行ったユーザには、十分な利用可能日がない。
 HolidaysValidated=検証済の休暇申請
@@ -125,7 +125,7 @@ HolidaysCanceledBody=%sから%sへの休暇申請はキャンセルされた。
 FollowedByACounter=1：このタイプの休暇にはカウンタの追随が必要。カウンタは手動または自動でインクリメントされ、休暇要求が検証されると、カウンタはデクリメントされる。 <br> 0：カウンタに追随していない。
 NoLeaveWithCounterDefined=カウンタが続く必要がある定義された休暇タイプはない
 GoIntoDictionaryHolidayTypes=<strong>ホーム-設定-辞書-休暇の種類</strong>に移動して、さまざまな種類の葉を設定する。
-HolidaySetup=モジュールLeaveのセットアップ
+HolidaySetup=モジュールLeaveの設定
 HolidaysNumberingModules=休暇申請の番号付けモデル
 TemplatePDFHolidays=休暇申請用テンプレートPDF
 FreeLegalTextOnHolidays=PDFのフリーテキスト

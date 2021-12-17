@@ -228,7 +228,7 @@ print "</td></tr>\n";
 // Allow members to change type on renewal forms
 /* To test during next beta
 print '<tr class="oddeven"><td>'.$langs->trans("MemberAllowchangeOfType").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
+print $form->selectyesno('MEMBER_ALLOW_CHANGE_OF_TYPE', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
 print "</td></tr>\n";
 */
 
@@ -404,13 +404,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&amp;token='.newToken().'&amp;value='.$name.'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&token='.newToken().'&value='.$name.'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -419,7 +419,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->MEMBER_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 

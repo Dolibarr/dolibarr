@@ -6,7 +6,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
@@ -31,13 +31,6 @@
  */
 
 require '../../main.inc.php';
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'facture', $facid, '');
-
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -56,6 +49,10 @@ $contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'p
 $facid				= GETPOST('facid', 'int');
 $socid				= GETPOST('socid', 'int');
 $userid = GETPOST('userid', 'int');
+
+// Security check
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'facture', $facid, '');
 
 $search_ref = GETPOST("search_ref", "alpha");
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -204,11 +201,11 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid > 0) {
@@ -320,6 +317,12 @@ if ($search_company) {
 }
 if ($search_amount != '') {
 	$param .= '&search_amount='.urlencode($search_amount);
+}
+if ($search_paymenttype) {
+	$param .= '&search_paymenttype='.urlencode($search_paymenttype);
+}
+if ($search_account) {
+	$param .= '&search_account='.urlencode($search_account);
 }
 if ($search_payment_num) {
 	$param .= '&search_payment_num='.urlencode($search_payment_num);
@@ -525,10 +528,7 @@ while ($i < min($num, $limit)) {
 
 	// Date
 	if (!empty($arrayfields['p.datep']['checked'])) {
-		$dateformatforpayment = 'day';
-		if (!empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) {
-			$dateformatforpayment = 'dayhour';
-		}
+		$dateformatforpayment = 'dayhour';
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

@@ -296,7 +296,7 @@ if (empty($reshook)) {
 		if (empty($error) && $id > 0) {
 			$db->commit();
 			if (!empty($backtopage)) {
-				$url = $backtopage;
+				$url = str_replace('__ID__', $id, $backtopage);
 			} else {
 				$url = 'card.php?id='.$id;
 			}
@@ -437,7 +437,7 @@ if (empty($reshook)) {
 			$object->roles = GETPOST("roles", 'array'); // Note GETPOSTISSET("role") is null when combo is empty
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -545,8 +545,8 @@ $formcompany = new FormCompany($db);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
+$objsoc = new Societe($db);
 if ($socid > 0) {
-	$objsoc = new Societe($db);
 	$objsoc->fetch($socid);
 }
 
@@ -620,7 +620,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
 			if ($conf->use_javascript_ajax) {
-				print "\n".'<script type="text/javascript" language="javascript">'."\n";
+				print "\n".'<script type="text/javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="create";
@@ -798,7 +798,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
 				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
-					print "\n".'<script type="text/javascript" language="javascript">'."\n";
+					print "\n".'<script type="text/javascript">'."\n";
 					print '$(document).ready(function () {
 							$("#email").keyup(function() {
 								if ($(this).val()!="") {
@@ -818,7 +818,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2)).'</td>';
+				print '<td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+				print '</td>';
 				print '</tr>';
 			}
 
@@ -865,7 +867,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Other attributes
-			$parameters = array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
+			$parameters = array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3, 'colspanvalue' => 3);
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 			print "</table><br>";
@@ -922,7 +924,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
 			if ($conf->use_javascript_ajax) {
-				print "\n".'<script type="text/javascript" language="javascript">'."\n";
+				print "\n".'<script type="text/javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="edit";
@@ -1069,7 +1071,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
 				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
-					print "\n".'<script type="text/javascript" language="javascript">'."\n";
+					print "\n".'<script type="text/javascript">'."\n";
 
 					print '
 					jQuery(document).ready(function () {
@@ -1095,8 +1097,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+				print '<td>';
 				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty).'</td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty);
+				print '</td>';
 				print '</tr>';
 			}
 
@@ -1165,7 +1169,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Other attributes
-			$parameters = array('colspan' => ' colspan="3"', 'cols'=> '3');
+			$parameters = array('colspan' => ' colspan="3"', 'cols'=> '3', 'colspanvalue'=> '3');
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 			$object->load_ref_elements();
@@ -1288,7 +1292,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($objsoc->id > 0) {
 				$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
 			} else {
-				$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+				$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 			}
 		}
 		$morehtmlref .= '</div>';
@@ -1323,7 +1327,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
+			print '<tr><td>'.$langs->trans("No_Email").'</td><td>';
+			if ($object->email) {
+				print yn($object->no_email);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
+			}
+			print '</td></tr>';
 		}
 
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
@@ -1348,7 +1358,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $langs->trans('ProspectLevel');
 				print '<td>';
 				if ($action != 'editlevel' && $user->rights->societe->contact->creer) {
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 				}
 				print '</tr></table>';
 				print '</td><td>';
@@ -1371,7 +1381,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$titlealt = $val['label'];
 					}
 					if ($object->stcomm_id != $val['id']) {
-						print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+						print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 					}
 				}
 				print '</div></td></tr>';
@@ -1381,10 +1391,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -1462,7 +1472,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print "</table>";
 
-		print '</div></div></div>';
+		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
@@ -1486,11 +1496,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if ($user->rights->societe->contact->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 			}
 
 			if (!$object->user_id && $user->rights->user->user->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 
 			// Activer
@@ -1518,7 +1528,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
@@ -1529,7 +1539,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'contact', $object->socid, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for thirdparty
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		// Presend form

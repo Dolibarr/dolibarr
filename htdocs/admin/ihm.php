@@ -299,6 +299,8 @@ $head = ihm_prepare_head();
 
 print dol_get_fiche_head($head, $mode, '', -1, '');
 
+print '<br>';
+
 clearstatcache();
 
 if ($mode == 'template') {
@@ -451,11 +453,11 @@ if ($mode == 'other') {
 	print '</table>' . "\n";
 	print '</div>';
 
-	print '<br>';
 	print '<div class="center">';
 	print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
 	print '</div>';
 
+	print '<br>';
 	print '<br>';
 
 	// Other
@@ -577,9 +579,9 @@ if ($mode == 'login') {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
 
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
+	print '<tr class="liste_titre"><td class="titlefieldmax45">';
 	print $langs->trans("Parameter");
-	print '</td><td class="titlefieldmiddle">';
+	print '</td><td>';
 	print $langs->trans("Value");
 	print '</td></tr>';
 
@@ -630,7 +632,6 @@ if ($mode == 'login') {
 	print '</div>';
 }
 
-print '<br>';
 print '<div class="center">';
 print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
 print '</div>';

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class pdf_stdandard extends ModelePDFMovement
+class pdf_standard extends ModelePDFMovement
 {
 	/**
 	 * @var DoliDb Database handler
@@ -499,14 +499,10 @@ class pdf_stdandard extends ModelePDFMovement
 
 				$tab_top = 42;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
 
-				/* ************************************************************************** */
-				/*                                                                            */
-				/* Affichage de la liste des produits du MouvementStock                           */
-				/*                                                                            */
-				/* ************************************************************************** */
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
+
+				// Show list of product of the MouvementStock
 
 				$nexY += 5;
 				$nexY = $pdf->GetY();

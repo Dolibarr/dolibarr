@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Direkt drucken
-Module64000Desc=Direkt-Druck-System aktivieren 
-PrintingSetup=Einstellungen Direkt-Druck-System
-PrintingDesc=Dieses Modul fügt einen "Drucken"-Button zu verschiedenen Modulen hinzu, damit Dokumente direkt auf einem Drucker gedruckt werden können, ohne dass das Dokument in einer anderen Anwendung geöffnet werden muss.
-MenuDirectPrinting=direkte Druckaufträge
-DirectPrint=Direkt drucken
+Module64000Name=Ein-Klick-Drucken
+Module64000Desc=Ein-Klick-Drucksystem aktivieren
+PrintingSetup=Einrichtung des Ein-Klick-Drucksystems
+PrintingDesc=Dieses Modul fügt diversen Modulen eine Schaltfläche "Drucken" hinzu, damit Dokumente direkt auf einem Drucker gedruckt werden können, ohne dass das Dokument in einer anderen Anwendung geöffnet werden muss.
+MenuDirectPrinting=Ein-Klick-Druckaufträge
+DirectPrint=Ein-Klick-Drucken
 PrintingDriverDesc=Konfigurationsvariablen für den Drucker-Treiber.
 ListDrivers=Treiberliste
 PrintTestDesc=Druckerliste
@@ -27,7 +27,7 @@ GCP_OwnerName=Besitzername
 GCP_State=Druckerstatus
 GCP_connectionStatus=Online-Status
 GCP_Type=Druckertyp
-PrintIPPDesc=Dieser Treiber erlaubt es, Dokumente direkt an einen Drucker zu senden. \nEs ist dafür erforderlich, ein Linux System mit CUPS installiert zu haben. 
+PrintIPPDesc=Dieser Treiber erlaubt es, Dokumente direkt an einen Drucker zu senden. <br> Es ist dafür erforderlich, ein Linux System mit CUPS installiert zu haben. 
 PRINTIPP_HOST=Druckserver
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Anmeldung (Login)
