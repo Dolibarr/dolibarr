@@ -373,7 +373,7 @@ class modSociete extends DolibarrModules
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			if (!empty($conf->multicompany->enabled)) {
 				$nbofallowedentities = count(explode(',', getEntity('socpeople')));
-			 	if ($nbofallowedentities > 1) {
+				if ($nbofallowedentities > 1) {
 					$this->export_fields_array[$r]['c.entity'] = 'Entity';
 				}
 
