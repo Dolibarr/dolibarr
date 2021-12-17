@@ -362,7 +362,6 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
-	
 	print '<td>'.$langs->trans('Company').'</td>';
 	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 		print '<td>'.$langs->trans('Entity').'</td>';
