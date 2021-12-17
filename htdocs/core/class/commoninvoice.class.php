@@ -168,6 +168,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
+
 		if ($result >= 0) {
 			return $result;
 		} else {
