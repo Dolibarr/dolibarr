@@ -312,26 +312,28 @@ if ($modecompta == 'BOOKKEEPING') {
 
 				if ($showaccountdetail == 'no') {
 					if ($objp->pcg_type != $oldpcgtype) {
-						print '<tr><td colspan="3" class="groupby">'.$objp->pcg_type.'</td></tr>';
+						print '<tr class="trforbreak"><td colspan="3" class="tdforbreak">'.$objp->pcg_type.'</td></tr>';
 						$oldpcgtype = $objp->pcg_type;
 					}
 				}
 
-				print '<tr class="oddeven">';
 				if ($showaccountdetail == 'no') {
+					print '<tr class="oddeven">';
 					print '<td></td>';
 					print '<td>';
 					print $objp->pcg_type;
 					print ($objp->name ? ' ('.$objp->name.')' : ' ('.$langs->trans("Unknown").')');
 					print "</td>\n";
 					print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
+					print "</tr>\n";
 				} else {
-					print '<td colspan="2" class="groupby">';
+					print '<tr class="oddeven trforbreak">';
+					print '<td colspan="2" class="tdforbreak">';
 					print $objp->pcg_type;
 					print "</td>\n";
-					print '<td class="right groupby"><span class="amount">'.price($objp->amount)."</span></td>\n";
+					print '<td class="right tdforbreak"><span class="amount">'.price($objp->amount)."</span></td>\n";
+					print "</tr>\n";
 				}
-				print "</tr>\n";
 
 				$total_ht += (isset($objp->amount) ? $objp->amount : 0);
 				$total_ttc += (isset($objp->amount) ? $objp->amount : 0);

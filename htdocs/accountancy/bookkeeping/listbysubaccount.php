@@ -713,8 +713,8 @@ while ($i < min($num, $limit)) {
 		}
 
 		// Show the break account
-		print "<tr>";
-		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 10).'" class="groupby">';
+		print '<tr class="trforbreak">';
+		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 10).'" class="tdforbreak">';
 		if ($line->subledger_account != "" && $line->subledger_account != '-1') {
 			print $line->subledger_label.' : '.length_accounta($line->subledger_account);
 		} else {
