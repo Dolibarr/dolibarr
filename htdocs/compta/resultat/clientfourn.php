@@ -723,7 +723,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT c.id, c.libelle as label, sum(cs.amount) as amount";
+		$sql = "SELECT c.id, c.libelle as label, c.accountancy_code, sum(cs.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " WHERE cs.fk_type = c.id";
@@ -732,7 +732,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 		}
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
-		$sql = "SELECT c.id, c.libelle as label, sum(p.amount) as amount";
+		$sql = "SELECT c.id, c.libelle as label, c.accountancy_code, sum(p.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -744,7 +744,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 	}
 	$sql .= " AND cs.entity = ".$conf->entity;
-	$sql .= " GROUP BY c.libelle, c.id";
+	$sql .= " GROUP BY c.libelle, c.id, c.accountancy_code";
 	$newsortfield = $sortfield;
 	if ($newsortfield == 's.nom, s.rowid') {
 		$newsortfield = 'c.libelle, c.id';
@@ -776,7 +776,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 				print '<tr class="oddeven">';
 				print '<td>&nbsp;</td>';
-				print '<td>'.$obj->label.'</td>';
+				print '<td'.($obj->accountancy_code ? ' title="'.dol_escape_htmltag($langs->trans("AccountingCategory").': '.$obj->accountancy_code).'"' : '').'>'.dol_escape_htmltag($obj->label).'</td>';
 				print '<td class="right">';
 				if ($modecompta == 'CREANCES-DETTES') {
 					print '<span class="amount">'.price(-$obj->amount).'</span>';
@@ -818,7 +818,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT c.id, c.libelle as label, sum(cs.amount) as amount";
+		$sql = "SELECT c.id, c.libelle as label, c.accountancy_code, sum(cs.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " WHERE cs.fk_type = c.id";
@@ -828,7 +828,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 		$sql .= " AND cs.entity = ".$conf->entity;
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
-		$sql = "SELECT c.id, c.libelle as label, sum(p.amount) as amount";
+		$sql = "SELECT c.id, c.libelle as label, c.accountancy_code, sum(p.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -840,7 +840,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 		$sql .= " AND cs.entity = ".$conf->entity;
 	}
-	$sql .= " GROUP BY c.libelle, c.id";
+	$sql .= " GROUP BY c.libelle, c.id, c.accountancy_code";
 	$newsortfield = $sortfield;
 	if ($newsortfield == 's.nom, s.rowid') {
 		$newsortfield = 'c.libelle, c.id';
@@ -871,7 +871,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 				print '<tr class="oddeven">';
 				print '<td>&nbsp;</td>';
-				print '<td>'.$obj->label.'</td>';
+				print '<td'.($obj->accountancy_code ? ' title="'.dol_escape_htmltag($langs->trans("AccountingCategory").': '.$obj->accountancy_code).'"' : '').'>'.dol_escape_htmltag($obj->label).'</td>';
 				print '<td class="right">';
 				if ($modecompta == 'CREANCES-DETTES') {
 					print '<span class="amount">'.price(-$obj->amount).'</span>';
