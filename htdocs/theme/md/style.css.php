@@ -4022,6 +4022,10 @@ input.liste_titre {
 	white-space: normal;
 }
 
+th.groupby, td.groupby {
+	font-weight:bold; border-bottom: 1pt solid black !important;
+}
+
 
 tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 2px solid #aaa;

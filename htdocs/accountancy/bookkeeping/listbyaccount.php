@@ -712,7 +712,7 @@ while ($i < min($num, $limit)) {
 
 		// Show the break account
 		print "<tr>";
-		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 10).'" style="font-weight:bold; border-bottom: 1pt solid black;">';
+		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 10).'" class="groupby">';
 		if ($line->numero_compte != "" && $line->numero_compte != '-1') {
 			print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
 		} else {
