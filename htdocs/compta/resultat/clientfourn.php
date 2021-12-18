@@ -280,7 +280,10 @@ if ($modecompta == 'BOOKKEEPING') {
 	$charofaccountstring = $conf->global->CHARTOFACCOUNTS;
 	$charofaccountstring = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
-	$sql = "SELECT f.thirdparty_code as name, -1 as socid, aa.pcg_type, SUM(f.credit - f.debit) as amount";
+	$sql = "SELECT -1 as socid, aa.pcg_type, SUM(f.credit - f.debit) as amount";
+	if ($showaccountdetail == 'no') {
+		$sql .= ", f.thirdparty_code as name";
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as f";
 	$sql .= ", ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql .= " WHERE f.numero_compte = aa.account_number";
@@ -290,7 +293,10 @@ if ($modecompta == 'BOOKKEEPING') {
 	if (!empty($date_start) && !empty($date_end)) {
 		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
 	}
-	$sql .= " GROUP BY pcg_type DESC, name, socid";
+	$sql .= " GROUP BY pcg_type DESC";
+	if ($showaccountdetail == 'no') {
+		$sql .= ", name, socid";	// group by "accounting group" (INCOME/EXPENSE), then "customer".
+	}
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$oldpcgtype = '';
@@ -305,16 +311,20 @@ if ($modecompta == 'BOOKKEEPING') {
 			while ($i < $num) {
 				$objp = $db->fetch_object($result);
 
-				if ($objp->pcg_type != $oldpcgtype) {
-					print '<tr><td colspan="4">'.$objp->pcg_type.'</td></tr>';
-					$oldpcgtype = $objp->pcg_type;
+				if ($showaccountdetail == 'no') {
+					if ($objp->pcg_type != $oldpcgtype) {
+						print '<tr><td colspan="4">'.$objp->pcg_type.'</td></tr>';
+						$oldpcgtype = $objp->pcg_type;
+					}
+				} else {
+					print '<tr class="oddeven">';
+					print '<td>&nbsp;</td>';
+					print '<td>'.$objp->pcg_type;
+					print ($objp->name ? ' ('.$objp->name.')' : '');
+					print "</td>\n";
+					print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
+					print "</tr>\n";
 				}
-
-				print '<tr class="oddeven">';
-				print '<td>&nbsp;</td>';
-				print '<td>'.$objp->pcg_type.($objp->name ? ' ('.$objp->name.')' : '')."</td>\n";
-				print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
-				print "</tr>\n";
 
 				$total_ht += (isset($objp->amount) ? $objp->amount : 0);
 				$total_ttc += (isset($objp->amount) ? $objp->amount : 0);
@@ -333,7 +343,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				if ($showaccountdetail != 'no') {
 					$tmppredefinedgroupwhere = "pcg_type = '".$db->escape($objp->pcg_type)."'";
 					$tmppredefinedgroupwhere .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
-					//$tmppredefinedgroupwhere.= " AND thirdparty_code = '".$db->escape($objp->name)."'";
+					//$tmppredefinedgroupwhere .= " AND thirdparty_code = '".$db->escape($objp->name)."'";
 
 					// Get cpts of category/group
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
@@ -637,7 +647,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				$objp = $db->fetch_object($result);
 
 				print '<tr class="oddeven"><td>&nbsp;</td>';
-				print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid."\">".$objp->name."</a></td>\n";
+				print "<td>".$langs->trans("Bills").' <a href="'.DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid.'">'.$objp->name.'</a></td>'."\n";
 
 				if ($modecompta == 'CREANCES-DETTES') {
 					print '<td class="right"><span class="amount">'.price(-$objp->amount_ht)."</span></td>\n";
