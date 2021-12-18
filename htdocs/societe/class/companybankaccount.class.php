@@ -424,6 +424,6 @@ class CompanyBankAccount extends Account
 		$this->date_rum        = dol_now() - 10000;
 		$this->frstrecur       = 'FRST';
 
-		$this->socid = 0;
+		$this->socid           = 1;
 	}
 }
