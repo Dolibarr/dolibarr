@@ -153,6 +153,11 @@ class AccountingAccount extends CommonObject
 	 */
 	private $accountingaccount_codetotid_cache = array();
 
+
+	const STATUS_ENABLED = 1;
+	const STATUS_DISABLED = 0;
+
+
 	/**
 	 * Constructor
 	 *
@@ -691,49 +696,22 @@ class AccountingAccount extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-		$langs->loadLangs(array("users"));
-
-		if ($mode == 0) {
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 1) {
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 2) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4') . ' ' . $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5') . ' ' . $langs->trans('Disabled');
-			}
-		} elseif ($mode == 3) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4') . ' ' . $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5') . ' ' . $langs->trans('Disabled');
-			}
-		} elseif ($mode == 5) {
-			if ($status == 1) {
-				return $langs->trans('Enabled') . ' ' . img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled') . ' ' . img_picto($langs->trans('Disabled'), 'statut5');
-			}
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			$langs->load("users");
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
 		}
-	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+		$statusType = 'status4';
+		if ($status == self::STATUS_DISABLED) {
+			$statusType = 'status5';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
 
 	/**
 	 * Return Suggest accounting accounts to bind
