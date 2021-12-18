@@ -109,6 +109,11 @@ class AccountingAccount extends CommonObject
 	public $account_category;
 
 	/**
+	 * @var int Label category account
+	 */
+	public $account_category_label;
+
+	/**
 	 * @var int Status
 	 */
 	public $status;
@@ -193,7 +198,8 @@ class AccountingAccount extends CommonObject
 				$sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
 			}
 
-			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch id=".$id." account_number=".$account_number, LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
