@@ -857,7 +857,8 @@ if ($modecompta == 'BOOKKEEPING') {
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
 			if ($modecompta == 'CREANCES-DETTES') {
-				$column = 'p.datev';
+				//$column = 's.dateep';	// We use the date of salary
+				$column = 'p.datep';
 			} else {
 				$column = 'p.datep';
 			}
@@ -866,13 +867,14 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid=p.fk_salary";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
-			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
+			$sql .= " WHERE s.entity IN (".getEntity('salary').")";
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 			}
 			$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, s.fk_user, p.label, dm";
 
 			// For backward compatibility with old module salary
+			$column = 'p.datep';
 			$sql .= " UNION ";
 			$sql .= " SELECT u.rowid, u.firstname, u.lastname, p.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";

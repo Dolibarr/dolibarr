@@ -417,10 +417,10 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 				while ($i < $num) {
 					$obj = $db->fetch_object($result);
 
-					if (!isset($decaiss[$obj->dm])) {
+					/*if (!isset($decaiss[$obj->dm])) {
 						$decaiss[$obj->dm] = 0;
 					}
-					$decaiss[$obj->dm] += $obj->amount;
+					$decaiss[$obj->dm] += $obj->amount;*/
 
 					if (!isset($decaiss_ttc[$obj->dm])) {
 						$decaiss_ttc[$obj->dm] = 0;
@@ -457,10 +457,10 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 				while ($i < $num) {
 					$obj = $db->fetch_object($result);
 
-					if (!isset($encaiss[$obj->dm])) {
+					/*if (!isset($encaiss[$obj->dm])) {
 						$encaiss[$obj->dm] = 0;
 					}
-					$encaiss[$obj->dm] += $obj->amount;
+					$encaiss[$obj->dm] += $obj->amount;*/
 
 					if (!isset($encaiss_ttc[$obj->dm])) {
 						$encaiss_ttc[$obj->dm] = 0;
@@ -493,10 +493,10 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 				while ($i < $num) {
 					$obj = $db->fetch_object($result);
 
-					if (!isset($decaiss[$obj->dm])) {
+					/*if (!isset($decaiss[$obj->dm])) {
 						$decaiss[$obj->dm] = 0;
 					}
-					$decaiss[$obj->dm] += $obj->amount;
+					$decaiss[$obj->dm] += $obj->amount;*/
 
 					if (!isset($decaiss_ttc[$obj->dm])) {
 						$decaiss_ttc[$obj->dm] = 0;
@@ -528,10 +528,10 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 				while ($i < $num) {
 					$obj = $db->fetch_object($result);
 
-					if (!isset($encaiss[$obj->dm])) {
+					/*if (!isset($encaiss[$obj->dm])) {
 						$encaiss[$obj->dm] = 0;
 					}
-					$encaiss[$obj->dm] += -$obj->amount;
+					$encaiss[$obj->dm] += -$obj->amount;*/
 
 					if (!isset($encaiss_ttc[$obj->dm])) {
 						$encaiss_ttc[$obj->dm] = 0;
@@ -615,7 +615,8 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 
 if (!empty($conf->salaries->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
-		$column = 's.dateep';
+		//$column = 's.dateep';		// we use the date of salary
+		$column = 'p.datep';
 	}
 	if ($modecompta == "RECETTES-DEPENSES") {
 		$column = 'p.datep';
