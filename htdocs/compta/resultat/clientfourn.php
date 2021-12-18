@@ -312,7 +312,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 				if ($showaccountdetail == 'no') {
 					if ($objp->pcg_type != $oldpcgtype) {
-						print '<tr><td colspan="3">'.$objp->pcg_type.'</td></tr>';
+						print '<tr><td colspan="3" class="groupby">'.$objp->pcg_type.'</td></tr>';
 						$oldpcgtype = $objp->pcg_type;
 					}
 				}
@@ -324,12 +324,13 @@ if ($modecompta == 'BOOKKEEPING') {
 					print $objp->pcg_type;
 					print ($objp->name ? ' ('.$objp->name.')' : ' ('.$langs->trans("Unknown").')');
 					print "</td>\n";
+					print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 				} else {
-					print '<td colspan="2">';
+					print '<td colspan="2" class="groupby">';
 					print $objp->pcg_type;
 					print "</td>\n";
+					print '<td class="right groupby"><span class="amount">'.price($objp->amount)."</span></td>\n";
 				}
-				print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 				print "</tr>\n";
 
 				$total_ht += (isset($objp->amount) ? $objp->amount : 0);
