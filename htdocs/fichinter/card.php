@@ -7,7 +7,7 @@
  * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2018  Charlene Benke          <charlies@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
- * Copyright (C) 2018 		Philippe Grand       	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2021 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1329,7 +1329,7 @@ if ($action == 'create') {
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				// Ligne en mode visu
+				// Line in visual mode
 				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid) {
 					print '<tr class="oddeven">';
 
@@ -1339,7 +1339,7 @@ if ($action == 'create') {
 					}
 
 					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+					print '<a name="'.$objp->rowid.'"></a>'; // anchor to return to the line
 					print dol_htmlentitiesbr($objp->description);
 
 					// Date
@@ -1386,7 +1386,7 @@ if ($action == 'create') {
 
 					$line->fetch_optionals();
 
-					print $line->showOptionals($extrafields, 'view', array('colspan'=>5));
+					print $line->showOptionals($extrafields, 'view', array('style' => 'class="nowrap"', 'colspan' => 5));
 				}
 
 				// Line in update mode
@@ -1401,13 +1401,13 @@ if ($action == 'create') {
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
-					// Editeur wysiwyg
+					// wysiwyg editor
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
 					$doleditor->Create();
 					print '</td>';
 
-					// Date d'intervention
+					// Intervention date
 					print '<td class="center nowrap">';
 					if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
 						print $form->selectDate($db->jdate($objp->date_intervention), 'di', 0, 0, 0, "date_intervention");
@@ -1459,7 +1459,7 @@ if ($action == 'create') {
 					}
 
 					print '<td>';
-					print '<a name="add"></a>'; // ancre
+					print '<a name="add"></a>'; // anchor
 					print $langs->trans('Description').'</td>';
 					print '<td class="center">'.$langs->trans('Date').'</td>';
 					print '<td class="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
@@ -1475,7 +1475,7 @@ if ($action == 'create') {
 				}
 
 				print '<td>';
-				// editeur wysiwyg
+				// wysiwyg editor
 				if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
@@ -1483,7 +1483,7 @@ if ($action == 'create') {
 				}
 				print '</td>';
 
-				// Date intervention
+				// Date of intervention
 				print '<td class="center nowrap">';
 				$now = dol_now();
 				$timearray = dol_getdate($now);
