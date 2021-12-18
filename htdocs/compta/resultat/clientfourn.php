@@ -774,9 +774,17 @@ if ($modecompta == 'BOOKKEEPING') {
 				$subtotal_ht += $obj->amount;
 				$subtotal_ttc += $obj->amount;
 
+				$titletoshow = '';
+				if ($obj->accountancy_code) {
+					$titletoshow = $langs->trans("AccountingCode").': '.$obj->accountancy_code;
+					$tmpaccountingaccount = new AccountingAccount($db);
+					$tmpaccountingaccount->fetch(0, $obj->accountancy_code, 1);
+					$titletoshow .= ' - '.$langs->trans("AccountingCategory").': '.$tmpaccountingaccount->pcg_type;
+				}
+
 				print '<tr class="oddeven">';
 				print '<td>&nbsp;</td>';
-				print '<td'.($obj->accountancy_code ? ' title="'.dol_escape_htmltag($langs->trans("AccountingCategory").': '.$obj->accountancy_code).'"' : '').'>'.dol_escape_htmltag($obj->label).'</td>';
+				print '<td'.($obj->accountancy_code ? ' title="'.dol_escape_htmltag($titletoshow).'"' : '').'>'.dol_escape_htmltag($obj->label).'</td>';
 				print '<td class="right">';
 				if ($modecompta == 'CREANCES-DETTES') {
 					print '<span class="amount">'.price(-$obj->amount).'</span>';
@@ -869,9 +877,17 @@ if ($modecompta == 'BOOKKEEPING') {
 				$subtotal_ht += $obj->amount;
 				$subtotal_ttc += $obj->amount;
 
+				$titletoshow = '';
+				if ($obj->accountancy_code) {
+					$titletoshow = $langs->trans("AccountingCode").': '.$obj->accountancy_code;
+					$tmpaccountingaccount = new AccountingAccount($db);
+					$tmpaccountingaccount->fetch(0, $obj->accountancy_code, 1);
+					$titletoshow .= ' - '.$langs->trans("AccountingCategory").': '.$tmpaccountingaccount->pcg_type;
+				}
+
 				print '<tr class="oddeven">';
 				print '<td>&nbsp;</td>';
-				print '<td'.($obj->accountancy_code ? ' title="'.dol_escape_htmltag($langs->trans("AccountingCategory").': '.$obj->accountancy_code).'"' : '').'>'.dol_escape_htmltag($obj->label).'</td>';
+				print '<td'.($obj->accountancy_code ? ' title="'.dol_escape_htmltag($titletoshow).'"' : '').'>'.dol_escape_htmltag($obj->label).'</td>';
 				print '<td class="right">';
 				if ($modecompta == 'CREANCES-DETTES') {
 					print '<span class="amount">'.price(-$obj->amount).'</span>';
