@@ -203,7 +203,7 @@ class AccountingAccount extends CommonObject
 				$sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
 			}
 
-			dol_syslog(get_class($this)."::fetch id=".$id." account_number=".$account_number, LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch rowid=".$rowid." account_number=".$account_number, LOG_DEBUG);
 
 			$result = $this->db->query($sql);
 			if ($result) {
