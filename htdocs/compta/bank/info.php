@@ -34,10 +34,12 @@ $ref = GETPOST('ref', 'alpha');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
+
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
 if (empty($user->rights->banque->lire) && !$user->rights->banque->consolidate) {
 	accessforbidden();

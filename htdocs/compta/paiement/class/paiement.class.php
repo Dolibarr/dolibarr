@@ -483,7 +483,7 @@ class Paiement extends CommonObject
 
 		// Verifier si paiement porte pas sur une facture classee
 		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('fk_statut > 1');
+		$billsarray = $this->getBillsArray('f.fk_statut > 1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible";
