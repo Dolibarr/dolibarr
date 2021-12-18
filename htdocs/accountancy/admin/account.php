@@ -363,7 +363,7 @@ if ($resql) {
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans("New"), $langs->trans("Addanaccount"), 'fa fa-plus-circle', './card.php?action=create');
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'accounting_account', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Box to select active chart of account
 	print $langs->trans("Selectchartofaccounts")." : ";

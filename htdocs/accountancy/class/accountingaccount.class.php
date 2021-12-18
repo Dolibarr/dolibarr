@@ -506,7 +506,7 @@ class AccountingAccount extends CommonObject
 			$url .= '&save_lastsearch_values=1';
 		}
 
-		$picto = 'billr';
+		$picto = 'accounting_account';
 		$label = '';
 
 		if (empty($this->labelshort) || $withcompletelabel == 1) {
