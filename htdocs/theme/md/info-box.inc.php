@@ -426,7 +426,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 
-/* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
+/* USING IMAGES FOR WEATHER INSTEAD OF FONT AWESOME */
 /* For other themes just uncomment this part */
 /*.info-box-weather-level0,
 .info-box-weather-level1,

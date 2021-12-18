@@ -5,7 +5,7 @@
 
 .mainmenu::before{
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo !empty($conf->global->MAIN_FONTAWESOME_FAMILY) ? $conf->global->MAIN_FONTAWESOME_FAMILY : 'Font Awesome 5 Free'; ?>";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
