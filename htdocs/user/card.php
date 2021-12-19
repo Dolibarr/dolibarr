@@ -1868,7 +1868,7 @@ else
 			}
 
 			// Signature
-			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td>';
+			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td class="wordbreak">';
 			print dol_htmlentitiesbr($object->signature);
 			print "</td></tr>\n";
 
