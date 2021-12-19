@@ -1566,7 +1566,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (!defined('DISABLE_FONT_AWSOME')) {
 			print '<!-- Includes CSS for font awesome -->'."\n";
 
-			$fontawesome_directory = !empty($conf->global->MAIN_FONTAWESOME_DIRECTORY) ? $conf->global->MAIN_FONTAWESOME_DIRECTORY : '/theme/common/fontawesome-5';
+			$fontawesome_directory = getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', '/theme/common/fontawesome-5');
 
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
 			// Deprecated Font awesome v4
