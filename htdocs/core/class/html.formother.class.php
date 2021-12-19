@@ -57,10 +57,10 @@ class FormOther
 	}
 
 	/**
-	 * Return HTML code for scanner tool.
+	 * Return the HTML code for scanner tool.
 	 * This must be called into an existing <form>
 	 *
-	 * @param	string	$jstoexecuteonadd	Name of javascript function to call
+	 * @param	string	$jstoexecuteonadd	Name of javascript function to call once the barcode scanning session is complete and user has click on "Add".
 	 * @param	string	$mode				'all' (both product and lot barcode) or 'product' (product barcode only) or 'lot' (lot number only)
 	 * @return	string						HTML component
 	 */
@@ -72,7 +72,7 @@ class FormOther
 
 		$out .= '<!-- Popup for mass barcode scanning -->'."\n";
 		$out .= '<div class="div-for-modal-topright" style="padding: 15px">';
-		$out .= '<center><strong>Barcode scanner tool...</strong></center><br>';
+		$out .= '<center>'.img_picto('', 'barcode', 'class="pictofixedwidth"').'<strong>Barcode scanner tool...</strong></center><br>';
 
 		if ($mode == 'product') {
 			$out .= '<input type="hidden" name="barcodemode" value="barcodeforproduct" id="barcodeforproduct">';

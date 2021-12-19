@@ -606,12 +606,14 @@ if ($object->id > 0) {
 	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
 		if ($permissiontoadd) {
+			// Output the javascript to manage the scanner tool.
 			print '<script>';
 
 			print '
 			var errortab1 = [];
 			var errortab2 = [];
 			var errortab3 = [];
+			var errortab4 = [];
 
 			function barcodescannerjs(){
 				console.log("We catch inputs in scanner box");
@@ -626,6 +628,7 @@ if ($object->id > 0) {
 				errortab1 = [];
 				errortab2 = [];
 				errortab3 = [];
+				errortab4 = [];
 
 				if(textarray[0] != ""){
 					$(".expectedqty").each(function(){
@@ -734,6 +737,13 @@ if ($object->id > 0) {
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
+						if (Object.keys(errortab4).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse').': ";
+							errortab4.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
 
 						jQuery("#scantoolmessage").text("'.$langs->trans("ErrorOnElementsInventory").'\n" + stringerror);
 						//alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
@@ -742,6 +752,7 @@ if ($object->id > 0) {
 
 			}
 
+			/* This methode is called by parent barcodescannerjs() */
 			function barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,mode,autodetect=false){
 				BarcodeIsInProduct=0;
 				newproductrow=0
@@ -753,14 +764,14 @@ if ($object->id > 0) {
 						async: false,
 						success: function(response) {
 							response = JSON.parse(response);
-							if(response.status == "success"){
+							if (response.status == "success"){
 								console.log(response.message);
 								if(!newproductrow){
 									newproductrow = response.object;
 								}
 							}else{
-								if (mode!="lotserial" && autodetect==false && !errortab.includes(element)){
-									errortab.push(element);
+								if (mode!="lotserial" && autodetect==false && !errortab4.includes(element)){
+									errortab4.push(element);
 									console.error(response.message);
 								}
 							}
