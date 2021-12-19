@@ -73,14 +73,15 @@ class FormOther
 		$out .= '<div class="div-for-modal-topright" style="padding: 15px">';
 		$out .= '<center><strong>Barcode scanner tool...</strong></center><br>';
 
-		$out .= '<input type="radio" name="barcodemode" value="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
-		$out .= '<input type="radio" name="barcodemode" value="barcodeforproduct"> Scan a product barcode<br>';
-		$out .= '<input type="radio" name="barcodemode" value="barcodeforlotserial"> Scan a product lot or serial number<br>';
+		$out .= '<input type="radio" name="barcodemode" value="barcodeforautodetect" id="barcodeforautodetect" checked="checked"> <label for="barcodeforautodetect">Autodetect if we scan a product barcode or a lot/serial barcode</label><br>';
+		$out .= '<input type="radio" name="barcodemode" value="barcodeforproduct" id="barcodeforproduct"> <label for="barcodeforproduct">Scan a product barcode</label><br>';
+		$out .= '<input type="radio" name="barcodemode" value="barcodeforlotserial" id="barcodeforlotserial"> <label for="barcodeforlotserial">Scan a product lot or serial number</label><br>';
 
 		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$out .= '<br>';
 		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
@@ -92,13 +93,20 @@ class FormOther
 		$out .= '<br>';
 		$out .= '<center>';
 		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id ="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.$langs->trans("Add").'">';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("CloseWindow").'">';
+		$out .= '</center>';
 		$out .= '<br>';
+		$out .= '<div type="text" id="scantoolmessage" class="scantoolmessage ok nopadding"></div>';
 
 		$out .= '<script>';
+		$out .= 'jQuery("#barcodeforautodetect, #barcodeforproduct, #barcodeforlotserial").click(function(){';
+		$out .= 'console.log("select choice");';
+		$out .= 'jQuery("#scantoolmessage").text("");';
+		$out .= '});'."\n";
 		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
 			console.log("We call js to execute '.dol_escape_js($jstoexecuteonadd).'");
 			'.dol_escape_js($jstoexecuteonadd).'();
+			return false;	/* We want to stay on the scan tool */
 		})';
 		$out .= '</script>';
 

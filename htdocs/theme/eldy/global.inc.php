@@ -1032,6 +1032,11 @@ div.divsearchfield {
 	opacity: 0.6;
 }
 
+
+/* ============================================================================== */
+/* Styles for scan tool                                                           */
+/* ============================================================================== */
+
 div.div-for-modal {
 	/* display: none; */
 	position:absolute;
@@ -1045,18 +1050,25 @@ div.div-for-modal {
 	z-index: 100;
 }
 
+#scantoolmessage {
+	height: 3em;
+	border: none;
+	overflow-y: auto;
+}
+
 div.div-for-modal-topright {
 	/* display: none; */
 	position: fixed;
 	top: 0;
 	right: 0;
 	width:50%;  /* adjust as per your needs */
-	height:250px;   /* adjust as per your needs */
+	height:320px;   /* adjust as per your needs */
 	background: #fff;
 	border: 1px solid #bbb;
 	box-shadow: 2px 2px 20px #ddd;
 	z-index: 1100;
 }
+
 
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip

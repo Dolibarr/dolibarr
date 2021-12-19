@@ -343,10 +343,15 @@ if (empty($reshook)) {
 			$result = $tmp->create($user);
 			if ($result < 0) {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					setEventMessages($langs->trans("DuplicateRecord"), null, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 				} else {
 					dol_print_error($db, $tmp->error, $tmp->errors);
 				}
+			} else {
+				// Clear var
+				$_POST['batch'] = '';
+				$_POST['qtytoadd'] = '';
 			}
 		}
 	}
@@ -606,18 +611,28 @@ if ($object->id > 0) {
 			print '<script>';
 
 			print '
-			var errortab = [];
+			var errortab1 = [];
+			var errortab2 = [];
+			var errortab3 = [];
+
 			function barcodescannerjs(){
-				console.log("We catch inputs in sacnner box");
+				console.log("We catch inputs in scanner box");
+				jQuery("#scantoolmessage").text();
+
 				var selectaddorreplace = $("select[name=selectaddorreplace]").val();
 				var barcodemode = $("input[name=barcodemode]:checked").val();
 				var barcodeproductqty = $("input[name=barcodeproductqty]").val();
 				var textarea = $("textarea[name=barcodelist]").val();
-				var textarray = textarea.split("\n");
+				var textarray = textarea.split(/[\s,]+/);
 				var tabproduct = [];
+				errortab1 = [];
+				errortab2 = [];
+				errortab3 = [];
+
 				if(textarray[0] != ""){
 					$(".expectedqty").each(function(){
 						id = this.id;
+						console.log("Analyze line "+id+" in inventory");
 						warehouse = $("#"+id+"_warehouse").children().first().text();
 						productbarcode = $("#"+id+"_product").children().first().attr("title");
 						productbarcode = productbarcode.split("<br>");
@@ -625,11 +640,10 @@ if ($object->id > 0) {
 						productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
 
 						productbatchcode = $("#"+id+"_batch").text();
-						if(barcodemode != "barcodeforproduct"){
+						if (barcodemode != "barcodeforproduct") {
 							tabproduct.forEach(product=>{
 								if(product.Batch != "" && product.Batch == productbatchcode){
-									alert("'.$langs->transnoentities('ErrorSameBatchNumber').': "+productbatchcode);
-									throw"'.$langs->transnoentities('ErrorSameBatchNumber').': "+productbatchcode;
+									errortab1.push(productbatchcode);
 								}
 							})
 						}
@@ -638,7 +652,8 @@ if ($object->id > 0) {
 							productinput = 0
 						}
 						tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':productinput,\'fetched\':false});
-					})
+					});
+
 					textarray.forEach(function(element,index){
 						var verify_batch = false;
 						var verify_barcode = false;
@@ -648,26 +663,31 @@ if ($object->id > 0) {
 								verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial",true);
 								break;
 							case "barcodeforproduct":
-								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"barcode");
+								verify_barcode = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"barcode");
 								break;
 							case "barcodeforlotserial":
-								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial");
+								verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial");
 								break;
 							default:
 								alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
 								throw "'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
 						}
-						if(verify_batch == true && verify_barcode == true){
-							errortab.push(element);
+
+						if (verify_batch == false && verify_barcode == false) {		/* If the 2 flags are false, error */
+							errortab2.push(element);
+						}
+						if (verify_batch == true && verify_barcode == true) {		/* If the 2 flags are true, error: we don t know which one to take */
+							errortab3.push(element);
 						}
 					});
-					if (Object.keys(errortab).length < 1){
+
+					if (Object.keys(errortab1).length < 1 && Object.keys(errortab2).length < 1 && Object.keys(errortab3).length < 1) {
 						tabproduct.forEach(product => {
 							if(product.Qty!=0){
 								console.log("We change #"+product.Id+"_input to match input in scanner box");
 								if(product.hasOwnProperty("reelqty")){
 									$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-										data: { "action":"addnewlineproduct","fk_entrepot":product.Warehouse,"batch":product.Batch,"fk_inventory":'.dol_escape_js($object->id).',"fk_product":product.fk_product,"reelqty":product.reelqty},
+										data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js($object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
 										type: \'POST\',
 										async: false,
 										success: function(response) {
@@ -690,15 +710,35 @@ if ($object->id > 0) {
 									$("#"+product.Id+"_input").val(product.Qty);
 								}
 							}
-						})
-						document.forms["formrecord"].submit();
-					}else{
-						let stringerror = "";
-						errortab.forEach(element => {
-							stringerror += (element + ",")
 						});
-						stringerror = stringerror.slice(0, -1);
-						alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
+						jQuery("#scantoolmessage").text("'.$langs->trans("QtyWasAddedToTheScannedBarcode").'\n");
+						/* document.forms["formrecord"].submit(); */
+					} else {
+						let stringerror = "";
+						if (Object.keys(errortab1).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorSameBatchNumber').': ";
+							errortab1.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+						if (Object.keys(errortab2).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorCantFindCodeInInventory').': ";
+							errortab2.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+						if (Object.keys(errortab3).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial').': ";
+							errortab3.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+
+						jQuery("#scantoolmessage").text("'.$langs->trans("ErrorOnElementsInventory").'\n" + stringerror);
+						//alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
 					}
 				}
 
@@ -710,7 +750,7 @@ if ($object->id > 0) {
 				result=false;
 				tabproduct.forEach(product => {
 					$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-						data: { "action":"existbarcode",'.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.',':'').(!empty($object->fk_product)?'"fk_product":'.$object->fk_product.',':'').'"barcode":element,"product":product,"mode":mode},
+						data: { "token":"'.newToken().'", "action":"existbarcode", '.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.', ':'').(!empty($object->fk_product)?'"fk_product":'.$object->fk_product.', ':'').'"barcode":element, "product":product, "mode":mode},
 						type: \'POST\',
 						async: false,
 						success: function(response) {
