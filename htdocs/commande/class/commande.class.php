@@ -386,9 +386,6 @@ class Commande extends CommonOrder
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		$this->remise = 0;
-		$this->remise_percent = 0;
 	}
 
 	/**
