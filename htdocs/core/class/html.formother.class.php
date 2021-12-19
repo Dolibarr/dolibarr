@@ -88,7 +88,7 @@ class FormOther
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
 		$out .= '<br>';
-		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.$langs->trans("ScanOrTypeOrCopyPasteYouBarCode").'"></textarea>';
+		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.dol_escape_htmltag($langs->trans("ScanOrTypeOrCopyPasteYouBarCode")).'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
 
@@ -98,8 +98,8 @@ class FormOther
 		*/
 		$out .= '<br>';
 		$out .= '<center>';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id ="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.$langs->trans("Add").'">';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("CloseWindow").'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id ="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.dol_escape_htmltag($langs->trans("CloseWindow")).'">';
 		$out .= '</center>';
 		$out .= '<br>';
 		$out .= '<div type="text" id="scantoolmessage" class="scantoolmessage ok nopadding"></div>';

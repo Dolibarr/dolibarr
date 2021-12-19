@@ -265,4 +265,4 @@ ProductBarcodeDoesNotExist=Le produit avec ce code-barres n'existe pas
 WarehouseId=ID entrepôt
 WarehouseRef=Réf entrepôt
 ClearQtys=Reset quantities
-ScanOrTypeOrCopyPasteYouBarCode=Scan your barcodes, type them or copy-paste them (use new line, tab or space or ',' or ';' as separator)
+ScanOrTypeOrCopyPasteYouBarCode=Scan your barcodes, type them or copy-paste them (use new line, tab or space or "," or ";" as separator) then click on "Add"
