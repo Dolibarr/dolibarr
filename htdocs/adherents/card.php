@@ -1431,7 +1431,7 @@ else
 		if ($action == 'create_thirdparty')
 		{
 			$companyalias = '';
-			$fullname = $object->lastname . ' ' . $object->firstname;
+			$fullname = $object->getFullName($langs);
 
 			if ($object->morphy == 'mor')
 			{
