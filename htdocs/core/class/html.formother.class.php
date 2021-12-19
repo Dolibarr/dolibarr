@@ -60,10 +60,11 @@ class FormOther
 	 * Return HTML code for scanner tool.
 	 * This must be called into an existing <form>
 	 *
-	 * @param	string	$jstoexecuteonadd		Name of javascript function to call
+	 * @param	string	$jstoexecuteonadd	Name of javascript function to call
+	 * @param	string	$mode				'all' (both product and lot barcode) or 'product' (product barcode only) or 'lot' (lot number only)
 	 * @return	string						HTML component
 	 */
-	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodescannerjs')
+	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodescannerjs', $mode = 'all')
 	{
 		global $langs;
 
@@ -73,10 +74,15 @@ class FormOther
 		$out .= '<div class="div-for-modal-topright" style="padding: 15px">';
 		$out .= '<center><strong>Barcode scanner tool...</strong></center><br>';
 
-		$out .= '<input type="radio" name="barcodemode" value="barcodeforautodetect" id="barcodeforautodetect" checked="checked"> <label for="barcodeforautodetect">Autodetect if we scan a product barcode or a lot/serial barcode</label><br>';
-		$out .= '<input type="radio" name="barcodemode" value="barcodeforproduct" id="barcodeforproduct"> <label for="barcodeforproduct">Scan a product barcode</label><br>';
-		$out .= '<input type="radio" name="barcodemode" value="barcodeforlotserial" id="barcodeforlotserial"> <label for="barcodeforlotserial">Scan a product lot or serial number</label><br>';
-
+		if ($mode == 'product') {
+			$out .= '<input type="hidden" name="barcodemode" value="barcodeforproduct" id="barcodeforproduct">';
+		} elseif ($mode == 'lot') {
+			$out .= '<input type="hidden" name="barcodemode" value="barcodeforlotserial" id="barcodeforlotserial">';
+		} else {	// $mode = 'all'
+			$out .= '<input type="radio" name="barcodemode" value="barcodeforautodetect" id="barcodeforautodetect" checked="checked"> <label for="barcodeforautodetect">Autodetect if we scan a product barcode or a lot/serial barcode</label><br>';
+			$out .= '<input type="radio" name="barcodemode" value="barcodeforproduct" id="barcodeforproduct"> <label for="barcodeforproduct">Scan a product barcode</label><br>';
+			$out .= '<input type="radio" name="barcodemode" value="barcodeforlotserial" id="barcodeforlotserial"> <label for="barcodeforlotserial">Scan a product lot or serial number</label><br>';
+		}
 		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);

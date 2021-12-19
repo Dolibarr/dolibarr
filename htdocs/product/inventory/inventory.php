@@ -807,7 +807,7 @@ if ($object->id > 0) {
 		}
 		include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($db);
-		print $formother->getHTMLScannerForm("barcodescannerjs");
+		print $formother->getHTMLScannerForm("barcodescannerjs", 'all');
 	}
 
 	//Call method to undo changes in real qty
