@@ -88,7 +88,7 @@ class FormOther
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
 		$out .= '<br>';
-		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
+		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.$langs->trans("ScanOrTypeOrCopyPasteYouBarCode").'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
 

@@ -567,37 +567,35 @@ if ($object->id > 0) {
 
 	if ($object->status == Inventory::STATUS_VALIDATED) {
 		print '<center>';
-		if ($permissiontoadd) {
-			/*
-			 if (!empty($conf->barcode->enabled)) {
-			 print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
-			 }
-			 if (!empty($conf->productbatch->enabled)) {
-			 print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
-			 }*/
-			if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
-			}
-		} else {
-			print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
-		}
-		if ($permissiontoadd && $conf->use_javascript_ajax) {
-			print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+		if (!empty($conf->use_javascript_ajax)) {
+			if ($permissiontoadd) {
+				// Link to launch scan tool
+				if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
+				}
 
-			print '<script>';
-			print '$( document ).ready(function() {';
-			print '	$("#fillwithexpected").on("click",function fillWithExpected(){
-						$(".expectedqty").each(function(){
-							var object = $(this)[0];
-							var objecttofill = $("#"+object.id+"_input")[0];
-							objecttofill.value = object.innerText;
-						})
-						console.log("Values filled (after click on fillwithexpected)");
-						disablebuttonmakemovementandclose();
-						return false;
-			        });';
-			print '});';
-			print '</script>';
+				// Link to autofill
+				print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+				print '<script>';
+				print '$( document ).ready(function() {';
+				print '	$("#fillwithexpected").on("click",function fillWithExpected(){
+							$(".expectedqty").each(function(){
+								var object = $(this)[0];
+								var objecttofill = $("#"+object.id+"_input")[0];
+								objecttofill.value = object.innerText;
+							})
+							console.log("Values filled (after click on fillwithexpected)");
+							disablebuttonmakemovementandclose();
+							return false;
+				        });';
+				print '});';
+				print '</script>';
+
+				// Link to reset qty
+				print '<a href="#" id="clearqty" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'eraser', 'class="paddingrightonly"').$langs->trans("ClearQtys").'</a>';
+			} else {
+				print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+			}
 		}
 		print '<br>';
 		print '<br>';
@@ -623,7 +621,7 @@ if ($object->id > 0) {
 				var barcodemode = $("input[name=barcodemode]:checked").val();
 				var barcodeproductqty = $("input[name=barcodeproductqty]").val();
 				var textarea = $("textarea[name=barcodelist]").val();
-				var textarray = textarea.split(/[\s,]+/);
+				var textarray = textarea.split(/[\s,;]+/);
 				var tabproduct = [];
 				errortab1 = [];
 				errortab2 = [];
@@ -813,7 +811,12 @@ if ($object->id > 0) {
 	//Call method to undo changes in real qty
 	print '<script>';
 	print 'jQuery(document).ready(function() {
-		$(".undochangesqty").on("click",function undochangesqty() {
+		$("#clearqty").on("click", function() {
+			console.log("Clear all values");
+			jQuery(".realqty").val("");
+			return false;	/* disable submit */
+		});
+		$(".undochangesqty").on("click", function undochangesqty() {
 			console.log("Clear value of inventory line");
 			id = this.id;
 			id = id.split("_")[1];
