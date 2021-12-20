@@ -221,6 +221,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_mysoc_idprof6' => 'ProfId6',
 			'dol_value_mysoc_tva_intra' => 'VATIntra',
 			'dol_value_mysoc_capital' => 'Capital',
+			'dol_value_mysoc_url' => 'Web',
 			'dol_value_vendor_lastname' => 'VendorLastname',
 			'dol_value_vendor_firstname' => 'VendorFirstname',
 			'dol_value_vendor_mail' => 'VendorEmail',
@@ -607,6 +608,7 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_mysoc_idprof6}', $mysoc->idprof6, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_tva_intra}', $mysoc->tva_intra, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_capital}', $mysoc->capital, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_url}', $mysoc->url, $this->template);
 
 		$this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
