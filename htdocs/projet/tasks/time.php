@@ -1538,7 +1538,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print_liste_field_titre($arrayfields['t.task_date']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
 		}
 		if (!empty($allprojectforuser)) {
-			print_liste_field_titre($langs->trans("Project"), $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+			print_liste_field_titre("Project", $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		}
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.task_ref']['checked'])) {
