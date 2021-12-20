@@ -135,3 +135,4 @@ NbInsert=Number of inserted lines: %s
 NbUpdate=Number of updated lines: %s
 MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s
 StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
