@@ -134,7 +134,6 @@ if ($action == 'getProducts') {
 	$sql .= ' AND p.tosell = 1';
 	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
 		$sql .= ' AND ps.reel > 0';
-		
 	}
 	$sql .= natural_search(array('p.ref', 'p.label', 'p.barcode'), $term);
 	$resql = $db->query($sql);
