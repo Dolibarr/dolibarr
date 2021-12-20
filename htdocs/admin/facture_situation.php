@@ -28,23 +28,113 @@
  */
 
 require '../main.inc.php';
+
+// Libraries
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('situationinvoicesetup', 'globalsetup'));
+
+// Access control
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
+
+$form = new Form($db);
+$formSetup = new FormSetup($db);
+
+
+// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
+$formSetup->newItem('INVOICE_USE_SITUATION')
+	->setAsYesNo()
+	->nameText = $langs->trans('UseSituationInvoices');
+
+$item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE')
+	->setAsYesNo()
+	->nameText = $langs->trans('UseSituationInvoicesCreditNote');
+
+//$item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY')
+//	->setAsYesNo()
+//	->nameText = $langs->trans('Retainedwarranty');
+
+
+$item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY');
+$item->nameText = $langs->trans('AllowedInvoiceForRetainedWarranty');
+
+$arrayAvailableType = array(
+	Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation"),
+	Facture::TYPE_STANDARD.'+'.Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation").' + '.$langs->trans("InvoiceStandard"),
+);
+
+if ($action == 'edit') {
+	$item->fieldInputOverride = $form->selectarray('INVOICE_USE_RETAINED_WARRANTY', $arrayAvailableType, $conf->global->INVOICE_USE_RETAINED_WARRANTY, 1);
+} else {
+	$item->fieldOutputOverride= isset($arrayAvailableType[$conf->global->INVOICE_USE_RETAINED_WARRANTY])?$arrayAvailableType[$conf->global->INVOICE_USE_RETAINED_WARRANTY]:'';
+}
+
+//$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION')->setAsYesNo();
+//$item->nameText = $langs->trans('RetainedwarrantyOnlyForSituation');
+
+$formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')
+	->setAsYesNo()
+	->nameText = $langs->trans('RetainedwarrantyOnlyForSituationFinal');
+
+
+// TODO : TODO : TODO
+$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION');
+
+$metas = array(
+	'type' => 'number',
+	'step' => '0.01',
+	'min' => 0,
+	'max' => 100
+);
+_printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', $langs->trans('RetainedwarrantyDefaultPercent'), '', $metas);
+
+
+/*
+// Hôte
+$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+$item->cssClass = 'minwidth500';
+
+// Setup conf MYMODULE_MYPARAM1 as a simple string input
+$item = $formSetup->newItem('MYMODULE_MYPARAM1');
+
+// Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
+$item = $formSetup->newItem('MYMODULE_MYPARAM2');
+$item->nameText = $item->getNameText().' more html text ';
+
+// Setup conf MYMODULE_MYPARAM3
+$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+$item->setAsThirdpartyType();
+
+// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
+$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+
+// Setup conf MYMODULE_MYPARAM5
+$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+
+// Setup conf MYMODULE_MYPARAM6
+$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+
+// Setup conf MYMODULE_MYPARAM7
+$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+*/
 
 
 /*
@@ -67,7 +157,6 @@ llxHeader(
 	'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura'
 );
 
-$form = new Form($db);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -84,6 +173,25 @@ print '<span class="opacitymedium">'.$langs->trans("InvoiceFirstSituationDesc").
  *  Numbering module
  */
 
+if ($action == 'edit') {
+	print $formSetup->generateOutput(true);
+} else {
+	print $formSetup->generateOutput();
+}
+
+if (count($formSetup->items) > 0) {
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '</div>';
+} else {
+	print '<br>'.$langs->trans("NothingToSetup");
+}
+
+
+print '<hr/>';
+
+
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
@@ -97,23 +205,9 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-_printOnOff('INVOICE_USE_SITUATION', $langs->trans('UseSituationInvoices'));
-_printOnOff('INVOICE_USE_SITUATION_CREDIT_NOTE', $langs->trans('UseSituationInvoicesCreditNote'));
-//_printOnOff('INVOICE_USE_RETAINED_WARRANTY', $langs->trans('Retainedwarranty'));
 
-$confkey = 'INVOICE_USE_RETAINED_WARRANTY';
 
-$arrayAvailableType = array(
-	Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation"),
-	Facture::TYPE_STANDARD.'+'.Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation").' + '.$langs->trans("InvoiceStandard"),
-);
-$selected = $conf->global->$confkey;
-$curentInput = (empty($inputCount) ? 1 : ($inputCount + 1));
-$formSelectInvoiceType = $form->selectarray('value'.$curentInput, $arrayAvailableType, $selected, 1);
-_printInputFormPart($confkey, $langs->trans('AllowedInvoiceForRetainedWarranty'), '', array(), $formSelectInvoiceType);
 
-//_printOnOff('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION', $langs->trans('RetainedwarrantyOnlyForSituation'));
-_printOnOff('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION', $langs->trans('RetainedwarrantyOnlyForSituationFinal'));
 
 $metas = array(
 	'type' => 'number',
