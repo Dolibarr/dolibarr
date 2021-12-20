@@ -269,3 +269,5 @@ InventoryStartedShort=Started
 ErrorOnElementsInventory=Operation canceled for the following reason:
 ErrorCantFindCodeInInventory=Can't find the following code in inventory
 QtyWasAddedToTheScannedBarcode=Success !! The quantity was added to all the requested barcode. You can close the Scanner tool.
+StockChangeDisabled=Change on stock disabled
+NoWarehouseDefinedForTerminal=No warehouse defined for terminal
