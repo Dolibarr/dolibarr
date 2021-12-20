@@ -225,6 +225,9 @@ if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {
 if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
+if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
+	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTExpenseReport'));
+}
 if (!empty($conf->agenda->enabled)) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
@@ -654,7 +657,7 @@ if ($action == 'view') {
 		if ($valuetoshow != '') {
 			print '<td class="'.$align.'">';
 			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-				print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 			} elseif (!empty($tabhelp[$id][$value])) {
 				if (in_array($value, array('topic'))) {
 					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value); // Tooltip on click
@@ -894,7 +897,7 @@ if ($resql) {
 			$valuetoshow = $langs->trans("Content"); $showfield = 0;
 		}
 		if ($fieldlist[$field] == 'content_lines') {
-			$valuetoshow = $langs->trans("ContentLines"); $showfield = 0;
+			$valuetoshow = $langs->trans("ContentForLines"); $showfield = 0;
 		}
 
 		// Show fields
@@ -971,6 +974,14 @@ if ($resql) {
 								$okforextended = false;
 							}
 							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+							print $doleditor->Create(1);
+						}
+						if ($tmpfieldlist == 'content_lines') {
+							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+							$okforextended = true;
+							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
+								$okforextended = false;
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 						print '</td>';
@@ -1114,35 +1125,6 @@ if ($resql) {
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 				}
 				print '</td>';
-
-				/*
-				$fieldsforcontent = array('content');
-				if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
-				{
-					$fieldsforcontent = array('content', 'content_lines');
-				}
-				foreach ($fieldsforcontent as $tmpfieldlist)
-				{
-					$showfield = 1;
-					$align = "left";
-					$valuetoshow = $obj->{$tmpfieldlist};
-
-					$class = 'tddict';
-					// Show value for field
-					if ($showfield) {
-
-						print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$i.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
-						$okforextended = true;
-						if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
-							$okforextended = false;
-						$doleditor = new DolEditor($tmpfieldlist.'-'.$i, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%', 1);
-						print $doleditor->Create(1);
-						print '</td>';
-						print '<td></td><td></td><td></td>';
-
-					}
-				}*/
-
 				print "</tr>\n";
 			}
 

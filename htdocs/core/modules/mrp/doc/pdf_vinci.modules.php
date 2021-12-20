@@ -5,8 +5,8 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France       <frederic.france@netlogic.fr>
- * Copyright (C) 2018      Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France       <frederic.france@netlogic.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -23,7 +23,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/mrp/doc/pdf_vinci.php
+ *	\file       htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
  *	\ingroup    mrp
  *	\brief      File of class to generate MO document from vinci model
  */
@@ -309,6 +309,8 @@ class pdf_vinci extends ModelePDFMo
 				$tab_top = 90 + $top_shift;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
+
 
 				// Affiche notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
@@ -412,8 +414,8 @@ class pdf_vinci extends ModelePDFMo
 						}
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-					} else // No pagebreak
-					{
+					} else {
+						// No pagebreak
 						$pdf->commitTransaction();
 						$posyafter = $pdf->GetY();
 						$height_note = $posyafter - $tab_top;

@@ -37,7 +37,8 @@ ManufacturingDate=Data de producţie
 DestructionDate=Data distrugerii
 FirstUseDate=Data primei utilizări
 QCFrequency=Frecvenţa controlului de calitate (în zile)
-
+ShowAllLots=Arată toate loturile
+HideLots=Ascunde loturile
 #Traceability - qc status
 OutOfOrder=Indisponibil
 InWorkingOrder=În stare de funcționare

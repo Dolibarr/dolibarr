@@ -81,6 +81,7 @@ if (empty($origin_id)) {
 }
 $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOST('lineid', 'int') ?GETPOST('lineid', 'int') : '';
+$facid = GETPOST('facid', 'int');
 
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -122,7 +123,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
 $permissiondellink = $user->rights->expedition->delivery->creer; // Used by the include of actions_dellink.inc.php
-//var_dump($object->lines[0]->detail_batch);
+$permissiontoadd = $user->rights->expedition->creer;
 
 
 /*
@@ -152,7 +153,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->expedition->dir_output.'/sending';
-	$permissiontoadd = $user->rights->expedition->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Reopen
@@ -1022,7 +1022,7 @@ if ($action == 'create') {
 
 			$numAsked = count($object->lines);
 
-			print '<script type="text/javascript" language="javascript">'."\n";
+			print '<script type="text/javascript">'."\n";
 			print 'jQuery(document).ready(function() {'."\n";
 			print 'jQuery("#autofill").click(function() {';
 			$i = 0;
@@ -1723,9 +1723,10 @@ if ($action == 'create') {
 				if (!empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($objectsrc->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -1893,7 +1894,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -1964,7 +1964,6 @@ if ($action == 'create') {
 
 		print "</table>";
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -2043,9 +2042,10 @@ if ($action == 'create') {
 		print "</tr>\n";
 		print '</thead>';
 
+		$outputlangs = $langs;
+
 		if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 			$object->fetch_thirdparty();
-			$outputlangs = $langs;
 			$newlang = '';
 			if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
@@ -2105,7 +2105,7 @@ if ($action == 'create') {
 
 		// Loop on each product to send/sent
 		for ($i = 0; $i < $num_prod; $i++) {
-			$parameters = array('i' => $i, 'line' => $lines[$i], 'line_id' => $line_id, 'num' => $num_prod, 'alreadysent' => $alreadysent, 'editColspan' => $editColspan, 'outputlangs' => $outputlangs);
+			$parameters = array('i' => $i, 'line' => $lines[$i], 'line_id' => $line_id, 'num' => $num_prod, 'alreadysent' => $alreadysent, 'editColspan' => !empty($editColspan) ? $editColspan : 0, 'outputlangs' => $outputlangs);
 			$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -2145,10 +2145,10 @@ if ($action == 'create') {
 					$product_static->weight_units = $lines[$i]->weight_units;
 					$product_static->length = $lines[$i]->length;
 					$product_static->length_units = $lines[$i]->length_units;
-					$product_static->width = $lines[$i]->width;
-					$product_static->width_units = $lines[$i]->width_units;
-					$product_static->height = $lines[$i]->height;
-					$product_static->height_units = $lines[$i]->height_units;
+					$product_static->width = !empty($lines[$i]->width) ? $lines[$i]->width : 0;
+					$product_static->width_units = !empty($lines[$i]->width_units) ? $lines[$i]->width_units : 0;
+					$product_static->height = !empty($lines[$i]->height) ? $lines[$i]->height : 0;
+					$product_static->height_units = !empty($lines[$i]->height_units) ? $lines[$i]->height_units : 0;
 					$product_static->surface = $lines[$i]->surface;
 					$product_static->surface_units = $lines[$i]->surface_units;
 					$product_static->volume = $lines[$i]->volume;
@@ -2158,7 +2158,7 @@ if ($action == 'create') {
 					$text .= ' - '.$label;
 					$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($lines[$i]->description));
 					print $form->textwithtooltip($text, $description, 3, '', '', $i);
-					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
+					print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : '', !empty($lines[$i]->date_end) ? $lines[$i]->date_end : '');
 					if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
 						print (!empty($lines[$i]->description) && $lines[$i]->description != $lines[$i]->product) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
 					}
@@ -2183,7 +2183,7 @@ if ($action == 'create') {
 				}
 
 				$unit_order = '';
-				if ($conf->global->PRODUCT_USE_UNITS) {
+				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 					$unit_order = measuringUnitString($lines[$i]->fk_unit);
 				}
 
@@ -2414,9 +2414,9 @@ if ($action == 'create') {
 
 					// TODO Show all in same line by setting $display_type = 'line'
 					if ($action == 'editline' && $line->id == $line_id) {
-						print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked, '', 0, 'card');
+						print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
 					} else {
-						print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked, '', 0, 'card');
+						print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
 					}
 				}
 			}
@@ -2544,14 +2544,14 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'shipping', $socid, 1);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 
@@ -2566,8 +2566,8 @@ if ($action == 'create') {
 
 	// Presend form
 	$modelmail = 'shipping_send';
-	$defaulttopic = 'SendShippingRef';
-	$diroutput = $conf->expedition->dir_output;
+	$defaulttopic = $langs->trans('SendShippingRef');
+	$diroutput = $conf->expedition->dir_output.'/sending';
 	$trackid = 'shi'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

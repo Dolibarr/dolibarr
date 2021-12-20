@@ -19,18 +19,22 @@
 #
 ModuleEventOrganizationName = Begivenhedsorganisation
 EventOrganizationDescription = Begivenhedsorganisation gennem modulprojekt
-EventOrganizationDescriptionLong= Administrer begivenhedsorganisation til konference, deltagere, højttalere og deltagere med en offentlig abonnementside
+EventOrganizationDescriptionLong= Administrer tilrettelæggelsen af en begivenhed (show, konferencer, deltagere eller talere, med offentlige sider til forslag, afstemning eller registrering)
 #
 # Menu
 #
 EventOrganizationMenuLeft = Organiserede begivenheder
 EventOrganizationConferenceOrBoothMenuLeft = Konference eller stand
 
+PaymentEvent=Betaling af arrangement
+
 #
 # Admin page
 #
-EventOrganizationSetup = Opsætning af begivenhedsorganisation
-Settings = Indstillinger
+NewRegistration=Registrering
+EventOrganizationSetup=Opsætning af begivenhedsorganisation
+EventOrganization=Arrangement organisering
+Settings=Indstillinger
 EventOrganizationSetupPage = Konfigurationsside for begivenhedsorganisation
 EVENTORGANIZATION_TASK_LABEL = Etiket over opgaver, der skal oprettes automatisk, når projektet valideres
 EVENTORGANIZATION_TASK_LABELTooltip = Når du validerer en organiseret begivenhed, kan der automatisk oprettes nogle opgaver i projektet <br> <br> For eksempel: <br> Send Call for Conference <br> Send Call for Booth <br> Modtag opkald til konferencer a04 mind om begivenhed til højttalere <br> Send minder om begivenhed til Booth-vært <br> Send påmind om begivenhed til deltagere
@@ -38,8 +42,8 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategori, der automatisk tilføjes til
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategori, der automatisk tilføjes til tredjeparter, når de foreslår en stand
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Skabelon til e-mail, der skal sendes efter modtagelse af et forslag til en konference.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Skabelon til e-mail, der skal sendes efter modtagelse af et forslag til en stand.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Skabelon til e-mail, der skal sendes, efter at et abonnement på en kabine er betalt.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Skabelon til e-mail, der skal sendes, efter at et abonnement på en begivenhed er betalt.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Skabelon til e -mail, der skal sendes, efter at en registrering til en bod er blevet betalt.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = E -mail -skabelon, der skal sendes, efter at en registrering til en begivenhed er betalt.
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Skabelon til e-mail med massaktion til attendes
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Skabelon til e-mail med massaktion til højttalere
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrer tredjeparts valgliste i deltagernes oprettelseskort / formular med kategori
@@ -49,11 +53,11 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtrer tredjeparts valgliste i deltage
 # Object
 #
 EventOrganizationConfOrBooth= Konference eller stand
-ManageOrganizeEvent = Administrer begivenhedsorganisation
+ManageOrganizeEvent = Administrer tilrettelæggelsen af en begivenhed
 ConferenceOrBooth = Konference eller stand
 ConferenceOrBoothTab = Konference eller stand
-AmountOfSubscriptionPaid = Betalt abonnementsbeløb
-DateSubscription = Dato for abonnement
+AmountPaid = Betalt beløb
+DateOfRegistration = Dato for registrering
 ConferenceOrBoothAttendee = Konference eller messedeltager
 
 #
@@ -63,25 +67,26 @@ YourOrganizationEventConfRequestWasReceived = Din anmodning om konference blev m
 YourOrganizationEventBoothRequestWasReceived = Din anmodning om stand blev modtaget
 EventOrganizationEmailAskConf = Anmodning om konference
 EventOrganizationEmailAskBooth = Anmodning om stand
-EventOrganizationEmailSubsBooth = Abonnement på stand
-EventOrganizationEmailSubsEvent = Abonnement på en begivenhed
+EventOrganizationEmailBoothPayment = Betaling af din bod
+EventOrganizationEmailRegistrationPayment = Tilmelding til et arrangement
 EventOrganizationMassEmailAttendees = Kommunikation til deltagere
 EventOrganizationMassEmailSpeakers = Kommunikation til taler
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Tillad ukendte personer at foreslå konferencer
-AllowUnknownPeopleSuggestConfHelp=Tillad ukendte personer at foreslå konferencer
-AllowUnknownPeopleSuggestBooth=Tillad ukendte personer at foreslå stand
-AllowUnknownPeopleSuggestBoothHelp=Tillad ukendte personer at foreslå stand
+AllowUnknownPeopleSuggestConf=Tillad folk at foreslå konferencer
+AllowUnknownPeopleSuggestConfHelp=Tillad ukendte mennesker at foreslå en konference, de vil lave
+AllowUnknownPeopleSuggestBooth=Tillad folk at ansøge om en bod
+AllowUnknownPeopleSuggestBoothHelp=Tillad ukendte mennesker at ansøge om en bod
 PriceOfRegistration=Pris for registrering
-PriceOfRegistrationHelp=Pris for registrering
+PriceOfRegistrationHelp=Pris at betale for at tilmelde sig eller deltage i arrangementet
 PriceOfBooth=Abonnementspris for at stå en kabine
 PriceOfBoothHelp=Abonnementspris for at stå en kabine
 EventOrganizationICSLink=Link ICS til begivenheder
 ConferenceOrBoothInformation=Oplysninger om konference eller stand
-Attendees = Deltagere
+Attendees=Deltagere
+ListOfAttendeesOfEvent=Liste over deltagere i arrangementsprojektet
 DownloadICSLink = Download ICS-link
 EVENTORGANIZATION_SECUREKEY = Sikker nøgle til linket til offentlig registrering til en konference
 SERVICE_BOOTH_LOCATION = Service, der bruges til fakturarække om en standplacering
@@ -100,27 +105,41 @@ EvntOrgCancelled = Annulleret
 # Public page
 #
 SuggestForm = Forslagsside
-RegisterPage = Side til konferencer eller stand
-EvntOrgRegistrationHelpMessage = Her kan du stemme på et arrangement eller foreslå en ny konference eller stand til projektet
-EvntOrgRegistrationConfHelpMessage = Her kan du foreslå en ny konference til projektet
-EvntOrgRegistrationBoothHelpMessage = Her kan du foreslå en ny stand til projektet
+SuggestOrVoteForConfOrBooth = Side for forslag eller afstemning
+EvntOrgRegistrationHelpMessage = Her kan du stemme på en konference eller foreslå en ny til arrangementet. Du kan også ansøge om at få en bod under arrangementet.
+EvntOrgRegistrationConfHelpMessage = Her kan du foreslå en ny konference for at animere under arrangementet.
+EvntOrgRegistrationBoothHelpMessage = Her kan du ansøge om at få en bod under arrangementet.
 ListOfSuggestedConferences = Liste over foreslåede konferencer
 ListOfSuggestedBooths = Liste over foreslåede stand
+ListOfConferencesOrBooths=Liste over konferencer eller boder med eventprojekt
 SuggestConference = Foreslå en ny konference
 SuggestBooth = Foreslå en kabine
 ViewAndVote = Se og stem på foreslåede begivenheder
-PublicAttendeeSubscriptionPage = Offentlig link til registrering til en konference
+PublicAttendeeSubscriptionGlobalPage = Offentligt link til registrering til arrangementet
+PublicAttendeeSubscriptionPage = Offentligt link til registrering til denne begivenhed
 MissingOrBadSecureKey = Sikkerhedsnøglen er ugyldig eller mangler
-EvntOrgWelcomeMessage = Denne formular giver dig mulighed for at registrere dig som en ny deltager til konferencen: '%s'
+EvntOrgWelcomeMessage = Denne formular giver dig mulighed for at registrere dig som en ny deltager til begivenheden: <b> %s </b>
 EvntOrgDuration = Denne konference starter på %s og slutter på %s.
 ConferenceAttendeeFee = Konferencedeltagergebyr for begivenheden: '%s', der forekommer fra %s til %s.
 BoothLocationFee = Standplacering for begivenheden: '%s' der forekommer fra %s til %s
 EventType = Begivenhedstype
 LabelOfBooth=Båsetiket
 LabelOfconference=Konference label
-ConferenceIsNotConfirmed=Abonnement ikke tilgængeligt, konference er endnu ikke bekræftet
+ConferenceIsNotConfirmed=Tilmelding ikke tilgængelig, konference er ikke bekræftet endnu
 DateMustBeBeforeThan=%s skal være før %s
 DateMustBeAfterThan=%s skal være efter %s
+
+NewSubscription=Registrering
+OrganizationEventConfRequestWasReceived=Dit forslag til en konference er modtaget
+OrganizationEventBoothRequestWasReceived=Din anmodning om en bod er modtaget
+OrganizationEventPaymentOfBoothWasReceived=Din betaling for din bod er blevet registreret
+OrganizationEventPaymentOfRegistrationWasReceived=Din betaling for din begivenhedsregistrering er registreret
+OrganizationEventBulkMailToAttendees=Dette er en påmindelse om din deltagelse i begivenheden som deltager
+OrganizationEventBulkMailToSpeakers=Dette er en påmindelse om din deltagelse i arrangementet som foredragsholder
+OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller partner)
+
+NewSuggestionOfBooth=Ansøgning om bod
+NewSuggestionOfConference=Ansøgning om en konference
 
 #
 # Vote page
@@ -133,17 +152,15 @@ VoteOk = Din stemme er blevet accepteret.
 AlreadyVoted = Du har allerede stemt på denne begivenhed.
 VoteError = Der opstod en fejl under afstemningen. Prøv igen.
 
-#
-# SubscriptionOk page
-#
-SubscriptionOk = Dit abonnement på denne konference er valideret
-#
-# Subscription validation mail
-#
-ConfAttendeeSubscriptionConfirmation = Bekræftelse af dit abonnement på en konference
-#
-# Payment page
-#
+SubscriptionOk = Din registrering er valideret
+ConfAttendeeSubscriptionConfirmation = Bekræftelse af dit abonnement på en begivenhed
 Attendee = Deltager
 PaymentConferenceAttendee = Konference deltager betaling
 PaymentBoothLocation = Betaling af standplacering
+DeleteConferenceOrBoothAttendee=Fjern deltager
+RegistrationAndPaymentWereAlreadyRecorder=En registrering og en betaling blev allerede registreret for e -mailen <b> %s </b>
+EmailAttendee=E -mail til deltager
+EmailCompanyForInvoice=Firmaets e -mail (for faktura, hvis den er forskellig fra deltagerens e -mail)
+ErrorSeveralCompaniesWithEmailContactUs=Flere virksomheder med denne e -mail er fundet, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
+ErrorSeveralCompaniesWithNameContactUs=Flere virksomheder med dette navn er fundet, så vi kan ikke automatisk validere din registrering. Kontakt os venligst på %s for en manuel validering
+NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åbne for offentligheden for denne begivenhed

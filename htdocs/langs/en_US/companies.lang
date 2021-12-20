@@ -271,6 +271,12 @@ ProfId3RU=Prof Id 3 (KPP)
 ProfId4RU=Prof Id 4 (OKPO)
 ProfId5RU=-
 ProfId6RU=-
+ProfId1UA=Prof Id 1 (EDRPOU)
+ProfId2UA=Prof Id 2 (DRFO)
+ProfId3UA=Prof Id 3 (INN)
+ProfId4UA=Prof Id 4 (Certificate)
+ProfId5UA=Prof Id 5 (RNOKPP)
+ProfId6UA=Prof Id 6 (TRDPAU)
 ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
@@ -363,7 +369,7 @@ VATIntraCheck=Check
 VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commission website
-VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank">%s</a>
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Check not possible. Check service is not provided by the member state (%s).
 NorProspectNorCustomer=Not prospect, nor customer
 JuridicalStatus=Business entity type

@@ -209,10 +209,10 @@ class Societe extends CommonObject
 		'mode_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>295),
 		'cond_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
 		'mode_reglement_supplier' =>array('type'=>'integer', 'label'=>'Mode reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>305),
+		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>308),
 		'outstanding_limit' =>array('type'=>'double(24,8)', 'label'=>'OutstandingBill', 'enabled'=>1, 'visible'=>-1, 'position'=>310, 'isameasure'=>1),
 		'order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>315, 'isameasure'=>1),
 		'supplier_order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Supplier order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>320, 'isameasure'=>1),
-		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>325),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'Fk shipping method', 'enabled'=>1, 'visible'=>-1, 'position'=>330),
 		'tva_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Tva assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
 		'localtax1_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax1 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>340),
@@ -853,7 +853,7 @@ class Societe extends CommonObject
 		$this->accountancy_code_customer = trim($this->code_compta);
 		$this->accountancy_code_supplier = trim($this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
-		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
+		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
 
 		if (!empty($this->multicurrency_code)) {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
@@ -917,8 +917,8 @@ class Societe extends CommonObject
 			$sql .= ", ".(int) $this->fk_multicurrency;
 			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-				$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+				$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+				$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
 			}
 			$sql .= ")";
 
@@ -931,9 +931,9 @@ class Societe extends CommonObject
 
 				// update accountancy for this entity
 				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . ((int) $this->id) . " AND entity = " . ((int) $conf->entity));
+					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
 
-					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
 					$sql .= " fk_soc";
 					$sql .= ", entity";
 					$sql .= ", accountancy_code_customer";
@@ -942,11 +942,11 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
-					$sql .= ", " . $conf->entity;
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_customer) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_supplier) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+					$sql .= ", ".$conf->entity;
+					$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
 					$sql .= ")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1053,7 +1053,7 @@ class Societe extends CommonObject
 				$error++;
 				$this->error = $contact->error;
 				$this->errors = array_merge($this->errors, $contact->errors);
-				dol_syslog(get_class($this) . "::create_individual Affect Tag ERROR:" . $this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::create_individual Affect Tag ERROR:".$this->error, LOG_ERR);
 				$contactId = $result;
 			}
 		}
@@ -1063,7 +1063,7 @@ class Societe extends CommonObject
 			if ($result < 0) {
 				$this->error = $contact->error;
 				$this->errors = array_merge($this->errors, $contact->errors);
-				dol_syslog(get_class($this) . "::create_individual set mailing status ERROR:" . $this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::create_individual set mailing status ERROR:".$this->error, LOG_ERR);
 				$contactId = $result;
 			}
 		}
@@ -1299,7 +1299,7 @@ class Societe extends CommonObject
 		}
 
 		$this->code_compta_client = trim(empty($this->code_compta) ? $this->code_compta_client : $this->code_compta);
-		$this->code_compta = $this->code_compta_client;		// for backward compatibility
+		$this->code_compta = $this->code_compta_client; // for backward compatibility
 		$this->code_compta_fournisseur = trim($this->code_compta_fournisseur);
 
 		// Check parameters. More tests are done later in the ->verify()
@@ -1340,7 +1340,7 @@ class Societe extends CommonObject
 		$this->webservices_key = trim($this->webservices_key);
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
-		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
+		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
 
 		//Incoterms
 		$this->fk_incoterms = (int) $this->fk_incoterms;
@@ -1467,8 +1467,8 @@ class Societe extends CommonObject
 			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount != '' ? $this->supplier_order_min_amount : 'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
-				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
+				$sql .= ", accountancy_code_buy = '".$this->db->escape($this->accountancy_code_buy)."'";
+				$sql .= ", accountancy_code_sell= '".$this->db->escape($this->accountancy_code_sell)."'";
 
 				if ($customer) {
 					$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
@@ -1559,9 +1559,9 @@ class Societe extends CommonObject
 
 				// update accountancy for this entity
 				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . ((int) $this->id) . " AND entity = " . ((int) $conf->entity));
+					$this->db->query("DELETE FROM ".MAIN_DB_PREFIX."societe_perentity WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity));
 
-					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (";
 					$sql .= " fk_soc";
 					$sql .= ", entity";
 					$sql .= ", accountancy_code_customer";
@@ -1570,11 +1570,11 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
-					$sql .= ", " . $conf->entity;
-					$sql .= ", '" . $this->db->escape($this->code_compta_client)."'";
-					$sql .= ", '" . $this->db->escape($this->code_compta_fournisseur)."'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+					$sql .= ", ".$conf->entity;
+					$sql .= ", '".$this->db->escape($this->code_compta_client)."'";
+					$sql .= ", '".$this->db->escape($this->code_compta_fournisseur)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
 					$sql .= ")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1702,7 +1702,7 @@ class Societe extends CommonObject
 		}
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = ".((int) $conf->entity);
 		}
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
@@ -1792,7 +1792,7 @@ class Societe extends CommonObject
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
 				$this->region_id    = $obj->region_id;
-				$this->region_code   = $obj->region_code;
+				$this->region_code = $obj->region_code;
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcomm);
@@ -2630,7 +2630,7 @@ class Societe extends CommonObject
 			$label .= '<br>'.implode('&nbsp;', $phonelist);
 		}
 		if (!empty($this->address)) {
-			$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);	// Address + country
+			$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
 		} elseif (!empty($this->country_code)) {
 			$label .= '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		}
@@ -2703,7 +2703,7 @@ class Societe extends CommonObject
 		$linkend = '</a>';
 
 		global $user;
-		if (!$user->rights->societe->client->voir && $user->socid > 0 && $this->id != $user->socid) {
+		if (empty($user->rights->societe->client->voir) && $user->socid > 0 && $this->id != $user->socid) {
 			$linkstart = '';
 			$linkend = '';
 		}
@@ -2801,10 +2801,10 @@ class Societe extends CommonObject
 		}
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			$this->labelStatus[0] = $langs->trans("ActivityCeased");
-			$this->labelStatus[1] = $langs->trans("InActivity");
-			$this->labelStatusShort[0] = $langs->trans("ActivityCeased");
-			$this->labelStatusShort[1] = $langs->trans("InActivity");
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv("ActivityCeased");
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv("InActivity");
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("ActivityCeased");
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("InActivity");
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
@@ -3350,7 +3350,7 @@ class Societe extends CommonObject
 
 				if ($type == 'customer') {
 					$this->code_compta_client = $mod->code;
-					$this->code_compta = $this->code_compta_client;		// For backward compatibility
+					$this->code_compta = $this->code_compta_client; // For backward compatibility
 				} elseif ($type == 'supplier') {
 					$this->code_compta_fournisseur = $mod->code;
 				}
@@ -3385,7 +3385,7 @@ class Societe extends CommonObject
 		if ($this->id) {
 			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
 			if ($id > 0) {
-				$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
+				$sameparent = $this->validateFamilyTree($id, $this->id, 0);
 				if ($sameparent < 0) {
 					return -1;
 				}
@@ -3397,7 +3397,7 @@ class Societe extends CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
 
-			$resql	= $this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->parent = $id;
 				return 1;
@@ -3426,16 +3426,16 @@ class Societe extends CommonObject
 		$sql = 'SELECT s.parent';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' WHERE rowid = '.((int) $idparent);
-		$resql	= $this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj	= $this->db->fetch_object($resql);
 
-			if ($obj->parent == '')	{
+			if ($obj->parent == '') {
 				return 0;
-			} elseif ($obj->parent == $idchild)	{
+			} elseif ($obj->parent == $idchild) {
 				return 1;
 			} else {
-				$sameparent	= $this->validateFamilyTree($obj->parent, $idchild, ($counter + 1));
+				$sameparent = $this->validateFamilyTree($obj->parent, $idchild, ($counter + 1));
 			}
 			return $sameparent;
 		} else {
@@ -3762,7 +3762,7 @@ class Societe extends CommonObject
 			}
 
 			if ($url) {
-				return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+				return '<a target="_blank" rel="noopener noreferrer" href="'.$url.'">'.$langs->trans("Check").'</a>';
 			}
 		} else {
 			return $hookmanager->resPrint;
@@ -3936,7 +3936,7 @@ class Societe extends CommonObject
 	 */
 	public function create_from_member(Adherent $member, $socname = '', $socalias = '', $customercode = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $user, $langs;
 
 		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
@@ -4069,7 +4069,7 @@ class Societe extends CommonObject
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
 			} else { // For backward compatibility
-				dol_syslog("Your setup of State an old syntax (entity=".$conf->entity."). Go in Home - Setup - Organization then Save should remove this error.", LOG_ERR);
+				dol_syslog("Your setup of State has an old syntax (entity=".$conf->entity."). Go in Home - Setup - Organization then Save should remove this error.", LOG_ERR);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$state_code = getState($state_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 				$state_label = getState($state_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
@@ -4752,12 +4752,12 @@ class Societe extends CommonObject
 	 * Function used to replace a thirdparty id with another one.
 	 * It must be used within a transaction to avoid trouble
 	 *
-	 * @param 	DoliDB 	$db 		Database handler
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
 	 * @param 	int 	$origin_id 	Old thirdparty id (will be removed)
 	 * @param 	int 	$dest_id 	New thirdparty id
 	 * @return 	bool				True if success, False if error
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		if ($origin_id == $dest_id) {
 			dol_syslog('Error: Try to merge a thirdparty into itself');
@@ -4774,9 +4774,9 @@ class Societe extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $origin_id.') ';
 
-		$resql = $db->query($sql);
-		while ($obj = $db->fetch_object($resql)) {
-			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
+		$resql = $dbs->query($sql);
+		while ($obj = $dbs->fetch_object($resql)) {
+			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
 		/**
@@ -4792,7 +4792,7 @@ class Societe extends CommonObject
 			'societe_rib'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -4819,19 +4819,19 @@ class Societe extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ";
-		$sql.= $field." = '".$this->db->escape($value)."'";
-		$sql.= " WHERE rowid = ".((int) $this->id);
+		$sql .= $field." = '".$this->db->escape($value)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
 			// Call triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('COMPANY_MODIFY', $this, $user, $langs, $conf);
+			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+			$interface = new Interfaces($this->db);
+			$result = $interface->run_triggers('COMPANY_MODIFY', $this, $user, $langs, $conf);
 			if ($result < 0) {
-				$this->errors=$interface->errors;
+				$this->errors = $interface->errors;
 				$this->db->rollback();
 				return -1;
 			}
@@ -4842,7 +4842,7 @@ class Societe extends CommonObject
 			$this->db->commit();
 			return 1;
 		} else {
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}

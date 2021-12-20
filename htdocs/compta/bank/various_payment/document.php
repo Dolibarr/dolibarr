@@ -69,6 +69,9 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart = 'banque';
 
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+
+
 
 /*
  * Actions

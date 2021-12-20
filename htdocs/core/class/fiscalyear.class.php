@@ -291,7 +291,7 @@ class Fiscalyear extends CommonObject
 
 		$url = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$this->id;
 
-		if (!$user->rights->accounting->fiscalyear->write) {
+		if (empty($user->rights->accounting->fiscalyear->write)) {
 			$option = 'nolink';
 		}
 

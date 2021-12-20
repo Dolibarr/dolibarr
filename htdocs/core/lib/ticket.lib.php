@@ -164,7 +164,7 @@ function showDirectPublicLink($object)
 		if ($url) {
 			$out .= '<div class="urllink">';
 			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" value="'.$url.'">';
-			$out .= '<a href="'.$url.'" target="_blank" rel="noopener">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
+			$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
 			$out .= '</div>';
 			$out .= ajax_autoselect("directpubliclink", 0);
 		} else {
@@ -178,16 +178,16 @@ function showDirectPublicLink($object)
 /**
  *  Generate a random id
  *
- *  @param  int $car Length of string to generate key
+ *  @param  int 	$car 	Length of string to generate key
  *  @return string
  */
 function generate_random_id($car = 16)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	srand((double) microtime() * 1000000);
+	mt_srand((double) microtime() * 1000000);
 	for ($i = 0; $i < $car; $i++) {
-		$string .= $chaine[rand() % strlen($chaine)];
+		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}
 	return $string;
 }
@@ -635,7 +635,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		if ($donetodo) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
-				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&socid='.$filterobj->id.'&status=done">';
+				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
 			}
 			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
 			$tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
@@ -850,7 +850,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 						$class .= ' documentpreview';
 					}
 
-					$footer .= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank"  '.$mimeAttr.' >';
+					$footer .= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank" rel="noopener noreferrer" '.$mimeAttr.' >';
 					$footer .= img_mime($filePath).' '.$doc->filename;
 					$footer .= '</a>';
 

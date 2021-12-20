@@ -1,15 +1,4 @@
-# Dolibarr language file - fr_FR - hrm
-
-
-#
-# Generic
-#
-
-# Module label 'ModuleHrmName'
-ModuleHrmName = GRH
-# Module description 'ModuleHrmDesc'
-ModuleHrmDesc = GRH description
-
+# Dolibarr language file - en_US - hrm
 
 
 # Admin
@@ -30,74 +19,63 @@ Employees=Salariés
 Employee=Salarié
 NewEmployee=Nouveau salarié
 ListOfEmployees=List des salariés
-HrmSetup = Configuration GPEC
-HrmSetupPage = Page de configuration du module GPEC
-HRM_MAXRANK=Note maximale pour une compétence
-HRM_DEFAULT_SKILL_DESCRIPTION=Description par défaut d'une note lors de la création d'une nouvelle compétence
-HrmAbout = A propos du module GPEC
-traduction_note=Translate
-deplacement=Déplacement
-DateEval=Date évaluation
-JobCard=Fiche métier
-Job=Métier
-Jobs=Métiers
+HrmSetup=Configuration du module GRH
+HRM_MAXRANK=Niveau maximum pour cette compétence
+HRM_DEFAULT_SKILL_DESCRIPTION=Default description of ranks when skill is created
+deplacement=Ctrl
+DateEval=Date d'évaluation
+JobCard=Fiche emploi
+Job=Emploi
+Jobs=Emplois
 NewSkill=Nouvelle compétence
 SkillType=Type de compétence
-Skilldets=Liste des notes pour cette compétence
-Skilldet=Skill level
-rank=Note
-ErrNoSkillSelected=Aucune compétence sélectionnée
+Skilldets=Liste des niveaux pour cette compétence
+Skilldet=Niveau de compétence
+rank=Niveau
+ErrNoSkillSelected=Pas de compétence sélectionnée
 ErrSkillAlreadyAdded=Cette compétence est déjà dans la liste
-SkillHasNoLines=Cette compétence n'a pas de notes
+SkillHasNoLines=Cette compétence n'a pas de lignes affectées
 skill=Compétence
 Skills=Compétences
 SkillCard=Fiche compétence
-EmployeeSkillsUpdated=Les compétences du salarié ont été mises à jour (voir l'onglet "compétences" de la fiche du salarié)
-Eval=Evaluation
-Evals=Evaluations
-NewEval=Nouvelle evaluation
-ValidateEvaluation=Valider évaluation
-ConfirmValidateEvaluation=Etes vous sûr(e) de vouloir valider cette évaluation sous la référence <b>%s</b>?
+EmployeeSkillsUpdated=Compétences de l'employé mises à jour (voir onglet "Compétences" de la fiche employé)
+Eval=Évaluation
+Evals=Évaluations
+NewEval=Nouvelle évaluation
+ValidateEvaluation=Valider l'évaluation
+ConfirmValidateEvaluation=Êtes-vous sûr de vouloir valider cette évaluation sous la référence  <b> %s </b> ?
 EvaluationCard=Fiche évaluation
-RequiredRank=Note requise pour ce métier
-EmployeeRank=Note employé pour cette compétence
-PositionCard=Fiche poste
-EmployeesInThisPosition=Salariés occupant ce poste
-Position=Poste
-Positions=Postes
-group1ToCompare=Groupe utilisateurs à analyser
-group2ToCompare=Second groupe utilisateurs pour comparaison
-OrJobToCompare=Comparer avec les compétences exigées pour un métier
+RequiredRank=Niveau requis pour cet emploi
+EmployeeRank=Niveau de l'employée pour cette compétence
+Position=Position
+Positions=Positions
+PositionCard=Position card
+EmployeesInThisPosition=Employees in this position
+group1ToCompare=Groupe d'utilisateurs à analyser
+group2ToCompare=Second usergroup for comparison
+OrJobToCompare=Compare to job skills requirements
 difference=Différence
-CompetenceAcquiredByOneOrMore=Compétence acquise par au moins un salarié mais non requise par le second élément de comparaison
-MaxlevelGreaterThan=Niveau maximal supérieur au niveau requis
-MaxLevelEqualTo=Niveau maximal égal au niveau requis
-MaxLevelLowerThan=Niveau maximal inférieur au niveau requis
-MaxlevelGreaterThanShort=Niveau salarié supérieur au niveau requis
-MaxLevelEqualToShort=Niveau salarié égal au niveau requis
-MaxLevelLowerThanShort= Niveau salarié inférieur au niveau requis
-SkillNotAcquired=Compétence non acquise par tous les utilisateur et requise par le second élément de comparaison
+CompetenceAcquiredByOneOrMore=Competence acquired by one or more users but not requested by the second comparator
+MaxlevelGreaterThan=Max level greater than the one requested
+MaxLevelEqualTo=Max level equal to that demand
+MaxLevelLowerThan=Max level lower than that demand
+MaxlevelGreaterThanShort=Employee level greater than the one requested
+MaxLevelEqualToShort=Employee level equals to that demand
+MaxLevelLowerThanShort=Employee level lower than that demand
+SkillNotAcquired=Compétences non acquises par tous les employés et requis par le second comparateur
 legend=Légende
 TypeSkill=Type de compétence
-AddSkill=Ajouter des compétences à ce métier
-RequiredSkills=Compétences requises pour ce métier
-UserRank=Note utilisateur
-SkillList=Liste des compétences
-SaveRank=Enregistrer notes
-knowHow=Savoir faire
-HowToBe=Savoir être
-knowledge=Savoir
-AbandonmentComment=Commentaire abandon
+AddSkill=Ajouter des compétences à cet emploi
+RequiredSkills=Compétences requises pour cet emploi
+UserRank=Niveau employé
+SkillList=Liste compétence
+SaveRank=Sauvegarder niveau
+knowHow=Savoir comment
+HowToBe=Comment être
+knowledge=Connaissances
+AbandonmentComment=Commentaire sur l'abandon
 DateLastEval=Date dernière évaluation
-NoEval=Aucune évaluation effectuée pour ce salarié
-HowManyUserWithThisMaxNote=Nombre d'utilisateurs ayant cette note
-HighestRank=Note la plus haute
+NoEval=Aucune évaluation effectuée pour cet employé
+HowManyUserWithThisMaxNote=Nombre d'employés avec ce niveau
+HighestRank=Plus haut niveau
 SkillComparison=Comparaison des compétences
-ReadSkillJobPosition=Lire les compétences / métiers / postes
-CreateUpdateSkillJobPosition=Créer / mettre à jour les compétences / métiers / postes
-DeleteSkillJobPosition=Supprimer les compétences / métiers / postes
-ReadEval=Lire les évaluations
-CreateUpdateEval=Créer / mettre à jour les évaluations
-ValidateEval=Valider les évaluations
-DeleteEval=Supprimer les évaluations
-SeeComparisonMenu=Accéder au menu de comparaison des compétences

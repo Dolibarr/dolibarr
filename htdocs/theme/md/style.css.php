@@ -438,8 +438,29 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
+#mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
+	background: var(--butactionbg);
+	color: #FFF !important;
+	border-radius: 3px;
+	border-collapse: collapse;
+	border: none;
+	text-shadow: none;
+	text-transform: uppercase;
+	font-weight: bold;
+	margin: 0em 0.9em;
+	padding: 0.6em 0.7em;
+	line-height: 17px;
+}
+#mainbody input.button:not(.buttongen):not(.bordertransp):hover, #mainbody a.button:not(.buttongen):not(.bordertransp):hover {
+	-webkit-box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+	box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+}
+
 input.button.massactionconfirmed {
 	margin: 4px;
+}
+input.short {
+	width: 40px;
 }
 
 textarea {
@@ -654,6 +675,10 @@ input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
+input[type=checkbox], input[type=radio] {
+	margin: 0 3px 0 3px;
+}
+
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
 ::-webkit-input-placeholder { color:#ccc; }
@@ -663,7 +688,11 @@ input:-webkit-autofill {
 input:-moz-placeholder { color:#ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
-fieldset { border: 1px solid #AAAAAA !important; }
+fieldset {
+	border: 1px solid #AAAAAA !important;
+	padding-inline-start: 2em;
+	padding-inline-end: 2em;
+}
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
@@ -758,6 +787,9 @@ div.floatright
 button:focus {
 	outline: none;
 }
+.line-height-large {
+	line-height: 1.8em;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
@@ -829,6 +861,12 @@ textarea.centpercent {
 .alignstart {
 	text-align: start;
 }
+.start {
+	text-align: start;
+}
+.end {
+	text-align: end;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
@@ -849,6 +887,9 @@ textarea.centpercent {
 }
 .nowraponsmartphone {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+}
+.wraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -910,6 +951,19 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.paddingtop {
+	padding-top: 4px;
+}
+.paddingtop2 {
+	padding-top: 2px;
+}
+.paddingbottom {
+	padding-bottom: 4px;
+}
+.paddingbottom2 {
+	padding-bottom: 2px;
+}
+
 .cursordefault {
 	cursor: default;
 }
@@ -996,6 +1050,9 @@ body[class*="colorblind-"] .text-success{
 .editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
 	color: var(--colortexttitle) !important;
 }
+a.editfielda.nohover *:hover:before {
+	color: #ccc !important;
+}
 
 .size15x { font-size: 1.5em !important; }
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
@@ -1004,6 +1061,9 @@ body[class*="colorblind-"] .text-success{
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
+.fawidth30 {
+	width: 20px;
+}
 .floatnone {
 	float: none !important;
 }
@@ -1098,6 +1158,10 @@ if ($conf->browser->layout == 'phone') {
 }
 
 
+/* ============================================================================== */
+/* Styles for scan tool                                                           */
+/* ============================================================================== */
+
 div.div-for-modal {
 	/* display: none; */
 	position:absolute;
@@ -1111,18 +1175,25 @@ div.div-for-modal {
 	z-index: 100;
 }
 
+#scantoolmessage {
+	height: 3em;
+	border: none;
+	overflow-y: auto;
+}
+
 div.div-for-modal-topright {
 	/* display: none; */
 	position: fixed;
 	top: 0;
 	right: 0;
 	width:50%;  /* adjust as per your needs */
-	height:250px;   /* adjust as per your needs */
+	height:300px;   /* adjust as per your needs */
 	background: #fff;
 	border: 1px solid #bbb;
 	box-shadow: 2px 2px 20px #ddd;
 	z-index: 1100;
 }
+
 
 
 div.confirmmessage {
@@ -1158,7 +1229,7 @@ select.flat.selectlimit {
 	max-width: 62px;
 }
 .selectlimit, .marginrightonly {
-	margin-right: 10px !important;
+	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
 	margin-<?php echo $left; ?>: 10px !important;
@@ -1390,9 +1461,17 @@ table[summary="list_of_modules"] .fa-cog {
 	min-width: 100px;
 }
 
+.linkedcol-date {
+	text-align: center;
+}
+
 .img-skinthumb {
 	width: 160px;
 	height: 100px;
+}
+
+tr.nobottom td {
+	border-bottom: 0px !important;
 }
 
 
@@ -1422,6 +1501,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
 	.minwidth300imp { min-width: 300px !important; }
@@ -1481,6 +1561,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 150px !important; }
 	.minwidth200imp { min-width: 200px !important; }
 	.minwidth250imp { min-width: 250px !important; }
@@ -1500,6 +1581,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 70px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -1509,11 +1591,11 @@ table[summary="list_of_modules"] .fa-cog {
 }
 
 /* Set a width. Note: add also a max-width, for example maxwidth500, that will be used in priority */
-.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
 }
-.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -1586,7 +1668,7 @@ table[summary="list_of_modules"] .fa-cog {
 		min-width: 150px !important;
 	}
 
-	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
+	.divmainbodylarge { margin-left: 10px; margin-right: 10px; }
 
 	.tdoverflowonsmartphone {
 		max-width: 0;
@@ -1646,6 +1728,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 75px !important; }
 	.minwidth100imp { min-width: 100px !important; }
+	.minwidth125imp { min-width: 125px !important; }
 	.minwidth150imp { min-width: 110px !important; }
 	.minwidth200imp { min-width: 110px !important; }
 	.minwidth250imp { min-width: 115px !important; }
@@ -1682,6 +1765,7 @@ table[summary="list_of_modules"] .fa-cog {
 
 	div.statusref {
 		padding-right: 10px;
+		max-width: 55%;
 	   }
 	div.statusref img {
 		padding-right: 3px !important;
@@ -1696,7 +1780,7 @@ table[summary="list_of_modules"] .fa-cog {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr:not(.liste_titre)>td:first-of-type, tr.trforfield:not(.liste_titre)>td:first-of-type, div.tableforfield div.tagtr:not(.liste_titre)>div.tagtd:first-of-type {
 	color: #666;
 }
 
@@ -1748,7 +1832,7 @@ td.showDragHandle {
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
-	padding-bottom: 10px;
+	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-left: 229px;
 	padding-top: 16px;
@@ -1866,11 +1950,6 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
 .side-nav-vert {
 	margin-left: 0;
 }
-div.login_block {
-	/* border-right: none ! important; */
-	top: inherit !important;
-	border-right: 1px solid rgba(0,0,0,0.3);
-}
 
 .side-nav {
 	<?php
@@ -1896,10 +1975,6 @@ div.backgroundsemitransparent {
 
 /* Login */
 
-div.login_block {
-	/* position: initial !important;*/
-	/*display: none;*/
-}
 .login_block_getinfo {
 	text-align: center;
 }
@@ -1962,7 +2037,7 @@ div.fichethirdleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px;\n";
@@ -1973,21 +2048,18 @@ div.fichetwothirdright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: 50%;\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 	<?php if ($conf->browser->layout == 'phone') {
 		print "padding-bottom: 6px\n";
 	} ?>
-}
-div.fichetwothirdright div.ficheaddleft {
-	padding-left: 20px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -1995,7 +2067,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -2038,9 +2110,6 @@ div.secondcolumn div.box {
 		float: none;
 		width: auto;
 		padding-bottom: 6px;
-	}
-	div.fichetwothirdright div.ficheaddleft {
-		padding-left: 0;
 	}
 	div.fichehalfleft {
 		float: none;
@@ -2125,7 +2194,7 @@ img.hideonsmartphone.pictoactionview {
 }
 
 .pictofixedwidth {
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	width: 20px;
 	padding-right: 0;
 }
@@ -2269,6 +2338,19 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
+li.tmenusel::after, li.tmenu:hover::after {
+	content: "";
+	position: absolute;
+	bottom: 0px;
+	left: 50%;
+	left: calc(50% - 6px);
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0px 6px 5px 6px;
+	border-color: transparent transparent #ffffff transparent;
+}
+
 div.tmenusep {
 <?php if ($disableimages) { ?>
 	display: none;
@@ -2362,9 +2444,7 @@ li.tmenu, li.tmenusel {
 li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
-li.tmenusel a.tmenusel {
-	text-decoration: underline !important;
-}
+
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
 
@@ -2393,7 +2473,7 @@ div.tmenucenter
 	width: 100%;
 }
 div.menu_titre {
-	padding-bottom: 2px;
+	padding-bottom: 5px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
@@ -2617,7 +2697,7 @@ a.tmenuimage:focus {
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 14px;
+	font-size: 1.2em;
 	vertical-align: middle;
 }
 .login_table_title {
@@ -2651,7 +2731,7 @@ form#login {
 	border: none;
 	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
-	margin-left: 18px;
+	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
@@ -2725,11 +2805,10 @@ table.login_table_securitycode tr td {
 }
 
 div.login_block {
-	/* border-right: 1px solid rgba(0,0,0,0.3); */
+	top: 0;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	<?php print $left; ?>: 0;
-	top: 0px;
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
 <?php } else { ?>
@@ -2891,16 +2970,27 @@ div.vmenu, td.vmenu {
 .searchform { padding-top: 10px; }
 .searchform .bordertransp { border: 0; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
-a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
+	white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
+}
+span.vmenudisabled, font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
+a.vmenu:link, a.vmenu:visited {
+	color: var(--colortextbackvmenu);
+}
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
-font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
-a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
-font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
+span.vsmenudisabled, font.vsmenudisabled {
+	font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa;
+}
+a.vsmenu:link, a.vsmenu:visited {
+	color: var(--colortextbackvmenu);
+	white-space: nowrap;
+}
+span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
+	text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none;
+}
 
 .helppresentcircle {
 	color: var(--colorbackhmenu1);
@@ -3113,19 +3203,19 @@ div.tabsElem a {
 }
 div.tabBar {
 	color: #<?php echo $colortextbacktab; ?>;
-	padding-top: 21px;
+	padding-top: 23px;
 	padding-left: 24px;
 	padding-right: 24px;
-	padding-bottom: 18px;
+	padding-bottom: 23px;
 	margin: 0px 0px 18px 0px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
-	border-right: 1px solid #BBB;
-	border-left: 1px solid #BBB;
+	border-right: 1px solid #CCC;
+	border-left: 1px solid #CCC;
 	border-top: 1px solid #CCC;
+	border-bottom: 1px solid #CCC;
 	width: auto;
 	background: var(--colorbacktabcard1);
-	border-bottom: 1px solid #aaa;
 }
 
 div.tabBar tr.titre td {
@@ -3313,18 +3403,15 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
 	padding: 4px !important;
 }
-.nopaddingleft {
-	padding-<?php print $left; ?>: 0px;
+input.buttonreset {
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding: 8px 15px;
+	text-decoration: underline;
+	color: var(--colortextlink);
+	cursor: pointer;
 }
-.nopaddingright {
-	padding-<?php print $right; ?>: 0px;
-}
-.nopaddingtopimp {
-	padding-top: 0px !important;
-}
-.nopaddingbottomimp {
-	padding-bottom: 0px !important;
-}
+
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -3366,7 +3453,7 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 2px 4px 2px 4px;
+	padding: 4px 4px 4px 4px;
 	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
@@ -3385,6 +3472,33 @@ td.border, div.tagtable div div.border {
 .table-val-border-col {
 	width:auto;
 }
+
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_REF)) { ?>
+/* To have left column sticky */
+.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
+	position: sticky;
+	left: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
+<?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_ACTION)) { ?>
+/* To have right column sticky */
+.tagtable td.actioncolumn, .tagtable th.actioncolumn {
+	position: sticky;
+	right: 0;
+	top: 0;
+	max-width: 150px !important;
+	//background-color: inherit;
+	background-color: gainsboro;
+	z-index: 2;
+}
+<?php } ?>
+
 
 
 /* Main boxes */
@@ -3415,7 +3529,7 @@ div.colorback
 	border-left: 1px solid #ccc;
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
-	width: calc(100% - 1px);	/* -1 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
+	width: calc(100% - 2px);	/* -2 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
@@ -3431,7 +3545,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-right: 1px solid #ccc;
 	border-left: 1px solid #ccc;
 
-	margin: 0px 0px 8px 0px;
+	margin: 0px 0px 20px 0px;
 
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
@@ -3833,11 +3947,11 @@ div.liste_titre_bydiv {
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
 
-	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	width: calc(100% - 1px);
+	box-shadow: none;
+	width: calc(100% - 2px);	/* -3px because the width for table class="tagtable" under this is cal(100% - 2px) so it is aligned. */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
@@ -3919,7 +4033,6 @@ input.liste_titre {
 	white-space: normal;
 }
 
-
 tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 2px solid #aaa;
 }
@@ -3986,8 +4099,8 @@ div .tdtop {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, var(--colorbacklineimpair1) 0%, var(--colorbacklineimpair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair1) 0%, var(--colorbacklineimpair2) 100%);
@@ -4001,8 +4114,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
@@ -4030,9 +4143,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 0px;
 	padding-left: 0px;
 	padding-bottom: 12px;
-}
-.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
-	border: none;
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
@@ -4320,7 +4430,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 40px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
+.widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
@@ -4493,6 +4603,11 @@ div#card-errors {
 	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
 }
 
+div#dialogforpopup {
+	background-color: #f8f8f8 !important;
+}
+
+
 /* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
@@ -4554,6 +4669,25 @@ div.ui-tooltip.mytooltip {
 	/*background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);*/
 	line-height: 1.6em;
+	min-width: 550px;
+}
+@media only screen and (max-width: 768px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 400px;
+	}
+}
+@media only screen and (max-width: 480px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 300px;
+	}
+}
+@media only screen and (max-width: 320px)
+{
+	div.ui-tooltip.mytooltip {
+		max-width: 230px;
+	}
 }
 
 
@@ -4667,7 +4801,7 @@ div.visible {
 	display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
+div.hidden, header.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 
@@ -5448,6 +5582,8 @@ div#ecm-layout-center {
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
+	text-align: start;
+	word-break: break-word;
 }
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;
@@ -5581,6 +5717,10 @@ input.select2-input {
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	border: 1px solid #e4e4e4;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,
@@ -6714,6 +6854,53 @@ div.clipboardCPValue.hidewithsize {
 	display: none;
 }
 
+/* To make a div popup, we must use a position aboluste inside a position relative */
+
+.clipboardCPText {
+	position: relative;
+}
+.clipboardCPTextDivInside {
+	position: absolute;
+	background: #EEE;
+	color: 888;
+	border: 1px solid #DDD;
+	opacity: 1;
+	z-index: 20;
+	padding: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	top: -5px;
+	left: 0px;
+	border-radius: 5px;
+	white-space: nowrap;
+	font-size: 0.95em;
+	box-shadow: 1px 1px 6px #ddd;
+}
+
+
+/* ============================================================================== */
+/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* ============================================================================== */
+
+.radio_js_bloc_number {
+	display:inline-block;
+	padding:5px 7px;
+	min-width:20px;
+	border-radius:3px;
+	border:1px solid #ccc;
+	background:#eee;
+	color:#555;
+	cursor:pointer;
+	margin:2px;
+	text-align:center;
+}
+.radio_js_bloc_number.selected {
+	transition:0.2s ease background;
+	background:#888;
+	color:#fff;
+	border-color:#555;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6816,6 +7003,11 @@ div.clipboardCPValue.hidewithsize {
 /* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
+	div.login_block {
+		border-right: 1px solid rgba(0,0,0,0.3);
+		top: auto;
+	}
+
 	div#tmenu_tooltip {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 		display:none;
@@ -6825,6 +7017,10 @@ div.clipboardCPValue.hidewithsize {
 	}
 	li.tmenu, li.tmenusel {
 		min-width: 30px;
+	}
+
+	div.login_block {
+		border-right: 1px solid rgba(0,0,0,0.3);
 	}
 
 	div.tmenucenter {
@@ -6874,7 +7070,7 @@ div.clipboardCPValue.hidewithsize {
 	input#addedfile {
 		width: 95%;
 	}
-	
+
 	#divbodywebsite {
 		word-break: break-all;
 	}
@@ -6883,7 +7079,18 @@ div.clipboardCPValue.hidewithsize {
 		border-left: unset;
 		boerder-right: unset;
 		padding-left: 5px;
-	}	
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		display: block;
+		margin-bottom: 6px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		text-align: center;
+	}
 }
 
 

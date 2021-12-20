@@ -23,7 +23,7 @@
 
 /**
  *	\defgroup   propale     Module commercial proposals
- *	\brief      Module pour gerer la tenue de propositions commerciales
+ *	\brief      Module to manage commercial proposals
  *	\file       htdocs/core/modules/modPropale.class.php
  *	\ingroup    propale
  *	\brief      Description and activation file for the module customer proposal
@@ -36,7 +36,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modPropale extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *

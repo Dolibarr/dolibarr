@@ -311,7 +311,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$project->id;
-	$head[$h][1] .= $langs->trans("Events");
+	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
@@ -471,14 +471,6 @@ function project_timesheet_prepare_head($mode, $fuser = null)
 		$h++;
 	}
 
-	/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perline.php".($param?'?'.$param:'');
-		$head[$h][1] = $langs->trans("InputDetail");
-		$head[$h][2] = 'inputperline';
-		$h++;
-	}*/
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_timesheet');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_timesheet', 'remove');
@@ -517,7 +509,7 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
-	if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$langs->load("members");
 
 		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
@@ -572,7 +564,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$numlines = count($lines);
 
 	// We declare counter as global because we want to edit them into recursive call
-	global $total_projectlinesa_spent, $total_projectlinesa_planned, $total_projectlinesa_spent_if_planned, $total_projectlinesa_declared_if_planned, $total_projectlinesa_tobill, $total_projectlinesa_billed;
+	global $total_projectlinesa_spent, $total_projectlinesa_planned, $total_projectlinesa_spent_if_planned, $total_projectlinesa_declared_if_planned, $total_projectlinesa_tobill, $total_projectlinesa_billed, $total_budget_amount;
 
 	if ($level == 0) {
 		$total_projectlinesa_spent = 0;
@@ -581,6 +573,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		$total_projectlinesa_declared_if_planned = 0;
 		$total_projectlinesa_tobill = 0;
 		$total_projectlinesa_billed = 0;
+		$total_budget_amount = 0;
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -651,6 +644,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->datee = $lines[$i]->date_end; // deprecated
 				$taskstatic->planned_workload = $lines[$i]->planned_workload;
 				$taskstatic->duration_effective = $lines[$i]->duration;
+				$taskstatic->budget_amount = $lines[$i]->budget_amount;
 
 
 				if ($showproject) {
@@ -850,6 +844,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 					print '</td>';
 				}*/
+				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
+					print '<td class="center">';
+					print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+					$total_budget_amount += $lines[$i]->budget_amount;
+					print '</td>';
+				}
 
 				// Contacts of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
@@ -921,7 +921,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0)
+	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0 || $total_budget_amount > 0)
 		&& $level <= 0) {
 		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -1021,6 +1021,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 			}
 		}
+
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
+			print '<td class="nowrap liste_total center">';
+			print price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			print '</td>';
+		}
+
 		// Contacts of task for backward compatibility,
 		if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 			print '<td></td>';

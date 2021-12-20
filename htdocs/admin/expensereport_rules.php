@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -257,11 +257,12 @@ foreach ($rules as $rule) {
 		if ($rule->fk_c_type_fees == -1) {
 			echo $langs->trans('AllExpenseReport');
 		} else {
-			$key = getDictvalue(MAIN_DB_PREFIX.'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
-			if ($key != $langs->trans($key)) {
+			$key = getDictionaryValue(MAIN_DB_PREFIX.'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
+			if ($key && $key != $langs->trans($key)) {
 				echo $langs->trans($key);
 			} else {
-				echo $langs->trans(getDictvalue(MAIN_DB_PREFIX.'c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id')); // TODO check to return trans of 'code'
+				$value = getDictionaryValue(MAIN_DB_PREFIX.'c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id');
+				echo $langs->trans($value ? $value : 'Undefined'); // TODO check to return trans of 'code'
 			}
 		}
 	}

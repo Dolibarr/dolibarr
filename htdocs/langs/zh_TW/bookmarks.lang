@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=使用外部/絕對連結（https：
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=選擇已連結頁面開啟在目前分頁或是在新分頁
 BookmarksManagement=書籤管理
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=未定義書籤

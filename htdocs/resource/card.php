@@ -48,16 +48,20 @@ if ($user->socid > 0) {
 	accessforbidden();
 }
 
-if (!$user->rights->resource->read) {
-	accessforbidden();
-}
-
 $object = new Dolresource($db);
 
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+
+$result = restrictedArea($user, 'resource', $object->id, 'resource');
+
+$permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
 
@@ -139,7 +143,7 @@ if (empty($reshook)) {
 				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost(null, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 				if ($ret < 0) {
 					$error++;
 				}

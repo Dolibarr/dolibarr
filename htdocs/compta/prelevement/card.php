@@ -67,6 +67,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 $type = $object->type;
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -86,9 +87,10 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'confirm_delete') {
+		$savtype = $object->type;
 		$res = $object->delete($user);
 		if ($res > 0) {
-			if ($object->type == 'bank-transfer') {
+			if ($savtype == 'bank-transfer') {
 				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
 			} else {
 				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
@@ -97,7 +99,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Seems to no be used and replaced with $action == 'infocredit'
+	// Seems to not be used and replaced with $action == 'infocredit'
 	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes') {
 		if ($object->statut == 2) {
 			$res = -1;
@@ -376,6 +378,9 @@ if ($id > 0 || $ref) {
 		$i = 0;
 
 		$urladd = "&id=".urlencode($id);
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$urladd .= '&limit='.urlencode($limit);
+		}
 
 		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
 		print '<input type="hidden" name="id" value="'.$id.'"/>';
@@ -385,6 +390,12 @@ if ($id > 0 || $ref) {
 		}
 		if (!empty($limit)) {
 			print '<input type="hidden" name="limit" value="'.$limit.'"/>';
+		}
+		if (!empty($sortfield)) {
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+		}
+		if (!empty($sortorder)) {
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 

@@ -100,6 +100,7 @@ if (empty($upload_dir)) {
 
 $permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
+$permtoedit = $user->rights->produit->creer;
 //$permissiontodelete = $usercandelete;
 
 // Security check
@@ -112,7 +113,9 @@ if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'productbatch');
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -129,8 +132,6 @@ if (empty($reshook)) {
 	// Action submit/delete file/link
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
-
-$permtoedit = $user->rights->produit->creer;
 
 
 /*

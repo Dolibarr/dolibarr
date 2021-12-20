@@ -310,9 +310,10 @@ if ($id > 0 || !empty($ref)) {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -357,7 +358,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">';
 		print dol_print_date($object->date, 'day');
-		if ($object->hasDelay() && empty($object->delivery_date)) {
+		if ($object->hasDelay() && empty($object->delivery_date)) {	// If there is a delivery date planned, warning should be on this date
 			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
 		print '</td>';
@@ -393,6 +394,23 @@ if ($id > 0 || !empty($ref)) {
 		//print nl2br($object->note_public);
 		//print '</td>';
 		print '</tr>';
+
+		// Delivery delay
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('AvailabilityPeriod');
+		print '</td>';
+		if ($action != 'editavailability') {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editavailability') {
+			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
+		} else {
+			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
+		}
+		print '</td></tr>';
 
 		// Shipping Method
 		print '<tr><td>';
@@ -434,6 +452,22 @@ if ($id > 0 || !empty($ref)) {
 			print '</tr>';
 		}
 
+		// Source reason (why we have an order)
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('Source');
+		print '</td>';
+		if ($action != 'editdemandreason') {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editdemandreason') {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
+		} else {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
+		}
+
 		// Terms of payment
 		/*
 		print '<tr><td height="10">';
@@ -471,39 +505,6 @@ if ($id > 0 || !empty($ref)) {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 		}
 		print '</td></tr>';*/
-
-		// Availability
-		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('AvailabilityPeriod');
-		print '</td>';
-		if ($action != 'editavailability') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'editavailability') {
-			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
-		} else {
-			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
-		}
-		print '</td></tr>';
-
-		// Source
-		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Source');
-		print '</td>';
-		if ($action != 'editdemandreason') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'editdemandreason') {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
-		} else {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
-		}
 
 		$tmparray = $object->getTotalWeightVolume();
 		$totalWeight = $tmparray['weight'];
@@ -554,7 +555,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -603,10 +603,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
 
 		print '<div class="clearboth"></div><br>';
-
 
 
 		/**

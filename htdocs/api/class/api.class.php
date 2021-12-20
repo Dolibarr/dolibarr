@@ -110,6 +110,8 @@ class DolibarrApi
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 		unset($object->table_rowid);
+		unset($object->pass);
+		unset($object->pass_indatabase);
 
 		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);

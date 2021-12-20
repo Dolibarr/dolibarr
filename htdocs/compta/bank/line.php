@@ -51,7 +51,7 @@ if (!empty($conf->salaries->enabled)) {
 }
 
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$id = (GETPOST('rowid', 'int') ? GETPOST('rowid', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -63,11 +63,13 @@ $cancel = GETPOST('cancel', 'alpha');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
-if (!$user->rights->banque->lire && !$user->rights->banque->consolidate) {
+if (empty($user->rights->banque->lire) && !$user->rights->banque->consolidate) {
 	accessforbidden();
 }
 
@@ -568,6 +570,12 @@ if ($result) {
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
+			$arrayselected = array();
+			$c = new Categorie($db);
+			$cats = $c->containing($bankline->id, Categorie::TYPE_BANK_LINE);
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
 			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
 			print "</td></tr>";
 		}

@@ -134,7 +134,7 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
 }
 ?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
-<script language="javascript">
+<script type="text/javascript">
 <?php
 $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
@@ -627,18 +627,24 @@ function Search2(keyCodeForEnter) {
 }
 
 function Edit(number) {
+	console.log("We click on PAD on number="+number);
 
-	if (typeof(selectedtext) == "undefined") return;	// We click on an action on the number pad but there is no line selected
+	if (typeof(selectedtext) == "undefined") {
+		return;	// We click on an action on the number pad but there is no line selected
+	}
 
 	var text=selectedtext+"<br> ";
+
 
 	if (number=='c'){
 		editnumber="";
 		Refresh();
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
+		$("#price").html("<?php echo $langs->trans("Price"); ?>");
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
 		return;
 	}
 	else if (number=='qty'){
-		console.log("Edit "+number);
 		if (editaction=='qty' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -654,7 +660,6 @@ function Edit(number) {
 		}
 	}
 	else if (number=='p'){
-		console.log("Edit "+number);
 		if (editaction=='p' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updateprice&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -670,7 +675,6 @@ function Edit(number) {
 		}
 	}
 	else if (number=='r'){
-		console.log("Edit "+number);
 		if (editaction=='r' && editnumber!=""){
 			$("#poslines").load("invoice.php?action=updatereduction&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
@@ -708,6 +712,7 @@ function Edit(number) {
 	}
 	$('#'+selectedline).find("td:first").html(text+editnumber);
 }
+
 
 function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder");
@@ -789,7 +794,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=LIQ", function() {
 	});
 }
 
@@ -820,9 +825,11 @@ $( document ).ready(function() {
 	if ($_SESSION["takeposterminal"] == "") {
 		print "ModalBox('ModalTerminal');";
 	}
+
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-		$sql .= " entity = ".$conf->entity." AND ";
+		$sql .= " entity = ".((int) $conf->entity)." AND ";
+		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -849,41 +856,50 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="header">
 		<div class="topnav">
 			<div class="topnav-left">
-			<div class="inline-block valignmiddle">
-			<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
-			<span class="fa fa-cash-register"></span>
-			<span class="hideonsmartphone">
-			<?php echo $langs->trans("Terminal"); ?>
-			</span>
-			<?php echo " ";
-			if ($_SESSION["takeposterminal"] == "") {
-				echo "1";
-			} else {
-				echo $_SESSION["takeposterminal"];
-			}
-			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
-			?>
-			</a>
-			<?php
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
-				print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
-				print '</a>';
-			}
-			?>
-			</div>
-			<!-- section for customer and open sales -->
-			<div class="inline-block valignmiddle" id="customerandsales">
-			</div>
-			<!-- More info about customer -->
-			<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
-			<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
+				<div class="inline-block valignmiddle">
+				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
+				<span class="fa fa-cash-register"></span>
+				<span class="hideonsmartphone">
+				<?php echo $langs->trans("Terminal"); ?>
+				</span>
+				<?php echo " ";
+				if ($_SESSION["takeposterminal"] == "") {
+					echo "1";
+				} else {
+					echo $_SESSION["takeposterminal"];
+				}
+				echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
+				?>
+				</a>
+				<?php
+				if (!empty($conf->multicurrency->enabled)) {
+					print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
+					print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
+					print '</a>';
+				}
+				?>
+				</div>
+				<!-- section for customer -->
+				<div class="inline-block valignmiddle" id="customerandsales"></div>
+				<!-- section for shopping carts -->
+				<div class="inline-block valignmiddle" id="shoppingcart"></div>
+				<!-- More info about customer -->
+				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
+				<?php
+				if (!empty($conf->stock->enabled)) {
+					?>
+				<!-- More info about warehouse -->
+				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
+					<?php
+				}
+				?>
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);" placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT.'/'; ?>';"><span class="fas fa-home"></span></a>
+				<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
+				<span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>
 				<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 				<?php } ?>
@@ -1104,8 +1120,10 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 }
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-$sql .= " entity = ".$conf->entity." AND ";
+$sql .= " entity = ".((int) $conf->entity)." AND ";
+$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -1119,14 +1137,24 @@ if ($resql) {
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
-$reshook = $hookmanager->executeHooks('ActionButtons');
-if (!empty($reshook)) {
-	if (is_array($reshook) && !isset($reshook['title'])) {
-		foreach ($reshook as $reshook) {
-			$menus[$r++] = $reshook;
+$parameters = array('menus'=>$menus);
+$reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
+if ($reshook == 0) {  //add buttons
+	if (is_array($hookmanager->resArray) ) {
+		foreach ($hookmanager->resArray as $resArray) {
+			foreach ($resArray as $butmenu) {
+				$menus[$r++] = $butmenu;
+			}
 		}
-	} else {
-		$menus[$r++] = $reshook;
+	} elseif ($reshook == 1) {
+		$r = 0; //replace buttons
+		if (is_array($hookmanager->resArray) ) {
+			foreach ($hookmanager->resArray as $resArray) {
+				foreach ($resArray as $butmenu) {
+					$menus[$r++] = $butmenu;
+				}
+			}
+		}
 	}
 }
 

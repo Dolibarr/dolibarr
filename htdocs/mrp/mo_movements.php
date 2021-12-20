@@ -468,7 +468,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= natural_search('e.rowid', $search_warehouse, 2);
 	}
 	if (!empty($search_user)) {
-		$sql .= natural_search('u.login', $search_user);
+		$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 	}
 	if (!empty($search_batch)) {
 		$sql .= natural_search('m.batch', $search_batch);

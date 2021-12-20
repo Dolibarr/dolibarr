@@ -198,9 +198,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
-				$tab_height = 200;
 				$tab_top_newpage = 40;
-				$tab_height_newpage = 210;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				if (!empty($object->note_public)) {
@@ -282,7 +282,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$sepaname = '______________________________________________';
 				if ($thirdparty->id > 0) {
-					$sepaname = $thirdparty->name.($object->account_owner ? ' ('.$object->account_owner.')' : '');
+					$sepaname = $thirdparty->name.($object->proprio ? ' ('.$object->proprio.')' : '');
 				}
 				$posY = $pdf->GetY();
 				$posY += 3;
