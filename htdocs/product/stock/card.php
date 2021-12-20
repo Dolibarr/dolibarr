@@ -172,9 +172,9 @@ if (empty($reshook))
 			$object->phone 		 = GETPOST("phone");
 			$object->fax 		 = GETPOST("fax");
 
-			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
-			if ($ret < 0)   $error++;
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	        if ($ret < 0)   $error++;
 
 			if (!$error) {
 				$ret = $object->update($id, $user);

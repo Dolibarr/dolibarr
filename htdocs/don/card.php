@@ -159,7 +159,7 @@ if ($action == 'update')
 		$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 		if ($ret < 0) $error++;
 
 		if ($object->update($user) > 0) {
