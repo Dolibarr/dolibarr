@@ -117,25 +117,26 @@ if ($action == 'getProducts') {
 		}
 	}
 
-	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price ';
+	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price ';
 	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
-		$sql .= ', reel';
+		$sql .= ', ps.reel';
 	}
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
-		$sql .= ' ON p.rowid = ps.fk_product';
+		$sql .= ' ON (p.rowid = ps.fk_product';
+		$sql .= " AND ps.fk_entrepot = ".((int) $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']}) . ')';
 	}
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
-	$sql .= ' AND tosell = 1';
+	$sql .= ' AND p.tosell = 1';
 	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
 		$sql .= ' AND ps.reel > 0';
-		$sql .= " AND fk_entrepot = ".((int) $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']});
+		
 	}
-	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
+	$sql .= natural_search(array('p.ref', 'p.label', 'p.barcode'), $term);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$rows = array();
