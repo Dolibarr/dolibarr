@@ -122,12 +122,13 @@ class FactureStats extends Stats
 	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
+        global $conf;
 
 		$sql = "SELECT date_format(f.datef,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= $this->join;
-		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START))."' AND '".$this->db->idate(dol_get_last_day($year + 1, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 12 : $conf->global->SOCIETE_FISCAL_MONTH_START -1))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
@@ -146,8 +147,9 @@ class FactureStats extends Stats
 	public function getNbByYear()
 	{
 		global $user;
+		global $conf;
 
-		$sql = "SELECT date_format(f.datef,'%Y') as dm, COUNT(*), SUM(c.".$this->field.")";
+		$sql = "SELECT (CASE WHEN ( EXTRACT(month FROM f.datef ) >=  '" . $conf->global->SOCIETE_FISCAL_MONTH_START. "') THEN date_format(f.datef,'%Y') ELSE date_format(f.datef,'%Y') - 1 END ) as dm, COUNT(*), SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= $this->join;
@@ -169,12 +171,13 @@ class FactureStats extends Stats
 	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
+		global $conf;
 
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= $this->join;
-		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START))."' AND '".$this->db->idate(dol_get_last_day($year + 1, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 12 : $conf->global->SOCIETE_FISCAL_MONTH_START -1))."'";
 		$sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
@@ -193,12 +196,13 @@ class FactureStats extends Stats
 	public function getAverageByMonth($year)
 	{
 		global $user;
+        global $conf;
 
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= $this->join;
-        $sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        $sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START))."' AND '".$this->db->idate(dol_get_last_day($year + 1, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 12 : $conf->global->SOCIETE_FISCAL_MONTH_START -1))."'";
 		$sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
@@ -214,8 +218,9 @@ class FactureStats extends Stats
 	public function getAllByYear()
 	{
 		global $user;
+		global $conf;
 
-		$sql = "SELECT date_format(datef,'%Y') as year, COUNT(*) as nb, SUM(f.".$this->field.") as total, AVG(f.".$this->field.") as avg";
+		$sql = "SELECT (CASE WHEN EXTRACT(month FROM f.datef ) >=  '" . $conf->global->SOCIETE_FISCAL_MONTH_START . "' THEN date_format(f.datef,'%Y') ELSE date_format(f.datef,'%Y') - 1 END ) as year, COUNT(*) as nb, SUM(f.".$this->field.") as total, AVG(f.".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= $this->join;
