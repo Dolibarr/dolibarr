@@ -733,6 +733,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
 			$param = ((!empty($mode) && $mode == 'mine') ? '&mode=mine' : '');
+			if ($search_user) {
+				$param .= '&search_user='.((int) $search_user);
+			}
+			if ($search_month) {
+				$param .= '&search_month='.((int) $search_month);
+			}
+			if ($search_year) {
+				$param .= '&search_year='.((int) $search_year);
+			}
 
 			// Project card
 
@@ -753,7 +762,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}
 
-			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
