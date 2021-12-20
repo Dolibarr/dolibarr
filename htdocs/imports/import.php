@@ -1076,7 +1076,7 @@ if ($step == 4 && $datatoimport) {
 		$tablealias = preg_replace('/(\..*)$/i', '', $code);
 		$tablename = $objimport->array_import_tables[0][$tablealias];
 
-		$entityicon = $entitytoicon[$entity] ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
+		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
 		print '<td class="nowraponall" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
@@ -1143,7 +1143,7 @@ if ($step == 4 && $datatoimport) {
 		}
 		// Source required
 		$htmltext .= $langs->trans("SourceRequired").': <b>'.yn(preg_match('/\*$/', $label)).'</b><br>';
-		$example = $objimport->array_import_examplevalues[0][$code];
+		$example = !empty($objimport->array_import_examplevalues[0][$code])?$objimport->array_import_examplevalues[0][$code]:"";
 		// Example
 		if (empty($objimport->array_import_convertvalue[0][$code])) {	// If source file does not need convertion
 			if ($example) {
