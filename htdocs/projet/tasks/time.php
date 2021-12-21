@@ -1614,7 +1614,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Project ref
 			if (!empty($allprojectforuser)) {
-				print '<td>';
+				print '<td class="nowraponall">';
 				if (empty($conf->cache['project'][$task_time->fk_projet])) {
 					$tmpproject = new Project($db);
 					$tmpproject->fetch($task_time->fk_projet);
@@ -1624,6 +1624,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 				print $tmpproject->getNomUrl(1);
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 			// Task ref
@@ -1849,6 +1852,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '</td>';
 				}
 
+				// Project ref
+				if (!empty($allprojectforuser)) {
+					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
+						print '<td class="nowrap">';
+						print '</td>';
+					}
+				}
+
 				// Task ref
 				if (!empty($arrayfields['t.task_ref']['checked'])) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
@@ -1975,6 +1986,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						print dol_print_date(($date2 ? $date2 : $date1), ($task_time->task_date_withhour ? 'dayhour' : 'day'));
 					}
 					print '</td>';
+				}
+
+				// Project ref
+				if (!empty($allprojectforuser)) {
+					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
+						print '<td class="nowrap">';
+						print '</td>';
+					}
 				}
 
 				// Task ref
