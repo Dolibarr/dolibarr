@@ -236,8 +236,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posY = $pdf->GetY();
 				$posY += 2;
 				$pdf->SetXY($this->marge_gauche, $posY);
-				$ics = '';
-				if (!empty($conf->global->PRELEVEMENT_ICS)) {
+				$ics = $object->ics;	// ICS for direct debit
+				if (empty($ics) && !empty($conf->global->PRELEVEMENT_ICS)) {
 					$ics = $conf->global->PRELEVEMENT_ICS;
 				}
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
