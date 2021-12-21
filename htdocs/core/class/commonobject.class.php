@@ -1662,8 +1662,8 @@ abstract class CommonObject
 	 * Looks for an object with ref matching the wildcard provided
 	 * It does only work when $this->table_ref_field is set
 	 *
-	 * @param string $ref Wildcard
-	 * @return int >1 = OK, 0 = Not found or table_ref_field not defined, <0 = KO
+	 * @param 	string 	$ref 	Wildcard
+	 * @return 	int 			>1 = OK, 0 = Not found or table_ref_field not defined, <0 = KO
 	 */
 	public function fetchOneLike($ref)
 	{
