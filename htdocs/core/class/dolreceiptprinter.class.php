@@ -674,9 +674,9 @@ class dolReceiptPrinter extends Printer
 							$vatarray[$line->tva_tx] += $line->total_tva;
 						}
 						foreach ($vatarray as $vatkey => $vatvalue) {
-							 $spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
-							 $spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
-							 $this->printer->text($spaces.$vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
+							$spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
+							$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+							$this->printer->text($spaces.$vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
 						}
 						break;
 					case 'DOL_PRINT_OBJECT_TAX1':
