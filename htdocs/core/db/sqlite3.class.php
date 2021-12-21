@@ -394,7 +394,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @param	int		$result_mode	Result mode (not used with sqlite)
-	 *	@return	SQLite3Result			Resultset of answer
+	 *	@return	bool|SQLite3Result		Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
@@ -407,6 +407,7 @@ class DoliDBSqlite3 extends DoliDB
 		$this->error = '';
 
 		// Convert MySQL syntax to SQLite syntax
+		$reg = array();
 		if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $query, $reg)) {
 			// Ajout d'une clef étrangère à la table
 			// procédure de remplacement de la table pour ajouter la contrainte

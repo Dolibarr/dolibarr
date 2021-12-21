@@ -1273,7 +1273,7 @@ abstract class CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
-		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
+		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
 		if ($code) {
 			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
@@ -8740,7 +8740,7 @@ abstract class CommonObject
 			$sql .= " VALUES (".implode(", ", $values).")";		// $values can contains 'abc' or 123
 
 			$res = $this->db->query($sql);
-			if ($res === false) {
+			if (!$res) {
 				$error++;
 				if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$this->errors[] = "ErrorRefAlreadyExists";
@@ -8992,7 +8992,7 @@ abstract class CommonObject
 		$this->db->begin();
 		if (!$error) {
 			$res = $this->db->query($sql);
-			if ($res === false) {
+			if (!$res) {
 				$error++;
 				$this->errors[] = $this->db->lasterror();
 			}
