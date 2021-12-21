@@ -1238,11 +1238,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
-		if ($conf->global->TAKEPOS_HIDE_CATEGORIES == 1) {
 			print '<div class="wrapper2" id="prodiv'.$count.'"  ';
-		} else {
-			print '<div class="wrapper2" id="prodiv'.$count.'" ';
-		}
 		?>
 				<?php if ($count == ($MAXPRODUCT - 2)) {
 					?> onclick="MoreProducts('less');" <?php
