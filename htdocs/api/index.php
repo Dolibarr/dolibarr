@@ -346,17 +346,19 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 // If API_DISABLE_COMPRESSION is set, returnResponse is false => It use default handling so output result directly.
 $usecompression = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
 $foundonealgorithm = 0;
-if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
-	$foundonealgorithm++;
-}
-if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
-	$foundonealgorithm++;
-}
-if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
-	$foundonealgorithm++;
-}
-if (!$foundonealgorithm) {
-	$usecompression = false;
+if ($usecompression) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
+		$foundonealgorithm++;
+	}
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
+		$foundonealgorithm++;
+	}
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
+		$foundonealgorithm++;
+	}
+	if (!$foundonealgorithm) {
+		$usecompression = false;
+	}
 }
 
 //dol_syslog('We found some compression algoithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
