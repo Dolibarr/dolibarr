@@ -2216,3 +2216,4 @@ PDF_USE_1A=Generate PDF with PDF/A-1b format
 MissingTranslationForConfKey = Missing translation for %s
 NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses
