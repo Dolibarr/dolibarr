@@ -86,12 +86,14 @@ class FactureFournisseurRec extends CommonInvoice
 
     public $user_author;
     public $user_modif;
-    public $fk_projet;
+    public $fk_project;
 
+    public $mode_reglement_id;
+    public $mode_reglement_code;
     public $cond_reglement_code;
     public $cond_reglement_doc;
-    public $mode_reglement_code;
-    public $mode_reglement;
+    public $cond_reglement_id;
+
     public $date_lim_reglement;
 
     public $fk_multicurrency;
@@ -111,6 +113,8 @@ class FactureFournisseurRec extends CommonInvoice
     public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
     public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
+    public $model_pdf;
+
     /* Override fields in CommonObject
     public $entity;
     public $date_creation;
@@ -119,12 +123,10 @@ class FactureFournisseurRec extends CommonInvoice
     public $total_tva;
     public $total_ttc;
     public $fk_account;
-    public $cond_reglement_id;
+    public $mode_reglement;
     public $cond_reglement;
-    public $mode_reglement_id;
     public $note_public;
     public $note_private;
-    public $model_pdf;
     */
 
     /**
@@ -294,7 +296,7 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ', generate_pdf';
             $sql .= ') VALUES (';
             $sql .= "'".$this->db->escape($this->titre)."'";
-            $sql .= ", '".(!empty($facfourn_src->ref_supplier) ? $facfourn_src->ref_supplier : '')."'";
+            $sql .= ", '".(!empty($this->ref_supplier) ? $this->ref_supplier : '')."'";
             $sql .= ', ' . $conf->entity;
             $sql .= ', ' . (int) $facfourn_src->socid;
             $sql .= ", '".$this->db->idate($now)."'";
@@ -305,8 +307,8 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ', ' . $user->id;
             $sql .= ', ' .(!empty($this->fk_project) ? $this->fk_project : 'NULL');                                                 // Fields declarded on creation
             $sql .= ', ' .(!empty($facfourn_src->fk_account) ? $facfourn_src->fk_account : 'NULL');
-            $sql .= ', ' .($facfourn_src->cond_reglement_id > 0 ? (int) $facfourn_src->cond_reglement_id : 'NULL');        
-            $sql .= ', ' .($facfourn_src->mode_reglement_id > 0 ? (int) $facfourn_src->mode_reglement_id : 'NULL');        
+            $sql .= ', ' .($this->cond_reglement_id > 0 ? (int) $this->cond_reglement_id : 'NULL');
+            $sql .= ', ' .($this->mode_reglement_id > 0 ? (int) $this->mode_reglement_id : 'NULL');
             $sql .= ", '".($facfourn_src->date_echeance > 0 ? $this->db->idate($facfourn_src->date_echeance) : 'NULL')."'";         // date_lim_reglement
             $sql .= ', ' .(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : 'NULL');                  // Fields declarded on creation         
             $sql .= ', ' .(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : 'NULL');                    // Fields declarded on creation
@@ -343,28 +345,25 @@ class FactureFournisseurRec extends CommonInvoice
                     }
 
                     $result_insert = $this->addline(
-                        $facfourn_src->lines[$i]->desc,
-                        $facfourn_src->lines[$i]->subprice,
+                        $facfourn_src->lines[$i]->fk_product,
+                        $facfourn_src->lines[$i]->ref_supplier,
+                        $facfourn_src->lines[$i]->label,
+                        $facfourn_src->lines[$i]->description,
+                        $facfourn_src->lines[$i]->pu_ht,
+                        $facfourn_src->lines[$i]->pu_ttc,
                         $facfourn_src->lines[$i]->qty,
+                        $facfourn_src->lines[$i]->remise_percent,
                         $tva_tx,
                         $facfourn_src->lines[$i]->localtax1_tx,
                         $facfourn_src->lines[$i]->localtax2_tx,
-                        $facfourn_src->lines[$i]->fk_product,
-                        $facfourn_src->lines[$i]->remise_percent,
                         'HT',
-                        $facfourn_src->lines[$i]->info_bits,
-                        '',
-                        0,
                         $facfourn_src->lines[$i]->product_type,
-                        $facfourn_src->lines[$i]->rang,
+                        $facfourn_src->lines[$i]->date_start,
+                        $facfourn_src->lines[$i]->date_end,
+                        $facfourn_src->lines[$i]->info_bits,
                         $facfourn_src->lines[$i]->special_code,
-                        $facfourn_src->lines[$i]->label,
-                        $facfourn_src->lines[$i]->fk_unit,
-                        $facfourn_src->lines[$i]->multicurrency_subprice,
-                        0,
-                        0,
-                        null,
-                        $facfourn_src->lines[$i]->pa_ht
+                        $facfourn_src->lines[$i]->rang,
+                        $facfourn_src->lines[$i]->fk_unit
                     );
 
                     if ($result_insert < 0) {
@@ -517,8 +516,8 @@ class FactureFournisseurRec extends CommonInvoice
         $sql .= ', f.total_tva, f.total_ht, f.total_ttc';
         $sql .= ', f.fk_user_author, f.fk_user_modif';
         $sql .= ', f.fk_projet, f.fk_account';
-        $sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-        $sql .= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
+        $sql .= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+        $sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql .= ', f.date_lim_reglement';
         $sql .= ', f.note_private, f.note_public, f.modelpdf';
         $sql .= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
@@ -560,7 +559,7 @@ class FactureFournisseurRec extends CommonInvoice
                 $this->total_ttc                = $obj->total_ttc;
                 $this->user_author              = $obj->fk_user_author;
                 $this->user_modif               = $obj->fk_user_modif;
-                $this->fk_project               = $obj->fk_project;
+                $this->fk_project               = $obj->fk_projet;
                 $this->fk_account               = $obj->fk_account;
                 $this->mode_reglement_id        = $obj->fk_mode_reglement;
                 $this->mode_reglement_code      = $obj->mode_reglement_code;
@@ -654,16 +653,19 @@ class FactureFournisseurRec extends CommonInvoice
         }
         $extrafields->fetch_name_optionals_label($this->table_element_line, true);
 
-        $sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
-        $sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
-        $sql .= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price, l.buy_price_ht as pa_ht,';
-        $sql .= ' l.rang, l.special_code,';
-        $sql .= ' l.fk_unit, l.fk_contract_line,';
+        $sql = 'SELECT l.rowid,';
+        $sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref, l.label, l.description,';
+        $sql .= ' l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except, l.vat_src_code, l.tva_tx,';
+        $sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type,';
+        $sql .= ' l.total_ht, l.total_tva, l.total_ttc, total_localtax1, total_localtax2,';
+        $sql .= ' l.product_type, l.date_start, l.date_end,';
+        $sql .= ' l.info_bits, l.special_code, l.rang,';
+        $sql .= ' l.fk_unit, l.import_key, l.fk_user_author, l.fk_user_modif,';
         $sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
         $sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det_rec as l';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-        $sql .= ' WHERE l.fk_facture = '. (int) $this->id;
+        $sql .= ' WHERE l.fk_facture_fourn = '. $this->id;
         $sql .= ' ORDER BY l.rang';
 
         dol_syslog('FactureFournisseurRec::fetch_lines', LOG_DEBUG);
@@ -673,69 +675,49 @@ class FactureFournisseurRec extends CommonInvoice
             $i = 0;
             while ($i < $num) {
                 $objp = $this->db->fetch_object($result);
-                $line = new FactureLigneRec($this->db);
+                $line = new FactureFournisseurLigneRec($this->db);
 
-                $line->id = $objp->rowid;
-                $line->rowid = $objp->rowid;
-                $line->desc             = $objp->description; // Description line
-                $line->description      = $objp->description; // Description line
-                $line->ref              = $objp->product_ref; // Ref product
-                $line->product_ref      = $objp->product_ref; // Ref product
-                $line->libelle          = $objp->product_label; // deprecated
-                $line->product_label = $objp->product_label; // Label product
-                $line->product_desc     = $objp->product_desc; // Description product
-                $line->product_type     = $objp->product_type; // Type of line
-                $line->fk_product_type  = $objp->fk_product_type; // Type of product
-                $line->qty              = $objp->qty;
-                $line->subprice         = $objp->subprice;
-
-                $line->label            = $objp->custom_label; // @deprecated
-
-                $line->vat_src_code     = $objp->vat_src_code;
-                $line->tva_tx           = $objp->tva_tx;
-                $line->localtax1_tx     = $objp->localtax1_tx;
-                $line->localtax2_tx     = $objp->localtax2_tx;
-                $line->localtax1_type   = $objp->localtax1_type;
-                $line->localtax2_type   = $objp->localtax2_type;
-                $line->remise_percent   = $objp->remise_percent;
-                //$line->fk_remise_except = $objp->fk_remise_except;
-                $line->fk_product       = $objp->fk_product;
-                $line->date_start_fill  = $objp->date_start_fill;
-                $line->date_end_fill    = $objp->date_end_fill;
-                $line->info_bits        = $objp->info_bits;
-                $line->total_ht         = $objp->total_ht;
-                $line->total_tva        = $objp->total_tva;
-                $line->total_ttc        = $objp->total_ttc;
-
-                //$line->code_ventilation = $objp->fk_code_ventilation;
-
-                $line->fk_product_fournisseur_price = $objp->fk_product_fournisseur_price;
-                $line->fk_fournprice = $objp->fk_product_fournisseur_price; // For backward compatibility
-
-                $marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $objp->fk_product_fournisseur_price, $objp->pa_ht);
-
-                $line->buyprice = $marginInfos[0];
-                $line->pa_ht = $marginInfos[0]; // For backward compatibility
-                $line->marge_tx			= $marginInfos[1];
-                $line->marque_tx		= $marginInfos[2];
-                $line->rang = $objp->rang;
-                $line->special_code = $objp->special_code;
-                $line->fk_unit = $objp->fk_unit;
-                $line->fk_contract_line = $objp->fk_contract_line;
-
-                // Ne plus utiliser
-                $line->price            = $objp->price;
-                $line->remise           = $objp->remise;
+                $line->id                       = $objp->rowid;
+                $line->fk_facture_fourn         = $objp->fk_facture_fourn;
+                $line->fk_parent                = $objp->fk_parent_line;
+                $line->fk_product               = $objp->fk_product;
+                $line->ref_supplier             = $objp->ref_supplier;
+                $line->label                    = $objp->label;
+                $line->description              = $objp->description;
+                $line->pu_ht                    = $objp->pu_ht;
+                $line->pu_ttc                   = $objp->pu_ttc;
+                $line->qty                      = $objp->qty;
+                $line->remise_percent           = $objp->remise_percent;
+                $line->fk_remise_except         = $objp->fk_remise_except;
+                $line->vat_src_code             = $objp->vat_src_code;
+                $line->tva_tx                   = $objp->tva_tx;
+                $line->localtax1_tx             = $objp->localtax1_tx;
+                $line->localtax1_type           = $objp->localtax1_type;
+                $line->localtax2_tx             = $objp->localtax2_tx;
+                $line->localtax2_type           = $objp->localtax2_type;
+                $line->total_ht                 = $objp->total_ht;
+                $line->total_tva                = $objp->total_tva;
+                $line->total_localtax1          = $objp->total_localtax1;
+                $line->total_localtax2          = $objp->total_localtax2;
+                $line->total_ttc                = $objp->total_ttc;
+                $line->product_type             = $objp->product_type;
+                $line->date_start               = $objp->date_start;
+                $line->date_end                 = $objp->date_end;
+                $line->info_bits	            = $objp->info_bits	;
+                $line->special_code             = $objp->special_code;
+                $line->rang                     = $objp->rang;
+                $line->fk_unit                  = $objp->fk_unit;
+                $line->import_key               = $objp->import_key;
+                $line->fk_user_author           = $objp->fk_user_author;
+                $line->fk_user_modif            = $objp->fk_user_modif;
+                $line->fk_multicurrency         = $objp->fk_multicurrency;
+                $line->multicurrency_code       = $objp->multicurrency_code;
+                $line->multicurrency_subprice   = $objp->multicurrency_subprice;
+                $line->multicurrency_total_ht   = $objp->multicurrency_total_ht;
+                $line->multicurrency_total_tva  = $objp->multicurrency_total_tva;
+                $line->multicurrency_total_ttc  = $objp->multicurrency_total_ttc;
 
                 $line->fetch_optionals();
-
-                // Multicurrency
-                $line->fk_multicurrency = $objp->fk_multicurrency;
-                $line->multicurrency_code = $objp->multicurrency_code;
-                $line->multicurrency_subprice 	= $objp->multicurrency_subprice;
-                $line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-                $line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-                $line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
                 $this->lines[$i] = $line;
 
@@ -775,7 +757,7 @@ class FactureFournisseurRec extends CommonInvoice
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det_rec WHERE fk_facture_fourn = ". $rowid;
 
         if ($this->db->query($sqlef) && $this->db->query($sql)) {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn__rec WHERE rowid = ". $rowid;
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_rec WHERE rowid = ". $rowid;
             dol_syslog($sql);
             if ($this->db->query($sql)) {
                 // Delete linked object
@@ -856,7 +838,8 @@ class FactureFournisseurRec extends CommonInvoice
             $txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
         }
 
-        if ($this->suspended === self::STATUS_NOTSUSPENDED) {
+        if ($this->suspended == self::STATUS_NOTSUSPENDED) {
+
             // Clean parameters
             $remise_percent = empty($remise_percent) ? 0 : price2num($remise_percent);
             $qty = price2num($qty);
@@ -975,13 +958,14 @@ class FactureFournisseurRec extends CommonInvoice
             dol_syslog(get_class($this). '::addline', LOG_DEBUG);
             if ($this->db->query($sql)) {
                 $lineId = $this->db->last_insert_id(MAIN_DB_PREFIX. 'facture_fourn_det_rec');
-                $this->id = $facid;
                 $this->update_price();
+                $this->id = $facid;
                 $this->db->commit();
                 return $lineId;
             } else {
                 $this->db->rollback();
                 $this->error = $this->db->lasterror();
+
                 return -1;
             }
         }
@@ -1386,7 +1370,7 @@ class FactureFournisseurRec extends CommonInvoice
             }
         }
 
-        $url = DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$this->id;
+        $url = DOL_URL_ROOT.'/fourn/facture/card-rec.php?facid='.$this->id;
 
         if ($short) {
             return $url;
@@ -2026,8 +2010,8 @@ class FactureFournisseurLigneRec extends CommonObjectLine
         $sql .= ' l.vat_src_code, l.tva_tx, l.localtax1_tx, l.localtax1_type, l.localtax2_tx, l.localtax2_type,';
         $sql .= ' l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc,';
         $sql .= ' l.product_type, l.date_start, l.date_end,';
-        $sql .= ' l.info_bits, l.special_code, l.rang, l.fk_unit, l.import_key';
-        $sql .= ' l.fk_user_author, l.fk_user_modif, l.fk_multicurrency';
+        $sql .= ' l.info_bits, l.special_code, l.rang, l.fk_unit, l.import_key,';
+        $sql .= ' l.fk_user_author, l.fk_user_modif, l.fk_multicurrency,';
         $sql .= ' l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
         $sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det_rec as l';
