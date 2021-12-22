@@ -1167,6 +1167,9 @@ class pdf_gme extends ModelePDFPropales
 	{
 		global $user;
 
+		$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
+		if (count($arrayidcontact) > 0) $object->fetch_contact($arrayidcontact[0]);
+
 		$pdf->Text(20,$pdf->GetY()+5,"D. Validation de l'offre");
 
 		//Reset Font&Color
@@ -1179,6 +1182,8 @@ class pdf_gme extends ModelePDFPropales
 		$Y = $pdf->GetY();
 
 		//Client
+		var_dump($object);
+		exit();
 		$pdf->MultiCell (85,7,'Pour '.$object->thirdparty->name,0,'L',0,1,20,$pdf->GetY());
 		$pdf->MultiCell (85,7,$object->contact->firstname.' '.$object->contact->lastname,0,'L',0,1,20,$pdf->GetY());
 		$pdf->MultiCell (85,7,'En sa qualité de '.$object->contact->poste,0,'L',0,1,20,$pdf->GetY());
