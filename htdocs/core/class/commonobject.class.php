@@ -3402,6 +3402,9 @@ abstract class CommonObject
 			$fieldtva = 'tva';
 			$fieldup = 'pu_ht';
 		}
+        if ($this->element == 'invoice_supplier_rec') {
+            $fieldup = 'pu_ht';
+		}
 		if ($this->element == 'expensereport') {
 			$fieldup = 'value_unit';
 		}
@@ -3425,6 +3428,7 @@ abstract class CommonObject
 		}
 		$sql .= ' ORDER by rowid'; // We want to be sure to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
 
+//        print $sql;exit;
 		dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -7993,7 +7997,9 @@ abstract class CommonObject
 		$element = $this->element;
 		if ($element == 'facturerec') {
 			$element = 'facture';
-		}
+		} elseif ($element == 'invoice_supplier_rec'){
+            return $user->rights->fournisseur->facture;
+        }
 
 		return $user->rights->{$element};
 	}
