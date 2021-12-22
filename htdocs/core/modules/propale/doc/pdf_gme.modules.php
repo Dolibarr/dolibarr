@@ -1210,7 +1210,7 @@ class pdf_gme extends ModelePDFPropales
 		$user->fetch($object->user_author_id);
 
 		if($user->photo != '') {
-			$pdf->Image($conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo,90,263,22,22);
+			$pdf->Image($conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo,90,263,24,22);
 		}
 
 		$pdf->SetFont('Helvetica','', 9);
