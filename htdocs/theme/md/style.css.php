@@ -1834,7 +1834,7 @@ td.showDragHandle {
 	width: 100%;
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
-	padding-left: 229px;
+	padding-<?php print $left; ?>: 229px;
 	padding-top: 16px;
 <?php } ?>
 }
@@ -1860,13 +1860,13 @@ td.showDragHandle {
 	display: none;
 <?php } else { ?>
 	background: var(--colorbackvmenu1);
-	border-right: 1px solid rgba(0,0,0,0.2);
+	border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2);
 	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
 	color: #333;
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
-	left: 0;
+	<?php echo $left; ?>: 0;
 	<?php
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	} else { ?>
@@ -1920,12 +1920,13 @@ td.showDragHandle {
 }
 
 body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
-	margin-left: 0;padding-left:0
+	margin-left: 0;
+	padding-left:0
 }
 
 
 .side-nav-vert {
-	margin-left: 228px;
+	margin-<?php echo $left; ?>: 228px;
 }
 
 /* body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other, body.sidebar-collapse #topmenu-login-dropdown */
@@ -1991,7 +1992,7 @@ div.backgroundsemitransparent {
 
 
 #id-right {
-	padding-left: 0 ! important;
+	padding-<?php print $left; ?>: 0 ! important;
 }
 #id-left {
 	z-index: 91;
@@ -2941,7 +2942,7 @@ form[name="addtime"] img.userphoto {
 div.vmenu, td.vmenu {
 	margin-<?php print $right; ?>: 2px;
 	position: relative;
-	float: left;
+	float: <?php print $left; ?>;
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 0px;
@@ -2949,7 +2950,7 @@ div.vmenu, td.vmenu {
 }
 
 .vmenu {
-	margin-left: 4px;
+	margin-<?php print $left; ?>: 4px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -2993,14 +2994,17 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 }
 
 .helppresentcircle {
+	/*
 	color: var(--colorbackhmenu1);
 	filter: invert(0.5);
-	margin-left: -7px;
+	*/
+	color: var(--colortextbackhmenu);
+	margin-left: -4px;
 	display: inline-block;
-	margin-top: -10px;
 	font-size: x-small;
 	vertical-align: super;
 	opacity: 0.95;
+	transform: rotate(<?php echo ($left == 'left' ? '55deg' : '305deg'); ?>);
 }
 
 div.blockvmenulogo
