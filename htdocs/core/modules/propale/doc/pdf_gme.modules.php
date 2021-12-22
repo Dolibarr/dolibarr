@@ -36,7 +36,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-//librairie extrafields
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
@@ -134,11 +133,6 @@ class pdf_gme extends ModelePDFPropales
 	public $urlImageGmeHeader;
 
 	/**
-	 * @var Image commercial
-	 */
-	public $urlImageCom;
-
-	/**
 	 * @var Logo mail
 	 */
 	public $urlPictoMail;
@@ -148,6 +142,16 @@ class pdf_gme extends ModelePDFPropales
 	 */
 	public $urlPictoPhone;
 
+	public $contentLeftMargin;
+	public $contentFontSize;
+	public $titleFontSize;
+	public $subTitleFontSize;
+	public $footerContent;
+	public $user;
+	public $contentHeaderCustomerMarginLeft;
+	public $contentHeaderCustomerMarginTop;
+	public $tableFontSize;
+	public $tableSubTotalsFontSize;
 
 	/**
 	 *	Constructor
@@ -156,14 +160,26 @@ class pdf_gme extends ModelePDFPropales
 	 */
 	public function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf,$langs,$mysoc, $user;
 
 		//Variable Image
-		$this->urlImageCom = DOL_DATA_ROOT.'/images/commercial.png';
 		$this->urlImageGmeHeader = DOL_DATA_ROOT.'/images/gme_header.png';
 		$this->urlImageGme = DOL_DATA_ROOT.'/images/gme.jpg';
 		$this->urlPictoMail = DOL_DATA_ROOT.'/images/mail.png';
 		$this->urlPictoPhone = DOL_DATA_ROOT.'/images/phone.png';
+
+		// Global vars for the GME doc.
+		$this->contentLeftMargin = 20;
+		$this->contentFontSize = 10;
+		$this->titleFontSize = 14;
+		$this->subTitleFontSize = 11;
+		$this->footerContent = 'G.M.Electronics SRL - Rue de Termonde, 140 - 1083 Ganshoren - www.gmelectronics.be – info@gmelectronics.be BE0426.751.795';
+		$this->contentHeaderCustomerMarginLeft = 118;
+		$this->contentHeaderCustomerMarginTop = 18;
+		$this->marge_basse = 40;
+		$this->marge_haute = 55;
+		$this->tableFontSize = 8;
+		$this->tableSubTotalsFontSize = 12;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
@@ -181,8 +197,6 @@ class pdf_gme extends ModelePDFPropales
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT+10:20;
 		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT+10:20;
-		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:45;
-		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:30;
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
@@ -433,7 +447,7 @@ class pdf_gme extends ModelePDFPropales
 
 				//A. Conditions de l'offre
 				$pdf->AddPage();
-				$pdf->SetAutoPageBreak(1,$this->marge_basse+30);
+				$pdf->SetAutoPageBreak(1,$this->marge_basse);
 
 				$this->conditionOffre($pdf,$object, $outputlangs);
 
@@ -441,22 +455,22 @@ class pdf_gme extends ModelePDFPropales
 
 				//B. Détails de l'offre
 				$pdf->AddPage();
-				$pdf->SetFont('Helvetica','B',14);
+				$pdf->SetFont('Helvetica','B',$this->titleFontSize);
 				$pdf->SetTextColor(153,204,102);
 				$pdf->Text(20,$this->marge_haute,"B. Détails de l'offre");
 
 				//Reset Font&Color
-				$pdf->SetFont('Helvetica','',10);
-				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFont('Helvetica','',$this->tableFontSize);
+				$pdf->SetTextColor(64,64,64);
+
+				$tab_top = $this->marge_haute + 10;
+				$tab_top_newpage = $this->marge_haute;
 
                 $heightforinfotot = 30;	// Height reserved to output the info and total part
                 $heightforsignature = empty($conf->global->PROPAL_DISABLE_SIGNATURE)?(pdfGetHeightForHtmlContent($pdf, $outputlangs->transnoentities("ProposalCustomerSignature"))-40):0;
                 $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 30;	// Height reserved to output the footer (value include bottom margin)
+	            $heightforfooter = $this->marge_basse;	// Height reserved to output the footer (value include bottom margin)
 				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 20;
-
-	            $tab_top = 55;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42+$top_shift:10);
 
 				// Incoterm
 				if ($conf->incoterm->enabled)
@@ -479,44 +493,6 @@ class pdf_gme extends ModelePDFPropales
 					}
 				}
 
-				// Affiche notes
-				$notetoshow=empty($object->note_public)?'':$object->note_public;
-				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
-				{
-					// Get first sale rep
-					if (is_object($object->thirdparty))
-					{
-						$salereparray=$object->thirdparty->getSalesRepresentatives($user);
-						$salerepobj=new User($this->db);
-						$salerepobj->fetch($salereparray[0]['id']);
-						if (! empty($salerepobj->signature)) $notetoshow=dol_concatdesc($notetoshow, $salerepobj->signature);
-					}
-				}
-				if (! empty($conf->global->MAIN_ADD_CREATOR_IN_NOTE) && $object->user_author_id > 0)
-				{
-				    $tmpuser=new User($this->db);
-				    $tmpuser->fetch($object->user_author_id);
-				    $notetoshow.='Affaire suivi par '.$tmpuser->getFullName($langs);
-				    if ($tmpuser->email) $notetoshow.=',  Mail: '.$tmpuser->email;
-				    if ($tmpuser->office_phone) $notetoshow.=', Tel: '.$tmpuser->office_phone;
-				}
-				if ($notetoshow)
-				{
-					$tab_top -= 2;
-
-					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-
-					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top+10, dol_htmlentitiesbr($notetoshow), 0, 1);
-					$nexY = $pdf->GetY();
-					$height_note=$nexY-$tab_top;
-
-					$tab_top = $nexY+3;
-				}
-
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
@@ -529,8 +505,27 @@ class pdf_gme extends ModelePDFPropales
 				for ($i = 0; $i < $nblignes; $i++)
 				{
 					$curY = $nexY;
-					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
-					$pdf->SetTextColor(0, 0, 0);
+					$pdf->SetFont('', '', $this->tableFontSize);   // Into loop to work with multipage
+					$pdf->SetTextColor(64,64,64);
+
+					// Special logic to create titles and comments
+					if(substr($object->lines[$i]->description, 0, 2) == '<h')
+					{
+						$isTitre = 1;
+						$numTitre++;
+						$posTitre[$numTitre] = $curY + 10;
+						$pageTitre[$numTitre] = $pdf->getPage();
+						$curY = $curY + 10;
+					}
+					elseif(substr($object->lines[$i]->description, 0, 5) == '<div>')
+					{
+						$isComment = 1;
+					}
+					else
+					{
+						$isTitre = 0;
+						$isComment = 0;
+					}
 
 					// Define size of image if we need it
 					$imglinesize=array();
@@ -549,7 +544,7 @@ class pdf_gme extends ModelePDFPropales
 					{
 						$pdf->AddPage('', '', true);
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->setPage($pageposbefore+1);
 
 						$curY = $tab_top_newpage;
@@ -587,7 +582,7 @@ class pdf_gme extends ModelePDFPropales
 							{
 								$pdf->AddPage('', '', true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter+1);
 							}
 						}
@@ -615,25 +610,7 @@ class pdf_gme extends ModelePDFPropales
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
-
-
-					//Titre
-					//if (empty(pdf_getlineqty($object, $i, $outputlangs, $hidedetails)) && $object->lines[$i]->subprice == 0){
-					//Code initial if(<h&&qty==0) elseif(<div>&&qty==0)
-					//if(substr($object->lines[$i]->description, 0, 2) == '<h' && empty(pdf_getlineqty($object, $i, $outputlangs, $hidedetails))){
-					//Code modifié if(<h&&qty==1) elseif(<div>&&qty==1), plus pratique
-					if(substr($object->lines[$i]->description, 0, 2) == '<h'){
-						$isTitre = 1;
-						$numTitre++;
-						$posTitre[$numTitre] = $curY;
-						$pageTitre[$numTitre] = $pdf->getPage();
-					}elseif(substr($object->lines[$i]->description, 0, 5) == '<div>'){
-						$isComment = 1;
-					}else{
-						$isTitre = 0;
-						$isComment = 0;
-					}
+					$pdf->SetFont('', '', $this->tableFontSize);
 
 					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN) && empty($isTitre) && empty($isComment))
@@ -735,39 +712,39 @@ class pdf_gme extends ModelePDFPropales
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $curY, $this->page_largeur - $this->marge_droite, $curY);
+						$pdf->line($this->marge_gauche, $curY + 6, $this->page_largeur - $this->marge_droite, $curY + 6);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
 					$nexY+=2;    // Passe espace entre les lignes
 
-					// Detect if some page were added automatically and output _tableau for past pages
+					// Detect if some page were added automatically and output _tableheader for past pages
 					while ($pagenb < $pageposafter)
 					{
 						$pdf->setPage($pagenb);
 						if ($pagenb == $newPage)
 						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+							$this->_tableheader($pdf, $tab_top, $outputlangs, $object->multicurrency_code);
 						}
 						elseif ($pagenb > $newPage)
 						{
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
+							$this->_tableheader($pdf, $tab_top_newpage, $outputlangs, $object->multicurrency_code);
 						}
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 					{
 						if ($pagenb == $newPage)
 						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+							$this->_tableheader($pdf, $tab_top,  $outputlangs, $object->multicurrency_code);
 						}
 						elseif ($pagenb > $newPage)
 						{
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
+							$this->_tableheader($pdf, $tab_top_newpage, $outputlangs, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 
@@ -775,7 +752,7 @@ class pdf_gme extends ModelePDFPropales
 						$pdf->AddPage();
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 				}
 
@@ -786,14 +763,13 @@ class pdf_gme extends ModelePDFPropales
 					$lastPage = $pdf->getPage();
 				}
 
-
 				for ($i = 1; $i <= $numTitre; $i++)
 				{
 						$total_excl_tax = price($ssTotalTitre[$i], 0, $outputlangs);
 						$pdf->setPage($pageTitre[$i]);
-						$pdf->SetFont('','B',10);
+						$pdf->SetFont('','B',$this->tableSubTotalsFontSize);
 						$pdf->SetXY($this->postotalht, $posTitre[$i]);
-						$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax.'€', 0, 'R', 0);
+						$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax.' €', 0, 'R', 0);
 				}
 
 				if($numTitre){
@@ -807,12 +783,12 @@ class pdf_gme extends ModelePDFPropales
 				// Show square
 				if ($pagenb == $newPage)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+					$this->_tableheader($pdf, $tab_top, $outputlangs, $object->multicurrency_code);
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter + 1;
 				}
 				elseif ($pagenb > $newPage)
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
+					$this->_tableheader($pdf, $tab_top_newpage, $outputlangs, $object->multicurrency_code);
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter + 1;
 				}
 
@@ -820,7 +796,7 @@ class pdf_gme extends ModelePDFPropales
 
 				//C. Total de l'offre (Récapitulatif des totaux)
 				$pdf->AddPage();
-				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+				$this->_pagehead($pdf, $object, 0, $outputlangs);
 
 				$this->totOffre($pdf, $object, $outputlangs);
 
@@ -953,107 +929,53 @@ class pdf_gme extends ModelePDFPropales
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableheader(&$pdf, $tab_top, $outputlangs,  $currency = '')
 	{
 		global $conf;
-		// Force to disable hidetop and hidebottom
-		$hidebottom=0;
-		if ($hidetop) $hidetop=-1;
-
 		$currency = !empty($currency) ? $currency : $conf->currency;
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Amount in (at tab_top - 1)
-		$pdf->SetTextColor(0, 0, 0);
+		$pdf->SetTextColor(64,64,64);
 		$pdf->SetFont('Helvetica', '', 10);
 
-		if (empty($hidetop))
-		{
-			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
-			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 6), 258);
-			$pdf->SetFontSize(6);
-			//Montants exprimés en euros
-			$pdf->MultiCell(0, 0,$titre,0,'R');
-
-			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
-		}
+		$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
+		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 6), 258);
+		$pdf->SetFontSize(6);
+		$pdf->MultiCell(0, 0,$titre,0,'R');
+		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 5, 'F', null, ['230', '230', '230']);
 
 		$pdf->SetDrawColor(128, 128, 128);
-		$pdf->SetFont('', '', $default_font_size - 1);
+		$pdf->SetFont('', '', $this->tableFontSize);
 
-		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
-		if (empty($hidetop))
+		$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur-$this->marge_droite, $tab_top + 5);	// line prend une position y en 2eme param et 4eme param
+
+		$pdf->SetXY($this->posxdesc-1, $tab_top + 1);
+		$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Designation"), '', 'L');
+
+		$pdf->SetXY($this->posxtva-3, $tab_top + 1);
+		$pdf->MultiCell($this->posxup-$this->posxtva+3, 2, $outputlangs->transnoentities("VAT"), '', 'C');
+
+		$pdf->SetXY($this->posxup-1, $tab_top + 1);
+		$pdf->MultiCell($this->posxqty-$this->posxup-1, 2, $outputlangs->transnoentities("PriceUHT"), '', 'C');
+
+		$pdf->SetXY($this->posxqty-1, $tab_top + 1);
+		$pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
+
+		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
-
-			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Designation"), '', 'L');
+			$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
+			$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+				'C');
 		}
 
-		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
-		{
-			$pdf->line($this->posxpicture-1, $tab_top, $this->posxpicture-1, $tab_top + $tab_height);
-			if (empty($hidetop))
-			{
-				//$pdf->SetXY($this->posxpicture-1, $tab_top+1);
-				//$pdf->MultiCell($this->posxtva-$this->posxpicture-1,2, $outputlangs->transnoentities("Photo"),'','C');
-			}
-		}
-
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
-		{
-			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			if (empty($hidetop))
-			{
-				// Not do -3 and +3 instead of -1 -1 to have more space for text 'Sales tax'
-				$pdf->SetXY($this->posxtva-3, $tab_top+1);
-				$pdf->MultiCell($this->posxup-$this->posxtva+3, 2, $outputlangs->transnoentities("VAT"), '', 'C');
-			}
-		}
-
-		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxup-1, $tab_top+1);
-			$pdf->MultiCell($this->posxqty-$this->posxup-1, 2, $outputlangs->transnoentities("PriceUHT"), '', 'C');
-		}
-
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
-		}
-
-		if($conf->global->PRODUCT_USE_UNITS) {
-			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
-			if (empty($hidetop)) {
-				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
-					'C');
-			}
-		}
-
-		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			if ($this->atleastonediscount)
-			{
-				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
-				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1, 2, $outputlangs->transnoentities("ReductionShort"), '', 'C');
-			}
-		}
 		if ($this->atleastonediscount)
 		{
-			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
+			$pdf->SetXY($this->posxdiscount-1, $tab_top + 1);
+			$pdf->MultiCell($this->postotalht-$this->posxdiscount+1, 2, $outputlangs->transnoentities("ReductionShort"), '', 'C');
 		}
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->postotalht-3, $tab_top+1);
-			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("TotalHT"), '', 'C');
-		}
+
+		$pdf->SetXY($this->postotalht-3, $tab_top + 1);
+		$pdf->MultiCell(30, 2, $outputlangs->transnoentities("TotalHT"), '', 'C');
 	}
 
 	/**
@@ -1067,54 +989,34 @@ class pdf_gme extends ModelePDFPropales
 	 */
 	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf,$langs,$mysoc;
-
-		// Load traductions files requiredby by page
+		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills"));
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
-		// Get contact
-		$usecontact = false;
-		$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
-		if (count($arrayidcontact) > 0)
-		{
-			$usecontact = true;
-			$result = $object->fetch_contact($arrayidcontact[0]);
-		}
-
-		//Image en-tête (modifier le chemin de l'image en fonction de la photo souhaitée)
+		// Header picture
 		$pdf->Image($this->urlImageGmeHeader,0,0,210,50);
 
 		//Données
 		$pdf->SetFont('','I',7);
-		$pdf->MultiCell(0,4,$object->thirdparty->name,0,'L',0,1,152,15);
-		$pdf->MultiCell(0,4,$object->thirdparty->code_client,0,'L',0,1,152,$pdf->GetY());
-		$pdf->MultiCell(0,4,$object->ref,0,'L',0,1,152,$pdf->GetY());
+		$pdf->MultiCell(0,4,$object->thirdparty->name,0,'L',0,1,$this->contentHeaderCustomerMarginLeft + 30,$this->contentHeaderCustomerMarginTop);
+		$pdf->MultiCell(0,4,$object->thirdparty->code_client,0,'L',0,1,$this->contentHeaderCustomerMarginLeft + 30,$pdf->GetY());
+		$pdf->MultiCell(0,4,$object->ref,0,'L',0,1,$this->contentHeaderCustomerMarginLeft + 30,$pdf->GetY());
 		$pdf->MultiCell (0,4,dol_print_date($object->date,"day",
-				false,$outputlangs,true),0,'L',0,1,152,$pdf->GetY());
-		$pdf->writeHTMLCell(50,4,152,$pdf->GetY(),$object->thirdparty->address.'<br/>'
+				false,$outputlangs,true),0,'L',0,1,$this->contentHeaderCustomerMarginLeft + 30,$pdf->GetY());
+
+		$pdf->writeHTMLCell(50,4,$this->contentHeaderCustomerMarginLeft + 30,$pdf->GetY(),$object->thirdparty->address.'<br/>'
 			.$object->thirdparty->zip.' '.$object->thirdparty->town,0,1);
-		$lastY = $pdf->GetY();
-		$pdf->MultiCell(0,4,$object->thirdparty->tva_intra,0,'L',0,1,152,$lastY);
+
+		$yTVA = $pdf->GetY();
+		$pdf->MultiCell(0,4,$object->thirdparty->tva_intra,0,'L',0,1,$this->contentHeaderCustomerMarginLeft + 30, $yTVA);
 
 		//Titre
 		$pdf->SetFont('','B',7);
-		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Lastname').' : ',0,'L',0,1,125,15);
-		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Customer').' n° :',0,'L',0,1,125,$pdf->GetY());
-		$pdf->MultiCell(40,4,$outputlangs->transnoentities('ContactDefault_propal').' n° :',0,'L',0,1,125,$pdf->GetY());
-		$pdf->MultiCell(40,4,$outputlangs->transnoentities('DatePropal').' :',0,'L',0,1,125,$pdf->GetY());
-		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Address').' : ',0,'L',0,1,125,$pdf->GetY());
-		$pdf->MultiCell(40,4,$outputlangs->transnoentities('VATIntra').' : ',0,'L',0,1,125,$lastY);
-
-
-
-
-		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
-
-		$pdf->SetTextColor(0, 0, 0);
-
-		return $top_shift;
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Lastname').' : ',0,'L',0,1,$this->contentHeaderCustomerMarginLeft,$this->contentHeaderCustomerMarginTop);
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Customer').' n° :',0,'L',0,1,$this->contentHeaderCustomerMarginLeft,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('ContactDefault_propal').' n° :',0,'L',0,1,$this->contentHeaderCustomerMarginLeft,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('DatePropal').' :',0,'L',0,1,$this->contentHeaderCustomerMarginLeft,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Address').' : ',0,'L',0,1,$this->contentHeaderCustomerMarginLeft,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('VATIntra').' : ',0,'L',0,1,$this->contentHeaderCustomerMarginLeft,$yTVA);
 	}
 
 	/**
@@ -1127,30 +1029,22 @@ class pdf_gme extends ModelePDFPropales
 	 *  @param  Object		$extralabels
 	 *  @return	void
 	 */
-	private function pageGarde(&$pdf, $object, $outputlangs, $rowid, $extralabels){
-		//Image PDG (modifier le chemin de l'image en fonction de la photo souhaitée)
-
+	private function pageGarde(&$pdf, $object, $outputlangs, $rowid, $extralabels)
+	{
 		$pdf->Image($this->urlImageGme,0,0,210,190);
 
-		//object extrafields
+		//get extrafields
 		$object->fetch($rowid);
 		$object->fetch_optionals($rowid,$extralabels);
 
-		//tdo extrafields
-		$pdf->SetFont('Helvetica','B',14);
+		$pdf->SetFont('Helvetica','B',$this->titleFontSize);
 		$pdf->SetTextColor(153,204,102);
-		$pdf->MultiCell (160,5, $outputlangs->convToOutputCharset($object->array_options ['options_tdo']),0,'R',0,1,0, 210);
+		$pdf->MultiCell (180,3, $outputlangs->convToOutputCharset($object->array_options ['options_tdo']),0,'R',0,1,0, 240);
 
-		//Reset Font&Color
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
-
-		//stdo extrafields
-		$pdf->MultiCell (160,5, $outputlangs->convToOutputCharset($object->array_options ['options_stdo']),0,'R',0,1,0,$pdf->GetY()+5);
-
-		//reference
-		$pdf->MultiCell (160,5, $outputlangs->convToOutputCharset($object->ref),0,'R',0,1,0,$pdf->GetY()+5);
-
+		$pdf->SetFont('Helvetica','',$this->subTitleFontSize);
+		$pdf->SetTextColor(64,64,64);
+		$pdf->MultiCell (180,3, $outputlangs->convToOutputCharset($object->array_options ['options_stdo']),0,'R',0,1,0,$pdf->GetY()+3);
+		$pdf->MultiCell (180,3, $outputlangs->convToOutputCharset($object->ref),0,'R',0,1,0,$pdf->GetY()+3);
 	}
 
 	/**
@@ -1186,8 +1080,9 @@ class pdf_gme extends ModelePDFPropales
 
 
 		//Titre
-		$pdf->SetFont('Helvetica','B',14);
-		$pdf->Text(20,$this->marge_haute,"A. Conditions de l'offre");
+		$pdf->SetFont('Helvetica','B',$this->titleFontSize);
+		$pdf->SetTextColor(153,204,102);
+		$pdf->Text($this->contentLeftMargin,$this->marge_haute,"A. Conditions de l'offre");
 
 		$pdf->SetY($this->marge_haute+5);
 
@@ -1195,13 +1090,13 @@ class pdf_gme extends ModelePDFPropales
 
 		for ($i=0; $i<6; $i++) {
 			if(!empty($contenu[$i])){
-				$pdf->SetFont('Helvetica','B',11);
+				$pdf->SetFont('Helvetica','B',$this->subTitleFontSize);
 				$pdf->SetTextColor(153,204,102);
-				$pdf->Text(30,$pdf->GetY()+5,$j.'. '.$titre[$i]);
+				$pdf->Text(20,$pdf->GetY()+5,$j.'. '.$titre[$i]);
 
-				$pdf->SetFont('Helvetica','',10);
-				$pdf->SetTextColor(0,0,0);
-				$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,$contenu[$i],0,2);
+				$pdf->SetFont('Helvetica','',$this->contentFontSize);
+				$pdf->SetTextColor(64,64,64);
+				$pdf->writeHTMLCell(0,5,$this->contentLeftMargin,$pdf->GetY()+10,'<span style="text-align:justify;">'.$contenu[$i].'</span>',0,2);
 
 				$j++;
 			}
@@ -1221,23 +1116,30 @@ class pdf_gme extends ModelePDFPropales
 		//Couleur de fond cellule
 		$pdf->SetFillColor(153,204,102);
 
-		$pdf->SetFont('Helvetica','B',14);
+		$pdf->SetFont('Helvetica','B',$this->titleFontSize);
 		$pdf->SetTextColor(153,204,102);
 		$pdf->Text(20,$this->marge_haute,"C. Total de l'offre");
 
 		//remtotal
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->writeHTMLCell(0,5,20,$pdf->GetY()+10,$outputlangs->convToOutputCharset($object->array_options ['options_remtotal']),0,1);
+		if($outputlangs->convToOutputCharset($object->array_options ['options_remtotal']) != '')
+		{
+			$pdf->SetFont('Helvetica','',$this->contentFontSize);
+			$pdf->SetTextColor(64,64,64);
+			$pdf->writeHTMLCell(0,5,20,$pdf->GetY()+10,$outputlangs->convToOutputCharset($object->array_options ['options_remtotal']),0,1);
+		}
+		else
+		{
+			$pdf->writeHTMLCell(0,5,20,$pdf->GetY(),'',0,1);
+		}
 
 		//Tableau récap totaux
-		$pdf->SetFont('Helvetica','B',10);
+		$pdf->SetFont('Helvetica','B',$this->contentFontSize);
 		$pdf->SetTextColor(255,255,255);
 		$pdf->MultiCell (170,7,"Récapitulatif des totaux",1,'C',1,1,20,$pdf->GetY()+5,true, 0, false, true, 7, 'M');
 
 		//tot HT
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Helvetica','',$this->contentFontSize);
+		$pdf->SetTextColor(64,64,64);
 		$pdf->MultiCell (85,7,$outputlangs->transnoentities('TotalHT'),1,'L',0,0,20, $pdf->GetY(),true, 0, false, true, 7, 'M');
 		$pdf->MultiCell (85,7, number_format($object->total_ht,2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
@@ -1247,7 +1149,7 @@ class pdf_gme extends ModelePDFPropales
 		$pdf->MultiCell (85,7, number_format(($object->total_ttc-$object->total_ht),2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 		//tot ttc
-		$pdf->SetFont('Helvetica','B',14);
+		$pdf->SetFont('Helvetica','B',$this->titleFontSize);
 		$pdf->SetTextColor(153,204,102);
 		$pdf->MultiCell (85,7,$outputlangs->transnoentities('TotalTTC'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
 		$pdf->MultiCell (85,7, number_format($object->total_ttc,2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
@@ -1261,25 +1163,20 @@ class pdf_gme extends ModelePDFPropales
 	 *  @param  Object		$object     	Object to show
 	 *  @return	void
 	 */
-	private function validOffre(&$pdf, $object, $outputlangs){
-		$usecontact = false;
-		$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
-		if (count($arrayidcontact) > 0)
-		{
-			$usecontact = true;
-			$result = $object->fetch_contact($arrayidcontact[0]);
-		}
+	private function validOffre(&$pdf, $object, $outputlangs)
+	{
+		global $user;
 
 		$pdf->Text(20,$pdf->GetY()+5,"D. Validation de l'offre");
 
 		//Reset Font&Color
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Helvetica','',$this->contentFontSize);
+		$pdf->SetTextColor(64,64,64);
 
 		//vdl
 		$pdf->writeHTMLCell(0,7,20,$pdf->GetY()+10,$outputlangs->convToOutputCharset($object->array_options ['options_vdl']),0,1);
 
-		$Y=$pdf->GetY();
+		$Y = $pdf->GetY();
 
 		//Client
 		$pdf->MultiCell (85,7,'Pour '.$object->thirdparty->name,0,'L',0,1,20,$pdf->GetY());
@@ -1288,8 +1185,8 @@ class pdf_gme extends ModelePDFPropales
 		$pdf->MultiCell (85,7,$outputlangs->transnoentities('DateOfSignature'),0,'L',0,0,20,$pdf->GetY());
 
 		//GME
-		$pdf->MultiCell (85,7,'POUR G.M.ELECTRONICS',0,'R',0,1,105,$Y);
-		$pdf->MultiCell (85,7,'Yannick Heselmans',0,'R',0,1,105,$pdf->GetY());
+		$pdf->MultiCell (85,7,'Pour G.M.Electronics',0,'R',0,1,105,$Y);
+		$pdf->MultiCell (85,7,$user->firstname.' '.$user->lastname,0,'R',0,1,105,$pdf->GetY());
 		$pdf->MultiCell (85,7,'Responsable Commercial',0,'R',0,1,105,$pdf->GetY());
 		$pdf->MultiCell (85,7,$outputlangs->transnoentities('DateOfSignature'),0,'R',0,1,105,$pdf->GetY());
 	}
@@ -1305,82 +1202,30 @@ class pdf_gme extends ModelePDFPropales
 	 */
 	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		global $conf, $user;
 
-		//Commercial
-		$this->_pagefootsignature($pdf, $object, $outputlangs);
+		$user->fetch($object->user_author_id);
+
+		if($user->photo != '') {
+			$pdf->Image($conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo,90,263,22,22);
+		}
+
+		$pdf->SetFont('Helvetica','', 9);
+		$pdf->SetTextColor(64,64,64);
+		$pdf->SetDrawColor(153,204,102);
+
+		$pdf->MultiCell(0,4,$outputlangs->transnoentities('DemandReasonTypeSRC_COMM'),'B','L',0,1,120,265);
+		$pdf->MultiCell(60,4,$user->lastname.' '.$user->firstname,0,'L',0,1,120,$pdf->GetY()+1);
+
+		$pdf->Image($this->urlPictoMail,121,$pdf->GetY()+1,4,4);
+		$pdf->MultiCell(60,4,' '.$user->email,0,'L',0,1,125,$pdf->GetY()+1);
+
+		$pdf->Image($this->urlPictoPhone,121,$pdf->GetY()+1,4,4);
+		$pdf->MultiCell(60,4,' '.$user->office_phone,0,'L',0,1,125,$pdf->GetY()+1);
 
 		//Donnée GME + num Page
 		$pdf->SetFontSize(7);
-		$pdf->MultiCell(0,2,'G.M.Electronics SRL - Rue de Termonde, 140 - 1083 Ganshoren - www.gmelectronics.be – info@gmelectronics.be BE0426.751.795',0,'C',0,0,20,288);
+		$pdf->MultiCell(0,2,$this->footerContent,0,'C',0,0,20,288);
 		$pdf->MultiCell(177,2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(),0,'R',0,0,20,288);
-	}
-
-	/**
-	 *   	Signature de base de page
-	 *
-	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 */
-
-	private function _pagefootsignature(&$pdf, $object, $outputlangs)
-	{
-		$tmpuser=new User($this->db);
-		$tmpuser->fetch($object->user_author_id);
-
-		//Image Com (modifier le chemin de l'image en fonction de la photo souhaitée)
-		$pdf->Image($this->urlImageCom,90,263,22,22);
-
-		$pdf->SetFont('Helvetica','', 9);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->SetDrawColor(153,204,102);
-
-		//$pdf->MultiCell(0,20,'','LT','L',0,0,108,258);
-		$pdf->MultiCell(0,4,$outputlangs->transnoentities('DemandReasonTypeSRC_COMM'),'B','L',0,1,120,265);
-		$pdf->MultiCell(60,4,$tmpuser->lastname.' '.$tmpuser->firstname,0,'L',0,1,120,$pdf->GetY()+1);
-
-		$pdf->Image($this->urlPictoMail,121,$pdf->GetY()+1,4,4);
-		$pdf->MultiCell(60,4,' '.$tmpuser->email,0,'L',0,1,125,$pdf->GetY()+1);
-
-		$pdf->Image($this->urlPictoPhone,121,$pdf->GetY()+1,4,4);
-		$pdf->MultiCell(60,4,' '.$tmpuser->office_phone,0,'L',0,1,125,$pdf->GetY()+1);
-	}
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Show area for the customer to sign
-	 *
-	 *	@param	PDF			$pdf            Object PDF
-	 *	@param  Facture		$object         Object invoice
-	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
-	 *	@return int							Position pour suite
-	 */
-	private function _signature_area(&$pdf, $object, $posy, $outputlangs)
-	{
-        // phpcs:enable
-		global $conf;
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		$tab_top = $posy + 4;
-		$tab_hl = 4;
-
-		$posx = 120;
-		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
-		$useborder=0;
-		$index = 0;
-		// Total HT
-		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($posx, $tab_top + 0);
-		$pdf->SetFont('', '', $default_font_size - 2);
-		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
-
-		$pdf->SetXY($posx, $tab_top + $tab_hl);
-		$pdf->MultiCell($largcol, $tab_hl*3, '', 1, 'R');
-		if (! empty($conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING)) {
-			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl, $largcol, $tab_hl*3);
-		}
-
-		return ($tab_hl*7);
 	}
 }
