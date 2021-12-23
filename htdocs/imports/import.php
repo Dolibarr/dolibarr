@@ -142,7 +142,6 @@ $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array')
 $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
 
-$import_wip = 0;
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -161,7 +160,7 @@ foreach ($fieldsarray as $elem) {
 	$tabelem = explode('=', $elem, 2);
 	$key = $tabelem[0];
 	$val = (isset($tabelem[1]) ? $tabelem[1] : '');
-	if ($key && $val) {
+	if ($key && $val && ($key > 0 && $step != 4)) {
 		$array_match_file_to_database[$key] = $val;
 	}
 }
@@ -323,31 +322,19 @@ if ($action == 'saveorder') {
 	$serialized_array_match_file_to_database = '';
 	$array_match_file_to_database = array();
 	$fieldsarray = explode(',', $list);
-	if (empty($import_wip)) {
-		$pos = 0;
-	}
+	$pos = 0;
 	foreach ($fieldsarray as $fieldnb) {	// For each elem in list. fieldnb start from 1 to ...
 		// Get name of database fields at position $pos and put it into $namefield
-		if (empty($import_wip)) {
-			$posbis = 0;
-		} else {
-			$pos = 1;
-		}
+		$posbis = 0;
 
 		$namefield = '';
 		foreach ($fieldstarget as $key => $val) {	// key:   val:
 			//dol_syslog('AjaxImport key='.$key.' val='.$val);
-			if (empty($import_wip)) {
-				if ($posbis < $pos) {
-					$posbis++;
-					continue;
-				}
-			} else {
-				if ($pos < $fieldnb) {
-					$pos++;
-					continue;
-				}
+			if ($posbis < $pos) {
+				$posbis++;
+				continue;
 			}
+
 			// We found the key of targets that is at position pos
 			$namefield = $key;
 			//dol_syslog('AjaxImport Field name found for file field nb '.$fieldnb.'='.$namefield);
@@ -1018,9 +1005,9 @@ if ($step == 4 && $datatoimport) {
 	// List of source fields
 	$var = true;
 	$lefti = 1;
-	foreach ($import_wip?$fieldssource:$array_match_file_to_database as $key => $val) {
+	foreach ($array_match_file_to_database as $key => $val) {
 		$var = !$var;
-		show_elem($fieldssource, $key, $val, $var, '', $import_wip); // key is field number in source file
+		show_elem($fieldssource, $key, $val, $var, 1, '', $listofkeys); // key is field number in source file
 		//print '> '.$lefti.'-'.$key.'-'.$val;
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
@@ -1039,7 +1026,7 @@ if ($step == 4 && $datatoimport) {
 	while ($lefti <= $num) {
 		$var = !$var;
 		$newkey = getnewkey($fieldssource, $listofkeys);
-		show_elem($fieldssource, $newkey, '', $var, '', $import_wip); // key start after field number in source file
+		show_elem($fieldssource, $newkey, '', $var, 1, '', $listofkeys); // key start after field number in source file
 		//print '> '.$lefti.'-'.$newkey;
 		$listofkeys[$key] = 1;
 		$lefti++;
@@ -1053,20 +1040,14 @@ if ($step == 4 && $datatoimport) {
 	print '</td><td width="50%">';
 
 	// List of target fields
-	if (empty($import_wip)) {
-		$height = '24px'; //needs px for css height attribute below
-	} else {
-		$height = '29px';
-	}
+	//	$height = '24px'; //needs px for css height attribute below
+	$height = '30px';
 	$i = 0;
 	$mandatoryfieldshavesource = true;
-	if (!empty($import_wip)) {
-		$fieldselect = 1;
-	}
+	$fieldselect = 1;
 	print '<table width="100%" class="nobordernopadding">';
-	if (!empty($import_wip)) {
-		$pos = 1;
-	}
+	$pos = 1;
+
 	foreach ($fieldstarget as $code => $label) {
 		print '<tr class="oddeven" style="height:'.$height.'">';
 
@@ -1081,49 +1062,22 @@ if ($step == 4 && $datatoimport) {
 
 		print '<td class="nowraponall" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td class="nowraponall" style="font-weight: normal">';
-		if (empty($import_wip)) {
-			$newlabel = preg_replace('/\*$/', '', $label);
-			$text = $langs->trans($newlabel);
-			$more = '';
-			if (preg_match('/\*$/', $label)) {
-				$text = '<span class="fieldrequired">'.$text.'</span>';
-				$more = ((!empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= count($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
-				if ($mandatoryfieldshavesource) {
-					$mandatoryfieldshavesource = (!empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= count($fieldssource)));
-				}
-				//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
+		$newlabel = preg_replace('/\*$/', '', $label);
+		$text = $langs->trans($newlabel);
+		$more = '';
+		if (preg_match('/\*$/', $label)) {
+			$text = '<span class="fieldrequired">'.$text.'</span>';
+			$more = ((!empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= count($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
+			if ($mandatoryfieldshavesource) {
+				$mandatoryfieldshavesource = (!empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= count($fieldssource)));
 			}
-			print $text;
-		} else {
-			print '<select  class="flat minwidth200" autocomplete="off" name="selectfield_'.$fieldselect.'">';
-			print '<option value="-1">&nbsp;</option>';
-			$pos2=1;
-			foreach ($array_match_file_to_database as $idselect => $codeselect) {
-				$labelselect = $fieldstarget[$codeselect];
-				$newlabel = preg_replace('/\*$/', '', $labelselect);
-				$text = $langs->trans($newlabel);
-				if (preg_match('/\*$/', $label)) {
-					$text = '<span class="fieldrequired">'.$text.'</span>';
-					$more = ((!empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= count($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
-					if ($mandatoryfieldshavesource) {
-						$mandatoryfieldshavesource = (!empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= count($fieldssource)));
-					}
-					//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
-				}
-				print '<option value="'.$codeselect.'" ';
-				if ($pos == $pos2) {
-					print 'selected';
-				}
-				print '>'.$text.'</option>';
-				$pos2++;
-			}
-			$pos++;
-			print '</select>';
+			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
 		}
+		print $text;
 		print '</td>';
 		// Info field
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
-		$filecolumn = $array_match_database_to_file[$code];
+		$filecolumn = !empty($array_match_database_to_file[$code])?$array_match_database_to_file[$code]:0;
 		// Source field info
 		$htmltext = '<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
 		if ($filecolumn > count($fieldssource)) {
@@ -1181,9 +1135,7 @@ if ($step == 4 && $datatoimport) {
 		print '</td>';
 
 		print '</tr>';
-		if (!empty($import_wip)) {
-			$fieldselect++;
-		}
+		$fieldselect++;
 	}
 	print '</table>';
 
@@ -1202,7 +1154,7 @@ if ($step == 4 && $datatoimport) {
 		if (empty($fieldsplaced[$key])) {
 			//
 			$nbofnotimportedfields++;
-			show_elem($fieldssource, $key, '', $var, 'nostyle', $import_wip);
+			show_elem($fieldssource, $key, '', $var, 0, 'nostyle', $listofkeys);
 			//print '> '.$lefti.'-'.$key;
 			$listofkeys[$key] = 1;
 			$lefti++;
@@ -1211,7 +1163,7 @@ if ($step == 4 && $datatoimport) {
 
 	// Print one more empty field
 	$newkey = getnewkey($fieldssource, $listofkeys);
-	show_elem($fieldssource, $newkey, '', $var, 'nostyle', $import_wip);
+	show_elem($fieldssource, $newkey, '', $var, 1, 'nostyle', $listofkeys);
 	//print '> '.$lefti.'-'.$newkey;
 	$listofkeys[$newkey] = 1;
 	$nbofnotimportedfields++;
@@ -1224,7 +1176,7 @@ if ($step == 4 && $datatoimport) {
 	$i = 0;
 	while ($i < $nbofnotimportedfields) {
 		// Print empty cells
-		show_elem('', '', 'none', $var, 'nostyle', $import_wip);
+		show_elem('', '', 'none', $var, 0, 'nostyle', $listofkeys);
 		$i++;
 	}
 	print '</td></tr>';
@@ -1235,35 +1187,51 @@ if ($step == 4 && $datatoimport) {
 
 	if ($conf->use_javascript_ajax) {
 		print '<script type="text/javascript">';
-		print 'jQuery(function() {
-                    jQuery("#left, #right").sortable({
-                        /* placeholder: \'ui-state-highlight\', */
-                        handle: \'.boxhandle\',
-                        revert: \'invalid\',
-                        items: \'.box\',
-                        containment: \'.fiche\',
-                        connectWith: \'.connectedSortable\',
-                        stop: function(event, ui) {
-                            updateOrder();
-                        }
-                    });
-                });
-        ';
+
+		// print 'jQuery(function() {
+		// 			jQuery("#left, #right").sortable({
+		// 				/* placeholder: \'ui-state-highlight\', */
+		// 				handle: \'.boxhandle\',
+		// 				revert: \'invalid\',
+		// 				items: \'.box\',
+		// 				containment: \'.fiche\',
+		// 				connectWith: \'.connectedSortable\',
+		// 				stop: function(event, ui) {
+		// 					updateOrder();
+		// 				}
+		// 			});
+		// 		});
+		// ';
+
+		print '$(".import_select").on("change",function(){
+			updateOrder2();
+		})';
+
 		print "\n";
-		print 'function updateOrder(){'."\n";
-		print 'var left_list = cleanSerialize(jQuery("#left").sortable("serialize" ));'."\n";
-		//print 'var right_list = cleanSerialize(jQuery("#right").sortable("serialize" ));'."\n";
-		print 'var boxorder = \'A:\' + left_list;'."\n";
-		//print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
-		//print 'alert(\'boxorder=\' + boxorder);';
-		//print 'var userid = \''.$user->id.'\';'."\n";
-		//print 'var datatoimport = "'.$datatoimport.'";'."\n";
-		// print 'jQuery.ajax({ url: "ajaximport.php?step=4&boxorder=" + boxorder + "&userid=" + userid + "&datatoimport=" + datatoimport,
-		//                    async: false
-		//        });'."\n";
-		// Now reload page
+		// print 'function updateOrder(){'."\n";
+		// print 'var left_list = cleanSerialize(jQuery("#left").sortable("serialize" ));'."\n";
+		// //print 'var right_list = cleanSerialize(jQuery("#right").sortable("serialize" ));'."\n";
+		// print 'var boxorder = \'A:\' + left_list;'."\n";
+		// //print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
+		// //print 'alert(\'boxorder=\' + boxorder);';
+		// //print 'var userid = \''.$user->id.'\';'."\n";
+		// //print 'var datatoimport = "'.$datatoimport.'";'."\n";
+		// // print 'jQuery.ajax({ url: "ajaximport.php?step=4&boxorder=" + boxorder + "&userid=" + userid + "&datatoimport=" + datatoimport,
+		// //                    async: false
+		// //        });'."\n";
+		// // Now reload page
+		// print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&token='.newToken().'&boxorder=\' + boxorder;'."\n";
+		// //print 'alert(newlocation);';
+		// print 'window.location.href=newlocation;'."\n";
+		// print '}'."\n";
+
+		print 'function updateOrder2(){'."\n";
+		print 'var tmpboxorder = \'A:\''."\n";
+		print '$(".import_select").each(function(){'."\n";
+		print 'tmpboxorder = tmpboxorder + $(this).val() + \',\'';
+		print '});'."\n";
+		print 'boxorder = tmpboxorder.slice(0,-1)'."\n";
 		print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&token='.newToken().'&boxorder=\' + boxorder;'."\n";
-		//print 'alert(newlocation);';
 		print 'window.location.href=newlocation;'."\n";
 		print '}'."\n";
 		print '</script>'."\n";
@@ -2162,23 +2130,21 @@ $db->close();
 /**
  * Function to put the movable box of a source field
  *
- * @param	array	$fieldssource	List of source fields
- * @param	int		$pos			Pos
- * @param	string	$key			Key
- * @param	boolean	$var			Line style (odd or not)
- * @param	int		$nostyle		Hide style
- * @param	int 	$import_wip		WIP
+ * @param	array	$fieldssource	 List of source fields
+ * @param	int		$pos			 Pos
+ * @param	string	$key			 Key
+ * @param	boolean	$var			 Line style (odd or not)
+ * @param	boolean $isimportedfield Verify if it's an imported field
+ * @param	int		$nostyle		 Hide style
+ * @param	array   $listofkeys      List of keys for select boxes
  * @return	void
  */
-function show_elem($fieldssource, $pos, $key, $var, $nostyle = '', $import_wip = 1)
+function show_elem($fieldssource, $pos, $key, $var, $isimportedfield, $nostyle = '', &$listofkeys = array())
 {
 	global $langs, $bc;
 
-	if (empty($import_wip)) {
-		$height = '24px';
-	} else {
-		$height = '29px';
-	}
+	//	$height = '24px';
+		$height = '30px';
 
 	if ($key == 'none') {
 		//stop multiple duplicate ids with no number
@@ -2195,9 +2161,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '', $import_wip =
 	if ($pos && $pos > count($fieldssource)) {	// No fields
 		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
-		if (empty($import_wip)) {
-			print img_picto(($pos > 0 ? $langs->trans("MoveField", $pos) : ''), 'grip_title', 'class="boxhandle" style="cursor:move;"');
-		}
+		//print img_picto(($pos > 0 ? $langs->trans("MoveField", $pos) : ''), 'grip_title', 'class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("NoFields");
@@ -2212,24 +2176,65 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '', $import_wip =
 		print '&nbsp;';
 		print '</td>';
 		print '</tr>';
+	} elseif (empty($isimportedfield)) {
+		$example = !empty($fieldssource[$pos]['example1'])?$fieldssource[$pos]['example1']:"";
+		if ($example) {
+			if (!utf8_check($example)) {
+				$example = utf8_encode($example);
+			}
+			print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
+			print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
+			print '&nbsp;';
+			print '</td>';
+			print '<td style="font-weight: normal">';
+			print $langs->trans("EmptyField").':&nbsp;';
+			print ' (<i>'.$example.'</i>)';
+			print '</td>';
+			print '</tr>';
+		}
 	} else {
 		// Print field of source file
 		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-		if (empty($import_wip)) {
-			print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
-		}
+		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
 		print '</td>';
-		print '<td class="nowraponall" style="font-weight: normal">';
-		print $langs->trans("Field").' '.$pos;
-		$example = $fieldssource[$pos]['example1'];
+		print '<td class="nowraponall" width="100" style="font-weight: normal">';
+		$example = !empty($fieldssource[$pos]['example1'])?$fieldssource[$pos]['example1']:"";
+		if ($example != "") {
+			print $langs->trans("Field").' '.$pos.':&nbsp;';
+		} else {
+			print $langs->trans("EmptyField").':&nbsp;';
+		}
 		if ($example) {
 			if (!utf8_check($example)) {
 				$example = utf8_encode($example);
 			}
-			print ' (<i>'.$example.'</i>)';
 		}
+		$nameselect = ($pos > 0) ? $pos : (-$pos);
+		print '<td class="nowraponall" style="font-weight: normal">';
+		print '<select class="import_select flat" style="width:100%;" autocomplete="off" name="selectfield_'.$nameselect.'">';
+		$valueemptyoption = ($pos < 0) ? $pos : (-$pos);
+		print '<option value="'.$valueemptyoption.'">&nbsp;</option>';
+		if ($example != "") {
+			print '<option selected value="'.$pos.'">';
+			print ' (<i>'.$example.'</i>)';
+			print '</option>';
+		}
+		foreach ($fieldssource as $newkey => $val) {
+			if (empty($listofkeys[$newkey])) {
+				$example = $fieldssource[$newkey]['example1'];
+				if ($example) {
+					if (!utf8_check($example)) {
+						$example = utf8_encode($example);
+					}
+					print '<option value="'.$newkey.'">';
+					print ' (<i>'.$example.'</i>)';
+					print '</option>';
+				}
+			}
+		}
+		print '</td>';
 		print '</td>';
 		print '</tr>';
 	}
