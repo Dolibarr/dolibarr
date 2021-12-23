@@ -294,17 +294,26 @@ class DolibarrApi
 	/**
 	 * Return if a $sqlfilters parameter is valid
 	 *
-	 * @param  string   $sqlfilters     sqlfilter string
-	 * @return boolean                  True if valid, False if not valid
+	 * @param  	string   		$sqlfilters     sqlfilter string
+	 * @param	string			$error			Error message
+	 * @return 	boolean|string   				True if valid, False if not valid
 	 */
-	protected function _checkFilters($sqlfilters)
+	protected function _checkFilters($sqlfilters, &$error = '')
 	{
 		// phpcs:enable
+
 		//$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 		//$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
-		$tmp = $sqlfilters;
-		$ok = 0;
+		$tmp = trim($sqlfilters);
+
 		$i = 0; $nb = strlen($tmp);
+
+		if ($nb > 0 && $tmp[0] != '(') {
+			$error = "Bad sqlfilters (first and last characters must be open and closing parenthesis) = ".$sqlfilters;
+			dol_syslog($error, LOG_WARNING);
+			return false;
+		}
+
 		$counter = 0;
 		while ($i < $nb) {
 			if ($tmp[$i] == '(') {
