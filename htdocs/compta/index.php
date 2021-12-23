@@ -190,6 +190,9 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				$tmpinvoice->date_lim_reglement = $db->jdate($obj->datelimite);
 				$tmpinvoice->type = $obj->type;
 
+				// InfraS change begin
+				$thirdpartystatic->fetch($obj->socid);	// InfraS change
+				/*
 				$thirdpartystatic->id = $obj->socid;
 				$thirdpartystatic->name = $obj->name;
 				$thirdpartystatic->email = $obj->email;
@@ -201,6 +204,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				//$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
 				$thirdpartystatic->code_compta = $obj->code_compta;
 				//$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				// InfraS change end */
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -340,6 +344,9 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$facstatic->type = $obj->type;
 				$facstatic->ref_supplier = $obj->ref_supplier;
 
+				// InfraS change begin
+				$thirdpartystatic->fetch($obj->socid);	// InfraS change
+				/*
 				$thirdpartystatic->id = $obj->socid;
 				$thirdpartystatic->name = $obj->name;
 				$thirdpartystatic->email = $obj->email;
@@ -351,6 +358,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
 				$thirdpartystatic->code_compta = '';
 				$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				// InfraS change end */
 
 				print '<tr class="oddeven nowraponall tdoverflowmax100"><td>';
 				print $facstatic->getNomUrl(1, '');
@@ -651,6 +659,9 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 					continue;
 				}
 
+				// InfraS change begin
+				$societestatic->fetch($obj->socid);	// InfraS change
+				/*
 				$societestatic->id = $obj->socid;
 				$societestatic->name = $obj->name;
 				$societestatic->email = $obj->email;
@@ -661,6 +672,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				//$societestatic->code_fournisseur = $obj->code_fournisseur;
 				$societestatic->code_compta = $obj->code_compta;
 				//$societestatic->code_fournisseur = $obj->code_fournisseur;
+				// InfraS change end */
 
 				$commandestatic->id = $obj->rowid;
 				$commandestatic->ref = $obj->ref;

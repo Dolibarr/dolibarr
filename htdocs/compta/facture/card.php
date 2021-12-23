@@ -2406,11 +2406,16 @@ if (empty($reshook)) {
 
 			$type = $product->type;
 
+			// InfraS change begin
+			$pqp = (GETPOST('pbq', 'int') ? GETPOST('pbq', 'int') : 0);
+			$datapriceofproduct = $product->getSellPrice($mysoc, $object->thirdparty, $pqp);
+			$price_min = $datapriceofproduct['price_min'];
+			/*
 			$price_min = $product->price_min;
 			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min [$object->thirdparty->price_level];
 			}
-
+			// InfraS change end	*/
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
@@ -3602,7 +3607,7 @@ if ($action == 'create') {
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$fk_account = GETPOST('fk_account', 'int');
+		if (GETPOSTISSET('fk_account'))	$fk_account = GETPOST('fk_account', 'int');	// InfraS change
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
