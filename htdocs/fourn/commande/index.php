@@ -28,7 +28,9 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';	// InfraS add
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';	// InfraS add
 
 // Security check
 $orderid = GETPOST('orderid');
@@ -53,6 +55,8 @@ $langs->loadLangs(array("suppliers", "orders"));
 llxHeader('', $langs->trans("SuppliersOrdersArea"));
 
 $commandestatic = new CommandeFournisseur($db);
+$companystatic = new Societe($db);	// InfraS add
+$projectstatic = new Project($db);	// InfraS add
 $userstatic = new User($db);
 $formfile = new FormFile($db);
 
@@ -137,7 +141,7 @@ if ($resql) {
 		}
 
 		if (!$conf->use_javascript_ajax) {
-			print '<tr class="oddeven">';
+			print '<tr class="oddeven center">';	// InfraS change
 			print '<td>'.$commandestatic->LibStatut($status, 0).'</td>';
 			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
 			print "</tr>\n";
@@ -153,7 +157,8 @@ if ($resql) {
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(array('pie'));
-		$dolgraph->setHeight('200');
+		$dolgraph->setWidth('500');	// InfraS add
+		$dolgraph->SetHeight('260');	// InfraS change 200 to 260
 		$dolgraph->draw('idgraphstatus');
 		print $dolgraph->show($total ? 0 : 1);
 
@@ -194,18 +199,26 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftOrders").'</th></tr>';	// InfraS change colspan 2 to 3
 		$langs->load("orders");
 		$num = $db->num_rows($resql);
 		if ($num) {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
+				$commandestatic->id = $obj->rowid;	// InfraS add
+				$commandestatic->ref = $obj->ref;	// InfraS add
+				$companystatic->fetch($obj->socid);	// InfraS add
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"), "order").' '.$obj->ref."</a></td>";
+		//		print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"), "order").' '.$obj->ref."</a></td>";	// InfraS change
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
+				print $commandestatic->getNomUrl(1);	// InfraS add
+                print "</td>";	// InfraS add
+				print '<td class="nowrap">';	// InfraS add
+				print $companystatic->getNomUrl(1, 'company', 16);	// InfraS add
+				print "</td>";	// InfraS add
 				$i++;
 			}
 		}
@@ -280,7 +293,8 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 */
 $max = 5;
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";
+$sql = "SELECT c.rowid, c.ref, c.fk_projet, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";	// InfraS add ", c.fk_projet"
+$sql.= ", s.canvas";	// InfraS add
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) {
@@ -303,7 +317,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
+	print '<th colspan="5">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';	// InfraS change colspan 4 to 5
 
 	$num = $db->num_rows($resql);
 	if ($num) {
@@ -316,6 +330,8 @@ if ($resql) {
 
 			$commandestatic->id = $obj->rowid;
 			$commandestatic->ref = $obj->ref;
+			$companystatic->fetch($obj->socid);	// InfraS add
+			$projectstatic->fetch($obj->fk_projet);	// InfraS add
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
@@ -335,7 +351,15 @@ if ($resql) {
 
 			print '</td>';
 
-			print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+	//		print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';	// InfraS change
+			// InfraS add begin
+			print '<td class="nowrap">';
+            print $companystatic->getNomUrl(1, 'company', 16);
+			print "</td>";
+			print '<td class="nowrap">';
+			print ($obj->fk_projet > 0 ? $projectstatic->getNomUrl(1) : '');
+			print "</td>";
+			// InfraS add end
 			print '<td>'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 			print '<td class="right">'.$commandestatic->LibStatut($obj->status, 3, $obj->billed).'</td>';
 			print '</tr>';

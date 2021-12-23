@@ -250,7 +250,10 @@ if ($object->id > 0) {
 
 	// TVA Intra
 	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
-	print showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra));
+	$tvaIntra	= dol_escape_htmltag($object->tva_intra);	// InfraS add
+	if (strtoupper($object->country_code) == 'FR')	// InfraS add
+		if (dol_strlen($tvaIntra) == 13)	$tvaIntra	= substr($tvaIntra, 0, 4).'&nbsp;'.substr($tvaIntra, 4, 3).'&nbsp;'.substr($tvaIntra, 7, 3).'&nbsp;'.substr($tvaIntra, 10, 3);	// InfraS add
+	print showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra), 1, $tvaIntra);	// InfraS change
 	print '</td></tr>';
 
 	// Default terms of the settlement

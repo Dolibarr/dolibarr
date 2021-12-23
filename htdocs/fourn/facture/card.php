@@ -2129,7 +2129,7 @@ if ($action == 'create') {
 
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp = '<input type="radio" id="radio_creditnote" name="type" value="2"'.(GETPOST('type') == 2 ? ' checked' : '');
-				if (!$optionsav) {
+				if ((!$optionsav && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))) {	// InfraS change
 					$tmp .= ' disabled';
 				}
 				$tmp .= '> ';
@@ -2176,7 +2176,13 @@ if ($action == 'create') {
 			}
 		} else {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			// InfraS add begin
+			if (empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+				$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			} else {
+				$tmp = '<input type="radio" name="type" id="radio_creditnote" value="2" > ';
+			}
+			// InfraS add end
 			$text = $tmp.$langs->trans("InvoiceAvoir").' ';
 			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").')</span> ';
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
@@ -2710,7 +2716,7 @@ if ($action == 'create') {
 			$facreplaced->fetch($object->fk_facture_source);
 			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 		}
-		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+        if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && !empty($object->fk_facture_source)) {	// InfraS change
 			$facusing = new FactureFournisseur($db);
 			$facusing->fetch($object->fk_facture_source);
 			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';

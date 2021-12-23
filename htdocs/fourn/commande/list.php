@@ -1360,9 +1360,12 @@ if ($resql) {
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax150">';
-			$thirdpartytmp->id = $obj->socid;
+			// InfraS change begin
+			$thirdpartytmp->fetch($obj->socid);
+	/*		$thirdpartytmp->id = $obj->socid;
 			$thirdpartytmp->name = $obj->name;
 			$thirdpartytmp->email = $obj->email;
+			// InfraS change end	*/
 			print $thirdpartytmp->getNomUrl(1, 'supplier');
 			print '</td>'."\n";
 			if (!$i) {
