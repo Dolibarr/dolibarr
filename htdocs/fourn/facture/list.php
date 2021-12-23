@@ -1331,7 +1331,8 @@ if ($resql) {
 			$facturestatic->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 			// InfraS change begin
 			$thirdparty->fetch($obj->socid);
-	/*		$thirdparty->id = $obj->socid;
+			/*
+			$thirdparty->id = $obj->socid;
 			$thirdparty->name = $obj->name;
 			$thirdparty->client = $obj->client;
 			$thirdparty->fournisseur = $obj->fournisseur;
@@ -1341,7 +1342,8 @@ if ($resql) {
 			$thirdparty->code_compta_fournisseur = $obj->code_compta_fournisseur;
 			$thirdparty->email = $obj->email;
 			$thirdparty->country_code = $obj->country_code;
-			// InfraS change end	*/
+			// InfraS change end
+			*/
 			$paiement = $facturestatic->getSommePaiement();
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();

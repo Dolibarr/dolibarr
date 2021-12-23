@@ -1362,10 +1362,12 @@ if ($resql) {
 			print '<td class="tdoverflowmax150">';
 			// InfraS change begin
 			$thirdpartytmp->fetch($obj->socid);
-	/*		$thirdpartytmp->id = $obj->socid;
+			/*
+			$thirdpartytmp->id = $obj->socid;
 			$thirdpartytmp->name = $obj->name;
 			$thirdpartytmp->email = $obj->email;
-			// InfraS change end	*/
+			// InfraS change end
+			*/
 			print $thirdpartytmp->getNomUrl(1, 'supplier');
 			print '</td>'."\n";
 			if (!$i) {
