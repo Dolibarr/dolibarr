@@ -108,10 +108,20 @@ class Notify
 		global $conf, $langs;
 		$langs->load("mails");
 
+		// Get full list of all notifications subscribed for $action, $socid and $object
 		$listofnotiftodo = $this->getNotificationsArray($action, $socid, $object, 0);
+
 		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER)) {
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'touser') {
+					unset($listofnotiftodo[$val['email']]);
+					//$listofnotiftodo = array_merge($listofnotiftodo);
+				}
+			}
+		}
+		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT)) {
+			foreach ($listofnotiftodo as $val) {
+				if ($val['type'] == 'tocontact') {
 					unset($listofnotiftodo[$val['email']]);
 					//$listofnotiftodo = array_merge($listofnotiftodo);
 				}
