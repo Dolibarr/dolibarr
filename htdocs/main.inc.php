@@ -1744,9 +1744,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				}
 			}
 		}
-		
+
 		//If you want to load custom javascript file from your selected theme directory
-		if (!empty($conf->global->ALLOW_THEME_JS)) { 
+		if (!empty($conf->global->ALLOW_THEME_JS)) {
 			$theme_js = dol_buildpath('/theme/'.$conf->theme.'/'.$conf->theme.'.js', 0);
 			if (file_exists($theme_js)) {
 				print '<script src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$conf->theme.'.js'.($ext ? '?'.$ext : '').'"></script>'."\n";

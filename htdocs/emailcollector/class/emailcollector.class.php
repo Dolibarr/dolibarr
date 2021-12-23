@@ -2068,7 +2068,7 @@ class EmailCollector extends CommonObject
 										$this->error = 'Failed to create ticket: '.$langs->trans($tickettocreate->error);
 										$this->errors = $tickettocreate->errors;
 									} else {
-										if($attachments) {
+										if ($attachments) {
 											$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
 											if (!dol_is_dir($destdir)) {
 												dol_mkdir($destdir);
@@ -2298,7 +2298,7 @@ class EmailCollector extends CommonObject
 	 * @param 	string $mid		    prefix
 	 * @return 	array				Array with number and object
 	 */
-	private function getmsg($mbox, $mid, $destdir='')
+	private function getmsg($mbox, $mid, $destdir = '')
 	{
 		// input $mbox = IMAP stream, $mid = message id
 		// output all the following:
@@ -2348,7 +2348,7 @@ class EmailCollector extends CommonObject
 	 * @param   string      $partno         Partno
 	 * @return	void
 	 */
-	private function getpart($mbox, $mid, $p, $partno, $destdir='')
+	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
 	{
 		// $partno = '1', '2', '2.1', '2.1.3', etc for multipart, 0 if simple
 		global $htmlmsg, $plainmsg, $charset, $attachments;
@@ -2386,11 +2386,11 @@ class EmailCollector extends CommonObject
 			$filename = ($params['filename']) ? $params['filename'] : $params['name'];
 			// filename may be encoded, so see imap_mime_header_decode()
 			$attachments[$filename] = $data; // this is a problem if two files have same name
-			
+
 			// Get file name (with extension)
 			$file_name_complete =  $params['filename'];
 
-			
+
 			$destination = $destdir.'/'.$file_name_complete;
 
 			// Extract file extension
@@ -2407,7 +2407,7 @@ class EmailCollector extends CommonObject
 
 			/**
 			 * Check if the same file name already exists in the upload folder,
-	 		 * append increment number to the original filename
+			 * append increment number to the original filename
 			 */
 			while (file_exists($destdir."/" . $file_name . "." . $extension)) {
 				$file_name = (string) $file_name_original . ' (' . $num . ')';
@@ -2418,7 +2418,6 @@ class EmailCollector extends CommonObject
 
 
 			file_put_contents($destination, $data);
-
 		}
 
 		// TEXT
