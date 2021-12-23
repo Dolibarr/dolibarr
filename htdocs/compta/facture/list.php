@@ -1560,9 +1560,10 @@ if ($resql) {
 				 $facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 				 $facturestatic->situation_counter = $obj->situation_counter;
 			}
-        	// InfraS change begin
+			// InfraS change begin
 			$companystatic->fetch($obj->socid);
-	/*		$companystatic->id = $obj->socid;
+			/*
+			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->name_alias = $obj->alias;
 			$companystatic->client = $obj->client;
@@ -1578,7 +1579,8 @@ if ($resql) {
 			$companystatic->zip = $obj->zip;
 			$companystatic->town = $obj->town;
 			$companystatic->country_code = $obj->country_code;
-        	// InfraS change end	*/
+			// InfraS change end
+			*/
 
 			$projectstatic->id = $obj->project_id;
 			$projectstatic->ref = $obj->project_ref;
