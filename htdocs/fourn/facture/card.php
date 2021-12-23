@@ -2716,7 +2716,7 @@ if ($action == 'create') {
 			$facreplaced->fetch($object->fk_facture_source);
 			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 		}
-        if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && !empty($object->fk_facture_source)) {	// InfraS change
+		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && !empty($object->fk_facture_source)) {	// InfraS change
 			$facusing = new FactureFournisseur($db);
 			$facusing->fetch($object->fk_facture_source);
 			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';

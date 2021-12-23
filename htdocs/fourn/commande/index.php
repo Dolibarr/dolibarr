@@ -212,10 +212,10 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
-		//		print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"), "order").' '.$obj->ref."</a></td>";	// InfraS change
+				//print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"), "order").' '.$obj->ref."</a></td>";	// InfraS change
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
 				print $commandestatic->getNomUrl(1);	// InfraS add
-                print "</td>";	// InfraS add
+				print "</td>";	// InfraS add
 				print '<td class="nowrap">';	// InfraS add
 				print $companystatic->getNomUrl(1, 'company', 16);	// InfraS add
 				print "</td>";	// InfraS add
@@ -351,10 +351,10 @@ if ($resql) {
 
 			print '</td>';
 
-	//		print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';	// InfraS change
+			//print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';	// InfraS change
 			// InfraS add begin
 			print '<td class="nowrap">';
-            print $companystatic->getNomUrl(1, 'company', 16);
+			print $companystatic->getNomUrl(1, 'company', 16);
 			print "</td>";
 			print '<td class="nowrap">';
 			print ($obj->fk_projet > 0 ? $projectstatic->getNomUrl(1) : '');
