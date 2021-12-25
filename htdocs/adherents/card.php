@@ -1431,7 +1431,15 @@ else
 		if ($action == 'create_thirdparty')
 		{
 			$companyalias = '';
-			$fullname = $object->lastname . ' ' . $object->firstname;
+			if ($conf->global->ADHERENT_NAME_FORMAT == '1')
+            {
+                $fullname = $object->lastname . ' ' . $object->firstname;
+            }
+            else
+            {
+                $fullname = $object->firstname . ' ' . $object->lastname;
+            }
+
 
 			if ($object->morphy == 'mor')
 			{

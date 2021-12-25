@@ -52,7 +52,7 @@ $action = GETPOST('action', 'alpha');
 if ($action == 'updateall')
 {
     $db->begin();
-    $res1 = $res2 = $res3 = $res4 = $res5 = $res6 = 0;
+    $res1 = $res2 = $res3 = $res4 = $res5 = $res6 =  $res7 = 0;
     $res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
     $res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -67,7 +67,9 @@ if ($action == 'updateall')
             $res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
         }
     }
-    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0)
+
+    $res7 = dolibarr_set_const($db, 'ADHERENT_NAME_FORMAT', GETPOST('ADHERENT_NAME_FORMAT', 'alpha'), 'chaine', 0, $langs->trans('MemberAddThirdPartyNote'), $conf->entity);
+    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0)
     {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
@@ -217,6 +219,14 @@ if ($conf->facture->enabled)
 	}
 	print "</tr>\n";
 }
+
+// Choose members creation name format
+print '<tr class="oddeven"><td>'.$langs->trans("MemberAddThirdPartyNameFormat").'</td>';
+print '<td>';
+print $form->selectarray('ADHERENT_NAME_FORMAT', array('0'=>$langs->trans("MemberAddThirdPartyLastName"), '1'=>$langs->trans("MemberAddThirdPartyFirstName")), (empty($conf->global->ADHERENT_NAME_FORMAT) ? '0' : $conf->global->ADHERENT_NAME_FORMAT), 0);
+print '</td>';
+print "</tr>\n";
+
 
 print '</table>';
 
