@@ -110,8 +110,8 @@ class PhpCollector extends DataCollector implements Renderable
 	 * @param string $message  Message of error.
 	 * @param string $fileName File where error is generated.
 	 * @param int    $line     Line number where error is generated.
-     *
-     * @return void
+	 *
+	 * @return void
 	 */
 	public function errorHandler($severity, $message, $fileName, $line)
 	{
