@@ -122,6 +122,17 @@ $creditor = $mysoc->name;
 $object = new Propal($db);
 $object->fetch(0, $ref);
 
+// Check securitykey
+$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+$type = $source;
+$calculatedsecuritykey = dol_hash($securekeyseed.$type.$ref, '0');
+
+if ($calculatedsecuritykey != $SECUREKEY) {
+	http_response_code(403);
+	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
+	exit(-1);
+}
+
 
 /*
  * Actions
@@ -144,7 +155,7 @@ if ($action == 'confirm_refusepropal') {
 		$db->commit();
 
 		$message = 'refused';
-		setEventMessages("PropalRefused", null, 'warning');
+		setEventMessages("PropalRefused", null, 'warnings');
 	} else {
 		$db->rollback();
 	}
@@ -170,7 +181,7 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 if ($action == 'refusepropal') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.$ref, $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
 }
 
 // Check link validity for param 'source'
@@ -295,6 +306,13 @@ if ($source == 'proposal') {
 	print '<b>'.$proposal->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
+	// Amount
+
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
+	print '</td><td class="CTableRow2">';
+	print '<b>'.price($proposal->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
+	print '</td></tr>'."\n";
+
 	// Object
 
 	$text = '<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
@@ -308,7 +326,7 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	} else {
-		/* TODO If proposal signed newer than proposal ref, get link of proposal signed
+		/* TODO If the file of proposal signed is newer than the default proposal file, get link of proposal signed
 
 		*/
 	}
@@ -374,12 +392,13 @@ if ($action == "dosign" && empty($cancel)) {
 						"action" : "importSignature",
 						"signaturebase64" : signature,
 						"ref" : \''.dol_escape_js($REF).'\',
-						"mode" : "propale",
+						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
+						"mode" : \''.dol_escape_htmltag($source).'\',
 					},
 					success: function(response) {
 						if(response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["SELF"].'?ref='.urlencode($ref).'&message=signed");
+							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&message=signed&securekey='.urlencode($SECUREKEY).'");
 						}else{
 							console.error(response);
 						}

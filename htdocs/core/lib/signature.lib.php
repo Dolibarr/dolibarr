@@ -18,7 +18,7 @@
  */
 
 /**
- * Return string with full Url
+ * Return string with full online Url to accept and sign a quote
  *
  * @param   string	$type		Type of URL ('proposal', ...)
  * @param	string	$ref		Ref of object
@@ -58,13 +58,27 @@ function showOnlineSignatureUrl($type, $ref)
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '')
 {
-	global $conf, $db, $langs;
+	global $conf, $db, $langs, $dolibarr_main_url_root;
 
 	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	$localorexternal = 1; // external
+
+	$urltouse = DOL_MAIN_URL_ROOT;
+	if ($localorexternal) {
+		$urltouse = $urlwithroot;
+	}
+
+	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+
 	if ($type == 'proposal') {
-		$out = DOL_MAIN_URL_ROOT.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'proposal_ref';
 		}
@@ -72,6 +86,12 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
+		if ($mode == 1) {
+			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref, '0');
+		}
+		/*
 		if ($mode == 1) {
 			$out .= '&hashp=<span style="color: #666666">hash_of_file</span>';
 		} else {
@@ -94,13 +114,15 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 			} else {
 				$out .= '&hashp='.$hashp;
 			}
-		}
+		}*/
 	}
 
 	// For multicompany
+	/*
 	if (!empty($out)) {
 		$out .= "&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
 	}
+	*/
 
 	return $out;
 }
