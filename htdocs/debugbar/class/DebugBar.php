@@ -37,7 +37,7 @@ class DolibarrDebugBar extends DebugBar
 		$this->addCollector(new DolRequestDataCollector());
 		//$this->addCollector(new DolConfigCollector());      // Disabled for security purpose
 		$this->addCollector(new DolTimeDataCollector());
-        $this->addCollector(new PhpCollector());
+		$this->addCollector(new PhpCollector());
 		$this->addCollector(new DolMemoryCollector());
 		//$this->addCollector(new DolExceptionsCollector());
 		$this->addCollector(new DolQueryCollector());
