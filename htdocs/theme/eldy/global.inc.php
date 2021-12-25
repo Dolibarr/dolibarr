@@ -4579,7 +4579,15 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 	color: #222;
 	opacity: 0.3;
 }
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+
+#dolpublictable {
+	min-width: 300px; font-size: 16px;
+	padding: 6px;
+}
+#dolpaymenttable {
+	min-width: 320px; font-size: 16px;
+}	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+
 #tablepublicpayment {
 	border: 1px solid #CCCCCC !important;
 	width: 100%;
