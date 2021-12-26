@@ -3630,16 +3630,19 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-	  color: var(--colortexttitlenotab);
-	  font-size: 1.2em;
-	  word-break: break-word;
+	color: var(--colortexttitlenotab);
+	font-size: 1.2em;
+	word-break: break-word;
+}
+a.refid {
+	color: var(--colortexttitlenotab) !important;
 }
 div.refidno  {
 	padding-top: 3px;
 	font-weight: normal;
-	  color: var(--refidnocolor);
-	  font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	  line-height: 1.4em;
+	color: var(--refidnocolor);
+	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
+	line-height: 1.4em;
 }
 div.refidno form {
 	display: inline-block;
@@ -4579,7 +4582,15 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 	color: #222;
 	opacity: 0.3;
 }
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+
+#dolpublictable {
+	min-width: 300px; font-size: 16px;
+	padding: 6px;
+}
+#dolpaymenttable {
+	min-width: 320px; font-size: 16px;
+}	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+
 #tablepublicpayment {
 	border: 1px solid #CCCCCC !important;
 	width: 100%;

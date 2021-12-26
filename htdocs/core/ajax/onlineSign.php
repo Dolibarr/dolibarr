@@ -51,11 +51,27 @@ if (!defined('NOBROWSERNOTIF')) {
 include '../../main.inc.php';
 
 $action = GETPOST('action', 'aZ09');
+
 $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
 $mode = GETPOST('mode', 'aZ09');
+$SECUREKEY = GETPOST("securekey"); // Secure key
+
 $error = 0;
 $response = "";
+
+// Check securitykey
+$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+$type = $mode;
+$calculatedsecuritykey = dol_hash($securekeyseed.$type.$ref, '0');
+
+if ($calculatedsecuritykey != $SECUREKEY) {
+	http_response_code(403);
+	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
+	exit(-1);
+}
+
+
 /*
  * Actions
  */
@@ -71,62 +87,76 @@ if ($action == "importSignature") {
 	if (!empty($signature) && $signature[0] == "image/png;base64") {
 		$signature = $signature[1];
 		$data = base64_decode($signature);
-		$upload_dir = DOL_DATA_ROOT."/".$mode."/".$ref."/";
-		$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
-		$filename = "signatures/".$date."_signature.png";
-		if (!is_dir($upload_dir."signatures/")) {
-			if (!mkdir($upload_dir."signatures/")) {
-				$response ="error mkdir";
-				$error++;
+
+		if ($mode == "propale" || $mode == 'proposal') {
+			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+			$object = new Propal($db);
+			$object->fetch(0, $ref);
+
+			$upload_dir = !empty($conf->propal->multidir_output[$object->entity])?$conf->propal->multidir_output[$object->entity]:$conf->propal->dir_output;
+			$upload_dir .= '/'.dol_sanitizeFileName($object->ref).'/';
+
+			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$filename = "signatures/".$date."_signature.png";
+			if (!is_dir($upload_dir."signatures/")) {
+				if (!dol_mkdir($upload_dir."signatures/")) {
+					$response ="Error mkdir. Failed to create dir ".$upload_dir."signatures/";
+					$error++;
+				}
 			}
-		}
-		if (!$error) {
-			$return = file_put_contents($upload_dir.$filename, $data);
-			if ($return == false) {
-				$response = 'error file_put_content';
-			} else {
-				if ($mode == "propale") {
-					require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-					$object = new Propal($db);
-					$object->fetch(0, $ref);
 
-					$pdf = pdf_getInstance();
-					$pdf->Open();
-					$pdf->AddPage();
-					$pagecount = $pdf->setSourceFile($upload_dir.$ref.".pdf");
+			if (!$error) {
+				$return = file_put_contents($upload_dir.$filename, $data);
+				if ($return == false) {
+					$error++;
+					$response = 'error file_put_content';
+				}
+			}
 
-					$tppl = $pdf->importPage(1);
-					$pdf->useTemplate($tppl);
-					$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);
-					$pdf->Close();
-					$pdf->Output($upload_dir.$ref."_signed-".$date.".pdf", "F");
+			if (!$error) {
+				$pdf = pdf_getInstance();
+				$pdf->Open();
+				$pdf->AddPage();
+				$pagecount = $pdf->setSourceFile($upload_dir.$ref.".pdf");
 
-					$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-					$sql .= " SET fk_statut = ".((int) $object::STATUS_SIGNED).", note_private = '".$object->note_private."', date_signature='".$db->idate(dol_now())."'";
-					$sql .= " WHERE rowid = ".((int) $object->id);
+				$tppl = $pdf->importPage(1);
+				$pdf->useTemplate($tppl);
+				$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);
+				$pdf->Close();
+				$pdf->Output($upload_dir.$ref."_signed-".$date.".pdf", "F");
 
-					dol_syslog(__METHOD__, LOG_DEBUG);
-					$resql = $db->query($sql);
-					if (!$resql) {
-						$error++;
-					} else {
-						$num = $db->affected_rows($resql);
-					}
+				$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
+				$sql .= " SET fk_statut = ".((int) $object::STATUS_SIGNED).", note_private = '".$object->note_private."', date_signature='".$db->idate(dol_now())."'";
+				$sql .= " WHERE rowid = ".((int) $object->id);
 
-					if (!$error) {
-						$db->commit();
-						$response = "success";
-						setEventMessage("PropalSigned");
-					} else {
-						$db->rollback();
-						$response = "error sql";
-					}
+				dol_syslog(__METHOD__, LOG_DEBUG);
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				} else {
+					$num = $db->affected_rows($resql);
+				}
+
+				if (!$error) {
+					$db->commit();
+					$response = "success";
+					setEventMessages("PropalSigned", null, 'warnings');
+				} else {
+					$db->rollback();
+					$error++;
+					$response = "error sql";
 				}
 			}
 		}
 	} else {
+		$error++;
 		$response = 'error signature_not_found';
 	}
 }
+
+if ($error) {
+	http_response_code(501);
+}
+
 echo $response;
