@@ -3662,14 +3662,17 @@ div.refidpadding  {
 div.refid  {
 	font-weight: bold;
 	color: rgb(--colortexttitlenotab);
-	  font-size: 160%;
+	font-size: 160%;
+}
+a.refid {
+	color: var(--colortexttitlenotab) !important;
 }
 div.refidno  {
 	padding-top: 8px;
 	font-weight: normal;
-	  color: #444;
-	  font-size: <?php print $fontsize ?>px;
-	  line-height: 21px;
+	color: #444;
+	font-size: <?php print $fontsize ?>px;
+	line-height: 21px;
 }
 div.refidno form {
 	display: inline-block;
