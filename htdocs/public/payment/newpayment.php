@@ -926,7 +926,8 @@ print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
 
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
+// Section with payment informationsummary
+print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
 
 // Output introduction text
 $text = '';
@@ -1524,10 +1525,13 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Member");
-	print '</td><td class="CTableRow2"><b>';
-	if ($member->morphy == 'mor' && !empty($member->societe)) {
-		print $member->societe;
+	print '</td><td class="CTableRow2">';
+	print '<b>';
+	if ($member->morphy == 'mor' && !empty($member->company)) {
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print $member->company;
 	} else {
+		print img_picto('', 'member', 'class="pictofixedwidth"');
 		print $member->getFullName($langs);
 	}
 	print '</b>';
