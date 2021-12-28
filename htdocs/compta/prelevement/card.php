@@ -302,20 +302,22 @@ if ($id > 0 || $ref) {
 		print '<br>';
 	}
 
-
 	// Actions
 	if ($action != 'settransmitted' && $action != 'setcredited') {
 		print "\n".'<div class="tabsAction">'."\n";
 
-		if (empty($object->date_trans) && $user->rights->prelevement->bons->send) {
-			print '<a class="butAction" href="card.php?action=settransmitted&token='.newToken().'&id='.$object->id.'">'.$langs->trans("SetToStatusSent").'</a>';
+		if (empty($object->date_trans)) {
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"),'', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->send);
+			else print dolGetButtonAction($langs->trans("SetToStatusSent"),'', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->send);
 		}
 
 		if (!empty($object->date_trans) && $object->date_credit == 0) {
-			print '<a class="butAction" href="card.php?action=setcredited&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ClassCredited").'</a>';
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"),'', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->debit);
+			else print dolGetButtonAction($langs->trans("ClassCredited"),'', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->credit);
 		}
 
-		print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+		if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"),'', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->create);
+		else print dolGetButtonAction($langs->trans("Delete"),'', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->creer);
 
 		print '</div>';
 	}
