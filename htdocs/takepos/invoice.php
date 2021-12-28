@@ -1088,6 +1088,7 @@ $( document ).ready(function() {
 	?>
 
 	$("#customerandsales").html('');
+	$("#shoppingcart").html('');
 
 	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 
@@ -1108,7 +1109,7 @@ $( document ).ready(function() {
 	if ($resql) {
 		$max_sale = 0;
 		while ($obj = $db->fetch_object($resql)) {
-			echo '$("#customerandsales").append(\'';
+			echo '$("#shoppingcart").append(\'';
 			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser')).' - '.$obj->ref).'" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
@@ -1127,7 +1128,7 @@ $( document ).ready(function() {
 			}
 			echo '</a>\');';
 		}
-		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
+		echo '$("#shoppingcart").append(\'<a onclick="place=\\\'0-';
 		echo $max_sale + 1;
 		echo '\\\'; invoiceid=0; Refresh();"><div><span class="fa fa-plus" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"><span class="fa fa-shopping-cart"></span></div></a>\');';
 	} else {
@@ -1136,20 +1137,42 @@ $( document ).ready(function() {
 
 	$s = '';
 
+	$idwarehouse = 0;
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-	if (!empty($conf->stock->enabled) && getDolGlobalString("$constantforkey") != "1") {
-		$s = '<span class="small">';
-		$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-		$warehouse = new Entrepot($db);
-		$warehouse->fetch(getDolGlobalString($constantforkey));
-		$s .= $langs->trans("Warehouse").'<br>'.$warehouse->ref;
-		$s .= '</span>';
+	if (!empty($conf->stock->enabled)) {
+		if (getDolGlobalString("$constantforkey") != "1") {
+			$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+			$idwarehouse = getDolGlobalString($constantforkey);
+			if ($idwarehouse > 0) {
+				$s = '<span class="small">';
+				$warehouse = new Entrepot($db);
+				$warehouse->fetch($idwarehouse);
+				$s .= '<span class="hideonsmartphone">'.$langs->trans("Warehouse").'<br></span>'.$warehouse->ref;
+				if ($warehouse->statut == Entrepot::STATUS_CLOSED) {
+					$s .= ' ('.$langs->trans("Closed").')';
+				}
+				$s .= '</span>';
+				print "$('#infowarehouse').html('".dol_escape_js($s)."');";
+				print '$("#infowarehouse").css("display", "inline-block");';
+			} else {
+				$s = '<span class="small hideonsmartphone">';
+				$s .= $langs->trans("StockChangeDisabled").'<br>'.$langs->trans("NoWarehouseDefinedForTerminal");
+				$s .= '</span>';
+				print "$('#infowarehouse').html('".dol_escape_js($s)."');";
+				if (!empty($conf->dol_optimize_smallscreen)) {
+					print '$("#infowarehouse").css("display", "none");';
+				}
+			}
+		} else {
+			$s = '<span class="small hideonsmartphone">'.$langs->trans("StockChangeDisabled").'</span>';
+			print "$('#infowarehouse').html('".dol_escape_js($s)."');";
+			if (!empty($conf->dol_optimize_smallscreen)) {
+				print '$("#infowarehouse").css("display", "none");';
+			}
+		}
 	}
-	?>
 
-	$("#infowarehouse").html('<?php print dol_escape_js($s); ?>');
 
-	<?php
 	// Module Adherent
 	$s = '';
 	if (!empty($conf->adherent->enabled) && $invoice->socid > 0 && $invoice->socid != $conf->global->$constforcompanyid) {

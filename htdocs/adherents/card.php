@@ -918,12 +918,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// When used in standard mode
 	// -----------------------------------------
 
+	// Create mode
 	if ($action == 'create') {
-		/* ************************************************************************** */
-		/*                                                                            */
-		/* Creation mode                                                              */
-		/*                                                                            */
-		/* ************************************************************************** */
 		$object->canvas = $canvas;
 		$object->state_id = GETPOST('state_id', 'int');
 
@@ -1145,13 +1141,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</form>\n";
 	}
 
+	// Edit mode
 	if ($action == 'edit') {
-		/********************************************
-		*
-		* Edition mode
-		*
-		********************************************/
-
 		$res = $object->fetch($id);
 		if ($res < 0) {
 			dol_print_error($db, $object->error); exit;
@@ -1412,13 +1403,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</form>';
 	}
 
+	// View
 	if ($id > 0 && $action != 'edit') {
-		/* ************************************************************************** */
-		/*                                                                            */
-		/* View mode                                                                  */
-		/*                                                                            */
-		/* ************************************************************************** */
-
 		$res = $object->fetch($id);
 		if ($res < 0) {
 			dol_print_error($db, $object->error); exit;
@@ -1707,7 +1693,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'rowid', $linkback);
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= '</a>';
+
+
+		dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -1862,13 +1853,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// VCard
+		/*
 		print '<tr><td>';
 		print $langs->trans("VCard").'</td><td colspan="3">';
 		print '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
+		print img_picto($langs->trans("Download").' vcard', 'vcard.png', 'class="paddingrightonly"');
 		print $langs->trans("Download");
+		print img_picto($langs->trans("Download").' vcard', 'download', 'class="paddingleft"');
 		print '</a>';
 		print '</td></tr>';
+		*/
 
 		print "</table>\n";
 

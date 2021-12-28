@@ -2096,6 +2096,7 @@ if ($action == 'create') {
 
 						$titlealt = '';
 						if (!empty($conf->accounting->enabled)) {
+							require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 							$accountingaccount = new AccountingAccount($db);
 							$resaccountingaccount = $accountingaccount->fetch(0, $line->type_fees_accountancy_code, 1);
 							//$titlealt .= '<span class="opacitymedium">';
