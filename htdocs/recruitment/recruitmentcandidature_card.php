@@ -260,6 +260,8 @@ if (empty($reshook)) {
 			$nuser->employee = 1;
 			$nuser->firstname = $object->firstname;
 			$nuser->lastname = $object->lastname;
+			$nuser->email = '';
+			$nuser->personal_email = $object->email;
 			$nuser->personal_mobile = $object->phone;
 			$nuser->birth = $object->date_birth;
 			$nuser->salary = $object->remuneration_proposed;
