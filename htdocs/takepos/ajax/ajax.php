@@ -125,7 +125,7 @@ if ($action == 'getProducts') {
 	if ($conf->global->TAKEPOS_PRODUCT_IN_STOCK == 1) {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
-		$sql .= " AND ps.fk_entrepot = ".((int) $db->escape($conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']})) . ')';
+		$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal']));
 	}
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
