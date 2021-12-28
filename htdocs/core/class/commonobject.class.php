@@ -7615,7 +7615,7 @@ abstract class CommonObject
 				$selectkey = $InfoFieldList[2];
 			}
 
-			if (!isInDb($value_arr, $InfoFieldList[0], $selectkey)) {
+			if (!$validate->isInDb($value_arr, $InfoFieldList[0], $selectkey)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
