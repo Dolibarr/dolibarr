@@ -270,6 +270,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		$features = 'produit';
 	}
 
+
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
 	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);

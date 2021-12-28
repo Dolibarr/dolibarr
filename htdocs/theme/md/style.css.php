@@ -688,8 +688,8 @@ input[type=checkbox], input[type=radio] {
 input:-moz-placeholder { color:#ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
-fieldset { 
-	border: 1px solid #AAAAAA !important; 
+fieldset {
+	border: 1px solid #AAAAAA !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
 }
@@ -1152,6 +1152,10 @@ if ($conf->browser->layout == 'phone') {
 }
 
 
+/* ============================================================================== */
+/* Styles for scan tool                                                           */
+/* ============================================================================== */
+
 div.div-for-modal {
 	/* display: none; */
 	position:absolute;
@@ -1165,18 +1169,25 @@ div.div-for-modal {
 	z-index: 100;
 }
 
+#scantoolmessage {
+	height: 3em;
+	border: none;
+	overflow-y: auto;
+}
+
 div.div-for-modal-topright {
 	/* display: none; */
 	position: fixed;
 	top: 0;
 	right: 0;
 	width:50%;  /* adjust as per your needs */
-	height:250px;   /* adjust as per your needs */
+	height:300px;   /* adjust as per your needs */
 	background: #fff;
 	border: 1px solid #bbb;
 	box-shadow: 2px 2px 20px #ddd;
 	z-index: 1100;
 }
+
 
 
 div.confirmmessage {
@@ -1817,7 +1828,7 @@ td.showDragHandle {
 	width: 100%;
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
-	padding-left: 229px;
+	padding-<?php print $left; ?>: 229px;
 	padding-top: 16px;
 <?php } ?>
 }
@@ -1843,13 +1854,13 @@ td.showDragHandle {
 	display: none;
 <?php } else { ?>
 	background: var(--colorbackvmenu1);
-	border-right: 1px solid rgba(0,0,0,0.2);
+	border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2);
 	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
 	color: #333;
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
-	left: 0;
+	<?php echo $left; ?>: 0;
 	<?php
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	} else { ?>
@@ -1903,12 +1914,13 @@ td.showDragHandle {
 }
 
 body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
-	margin-left: 0;padding-left:0
+	margin-left: 0;
+	padding-left:0
 }
 
 
 .side-nav-vert {
-	margin-left: 228px;
+	margin-<?php echo $left; ?>: 228px;
 }
 
 /* body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other, body.sidebar-collapse #topmenu-login-dropdown */
@@ -1974,7 +1986,7 @@ div.backgroundsemitransparent {
 
 
 #id-right {
-	padding-left: 0 ! important;
+	padding-<?php print $left; ?>: 0 ! important;
 }
 #id-left {
 	z-index: 91;
@@ -2456,7 +2468,7 @@ div.tmenucenter
 	width: 100%;
 }
 div.menu_titre {
-	padding-bottom: 2px;
+	padding-bottom: 5px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
@@ -2924,7 +2936,7 @@ form[name="addtime"] img.userphoto {
 div.vmenu, td.vmenu {
 	margin-<?php print $right; ?>: 2px;
 	position: relative;
-	float: left;
+	float: <?php print $left; ?>;
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 0px;
@@ -2932,7 +2944,7 @@ div.vmenu, td.vmenu {
 }
 
 .vmenu {
-	margin-left: 4px;
+	margin-<?php print $left; ?>: 4px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -2953,26 +2965,40 @@ div.vmenu, td.vmenu {
 .searchform { padding-top: 10px; }
 .searchform .bordertransp { border: 0; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
+	white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
+}
 span.vmenudisabled, font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
-a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
+a.vmenu:link, a.vmenu:visited {
+	color: var(--colortextbackvmenu);
+}
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
-span.vsmenudisabled, font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
-a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
+span.vsmenudisabled, font.vsmenudisabled {
+	font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa;
+}
+a.vsmenu:link, a.vsmenu:visited {
+	color: var(--colortextbackvmenu);
+	white-space: nowrap;
+}
 span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
+	text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none;
+}
 
 .helppresentcircle {
+	/*
 	color: var(--colorbackhmenu1);
 	filter: invert(0.5);
-	margin-left: -7px;
+	*/
+	color: var(--colortextbackhmenu);
+	margin-left: -4px;
 	display: inline-block;
-	margin-top: -10px;
 	font-size: x-small;
 	vertical-align: super;
 	opacity: 0.95;
+	transform: rotate(<?php echo ($left == 'left' ? '55deg' : '305deg'); ?>);
 }
 
 div.blockvmenulogo
@@ -3630,14 +3656,17 @@ div.refidpadding  {
 div.refid  {
 	font-weight: bold;
 	color: rgb(--colortexttitlenotab);
-	  font-size: 160%;
+	font-size: 160%;
+}
+a.refid {
+	color: var(--colortexttitlenotab) !important;
 }
 div.refidno  {
 	padding-top: 8px;
 	font-weight: normal;
-	  color: #444;
-	  font-size: <?php print $fontsize ?>px;
-	  line-height: 21px;
+	color: #444;
+	font-size: <?php print $fontsize ?>px;
+	line-height: 21px;
 }
 div.refidno form {
 	display: inline-block;
@@ -4004,7 +4033,6 @@ input.liste_titre {
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;
 }
-
 
 tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 2px solid #aaa;
@@ -4500,7 +4528,15 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 span.buttonpaymentsmall {
 	text-shadow: none;
 }
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+
+#dolpublictable {
+	min-width: 300px; font-size: 16px;
+	padding: 6px;
+}
+#dolpaymenttable {
+	min-width: 320px; font-size: 16px;
+}	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -6957,7 +6993,7 @@ div.clipboardCPValue.hidewithsize {
 		border-right: 1px solid rgba(0,0,0,0.3);
 		top: auto;
 	}
-	
+
 	div#tmenu_tooltip {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 		display:none;
@@ -7029,6 +7065,17 @@ div.clipboardCPValue.hidewithsize {
 		border-left: unset;
 		boerder-right: unset;
 		padding-left: 5px;
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		display: block;
+		margin-bottom: 6px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		text-align: center;
 	}
 }
 

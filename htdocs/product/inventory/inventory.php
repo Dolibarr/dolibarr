@@ -286,10 +286,15 @@ if (empty($reshook)) {
 			$result = $tmp->create($user);
 			if ($result < 0) {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					setEventMessages($langs->trans("DuplicateRecord"), null, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 				} else {
 					dol_print_error($db, $tmp->error, $tmp->errors);
 				}
+			} else {
+				// Clear var
+				$_POST['batch'] = '';
+				$_POST['qtytoadd'] = '';
 			}
 		}
 	}
@@ -499,37 +504,35 @@ if ($object->id > 0) {
 
 	if ($object->status == Inventory::STATUS_VALIDATED) {
 		print '<center>';
-		if ($permissiontoadd) {
-			/*
-			 if (!empty($conf->barcode->enabled)) {
-			 print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
-			 }
-			 if (!empty($conf->productbatch->enabled)) {
-			 print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
-			 }*/
-			if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
-			}
-		} else {
-			print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
-		}
-		if ($permissiontoadd && $conf->use_javascript_ajax) {
-			print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+		if (!empty($conf->use_javascript_ajax)) {
+			if ($permissiontoadd) {
+				// Link to launch scan tool
+				if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
+				}
 
-			print '<script>';
-			print '$( document ).ready(function() {';
-			print '	$("#fillwithexpected").on("click",function fillWithExpected(){
-						$(".expectedqty").each(function(){
-							var object = $(this)[0];
-							var objecttofill = $("#"+object.id+"_input")[0];
-							objecttofill.value = object.innerText;
-						})
-						console.log("Values filled (after click on fillwithexpected)");
-						disablebuttonmakemovementandclose();
-						return false;
-			        });';
-			print '});';
-			print '</script>';
+				// Link to autofill
+				print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+				print '<script>';
+				print '$( document ).ready(function() {';
+				print '	$("#fillwithexpected").on("click",function fillWithExpected(){
+							$(".expectedqty").each(function(){
+								var object = $(this)[0];
+								var objecttofill = $("#"+object.id+"_input")[0];
+								objecttofill.value = object.innerText;
+							})
+							console.log("Values filled (after click on fillwithexpected)");
+							disablebuttonmakemovementandclose();
+							return false;
+				        });';
+				print '});';
+				print '</script>';
+
+				// Link to reset qty
+				print '<a href="#" id="clearqty" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'eraser', 'class="paddingrightonly"').$langs->trans("ClearQtys").'</a>';
+			} else {
+				print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+			}
 		}
 		print '<br>';
 		print '<br>';
@@ -540,21 +543,34 @@ if ($object->id > 0) {
 	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
 		if ($permissiontoadd) {
+			// Output the javascript to manage the scanner tool.
 			print '<script>';
 
 			print '
-			var errortab = [];
+			var errortab1 = [];
+			var errortab2 = [];
+			var errortab3 = [];
+			var errortab4 = [];
+
 			function barcodescannerjs(){
-				console.log("We catch inputs in sacnner box");
+				console.log("We catch inputs in scanner box");
+				jQuery("#scantoolmessage").text();
+
 				var selectaddorreplace = $("select[name=selectaddorreplace]").val();
 				var barcodemode = $("input[name=barcodemode]:checked").val();
 				var barcodeproductqty = $("input[name=barcodeproductqty]").val();
 				var textarea = $("textarea[name=barcodelist]").val();
-				var textarray = textarea.split("\n");
+				var textarray = textarea.split(/[\s,;]+/);
 				var tabproduct = [];
+				errortab1 = [];
+				errortab2 = [];
+				errortab3 = [];
+				errortab4 = [];
+
 				if(textarray[0] != ""){
 					$(".expectedqty").each(function(){
 						id = this.id;
+						console.log("Analyze line "+id+" in inventory");
 						warehouse = $("#"+id+"_warehouse").children().first().text();
 						productbarcode = $("#"+id+"_product").children().first().attr("title");
 						productbarcode = productbarcode.split("<br>");
@@ -562,11 +578,10 @@ if ($object->id > 0) {
 						productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
 
 						productbatchcode = $("#"+id+"_batch").text();
-						if(barcodemode != "barcodeforproduct"){
+						if (barcodemode != "barcodeforproduct") {
 							tabproduct.forEach(product=>{
 								if(product.Batch != "" && product.Batch == productbatchcode){
-									alert("'.$langs->transnoentities('ErrorSameBatchNumber').': "+productbatchcode);
-									throw"'.$langs->transnoentities('ErrorSameBatchNumber').': "+productbatchcode;
+									errortab1.push(productbatchcode);
 								}
 							})
 						}
@@ -575,7 +590,8 @@ if ($object->id > 0) {
 							productinput = 0
 						}
 						tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':productinput,\'fetched\':false});
-					})
+					});
+
 					textarray.forEach(function(element,index){
 						var verify_batch = false;
 						var verify_barcode = false;
@@ -585,26 +601,31 @@ if ($object->id > 0) {
 								verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial",true);
 								break;
 							case "barcodeforproduct":
-								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"barcode");
+								verify_barcode = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"barcode");
 								break;
 							case "barcodeforlotserial":
-								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial");
+								verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial");
 								break;
 							default:
 								alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
 								throw "'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
 						}
-						if(verify_batch == true && verify_barcode == true){
-							errortab.push(element);
+
+						if (verify_batch == false && verify_barcode == false) {		/* If the 2 flags are false, error */
+							errortab2.push(element);
+						}
+						if (verify_batch == true && verify_barcode == true) {		/* If the 2 flags are true, error: we don t know which one to take */
+							errortab3.push(element);
 						}
 					});
-					if (Object.keys(errortab).length < 1){
+
+					if (Object.keys(errortab1).length < 1 && Object.keys(errortab2).length < 1 && Object.keys(errortab3).length < 1) {
 						tabproduct.forEach(product => {
 							if(product.Qty!=0){
 								console.log("We change #"+product.Id+"_input to match input in scanner box");
 								if(product.hasOwnProperty("reelqty")){
 									$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-										data: { "action":"addnewlineproduct","fk_entrepot":product.Warehouse,"batch":product.Batch,"fk_inventory":'.dol_escape_js($object->id).',"fk_product":product.fk_product,"reelqty":product.reelqty},
+										data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js($object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
 										type: \'POST\',
 										async: false,
 										success: function(response) {
@@ -627,39 +648,67 @@ if ($object->id > 0) {
 									$("#"+product.Id+"_input").val(product.Qty);
 								}
 							}
-						})
-						document.forms["formrecord"].submit();
-					}else{
-						let stringerror = "";
-						errortab.forEach(element => {
-							stringerror += (element + ",")
 						});
-						stringerror = stringerror.slice(0, -1);
-						alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
+						jQuery("#scantoolmessage").text("'.$langs->trans("QtyWasAddedToTheScannedBarcode").'\n");
+						/* document.forms["formrecord"].submit(); */
+					} else {
+						let stringerror = "";
+						if (Object.keys(errortab1).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorSameBatchNumber').': ";
+							errortab1.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+						if (Object.keys(errortab2).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorCantFindCodeInInventory').': ";
+							errortab2.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+						if (Object.keys(errortab3).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial').': ";
+							errortab3.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+						if (Object.keys(errortab4).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse').': ";
+							errortab4.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+
+						jQuery("#scantoolmessage").text("'.$langs->trans("ErrorOnElementsInventory").'\n" + stringerror);
+						//alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
 					}
 				}
 
 			}
 
+			/* This methode is called by parent barcodescannerjs() */
 			function barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,mode,autodetect=false){
 				BarcodeIsInProduct=0;
 				newproductrow=0
 				result=false;
 				tabproduct.forEach(product => {
 					$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-						data: { "action":"existbarcode",'.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.',':'').(!empty($object->fk_product)?'"fk_product":'.$object->fk_product.',':'').'"barcode":element,"product":product,"mode":mode},
+						data: { "token":"'.newToken().'", "action":"existbarcode", '.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.', ':'').(!empty($object->fk_product)?'"fk_product":'.$object->fk_product.', ':'').'"barcode":element, "product":product, "mode":mode},
 						type: \'POST\',
 						async: false,
 						success: function(response) {
 							response = JSON.parse(response);
-							if(response.status == "success"){
+							if (response.status == "success"){
 								console.log(response.message);
 								if(!newproductrow){
 									newproductrow = response.object;
 								}
 							}else{
-								if (mode!="lotserial" && autodetect==false && !errortab.includes(element)){
-									errortab.push(element);
+								if (mode!="lotserial" && autodetect==false && !errortab4.includes(element)){
+									errortab4.push(element);
 									console.error(response.message);
 								}
 							}
@@ -704,13 +753,18 @@ if ($object->id > 0) {
 		}
 		include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($db);
-		print $formother->getHTMLScannerForm("barcodescannerjs");
+		print $formother->getHTMLScannerForm("barcodescannerjs", 'all');
 	}
 
 	//Call method to undo changes in real qty
 	print '<script>';
 	print 'jQuery(document).ready(function() {
-		$(".undochangesqty").on("click",function undochangesqty() {
+		$("#clearqty").on("click", function() {
+			console.log("Clear all values");
+			jQuery(".realqty").val("");
+			return false;	/* disable submit */
+		});
+		$(".undochangesqty").on("click", function undochangesqty() {
 			console.log("Clear value of inventory line");
 			id = this.id;
 			id = id.split("_")[1];

@@ -1834,6 +1834,7 @@ if ($id) {
 							$class = '';
 							$showfield = 1;
 							$valuetoshow = empty($obj->{$value}) ? '' : $obj->{$value};
+							$titletoshow = '';
 
 							if ($value == 'entity') {
 								$withentity = $valuetoshow;
@@ -1965,6 +1966,11 @@ if ($id) {
 							} elseif (in_array($value, array('recuperableonly'))) {
 								$class = "center";
 							} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
+								if (!empty($conf->accounting->enabled)) {
+									$tmpaccountingaccount = new AccountingAccount($db);
+									$tmpaccountingaccount->fetch(0, $valuetoshow, 1);
+									$titletoshow = $langs->transnoentitiesnoconv("Pcgtype").': '.$tmpaccountingaccount->pcg_type;
+								}
 								$valuetoshow = length_accountg($valuetoshow);
 							} elseif ($value == 'fk_tva') {
 								foreach ($form->cache_vatrates as $key => $Tab) {
@@ -2012,7 +2018,7 @@ if ($id) {
 							}
 							// Show value for field
 							if ($showfield) {
-								print '<!-- '. $value .' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+								print '<!-- '. $value .' --><td class="'.$class.'"'.($titletoshow ? ' title="'.dol_escape_htmltag($titletoshow).'"' : '').'>'.$valuetoshow.'</td>';
 							}
 						}
 					}
