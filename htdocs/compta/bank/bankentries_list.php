@@ -283,17 +283,17 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		if ($search_description) {
 			$param .= '&search_description='.urlencode($search_description);
 		}
-		if ($search_start_dt) {
-			$param .= '&search_start_dt='.urlencode($search_start_dt);
+		if (dol_strlen($search_dt_start) > 0) {
+			$param .= '&search_start_dtmonth='.GETPOST('search_start_dtmonth', 'int').'&search_start_dtday='.GETPOST('search_start_dtday', 'int').'&search_start_dtyear='.GETPOST('search_start_dtyear', 'int');
 		}
-		if ($search_end_dt) {
-			$param .= '&search_end_dt='.urlencode($search_end_dt);
+		if (dol_strlen($search_dt_end) > 0) {
+			$param .= '&search_end_dtmonth='.GETPOST('search_end_dtmonth', 'int').'&search_end_dtday='.GETPOST('search_end_dtday', 'int').'&search_end_dtyear='.GETPOST('search_end_dtyear', 'int');
 		}
-		if ($search_start_dv) {
-			$param .= '&search_start_dv='.urlencode($search_start_dv);
+		if (dol_strlen($search_dv_start) > 0) {
+			$param .= '&search_start_dvmonth='.GETPOST('search_start_dvmonth', 'int').'&search_start_dvday='.GETPOST('search_start_dvday', 'int').'&search_start_dvyear='.GETPOST('search_start_dvyear', 'int');
 		}
-		if ($search_end_dv) {
-			$param .= '&search_end_dv='.urlencode($search_end_dv);
+		if (dol_strlen($search_dv_end) > 0) {
+			$param .= '&search_end_dvmonth='.GETPOST('search_end_dvmonth', 'int').'&search_end_dvday='.GETPOST('search_end_dvday', 'int').'&search_end_dvyear='.GETPOST('search_end_dvyear', 'int');
 		}
 		if ($search_type) {
 			$param .= '&search_type='.urlencode($search_type);
