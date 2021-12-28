@@ -102,21 +102,6 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Seems to no be used and replaced with $action == 'infocredit'
-	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes') {
-		if ($object->statut == 2) {
-			$res = -1;
-			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
-		} else {
-			$res = $object->set_credite();
-		}
-
-		if ($res >= 0) {
-			header("Location: card.php?id=".$id);
-			exit;
-		}
-	}
-
 	if ($action == 'infotrans' && $user->rights->prelevement->bons->send) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -183,12 +168,6 @@ if ($id > 0 || $ref) {
 	if (GETPOST('error', 'alpha') != '') {
 		print '<div class="error">'.$object->getErrorString(GETPOST('error', 'alpha')).'</div>';
 	}
-
-	/*if ($action == 'credite')
-	{
-		print $form->formconfirm("card.php?id=".$object->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
-
-	}*/
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
