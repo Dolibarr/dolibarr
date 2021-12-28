@@ -52,6 +52,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+$moreparam = '';
 if ($type == 'bank-transfer') {
 	$object = new FactureFournisseur($db);
 	$moreparam = '&type='.$type;
