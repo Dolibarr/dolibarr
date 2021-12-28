@@ -353,7 +353,8 @@ class FormSetup
 		 */
 
 		$item = new FormSetupItem($confKey);
-		$item->setTypeFromTypeString($params['type']);
+		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developper to use object oriented usage
+		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
 			$item->enabled = $params['enabled'];
@@ -598,7 +599,7 @@ class FormSetupItem
 	/**
 	 * Constructor
 	 *
-	 * @param $confKey the conf key used in database
+	 * @param string $confKey the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
