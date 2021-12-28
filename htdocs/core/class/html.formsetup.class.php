@@ -605,7 +605,7 @@ class FormSetupItem
 		global $langs, $db, $conf, $form;
 		$this->db = $db;
 
-		if (!empty($form) && is_object($form) && get_class($form) == 'Form') { // form class have cache inside so I use it for optimise
+		if (!empty($form) && is_object($form) && get_class($form) == 'Form') { // the form class has a cache inside so I am using it to optimize
 			$this->form = $form;
 		} else {
 			$this->form = new Form($this->db);
