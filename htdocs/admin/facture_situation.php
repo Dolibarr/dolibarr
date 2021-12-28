@@ -94,47 +94,22 @@ $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')
 	->nameText = $langs->trans('RetainedwarrantyOnlyForSituationFinal');
 
 
-// TODO : TODO : TODO
-$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION');
-
-$metas = array(
+$item = $formSetup->newItem('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT');
+$item->nameText = $langs->trans('RetainedwarrantyDefaultPercent');
+$item->fieldAttr = array(
 	'type' => 'number',
 	'step' => '0.01',
 	'min' => 0,
 	'max' => 100
 );
-_printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', $langs->trans('RetainedwarrantyDefaultPercent'), '', $metas);
 
 
-/*
-// Hôte
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
-$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
-$item->cssClass = 'minwidth500';
-
-// Setup conf MYMODULE_MYPARAM1 as a simple string input
-$item = $formSetup->newItem('MYMODULE_MYPARAM1');
-
-// Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
-$item = $formSetup->newItem('MYMODULE_MYPARAM2');
-$item->nameText = $item->getNameText().' more html text ';
-
-// Setup conf MYMODULE_MYPARAM3
-$item = $formSetup->newItem('MYMODULE_MYPARAM3');
-$item->setAsThirdpartyType();
-
-// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
-
-// Setup conf MYMODULE_MYPARAM5
-$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
-
-// Setup conf MYMODULE_MYPARAM6
-$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
-
-// Setup conf MYMODULE_MYPARAM7
-$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
-*/
+// Conditions paiements
+$item = $formSetup->newItem('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
+$item->nameText = $langs->trans('PaymentConditionsShortRetainedWarranty');
+$form->load_cache_conditions_paiements();
+$item->fieldOutputOverride = $form->cache_conditions_paiements[$conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID]['label'];
+$item->fieldInputOverride = $form->getSelectConditionsPaiements($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID, 'INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID', -1, 1);
 
 
 /*
@@ -180,169 +155,18 @@ if ($action == 'edit') {
 }
 
 if (count($formSetup->items) > 0) {
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-	print '</div>';
+	if ($action != 'edit') {
+		print '<div class="tabsAction">';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+		print '</div>';
+	}
 } else {
 	print '<br>'.$langs->trans("NothingToSetup");
 }
 
-
-print '<hr/>';
-
-
-
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-
-
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder centpercent">';
-
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
-
-
-
-
-
-$metas = array(
-	'type' => 'number',
-	'step' => '0.01',
-	'min' => 0,
-	'max' => 100
-);
-_printInputFormPart('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT', $langs->trans('RetainedwarrantyDefaultPercent'), '', $metas);
-
-// Conditions paiements
-$inputCount = empty($inputCount) ? 1 : ($inputCount + 1);
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td>';
-print '<td class="center" width="20">&nbsp;</td>';
-print '<td class="right" width="300">';
-print '<input type="hidden" name="param'.$inputCount.'" value="INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID">';
-$form->select_conditions_paiements($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID, 'value'.$inputCount, -1, 1);
-print '</td></tr>';
-
-
-print '</table>';
-print '</div>';
-
-print '<br>';
-
-_updateBtn();
-
-print '</form>';
 
 print dol_get_fiche_end();
 
 // End of page
 llxFooter();
 $db->close();
-
-/**
- * Print an update button
- *
- * @return void
- */
-function _updateBtn()
-{
-	global $langs;
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '</div>';
-}
-
-/**
- * Print a On/Off button
- *
- * @param string $confkey the conf key
- * @param bool   $title   Title of conf
- * @param string $desc    Description
- *
- * @return void
- */
-function _printOnOff($confkey, $title = false, $desc = '')
-{
-	global $langs;
-
-	print '<tr class="oddeven">';
-	print '<td>'.($title ? $title : $langs->trans($confkey));
-	if (!empty($desc)) {
-		print '<br><small>'.$langs->trans($desc).'</small>';
-	}
-	print '</td>';
-	print '<td class="center" width="20">&nbsp;</td>';
-	print '<td class="right" width="300">';
-	print ajax_constantonoff($confkey);
-	print '</td></tr>';
-}
-
-
-/**
- * Print a form part
- *
- * @param string $confkey the conf key
- * @param bool   $title   Title of conf
- * @param string $desc    Description of
- * @param array  $metas   html meta
- * @param string $type    type of input textarea or input
- * @param bool   $help    help description
- *
- * @return void
- */
-function _printInputFormPart($confkey, $title = false, $desc = '', $metas = array(), $type = 'input', $help = false)
-{
-	global $langs, $conf, $db, $inputCount;
-
-	$inputCount = empty($inputCount) ? 1 : ($inputCount + 1);
-	$form = new Form($db);
-
-	$defaultMetas = array(
-		'name' => 'value'.$inputCount
-	);
-
-	if ($type != 'textarea') {
-		$defaultMetas['type']   = 'text';
-		$defaultMetas['value']  = $conf->global->{$confkey};
-	}
-
-
-	$metas = array_merge($defaultMetas, $metas);
-	$metascompil = '';
-	foreach ($metas as $key => $values) {
-		$metascompil .= ' '.$key.'="'.$values.'" ';
-	}
-
-	print '<tr class="oddeven">';
-	print '<td>';
-
-	if (!empty($help)) {
-		print $form->textwithtooltip(($title ? $title : $langs->trans($confkey)), $langs->trans($help), 2, 1, img_help(1, ''));
-	} else {
-		print $title ? $title : $langs->trans($confkey);
-	}
-
-	if (!empty($desc)) {
-		print '<br><small>'.$langs->trans($desc).'</small>';
-	}
-
-	print '</td>';
-	print '<td class="center" width="20">&nbsp;</td>';
-	print '<td class="right" width="300">';
-	print '<input type="hidden" name="param'.$inputCount.'" value="'.$confkey.'">';
-
-	print '<input type="hidden" name="action" value="setModuleOptions">';
-	if ($type == 'textarea') {
-		print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
-	} elseif ($type == 'input') {
-		print '<input '.$metascompil.'  />';
-	} else {
-		// custom
-		print $type;
-	}
-	print '</td></tr>';
-}
