@@ -1710,7 +1710,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				//print "x $i $active ".$links[$i][2]." z";
 				$out .= '<div class="tab tab'.($isactive?'active':'unactive').'" style="margin: 0 !important">';
 				if (!empty($links[$i][0])) {
-					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
+					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab tab'.($isactive?'active':'unactive').' inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
 				}
 				$out .= $links[$i][1];
 				if (!empty($links[$i][0])) {
