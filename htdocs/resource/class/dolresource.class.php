@@ -1047,5 +1047,4 @@ class Dolresource extends CommonObject
 			return -1;
 		}
 	}
-
 }
