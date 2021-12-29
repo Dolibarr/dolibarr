@@ -5,11 +5,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 /* <style type="text/css" > */
 
 :root {
-			--btncolortext:rgb(<?php print $colortextlink; ?>);
+			--btncolortext: rgb(<?php print $colortextlink; ?>);
 			--btncolorbg: #fbfbfb;
 			--btncolorborderhover: none;
 			--btncolorborder: #FFF;
 			--butactiondeletebg: rgb(234,228,225);
+			--butactionbg: rgb(<?php print $butactionbg; ?>);
 }
 
 <?php
@@ -26,6 +27,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
             --btncolorborderhover: #ffffff;
             --btncolorborder: #2b2c2e;
             --butactiondeletebg: rgb(252,84,91);
+			--butactionbg: rgb(173,140,79);
 
       }\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
@@ -64,7 +66,7 @@ span.butAction, span.butActionDelete {
 	font-size: 0.9em;
 }
 .butAction {
-	background: rgb(<?php echo $butactionbg ?>);
+	background: var(--butactionbg);
 	color: #FFF !important;
 	/* background: rgb(230, 232, 239); */
 }
