@@ -1262,7 +1262,7 @@ if ($action == 'create') {
 		if ($user->hasRight($origin, 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
-		//var_dump('origin='.$origin.' originid='.$originid.' $hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
+		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
 
 		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
 			// We do not use link for object that already contains a hard coded field to make links with agenda events

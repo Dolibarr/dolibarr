@@ -181,15 +181,17 @@ class FactureFournisseur extends CommonInvoice
 	 * @var float tva
 	 * @deprecated Use $total_tva
 	 */
-	public $tva = 0;
+	public $tva;
 
+	// Warning: Do not set default value into property defintion. it must stay null.
+	// For example to avoid to have substition done when object is generic and not yet defined.
 	public $localtax1;
 	public $localtax2;
-	public $total_ht = 0;
-	public $total_tva = 0;
-	public $total_localtax1 = 0;
-	public $total_localtax2 = 0;
-	public $total_ttc = 0;
+	public $total_ht;
+	public $total_tva;
+	public $total_localtax1;
+	public $total_localtax2;
+	public $total_ttc;
 
 	/**
 	 * @deprecated
@@ -727,7 +729,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->remise				= $obj->remise;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
-				$this->tva = $obj->tva;
+				//$this->tva = $obj->tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ht				= $obj->total_ht;
@@ -861,7 +863,7 @@ class FactureFournisseur extends CommonInvoice
 					$line->qty				= $obj->qty;
 					$line->remise_percent = $obj->remise_percent;
 					$line->fk_remise_except = $obj->fk_remise_except;
-					$line->tva				= $obj->total_tva; // deprecated
+					//$line->tva				= $obj->total_tva; // deprecated
 					$line->total_ht			= $obj->total_ht;
 					$line->total_ttc		= $obj->total_ttc;
 					$line->total_tva		= $obj->total_tva;
@@ -961,9 +963,9 @@ class FactureFournisseur extends CommonInvoice
 		if (isset($this->close_note)) {
 			$this->close_note = trim($this->close_note);
 		}
-		if (isset($this->tva)) {
+		/*if (isset($this->tva)) {
 			$this->tva = trim($this->tva);
-		}
+		}*/
 		if (isset($this->localtax1)) {
 			$this->localtax1 = trim($this->localtax1);
 		}
@@ -1035,7 +1037,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " remise=".(isset($this->remise) ? $this->remise : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		$sql .= " tva=".(isset($this->tva) ? $this->tva : "null").",";
+		//$sql .= " tva=".(isset($this->tva) ? $this->tva : "null").",";
 		$sql .= " localtax1=".(isset($this->localtax1) ? $this->localtax1 : "null").",";
 		$sql .= " localtax2=".(isset($this->localtax2) ? $this->localtax2 : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
@@ -3269,7 +3271,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->qty				= $obj->qty;
 		$this->remise_percent = $obj->remise_percent;
 		$this->fk_remise_except = $obj->fk_remise_except;
-		$this->tva				= $obj->total_tva; // deprecated
+		//$this->tva				= $obj->total_tva; // deprecated
 		$this->total_ht = $obj->total_ht;
 		$this->total_tva			= $obj->total_tva;
 		$this->total_localtax1	= $obj->total_localtax1;

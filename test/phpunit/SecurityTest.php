@@ -672,10 +672,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolStringOnlyTheseHtmlAttributes()
 	{
+		$stringtotest = 'eée';
+		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
+		$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correclty with test 1');
+
 		$stringtotest = '<div onload="ee"><a href="123"><span class="abc">abc</span></a></div>';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
 		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
-		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 1');
+		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 2');
 
 		return 0;
 	}

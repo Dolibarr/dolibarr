@@ -519,7 +519,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$sql .= ' AND f.type = 2'; // If paying back a credit note, we show all credit notes
 				}
 				// Group by because we have a total
-				$sql .= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef, f.date_lim_reglement';
+				$sql .= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc,';
+				$sql .= ' f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+				$sql .= ' f.datef, f.date_lim_reglement';
 				// Sort invoices by date and serial number: the older one comes first
 				$sql .= ' ORDER BY f.datef ASC, f.ref ASC';
 
@@ -685,7 +687,31 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 							print '</td>';
 
-							print '<td class="right">'.price($sign * $remaintopay).'</td>';
+							print '<td class="right">';
+							print price($sign * $remaintopay);
+							if (!empty($conf->paymentbybanktransfer->enabled)) {
+								$numdirectdebitopen = 0;
+								$totaldirectdebit = 0;
+								$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
+								$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+								$sql .= " WHERE fk_facture_fourn = ".((int) $objp->facid);
+								$sql .= " AND pfd.traite = 0";
+								$sql .= " AND pfd.ext_payment_id IS NULL";
+
+								$result_sql = $db->query($sql);
+								if ($result_sql) {
+									$obj = $db->fetch_object($result_sql);
+									$numdirectdebitopen = $obj->nb;
+									$totaldirectdebit = $obj->amount;
+								} else {
+									dol_print_error($db);
+								}
+								if ($numdirectdebitopen) {
+									$langs->load("withdrawals");
+									print img_warning($langs->trans("WarningSomeCreditTransferAlreadyExists", $numdirectdebitopen, price(price2num($totaldirectdebit, 'MT'), 0, $langs, 1, -1, -1, $conf->currency)), '', 'classfortooltip');
+								}
+							}
+							print '</td>';
 
 							// Amount
 							print '<td class="center nowraponall">';

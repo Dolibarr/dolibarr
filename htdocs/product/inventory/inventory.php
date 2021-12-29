@@ -121,6 +121,8 @@ if (empty($reshook)) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
+		$cacheOfProducts = array();
+
 		$db->begin();
 
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
@@ -139,8 +141,30 @@ if (empty($reshook)) {
 				$qty_stock = $line->qty_stock;
 				$qty_view = $line->qty_view;		// The quantity viewed by inventorier, the qty we target
 
+
+				// Load real stock we have now.
+				if (isset($cacheOfProducts[$line->fk_product])) {
+					$product_static = $cacheOfProducts[$line->fk_product];
+				} else {
+					$product_static = new Product($db);
+					$result = $product_static->fetch($line->fk_product, '', '', '', 1, 1, 1);
+
+					//$option = 'nobatch';
+					$option .= ',novirtual';
+					$product_static->load_stock($option); // Load stock_reel + stock_warehouse.
+
+					$cacheOfProducts[$product_static->id] = $product_static;
+				}
+
+				// Get the real quantity in stock now, but before the stock move for inventory.
+				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
+				if ($conf->productbatch->enabled && $product_static->hasbatch()) {
+					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
+				}
+
+
 				if (!is_null($qty_view)) {
-					$stock_movement_qty = price2num($qty_view - $qty_stock, 'MS');
+					$stock_movement_qty = price2num($qty_view - $realqtynow, 'MS');
 					if ($stock_movement_qty != 0) {
 						if ($stock_movement_qty < 0) {
 							$movement_type = 1;
@@ -152,15 +176,20 @@ if (empty($reshook)) {
 						//$inventorycode = 'INV'.$object->id;
 						$inventorycode = 'INV-'.$object->ref;
 
-						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, 0, $langs->trans('LabelOfInventoryMovemement', $object->id), $inventorycode, $datemovement, '', '', $line->batch);
+						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, 0, $langs->trans('LabelOfInventoryMovemement', $object->ref), $inventorycode, $datemovement, '', '', $line->batch);
 						if ($idstockmove < 0) {
 							$error++;
 							setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
 							break;
 						}
 
-						// Update line with id of stock movement
-						$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventorydet SET fk_movement = ".((int) $idstockmove)." WHERE rowid = ".((int) $line->rowid);
+						// Update line with id of stock movement (and the start quantity if it has changed this last recording)
+						$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventorydet";
+						$sqlupdate .= " SET fk_movement = ".((int) $idstockmove);
+						if ($qty_stock != $realqtynow) {
+							$sqlupdate .= ", qty_stock = ".((float) $realqtynow);
+						}
+						$sqlupdate .= " WHERE rowid = ".((int) $line->rowid);
 						$resqlupdate = $db->query($sqlupdate);
 						if (! $resqlupdate) {
 							$error++;
@@ -215,7 +244,7 @@ if (empty($reshook)) {
 						setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
 					}
 					if ($result > 0) {
-						$inventoryline->qty_stock = price2num(GETPOST('stock_qty_'.$lineid, 'alpha'), 'MS');	// The new value we want
+						$inventoryline->qty_stock = price2num(GETPOST('stock_qty_'.$lineid, 'alpha'), 'MS');	// The new value that was set in as hidden field
 						$inventoryline->qty_view = $qtytoupdate;	// The new value we want
 						$resultupdate = $inventoryline->update($user);
 					}
@@ -233,6 +262,18 @@ if (empty($reshook)) {
 				}
 
 				$i++;
+			}
+		}
+
+		// Update line with id of stock movement (and the start quantity if it has changed this last recording)
+		if (! $error) {
+			$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventory";
+			$sqlupdate .= " SET fk_user_modif = ".((int) $user->id);
+			$sqlupdate .= " WHERE rowid = ".((int) $object->id);
+			$resqlupdate = $db->query($sqlupdate);
+			if (! $resqlupdate) {
+				$error++;
+				setEventMessages($db->lasterror(), null, 'errors');
 			}
 		}
 
@@ -302,10 +343,15 @@ if (empty($reshook)) {
 			$result = $tmp->create($user);
 			if ($result < 0) {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					setEventMessages($langs->trans("DuplicateRecord"), null, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 				} else {
 					dol_print_error($db, $tmp->error, $tmp->errors);
 				}
+			} else {
+				// Clear var
+				$_POST['batch'] = '';
+				$_POST['qtytoadd'] = '';
 			}
 		}
 	}
@@ -521,37 +567,35 @@ if ($object->id > 0) {
 
 	if ($object->status == Inventory::STATUS_VALIDATED) {
 		print '<center>';
-		if ($permissiontoadd) {
-			/*
-			 if (!empty($conf->barcode->enabled)) {
-			 print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
-			 }
-			 if (!empty($conf->productbatch->enabled)) {
-			 print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
-			 }*/
-			if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
-			}
-		} else {
-			print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
-		}
-		if ($permissiontoadd && $conf->use_javascript_ajax) {
-			print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+		if (!empty($conf->use_javascript_ajax)) {
+			if ($permissiontoadd) {
+				// Link to launch scan tool
+				if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
+				}
 
-			print '<script>';
-			print '$( document ).ready(function() {';
-			print '	$("#fillwithexpected").on("click",function fillWithExpected(){
-						$(".expectedqty").each(function(){
-							var object = $(this)[0];
-							var objecttofill = $("#"+object.id+"_input")[0];
-							objecttofill.value = object.innerText;
-						})
-						console.log("Values filled (after click on fillwithexpected)");
-						disablebuttonmakemovementandclose();
-						return false;
-			        });';
-			print '});';
-			print '</script>';
+				// Link to autofill
+				print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+				print '<script>';
+				print '$( document ).ready(function() {';
+				print '	$("#fillwithexpected").on("click",function fillWithExpected(){
+							$(".expectedqty").each(function(){
+								var object = $(this)[0];
+								var objecttofill = $("#"+object.id+"_input")[0];
+								objecttofill.value = object.innerText;
+							})
+							console.log("Values filled (after click on fillwithexpected)");
+							disablebuttonmakemovementandclose();
+							return false;
+				        });';
+				print '});';
+				print '</script>';
+
+				// Link to reset qty
+				print '<a href="#" id="clearqty" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'eraser', 'class="paddingrightonly"').$langs->trans("ClearQtys").'</a>';
+			} else {
+				print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+			}
 		}
 		print '<br>';
 		print '<br>';
@@ -562,21 +606,34 @@ if ($object->id > 0) {
 	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
 		if ($permissiontoadd) {
+			// Output the javascript to manage the scanner tool.
 			print '<script>';
 
 			print '
-			var errortab = [];
+			var errortab1 = [];
+			var errortab2 = [];
+			var errortab3 = [];
+			var errortab4 = [];
+
 			function barcodescannerjs(){
-				console.log("We catch inputs in sacnner box");
+				console.log("We catch inputs in scanner box");
+				jQuery("#scantoolmessage").text();
+
 				var selectaddorreplace = $("select[name=selectaddorreplace]").val();
 				var barcodemode = $("input[name=barcodemode]:checked").val();
 				var barcodeproductqty = $("input[name=barcodeproductqty]").val();
 				var textarea = $("textarea[name=barcodelist]").val();
-				var textarray = textarea.split("\n");
+				var textarray = textarea.split(/[\s,;]+/);
 				var tabproduct = [];
+				errortab1 = [];
+				errortab2 = [];
+				errortab3 = [];
+				errortab4 = [];
+
 				if(textarray[0] != ""){
 					$(".expectedqty").each(function(){
 						id = this.id;
+						console.log("Analyze line "+id+" in inventory");
 						warehouse = $("#"+id+"_warehouse").children().first().text();
 						productbarcode = $("#"+id+"_product").children().first().attr("title");
 						productbarcode = productbarcode.split("<br>");
@@ -584,11 +641,10 @@ if ($object->id > 0) {
 						productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
 
 						productbatchcode = $("#"+id+"_batch").text();
-						if(barcodemode != "barcodeforproduct"){
+						if (barcodemode != "barcodeforproduct") {
 							tabproduct.forEach(product=>{
 								if(product.Batch != "" && product.Batch == productbatchcode){
-									alert("'.$langs->transnoentities('ErrorSameBatchNumber').': "+productbatchcode);
-									throw"'.$langs->transnoentities('ErrorSameBatchNumber').': "+productbatchcode;
+									errortab1.push(productbatchcode);
 								}
 							})
 						}
@@ -597,7 +653,8 @@ if ($object->id > 0) {
 							productinput = 0
 						}
 						tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':productinput,\'fetched\':false});
-					})
+					});
+
 					textarray.forEach(function(element,index){
 						var verify_batch = false;
 						var verify_barcode = false;
@@ -607,26 +664,31 @@ if ($object->id > 0) {
 								verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial",true);
 								break;
 							case "barcodeforproduct":
-								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"barcode");
+								verify_barcode = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"barcode");
 								break;
 							case "barcodeforlotserial":
-								barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial");
+								verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial");
 								break;
 							default:
 								alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
 								throw "'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
 						}
-						if(verify_batch == true && verify_barcode == true){
-							errortab.push(element);
+
+						if (verify_batch == false && verify_barcode == false) {		/* If the 2 flags are false, error */
+							errortab2.push(element);
+						}
+						if (verify_batch == true && verify_barcode == true) {		/* If the 2 flags are true, error: we don t know which one to take */
+							errortab3.push(element);
 						}
 					});
-					if (Object.keys(errortab).length < 1){
+
+					if (Object.keys(errortab1).length < 1 && Object.keys(errortab2).length < 1 && Object.keys(errortab3).length < 1) {
 						tabproduct.forEach(product => {
 							if(product.Qty!=0){
 								console.log("We change #"+product.Id+"_input to match input in scanner box");
 								if(product.hasOwnProperty("reelqty")){
 									$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-										data: { "action":"addnewlineproduct","fk_entrepot":product.Warehouse,"batch":product.Batch,"fk_inventory":'.dol_escape_js($object->id).',"fk_product":product.fk_product,"reelqty":product.reelqty},
+										data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js($object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
 										type: \'POST\',
 										async: false,
 										success: function(response) {
@@ -649,39 +711,67 @@ if ($object->id > 0) {
 									$("#"+product.Id+"_input").val(product.Qty);
 								}
 							}
-						})
-						document.forms["formrecord"].submit();
-					}else{
-						let stringerror = "";
-						errortab.forEach(element => {
-							stringerror += (element + ",")
 						});
-						stringerror = stringerror.slice(0, -1);
-						alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
+						jQuery("#scantoolmessage").text("'.$langs->trans("QtyWasAddedToTheScannedBarcode").'\n");
+						/* document.forms["formrecord"].submit(); */
+					} else {
+						let stringerror = "";
+						if (Object.keys(errortab1).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorSameBatchNumber').': ";
+							errortab1.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+						if (Object.keys(errortab2).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorCantFindCodeInInventory').': ";
+							errortab2.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+						if (Object.keys(errortab3).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial').': ";
+							errortab3.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+						if (Object.keys(errortab4).length > 0) {
+							stringerror += "<br>'.$langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse').': ";
+							errortab4.forEach(element => {
+								stringerror += (element + ", ")
+							});
+							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+						}
+
+						jQuery("#scantoolmessage").text("'.$langs->trans("ErrorOnElementsInventory").'\n" + stringerror);
+						//alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
 					}
 				}
 
 			}
 
+			/* This methode is called by parent barcodescannerjs() */
 			function barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,mode,autodetect=false){
 				BarcodeIsInProduct=0;
 				newproductrow=0
 				result=false;
 				tabproduct.forEach(product => {
 					$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-						data: { "action":"existbarcode",'.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.',':'').(!empty($object->fk_product)?'"fk_product":'.$object->fk_product.',':'').'"barcode":element,"product":product,"mode":mode},
+						data: { "token":"'.newToken().'", "action":"existbarcode", '.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.', ':'').(!empty($object->fk_product)?'"fk_product":'.$object->fk_product.', ':'').'"barcode":element, "product":product, "mode":mode},
 						type: \'POST\',
 						async: false,
 						success: function(response) {
 							response = JSON.parse(response);
-							if(response.status == "success"){
+							if (response.status == "success"){
 								console.log(response.message);
 								if(!newproductrow){
 									newproductrow = response.object;
 								}
 							}else{
-								if (mode!="lotserial" && autodetect==false && !errortab.includes(element)){
-									errortab.push(element);
+								if (mode!="lotserial" && autodetect==false && !errortab4.includes(element)){
+									errortab4.push(element);
 									console.error(response.message);
 								}
 							}
@@ -726,13 +816,18 @@ if ($object->id > 0) {
 		}
 		include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($db);
-		print $formother->getHTMLScannerForm("barcodescannerjs");
+		print $formother->getHTMLScannerForm("barcodescannerjs", 'all');
 	}
 
 	//Call method to undo changes in real qty
 	print '<script>';
 	print 'jQuery(document).ready(function() {
-		$(".undochangesqty").on("click",function undochangesqty() {
+		$("#clearqty").on("click", function() {
+			console.log("Clear all values");
+			jQuery(".realqty").val("");
+			return false;	/* disable submit */
+		});
+		$(".undochangesqty").on("click", function undochangesqty() {
 			console.log("Clear value of inventory line");
 			id = this.id;
 			id = id.split("_")[1];
@@ -766,8 +861,13 @@ if ($object->id > 0) {
 	print $form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp"));
 	print '</td>';
 	if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
-		// Actions
+		// Actions or link to stock movement
 		print '<td class="center">';
+		print '</td>';
+	} else {
+		// Actions or link to stock movement
+		print '<td class="right">';
+		//print $langs->trans("StockMovement");
 		print '</td>';
 	}
 	print '</tr>';
@@ -799,7 +899,7 @@ if ($object->id > 0) {
 
 	// Request to show lines of inventory (prefilled after start/validate step)
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
-	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
+	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 
@@ -826,6 +926,7 @@ if ($object->id > 0) {
 				$cacheOfWarehouses[$warehouse_static->id] = $warehouse_static;
 			}
 
+			// Load real stock we have now
 			if (isset($cacheOfProducts[$obj->fk_product])) {
 				$product_static = $cacheOfProducts[$obj->fk_product];
 			} else {
@@ -834,7 +935,7 @@ if ($object->id > 0) {
 
 				//$option = 'nobatch';
 				$option .= ',novirtual';
-				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
+				$product_static->load_stock($option); // Load stock_reel + stock_warehouse.
 
 				$cacheOfProducts[$product_static->id] = $product_static;
 			}
@@ -855,14 +956,14 @@ if ($object->id > 0) {
 
 			// Expected quantity = Quantity in stock when we start inventory
 			print '<td class="right expectedqty" id="id_'.$obj->rowid.'" title="Stock viewed at last update: '.$obj->qty_stock.'">';
+			$valuetoshow = $obj->qty_stock;
+			// For inventory not yet close, we overwrite with the real value in stock now
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
 				if ($conf->productbatch->enabled && $product_static->hasbatch()) {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 				} else {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
 				}
-			} else {
-				$valuetoshow = $obj->qty_stock;
 			}
 			print price2num($valuetoshow, 'MS');
 			print '<input type="hidden" name="stock_qty_'.$obj->rowid.'" value="'.$valuetoshow.'">';
@@ -891,8 +992,15 @@ if ($object->id > 0) {
 				print '<input type="hidden" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 				print '</td>';
 			} else {
-				print '<td class="right">';
+				print '<td class="right nowraponall">';
 				print $obj->qty_view;	// qty found
+				print '</td>';
+				print '<td class="nowraponall right">';
+				if ($obj->fk_movement > 0) {
+					$stockmovment = new MouvementStock($db);
+					$stockmovment->fetch($obj->fk_movement);
+					print $stockmovment->getNomUrl(1, 'movements');
+				}
 				print '</td>';
 			}
 			print '</tr>';
