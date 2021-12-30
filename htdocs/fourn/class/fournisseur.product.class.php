@@ -817,8 +817,9 @@ class ProductFournisseur extends Product
 				$min = -1;
 				foreach ($record_array as $record) {
 					$fourn_price = $record["price"];
-					// discount calculated buy price
-					$fourn_unitprice = $record["unitprice"] * (1 - $record["remise_percent"] / 100) - $record["remise"];
+					// calculate unit price for quantity 1
+					$fourn_unitprice = $record["unitprice"];
+
 					if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
