@@ -4104,10 +4104,10 @@ if ($action == 'create') {
 	}
 
 	// Confirmation du classement paye
-	if ($action == 'paid' && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) && $resteapayer == $object->total_ttc))) {
+	if ($action == 'paid' && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) && $resteapayer == $object->total_ttc))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 1);
 	}
-	if ($action == 'paid' && $resteapayer > 0 && (empty($conf->global->INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) || $resteapayer != $object->total_ttc)) {
+	if ($action == 'paid' && $resteapayer > 0 && (empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) || $resteapayer != $object->total_ttc)) {
 		$close = array();
 		// Code
 		$i = 0;
@@ -5436,7 +5436,8 @@ if ($action == 'create') {
 				}
 			}
 
-			$sumofpayment = $object->getSommePaiement();
+			$sumofpayment = $totalpaye;
+			$sumofpaymentall = $totalpaye + $totalcreditnotes + $totaldeposits;
 
 			// Reverse back money or convert to reduction
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
@@ -5460,8 +5461,8 @@ if ($action == 'create') {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > 0 && empty($discount->id)) {
-					if (price2num($object->total_ttc, 'MT') == price2num($sumofpayment, 'MT')) {
+				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > Facture::STATUS_DRAFT && empty($discount->id)) {
+					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT')) {
 						// We can close a down payment only if paid amount is same than amount of down payment (by definition)
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
 					} else {
@@ -5472,12 +5473,12 @@ if ($action == 'create') {
 
 			// Classify paid
 			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment && (
-					($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) && $object->total_ttc == $resteapayer))) ||
+					($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) && $object->total_ttc == $resteapayer))) ||
 					($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0) ||
 					($object->type == Facture::TYPE_DEPOSIT && $object->total_ttc > 0)
 				)
 			) {
-				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') != price2num($sumofpayment, 'MT')) {
+				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') != price2num($sumofpaymentall, 'MT')) {
 					// We can close a down payment only if paid amount is same than amount of down payment (by definition)
 					print '<span class="butActionRefused" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ClassifyPaid').'</span>';
 				} else {
@@ -5486,7 +5487,7 @@ if ($action == 'create') {
 			}
 
 			// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
-			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (empty($conf->global->INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) || $resteapayer != $object->total_ttc) && $usercanissuepayment) {
+			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) || $resteapayer != $object->total_ttc) && $usercanissuepayment) {
 				if ($totalpaye > 0 || $totalcreditnotes > 0) {
 					// If one payment or one credit note was linked to this invoice
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
