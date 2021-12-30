@@ -1649,8 +1649,9 @@ if ($action == 'create') {
 			$(document).ready(function() {
 				$("#socid").change(function() {
 					var socid = $(this).val();
+					var prjid = $("#projectid").val();
 					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&projectid="+prjid
 				});
 			});
 			</script>';
