@@ -269,15 +269,15 @@ class Products extends DolibarrApi
 			$total = $this->db->fetch_object($totalsResult)->total;
 
 			$tmp = $obj_ret;
-			$obj_ret = [];
+			$obj_ret = array();
 
 			$obj_ret['data'] = $tmp;
-			$obj_ret['pagination'] = [
+			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
 				'page_count' => ceil((int) $total/$limit),
 				'limit' => $limit
-			];
+			);
 		}
 
 		return $obj_ret;
@@ -462,8 +462,8 @@ class Products extends DolibarrApi
 
 		$childsArbo = $this->product->getChildsArbo($id, 1);
 
-		$keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec', 'ref'];
-		$childs = [];
+		$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'incdec', 'ref');
+		$childs = array();
 		foreach ($childsArbo as $values) {
 			$childs[] = array_combine($keys, $values);
 		}
@@ -1023,7 +1023,7 @@ class Products extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve product attribute list : '.$this->db->lasterror());
 		}
 
-		$return = [];
+		$return = array();
 		while ($result = $this->db->fetch_object($query)) {
 			$tmp = new ProductAttribute($this->db);
 			$tmp->id = $result->rowid;
@@ -1113,7 +1113,7 @@ class Products extends DolibarrApi
 
 		$result = $this->db->fetch_object($query);
 
-		$attr = [];
+		$attr = array();
 		$attr['id'] = $result->rowid;
 		$attr['ref'] = $result->ref;
 		$attr['ref_ext'] = $result->ref_ext;
@@ -1160,7 +1160,7 @@ class Products extends DolibarrApi
 
 		$result = $this->db->fetch_object($query);
 
-		$attr = [];
+		$attr = array();
 		$attr['id'] = $result->rowid;
 		$attr['ref'] = $result->ref;
 		$attr['ref_ext'] = $result->ref_ext;
@@ -1317,7 +1317,7 @@ class Products extends DolibarrApi
 
 		$result = $this->db->fetch_object($query);
 
-		$attrval = [];
+		$attrval = array();
 		$attrval['id'] = $result->rowid;
 		$attrval['fk_product_attribute'] = $result->fk_product_attribute;
 		$attrval['ref'] = $result->ref;
@@ -1361,7 +1361,7 @@ class Products extends DolibarrApi
 
 		$result = $this->db->fetch_object($query);
 
-		$attrval = [];
+		$attrval = array();
 		$attrval['id'] = $result->rowid;
 		$attrval['fk_product_attribute'] = $result->fk_product_attribute;
 		$attrval['ref'] = $result->ref;
@@ -2029,8 +2029,8 @@ class Products extends DolibarrApi
 		if ($includesubproducts) {
 			$childsArbo = $this->product->getChildsArbo($id, 1);
 
-			$keys = ['rowid', 'qty', 'fk_product_type', 'label', 'incdec'];
-			$childs = [];
+			$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'incdec');
+			$childs = array();
 			foreach ($childsArbo as $values) {
 				$childs[] = array_combine($keys, $values);
 			}
