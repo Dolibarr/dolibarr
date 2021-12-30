@@ -187,7 +187,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => $price,
 					);
 

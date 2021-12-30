@@ -180,7 +180,7 @@ class box_produits extends ModeleBoxes
 						}
 					}
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => $price,
 					);
 
