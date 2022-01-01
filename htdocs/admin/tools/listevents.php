@@ -73,12 +73,12 @@ $optioncss = GETPOST("optioncss", "aZ"); // Option for the css output (always ''
 $now = dol_now();
 $nowarray = dol_getdate($now);
 
-if (GETPOST("date_startmonth") > 0) {
+if (GETPOST("date_startmonth", 'int') > 0) {
 	$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth", 'int'), GETPOST("date_startday", 'int'), GETPOST("date_startyear", 'int'), 'tzuserrel');
 } else {
 	$date_start = '';
 }
-if (GETPOST("date_endmonth") > 0) {
+if (GETPOST("date_endmonth", 'int') > 0) {
 	$date_end = dol_get_last_hour(dol_mktime(23, 59, 59, GETPOST("date_endmonth", 'int'), GETPOST("date_endday", 'int'), GETPOST("date_endyear", 'int'), 'tzuserrel'), 'tzuserrel');
 } else {
 	$date_end = '';
@@ -90,7 +90,6 @@ if ($date_start !== '' && $date_end !== '' && $date_start > $date_end) {
 }
 
 
-
 if (!GETPOSTISSET('pageplusoneold') && !GETPOSTISSET('page') && $date_start === '') { // We define date_start and date_end
 	$date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], 'tzuserrel');
 }
@@ -99,12 +98,12 @@ if (!GETPOSTISSET('pageplusoneold') && !GETPOSTISSET('page') && $date_end === ''
 }
 
 // Set $date_startmonth...
-$date_startday = null;
-$date_startmonth = null;
-$date_startyear = null;
-$date_endday = null;
-$date_endmonth = null;
-$date_endyear = null;
+$date_startday = '';
+$date_startmonth = '';
+$date_startyear = '';
+$date_endday = '';
+$date_endmonth = '';
+$date_endyear = '';
 if ($date_start !== '') {
 	$tmp = dol_getdate($date_start);
 	$date_startday = $tmp['mday'];
@@ -139,6 +138,12 @@ $now = dol_now();
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$date_start = '';
 	$date_end = '';
+	$date_startday = '';
+	$date_endday = '';
+	$date_startmonth = '';
+	$date_endmonth = '';
+	$date_startyear = '';
+	$date_endyear = '';
 	$search_code = '';
 	$search_ip = '';
 	$search_user = '';
@@ -241,8 +246,8 @@ $nbtotalofrecords = '';
 	}
 }*/
 
-$sql .= $db->plimit($conf->liste_limit + 1, $offset);
-//print $sql;
+$sql .= $db->plimit($limit + 1, $offset);
+
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
