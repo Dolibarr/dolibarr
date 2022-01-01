@@ -1460,6 +1460,7 @@ class Expedition extends CommonObject
 
 		// delete batch expedition line
 		if (!$error) {
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
