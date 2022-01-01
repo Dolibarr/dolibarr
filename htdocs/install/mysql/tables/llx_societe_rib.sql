@@ -27,7 +27,7 @@ create table llx_societe_rib
   label          varchar(200),
   fk_soc         integer NOT NULL,
   datec          datetime,
-  tms            timestamp,
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   -- For BAN
   bank           varchar(255),  -- bank name
@@ -35,8 +35,10 @@ create table llx_societe_rib
   code_guichet   varchar(6),    -- desk code
   number         varchar(255),  -- account number
   cle_rib        varchar(5),    -- key of bank account
-  bic            varchar(20),  -- 11 according to ISO 9362 (we keep 20 for backward compatibility)
+
+  bic            varchar(20),   -- 11 according to ISO 9362 (we keep 20 for backward compatibility)
   iban_prefix    varchar(34),	-- full iban. 34 according to ISO 13616
+
   domiciliation  varchar(255),
   proprio        varchar(60),
   owner_address  varchar(255),

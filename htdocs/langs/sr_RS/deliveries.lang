@@ -27,5 +27,7 @@ Recipient=Primalac
 ErrorStockIsNotEnough=Nema dovoljno zaliha
 Shippable=Isporučivo
 NonShippable=Nije isporučivo
+ShowShippableStatus=Show shippable status
 ShowReceiving=Show delivery receipt
 NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

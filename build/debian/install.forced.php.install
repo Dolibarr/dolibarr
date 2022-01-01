@@ -24,6 +24,7 @@ $force_install_databaserootpass='__SUPERUSERPASSWORD__';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
+$force_install_distrib='debian';
 
 // Value to overwrite path to use shared libraries/fonts instead of embedded one.
 // If during install, we enable/disable declaration to use non embedded libraries, we must also check they are 
@@ -34,7 +35,6 @@ $force_install_lockinstall='444';
 //$force_dolibarr_lib_GEOIP_PATH='';
 //$force_dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
 //$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip';
-//$force_dolibarr_lib_PHPEXCEL_PATH='';	// Use '' or 'disabled'
 //$force_dolibarr_js_CKEDITOR='/javascript/ckeditor';	// Use '/javascript/ckeditor' or 'disabled'
 //$force_dolibarr_js_JQUERY='/javascript/jquery';
 //$force_dolibarr_js_JQUERY_UI='/javascript/jquery-ui';

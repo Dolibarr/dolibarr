@@ -27,5 +27,7 @@ Recipient=Penerima
 ErrorStockIsNotEnough=Tidak ada stok yang cukup
 Shippable=Dapat dikirim
 NonShippable=Tidak Dapat Dikirim
+ShowShippableStatus=Tampilkan status yang dapat dikirim
 ShowReceiving=Tampilkan tanda terima pengiriman
 NonExistentOrder=Pesanan tidak ada
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Jumlah stok sudah dialokasikan pada baris sebelumnya

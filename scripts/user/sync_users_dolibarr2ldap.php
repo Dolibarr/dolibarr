@@ -23,6 +23,11 @@
  * \ingroup ldap core
  * \brief Script de mise a jour des users dans LDAP depuis base Dolibarr
  */
+
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -106,7 +111,6 @@ if ($resql) {
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	dol_print_error($db);
 }

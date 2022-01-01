@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal-modul installation
 PaypalDesc=Denna modul tillåter betalning av kunder via <a href="http://www.paypal.com" target="_blank"> PayPal </a>. Detta kan användas för en ad hoc-betalning eller för en betalning relaterad till ett Dolibarr-objekt (faktura, order, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
+PaypalOrCBDoPayment=Betala med PayPal (kort eler PayPal)
 PaypalDoPayment=Betala med PayPal
 PAYPAL_API_SANDBOX=Läge test / sandlåda
 PAYPAL_API_USER=API användarnamn
@@ -32,5 +32,5 @@ PaypalImportPayment=Importera PayPal-betalningar
 PostActionAfterPayment=Posta åtgärder efter betalningar
 ARollbackWasPerformedOnPostActions=En återuppringning utfördes på alla Post-åtgärder. Du måste fylla i posthandlingar manuellt om det behövs.
 ValidationOfPaymentFailed=Bekräftandet av betalningen har misslyckats
-CardOwner=Card holder
-PayPalBalance=Paypal credit
+CardOwner=Kortinnehavare
+PayPalBalance=PayPal Kredit

@@ -27,5 +27,7 @@ Recipient=Modtager
 ErrorStockIsNotEnough=Der er ikke nok lager
 Shippable=Fragtvarer
 NonShippable=Kan ikke sendes
+ShowShippableStatus=Vis status, der kan sendes
 ShowReceiving=Vis leverings kvittering
 NonExistentOrder=ikke-eksisterende ordre
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Lagermængder, der allerede er tildelt på tidligere linjer

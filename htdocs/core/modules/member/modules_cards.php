@@ -40,7 +40,7 @@ class ModelePDFCards
 	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -48,18 +48,18 @@ class ModelePDFCards
 	 *	@param	integer	$maxfilenamelength	Max length of value to show
 	 *	@return	array						List of templates
 	 */
-	public function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'member';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -74,11 +74,12 @@ class ModelePDFCards
  *	@param	Translate	$outputlangs	Object langs to use for translation
  *	@param	string		$outputdir		Output directory
  *	@param	string		$template		pdf generenate document class to use default 'standard'
+ *  @param	string		$filename		Name of output file (without extension)
  *	@return int							<0 if KO, >0 if OK
  */
-function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard')
+function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard', $filename = 'tmp_cards')
 {
-    // phpcs:enable
+	// phpcs:enable
 	global $conf, $langs;
 	$langs->load("members");
 
@@ -94,54 +95,53 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 	$srctemplatepath = '';
 
 	// Positionne le modele sur le nom du modele a utiliser
-	if (!dol_strlen($modele))
-	{
-		if (!empty($conf->global->ADHERENT_CARDS_ADDON_PDF))
-		{
+	if (!dol_strlen($modele)) {
+		if (!empty($conf->global->ADHERENT_CARDS_ADDON_PDF)) {
 			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
-		}
-		else
-		{
+		} else {
 			$code = $modele;
 		}
+	} else {
+		$code = $modele;
 	}
-	else $code = $modele;
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp = explode(':', $template, 2);
-	if (!empty($tmp[1]))
-	{
+	if (!empty($tmp[1])) {
 		$template = $tmp[0];
 		$srctemplatepath = $tmp[1];
+	} else {
+		$srctemplatepath = $code;
 	}
-	else $srctemplatepath = $code;
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
-		foreach (array('doc', 'pdf') as $prefix)
-		{
+	if (is_array($conf->modules_parts['models'])) {
+		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+	}
+	foreach ($dirmodels as $reldir) {
+		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$template.".class.php";
 
-			// On verifie l'emplacement du modele
+			// We check that file of doc generaotr exists
 			$file = dol_buildpath($reldir."core/modules/member/doc/".$file, 0);
-			if (file_exists($file))
-			{
+			if (file_exists($file)) {
 				$filefound = 1;
 				$classname = $prefix.'_'.$template;
 				break;
 			}
 		}
-		if ($filefound) break;
+		if ($filefound) {
+			break;
+		}
 	}
 
 
 	// Charge le modele
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$obj = new $classname($db);
@@ -149,21 +149,15 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($arrayofmembers, $outputlangs, $srctemplatepath) > 0)
-		{
+		if ($obj->write_file($arrayofmembers, $outputlangs, $srctemplatepath, 'member', 0, $filename) > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "members_card_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-	}
-
-	else
-	{
+	} else {
 		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}

@@ -23,9 +23,9 @@ AddLoan=Crear crédito
 FinancialCommitment=Prestamo
 InterestAmount=Interés
 CapitalRemain=Capital restante
-TermPaidAllreadyPaid = This term is allready paid
-CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
-CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
+TermPaidAllreadyPaid = Este plazo ya está pagado
+CantUseScheduleWithLoanStartedToPaid = No se puede usar el programador para un préstamo con el pago iniciado
+CantModifyInterestIfScheduleIsUsed = No puede modificar el interés si usa el programador
 # Admin
 ConfigLoan=Configuración del módulo préstamos
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta contable por defecto para el capital

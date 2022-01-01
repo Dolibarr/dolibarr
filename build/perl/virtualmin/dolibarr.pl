@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
-# \author       (c)2009-2019 Regis Houssin  <regis.houssin@inodbox.com>
+# \author       (c)2009-2020 Regis Houssin  <regis.houssin@inodbox.com>
 #----------------------------------------------------------------------------
 
 
@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "10.0.0", "9.0.3", "8.0.5", "7.0.5", "6.0.8" );
+return ( "12.0.3", "11.0.5", "10.0.7", "9.0.4", "8.0.6", "7.0.5" );
 }
 
 sub script_dolibarr_release
@@ -75,6 +75,16 @@ if ($ver >= 3.6) {
 		}
 	elsif ($phpv < 5.3) {
 		push(@rv, "Dolibarr requires PHP version 5.3 or later");
+		}
+	}
+if ($ver >= 12.0) {
+	# Check for PHP 5.6+
+	local $phpv = &get_php_version($phpver || 5, $d);
+	if (!$phpv) {
+		push(@rv, "Could not work out exact PHP version");
+		}
+	elsif ($phpv < 5.6) {
+		push(@rv, "Dolibarr requires PHP version 5.6 or later");
 		}
 	}
 
@@ -376,7 +386,7 @@ sub script_dolibarr_realversion
 local ($d, $opts, $sinfo) = @_;
 local $lref = &read_file_lines("$opts->{'dir'}/filefunc.inc.php", 1);
 foreach my $l (@$lref) {
-		if ($l =~ /'DOL_VERSION','([0-9a-z\.\-]+)'/) {
+		if ($l =~ /'DOL_VERSION',\s?'([0-9a-z\.\-]+)'/) {
                 return $1;
                 }
         }
@@ -390,6 +400,8 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
+				$ver >= 12.0 ? "dolibarr\\-(12\\.0\\.[0-9\\.]+)\\.tgz" :
+				$ver >= 11.0 ? "dolibarr\\-(11\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 10.0 ? "dolibarr\\-(10\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 9.0 ? "dolibarr\\-(9\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 8.0 ? "dolibarr\\-(8\\.0\\.[0-9\\.]+)\\.tgz" :
@@ -410,7 +422,7 @@ return $ver eq $vers[0] ? undef : $vers[0];
 
 sub script_dolibarr_site
 {
-return 'http://www.dolibarr.org/';
+return 'https://www.dolibarr.org/';
 }
 
 sub script_dolibarr_passmode

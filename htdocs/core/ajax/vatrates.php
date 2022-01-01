@@ -20,14 +20,20 @@
  *       \brief      File to load vat rates combobox
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 require '../../main.inc.php';
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $htmlname	= GETPOST('htmlname', 'alpha');
 $selected	= (GETPOST('selected') ?GETPOST('selected') : '-1');
 $productid = (GETPOST('productid', 'int') ?GETPOST('productid', 'int') : 0);
@@ -41,20 +47,16 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Load original field value
-if (!empty($id) && !empty($action) && !empty($htmlname))
-{
+if (!empty($id) && !empty($action) && !empty($htmlname)) {
 	$form = new Form($db);
 	$soc = new Societe($db);
 
 	$soc->fetch($id);
 
-	if ($action == 'getSellerVATRates')
-	{
+	if ($action == 'getSellerVATRates') {
 		$seller = $mysoc;
 		$buyer = $soc;
-	}
-	else
-	{
+	} else {
 		$buyer = $mysoc;
 		$seller = $soc;
 	}

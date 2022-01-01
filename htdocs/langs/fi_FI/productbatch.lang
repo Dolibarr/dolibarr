@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Käytä erää / sarjanumeroa
-ProductStatusOnBatch=Kyllä (erä / sarja käytössä)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=Ei (erä / sarja ei ole käytössä)
-ProductStatusOnBatchShort=Kyllä
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Ei
 Batch=Erä/Sarjanumero
 atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
@@ -22,3 +24,21 @@ ProductLotSetup=Moduulin erän / sarjan asetukset
 ShowCurrentStockOfLot=Näytä nykyinen varasto pari tuotetta / erää kohti
 ShowLogOfMovementIfLot=Näytä siirto lokit pari tuotetta / erää kohti
 StockDetailPerBatch=Varastotiedot erää kohden
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+ManageLotMask=Custom mask
+CustomMasks=Option to define a different numbering mask for each product
+BatchLotNumberingModules=Numbering rule for automatic generation of lot number
+BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
+LifeTime=Life span (in days)
+EndOfLife=End of life
+ManufacturingDate=Manufacturing date
+DestructionDate=Destruction date
+FirstUseDate=First use date
+QCFrequency=Quality control frequency (in days)
+ShowAllLots=Show all lots
+HideLots=Hide lots
+#Traceability - qc status
+OutOfOrder=Out of order
+InWorkingOrder=In working order

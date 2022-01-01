@@ -34,7 +34,9 @@ define('NOTOKENRENEWAL', 1); // Disables token renewal
 require_once '../../../../main.inc.php';
 $uri = preg_replace('/^http(s?):\/\//i', '', $dolibarr_main_url_root);
 $pos = strstr($uri, '/'); // $pos contient alors url sans nom domaine
-if ($pos == '/') $pos = ''; // si $pos vaut /, on le met a ''
+if ($pos == '/') {
+	$pos = ''; // si $pos vaut /, on le met a ''
+}
 define('DOL_URL_ROOT', $pos);
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
 
@@ -81,14 +83,18 @@ $Config['HtmlExtensions'] = array("html", "htm", "xml", "xsd", "txt", "js");
 // Set to 0 to disable this feature.
 // Note: not needed on Windows-based servers.
 $newmask = '0644';
-if (!empty($conf->global->MAIN_UMASK)) $newmask = $conf->global->MAIN_UMASK;
+if (!empty($conf->global->MAIN_UMASK)) {
+	$newmask = $conf->global->MAIN_UMASK;
+}
 $Config['ChmodOnUpload'] = $newmask;
 
 // See comments above.
 // Used when creating folders that does not exist.
 $newmask = '0755';
 $dirmaskdec = octdec($newmask);
-if (!empty($conf->global->MAIN_UMASK)) $dirmaskdec = octdec($conf->global->MAIN_UMASK);
+if (!empty($conf->global->MAIN_UMASK)) {
+	$dirmaskdec = octdec($conf->global->MAIN_UMASK);
+}
 $dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
 $newmask = decoct($dirmaskdec);
 
@@ -130,14 +136,14 @@ $Config['ChmodOnFolderCreate'] = $newmask;
 		Attention: The above 'QuickUploadPath' must point to the same directory.
 		Attention: It must end with a slash: '/'
 
-	 	NOTE: by default, QuickUploadPath and QuickUploadAbsolutePath point to
-	 	"userfiles" directory to maintain backwards compatibility with older versions of FCKeditor.
-	 	This is fine, but you in some cases you will be not able to browse uploaded files using file browser.
-	 	Example: if you click on "image button", select "Upload" tab and send image
-	 	to the server, image will appear in FCKeditor correctly, but because it is placed
-	 	directly in /userfiles/ directory, you'll be not able to see it in built-in file browser.
-	 	The more expected behaviour would be to send images directly to "image" subfolder.
-	 	To achieve that, simply change
+		 NOTE: by default, QuickUploadPath and QuickUploadAbsolutePath point to
+		 "userfiles" directory to maintain backwards compatibility with older versions of FCKeditor.
+		 This is fine, but you in some cases you will be not able to browse uploaded files using file browser.
+		 Example: if you click on "image button", select "Upload" tab and send image
+		 to the server, image will appear in FCKeditor correctly, but because it is placed
+		 directly in /userfiles/ directory, you'll be not able to see it in built-in file browser.
+		 The more expected behaviour would be to send images directly to "image" subfolder.
+		 To achieve that, simply change
 			$Config['QuickUploadPath']['Image']			= $Config['UserFilesPath'] ;
 			$Config['QuickUploadAbsolutePath']['Image']	= $Config['UserFilesAbsolutePath'] ;
 		into:

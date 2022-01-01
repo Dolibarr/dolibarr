@@ -4,7 +4,6 @@ PaymentTypeShortCHQ=Cheque
 BankCode=BSB
 ChequeNumber=Cheque N°
 ChequeOrTransferNumber=Cheque/Transfer N°
-ChequeMaker=Cheque/Transfer transmitter
 ChequeBank=Bank of Cheque
 CheckBank=Cheque
 MenuCheques=Cheques

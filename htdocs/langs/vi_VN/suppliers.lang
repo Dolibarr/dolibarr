@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Nhà cung cấp
 SuppliersInvoice=Hóa đơn nhà cung cấp
+SupplierInvoices=Hóa đơn nhà cung cấp
 ShowSupplierInvoice=Hiển thị hóa đơn nhà cung cấp
 NewSupplier=Nhà cung cấp mới
 History=Lịch sử
@@ -38,10 +39,11 @@ MenuOrdersSupplierToBill=Đơn đặt hàng mua để xuất hóa đơn
 NbDaysToDelivery=Giao hàng chậm (ngày)
 DescNbDaysToDelivery=Giao hàng trễ nhất của các sản phẩm từ đơn đặt hàng này
 SupplierReputation=Uy tín nhà cung cấp
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Không đặt hàng
 NotTheGoodQualitySupplier=Chất lượng thấp
 ReputationForThisProduct=Uy tín
 BuyerName=Tên người mua
 AllProductServicePrices=Tất cả giá sản phẩm/ dịch vụ
-AllProductReferencesOfSupplier=Tất cả các tham chiếu sản phẩm/ dịch vụ của nhà cung cấp
+AllProductReferencesOfSupplier=All references of vendor
 BuyingPriceNumShort=Giá nhà cung cấp

@@ -23,7 +23,6 @@ StatsOnReceptionsOnlyValidated=Estadísticas realizadas en recepciones solo vali
 SendReceptionByEMail=Enviar recepción por correo electrónico
 SendReceptionRef=Presentación de la recepción %s
 ActionsOnReception=Eventos en recepción
-ReceptionCreationIsDoneFromOrder=Por el momento, la creación de una nueva recepción se realiza desde la tarjeta de pedido.
 ProductQtyInReceptionAlreadySent=Cantidad de producto de pedido abierto ya enviado
 ProductQtyInSuppliersReceptionAlreadyRecevied=Cantidad del producto de la orden de proveedor abierto ya recibida
 ValidateOrderFirstBeforeReception=Primero debe validar el pedido antes de poder hacer recepciones.

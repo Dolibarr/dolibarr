@@ -3,7 +3,7 @@
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * Source modified from part of fckeditor (http://www.fckeditor.net)
- * retreived as GPL v2 or later
+ * retrieved as GPL v2 or later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +94,10 @@ oConnector.ConnectorUrl = sConnUrl + ( sConnUrl.indexOf('?') != -1 ? '&' : '?' )
 var sServerPath = GetUrlParam( 'ServerPath' );
 if ( sServerPath.length > 0 )
 	oConnector.ConnectorUrl += 'ServerPath=' + encodeURIComponent( sServerPath ) + '&' ;
+
+/* @CHANGE LDR Overwrite value coming from parameters for security purpose */
+oConnector.ConnectorUrl = '<?php echo DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php?'; ?>';
+console.log('ConnectorUrl='+oConnector.ConnectorUrl);
 
 oConnector.ResourceType		= GetUrlParam( 'Type' );
 oConnector.ShowAllTypes		= ( oConnector.ResourceType.length == 0 );

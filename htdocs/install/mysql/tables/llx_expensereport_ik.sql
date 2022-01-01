@@ -5,7 +5,7 @@
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
+-- the Free Software Foundation; either version 3 of the License, or
 -- (at your option) any later version.
 --
 -- This program is distributed in the hope that it will be useful,
@@ -21,10 +21,10 @@
 CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     rowid           integer  AUTO_INCREMENT PRIMARY KEY,
     datec           datetime  DEFAULT NULL,
-    tms             timestamp,
+    tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
     fk_range        integer DEFAULT 0 NOT NULL,	  	  
     coef            double DEFAULT 0 NOT NULL,  
-    ikoffset          double DEFAULT 0 NOT NULL,
+    ikoffset        double DEFAULT 0 NOT NULL,
     active          integer DEFAULT 1         
 )ENGINE=innodb;

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011-2015 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2015 Regis Houssin <regis.houssin@inodbox.com>
+ * Copyright (C) 2021      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +21,36 @@
  *       \brief      File to set or del an on/off constant
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // Token is required even in GET mode
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
+$entity = GETPOST('entity', 'int');
+$value = ((GETPOST('value', 'int') || GETPOST('value', 'int') == '0') ? GETPOST('value', 'int') : 1);
+
 
 /*
  * View
@@ -46,21 +65,15 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-// Registering the location of boxes
-if (!empty($action) && !empty($name))
-{
-	$entity = GETPOST('entity', 'int');
-	$value = (GETPOST('value') ?GETPOST('value') : 1);
-
-	if ($user->admin)
-	{
-		if ($action == 'set')
-		{
+// Registering the new value of constant
+if (!empty($action) && !empty($name)) {
+	if ($user->admin) {
+		if ($action == 'set') {
 			dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
-		}
-		elseif ($action == 'del')
-		{
+		} elseif ($action == 'del') {
 			dolibarr_del_const($db, $name, $entity);
 		}
 	}
+} else {
+	http_response_code(403);
 }

@@ -1,9 +1,6 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubriques=Tags/Catégories
 RubriquesTransactions=Tags / Catégories de transactions
-MembersCategoriesArea=Espace tags/catégories de membres
-AccountsCategoriesArea=Étiquettes / catégories de comptes
-ProjectsCategoriesArea=Zone de tags / catégories de projets
 ImpossibleAddCat=Impossible d'ajouter le tag / catégorie %s
 ProductIsInCategories=Produit/service appartient aux tags/catégories suivant(e)s
 CompanyIsInCustomersCategories=Ce tiers appartient aux tags/catégories de clients/prospects suivant(e)s
@@ -22,4 +19,4 @@ ProductsCategoriesShort=Tags/catégories de produits
 MembersCategoriesShort=Tags/catégories de membres
 AccountsCategoriesShort=Étiquettes / catégories de comptes
 ProjectsCategoriesShort=Projets Tags / catégories
-CatProJectLinks=Liens entre projets et tags / catégories
+CatMembersLinks=Liens entre membres et libellés/catégories

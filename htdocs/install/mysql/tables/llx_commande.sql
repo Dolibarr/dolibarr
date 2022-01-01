@@ -32,7 +32,7 @@ create table llx_commande
   fk_soc					integer NOT NULL,
   fk_projet					integer DEFAULT NULL,			-- projet auquel est rattache la commande
 
-  tms						timestamp,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   date_creation				datetime,						-- date de creation 
   date_valid				datetime,						-- date de validation
   date_cloture				datetime,						-- date de cloture
@@ -47,7 +47,7 @@ create table llx_commande
   remise_percent			real      default 0,
   remise_absolue			real      default 0,
   remise					real      default 0,
-  tva						double(24,8)     default 0,
+  total_tva                 double(24,8)     default 0,
   localtax1					double(24,8)     default 0,	-- total localtax1 
   localtax2					double(24,8)     default 0,	-- total localtax2
   total_ht					double(24,8)     default 0,
@@ -64,8 +64,8 @@ create table llx_commande
   fk_currency				varchar(3),						-- currency code
   fk_cond_reglement			integer,						-- condition de reglement
   fk_mode_reglement			integer,						-- mode de reglement
-  
-  date_livraison			date 	  default NULL,
+
+  date_livraison			datetime 	  default NULL,
   fk_shipping_method		integer,						-- shipping method id
   fk_warehouse				integer default NULL,
   fk_availability			integer NULL,
@@ -77,7 +77,7 @@ create table llx_commande
   extraparams				varchar(255),					-- for stock other parameters with json format
   
   fk_multicurrency			integer,
-  multicurrency_code		varchar(255),
+  multicurrency_code		varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

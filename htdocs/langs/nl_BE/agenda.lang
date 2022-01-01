@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
 EventReports=Gebeurtenisrapporten
-ToUserOfGroup=Aan elke gebruiker in groep
 ViewPerType=Overzicht per type
 AgendaAutoActionDesc=Hier kunt u gebeurtenissen definiëren die u Dolibarr automatisch in Agenda wilt laten maken. Als er niets wordt gecontroleerd, worden alleen handmatige acties opgenomen in logboeken en weergegeven in Agenda. Automatisch bijhouden van zakelijke acties die worden uitgevoerd op objecten (validatie, statuswijziging), wordt niet opgeslagen.
 AgendaSetupOtherDesc=Deze pagina biedt opties voor het exporteren van uw Dolibarr-evenementen naar een externe agenda (Thunderbird, Google Agenda, enz.)
@@ -39,6 +38,5 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> om de uitvoer van acties te beperken
 AgendaUrlOptions4=<b>logint=%s</b> om de uitvoer van acties te beperken die aan de gebruiker <b>%s</b> is toegewezen. (eigenaar en anderen).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken tot acties die zijn gekoppeld aan project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenis uit te sluiten.
-AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?

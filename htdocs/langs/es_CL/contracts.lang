@@ -18,7 +18,6 @@ AddContract=Crear actividad
 ConfirmDeleteAContract=¿Seguro que quieres eliminar este contrato y todos sus servicios?
 ConfirmValidateContract=¿Estas seguro que deseas validar este contrato con el nombre de <b>%s</b>?
 ConfirmActivateAllOnContract=Esto abrirá todos los servicios (aún no activos). ¿Estás seguro de que deseas abrir todos los servicios?
-ConfirmCloseContract=Esto cerrará todos los servicios (activos o no). ¿Seguro que quieres cerrar este contrato?
 ConfirmCloseService=¿Estas seguro que quieres cerrar este servicio con fecha <b>%s</b>?
 ActivateService=Activar servicio
 ConfirmActivateService=¿Estas seguro que quieres activar este servicio con fecha <b>%s</b>?

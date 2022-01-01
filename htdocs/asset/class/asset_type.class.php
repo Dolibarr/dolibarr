@@ -42,7 +42,7 @@ class AssetType extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'invoice';
+	public $picto = 'asset';
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -87,7 +87,7 @@ class AssetType extends CommonObject
 	 *
 	 *	@param 		DoliDB		$db		Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -100,8 +100,8 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-    public function create($user, $notrigger = 0)
-    {
+	public function create($user, $notrigger = 0)
+	{
 		global $conf;
 
 		$error = 0;
@@ -126,49 +126,43 @@ class AssetType extends CommonObject
 		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
 		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
 		$sql .= ", '".$this->db->escape($this->note)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog("Asset_type::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."asset_type");
 
 			$result = $this->update($user, 1);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->db->rollback();
 				return -3;
 			}
 
-			if (!$notrigger)
-			{
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('ASSET_TYPE_CREATE', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *  Met a jour en base donnees du type
@@ -177,7 +171,7 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-    public function update($user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -194,45 +188,38 @@ class AssetType extends CommonObject
 		$sql .= "accountancy_code_depreciation_asset = '".$this->db->escape($this->accountancy_code_depreciation_asset)."',";
 		$sql .= "accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."',";
 		$sql .= "note = '".$this->db->escape($this->note)."'";
-		$sql .= " WHERE rowid =".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error)
-			{
+			if (!$error) {
 				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 				}
 			}
 
-			if (!$error && !$notrigger)
-			{
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('ASSET_TYPE_MODIFY', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 				return -$error;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -251,21 +238,20 @@ class AssetType extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."asset_type";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			// Call trigger
 			$result = $this->call_trigger('ASSET_TYPE_DELETE', $user);
-			if ($result < 0) { $error++; $this->db->rollback(); return -2; }
+			if ($result < 0) {
+				$error++; $this->db->rollback(); return -2;
+			}
 			// End call triggers
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -287,10 +273,8 @@ class AssetType extends CommonObject
 		dol_syslog("Asset_type::fetch", LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -303,15 +287,13 @@ class AssetType extends CommonObject
 			}
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of asset's type
 	 *
@@ -319,7 +301,7 @@ class AssetType extends CommonObject
 	 */
 	public function liste_array()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		$assettypes = array();
@@ -329,24 +311,19 @@ class AssetType extends CommonObject
 		$sql .= " WHERE entity IN (".getEntity('asset_type').")";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$nump = $this->db->num_rows($resql);
 
-			if ($nump)
-			{
+			if ($nump) {
 				$i = 0;
-				while ($i < $nump)
-				{
+				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
 
 					$assettypes[$obj->rowid] = $langs->trans($obj->label);
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 		}
 		return $assettypes;
@@ -355,7 +332,7 @@ class AssetType extends CommonObject
 	/**
 	 * 	Return array of Asset objects for asset type this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude
+	 * 	@param	string	$excludefilter		Filter string to exclude. This parameter must not be provided by input of users
 	 *  @param	int		$mode				0=Return array of asset instance
 	 *  									1=Return array of asset instance without extra data
 	 *  									2=Return array of asset id only
@@ -370,19 +347,17 @@ class AssetType extends CommonObject
 		$sql = "SELECT a.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."asset as a";
 		$sql .= " WHERE a.entity IN (".getEntity('asset').")";
-		$sql .= " AND a.fk_asset_type = ".$this->id;
-		if (!empty($excludefilter)) $sql .= ' AND ('.$excludefilter.')';
+		$sql .= " AND a.fk_asset_type = ".((int) $this->id);
+		if (!empty($excludefilter)) {
+			$sql .= ' AND ('.$excludefilter.')';
+		}
 
 		dol_syslog(get_class($this)."::listAssetsForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				if (!array_key_exists($obj->rowid, $ret))
-				{
-					if ($mode < 2)
-					{
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (!array_key_exists($obj->rowid, $ret)) {
+					if ($mode < 2) {
 						$assetstatic = new Asset($this->db);
 						if ($mode == 1) {
 							$assetstatic->fetch($obj->rowid, '', '', '', false, false);
@@ -390,8 +365,9 @@ class AssetType extends CommonObject
 							$assetstatic->fetch($obj->rowid);
 						}
 						$ret[$obj->rowid] = $assetstatic;
+					} else {
+						$ret[$obj->rowid] = $obj->rowid;
 					}
-					else $ret[$obj->rowid] = $obj->rowid;
 				}
 			}
 
@@ -400,9 +376,7 @@ class AssetType extends CommonObject
 			$this->asset = $ret;
 
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -423,12 +397,16 @@ class AssetType extends CommonObject
 		$result = '';
 		$label = $langs->trans("ShowTypeCard", $this->label);
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.((int) $this->id).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
+		}
 		$result .= $linkend;
 
 		return $result;
@@ -441,8 +419,8 @@ class AssetType extends CommonObject
 	 *
 	 *  @return	void
 	 */
-    public function initAsSpecimen()
-    {
+	public function initAsSpecimen()
+	{
 		global $conf, $user, $langs;
 
 		// Initialize parameters
@@ -457,15 +435,15 @@ class AssetType extends CommonObject
 		$this->asset = array(
 			$user->id => $user
 		);
-    }
+	}
 
-    /**
-     *     getLibStatut
-     *
-     *     @return string     Return status of a type of asset
-     */
-    public function getLibStatut()
-    {
-        return '';
-    }
+	/**
+	 *     getLibStatut
+	 *
+	 *     @return string     Return status of a type of asset
+	 */
+	public function getLibStatut()
+	{
+		return '';
+	}
 }

@@ -24,7 +24,9 @@
 require '../../main.inc.php';
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $langs->load("cashdesk");
 
@@ -37,8 +39,7 @@ print '<center>';
 if (GETPOSTISSET("id")) {
 	print '<h1><b>'.$langs->trans("ScanToOrder").'</b></h1>';
 	print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($id)."' width='30%'>";
-}
-else {
+} else {
 	print '<h1><b>'.$langs->trans("ScanToMenu").'</b></h1>';
 	print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php' width='30%'>";
 }

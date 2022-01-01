@@ -28,7 +28,6 @@ AccountParameter=Parámetros de la cuenta
 UsageParameter=Parámetros de uso
 InformationToFindParameters=Información para encontrar a su configuración de cuenta %s
 STRIPE_CGI_URL_V2=URL CGI del módulo Stripe para el pago
-VendorName=Nombre del vendedor
 CSSUrlForPaymentForm=Url de la hoja de estilo CSS para el formulario de pago
 NewStripePaymentReceived=Nuevo pago de Stripe recibido
 NewStripePaymentFailed=Nuevo pago de Stripe intentado, pero ha fallado

@@ -4,7 +4,6 @@ MenuToDoActions=Tous les événements incomplets
 MenuDoneActions=Tous les événements terminés
 MenuToDoMyActions=Mes événements incomplets
 MenuDoneMyActions=Mes événements terminés
-ListOfEvents=Liste d'événements (calendrier interne)
 ActionsAskedBy=Événements rapportés par
 ActionsToDoBy=Événements assignés à
 ActionsDoneBy=Événements faits par

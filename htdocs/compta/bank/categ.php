@@ -36,18 +36,21 @@ $langs->loadLangs(array('banks', 'categories'));
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-if (!$user->rights->banque->configurer)
-  accessforbidden();
+if (!$user->rights->banque->configurer) {
+	accessforbidden();
+}
 
 $bankcateg = new BankCateg($db);
 $categid = GETPOST('categid');
 $label = GETPOST("label");
 
+
+
 /*
- * Add category
+ * Actions
  */
-if (GETPOST('add'))
-{
+
+if (GETPOST('add')) {
 	if ($label) {
 		$bankcateg = new BankCateg($db);
 		$bankcateg->label = GETPOST('label');
@@ -76,13 +79,18 @@ if ($categid) {
  * View
  */
 
-llxHeader();
+$title = $langs->trans('RubriquesTransactions');
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+
+llxHeader('', $title, $help_url);
 
 
 print load_fiche_titre($langs->trans("RubriquesTransactions"), '', 'object_category');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -95,15 +103,17 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
+print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Label").'</td>';
+print '<td></td>';
+print '<td></td>';
 print "</tr>\n";
 
 // Line to add category
-if ($action != 'edit')
-{
+if ($action != 'edit') {
 	print '<tr class="oddeven">';
-	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
-	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+	print '<td>&nbsp;</td><td><input name="label" type="text" class="maxwidth100"></td>';
+	print '<td></td>';
+	print '<td class="center"><input type="submit" name="add" class="button button-add" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 }
 
@@ -111,34 +121,33 @@ if ($action != 'edit')
 $sql = "SELECT rowid, label";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_categ";
 $sql .= " WHERE entity = ".$conf->entity;
-$sql .= " ORDER BY label";
+$sql .= " ORDER BY rowid";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0; $total = 0;
+	$i = 0;
+	$total = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid") == $objp->rowid)
-		{
-			print "<td colspan=2>";
+		print '<td>'.$objp->rowid.'</td>';
+		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid") == $objp->rowid) {
+			print '<td colspan="3">';
 			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
 			print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
 			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
 			print "</td>";
-		}
-		else
-		{
+		} else {
 			print "<td>".$objp->label."</td>";
+			print '<td>';
+			//print '<a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$langs->trans("List").'</a>';
+			print '</td>';
 			print '<td class="center">';
-			print '<a class="editfielda reposition marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>';
-			print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a>';
+			print '<a class="editfielda reposition marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+			print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 			print '</td>';
 		}
 		print "</tr>";

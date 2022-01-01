@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=استفاده از شمارۀ سری‌ساخت/سریال
-ProductStatusOnBatch=بله (نیاز به شمارۀ سری‌ساخت/سریال)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=خیر ( بدون نیاز به شمارۀ سری‌ساخت/سریال)
-ProductStatusOnBatchShort=بله
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=خیر
 Batch=سری‌ساخت/سریال
 atleast1batchfield=تاریخ‌مصرف یا تاریخ‌فروش یا شمارۀ سری‌ساخت/سریال
@@ -22,3 +24,21 @@ ProductLotSetup=برپاسازی قابلیت سری‌ساخت/شماره‌س�
 ShowCurrentStockOfLot=نمایش موجودی فعلی برای زوج محصول/سری‌ساخت
 ShowLogOfMovementIfLot=نمایش گزارش‌کار جابجائی‌های مربوط به زوج محصول/سری‌ساخت
 StockDetailPerBatch=جزئیات موجودی هر سری‌ساخت
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+ManageLotMask=Custom mask
+CustomMasks=Option to define a different numbering mask for each product
+BatchLotNumberingModules=Numbering rule for automatic generation of lot number
+BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
+LifeTime=Life span (in days)
+EndOfLife=End of life
+ManufacturingDate=Manufacturing date
+DestructionDate=Destruction date
+FirstUseDate=First use date
+QCFrequency=Quality control frequency (in days)
+ShowAllLots=Show all lots
+HideLots=Hide lots
+#Traceability - qc status
+OutOfOrder=Out of order
+InWorkingOrder=In working order

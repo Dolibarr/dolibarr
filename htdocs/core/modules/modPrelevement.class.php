@@ -23,7 +23,7 @@
  *	\brief      	Module to manage Direct debit orders
  *	\file       	htdocs/core/modules/modPrelevement.class.php
  *	\ingroup    	prelevement
- *	\brief      	File to describe and enable the module Prelevement
+ *	\brief      	Description and activation file for the module Prelevement
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -67,7 +67,7 @@ class modPrelevement extends DolibarrModules
 		$this->depends = array("modFacture", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array("prelevement.php");
@@ -123,32 +123,32 @@ class modPrelevement extends DolibarrModules
 		$this->rights[$r][4] = 'bons';
 		$this->rights[$r][5] = 'credit';
 
-        // Menus
-        //-------
-        $this->menu = 1; // This module add menu entries. They are coded into menu manager.
-    }
+		// Menus
+		//-------
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
+	}
 
 
-    /**
-     *  Function called when module is enabled.
-     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *  It also creates data directories
-     *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
-     *  @return     int             	1 if OK, 0 if KO
-     */
-    public function init($options = '')
-    {
-        global $conf;
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		global $conf;
 
-        // Permissions
-        $this->remove($options);
+		// Permissions
+		$this->remove($options);
 
-        $sql = array(
-            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'bankaccount' AND entity = ".$conf->entity,
-            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','bankaccount',".$conf->entity.")",
-        );
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'bankaccount' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','bankaccount',".((int) $conf->entity).")",
+		);
 
-        return $this->_init($sql, $options);
-    }
+		return $this->_init($sql, $options);
+	}
 }

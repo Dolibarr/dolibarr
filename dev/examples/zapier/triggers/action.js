@@ -10,14 +10,14 @@ const subscribeHook = (z, bundle) => {
         action: bundle.inputData.action
     };
 
-    const url = bundle.authData.url  + '/api/index.php/zapierapi/hook';
+    const url = bundle.authData.url + '/api/index.php/zapierapi/hook';
 
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
     const options = {
         url: url,
         method: 'POST',
-        body: JSON.stringify(data)
+        body: data,
     };
 
     // You may return a promise or a normal data structure from any perform method.
@@ -32,7 +32,7 @@ const unsubscribeHook = (z, bundle) => {
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
     const options = {
-        url: bundle.authData.url  + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
+        url: bundle.authData.url + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
         method: 'DELETE',
     };
 
@@ -74,7 +74,7 @@ const getFallbackRealAction = (z, bundle) => {
     // For the test poll, you should get some real data, to aid the setup process.
     const module = bundle.inputData.module;
     const options = {
-        url: bundle.authData.url  + '/api/index.php/agendaevents/0',
+        url: bundle.authData.url + '/api/index.php/agendaevents/0',
     };
 
     return z.request(options).then((response) => [JSON.parse(response.content)]);
@@ -100,7 +100,7 @@ module.exports = {
     noun: 'Action',
     display: {
         label: 'New Agenda',
-        description: 'Trigger when a new agenda with action is done in Dolibarr.'
+        description: 'Triggers when a new agenda with action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
@@ -111,6 +111,7 @@ module.exports = {
         inputFields: [
             {
                 key: 'action',
+                required: true,
                 type: 'string',
                 helpText: 'Which action of agenda this should trigger on.',
                 choices: {
@@ -145,12 +146,33 @@ module.exports = {
         // outputFields: () => { return []; }
         // Alternatively, a static field definition should be provided, to specify labels for the fields
         outputFields: [
-            {key: 'id', label: 'ID'},
-            {key: 'createdAt', label: 'Created At'},
-            {key: 'name', label: 'Name'},
-            {key: 'usertodo__name', label: 'UserToDo Name'},
-            {key: 'authorId', label: 'Author ID'},
-            {key: 'action', label: 'Action'}
+            {
+                key: 'id',
+                type: "integer",
+                label: 'ID'
+            },
+            {
+                key: 'createdAt',
+                type: "integer",
+                label: 'Created At'
+            },
+            {
+                key: 'name',
+                label: 'Name'
+            },
+            {
+                key: 'usertodo__name',
+                label: 'UserToDo Name'
+            },
+            {
+                key: 'authorId',
+                type: "integer",
+                label: 'Author ID'
+            },
+            {
+                key: 'action',
+                label: 'Action'
+            }
         ]
     }
 };

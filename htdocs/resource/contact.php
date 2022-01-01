@@ -36,35 +36,40 @@ $langs->loadLangs(array('resource', 'sendings', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
-
-// Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'resource', $id, 'resource');
+$action = GETPOST('action', 'aZ09');
 
 $object = new DolResource($db);
-$result = $object->fetch($id, $ref);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'resource', $object->id, 'resource');
+
+// Security check
+if (!$user->rights->resource->read) {
+	accessforbidden();
+}
 
 
 /*
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->resource->write)
-{
-	if ($result > 0 && $id > 0)
-	{
+if ($action == 'addcontact' && $user->rights->resource->write) {
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -74,25 +79,17 @@ if ($action == 'addcontact' && $user->rights->resource->write)
 
 		setEventMessages($mesg, null, 'errors');
 	}
-}
-
-// Toggle the status of a contact
-elseif ($action == 'swapstatut' && $user->rights->resource->write)
-{
+} elseif ($action == 'swapstatut' && $user->rights->resource->write) {
+	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-}
-
-// Erase a contact
-elseif ($action == 'deletecontact' && $user->rights->resource->write)
-{
+} elseif ($action == 'deletecontact' && $user->rights->resource->write) {
+	// Erase a contact
 	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -111,14 +108,13 @@ llxHeader('', $langs->trans("Resource"));
 
 // Mode vue et edition
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
 
 	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php'.(!empty($socid) ? '?id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -150,12 +146,16 @@ if ($id > 0 || !empty($ref))
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
-	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser = 1;
-	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty = 1;
+	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER)) {
+		$hideaddcontactforuser = 1;
+	}
+	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) {
+		$hideaddcontactforthirdparty = 1;
+	}
 
 	$permission = 1;
 	// Contacts lines

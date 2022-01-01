@@ -5,7 +5,7 @@
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
+-- the Free Software Foundation; either version 3 of the License, or
 -- (at your option) any later version.
 --
 -- This program is distributed in the hope that it will be useful,
@@ -19,11 +19,12 @@
 -- ========================================================================
 
 create table llx_c_units(
-	rowid integer AUTO_INCREMENT PRIMARY KEY,
-	code varchar(3),
-	scale integer,
-	label varchar(50),
-	short_label varchar(5),
-	unit_type varchar(10),
-	active tinyint DEFAULT 1 NOT NULL
+	rowid           integer AUTO_INCREMENT PRIMARY KEY,
+	code            varchar(3),
+    sortorder		smallint,
+	scale           integer,
+	label           varchar(50),
+	short_label     varchar(5),
+	unit_type       varchar(10),
+	active          tinyint DEFAULT 1 NOT NULL
 ) ENGINE=innodb;

@@ -1,2 +1,11 @@
 # Dolibarr language file - Source file is en_US - ecm
+ECMNbOfDocs=No. de documentos en el directorio
+ECMNewSection=Nueva carpeta
+ECMAddSection=Agregar carpeta
 ECMCreationDate=Fecha de creación
+ECMNbOfFilesInDir=Número de archivos en la carpeta
+ECMNbOfSubDir=Número de sub carpetas
+ECMNbOfFilesInSubDir=Número de archivos en sub-carpetas
+ECMArea=Área de DMS / ECM
+ECMSectionWasRemoved=La carpeta <b>%s</b> ha sido eliminada.
+ECMSectionWasCreated=Se ha creado la carpeta <b>%s</b>.

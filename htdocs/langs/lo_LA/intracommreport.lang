@@ -1,0 +1,40 @@
+Module68000Name = ບົດລາຍງານ Intracomm
+Module68000Desc = ການຄຸ້ມຄອງບົດລາຍງານ Intracomm (ສະ ໜັບ ສະ ໜູນ ຮູບແບບ DEB/DES ຂອງFrenchຣັ່ງ)
+IntracommReportSetup = ການຕັ້ງຄ່າໂມດູນ Intracommreport
+IntracommReportAbout = ກ່ຽວກັບ intracommreport
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numérod'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=ປະເພດນັກສະແດງ
+INTRACOMMREPORT_ROLE_ACTEUR=Rôlejoué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+
+# Menu
+MenuIntracommReport=ບົດລາຍງານ Intracomm
+MenuIntracommReportNew=ການປະກາດໃ່
+MenuIntracommReportList=ລາຍການ
+
+# View
+NewDeclaration=ການປະກາດໃ່
+Declaration=ຖະແຫຼງການ
+AnalysisPeriod=ໄລຍະເວລາການວິເຄາະ
+TypeOfDeclaration=ປະເພດຂອງການປະກາດ
+DEB=ແຈ້ງການແລກປ່ຽນສິນຄ້າ (DEB)
+DES=ແຈ້ງການແລກປ່ຽນການບໍລິການ (DES)
+
+# Export page
+IntracommReportTitle=ການກະກຽມໄຟລ X XML ໃນຮູບແບບ ProDouane
+
+# List
+IntracommReportList=ລາຍຊື່ການປະກາດທີ່ສ້າງຂຶ້ນ
+IntracommReportNumber=ເລກປະກາດ
+IntracommReportPeriod=ໄລຍະເວລາຂອງການວິເຄາະ
+IntracommReportTypeDeclaration=ປະເພດຂອງການປະກາດ
+IntracommReportDownload=ດາວໂຫລດໄຟລ X XML
+
+# Invoice
+IntracommReportTransportMode=ຮູບແບບການຂົນສົ່ງ

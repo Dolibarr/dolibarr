@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - languages
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
-URLToLink=URL to link
-OverwriteIfExists=Overwrite file if exists
+LinkANewFile=Ligar un novo ficheiro/documento
+LinkedFiles=Ficheiros e documentos ligados
+NoLinkFound=Sen ligazóns registrados
+LinkComplete=O ficheiro foi ligado correctamente
+ErrorFileNotLinked=O ficheiro non puido ser ligado
+LinkRemoved=A ligazón %s foi eliminada
+ErrorFailedToDeleteLink= Erro ao eliminar a ligazón '<b>%s</b>'
+ErrorFailedToUpdateLink= Erro ao actualizar a ligazón '<b>%s</b>'
+URLToLink=URL a ligar
+OverwriteIfExists=Sobrescribir ficheiro se existe

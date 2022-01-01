@@ -31,15 +31,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 class mod_project_universal extends ModeleNumRefProjects
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
@@ -54,17 +54,17 @@ class mod_project_universal extends ModeleNumRefProjects
 	public $name = 'Universal';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $conf, $langs;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("projects", "admin"));
+		$langs->loadLangs(array("projects", "admin"));
 
 		$form = new Form($this->db);
 
@@ -83,9 +83,9 @@ class mod_project_universal extends ModeleNumRefProjects
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskproject" value="'.$conf->global->PROJECT_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskproject" value="'.$conf->global->PROJECT_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -93,38 +93,37 @@ class mod_project_universal extends ModeleNumRefProjects
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-    	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
-    /**
-     *  Return next value
-     *
-     *  @param	Societe		$objsoc		Object third party
-     *  @param   Project		$project	Object project
-     *  @return  string					Value if OK, 0 if KO
-     */
-    public function getNextValue($objsoc, $project)
-    {
+	/**
+	 *  Return next value
+	 *
+	 *  @param	Societe		$objsoc		Object third party
+	 *  @param   Project		$project	Object project
+	 *  @return  string					Value if OK, 0 if KO
+	 */
+	public function getNextValue($objsoc, $project)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -132,8 +131,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		// On defini critere recherche compteur
 		$mask = $conf->global->PROJECT_UNIVERSAL_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
@@ -145,17 +143,17 @@ class mod_project_universal extends ModeleNumRefProjects
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return next reference not yet used as a reference
-     *
-     *  @param	Societe		$objsoc     Object third party
-     *  @param  Project		$project	Object project
-     *  @return string      			Next not used reference
-     */
-    public function project_get_num($objsoc = 0, $project = '')
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $project);
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return next reference not yet used as a reference
+	 *
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Project		$project	Object project
+	 *  @return string      			Next not used reference
+	 */
+	public function project_get_num($objsoc = 0, $project = '')
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $project);
+	}
 }

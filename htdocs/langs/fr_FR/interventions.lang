@@ -64,3 +64,5 @@ InterLineDuration=Durée ligne intervention
 InterLineDesc=Description ligne intervention
 RepeatableIntervention=Modèle d'intervention
 ToCreateAPredefinedIntervention=Pour créer une intervention prédéfinie ou récurrente, créez une intervention standard et convertissez-la en modèle d'intervention
+ConfirmReopenIntervention=Êtes-vous sur de vouloir ré-ouvrir l'intervention <b>%s</b> ?
+GenerateInter=Générer intervention
