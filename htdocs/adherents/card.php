@@ -1473,14 +1473,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Confirm create third party
 		if ($action == 'create_thirdparty') {
 			$companyalias = '';
-			if ($conf->global->ADHERENT_NAME_FORMAT == '1')
-            {
-                $fullname = $object->lastname . ' ' . $object->firstname;
-            }
-            else
-            {
-                $fullname = $object->firstname . ' ' . $object->lastname;
-            }
+			if ($conf->global->ADHERENT_NAME_FORMAT == '1') {
+				$fullname = $object->lastname . ' ' . $object->firstname;
+			} else {
+				$fullname = $object->firstname . ' ' . $object->lastname;
+			}
 
 
 			if ($object->morphy == 'mor') {

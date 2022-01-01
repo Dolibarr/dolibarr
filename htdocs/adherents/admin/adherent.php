@@ -49,47 +49,39 @@ $action = GETPOST('action', 'alpha');
  */
 
 //
-if ($action == 'updateall')
-{
-    $db->begin();
-    $res1 = $res2 = $res3 = $res4 = $res5 = $res6 =  $res7 = 0;
-    $res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
-    $res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
-    // Use vat for invoice creation
-    if ($conf->facture->enabled)
-    {
-        $res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        $res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
-        {
-            $res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        }
-    }
+if ($action == 'updateall') {
+	$db->begin();
+	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 =  $res7 = 0;
+	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	// Use vat for invoice creation
+	if ($conf->facture->enabled) {
+		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+		$res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			$res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+		}
+	}
 
-    $res7 = dolibarr_set_const($db, 'ADHERENT_NAME_FORMAT', GETPOST('ADHERENT_NAME_FORMAT', 'alpha'), 'chaine', 0, $langs->trans('MemberAddThirdPartyNote'), $conf->entity);
-    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0)
-    {
-        setEventMessages('ErrorFailedToSaveDate', null, 'errors');
-        $db->rollback();
-    }
-    else
-    {
-        setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
-        $db->commit();
-    }
+	$res7 = dolibarr_set_const($db, 'ADHERENT_NAME_FORMAT', GETPOST('ADHERENT_NAME_FORMAT', 'alpha'), 'chaine', 0, $langs->trans('MemberAddThirdPartyNote'), $conf->entity);
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0) {
+		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		$db->rollback();
+	} else {
+		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+		$db->commit();
+	}
 }
 
 // Action to update or add a constant
-if ($action == 'update' || $action == 'add')
-{
+if ($action == 'update' || $action == 'add') {
 	$constname = GETPOST('constname', 'alpha');
 	$constvalue = (GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
 	if (($constname == 'ADHERENT_CARD_TYPE' || $constname == 'ADHERENT_ETIQUETTE_TYPE' || $constname == 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) $constvalue = '';
-	if ($constname == 'ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
-	{
+	if ($constname == 'ADHERENT_LOGIN_NOT_REQUIRED') { // Invert choice
 		if ($constvalue) $constvalue = 0;
 		else $constvalue = 1;
 	}
