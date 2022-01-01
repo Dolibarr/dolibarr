@@ -124,22 +124,22 @@ if ($action == 'presend') {
 
 	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
-		$formmail->fromname = '';
+		(!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $formmail->fromname = $conf->global->INVOICE_EMAIL_SENDER_NAME : $formmail->fromname = '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
-		$formmail->fromname = '';
+		(!empty($conf->global->SHIPPING_EMAIL_SENDER_NAME) ? $formmail->fromname = $conf->global->SHIPPING_EMAIL_SENDER_NAME : $formmail->fromname = '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
-		$formmail->fromname = '';
+		(!empty($conf->global->COMMANDE_EMAIL_SENDER_NAME) ? $formmail->fromname = $conf->global->COMMANDE_EMAIL_SENDER_NAME : $formmail->fromname = '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
-		$formmail->fromname = '';
+		(!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $formmail->fromname = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : $formmail->fromname = '');
 		$formmail->fromtype = 'special';
 	}
 
