@@ -6115,6 +6115,7 @@ span#select2-boxbookmark-container {
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
+	margin-bottom: 0 !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;

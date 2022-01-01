@@ -5943,7 +5943,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 2px 5px 1px 5px;
+  padding: 3px 5px 2px 5px;
   margin: 0 0 2px 3px;
   position: relative;
   line-height: 13px;
@@ -5993,6 +5993,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
+	margin-bottom: 0 !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;

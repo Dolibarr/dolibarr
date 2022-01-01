@@ -25,6 +25,7 @@
  *  \ingroup    salaries
  *  \brief      Page of salaries payments
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
@@ -555,7 +556,8 @@ if ($action == 'create') {
 		$formproject = new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 
