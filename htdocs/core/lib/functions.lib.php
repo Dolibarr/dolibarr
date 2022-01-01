@@ -10597,3 +10597,90 @@ function jsonOrUnserialize($stringtodecode)
 
 	return $result;
 }
+
+
+
+/**
+ * Return if a $sqlfilters parameter is valid and will pass the preg_replace_callback() to replace Generic filter string with SQL filter string
+ * Example of usage:
+ * if ($sqlfilters) {
+ *	 $errormessage = '';
+ *   if (dolCheckFilters($sqlfilters, $errormessage)) {
+ *	   $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+ *	   $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
+ *   }
+ * }
+ *
+ * @param	string  		$sqlfilters     sqlfilter string
+ * @param	string			$error			Error message
+ * @return 	boolean			   				True if valid, False if not valid ($error is filled with the reason in such a case)
+ */
+function dolCheckFilters($sqlfilters, &$error = '')
+{
+	//$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+	//$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+	$tmp = $sqlfilters;
+	$i = 0; $nb = strlen($tmp);
+	$counter = 0;
+	while ($i < $nb) {
+		if ($tmp[$i] == '(') {
+			$counter++;
+		}
+		if ($tmp[$i] == ')') {
+			$counter--;
+		}
+		if ($counter < 0) {
+			$error = "Bad sqlfilters=".$sqlfilters;
+			dol_syslog($error, LOG_WARNING);
+			return false;
+		}
+		$i++;
+	}
+	return true;
+}
+
+/**
+ * Function to forge a SQL criteria from a Generic filter string.
+ * Example of usage:
+ * if ($sqlfilters) {
+ *	 $errormessage = '';
+ *   if (dolCheckFilters($sqlfilters, $errormessage)) {
+ *	   $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+ *	   $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
+ *   }
+ * }
+ *
+ * @param  array    $matches    Array of found string by regex search.
+ * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+ * @return string               Forged criteria. Example: "t.field like 'abc%'"
+ */
+function dolForgeCriteriaCallback($matches)
+{
+	global $db;
+
+	//dol_syslog("Convert matches ".$matches[1]);
+	if (empty($matches[1])) {
+		return '';
+	}
+	$tmp = explode(':', $matches[1], 3);
+
+	if (count($tmp) < 3) {
+		return '';
+	}
+
+	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+	$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+
+	$tmpescaped = trim($tmp[2]);
+	$regbis = array();
+	if ($operator == 'IN') {
+		$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
+	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+		$tmpescaped = "'".$db->escape($regbis[1])."'";
+	} else {
+		$tmpescaped = $db->sanitize($db->escape($tmpescaped));
+	}
+
+	return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
+}

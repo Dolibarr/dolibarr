@@ -983,7 +983,7 @@ div.divsearchfield {
 	padding-top: 2px;
 }
 .divadvancedsearchfield span.select2.select2-container.select2-container--default {
-	padding-bottom: 4px;
+	/* padding-bottom: 4px; */
 }
 .search_component_params {
 	/*display: flex; */
@@ -5917,9 +5917,14 @@ input.select2-input {
 	border-right: none;
 	border-radius: 0 !important;
 	background: var(--inputbackgroundcolor);
+	line-height: normal;
 }
-.select2-container--default .select2-selection--multiple .select2-selection__choice{
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+	line-height: 1.4em;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
 	background-color: #ddd;
+	margin-top: 4px !important;
 }
 
 .select2-search__field
