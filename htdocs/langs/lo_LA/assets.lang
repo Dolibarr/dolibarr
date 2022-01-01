@@ -16,52 +16,50 @@
 #
 # Generic
 #
-Assets = ຊັບສິນ
-NewAsset = ຊັບສິນໃ່
-AccountancyCodeAsset = ລະຫັດບັນຊີ (ຊັບສິນ)
-AccountancyCodeDepreciationAsset = ລະຫັດບັນຊີ (ບັນຊີຊັບສິນເສື່ອມລາຄາ)
-AccountancyCodeDepreciationExpense = ລະຫັດບັນຊີ (ບັນຊີລາຍຈ່າຍຄ່າເສື່ອມລາຄາ)
-NewAssetType=ປະເພດຊັບສິນໃ່
-AssetsTypeSetup=ການຕັ້ງຄ່າປະເພດຂອງຊັບສິນ
-AssetTypeModified=ປະເພດຊັບສິນຖືກແກ້ໄຂແລ້ວ
-AssetType=ປະເພດຊັບສິນ
-AssetsLines=ຊັບສິນ
+Assets = Assets
+NewAsset = New asset
+AccountancyCodeAsset = Accounting code (asset)
+AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
+AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
+NewAssetType=New asset type
+AssetsTypeSetup=Asset type setup
+AssetTypeModified=Asset type modified
+AssetType=Asset type
+AssetsLines=Assets
 DeleteType=ລຶບ
-DeleteAnAssetType=ລຶບປະເພດຊັບສິນ
-ConfirmDeleteAssetType=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການລຶບປະເພດເນື້ອຫານີ້?
-ShowTypeCard=ສະແດງປະເພດ '%s'
+DeleteAnAssetType=Delete an asset type
+ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+ShowTypeCard=Show type '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = ຊັບສິນ
+ModuleAssetsName = Assets
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = ລາຍລະອຽດຊັບສິນ
+ModuleAssetsDesc = Assets description
 
 #
 # Admin page
 #
-AssetsSetup = ການຕັ້ງຄ່າຊັບສິນ
-Settings = ການຕັ້ງຄ່າ
-AssetsSetupPage = ໜ້າ ການຕັ້ງຄ່າຊັບສິນ
-ExtraFieldsAssetsType = ຄຸນສົມບັດເພີ່ມເຕີມ (ປະເພດເນື້ອຫາ)
-AssetsType=ປະເພດຊັບສິນ
-AssetsTypeId=id ປະເພດເນື້ອຫາ
-AssetsTypeLabel=ປ້າຍ ກຳ ກັບປະເພດຊັບສິນ
-AssetsTypes=ປະເພດຊັບສິນ
+AssetsSetup = Assets setup
+Settings = Settings
+AssetsSetupPage = Assets setup page
+ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetsType=Asset type
+AssetsTypeId=Asset type id
+AssetsTypeLabel=Asset type label
+AssetsTypes=Assets types
 
 #
 # Menu
 #
-MenuAssets = ຊັບສິນ
-MenuNewAsset = ຊັບສິນໃ່
-MenuTypeAssets = ປະເພດຊັບສິນ
+MenuAssets = Assets
+MenuNewAsset = New asset
+MenuTypeAssets = Type assets
 MenuListAssets = ລາຍການ
-MenuNewTypeAssets = ໃຫມ່
+MenuNewTypeAssets = New
 MenuListTypeAssets = ລາຍການ
 
 #
 # Module
 #
-Asset=ຊັບສິນ
-NewAssetType=ປະເພດຊັບສິນໃ່
-NewAsset=ຊັບສິນໃ່
-ConfirmDeleteAsset=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບເນື້ອຫານີ້ອອກ?
+NewAssetType=New asset type
+NewAsset=New asset

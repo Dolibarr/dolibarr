@@ -27,29 +27,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
-$action = GETPOST('action', 'aZ09');
+if (!$user->admin)
+	accessforbidden();
+
+$action = GETPOST('action', 'alpha');
 
 // Other parameters HRM_*
 $list = array(
-//		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
+		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
-
-$permissiontoread = $user->admin;
-$permissiontoadd = $user->admin;
-
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
-
 
 /*
  * Actions
  */
-
 if ($action == 'update') {
 	$error = 0;
 
@@ -68,15 +58,10 @@ if ($action == 'update') {
 	}
 }
 
-
 /*
  * View
  */
-
-
-$title = $langs->trans('Parameters');
-
-llxHeader('', $title, '');
+llxHeader('', $langs->trans('Parameters'));
 
 $form = new Form($db);
 
@@ -93,15 +78,17 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-print dol_get_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
+dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans('Parameters').'</td>';
+print '<td colspan="3">'.$langs->trans('Journaux').'</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {
-	print '<tr class="oddeven value">';
+	$var = !$var;
+
+	print '<tr '.$bc[$var].' class="value">';
 
 	// Param
 	$label = $langs->trans($key);
@@ -115,9 +102,9 @@ foreach ($list as $key) {
 
 print "</table>\n";
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
-print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
 print '</form>';
 

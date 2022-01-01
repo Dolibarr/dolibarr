@@ -17,9 +17,8 @@
 CREATE TABLE llx_mrp_mo(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	entity integer DEFAULT 1 NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
-	mrptype integer DEFAULT 0,                  -- 0 for a manufacture MO, 1 for a dismantle MO 
+	entity integer DEFAULT 1 NOT NULL, 
 	label varchar(255), 
 	qty real NOT NULL,
 	fk_warehouse integer,
@@ -28,7 +27,7 @@ CREATE TABLE llx_mrp_mo(
 	note_private text, 
 	date_creation datetime NOT NULL, 
 	date_valid datetime NULL,
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+	tms timestamp, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer,
 	fk_user_valid integer,
@@ -39,7 +38,6 @@ CREATE TABLE llx_mrp_mo(
 	date_start_planned datetime, 
 	date_end_planned datetime, 
 	fk_bom integer, 
-	fk_project integer,
-	last_main_doc varchar(255)
+	fk_project integer
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

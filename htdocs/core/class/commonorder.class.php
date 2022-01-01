@@ -23,14 +23,13 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *      Superclass for orders classes
  */
 abstract class CommonOrder extends CommonObject
 {
-	use CommonIncoterm;
+
 }
 
 /**
@@ -38,12 +37,6 @@ abstract class CommonOrder extends CommonObject
  */
 abstract class CommonOrderLine extends CommonObjectLine
 {
-	/**
-	 * Custom label of line. Not used by default.
-	 * @deprecated
-	 */
-	public $label;
-
 	/**
 	 * Product ref
 	 * @var string
@@ -53,18 +46,18 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $ref;
 
 	/**
+	 * Product ref
+	 * @var string
+	 */
+	public $product_ref;
+
+	/**
 	 * Product label
 	 * @var string
 	 * @deprecated Use product_label
 	 * @see $product_label
 	 */
 	public $libelle;
-
-	/**
-	 * Product ref
-	 * @var string
-	 */
-	public $product_ref;
 
 	/**
 	 * Product label
@@ -101,7 +94,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * @deprecated
 	 * @see $subprice
 	 */
-	public $price;
+    public $price;
 
 	/**
 	 * Unit price before taxes
@@ -134,12 +127,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
-	 * VAT code
-	 * @var string
-	 */
-	public $vat_src_code;
-
-	/**
 	 * VAT %
 	 * @var float
 	 */
@@ -169,11 +156,4 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
-
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 }

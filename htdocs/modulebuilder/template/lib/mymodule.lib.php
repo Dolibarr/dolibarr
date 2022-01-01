@@ -60,9 +60,7 @@ function mymoduleAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule');
-
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mymodule@mymodule', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule');
 
 	return $head;
 }

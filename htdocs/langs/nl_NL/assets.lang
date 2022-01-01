@@ -61,7 +61,5 @@ MenuListTypeAssets = Lijstoverzicht
 #
 # Module
 #
-Asset=Bezit
 NewAssetType=Nieuw soort bezittingen
 NewAsset=Nieuw bezit
-ConfirmDeleteAsset=Weet u zeker dat u dit item wilt verwijderen?

@@ -32,86 +32,59 @@ $servicename = 'PayBox';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'paybox', 'paypal'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin)
+  accessforbidden();
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' && $user->admin)
+{
 	$db->begin();
-	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE", GETPOST("PAYBOX_IBS_DEVISE"),'chaine',0,'',$conf->entity);
+	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"],'chaine',0,'',$conf->entity);
 	$result = dolibarr_set_const($db, "PAYBOX_CGI_URL_V1", GETPOST('PAYBOX_CGI_URL_V1', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "PAYBOX_CGI_URL_V2", GETPOST('PAYBOX_CGI_URL_V2', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "PAYBOX_IBS_SITE", GETPOST('PAYBOX_IBS_SITE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "PAYBOX_IBS_RANG", GETPOST('PAYBOX_IBS_RANG', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT", GETPOST('PAYBOX_PBX_IDENTIFIANT', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
+	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) $error++;
+	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) $error++;
+	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) $error++;
+	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) $error++;
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-		$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
+        $result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) $error++;
 
 
-	if (!$error) {
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		$db->rollback();
+    if (!$error)
+  	{
+  		$db->commit();
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+  	}
+  	else
+  	{
+  		$db->rollback();
 		dol_print_error($db);
-	}
+    }
 }
 
 
@@ -120,17 +93,11 @@ if ($action == 'setvalue' && $user->admin) {
  */
 
 $IBS_SITE = "1999888"; // Site test
-if (empty($conf->global->PAYBOX_IBS_SITE)) {
-	$conf->global->PAYBOX_IBS_SITE = $IBS_SITE;
-}
+if (empty($conf->global->PAYBOX_IBS_SITE)) $conf->global->PAYBOX_IBS_SITE = $IBS_SITE;
 $IBS_RANG = "99"; // Rang test
-if (empty($conf->global->PAYBOX_IBS_RANG)) {
-	$conf->global->PAYBOX_IBS_RANG = $IBS_RANG;
-}
+if (empty($conf->global->PAYBOX_IBS_RANG)) $conf->global->PAYBOX_IBS_RANG = $IBS_RANG;
 $IBS_DEVISE = "978"; // Euro
-if (empty($conf->global->PAYBOX_IBS_DEVISE)) {
-	$conf->global->PAYBOX_IBS_DEVISE = $IBS_DEVISE;
-}
+if (empty($conf->global->PAYBOX_IBS_DEVISE)) $conf->global->PAYBOX_IBS_DEVISE = $IBS_DEVISE;
 
 llxHeader();
 
@@ -145,11 +112,11 @@ $head[$h][1] = $langs->trans("PayBox");
 $head[$h][2] = 'payboxaccount';
 $h++;
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-print dol_get_fiche_head($head, 'payboxaccount', '', -1);
+dol_fiche_head($head, 'payboxaccount', '', -1);
 
 print $langs->trans("PayBoxDesc")."<br>\n";
 print '<br>';
@@ -164,27 +131,27 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_SITE").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_SITE" value="'.$conf->global->PAYBOX_IBS_SITE.'">';
-print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 1999888 ('.$langs->trans("Test").')</span>';
+print '<br>'.$langs->trans("Example").': 1999888 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_RANG").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_RANG" value="'.$conf->global->PAYBOX_IBS_RANG.'">';
-print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')</span>';
+print '<br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_IDENTIFIANT").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
-print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')</span>';
+print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_HMAC_KEY").'</span></td><td>';
 print '<input size="100" type="text" name="PAYBOX_HMAC_KEY" value="'.dol_decode($conf->global->PAYBOX_HMAC_KEY).'">';
-print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 1A2B3C4D5E6F</span>';
+print '<br>'.$langs->trans("Example").': 1A2B3C4D5E6F';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
@@ -214,19 +181,20 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_CGI_URL_V2").'</span></td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
-print '<span class="opacitymedium"><br>'.$langs->trans("Example").' (preprod): https://preprod-tpeweb.paybox.com/php/';
-print '<br>'.$langs->trans("Example").' (prod): https://tpeweb.paybox.com/php/</span>';
+print '<br>'.$langs->trans("Example").' (preprod): https://preprod-tpeweb.paybox.com/php/';
+print '<br>'.$langs->trans("Example").' (prod): https://tpeweb.paybox.com/php/';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("PublicVendorName").'</td><td>';
-print '<input type="text" class="minwidth300" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
-print '<br><span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
+print $langs->trans("VendorName").'</td><td>';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
+print '<br>'.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 
-if (!empty($conf->banque->enabled)) {
+if (!empty($conf->banque->enabled))
+{
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	$form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
@@ -237,7 +205,7 @@ if (!empty($conf->banque->enabled)) {
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
-print '<span class="opacitymedium"><br>'.$langs->trans("Example").': http://mysite/mycss.css</span>';
+print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 
@@ -264,16 +232,15 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
 print '</td></tr>';
 
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
 print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
-if (!empty($conf->use_javascript_ajax)) {
+if (!empty($conf->use_javascript_ajax))
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
-}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
@@ -283,9 +250,9 @@ print '</td></tr>';
 
 print '</table>';
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

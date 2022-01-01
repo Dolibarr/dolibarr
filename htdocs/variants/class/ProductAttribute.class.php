@@ -16,18 +16,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  * Class ProductAttribute
  * Used to represent a product attribute
  */
-class ProductAttribute extends CommonObject
+class ProductAttribute
 {
 	/**
 	 * Database handler
 	 * @var DoliDB
 	 */
-	public $db;
+	private $db;
 
 	/**
 	 * Id of the product attribute
@@ -42,12 +41,6 @@ class ProductAttribute extends CommonObject
 	public $ref;
 
 	/**
-	 * External ref of the product attribute
-	 * @var string
-	 */
-	public $ref_ext;
-
-	/**
 	 * Label of the product attribute
 	 * @var string
 	 */
@@ -60,11 +53,11 @@ class ProductAttribute extends CommonObject
 	 */
 	public $rang;
 
-	/**
-	 * Constructor
-	 *
-	 * @param   DoliDB $db     Database handler
-	 */
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
 	public function __construct(DoliDB $db)
 	{
 		global $conf;
@@ -85,7 +78,7 @@ class ProductAttribute extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".((int) $id)." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -97,7 +90,6 @@ class ProductAttribute extends CommonObject
 
 		$this->id = $obj->rowid;
 		$this->ref = $obj->ref;
-		$this->ref_ext = $obj->ref_ext;
 		$this->label = $obj->label;
 		$this->rang = $obj->rang;
 
@@ -113,23 +105,22 @@ class ProductAttribute extends CommonObject
 	{
 		$return = array();
 
-		$sql = 'SELECT rowid, ref, ref_ext, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getEntity('product').')';
+		$sql = 'SELECT rowid, ref, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getEntity('product').')';
 		$sql .= $this->db->order('rang', 'asc');
 		$query = $this->db->query($sql);
-		if ($query) {
-			while ($result = $this->db->fetch_object($query)) {
-				$tmp = new ProductAttribute($this->db);
-				$tmp->id = $result->rowid;
-				$tmp->ref = $result->ref;
-				$tmp->ref_ext = $result->ref_ext;
-				$tmp->label = $result->label;
-				$tmp->rang = $result->rang;
+		if ($query)
+		{
+    		while ($result = $this->db->fetch_object($query)) {
+    			$tmp = new ProductAttribute($this->db);
+    			$tmp->id = $result->rowid;
+    			$tmp->ref = $result->ref;
+    			$tmp->label = $result->label;
+    			$tmp->rang = $result->rang;
 
-				$return[] = $tmp;
-			}
-		} else {
-			dol_print_error($this->db);
+    			$return[] = $tmp;
+    		}
 		}
+		else dol_print_error($this->db);
 
 		return $return;
 	}
@@ -137,29 +128,20 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Creates a product attribute
 	 *
-	 * @param   User    $user      Object user
-	 * @param   int     $notrigger Do not execute trigger
+	 * @param	User	$user	Object user that create
 	 * @return 					int <0 KO, Id of new variant if OK
 	 */
-	public function create(User $user, $notrigger = 0)
+	public function create(User $user)
 	{
-		if (empty($notrigger)) {
-			// Call trigger
-			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_CREATE', $user);
-			if ($result < 0) {
-				return -1;
-			}
-			// End call triggers
-		}
-
 		//Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, ref_ext, label, entity, rang)
-		VALUES ('".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->escape($this->label)."', ".(int) $this->entity.", ".(int) $this->rang.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, label, entity, rang)
+		VALUES ('".$this->db->escape($this->ref)."', '".$this->db->escape($this->label)."', ".(int) $this->entity.", ".(int) $this->rang.")";
 
 		$query = $this->db->query($sql);
-		if ($query) {
+		if ($query)
+		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute');
 
 			return $this->id;
@@ -171,26 +153,16 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Updates a product attribute
 	 *
-	 * @param   User    $user      Object user
-	 * @param   int     $notrigger Do not execute trigger
+	 * @param	User	$user		Object user
 	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function update(User $user, $notrigger = 0)
+	public function update(User $user)
 	{
-		if (empty($notrigger)) {
-			// Call trigger
-			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_MODIFY', $user);
-			if ($result < 0) {
-				return -1;
-			}
-			// End call triggers
-		}
-
 		//Ref must be uppercase
 		$this->ref = trim(strtoupper($this->ref));
 		$this->label = trim($this->label);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute SET ref = '".$this->db->escape($this->ref)."', ref_ext = '".$this->db->escape($this->ref_ext)."', label = '".$this->db->escape($this->label)."', rang = ".(int) $this->rang." WHERE rowid = ".(int) $this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute SET ref = '".$this->db->escape($this->ref)."', label = '".$this->db->escape($this->label)."', rang = ".(int) $this->rang." WHERE rowid = ".(int) $this->id;
 
 		if ($this->db->query($sql)) {
 			return 1;
@@ -202,21 +174,11 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Deletes a product attribute
 	 *
-	 * @param   User    $user      Object user
-	 * @param   int     $notrigger Do not execute trigger
-	 * @return 	int <0 KO, >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function delete(User $user, $notrigger = 0)
+	public function delete($user = null)
 	{
-		if (empty($notrigger)) {
-			// Call trigger
-			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_DELETE', $user);
-			if ($result < 0) {
-				return -1;
-			}
-			// End call triggers
-		}
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $this->id;
 
 		if ($this->db->query($sql)) {
@@ -249,7 +211,7 @@ class ProductAttribute extends CommonObject
 	public function countChildProducts()
 	{
 		$sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_combination2val pac2v
-		LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid WHERE pac2v.fk_prod_attr = ".((int) $this->id)." AND pac.entity IN (".getEntity('product').")";
+		LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid WHERE pac2v.fk_prod_attr = ".(int) $this->id." AND pac.entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -319,7 +281,7 @@ class ProductAttribute extends CommonObject
 			$newrang = $this->rang + 1;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_attribute SET rang = '.((int) $this->rang).' WHERE rang = '.((int) $newrang);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_attribute SET rang = '.$this->rang.' WHERE rang = '.$newrang;
 
 		if (!$this->db->query($sql)) {
 			$this->db->rollback();

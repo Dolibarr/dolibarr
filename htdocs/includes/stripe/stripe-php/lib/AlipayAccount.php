@@ -3,14 +3,16 @@
 namespace Stripe;
 
 /**
- * Class AlipayAccount.
+ * Class AlipayAccount
+ *
+ * @package Stripe
  *
  * @deprecated Alipay accounts are deprecated. Please use the sources API instead.
- * @see https://stripe.com/docs/sources/alipay
+ * @link https://stripe.com/docs/sources/alipay
  */
 class AlipayAccount extends ApiResource
 {
-    const OBJECT_NAME = 'alipay_account';
+    const OBJECT_NAME = "alipay_account";
 
     use ApiOperations\Delete;
     use ApiOperations\Update;
@@ -26,50 +28,44 @@ class AlipayAccount extends ApiResource
             $parent = $this['customer'];
             $path = 'sources';
         } else {
-            $msg = 'Alipay accounts cannot be accessed without a customer ID.';
-
-            throw new Exception\UnexpectedValueException($msg);
+            $msg = "Alipay accounts cannot be accessed without a customer ID.";
+            throw new Error\InvalidRequest($msg, null);
         }
-        $parentExtn = \urlencode(Util\Util::utf8($parent));
-        $extn = \urlencode(Util\Util::utf8($this['id']));
-
-        return "{$base}/{$parentExtn}/{$path}/{$extn}";
+        $parentExtn = urlencode(Util\Util::utf8($parent));
+        $extn = urlencode(Util\Util::utf8($this['id']));
+        return "$base/$parentExtn/$path/$extn";
     }
 
     /**
      * @param array|string $_id
-     * @param null|array|string $_opts
+     * @param array|string|null $_opts
      *
-     * @throws \Stripe\Exception\BadMethodCallException
+     * @throws \Stripe\Error\InvalidRequest
      *
      * @deprecated Alipay accounts are deprecated. Please use the sources API instead.
-     * @see https://stripe.com/docs/sources/alipay
+     * @link https://stripe.com/docs/sources/alipay
      */
     public static function retrieve($_id, $_opts = null)
     {
-        $msg = 'Alipay accounts cannot be retrieved without a customer ID. ' .
-               'Retrieve an Alipay account using `Customer::retrieveSource(' .
-               "'customer_id', 'alipay_account_id')`.";
-
-        throw new Exception\BadMethodCallException($msg);
+        $msg = "Alipay accounts cannot be accessed without a customer ID. " .
+               "Retrieve an Alipay account using \$customer->sources->retrieve('alipay_account_id') instead.";
+        throw new Error\InvalidRequest($msg, null);
     }
 
     /**
      * @param string $_id
-     * @param null|array $_params
-     * @param null|array|string $_options
+     * @param array|null $_params
+     * @param array|string|null $_options
      *
-     * @throws \Stripe\Exception\BadMethodCallException
+     * @throws \Stripe\Error\InvalidRequest
      *
      * @deprecated Alipay accounts are deprecated. Please use the sources API instead.
-     * @see https://stripe.com/docs/sources/alipay
+     * @link https://stripe.com/docs/sources/alipay
      */
     public static function update($_id, $_params = null, $_options = null)
     {
-        $msg = 'Alipay accounts cannot be updated without a customer ID. ' .
-               'Update an Alipay account using `Customer::updateSource(' .
-               "'customer_id', 'alipay_account_id', \$updateParams)`.";
-
-        throw new Exception\BadMethodCallException($msg);
+        $msg = "Alipay accounts cannot be accessed without a customer ID. " .
+               "Call save() on \$customer->sources->retrieve('alipay_account_id') instead.";
+        throw new Error\InvalidRequest($msg, null);
     }
 }

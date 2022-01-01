@@ -17,7 +17,7 @@ const subscribeHook = (z, bundle) => {
     const options = {
         url: url,
         method: 'POST',
-        body: data,
+        body: JSON.stringify(data)
     };
 
     // You may return a promise or a normal data structure from any perform method.
@@ -56,12 +56,6 @@ const getThirdparty = (z, bundle) => {
         fournisseur: bundle.cleanedRequest.fournisseur,
         code_client: bundle.cleanedRequest.code_client,
         code_fournisseur: bundle.cleanedRequest.code_fournisseur,
-        idprof1: bundle.cleanedRequest.idprof1,
-        idprof2: bundle.cleanedRequest.idprof2,
-        idprof3: bundle.cleanedRequest.idprof3,
-        idprof4: bundle.cleanedRequest.idprof4,
-        idprof5: bundle.cleanedRequest.idprof5,
-        idprof6: bundle.cleanedRequest.idprof6,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
         action: bundle.cleanedRequest.action
@@ -118,7 +112,7 @@ module.exports = {
     noun: 'Thirdparty',
     display: {
         label: 'New Thirdparty',
-        description: 'Triggers when a new thirdparty action is done in Dolibarr.'
+        description: 'Trigger when a new thirdpaty action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
@@ -129,7 +123,6 @@ module.exports = {
         inputFields: [
             {
                 key: 'action',
-                required: true,
                 type: 'string',
                 helpText: 'Which action of thirdparty this should trigger on.',
                 choices: {
@@ -166,23 +159,17 @@ module.exports = {
         // outputFields: () => { return []; }
         // Alternatively, a static field definition should be provided, to specify labels for the fields
         outputFields: [
-            {key: 'id', type: "integer", label: 'ID'},
+            {key: 'id', label: 'ID'},
             {key: 'createdAt', label: 'Created At'},
             {key: 'name', label: 'Name'},
             {key: 'name_alias', label: 'Name alias'},
-            {key: 'firstname', label: 'Firstname'},
-            {key: 'authorId', type: "integer", label: 'Author ID'},
+            {key: 'firstname', label: 'Firstame'},
+            {key: 'authorId', label: 'Author ID'},
             {key: 'action', label: 'Action'},
             {key: 'client', label: 'Customer/Prospect 0/1/2/3'},
             {key: 'fournisseur', label: 'Supplier 0/1'},
             {key: 'code_client', label: 'Customer code'},
-            {key: 'code_fournisseur', label: 'Supplier code'},
-            {key: 'idprof1', label: 'Id Prof 1'},
-            {key: 'idprof2', label: 'Id Prof 2'},
-            {key: 'idprof3', label: 'Id Prof 3'},
-            {key: 'idprof4', label: 'Id Prof 4'},
-            {key: 'idprof5', label: 'Id Prof 5'},
-            {key: 'idprof6', label: 'Id Prof 6'}
+            {key: 'code_fournisseur', label: 'Supplier code'}
         ]
     }
 };

@@ -35,52 +35,28 @@ $langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'aZ09');
-
-$childids = $user->getAllChildIds(1);
+$action = GETPOST('action', 'alpha');
 
 // Security check
 $socid = 0;
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$hookmanager->initHooks(array('expensereportnote'));
-
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 $object = new ExpenseReport($db);
-if (!$object->fetch($id, $ref) > 0) {
+if (!$object->fetch($id, $ref) > 0)
+{
 	dol_print_error($db);
 }
 
 $permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
 
-if ($object->id > 0) {
-	// Check current user can read this expense report
-	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) {
-		$canread = 1;
-	}
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
-		$canread = 1;
-	}
-	if (!$canread) {
-		accessforbidden();
-	}
-}
 
 /*
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
 
 /*
@@ -92,14 +68,15 @@ llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref)) {
+if ($id > 0 || !empty($ref))
+{
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
+	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -117,7 +94,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</div>';
 
-	print dol_get_fiche_end();
+	dol_fiche_end();
 }
 
 // End of page

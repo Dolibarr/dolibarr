@@ -50,9 +50,9 @@ class Ctyperesource
 	public $code;
 
 	/**
-	 * @var string Type resource label
-	 */
-	public $label;
+     * @var string Type resource label
+     */
+    public $label;
 
 	public $active;
 
@@ -165,17 +165,16 @@ class Ctyperesource
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
+
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
+
+
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if ($id) {
-			$sql .= " WHERE t.id = ".((int) $id);
-		} elseif ($code) {
-			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
-		} elseif ($label) {
-			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
-		}
+		if ($id)   $sql .= " WHERE t.id = ".$id;
+		elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+		elseif ($label) $sql .= " WHERE t.label = '".$this->db->escape($label)."'";
 
 
 		$resql = $this->db->query($sql);
@@ -230,27 +229,30 @@ class Ctyperesource
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
+
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
+
+
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+				$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 			}
 		}
 
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			$sql .= ' WHERE '.implode(' '.$filtermode.' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= $this->db->plimit($limit, $offset);
+		    $sql .= ' '.$this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -314,7 +316,7 @@ class Ctyperesource
 		$sql .= ' active = '.(isset($this->active) ? $this->active : "null");
 
 
-		$sql .= ' WHERE rowid='.((int) $this->id);
+		$sql .= ' WHERE rowid='.$this->id;
 
 		$this->db->begin();
 
@@ -377,7 +379,7 @@ class Ctyperesource
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql .= ' WHERE rowid='.$this->id;
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -480,9 +482,9 @@ class CtyperesourceLine
 	public $code;
 
 	/**
-	 * @var string Type resource line label
-	 */
-	public $label;
+     * @var string Type resource line label
+     */
+    public $label;
 
 	public $active;
 

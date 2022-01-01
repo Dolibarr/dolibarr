@@ -20,7 +20,7 @@
 create table llx_tva
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms             timestamp,
   datec           datetime,                   -- Create date
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur
@@ -30,8 +30,7 @@ create table llx_tva
   label           varchar(255),
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
-  paye            smallint default 0 NOT NULL,
-  fk_account      integer,
+  fk_bank         integer,  
   fk_user_creat   integer,                    -- utilisateur who create record
   fk_user_modif   integer,                    -- utilisateur who modify record
   import_key      varchar(14)

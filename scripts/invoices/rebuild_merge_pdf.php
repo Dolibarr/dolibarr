@@ -22,11 +22,6 @@
  * \ingroup facture
  * \brief Script to rebuild PDF and merge PDF files into one
  */
-
-if (!defined('NOSESSION')) {
-	define('NOSESSION', '1');
-}
-
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -52,7 +47,6 @@ $langs->load("main");
 $version = DOL_VERSION;
 $error = 0;
 
-
 /*
  * Main
  */
@@ -64,11 +58,6 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 // Check parameters
 if (!isset($argv[1])) {
 	usage();
-	exit(-1);
-}
-
-if (!empty($dolibarr_main_db_readonly)) {
-	print "Error: instance in read-onyl mode\n";
 	exit(-1);
 }
 

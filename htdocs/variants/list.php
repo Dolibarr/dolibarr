@@ -16,27 +16,11 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
+$id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $object = new ProductAttribute($db);
-$rowid = GETPOST('rowid', 'int');		// Id of line for up / down when no javascript available
-
-$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
-$permissiontoadd = $user->rights->produit->creer || $user->rights->service->creer;
-
-// Security check
-if (empty($conf->variants->enabled)) {
-	accessforbidden('Module not enabled');
-}
-if ($user->socid > 0) { // Protection if external user
-	accessforbidden();
-}
-
-
-//$result = restrictedArea($user, 'variant');
-if (!$permissiontoread) accessforbidden();
 
 
 
@@ -44,13 +28,13 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
-if ($action == 'up' && $permissiontoadd) {
+if ($action == 'up') {
 	$object->fetch($rowid);
 	$object->moveUp();
 
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit();
-} elseif ($action == 'down' && $permissiontoadd) {
+} elseif ($action == 'down') {
 	$object->fetch($rowid);
 	$object->moveDown();
 
@@ -73,15 +57,16 @@ $variants = $object->fetchAll();
 llxHeader('', $title);
 
 $newcardbutton = '';
-if ($user->rights->produit->creer) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
+if ($user->rights->produit->creer)
+{
+    $newcardbutton .= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 
 print load_fiche_titre($title, $newcardbutton, 'product');
 
 $forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 ?>
-	<script>
+	<script type="text/javascript">
 		$(document).ready(function(){
 			$(".imgupforline, .imgdownforline").hide();
 			$(".lineupdown").removeAttr('href');
@@ -104,8 +89,7 @@ $forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 					var roworder = cleanSerialize(decodeURI($("#tablelines").tableDnDSerialize()));
 					$.post("<?php echo DOL_URL_ROOT; ?>/variants/ajax/orderAttribute.php",
 						{
-							roworder: roworder,
-							token: "<?php echo currentToken(); ?>"
+							roworder: roworder
 						},
 						function() {
 							if (reloadpage == 1) {
@@ -142,8 +126,8 @@ foreach ($variants as $key => $attribute) {
 	print '<td class="right">'.$attribute->countChildValues().'</td>';
 	print '<td class="right">'.$attribute->countChildProducts().'</td>';
 	print '<td class="right">';
-	print '<a class="editfielda marginrightonly paddingleftonly" href="card.php?id='.$attribute->id.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
-	print '<a class="marginrightonly paddingleftonlyhref="card.php?id='.$attribute->id.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+	print '<a class="editfielda marginrightonly paddingleftonly" href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
+	print '<a class="marginrightonly paddingleftonlyhref="card.php?id='.$attribute->id.'&action=delete">'.img_delete().'</a>';
 	print '</td>';
 	print '<td class="center linecolmove tdlineupdown">';
 	if ($key > 0) {

@@ -18,12 +18,13 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf)) {
+if (empty($conf) || !is_object($conf))
+{
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
-echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedopjectblock.tpl.php -->\n";
+echo "<!-- BEGIN PHP TEMPLATE -->\n";
 
 global $user;
 
@@ -32,21 +33,22 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("members");
 
 $total = 0;
-foreach ($linkedObjectBlock as $key => $objectlink) {
-	echo '<tr class="oddeven">';
-	echo '<td>'.$langs->trans("Subscription").'</td>';
-	echo '<td class="nowraponall">'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="center"></td>';
-	echo '<td class="center">'.dol_print_date($objectlink->dateh, 'day').'</td>';
-	echo '<td class="right">';
+foreach ($linkedObjectBlock as $key => $objectlink)
+{
+    echo '<tr class="oddeven">';
+    echo '<td>'.$langs->trans("Subscription").'</td>';
+    echo '<td>'.$objectlink->getNomUrl(1).'</td>';
+    echo '<td class="center"></td>';
+    echo '<td class="center">'.dol_print_date($objectlink->dateh, 'day').'</td>';
+    echo '<td class="right">';
 	if ($user->rights->adherent->lire) {
 		$total = $total + $objectlink->amount;
 		echo price($objectlink->amount);
 	}
 	echo '</td>';
 	echo '<td class="right"></td>';
-	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
-	echo '</tr>';
+	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+    echo '</tr>';
 }
 
 echo "<!-- END PHP TEMPLATE -->\n";

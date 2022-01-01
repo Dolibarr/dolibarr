@@ -2,7 +2,6 @@
 /**
  * Copyright (C) 2015	Charlie BENKE       <charlie@patas-monkey.com>
  * Copyright (C) 2019	Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,43 +27,42 @@
  */
 function salaries_prepare_head($object)
 {
-	global $db, $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    global $db, $langs, $conf;
 
-	$head[$h][0] = DOL_URL_ROOT.'/salaries/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Salary");
-	$head[$h][2] = 'card';
-	$h++;
+    $h = 0;
+    $head = array();
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries');
+    $head[$h][0] = DOL_URL_ROOT.'/salaries/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("SalaryPayment");
+    $head[$h][2] = 'card';
+    $h++;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->salaries->dir_output."/".dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/salaries/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
-	}
-	$head[$h][2] = 'documents';
-	$h++;
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries');
 
-	$head[$h][0] = DOL_URL_ROOT.'/salaries/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+    $upload_dir = $conf->salaries->dir_output."/".dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+    $nbLinks = Link::count($db, $object->element, $object->id);
+    $head[$h][0] = DOL_URL_ROOT.'/salaries/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('Documents');
+    if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge ">'.($nbFiles + $nbLinks).'</span>';
+    $head[$h][2] = 'documents';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries', 'remove');
+    $head[$h][0] = DOL_URL_ROOT.'/salaries/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	return $head;
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries', 'remove');
+
+    return $head;
 }
 
 /**
@@ -74,28 +72,28 @@ function salaries_prepare_head($object)
  */
 function salaries_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries.php';
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries.php';
+    $head[$h][1] = $langs->trans("Miscellaneous");
+    $head[$h][2] = 'general';
+    $h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_admin');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf, $langs, '', $head, $h, 'salaries_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsSalaries");
-	$head[$h][2] = 'attributes';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsSalaries");
+    $head[$h][2] = 'attributes';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_admin', 'remove');
+    complete_head_from_modules($conf, $langs, '', $head, $h, 'salaries_admin', 'remove');
 
-	return $head;
+    return $head;
 }

@@ -29,8 +29,7 @@ CREATE TABLE llx_website_page
 	image         varchar(255),						
 	keywords      varchar(255),
 	lang          varchar(6),
-	fk_page       integer,
-	allowed_in_frames  integer DEFAULT 0,
+	fk_page       integer,          
 	htmlheader	  text,
 	content		  mediumtext,		-- text is not enough in size
     status        integer DEFAULT 1,
@@ -39,8 +38,6 @@ CREATE TABLE llx_website_page
     fk_user_modif integer,
     author_alias  varchar(64),
     date_creation datetime,
-	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    import_key    varchar(14),      -- import key
-    object_type   varchar(255),		-- To link page to an object
-    fk_object     varchar(255)		-- To link page to an object
+	tms           timestamp,
+    import_key    varchar(14)      -- import key
 ) ENGINE=innodb;

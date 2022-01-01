@@ -25,7 +25,7 @@ create table llx_user_employment
   ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
   fk_user			integer,
   datec             datetime,
-  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms               timestamp,
   fk_user_creat     integer,
   fk_user_modif     integer,
   job				varchar(128),				-- job position. may be a dictionary

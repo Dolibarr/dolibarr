@@ -1182,7 +1182,7 @@ class Parsedown
                     'src' => $Link['element']['attributes']['href'],
                 	'alt' => $Link['element']['text'],
                 	// @CHANGE LDR
-                    'class' => (!empty($Link['element']['attributes']['class']) ? $Link['element']['attributes']['class'] : '')
+                	'class' => $Link['element']['attributes']['class']
                 ),
             ),
         );

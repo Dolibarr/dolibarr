@@ -33,101 +33,73 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $servicename = 'PayPal';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
+$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' && $user->admin)
+{
 	$db->begin();
 
-	$result = dolibarr_set_const($db, "PAYPAL_API_USER", GETPOST('PAYPAL_API_USER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "PAYPAL_API_PASSWORD", GETPOST('PAYPAL_API_PASSWORD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "PAYPAL_API_SIGNATURE", GETPOST('PAYPAL_API_SIGNATURE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "PAYPAL_SSLVERSION", GETPOST('PAYPAL_SSLVERSION', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY", GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL", GETPOST('PAYPAL_ADD_PAYMENT_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+    $result = dolibarr_set_const($db, "PAYPAL_API_USER", GETPOST('PAYPAL_API_USER', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "PAYPAL_API_PASSWORD", GETPOST('PAYPAL_API_PASSWORD', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "PAYPAL_API_SIGNATURE", GETPOST('PAYPAL_API_SIGNATURE', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "PAYPAL_SSLVERSION", GETPOST('PAYPAL_SSLVERSION', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY", GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL", GETPOST('PAYPAL_ADD_PAYMENT_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK'), 'chaine', 0, '', $conf->entity);
+    if (!$result > 0) $error++;
+    $result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) $error++;
+	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) $error++;
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
-	if (empty($conf->use_javascript_ajax)) {
-		$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
-			$error++;
-		}
-	}
+	if (!$result > 0) $error++;
+	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) $error++;
 
-	if (!$error) {
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		$db->rollback();
+	if (!$error)
+  	{
+  		$db->commit();
+  		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+  	}
+  	else
+  	{
+  		$db->rollback();
 		dol_print_error($db);
-	}
+    }
 }
 
-if ($action == "setlive") {
-	$liveenable = GETPOST('value', 'int') ? 0 : 1;
-	$res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+if ($action == "setlive")
+{
+    $liveenable = GETPOST('value', 'int') ? 0 : 1;
+    $res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable, 'yesno', 0, '', $conf->entity);
+    if (!$res > 0) $error++;
+    if (!$error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 
@@ -150,12 +122,13 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 
-print dol_get_fiche_head($head, 'paypalaccount', '', -1);
+dol_fiche_head($head, 'paypalaccount', '', -1);
 
-print '<span class="opacitymedium">'.$langs->trans("PaypalDesc")."</span><br>\n";
+print $langs->trans("PaypalDesc")."<br>\n";
 
 // Test if php curl exist
-if (!function_exists('curl_version')) {
+if (!function_exists('curl_version'))
+{
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorPhpCurlNotInstalled"), null, 'errors');
 }
@@ -163,7 +136,6 @@ if (!function_exists('curl_version')) {
 
 print '<br>';
 
-print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 // Account Parameters
@@ -173,21 +145,24 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td>';
+print '<td class="titlefield">';
 print $langs->trans("PaypalLiveEnabled").'</td><td>';
-if (empty($conf->global->PAYPAL_API_SANDBOX)) {
-	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&token='.newToken().'&value=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-} else {
-	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&token='.newToken().'&value=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
+if (empty($conf->global->PAYPAL_API_SANDBOX))
+{
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+    print img_picto($langs->trans("Activated"), 'switch_on');
+}
+else
+{
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+    print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</td></tr>';
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';
 print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.$conf->global->PAYPAL_API_USER.'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
+print ' &nbsp; '.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com';
 print '</td></tr>';
 
 
@@ -200,7 +175,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SIGNATURE").'</td><td>';
 print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.$conf->global->PAYPAL_API_SIGNATURE.'">';
-print '<br><span class="opacitymedium">'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF</span>';
+print '<br>'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF';
 print '</td></tr>';
 
 
@@ -208,15 +183,6 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_SSLVERSION").'</td><td>';
 print $form->selectarray("PAYPAL_SSLVERSION", array('1'=> $langs->trans('TLSv1'), '6'=> $langs->trans('TLSv1.2')), $conf->global->PAYPAL_SSLVERSION);
 print '</td></tr>';
-
-print '</table>';
-print '</div>';
-
-print '<br>';
-
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
 
 // Usage Parameters
 print '<tr class="liste_titre">';
@@ -239,15 +205,15 @@ print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("PublicVendorName").'</td><td>';
+print $langs->trans("VendorName").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
+print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
-if (!empty($conf->banque->enabled)) {
+if (!empty($conf->banque->enabled))
+{
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
-	print img_picto('', 'bank_account').' ';
 	$form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
 }
@@ -255,7 +221,7 @@ if (!empty($conf->banque->enabled)) {
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
+print ' &nbsp; '.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 
@@ -288,17 +254,9 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp;  <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
+print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
 print '</td></tr>';
-
-print '</table>';
-print '</div>';
-
-print '<br>';
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
@@ -308,32 +266,21 @@ print "</tr>\n";
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input class="minwidth300" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
-if (!empty($conf->use_javascript_ajax)) {
+print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+if (!empty($conf->use_javascript_ajax))
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
-}
-if (!empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
-	$langs->load("errors");
-	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
-}
-print '</td></tr>';
+	print '</td></tr>';
 
-print '<tr class="oddeven"><td>';
-print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE);
-}
-print '</td></tr>';
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SecurityTokenIsUnique").'</td><td>';
+	print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN) ? 0 : $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
+	print '</td></tr>';
 
 print '</table>';
-print '</div>';
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
@@ -341,16 +288,15 @@ print '<br><br>';
 
 // Help doc
 print '<u>'.$langs->trans("InformationToFindParameters", "Paypal").'</u>:<br>';
-if (!empty($conf->use_javascript_ajax)) {
-	print '<a class="reposition" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
-}
+if (!empty($conf->use_javascript_ajax))
+	print '<a href="#" class="reposition" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
 
 $realpaypalurl = 'www.paypal.com';
 $sandboxpaypalurl = 'developer.paypal.com';
 
 print '<div id="apidoc">';
 print 'Your API authentication information can be found with following steps. We recommend that you open a separate Web browser session when carrying out this procedure.<br>
-1. Log in to your PayPal account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank" rel="noopener noreferrer external">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank" rel="noopener noreferrer external">'.$sandboxpaypalurl.'</a>).<br>
+1. Log in to your PayPal account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank">'.$sandboxpaypalurl.'</a>).<br>
 2. Click the "Profile" or "Preferencies" subtab located under the My Account heading.<br>
 3. Click the link "API Access".<br>
 4. Click the View API Certificate link in the right column.<br>
@@ -361,16 +307,15 @@ print 'Your API authentication information can be found with following steps. We
 ';
 print '</div>';
 
-if (!empty($conf->use_javascript_ajax)) {
+if (!empty($conf->use_javascript_ajax))
+{
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
-	            $("#apidoc").hide();
-	            $("#apidoca").click(function() {
-					console.log("We click on apidoca show/hide");
-	                $("#apidoc").show();
-	            	$("#apidoca").hide();
-					return false;
-	            })
+            $("#apidoc").hide();
+            $("#apidoca").click(function() {
+                $("#apidoc").show();
+            	$("#apidoca").hide();
+            })
 			});';
 	print '</script>';
 }

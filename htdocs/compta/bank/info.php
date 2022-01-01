@@ -29,21 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'companies'));
 
-$id = GETPOST("rowid", 'int');
-$ref = GETPOST('ref', 'alpha');
-
-// Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-
-$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
-if (empty($user->rights->banque->lire) && !$user->rights->banque->consolidate) {
-	accessforbidden();
-}
+$id = GETPOST("rowid");
 
 
 /*
@@ -69,7 +55,7 @@ $hselected = $h;
 $h++;
 
 
-print dol_get_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'accountline');
+dol_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'account');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

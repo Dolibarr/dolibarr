@@ -35,9 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
-if (!$user->admin) {
+if (!$user->admin)
 	accessforbidden();
-}
 
 $langs->load("admin");
 $langs->load("other");
@@ -49,17 +48,13 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
-foreach ($tmptype2label as $key => $val) {
-	$type2label[$key] = $langs->trans($val);
-}
+foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->trans($val);
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'commande_fournisseur_dispatch'; //Must be the $table_element of the class that manage extrafield
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
 
 /*
@@ -84,31 +79,43 @@ print "<br>\n";
 
 $head = reception_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'attributeslines_reception', $langs->trans("Receptions"), -1, 'reception');
+dol_fiche_head($head, 'attributeslines_reception', $langs->trans("Receptions"), -1, 'sending');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
 
 // Buttons
-if ($action != 'create' && $action != 'edit') {
+if ($action != 'create' && $action != 'edit')
+{
 	print '<div class="tabsAction">';
 	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
 	print "</div>";
 }
 
 
-// Creation of an optional field
-if ($action == 'create') {
+/* ************************************************************************** */
+/*                                                                            */
+/* Creation of an optional field											  */
+/*                                                                            */
+/* ************************************************************************** */
+
+if ($action == 'create')
+{
 	print "<br>";
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-// Edition of an optional field
-if ($action == 'edit' && !empty($attrname)) {
+/* ************************************************************************** */
+/*                                                                            */
+/* Edition of an optional field                                               */
+/*                                                                            */
+/* ************************************************************************** */
+if ($action == 'edit' && !empty($attrname))
+{
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 

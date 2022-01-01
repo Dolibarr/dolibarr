@@ -19,4 +19,3 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Használjon külső/abszolút linket
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Válassza ki, hogy a hivatkozott oldal az aktuális lapon vagy egy új lapon nyíljon meg
 BookmarksManagement=Könyvjelzők kezelése
 BookmarksMenuShortCut=Ctrl + Shift + m
-NoBookmarks=No bookmarks defined

@@ -16,18 +16,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  * Class ProductAttributeValue
  * Used to represent a product attribute value
  */
-class ProductAttributeValue extends CommonObject
+class ProductAttributeValue
 {
 	/**
 	 * Database handler
 	 * @var DoliDB
 	 */
-	public $db;
+	private $db;
 
 	/**
 	 * Attribute value id
@@ -53,18 +52,18 @@ class ProductAttributeValue extends CommonObject
 	 */
 	public $value;
 
-	/**
-	 * Constructor
-	 *
-	 * @param   DoliDB $db     Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    public function __construct(DoliDB $db)
+    {
 		global $conf;
 
 		$this->db = $db;
 		$this->entity = $conf->entity;
-	}
+    }
 
 	/**
 	 * Gets a product attribute value
@@ -145,11 +144,10 @@ class ProductAttributeValue extends CommonObject
 	/**
 	 * Creates a value for a product attribute
 	 *
-	 * @param  User $user      Object user
-	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 KO >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO >0 OK
 	 */
-	public function create(User $user, $notrigger = 0)
+	public function create(User $user)
 	{
 		if (!$this->fk_product_attribute) {
 			return -1;
@@ -157,24 +155,15 @@ class ProductAttributeValue extends CommonObject
 
 		// Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
-		$this->value = $this->db->escape($this->value);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_value (fk_product_attribute, ref, value, entity)
-		VALUES (".(int) $this->fk_product_attribute.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->value)."', ".(int) $this->entity.")";
+		VALUES ('".(int) $this->fk_product_attribute."', '".$this->db->escape($this->ref)."',
+		'".$this->db->escape($this->value)."', ".(int) $this->entity.")";
 
 		$query = $this->db->query($sql);
 
 		if ($query) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute_value');
-			if (empty($notrigger)) {
-				// Call trigger
-				$result = $this->call_trigger('PRODUCT_ATTRIBUTE_VALUE_CREATE', $user);
-				if ($result < 0) {
-					return -1;
-				}
-				// End call triggers
-			}
-
 			return 1;
 		}
 
@@ -184,21 +173,11 @@ class ProductAttributeValue extends CommonObject
 	/**
 	 * Updates a product attribute value
 	 *
-	 * @param  User	$user	   Object user
-	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 if KO, >0 if OK
+	 * @param	User	$user	Object user
+	 * @return 	int				<0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = 0)
+	public function update(User $user)
 	{
-		if (empty($notrigger)) {
-			// Call trigger
-			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_VALUE_MODIFY', $user);
-			if ($result < 0) {
-				return -1;
-			}
-			// End call triggers
-		}
-
 		//Ref must be uppercase
 		$this->ref = trim(strtoupper($this->ref));
 		$this->value = trim($this->value);
@@ -217,22 +196,12 @@ class ProductAttributeValue extends CommonObject
 	/**
 	 * Deletes a product attribute value
 	 *
-	 * @param  User $user      Object user
-	 * @param  int  $notrigger Do not execute trigger
 	 * @return int <0 KO, >0 OK
 	 */
-	public function delete(User $user, $notrigger = 0)
+	public function delete()
 	{
-
-		if (empty($notrigger)) {
-			// Call trigger
-			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_VALUE_DELETE', $user);
-			if ($result < 0) {
-				return -1;
-			}
-			// End call triggers
-		}
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $this->id;
+
 		if ($this->db->query($sql)) {
 			return 1;
 		}
@@ -243,36 +212,17 @@ class ProductAttributeValue extends CommonObject
 	/**
 	 * Deletes all product attribute values by a product attribute id
 	 *
-	 * @param int  $fk_attribute Product attribute id
-	 * @param User $user         Object user
+	 * @param int $fk_attribute Product attribute id
 	 * @return int <0 KO, >0 OK
 	 */
-	public function deleteByFkAttribute($fk_attribute, User $user)
+	public function deleteByFkAttribute($fk_attribute)
 	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE fk_product_attribute = ".(int) $fk_attribute;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE fk_product_attribute = ".(int) $fk_attribute;
 
-		$query = $this->db->query($sql);
-
-		if (!$query) {
-			return -1;
-		}
-
-		if (!$this->db->num_rows($query)) {
+		if ($this->db->query($sql)) {
 			return 1;
 		}
 
-		while ($obj = $this->db->fetch_object($query)) {
-			$tmp = new ProductAttributeValue($this->db);
-			if ($tmp->fetch($obj->rowid) > 0) {
-				$result = $tmp->delete($user);
-				if ($result < 0) {
-					return -1;
-				}
-			} else {
-				return -1;
-			}
-		}
-
-		return 1;
+		return -1;
 	}
 }

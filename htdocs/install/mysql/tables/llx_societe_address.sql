@@ -21,7 +21,7 @@ create table llx_societe_address
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   datec	             datetime,                            -- creation date
-  tms                timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                           -- last modification date
+  tms                timestamp,                           -- modification date
   label              varchar(30),                         --
   fk_soc	         integer        DEFAULT 0,            --
   name               varchar(60),                         -- company name

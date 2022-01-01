@@ -2,6 +2,7 @@
 
 use \DebugBar\DataCollector\TimeDataCollector;
 
+
 /**
  * DolTimeDataCollector class
  */

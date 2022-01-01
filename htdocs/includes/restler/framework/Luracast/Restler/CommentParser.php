@@ -1,5 +1,4 @@
 <?php
-
 namespace Luracast\Restler;
 
 use Exception;
@@ -15,7 +14,7 @@ use Luracast\Restler\Data\Text;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- *
+ * @version    3.0.0rc6
  */
 class CommentParser
 {
@@ -56,8 +55,8 @@ class CommentParser
      * @var array annotations that support array value
      */
     public static $allowsArrayValue = array(
-        'choice'     => true,
-        'select'     => true,
+        'choice' => true,
+        'select' => true,
         'properties' => true,
     );
 
@@ -221,7 +220,7 @@ class CommentParser
      */
     private function parseParam($param, array $value, array $embedded)
     {
-        $data = &$this->_data;
+        $data = & $this->_data;
         $allowMultiple = false;
         switch ($param) {
             case 'param' :
@@ -238,7 +237,7 @@ class CommentParser
                 $value = $this->formatReturn($value);
                 break;
             case 'class' :
-                $data = &$data[$param];
+                $data = & $data[$param];
                 list ($param, $value) = $this->formatClass($value);
                 break;
             case 'access' :
@@ -295,7 +294,7 @@ class CommentParser
                     += $data[$param][self::$embeddedDataName];
             }
             if (!is_array($data[$param])) {
-                $data[$param] = array('description' => (string)$data[$param]);
+                $data[$param] = array('description' => (string) $data[$param]);
             }
             if (is_array($value)) {
                 $data[$param] = $value + $data[$param];
@@ -321,24 +320,19 @@ class CommentParser
             $data['pattern'] = $matches[2];
         }
         while (preg_match('/{@(\w+)\s?([^}]*)}/ms', $subject, $matches)) {
-            $name = $matches[1];
-            $value = $matches[2];
             $subject = str_replace($matches[0], '', $subject);
-            if ($name == 'pattern') {
+            if ($matches[1] == 'pattern') {
                 throw new Exception('Inline pattern tag should follow {@pattern /REGEX_PATTERN_HERE/} format and can optionally include PCRE modifiers following the ending `/`');
-            } elseif (isset(static::$allowsArrayValue[$name])) {
-                $value = explode(static::$arrayDelimiter, $value);
-            } elseif ($value == 'true' || $value == 'false') {
-                $value = $value == 'true';
-            } elseif ($value == '') {
-                $value = true;
-            } elseif ($name == 'required') {
-                $value = explode(static::$arrayDelimiter, $value);
+            } elseif (isset(static::$allowsArrayValue[$matches[1]])) {
+                $matches[2] = explode(static::$arrayDelimiter, $matches[2]);
+            } elseif ($matches[2] == 'true' || $matches[2] == 'false') {
+                $matches[2] = $matches[2] == 'true';
+            } elseif ($matches[2] == '') {
+                $matches[2] = true;
+            } elseif ($matches[1] == 'required') {
+                $matches[2] = explode(static::$arrayDelimiter, $matches[2]);
             }
-            if (defined('Luracast\\Restler\\UI\\HtmlForm::'.$name)) {
-                $value = constant($value);
-            }
-            $data[$name] = $value;
+            $data[$matches[1]] = $matches[2];
         }
 
         while (preg_match(self::$embeddedDataPattern, $subject, $matches)) {
@@ -346,9 +340,9 @@ class CommentParser
             $str = $matches[self::$embeddedDataIndex];
             if (isset ($this->restler)
                 && self::$embeddedDataIndex > 1
-                && !empty ($name)
+                && !empty ($matches[1])
             ) {
-                $extension = $name;
+                $extension = $matches[1];
                 $formatMap = $this->restler->getFormatMap();
                 if (isset ($formatMap[$extension])) {
                     /**
@@ -403,15 +397,15 @@ class CommentParser
     {
         $code = 500;
         $exception = 'Exception';
-        if (count($value) > 1) {
+        if(count($value)>1){
             $v1 = $value[0];
             $v2 = $value[1];
-            if (is_numeric($v1)) {
+            if(is_numeric($v1)){
                 $code = $v1;
                 $exception = $v2;
                 array_shift($value);
                 array_shift($value);
-            } elseif (is_numeric($v2)) {
+            } elseif(is_numeric($v2)){
                 $code = $v2;
                 $exception = $v1;
                 array_shift($value);
@@ -420,17 +414,17 @@ class CommentParser
                 $exception = $v1;
                 array_shift($value);
             }
-        } elseif (count($value) && is_numeric($value[0])) {
+        } elseif(count($value) && is_numeric($value[0])) {
             $code = $value[0];
             array_shift($value);
         }
         $message = implode(' ', $value);
-        if (!isset(RestException::$codes[$code])) {
+        if(!isset(RestException::$codes[$code])){
             $code = 500;
-        } elseif (empty($message)) {
+        } elseif(empty($message)){
             $message = RestException::$codes[$code];
         }
-        return compact('code', 'message', 'exception');
+        return compact('code','message','exception');
     }
 
     private function formatClass(array $value)

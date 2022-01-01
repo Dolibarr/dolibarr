@@ -27,7 +27,7 @@ AssetTypeModified=Anlagentyp geändert
 AssetType=Anlagetyp
 AssetsLines=Anlagen
 DeleteType=Lösche Gruppe
-DeleteAnAssetType=Lösche einen Anlagetyp
+DeleteAnAssetType=Lösche eine Resourcenart
 ConfirmDeleteAssetType=Möchten Sie diesen Anlagetyp wirklich löschen?
 ShowTypeCard=Zeige Typ '%s'
 
@@ -61,7 +61,5 @@ MenuListTypeAssets = Liste
 #
 # Module
 #
-Asset=Anlagegut
 NewAssetType=neue Anlagenart
 NewAsset=neue Anlage
-ConfirmDeleteAsset=Möchten Sie dieses Asset wirklich löschen?

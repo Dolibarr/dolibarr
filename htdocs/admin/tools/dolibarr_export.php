@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2018	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,53 +29,43 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (!$sortorder) {
-	$sortorder = "DESC";
-}
-if (!$sortfield) {
-	$sortfield = "date";
-}
-if (empty($page) || $page == -1) {
-	$page = 0;
-}
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "date";
+if (empty($page) || $page == -1) { $page = 0; }
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-if (!$user->admin) {
+if (!$user->admin)
 	accessforbidden();
-}
 
 
 /*
  * Actions
  */
 
-if ($action == 'deletefile') {
-	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha'))) {
+if ($action == 'delete')
+{
+	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha')))
+	{
 		$file = $conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
 		$ret = dol_delete_file($file, 1);
-		if ($ret) {
-			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-		}
-	} else {
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	}
+	else
+	{
 		$file = $conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
 		$ret = dol_delete_file($file, 1);
-		if ($ret) {
-			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-		}
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 	$action = '';
 }
-
 
 /*
  * View
@@ -131,12 +121,10 @@ if (in_array($type, array('pgsql'))) {
 print "});\n";
 print "</script>\n";
 
-$title = $langs->trans("Backup");
-
-print load_fiche_titre($title, '', 'title_setup');
+print load_fiche_titre($langs->trans("Backup"), '', 'title_setup');
 //print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
-print '<div class="center">';
+print '<div class="center opacitymedium">';
 print $langs->trans("BackupDesc", DOL_DATA_ROOT);
 print '</div>';
 print '<br>';
@@ -145,51 +133,43 @@ print "<!-- Dump of a server -->\n";
 print '<form method="post" action="export.php" name="dump">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
-print '<input type="hidden" name="page_y" value="" />';
-
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
-print '<span class="opacitymedium">';
 print $langs->trans("BackupDesc3", $dolibarr_main_db_name).'<br>';
 //print $langs->trans("BackupDescY").'<br>';
-print '</span>';
-
 print '<br>';
 
 print '<div id="backupdatabaseleft" class="fichehalfleft" >';
 
-$title = $langs->trans("BackupDumpWizard");
+print load_fiche_titre($title ? $title : $langs->trans("BackupDumpWizard"));
 
-print load_fiche_titre($title);
-
-print '<table class="liste nohover centpercent noborderbottom">';
+print '<table width="100%" class="'.($useinecm ? 'nobordernopadding' : 'liste').' nohover">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
-
-print '<table class="centpercent noborderbottom">';
+print '<tr '.$bc[false].'><td style="padding-left: 8px">';
+print '<table class="centpercent">';
 print '<tr>';
 print '<td class="tdtop">';
 
 print '<div id="div_container_exportoptions">';
 print '<fieldset id="exportoptions"><legend>'.$langs->trans("ExportMethod").'</legend>';
 if (in_array($type, array('mysql', 'mysqli'))) {
-	print '<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />';
-	print '<label for="radio_dump_mysql">MySQL	Dump (mysqldump)</label>';
-	print '</div>';
-	print '<br>';
-	print '<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />';
-	print '<label for="radio_dump_mysql_nobin">MySQL Dump (php) '.img_warning($langs->trans('BackupPHPWarning')).'</label>';
-	print '</div>';
+    print '<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />';
+    print '<label for="radio_dump_mysql">MySQL	Dump (mysqldump)</label>';
+    print '</div>';
+    print '<br>';
+    print '<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />';
+    print '<label for="radio_dump_mysql">MySQL Dump (php) '.img_warning($langs->trans('BackupPHPWarning')).'</label>';
+    print '</div>';
 } elseif (in_array($type, array('pgsql'))) {
-	print '<div class="formelementrow"><input type="radio" name="what" value="postgresql" id="radio_dump_postgresql" />';
-	print '<label for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label>';
-	print '</div>';
+    print '<div class="formelementrow"><input type="radio" name="what"	value="postgresql" id="radio_dump_postgresql" />';
+    print '<label for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label>';
+    print '</div>';
 } else {
-	print 'No method available with database '.$label;
+    print 'No method available with database '.$label;
 }
 print '</fieldset>';
 print '</div>';
@@ -200,199 +180,204 @@ print '<td class="tdtop">';
 
 print '<div id="div_container_sub_exportoptions">';
 if (in_array($type, array('mysql', 'mysqli'))) {
-	print "<!--  Fieldset mysqldump -->\n";
-	print '<fieldset id="mysql_options"><legend>'.$langs->trans("MySqlExportParameters").'</legend>';
+    print "<!--  Fieldset mysqldump -->\n";
+    print '<fieldset id="mysql_options"><legend>'.$langs->trans("MySqlExportParameters").'</legend>';
 
-	print '<div class="formelementrow">'.$langs->trans("FullPathToMysqldumpCommand");
-	if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
-		$fullpathofmysqldump = $db->getPathOfDump();
-	} else {
-		$fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
-	}
-	print '<br>';
-	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'" /></div>';
+    print '<div class="formelementrow">'.$langs->trans("FullPathToMysqldumpCommand");
+    if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP))
+    {
+        $fullpathofmysqldump = $db->getPathOfDump();
+    }
+    else
+    {
+        $fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
+    }
+    print '<br>';
+    print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'" /></div>';
 
-	print '<br>';
-	print '<fieldset><legend>'.$langs->trans("ExportOptions").'</legend>';
-	print '<div class="formelementrow">';
-	print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
-	print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
-	print '</div>';
+    print '<br>';
+    print '<fieldset><legend>'.$langs->trans("ExportOptions").'</legend>';
+    print '<div class="formelementrow">';
+    print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
+    print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
+    print '</div>';
 
-	if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
-		print '<div class="formelementrow">';
-		print '<input type="checkbox" name="disable_fk" value="yes" id="checkbox_disable_fk" checked />';
-		print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
-		print '</div>';
-	}
+    if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
+        print '<div class="formelementrow">';
+        print '<input type="checkbox" name="disable_fk" value="yes" id="checkbox_disable_fk" checked />';
+        print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
+        print '</div>';
+    }
 
-	print '<label for="select_sql_compat">'.$langs->trans("ExportCompatibility").'</label>';
+    print '<label for="select_sql_compat">'.$langs->trans("ExportCompatibility").'</label>';
 
-	print '<select name="sql_compat" id="select_sql_compat" class="flat">';
-	print '<option value="NONE" selected>NONE</option>';
-	print '<option value="ANSI">ANSI</option>';
-	print '<option value="DB2">DB2</option>';
-	print '<option value="MAXDB">MAXDB</option>';
-	print '<option value="MYSQL323">MYSQL323</option>';
-	print '<option value="MYSQL40">MYSQL40</option>';
-	print '<option value="MSSQL">MSSQL</option>';
-	print '<option value="ORACLE">ORACLE</option>';
-	print '<option value="POSTGRESQL">POSTGRESQL</option>';
-	print '</select>';
-	print '<br>';
+    print '<select name="sql_compat" id="select_sql_compat" class="flat">';
+    print '<option value="NONE" selected>NONE</option>';
+    print '<option value="ANSI">ANSI</option>';
+    print '<option value="DB2">DB2</option>';
+    print '<option value="MAXDB">MAXDB</option>';
+    print '<option value="MYSQL323">MYSQL323</option>';
+    print '<option value="MYSQL40">MYSQL40</option>';
+    print '<option value="MSSQL">MSSQL</option>';
+    print '<option value="ORACLE">ORACLE</option>';
+    print '<option value="POSTGRESQL">POSTGRESQL</option>';
+    print '</select>';
+    print '<br>';
 
-	print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" />';
-	print '<label for="checkbox_use_quick">';
-	print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
+    print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" />';
+    print '<label for="checkbox_use_quick">';
+    print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
 	print '</label>';
-	print '<br>';
+	print '<br/>';
 
-	print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
-	print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';
-	print '-->';
-	print '</fieldset>';
+    print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
+    print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';
+    print '-->';
+    print '</fieldset>';
 
-	print '<br>';
-	print '<fieldset>';
-	print '<legend>';
-	print '<input type="checkbox" name="sql_structure" value="structure" id="checkbox_sql_structure" checked />';
-	print '<label for="checkbox_sql_structure">'.$langs->trans('ExportStructure').'</label>';
-	print '</legend>';
+    print '<br>';
+    print '<fieldset>';
+    print '<legend>';
+    print '<input type="checkbox" name="sql_structure" value="structure" id="checkbox_sql_structure" checked />';
+    print '<label for="checkbox_sql_structure">'.$langs->trans('ExportStructure').'</label>';
+    print '</legend>';
 
-	print '<input type="checkbox" name="drop"'.((!GETPOSTISSET("drop") || GETPOST('drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
-	print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
-	print '<br>';
-	print '</fieldset>';
+    print '<input type="checkbox" name="drop"'.((! GETPOSTISSET("drop") || GETPOST('drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
+    print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
+    print '<br>';
+    print '</fieldset>';
 
-	print '<br>';
-	print '<fieldset>';
-	print '<legend>';
-	print '<input type="checkbox" name="sql_data" value="data" id="checkbox_sql_data" checked />';
-	print '<label for="checkbox_sql_data">'.$langs->trans("Datas").'</label>';
-	print '</legend>';
-	print '<input type="checkbox" name="showcolumns" value="yes" id="checkbox_dump_showcolumns" checked />';
-	print '<label for="checkbox_dump_showcolumns">'.$langs->trans("NameColumn").'</label>';
-	print '<br>';
+    print '<br>';
+    print '<fieldset>';
+    print '<legend>';
+    print '<input type="checkbox" name="sql_data" value="data" id="checkbox_sql_data" checked />';
+    print '<label for="checkbox_sql_data">'.$langs->trans("Datas").'</label>';
+    print '</legend>';
+    print '<input type="checkbox" name="showcolumns" value="yes" id="checkbox_dump_showcolumns" checked />';
+    print '<label for="checkbox_dump_showcolumns">'.$langs->trans("NameColumn").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="extended_ins" value="yes" id="checkbox_dump_extended_ins" checked />';
-	print '<label for="checkbox_dump_extended_ins">'.$langs->trans("ExtendedInsert").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="extended_ins" value="yes" id="checkbox_dump_extended_ins" checked />';
+    print '<label for="checkbox_dump_extended_ins">'.$langs->trans("ExtendedInsert").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="disable-add-locks" value="no" id="checkbox_dump_disable-add-locks" />';
-	print '<label for="checkbox_dump_disable-add-locks">'.$langs->trans("NoLockBeforeInsert").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="disable-add-locks" value="no" id="checkbox_dump_disable-add-locks" />';
+    print '<label for="checkbox_dump_disable-add-locks">'.$langs->trans("NoLockBeforeInsert").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="delayed" value="yes" id="checkbox_dump_delayed" />';
-	print '<label for="checkbox_dump_delayed">'.$langs->trans("DelayedInsert").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="delayed" value="yes" id="checkbox_dump_delayed" />';
+    print '<label for="checkbox_dump_delayed">'.$langs->trans("DelayedInsert").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="sql_ignore" value="yes" id="checkbox_dump_ignore" />';
-	print '<label for="checkbox_dump_ignore">'.$langs->trans("IgnoreDuplicateRecords").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="sql_ignore" value="yes" id="checkbox_dump_ignore" />';
+    print '<label for="checkbox_dump_ignore">'.$langs->trans("IgnoreDuplicateRecords").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="hexforbinary" value="yes" id="checkbox_hexforbinary" checked />';
-	print '<label for="checkbox_hexforbinary">'.$langs->trans("EncodeBinariesInHexa").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="hexforbinary" value="yes" id="checkbox_hexforbinary" checked />';
+    print '<label for="checkbox_hexforbinary">'.$langs->trans("EncodeBinariesInHexa").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="charset_utf8" value="yes" id="checkbox_charset_utf8" checked disabled />';
-	print '<label for="checkbox_charset_utf8">'.$langs->trans("UTF8").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="charset_utf8" value="yes" id="checkbox_charset_utf8" checked disabled />';
+    print '<label for="checkbox_charset_utf8">'.$langs->trans("UTF8").'</label>';
+    print '<br>';
 
-	print '</fieldset>';
-	print '</fieldset>';
-	print "<!--  Fieldset mysql_nobin -->\n";
-	print '<fieldset id="mysql_nobin_options">';
-	print '<legend>'.$langs->trans("MySqlExportParameters").'</legend>';
-	print '<fieldset>';
-	print '<legend>'.$langs->trans("ExportOptions").'</legend>';
-	print '<div class="formelementrow">';
-	print '<input type="checkbox" name="nobin_use_transaction" value="yes" id="checkbox_use_transaction" />';
-	print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
+    print '</fieldset>';
+    print '</fieldset>';
+    print "<!--  Fieldset mysql_nobin -->\n";
+    print '<fieldset id="mysql_nobin_options">';
+    print '<legend>'.$langs->trans("MySqlExportParameters").'</legend>';
+    print '<fieldset>';
+    print '<legend>'.$langs->trans("ExportOptions").'</legend>';
+    print '<div class="formelementrow">';
+    print '<input type="checkbox" name="nobin_use_transaction" value="yes" id="checkbox_use_transaction" />';
+    print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
 
-	print '</div>';
-	if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
-		print '<div class="formelementrow">';
-		print '<input type="checkbox" name="nobin_disable_fk" value="yes" id="checkbox_disable_fk" checked />';
-		print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
-		print '</div>';
-	}
-	print '</fieldset>';
+    print '</div>';
+    if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
+        print '<div class="formelementrow">';
+        print '<input type="checkbox" name="nobin_disable_fk" value="yes" id="checkbox_disable_fk" checked />';
+        print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
+        print '</div>';
+    }
+    print '</fieldset>';
 
-	print '<br>';
-	print '<fieldset><legend>'.$langs->trans('ExportStructure').'</legend>';
-	print '<input type="checkbox" name="nobin_drop"'.((!GETPOSTISSET("nobin_drop") || GETPOST('nobin_drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
-	print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
-	print '<br>';
-	print '</fieldset>';
+    print '<br>';
+    print '<fieldset><legend>'.$langs->trans('ExportStructure').'</legend>';
+    print '<input type="checkbox" name="nobin_drop"'.((! GETPOSTISSET("nobin_drop") || GETPOST('nobin_drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
+    print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
+    print '<br>';
+    print '</fieldset>';
 
-	print '<br>';
-	print '<fieldset>';
-	print '<legend>'.$langs->trans("Datas").'</legend>';
+    print '<br>';
+    print '<fieldset>';
+    print '<legend>'.$langs->trans("Datas").'</legend>';
 
-	print '<input type="checkbox" name="nobin_nolocks" value="no" id="checkbox_dump_disable-add-locks" />';
-	print '<label for="checkbox_dump_disable-add-locks">'.$langs->trans("NoLockBeforeInsert").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="nobin_nolocks" value="no" id="checkbox_dump_disable-add-locks" />';
+    print '<label for="checkbox_dump_disable-add-locks">'.$langs->trans("NoLockBeforeInsert").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="nobin_delayed" value="yes" id="checkbox_dump_delayed" />';
-	print '<label for="checkbox_dump_delayed">'.$langs->trans("DelayedInsert").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="nobin_delayed" value="yes" id="checkbox_dump_delayed" />';
+    print '<label for="checkbox_dump_delayed">'.$langs->trans("DelayedInsert").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="nobin_sql_ignore" value="yes" id="checkbox_dump_ignore" />';
-	print '<label for="checkbox_dump_ignore">'.$langs->trans("IgnoreDuplicateRecords").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="nobin_sql_ignore" value="yes" id="checkbox_dump_ignore" />';
+    print '<label for="checkbox_dump_ignore">'.$langs->trans("IgnoreDuplicateRecords").'</label>';
+    print '<br>';
 
-	print '<input type="checkbox" name="nobin_charset_utf8" value="yes" id="checkbox_charset_utf8" checked disabled />';
-	print '<label for="checkbox_charset_utf8">'.$langs->trans("UTF8").'</label>';
-	print '<br>';
+    print '<input type="checkbox" name="nobin_charset_utf8" value="yes" id="checkbox_charset_utf8" checked disabled />';
+    print '<label for="checkbox_charset_utf8">'.$langs->trans("UTF8").'</label>';
+    print '<br>';
 
-	print '</fieldset>';
-	print '</fieldset>';
+    print '</fieldset>';
+    print '</fieldset>';
 }
 
 if (in_array($type, array('pgsql'))) {
-	print "<!--  Fieldset pg_dump -->\n";
-	print '<fieldset id="postgresql_options"><legend>'.$langs->trans("PostgreSqlExportParameters").'</legend>';
+    print "<!--  Fieldset pg_dump -->\n";
+    print '<fieldset id="postgresql_options"><legend>'.$langs->trans("PostgreSqlExportParameters").'</legend>';
 
-	print '<div class="formelementrow">'.$langs->trans("FullPathToPostgreSQLdumpCommand");
-	if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP)) {
-		$fullpathofpgdump = $db->getPathOfDump();
-	} else {
-		$fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
-	}
-	print '<br>';
-	print '<input type="text" name="postgresqldump" style="width: 80%" value="'.$fullpathofpgdump.'" /></div>';
+    print '<div class="formelementrow">'.$langs->trans("FullPathToPostgreSQLdumpCommand");
+    if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP)) {
+        $fullpathofpgdump = $db->getPathOfDump();
+    }
+    else
+    {
+        $fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
+    }
+    print '<br>';
+    print '<input type="text" name="postgresqldump" style="width: 80%" value="'.$fullpathofpgdump.'" /></div>';
 
-	print '<br>';
-	print '<fieldset>';
-	print '<legend>'.$langs->trans("ExportOptions").'</legend>';
-	print '<label for="select_sql_compat">'.$langs->trans("ExportCompatibility").'</label>';
-	print '<select name="sql_compat" id="select_sql_compat" class="flat">';
-	print '<option value="POSTGRESQL" selected>POSTGRESQL</option>';
-	print '<option value="ANSI">ANSI</option>';
-	print '</select>';
-	print '<br>';
-	print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
-	print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';
-	print '-->';
-	print '</fieldset>';
-	print '<br>';
-	print '<fieldset>';
-	print '<legend>';
-	print '<input type="checkbox" name="sql_structure" value="structure" id="checkbox_sql_structure" checked />';
-	print '<label for="checkbox_sql_structure">'.$langs->trans('ExportStructure').'</label>';
-	print '</legend>';
-	print '</fieldset>';
-	print '<br>';
-	print '<fieldset>';
-	print '<legend>';
-	print '<input type="checkbox" name="sql_data" value="data" id="checkbox_sql_data" checked />';
-	print '<label for="checkbox_sql_data">'.$langs->trans("Datas").'</label>';
-	print '</legend>';
-	print '<input type="checkbox" name="showcolumns" value="yes" id="checkbox_dump_showcolumns" checked />';
-	print '<label for="checkbox_dump_showcolumns">'.$langs->trans("NameColumn").'</label>';
-	print '<br>';
-	print '</fieldset>';
-	print '</fieldset>';
+    print '<br>';
+    print '<fieldset>';
+    print '<legend>'.$langs->trans("ExportOptions").'</legend>';
+    print '<label for="select_sql_compat">'.$langs->trans("ExportCompatibility").'</label>';
+    print '<select name="sql_compat" id="select_sql_compat" class="flat">';
+    print '<option value="POSTGRESQL" selected>POSTGRESQL</option>';
+    print '<option value="ANSI">ANSI</option>';
+    print '</select>';
+    print '<br>';
+    print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
+    print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';
+    print '-->';
+    print '</fieldset>';
+    print '<br>';
+    print '<fieldset>';
+    print '<legend>';
+    print '<input type="checkbox" name="sql_structure" value="structure" id="checkbox_sql_structure" checked />';
+    print '<label for="checkbox_sql_structure">'.$langs->trans('ExportStructure').'</label>';
+    print '</legend>';
+    print '</fieldset>';
+    print '<br>';
+    print '<fieldset>';
+    print '<legend>';
+    print '<input type="checkbox" name="sql_data" value="data" id="checkbox_sql_data" checked />';
+    print '<label for="checkbox_sql_data">'.$langs->trans("Datas").'</label>';
+    print '</legend>';
+    print '<input type="checkbox" name="showcolumns" value="yes" id="checkbox_dump_showcolumns" checked />';
+    print '<label for="checkbox_dump_showcolumns">'.$langs->trans("NameColumn").'</label>';
+    print '<br>';
+    print '</fieldset>';
+    print '</fieldset>';
 }
 print '</div>';
 
@@ -400,15 +385,11 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
-print '</td></tr>';
-print '</table>';
-
-
 
 print '<!--<fieldset>';
 print '<legend>'.$langs->trans("Destination").'</legend> -->';
 print '<br>';
-print '<label for="filename_template" class="line-height-large">'.$langs->trans("FileNameToGenerate").'</label>';
+print '<label for="filename_template">'.$langs->trans("FileNameToGenerate").'</label>';
 print '<br>';
 $prefix = 'dump';
 $ext = '.sql';
@@ -443,22 +424,19 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	//     'id' => 'radio_compression_zip',
 	//     'label' => $langs->trans("FormatZip")
 	// );
-	$compression['bz'] = array(
-	'function' => 'bzopen',
-	'id' => 'radio_compression_bzip',
-	'label' => $langs->trans("Bzip2")
+    $compression['bz'] = array(
+		'function' => 'bzopen',
+		'id' => 'radio_compression_bzip',
+		'label' => $langs->trans("Bzip2")
 	);
-	$compression['zstd'] = array(
-		'function' => 'zstd_compress',
-		'id' => 'radio_compression_zstd',
-		'label' => $langs->trans("Zstd")
-	);
-	$compression['none'] = array(
-		'function' => '',
-		'id' => 'radio_compression_none',
-		'label' => $langs->trans("None")
-	);
-} else {
+    $compression['none'] = array(
+    	'function' => '',
+    	'id' => 'radio_compression_none',
+    	'label' => $langs->trans("None")
+    );
+}
+else
+{
 	$compression['none'] = array(
 		'function' => '',
 		'id' => 'radio_compression_none',
@@ -478,16 +456,17 @@ print "\n";
 print $langs->trans("Compression").': &nbsp; ';
 
 $i = 0;
-foreach ($compression as $key => $val) {
+foreach ($compression as $key => $val)
+{
 	if (!$val['function'] || function_exists($val['function'])) {
 		// Enabled export format
 		$checked = '';
-		if ($key == 'gz') {
-			$checked = ' checked';
-		}
+		if ($key == 'gz') $checked = ' checked';
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-	} else {
+	}
+	else
+	{
 		// Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
@@ -505,26 +484,29 @@ print "<!--</fieldset>--> <!-- End destination -->\n";
 print '<br>';
 print '<div class="center">';
 print '<input type="submit" class="button reposition" value="'.$langs->trans("GenerateBackup").'" id="buttonGo">';
+print '<input type="hidden" name="page_y" value="'.GETPOST('page_y', 'int').'">';
 print '<br>';
 print '<br>';
 
-if (!empty($_SESSION["commandbackuplastdone"])) {
-	print '<br><b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
-	print '<textarea rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuplastdone"].'</textarea><br>'."\n";
-	print '<br>';
+if (!empty($_SESSION["commandbackuplastdone"]))
+{
+    print '<br><b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
+    print '<textarea rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuplastdone"].'</textarea><br>'."\n";
+    print '<br>';
 
-	//print $paramclear;
+    //print $paramclear;
 
-	// Now show result
-	print '<b>'.$langs->trans("BackupResult").':</b> ';
+    // Now show result
+    print '<b>'.$langs->trans("BackupResult").':</b> ';
 	print $_SESSION["commandbackupresult"];
 
 	$_SESSION["commandbackuplastdone"] = '';
 	$_SESSION["commandbackuptorun"] = '';
 	$_SESSION["commandbackupresult"] = '';
 }
-if (!empty($_SESSION["commandbackuptorun"])) {
-	print '<br><span class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser", $dolibarr_main_db_user, $dolibarr_main_db_user).':</span><br>'."\n";
+if (!empty($_SESSION["commandbackuptorun"]))
+{
+	print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser", $dolibarr_main_db_user, $dolibarr_main_db_user).':</font><br>'."\n";
 	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
 	print ajax_autoselect("commandbackuptoruntext", 0);
 	print '<br>';
@@ -538,16 +520,20 @@ if (!empty($_SESSION["commandbackuptorun"])) {
 
 print "</div> <!-- end div center button -->\n";
 
+print '</td></tr>';
+print '</table>';
 
 print "</div> 	<!-- end div fichehalfleft -->\n";
 
 
 print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
+print '<div class="ficheaddleft">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
 print '<br>';
 
+print '</div>';
 print '</div>';
 print '</form>';
 print '</fieldset>';
@@ -564,16 +550,14 @@ print '<input type="hidden" name="page_y" value="" />';
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>';
 
-print '<span class="opacitymedium">';
 print $langs->trans("BackupDesc2", DOL_DATA_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
-print '</span>';
 
 print '<div id="backupfilesleft" class="fichehalfleft">';
 
 print load_fiche_titre($title ? $title : $langs->trans("BackupZipWizard"));
 
-print '<label for="zipfilename_template" class="line-height-large paddingbottom">'.$langs->trans("FileNameToGenerate").'</label><br>';
+print '<label for="zipfilename_template">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix = 'documents';
 $ext = 'zip';
 $file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M");
@@ -592,22 +576,23 @@ unset($filecompression['none']);
 $filecompression['zip'] = array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip', 'label' => $langs->trans("FormatZip"));
 
 $i = 0;
-foreach ($filecompression as $key => $val) {
-	if (!$val['function'] || function_exists($val['function'])) {	// Enabled export format
-		$checked = '';
-		if ($key == 'gz') {
-			$checked = ' checked';
-		}
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
-		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-	} else // Disabled export format
-	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
-		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
-	}
-	print ' &nbsp; &nbsp; ';
-	$i++;
+foreach ($filecompression as $key => $val)
+{
+    if (!$val['function'] || function_exists($val['function']))	// Enabled export format
+    {
+    	$checked = '';
+    	if ($key == 'gz') $checked = ' checked';
+        print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
+        print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
+    }
+    else	// Disabled export format
+    {
+        print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
+        print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
+        print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+    }
+    print ' &nbsp; &nbsp; ';
+    $i++;
 }
 
 print '</div>';
@@ -621,12 +606,14 @@ print '</div>';
 
 print '</div>';
 
-print '<div id="backupfileright" class="fichehalfright" style="height:250px; overflow: auto;">';
+print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
+print '<div class="ficheaddleft">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));
 print '<br>';
 
+print '</div>';
 print '</div>';
 
 print '</fieldset>';

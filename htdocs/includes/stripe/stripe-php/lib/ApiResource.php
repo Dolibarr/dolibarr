@@ -3,7 +3,9 @@
 namespace Stripe;
 
 /**
- * Class ApiResource.
+ * Class ApiResource
+ *
+ * @package Stripe
  */
 abstract class ApiResource extends StripeObject
 {
@@ -19,15 +21,14 @@ abstract class ApiResource extends StripeObject
     public static function getSavedNestedResources()
     {
         static $savedNestedResources = null;
-        if (null === $savedNestedResources) {
+        if ($savedNestedResources === null) {
             $savedNestedResources = new Util\Set();
         }
-
         return $savedNestedResources;
     }
 
     /**
-     * @var bool A flag that can be set a behavior that will cause this
+     * @var boolean A flag that can be set a behavior that will cause this
      * resource to be encoded and sent up along with an update of its parent
      * resource. This is usually not desirable because resources are updated
      * individually on their own endpoints, but there are certain cases,
@@ -38,17 +39,16 @@ abstract class ApiResource extends StripeObject
     public function __set($k, $v)
     {
         parent::__set($k, $v);
-        $v = $this->{$k};
-        if ((static::getSavedNestedResources()->includes($k))
-            && ($v instanceof ApiResource)) {
+        $v = $this->$k;
+        if ((static::getSavedNestedResources()->includes($k)) &&
+            ($v instanceof ApiResource)) {
             $v->saveWithParent = true;
         }
+        return $v;
     }
 
     /**
-     * @throws Exception\ApiErrorException
-     *
-     * @return ApiResource the refreshed resource
+     * @return ApiResource The refreshed resource.
      */
     public function refresh()
     {
@@ -63,12 +63,11 @@ abstract class ApiResource extends StripeObject
         );
         $this->setLastResponse($response);
         $this->refreshFrom($response->json, $this->_opts);
-
         return $this;
     }
 
     /**
-     * @return string the base URL for the given class
+     * @return string The base URL for the given class.
      */
     public static function baseUrl()
     {
@@ -76,42 +75,35 @@ abstract class ApiResource extends StripeObject
     }
 
     /**
-     * @return string the endpoint URL for the given class
+     * @return string The endpoint URL for the given class.
      */
     public static function classUrl()
     {
         // Replace dots with slashes for namespaced resources, e.g. if the object's name is
         // "foo.bar", then its URL will be "/v1/foo/bars".
-        $base = \str_replace('.', '/', static::OBJECT_NAME);
-
-        return "/v1/{$base}s";
+        $base = str_replace('.', '/', static::OBJECT_NAME);
+        return "/v1/${base}s";
     }
 
     /**
-     * @param null|string $id the ID of the resource
-     *
-     * @throws Exception\UnexpectedValueException if $id is null
-     *
-     * @return string the instance endpoint URL for the given class
+     * @return string The instance endpoint URL for the given class.
      */
     public static function resourceUrl($id)
     {
-        if (null === $id) {
-            $class = static::class;
-            $message = 'Could not determine which URL to request: '
-               . "{$class} instance has invalid ID: {$id}";
-
-            throw new Exception\UnexpectedValueException($message);
+        if ($id === null) {
+            $class = get_called_class();
+            $message = "Could not determine which URL to request: "
+               . "$class instance has invalid ID: $id";
+            throw new Error\InvalidRequest($message, null);
         }
         $id = Util\Util::utf8($id);
         $base = static::classUrl();
-        $extn = \urlencode($id);
-
-        return "{$base}/{$extn}";
+        $extn = urlencode($id);
+        return "$base/$extn";
     }
 
     /**
-     * @return string the full API URL for this API resource
+     * @return string The full API URL for this API resource.
      */
     public function instanceUrl()
     {

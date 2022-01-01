@@ -34,33 +34,25 @@ $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'banque', '', '', '');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
-	$page = 0;
-}     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
-if (!$sortfield) {
-	$sortfield = "name";
-}
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 
 $object = new PaymentVarious($db);
@@ -69,15 +61,12 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart = 'banque';
 
-$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
-
-
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -90,19 +79,22 @@ $title = $langs->trans("VariousPayment").' - '.$langs->trans("Documents");
 $help_url = '';
 llxHeader("", $title, $help_url);
 
-if ($object->id) {
+if ($object->id)
+{
 	$head = various_payment_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
+	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->projet->enabled))
+	{
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' : ';
-		if ($user->rights->banque->modifier && 0) {
+		if ($user->rights->banque->modifier && 0)
+		{
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -136,7 +128,8 @@ if ($object->id) {
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file) {
+	foreach ($filearray as $key => $file)
+	{
 		$totalsize += $file['size'];
 	}
 
@@ -150,13 +143,15 @@ if ($object->id) {
 
 	print '<div class="clearboth"></div>';
 
-	print dol_get_fiche_end();
+	dol_fiche_end();
 
 	$modulepart = 'banque';
-	$permissiontoadd = $user->rights->banque->modifier;
+	$permission = $user->rights->banque->modifier;
 	$param = '&id='.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-} else {
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+}
+else
+{
 	print $langs->trans("ErrorUnknown");
 }
 

@@ -22,7 +22,7 @@ AccountancyCodeAsset = Grāmatvedības kods (aktīvs)
 AccountancyCodeDepreciationAsset = Grāmatvedības kods (nolietojuma aktīvu konts)
 AccountancyCodeDepreciationExpense = Grāmatvedības kods (nolietojuma izmaksu konts)
 NewAssetType=Jauns aktīvu veids
-AssetsTypeSetup=Aktīvu veida iestatīšana
+AssetsTypeSetup=Aktīvu veidu iestatīšana
 AssetTypeModified=Pamatlīdzekļu veids pārveidots
 AssetType=Aktīva veids
 AssetsLines=Aktīvi
@@ -42,7 +42,7 @@ ModuleAssetsDesc = Aktīvu apraksts
 AssetsSetup = Aktīvu uzstādīšana
 Settings = Iestatījumi
 AssetsSetupPage = Aktīvu iestatīšanas lapa
-ExtraFieldsAssetsType = Papildu atribūti (aktīvu veids)
+ExtraFieldsAssetsType = Papildu atribūti (Assets type)
 AssetsType=Aktīva veids
 AssetsTypeId=Aktīva veida id
 AssetsTypeLabel=Aktīva veida nosaukums
@@ -55,13 +55,5 @@ MenuAssets = Aktīvi
 MenuNewAsset = Jauns aktīvs
 MenuTypeAssets = Ierakstiet aktīvus
 MenuListAssets = Saraksts
-MenuNewTypeAssets = Jauns
+MenuNewTypeAssets = Jauns veids
 MenuListTypeAssets = Saraksts
-
-#
-# Module
-#
-Asset=Aktīvs
-NewAssetType=Jauns aktīvu veids
-NewAsset=Jauns aktīvs
-ConfirmDeleteAsset=Vai tiešām vēlaties dzēst šo īpašumu?

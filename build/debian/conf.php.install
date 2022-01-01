@@ -232,7 +232,7 @@ $dolibarr_main_prod='0';
 # Examples:
 # $dolibarr_mailing_limit_sendbycli='0';
 
-# dolibarr_main_distrib
+# dolibarr_distrib
 # A key to identify the distribution used for first installation
-$dolibarr_main_distrib = 'debian';
+$dolibarr_distrib = 'deb';
 

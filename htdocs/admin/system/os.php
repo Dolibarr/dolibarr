@@ -26,9 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("admin");
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin)
+  accessforbidden();
 
 /*
  * View

@@ -36,13 +36,12 @@ StatsOnReceptionsOnlyValidated=Statistics conducted on receptions only validated
 SendReceptionByEMail=Send reception by email
 SendReceptionRef=Submission of reception %s
 ActionsOnReception=Events on reception
-ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the Purchase Order record.
+ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the order card.
 ReceptionLine=Reception line
-ProductQtyInReceptionAlreadySent=A nyitott értékesítési rendelésből származó termékmennyiség már elküldve
+ProductQtyInReceptionAlreadySent=Product quantity from open sales order already sent
 ProductQtyInSuppliersReceptionAlreadyRecevied=Product quantity from open supplier order already received
 ValidateOrderFirstBeforeReception=You must first validate the order before being able to make receptions.
 ReceptionsNumberingModules=Numbering module for receptions
 ReceptionsReceiptModel=Document templates for receptions
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-ReceptionExist=A reception exists
-ByingPrice=Bying price
+

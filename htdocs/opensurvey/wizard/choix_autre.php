@@ -28,9 +28,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 // Security check
-if (!$user->rights->opensurvey->write) {
-	accessforbidden();
-}
+if (!$user->rights->opensurvey->write) accessforbidden();
 
 
 
@@ -38,35 +36,36 @@ if (!$user->rights->opensurvey->write) {
  * Action
  */
 
-$arrayofchoices = GETPOST('choix', 'array');
-$arrayoftypecolumn = GETPOST('typecolonne', 'array');
-
 // Set session vars
 if (isset($_SESSION["nbrecases"])) {
 	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
-		if (isset($arrayofchoices[$i])) {
-			$_SESSION["choix".$i] = $arrayofchoices[$i];
+		if (isset($_POST["choix"][$i])) {
+			$_SESSION["choix$i"] = $_POST["choix"][$i];
 		}
-		if (isset($arrayoftypecolumn[$i])) {
-			$_SESSION["typecolonne".$i] = $arrayoftypecolumn[$i];
+		if (isset($_POST["typecolonne"][$i])) {
+			$_SESSION["typecolonne$i"] = $_POST["typecolonne"][$i];
 		}
 	}
 } else { //nombre de cases par défaut
 	$_SESSION["nbrecases"] = 5;
 }
 
-if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x")) {
+if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x"))
+{
 	$_SESSION["nbrecases"] = $_SESSION["nbrecases"] + 5;
 }
 
 // Create survey into database
-if (GETPOSTISSET("confirmecreation")) {
+if (isset($_POST["confirmecreation"]))
+{
 	//recuperation des données de champs textes
 	$toutchoix = '';
-	for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++) {
-		if (!empty($arrayofchoices[$i])) {
+	for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++)
+	{
+		if (!empty($_POST["choix"][$i]))
+		{
 			$toutchoix .= ',';
-			$toutchoix .= str_replace(array(",", "@"), " ", $arrayofchoices[$i]).(empty($arrayoftypecolumn[$i]) ? '' : '@'.$arrayoftypecolumn[$i]);
+			$toutchoix .= str_replace(array(",", "@"), " ", $_POST["choix"][$i]).(empty($_POST["typecolonne"][$i]) ? '' : '@'.$_POST["typecolonne"][$i]);
 		}
 	}
 
@@ -75,8 +74,10 @@ if (GETPOSTISSET("confirmecreation")) {
 
 	//test de remplissage des cases
 	$testremplissage = '';
-	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
-		if (isset($arrayofchoices[$i])) {
+	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++)
+	{
+		if (isset($_POST["choix"][$i]))
+		{
 			$testremplissage = "ok";
 		}
 	}
@@ -93,6 +94,9 @@ if (GETPOSTISSET("confirmecreation")) {
 	}
 }
 
+
+
+
 /*
  * View
  */
@@ -103,7 +107,8 @@ $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss);
 
-if (empty($_SESSION['title'])) {
+if (empty($_SESSION['titre']))
+{
 	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	llxFooter();
 	exit;

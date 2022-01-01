@@ -36,9 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors'));
 
-if (!$user->admin) {
+if (!$user->admin)
 	accessforbidden();
-}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -47,41 +46,31 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' && $user->admin)
+{
 	$error = 0;
 	$db->begin();
 
-	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_DN', GETPOST("membertype"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
-	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
+	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_DN', GETPOST("membertype"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
 
-	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
-	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
-	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS', GETPOST("fieldmembertypemembers"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
+	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS', GETPOST("fieldmembertypemembers"), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
 	$valkey = '';
 	$key = GETPOST("key");
-	if ($key) {
-		$valkey = $conf->global->$key;
-	}
-	if (!dolibarr_set_const($db, 'LDAP_KEY_MEMBERS_TYPES', $valkey, 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
+	if ($key) $valkey = $conf->global->$key;
+	if (!dolibarr_set_const($db, 'LDAP_KEY_MEMBERS_TYPES', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
 
-	if (!$error) {
+	if (!$error)
+	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
+	}
+	else
+	{
 		$db->rollback();
 		dol_print_error($db);
 	}
@@ -101,18 +90,19 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
-if (!function_exists("ldap_connect")) {
+if (!function_exists("ldap_connect"))
+{
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'memberstypes', $langs->trans("LDAPSetup"), -1);
+dol_fiche_head($head, 'memberstypes', $langs->trans("LDAPSetup"), -1);
 
 
 print $langs->trans("LDAPDescMembersTypes").'<br>';
 print '<br>';
 
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $form = new Form($db);
@@ -124,29 +114,25 @@ print '<td colspan="4">'.$langs->trans("LDAPSynchronizeMembersTypes").'</td>';
 print "</tr>\n";
 
 // DN pour les types de membres
-print '<!-- LDAP_MEMBER_TYPE_DN -->';
-print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeDn").'</span></td><td>';
+print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeDn").'</span></td><td>';
 print '<input size="48" type="text" name="membertype" value="'.$conf->global->LDAP_MEMBER_TYPE_DN.'">';
 print '</td><td>'.$langs->trans("LDAPMemberTypepDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-print '<!-- LDAP_MEMBER_TYPE_OBJECT_CLASS -->';
-print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeObjectClassList").'</span></td><td>';
+print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPMemberTypeObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '</table>';
-
 print '<br>';
-
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
 print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
@@ -178,9 +164,9 @@ print '</table>';
 
 print info_admin($langs->trans("LDAPDescValues"));
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
@@ -188,7 +174,8 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
+{
 	$butlabel = $langs->trans("LDAPTestSynchroMemberType");
 	$testlabel = 'testmembertype';
 	$key = $conf->global->LDAP_KEY_MEMBERS_TYPES;
@@ -198,8 +185,10 @@ if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDA
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
-if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'testmembertype') {
+if (function_exists("ldap_connect"))
+{
+	if ($_GET["action"] == 'testmembertype')
+	{
 		// Creation objet
 		$object = new AdherentType($db);
 		$object->initAsSpecimen();
@@ -208,7 +197,8 @@ if (function_exists("ldap_connect")) {
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 
-		if ($result > 0) {
+		if ($result > 0)
+		{
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
 
@@ -221,14 +211,17 @@ if (function_exists("ldap_connect")) {
 			$result2 = $ldap->add($dn, $info, $user); // Now the test
 			$result3 = $ldap->delete($dn); // Clean what we did
 
-			if ($result2 > 0) {
+			if ($result2 > 0)
+			{
 				print img_picto('', 'info').' ';
-				print '<span class="ok">'.$langs->trans("LDAPSynchroOK").'</span><br>';
-			} else {
+				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			}
+			else
+			{
 				print img_picto('', 'error').' ';
-				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
-				print '</span><br>';
+				print '</font><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -236,11 +229,13 @@ if (function_exists("ldap_connect")) {
 			print "LDAP input file used for test:<br><br>\n";
 			print nl2br($ldap->dump_content($dn, $info));
 			print "\n<br>";
-		} else {
+		}
+		else
+		{
 			print img_picto('', 'error').' ';
-			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</span><br>';
+			print '</font><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

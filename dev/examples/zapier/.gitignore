@@ -5,4 +5,3 @@ node_modules
 .environment
 .env
 .zapierapprc
-package-lock.json

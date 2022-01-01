@@ -30,7 +30,6 @@ OtherSendingsForSameOrder=Ostale pošiljke za to naročilo
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Pošiljke za potrditev
 StatusSendingCanceled=Preklicano
-StatusSendingCanceledShort=Preklicano
 StatusSendingDraft=Osnutek
 StatusSendingValidated=Potrjeno (proizvodi za pošiljanje ali že poslani)
 StatusSendingProcessed=Obdelani
@@ -43,7 +42,7 @@ ConfirmValidateSending=Are you sure you want to validate this shipment with refe
 ConfirmCancelSending=Are you sure you want to cancel this shipment?
 DocumentModelMerou=Vzorec dokumenta Merou A5
 WarningNoQtyLeftToSend=Pozor, noben proizvod ne čaka na pošiljanje.
-StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+StatsOnShipmentsOnlyValidated=Statistika na osnovi potrjenih pošiljk. Uporabljen je datum potrditve pošiljanja (planiran datum dobave ni vedno znan)
 DateDeliveryPlanned=Planned date of delivery
 RefDeliveryReceipt=Ref delivery receipt
 StatusReceipt=Status delivery receipt
@@ -53,7 +52,7 @@ SendShippingByEMail=Send shipment by email
 SendShippingRef=Oddaja pošiljke %s
 ActionsOnShipping=Aktivnosti v zvezi z odpremnico
 LinkToTrackYourPackage=Povezave za sledenje vaše pošiljke
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=Za trenutek je oblikovanje nove pošiljke opravi od naročila kartice.
 ShipmentLine=Vrstica na odpremnici
 ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
 ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
@@ -66,7 +65,6 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Popolnejši vzorec dobavnice (logo...)
-DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined==
 SumOfProductVolumes=Vsota volumnov proizvodov
 SumOfProductWeights=Vsota tež proizvodov

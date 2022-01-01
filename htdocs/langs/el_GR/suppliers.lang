@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Προμηθευτές
 SuppliersInvoice=Τιμολόγιο προμηθευτή
-SupplierInvoices=Τιμολόγια προμηθευτή
 ShowSupplierInvoice=Εμφάνιση τιμολογίου προμηθευτή
 NewSupplier=Νέος πωλητής
 History=Ιστορικό
@@ -39,11 +38,10 @@ MenuOrdersSupplierToBill=Παραγγελίες αγοράς στο τιμολό
 NbDaysToDelivery=Παράταση παράδοσης (ημέρες)
 DescNbDaysToDelivery=Η μεγαλύτερη καθυστέρηση παράδοσης των προϊόντων από αυτήν την παραγγελία
 SupplierReputation=Φήμη πωλητή
-ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Να μην γίνει παραγγελία
 NotTheGoodQualitySupplier=Χαμηλή ποιότητα
 ReputationForThisProduct=Φήμη
 BuyerName=Όνομα αγοραστή
 AllProductServicePrices=Όλες οι τιμές προϊόντων / υπηρεσιών
-AllProductReferencesOfSupplier=All references of vendor
+AllProductReferencesOfSupplier=Όλες οι αναφορές προϊόντων / υπηρεσιών του πωλητή
 BuyingPriceNumShort=Τιμές πωλητών

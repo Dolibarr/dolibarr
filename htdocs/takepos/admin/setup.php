@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +31,15 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id'])) {
+if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
+{
 	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 }
 
 // Security check
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
 $langs->loadLangs(array("admin", "cashdesk"));
 
@@ -59,7 +57,7 @@ if ($resql) {
 	}
 }
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 
 
 /*
@@ -68,39 +66,46 @@ $action = GETPOST('action', 'aZ09');
 
 $error = 0;
 
-if ($action == 'set') {
+if ($action == 'set')
+{
 	$db->begin();
+	if (GETPOST('socid', 'int') < 0) $_POST["socid"] = '';
 
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON", GETPOST('TAKEPOS_ADDON', 'alpha'), 'int', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_APPID", GETPOST('TAKEPOS_SUMUP_APPID', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
+	if ($conf->global->TAKEPOS_ORDER_NOTES == 1)
+	{
+		$extrafields = new ExtraFields($db);
+		$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
+	}
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!($res > 0)) {
-		$error++;
-	}
+	if (!$res > 0) $error++;
 
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
-	}
+ 	if (!$error)
+    {
+        $db->commit();
+    }
+    else
+    {
+        $db->rollback();
+    }
 } elseif ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'alpha');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
-	if ($maskconst) {
-		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
-	}
-	if (!($res > 0)) {
+	if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) {
 		$error++;
 	}
 } elseif ($action == 'setrefmod') {
@@ -124,14 +129,12 @@ if ($action != '') {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-$help_url = 'EN:Module_Point_of_sale_(TakePOS)';
-
-llxHeader('', $langs->trans("CashDeskSetup"), $help_url);
+llxHeader('', $langs->trans("CashDeskSetup"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
-$head = takepos_admin_prepare_head();
-print dol_get_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
+$head = takepos_prepare_head();
+dol_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 
 // Numbering modules
 $now = dol_now();
@@ -150,16 +153,21 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir) {
+foreach ($dirmodels as $reldir)
+{
 	$dir = dol_buildpath($reldir."core/modules/takepos/");
 
-	if (is_dir($dir)) {
+	if (is_dir($dir))
+	{
 		$handle = opendir($dir);
-		if (is_resource($handle)) {
+		if (is_resource($handle))
+		{
 			$var = true;
 
-			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+			while (($file = readdir($handle)) !== false)
+			{
+				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
+				{
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
@@ -167,14 +175,11 @@ foreach ($dirmodels as $reldir) {
 					$module = new $file;
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
-						continue;
-					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
-						continue;
-					}
+					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-					if ($module->isEnabled()) {
+					if ($module->isEnabled())
+					{
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -182,21 +187,19 @@ foreach ($dirmodels as $reldir) {
 						// Show example of numbering module
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
-						} else {
-							print $tmp;
-						}
+						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						else print $tmp;
 						print '</td>'."\n";
 
 						print '<td align="center">';
-						if ($conf->global->TAKEPOS_REF_ADDON == "$file") {
+						if ($conf->global->TAKEPOS_REF_ADDON == "$file")
+						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&token='.newToken().'&value='.urlencode($file).'">';
+						}
+						else
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -215,9 +218,8 @@ foreach ($dirmodels as $reldir) {
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
 									$nextval = $langs->trans($nextval);
-								}
 								$htmltooltip .= $nextval.'<br>';
 							} else {
 								$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -238,8 +240,6 @@ foreach ($dirmodels as $reldir) {
 }
 print "</table><br>\n";
 
-print '<br>';
-
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -249,18 +249,20 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td class="notitlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 // Terminals
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
 print '<td colspan="2">';
-print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
+$array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9");
+print $form->selectarray('TAKEPOS_NUM_TERMINALS', $array, (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '0' : $conf->global->TAKEPOS_NUM_TERMINALS), 0);
 print "</td></tr>\n";
 
 // Services
-if (!empty($conf->service->enabled)) {
+if (!empty($conf->service->enabled))
+{
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
 	print '<td colspan="2">';
@@ -275,6 +277,14 @@ print $form->textwithpicto($langs->trans("RootCategoryForProductsToSell"), $lang
 print '<td colspan="2">';
 print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0);
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
+print "</td></tr>\n";
+
+// VAT Grouped on ticket
+print '<tr class="oddeven"><td>';
+print $langs->trans('TicketVatGrouped');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
 print "</td></tr>\n";
 
 // Sort product
@@ -295,10 +305,16 @@ print "</td></tr>\n";
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach ($substitutionarray as $key => $val) {
-	$htmltext .= $key.'<br>';
-}
+foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
+
+// Color theme
+print '<tr class="oddeven"><td>';
+print $langs->trans("ColorTheme");
+print '<td colspan="2">';
+$array = array(0=>"Eldy", 1=>$langs->trans("Colorful"));
+print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
+print "</td></tr>\n";
 
 // Payment numpad
 print '<tr class="oddeven"><td>';
@@ -309,12 +325,11 @@ print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS
 print "</td></tr>\n";
 
 // Numpad use payment icons
-/*print '<tr class="oddeven"><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans('TakeposNumpadUsePaymentIcon');
 print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_NUMPAD_USE_PAYMENT_ICON", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
-*/
 
 // Direct Payment
 print '<tr class="oddeven"><td>';
@@ -342,14 +357,14 @@ $nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -
 //$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
 $arrayofmessagename = array();
 if (is_array($formmail->lines_model)) {
-	foreach ($formmail->lines_model as $modelmail) {
-		//var_dump($modelmail);
-		$moreonlabel = '';
-		if (!empty($arrayofmessagename[$modelmail->label])) {
-			$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
-		}
-		$arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->topic)).$moreonlabel;
-	}
+    foreach ($formmail->lines_model as $modelmail) {
+        //var_dump($modelmail);
+        $moreonlabel = '';
+        if (!empty($arrayofmessagename[$modelmail->label])) {
+            $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+        }
+        $arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->topic)).$moreonlabel;
+    }
 }
 //var_dump($arraydefaultmessage);
 //var_dump($arrayofmessagename);
@@ -361,27 +376,6 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('ControlCashOpening');
 print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
-print "</td></tr>\n";
-
-// Gift receipt
-print '<tr class="oddeven"><td>';
-print $langs->trans('GiftReceiptButton');
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
-print "</td></tr>\n";
-
-// Delayed Pay Button
-print '<tr class="oddeven"><td>';
-print $langs->trans('AllowDelayedPayment');
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_DELAYED_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
-print "</td></tr>\n";
-
-// Show price without vat
-print '<tr class="oddeven"><td>';
-print $langs->trans('ShowPriceHT');
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_SHOW_HT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Numbering module
@@ -441,6 +435,14 @@ print "</td></tr>\n";
 //print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
 //print "</td></tr>\n";
 
+print '<tr class="oddeven"><td>';
+print $langs->trans("EnableBarOrRestaurantFeatures");
+print '</td>';
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
+print "</td></tr>\n";
+
 print '</table>';
 print '</div>';
 
@@ -473,7 +475,7 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 
 print '<br>';
 
-print $form->buttonsSaveCancel("Save", '');
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Tedarikçiler
 SuppliersInvoice=Tedarikçi faturası
-SupplierInvoices=Tedarikçi faturaları
 ShowSupplierInvoice=Tedarikçi Faturası Göster
 NewSupplier=Yeni tedarikçi
 History=Geçmiş
@@ -39,11 +38,10 @@ MenuOrdersSupplierToBill=Faturalanacak tedarikçi siparişleri
 NbDaysToDelivery=Teslimat gecikmesi (gün)
 DescNbDaysToDelivery=Bu siparişteki ürünlerin en uzun teslimat gecikmesi
 SupplierReputation=Tedarikçi itibarı
-ReferenceReputation=Referans itibarı
 DoNotOrderThisProductToThisSupplier=Sipariş verme
 NotTheGoodQualitySupplier=Düşük kalite
 ReputationForThisProduct=İtibar
 BuyerName=Alıcı adı
 AllProductServicePrices=Tüm ürün/hizmet fiyatları
-AllProductReferencesOfSupplier=Satıcının tüm referansları
+AllProductReferencesOfSupplier=Bu tedarikçinin tüm ürün/hizmet referansları
 BuyingPriceNumShort=Tedarikçi fiyatları

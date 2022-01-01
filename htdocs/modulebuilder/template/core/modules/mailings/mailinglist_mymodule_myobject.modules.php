@@ -48,16 +48,17 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		global $conf;
 
 		$this->db = $db;
-		if (is_array($conf->modules)) {
+		if (is_array($conf->modules))
+		{
 			$this->enabled = in_array('mymodule', $conf->modules) ? 1 : 0;
 		}
 	}
 
 
 	/**
-	 *  Displays the filter form that appears in the mailing recipient selection page
+	 *  Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
 	 *
-	 *  @return     string      Return select zone
+	 *  @return     string      Retourne zone select
 	 */
 	public function formFilter()
 	{
@@ -72,7 +73,8 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		$s .= $langs->trans("Status").': ';
 		$s .= '<select name="filter" class="flat">';
 		$s .= '<option value="none">&nbsp;</option>';
-		foreach ($arraystatus as $status) {
+		foreach ($arraystatus as $status)
+		{
 			$s .= '<option value="'.$status.'">'.$status.'</option>';
 		}
 		$s .= '</select>';
@@ -83,7 +85,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 
 
 	/**
-	 *  Returns url link to file of the source of the recipient of the mailing
+	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
 	 *
 	 *  @param      int         $id     ID
 	 *  @return     string              Url lien
@@ -110,23 +112,24 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		$sql = " select rowid as id, email, firstname, lastname, plan, partner";
 		$sql .= " from ".MAIN_DB_PREFIX."myobject";
 		$sql .= " where email IS NOT NULL AND email != ''";
-		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') {
-			$sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
-		}
+		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') $sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
 		$sql .= " ORDER BY email";
 
-		// Store recipients in target
+		// Stocke destinataires dans target
 		$result = $this->db->query($sql);
-		if ($result) {
+		if ($result)
+		{
 			$num = $this->db->num_rows($result);
 			$i = 0;
 
 			dol_syslog("mailinglist_mymodule_myobject.modules.php: mailing ".$num." targets found");
 
 			$old = '';
-			while ($i < $num) {
+			while ($i < $num)
+			{
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old <> $obj->email)
+				{
 					$target[$j] = array(
 						'email' => $obj->email,
 						'name' => $obj->lastname,
@@ -143,7 +146,9 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 
 				$i++;
 			}
-		} else {
+		}
+		else
+		{
 			dol_syslog($this->db->error());
 			$this->error = $this->db->error();
 			return -1;
@@ -194,9 +199,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	{
 		$a = parent::getNbOfRecipients("select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''");
 
-		if ($a < 0) {
-			return -1;
-		}
+		if ($a < 0) return -1;
 		return $a;
 	}
 }

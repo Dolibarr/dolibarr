@@ -48,9 +48,8 @@ if (! ($argv[1] && $argv[2])) {
 	echo "Usage: php pg2mysql_cli.php <inputfilename> <outputfilename> [engine]\n";
 	exit();
 } else {
-	if (isset($argv[3])) {
+	if (isset($argv[3]))
 		$config['engine'] = $argv[3];
-	}
 	pg2mysql_large($argv[1], $argv[2]);
 
 	echo <<<XHTML
@@ -75,18 +74,16 @@ function getfieldname($l)
 	// first check if its in nice quotes for us
 	$regs = array();
 	if (preg_match("/`(.*)`/", $l, $regs)) {
-		if ($regs[1]) {
+		if ($regs[1])
 			return $regs[1];
-		} else {
+		else
 			return null;
-		}
-	} elseif (preg_match("/([^\ ]*)/", trim($l), $regs)) {
-		// if its not in quotes, then it should (we hope!) be the first "word" on the line, up to the first space.
-		if ($regs[1]) {
+	} // if its not in quotes, then it should (we hope!) be the first "word" on the line, up to the first space.
+	elseif (preg_match("/([^\ ]*)/", trim($l), $regs)) {
+		if ($regs[1])
 			return $regs[1];
-		} else {
+		else
 			return null;
-		}
 	}
 }
 
@@ -99,15 +96,14 @@ function getfieldname($l)
  */
 function formatsize($s)
 {
-	if ($s < pow(2, 14)) {
+	if ($s < pow(2, 14))
 		return "{$s}B";
-	} elseif ($s < pow(2, 20)) {
+	elseif ($s < pow(2, 20))
 		return sprintf("%.1f", round($s / 1024, 1)) . "K";
-	} elseif ($s < pow(2, 30)) {
+	elseif ($s < pow(2, 30))
 		return sprintf("%.1f", round($s / 1024 / 1024, 1)) . "M";
-	} else {
+	else
 		return sprintf("%.1f", round($s / 1024 / 1024 / 1024, 1)) . "G";
-	}
 }
 
 /**
@@ -148,11 +144,10 @@ function pg2mysql_large($infilename, $outfilename)
 		$c = substr_count($instr, "'");
 		// we have an odd number of ' marks
 		if ($c % 2 != 0) {
-			if ($inquotes) {
+			if ($inquotes)
 				$inquotes = false;
-			} else {
+			else
 				$inquotes = true;
-			}
 		}
 
 		if ($linenum % 10000 == 0) {
@@ -332,11 +327,10 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$line = str_replace(" bool DEFAULT false", " bool DEFAULT 0", $line);
 			if (preg_match("/ character varying\(([0-9]*)\)/", $line, $regs)) {
 				$num = $regs[1];
-				if ($num <= 255) {
+				if ($num <= 255)
 					$line = preg_replace("/ character varying\([0-9]*\)/", " varchar($num)", $line);
-				} else {
+				else
 					$line = preg_replace("/ character varying\([0-9]*\)/", " text", $line);
-				}
 			}
 			// character varying with no size, we will default to varchar(255)
 			if (preg_match("/ character varying/", $line)) {
@@ -356,11 +350,10 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$line = preg_replace("/::.*$/", "\n", $line);
 			if (preg_match("/character\(([0-9]*)\)/", $line, $regs)) {
 				$num = $regs[1];
-				if ($num <= 255) {
+				if ($num <= 255)
 					$line = preg_replace("/ character\([0-9]*\)/", " varchar($num)", $line);
-				} else {
+				else
 					$line = preg_replace("/ character\([0-9]*\)/", " text", $line);
-				}
 			}
 			// timestamps
 			$line = str_replace(" timestamp with time zone", " datetime", $line);
@@ -370,8 +363,8 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$line = str_replace(" time with time zone", " time", $line);
 			$line = str_replace(" time without time zone", " time", $line);
 
-			$line = str_replace(" timestamp DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", $line);
-			$line = str_replace(" timestamp without time zone DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", $line);
+			$line = str_replace(" timestamp DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP", $line);
+			$line = str_replace(" timestamp without time zone DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP", $line);
 
 			if (strstr($line, "auto_increment") || preg_match('/ rowid int/', $line) || preg_match('/ id int/', $line)) {
 				$field = getfieldname($line);
@@ -470,11 +463,10 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 					$c = substr_count($line, "'");
 					// we have an odd number of ' marks
 					if ($c % 2 != 0) {
-						if ($inquotes) {
+						if ($inquotes)
 							$inquotes = false;
-						} else {
+						else
 							$inquotes = true;
-						}
 						// echo "inquotes=$inquotes\n";
 					}
 				} while (substr($lines[$linenumber], - 3, - 1) != ");" || $inquotes);
@@ -539,9 +531,8 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			}
 		}
 
-		if (substr($line, 0, 13) == 'DROP DATABASE') {
+		if (substr($line, 0, 13) == 'DROP DATABASE')
 			$output .= $line;
-		}
 
 		if (substr($line, 0, 15) == 'CREATE DATABASE') {
 			$matches = array();

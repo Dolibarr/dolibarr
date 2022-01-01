@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Lieferanten
 SuppliersInvoice=Lieferantenrechnung
-SupplierInvoices=Lieferantenrechnungen
 ShowSupplierInvoice=Zeige Lieferantenrechnung
 NewSupplier=neuer Lieferant
 History=Verlauf
@@ -38,12 +37,11 @@ ListOfSupplierOrders=Liste der Lieferantenbestellungen
 MenuOrdersSupplierToBill=Bestellungen zu Rechnungen
 NbDaysToDelivery=Lieferverzug (Tage)
 DescNbDaysToDelivery=Die längste Lieferverzögerung der Produkte aus dieser Bestellung
-SupplierReputation=Lieferanten-Reputation
-ReferenceReputation=Referenz Ruf
-DoNotOrderThisProductToThisSupplier=hier nicht bestellen
+SupplierReputation=Lieferanten Reputation
+DoNotOrderThisProductToThisSupplier=Nicht sortieren
 NotTheGoodQualitySupplier=Geringe Qualität
 ReputationForThisProduct=Reputation
 BuyerName=Käufer
 AllProductServicePrices=Alle Produkt/Leistung Preise
-AllProductReferencesOfSupplier=alle Referenzen des Anbieters
+AllProductReferencesOfSupplier=Alle Produkt- / Servicereferenzen des Anbieters
 BuyingPriceNumShort=Lieferantenpreise

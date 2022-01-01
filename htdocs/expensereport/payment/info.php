@@ -34,7 +34,7 @@ $langs->loadLangs(array('bills', 'trips'));
 
 $id = GETPOST('id');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 /*
@@ -56,7 +56,7 @@ $object->info($object->id);
 
 $head = payment_expensereport_prepare_head($object);
 
-print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
+dol_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
 
 
 //$linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
@@ -75,7 +75,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
 // End of page
 llxFooter();

@@ -22,8 +22,7 @@
 CREATE TABLE llx_establishment (
   rowid 			integer NOT NULL auto_increment PRIMARY KEY,
   entity 			integer NOT NULL DEFAULT 1,
-  ref				varchar(30),
-  name				varchar(128),
+  name				varchar(50),
   address           varchar(255),
   zip               varchar(25),
   town              varchar(50),
@@ -36,7 +35,7 @@ CREATE TABLE llx_establishment (
   fk_user_author 	integer NOT NULL,
   fk_user_mod		integer,
   datec				datetime NOT NULL,
-  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+  tms				timestamp NOT NULL,
   status            tinyint DEFAULT 1
 ) ENGINE=innodb;
 

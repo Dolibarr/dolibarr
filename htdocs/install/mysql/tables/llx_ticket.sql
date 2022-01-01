@@ -29,7 +29,7 @@ CREATE TABLE llx_ticket
 	message	text,
 	fk_statut integer,
 	resolution integer,
-	progress integer DEFAULT 0,				-- progression 0 - 100 or null
+	progress varchar(100),
 	timing varchar(20),
 	type_code varchar(32),
 	category_code varchar(32),
@@ -38,7 +38,6 @@ CREATE TABLE llx_ticket
 	date_read datetime,
 	date_close datetime,
 	notify_tiers_at_create tinyint,
-	email_msgid varchar(255),				-- if ticket is created by email collector, we store here MSG ID
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	tms timestamp,
     import_key        varchar(14)
 )ENGINE=innodb;

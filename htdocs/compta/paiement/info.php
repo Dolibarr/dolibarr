@@ -33,27 +33,8 @@ $langs->loadLangs(array('bills', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-
-$object = new Paiement($db);
-
-// Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-
-$result = restrictedArea($user, $object->element, $object->id, 'paiement', '');
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-// Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
-// It should be enough because all payments are done on invoices of the same thirdparty.
-if ($socid && $socid != $object->thirdparty->id) {
-	accessforbidden();
-}
-
-
 
 /*
  * Actions
@@ -68,11 +49,13 @@ if ($socid && $socid != $object->thirdparty->id) {
 
 llxHeader('', $langs->trans("Payment"));
 
+$object = new Paiement($db);
+$object->fetch($id, $ref);
 $object->info($object->id);
 
 $head = payment_prepare_head($object);
 
-print dol_get_fiche_head($head, 'info', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
+dol_fiche_head($head, 'info', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -91,7 +74,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
 // End of page
 llxFooter();

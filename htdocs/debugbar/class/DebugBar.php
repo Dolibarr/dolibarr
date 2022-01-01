@@ -4,7 +4,6 @@ dol_include_once('/debugbar/class/autoloader.php');
 
 use \DebugBar\DebugBar;
 use \DebugBar\DataCollector\PhpInfoCollector;
-
 dol_include_once('/debugbar/class/DataCollector/DolMessagesCollector.php');
 dol_include_once('/debugbar/class/DataCollector/DolRequestDataCollector.php');
 dol_include_once('/debugbar/class/DataCollector/DolConfigCollector.php');
@@ -52,10 +51,10 @@ class DolibarrDebugBar extends DebugBar
 	 */
 	public function getRenderer()
 	{
-		$renderer = parent::getJavascriptRenderer(DOL_URL_ROOT.'/includes/maximebf/debugbar/src/DebugBar/Resources');
-		//$renderer->disableVendor('jquery');
-		$renderer->disableVendor('fontawesome');
-		$renderer->disableVendor('highlightjs');
-		return $renderer;
+	    $renderer = parent::getJavascriptRenderer(DOL_URL_ROOT.'/includes/DebugBar/Resources');
+	    //$renderer->disableVendor('jquery');
+	    $renderer->disableVendor('fontawesome');
+	    $renderer->disableVendor('highlightjs');
+	    return $renderer;
 	}
 }

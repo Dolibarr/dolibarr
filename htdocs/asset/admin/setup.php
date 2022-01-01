@@ -32,12 +32,10 @@ global $langs, $user;
 $langs->loadLangs(array("admin", "assets"));
 
 // Access control
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array('FIXEDASSETS_MYPARAM1'=>array('css'=>'minwidth200'), 'FIXEDASSETS_MYPARAM2'=>array('css'=>'minwidth500'));
@@ -62,10 +60,11 @@ print load_fiche_titre($langs->trans("AssetsSetup"), $linkback, 'title_setup');
 
 $head = asset_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
+dol_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
 
 
-if ($action == 'edit') {
+if ($action == 'edit')
+{
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -73,7 +72,8 @@ if ($action == 'edit') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $key => $val) {
+	foreach ($arrayofparameters as $key => $val)
+	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
@@ -81,15 +81,20 @@ if ($action == 'edit') {
 
 	print '</table>';
 
-	print $form->buttonsSaveCancel("Save", '');
+	print '<br><div class="center">';
+	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '</div>';
 
 	print '</form>';
 	print '<br>';
-} else {
+}
+else
+{
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $key => $val) {
+	foreach ($arrayofparameters as $key => $val)
+	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
 		print '</td><td>'.$conf->global->$key.'</td></tr>';
@@ -98,11 +103,11 @@ if ($action == 'edit') {
 	print '</table>';
 
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 }
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
 // End of page
 llxFooter();

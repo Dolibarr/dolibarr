@@ -1,7 +1,7 @@
 /*!
- * Chart.js v2.9.4
+ * Chart.js v2.9.3
  * https://www.chartjs.org
- * (c) 2020 Chart.js Contributors
+ * (c) 2019 Chart.js Contributors
  * Released under the MIT License
  */
 (function (global, factory) {
@@ -2103,10 +2103,6 @@ if (typeof window !== 'undefined') {
 
 var chartjsColor = Color;
 
-function isValidKey(key) {
-	return ['__proto__', 'prototype', 'constructor'].indexOf(key) === -1;
-}
-
 /**
  * @namespace Chart.helpers
  */
@@ -2282,7 +2278,7 @@ var helpers = {
 		}
 
 		if (helpers.isObject(source)) {
-			var target = Object.create(source);
+			var target = {};
 			var keys = Object.keys(source);
 			var klen = keys.length;
 			var k = 0;
@@ -2303,12 +2299,6 @@ var helpers = {
 	 * @private
 	 */
 	_merger: function(key, target, source, options) {
-		if (!isValidKey(key)) {
-			// We want to ensure we do not copy prototypes over
-			// as this can pollute global namespaces
-			return;
-		}
-
 		var tval = target[key];
 		var sval = source[key];
 
@@ -2324,12 +2314,6 @@ var helpers = {
 	 * @private
 	 */
 	_mergerIf: function(key, target, source) {
-		if (!isValidKey(key)) {
-			// We want to ensure we do not copy prototypes over
-			// as this can pollute global namespaces
-			return;
-		}
-
 		var tval = target[key];
 		var sval = source[key];
 
@@ -3828,7 +3812,7 @@ helpers$1.extend(DatasetController.prototype, {
 	 */
 	_configure: function() {
 		var me = this;
-		me._config = helpers$1.merge(Object.create(null), [
+		me._config = helpers$1.merge({}, [
 			me.chart.options.datasets[me._type],
 			me.getDataset(),
 		], {
@@ -7098,8 +7082,7 @@ function updateDims(chartArea, params, layout) {
 		chartArea.h = newHeight;
 
 		// return true if chart area changed in layout's direction
-		var sizes = layout.horizontal ? [newWidth, chartArea.w] : [newHeight, chartArea.h];
-		return sizes[0] !== sizes[1] && (!isNaN(sizes[0]) || !isNaN(sizes[1]));
+		return layout.horizontal ? newWidth !== chartArea.w : newHeight !== chartArea.h;
 	}
 }
 
@@ -8111,7 +8094,7 @@ var core_scaleService = {
 	},
 	getScaleDefaults: function(type) {
 		// Return the scale defaults merged with the global settings so that we always use the latest ones
-		return this.defaults.hasOwnProperty(type) ? helpers$1.merge(Object.create(null), [core_defaults.scale, this.defaults[type]]) : {};
+		return this.defaults.hasOwnProperty(type) ? helpers$1.merge({}, [core_defaults.scale, this.defaults[type]]) : {};
 	},
 	updateScaleDefaults: function(type, additions) {
 		var me = this;
@@ -9186,7 +9169,7 @@ core_defaults._set('global', {
  * returns a deep copy of the result, thus doesn't alter inputs.
  */
 function mergeScaleConfig(/* config objects ... */) {
-	return helpers$1.merge(Object.create(null), [].slice.call(arguments), {
+	return helpers$1.merge({}, [].slice.call(arguments), {
 		merger: function(key, target, source, options) {
 			if (key === 'xAxes' || key === 'yAxes') {
 				var slen = source[key].length;
@@ -9226,9 +9209,9 @@ function mergeScaleConfig(/* config objects ... */) {
  * a deep copy of the result, thus doesn't alter inputs.
  */
 function mergeConfig(/* config objects ... */) {
-	return helpers$1.merge(Object.create(null), [].slice.call(arguments), {
+	return helpers$1.merge({}, [].slice.call(arguments), {
 		merger: function(key, target, source, options) {
-			var tval = target[key] || Object.create(null);
+			var tval = target[key] || {};
 			var sval = source[key];
 
 			if (key === 'scales') {
@@ -9245,7 +9228,7 @@ function mergeConfig(/* config objects ... */) {
 }
 
 function initConfig(config) {
-	config = config || Object.create(null);
+	config = config || {};
 
 	// Do NOT use mergeConfig for the data object because this method merges arrays
 	// and so would change references to labels and datasets, preventing data updates.
@@ -11226,8 +11209,6 @@ function computeLabelSizes(ctx, tickFonts, ticks, caches) {
 	var widths = [];
 	var heights = [];
 	var offsets = [];
-	var widestLabelSize = 0;
-	var highestLabelSize = 0;
 	var i, j, jlen, label, tickFont, fontString, cache, lineHeight, width, height, nestedLabel, widest, highest;
 
 	for (i = 0; i < length; ++i) {
@@ -11255,13 +11236,11 @@ function computeLabelSizes(ctx, tickFonts, ticks, caches) {
 		widths.push(width);
 		heights.push(height);
 		offsets.push(lineHeight / 2);
-		widestLabelSize = Math.max(width, widestLabelSize);
-		highestLabelSize = Math.max(height, highestLabelSize);
 	}
 	garbageCollect(caches, length);
 
-	widest = widths.indexOf(widestLabelSize);
-	highest = heights.indexOf(highestLabelSize);
+	widest = widths.indexOf(Math.max.apply(null, widths));
+	highest = heights.indexOf(Math.max.apply(null, heights));
 
 	function valueAt(idx) {
 		return {

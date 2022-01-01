@@ -24,10 +24,10 @@ create table llx_product_fournisseur_price
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec					datetime,
-  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms					timestamp,
   fk_product			integer,
   fk_soc				integer,
-  ref_fourn				varchar(128),
+  ref_fourn				varchar(30),
   desc_fourn            text,
   fk_availability		integer,	   
   price					double(24,8) DEFAULT 0,		-- price without tax for quantity
@@ -39,10 +39,10 @@ create table llx_product_fournisseur_price
   default_vat_code	    varchar(10),
   barcode                       varchar(180) DEFAULT NULL,          -- barcode
   fk_barcode_type               integer      DEFAULT NULL,          -- barcode type
-  tva_tx				double(7,4) NOT NULL,
-  localtax1_tx		    double(7,4) DEFAULT 0,
+  tva_tx				double(6,3) NOT NULL,
+  localtax1_tx		    double(6,3) DEFAULT 0,
   localtax1_type        varchar(10)  NOT NULL DEFAULT '0',
-  localtax2_tx		    double(7,4) DEFAULT 0,
+  localtax2_tx		    double(6,3) DEFAULT 0,
   localtax2_type        varchar(10)  NOT NULL DEFAULT '0',
   info_bits				integer NOT NULL DEFAULT 0,
   fk_user				integer,
@@ -50,10 +50,9 @@ create table llx_product_fournisseur_price
   import_key			varchar(14),                -- Import key
   delivery_time_days    integer,
   supplier_reputation varchar(10),
-  packaging			    varchar(64),
   
   fk_multicurrency		integer,
-  multicurrency_code	varchar(3),
+  multicurrency_code	varchar(255),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_unitprice   double(24,8) DEFAULT NULL,		-- unit price without tax
   multicurrency_price		double(24,8) DEFAULT NULL

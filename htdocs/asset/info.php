@@ -29,25 +29,21 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
-$id = GETPOSTINT('id');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'asset', $id);
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'asset', $id, '');
 
 $object = new Asset($db);
 $object->fetch($id);
-
 
 /*
  * Actions
  */
 
-// None
 
 
 /*
@@ -57,16 +53,14 @@ $object->fetch($id);
 $form = new Form($db);
 
 $title = $langs->trans('Asset')." - ".$langs->trans('Info');
-
-$help_url = "";
-
-llxHeader('', $title, $help_url);
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 $object->info($id);
 
 $head = asset_prepare_head($object);
 
-print dol_get_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
+dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -86,7 +80,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
 // End of page
 llxFooter();

@@ -32,27 +32,23 @@ $langs->load("users");
 
 // Security check
 $id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-
 $object = new User($db);
-if ($id > 0 || !empty($ref)) {
+if ($id > 0 || !empty($ref))
+{
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 }
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
+if ($user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
-	accessforbidden();
-}
+if (($object->id != $user->id) && (!$user->rights->user->user->lire))
+  accessforbidden();
 
 
 
@@ -67,7 +63,7 @@ llxHeader();
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-print dol_get_fiche_head($head, 'info', $title, -1, 'user');
+dol_fiche_head($head, 'info', $title, -1, 'user');
 
 
 $linkback = '';
@@ -92,7 +88,7 @@ dol_print_object_info($object);
 print '</div>';
 
 
-print dol_get_fiche_end();
+dol_fiche_end();
 
 // End of page
 llxFooter();

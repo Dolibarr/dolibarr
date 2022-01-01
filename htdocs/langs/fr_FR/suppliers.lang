@@ -1,7 +1,6 @@
-# Dolibarr language file - Source file is en_US - vendors
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Fournisseurs
 SuppliersInvoice=Facture fournisseur
-SupplierInvoices=Factures fournisseur
 ShowSupplierInvoice=Montrer la facture fournisseur
 NewSupplier=Nouveau fournisseur
 History=Historique
@@ -16,7 +15,7 @@ SomeSubProductHaveNoPrices=Certains sous-produits n'ont pas de prix définis
 AddSupplierPrice=Ajouter un prix d'achat
 ChangeSupplierPrice=Modifier un prix d'achat
 SupplierPrices=Prix fournisseurs
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Cette référence fournisseur est déjà associée à un produit : %s
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Cette référence fournisseur est déjà associée à la référence : %s
 NoRecordedSuppliers=Pas de fournisseur enregistré
 SupplierPayment=Paiement fournisseur
 SuppliersArea=Espace fournisseurs
@@ -39,7 +38,6 @@ MenuOrdersSupplierToBill=Commandes fournisseurs en facture
 NbDaysToDelivery=Délai de livraison en jours
 DescNbDaysToDelivery=Le plus gros délai de livraison parmi les produits de cette commande
 SupplierReputation=Réputation du fournisseur
-ReferenceReputation=Réputation
 DoNotOrderThisProductToThisSupplier=Ne pas commander
 NotTheGoodQualitySupplier=Mauvaise qualité
 ReputationForThisProduct=Réputation

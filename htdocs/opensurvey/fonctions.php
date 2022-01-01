@@ -31,6 +31,7 @@
  */
 function opensurvey_prepare_head(Opensurveysondage $object)
 {
+
 	global $langs, $conf;
 
 	$h = 0;
@@ -76,9 +77,10 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	//$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
-
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 	print '<body id="mainbody" class="publicnewmemberform">';
+
+
 
 	print '<span id="dolpaymentspan"></span>'."\n";
 	print '<div class="center">'."\n";
@@ -88,6 +90,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	print "\n";
 
 	// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
+	$width = 0;
 	// Define logo and logosmall
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
@@ -95,30 +98,31 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	// Define urllogo
 	$urllogo = '';
 	$urllogofull = '';
-	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
+	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
+	{
 		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-	} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
+		$width = 150;
+	}
+	elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+	{
 		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+		$width = 150;
 	}
 
 	// Output html code for logo
-	if ($urllogo) {
+	if ($urllogo)
+	{
 		print '<div class="backgreypublicpayment">';
 		print '<div class="logopublicpayment">';
 		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+		if ($width) print ' width="'.$width.'"';
 		print '>';
 		print '</div>';
 		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
-		print '</div>';
-	}
-
-	if (!empty($conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE)) {
-		print '<div class="backimagepublicopensurvey">';
-		print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE.'">';
 		print '</div>';
 	}
 
@@ -206,7 +210,7 @@ function getUrlSondage($id, $admin = false)
 /**
  * 	Generate a random id
  *
- *	@param	int		$car	Length of string to generate key
+ *	@param	string	$car	Char to generate key
  * 	@return	string
  */
 function dol_survey_random($car)
@@ -239,10 +243,11 @@ function ajouter_sondage()
 	// Insert survey
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
-	$opensurveysondage->description = $_SESSION['description'];
+	$opensurveysondage->commentaires = $_SESSION['commentaires'];
+	$opensurveysondage->description = $_SESSION['commentaires'];
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$opensurveysondage->nom_admin = $_SESSION['nom'];
-	$opensurveysondage->title = $_SESSION['title'];
+	$opensurveysondage->titre = $_SESSION['titre'];
 	$opensurveysondage->date_fin = $_SESSION['champdatefin'];
 	$opensurveysondage->format = $_SESSION['formatsondage'];
 	$opensurveysondage->mailsonde = $_SESSION['mailsonde'];
@@ -256,10 +261,10 @@ function ajouter_sondage()
 		dol_print_error($db);
 	}
 
-	unset($_SESSION["title"]);
+	unset($_SESSION["titre"]);
 	unset($_SESSION["nom"]);
 	unset($_SESSION["adresse"]);
-	unset($_SESSION["description"]);
+	unset($_SESSION["commentaires"]);
 	unset($_SESSION["mailsonde"]);
 	unset($_SESSION['allow_comments']);
 	unset($_SESSION['allow_spy']);

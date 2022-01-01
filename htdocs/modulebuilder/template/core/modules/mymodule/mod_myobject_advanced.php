@@ -79,9 +79,9 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskMyObject" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMyObject" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -113,7 +113,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		/*$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;*/
 
-		if (!$numExample) {
+		if (!$numExample)
+		{
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -134,7 +135,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		// We get cursor rule
 		$mask = $conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK;
 
-		if (!$mask) {
+		if (!$mask)
+		{
 			$this->error = 'NotConfigured';
 			return 0;
 		}

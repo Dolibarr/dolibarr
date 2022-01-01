@@ -19,12 +19,12 @@
 create table llx_subscription
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms             timestamp,
   datec           datetime,
   fk_adherent     integer,
   fk_type         integer,
   dateadh         datetime,
-  datef           datetime,
+  datef           date,
   subscription    double(24,8),
   fk_bank         integer DEFAULT NULL,
   fk_user_creat   integer DEFAULT NULL,

@@ -17,7 +17,7 @@
 -- ===========================================================================
 
 --
--- Save data relative to click to dial
+-- Stockage des informations relatives au click to dial
 --
 create table llx_user_clicktodial
 (
@@ -26,4 +26,5 @@ create table llx_user_clicktodial
   login         varchar(32),
   pass          varchar(64),
   poste         varchar(20)
+
 )ENGINE=innodb;

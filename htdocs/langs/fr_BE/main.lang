@@ -19,6 +19,7 @@ FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
+EmptySearchString=Enter non empty search criterias
 Update=Mise à jour
 DateStart=Date de début
 DateEnd=Date de fin

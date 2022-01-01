@@ -22,7 +22,7 @@ create table llx_loan
   rowid							integer AUTO_INCREMENT PRIMARY KEY,
   entity						integer DEFAULT 1 NOT NULL,
   datec							datetime,
-  tms							timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms							timestamp,
 
   label							varchar(80) NOT NULL,
   fk_bank						integer,

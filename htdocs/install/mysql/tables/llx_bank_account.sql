@@ -26,7 +26,7 @@ create table llx_bank_account
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   datec						datetime,
-  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms						timestamp,
   ref						varchar(12) NOT NULL,
   label						varchar(30) NOT NULL,
   entity					integer DEFAULT 1 NOT NULL,	-- multi company id
@@ -59,7 +59,5 @@ create table llx_bank_account
   note_public				text,
   model_pdf					varchar(255),
   import_key				varchar(14),
-  extraparams			    varchar(255),				-- for other parameters with json format
-  ics						varchar(32),			-- Creditor Identifier CI
-  ics_transfer			varchar(32)				-- Creditor Identifier CI for transfer
+  extraparams			    varchar(255)				-- for other parameters with json format
 )ENGINE=innodb;

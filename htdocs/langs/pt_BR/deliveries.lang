@@ -19,6 +19,5 @@ Sender=Remetente
 ErrorStockIsNotEnough=Não existe estoque suficiente
 Shippable=Disponivel para envio
 NonShippable=Não disponivel para envio
-ShowShippableStatus=Mostrar status entregável
 ShowReceiving=Mostrar recibo de entrega
 NonExistentOrder=Pedido inexistente
