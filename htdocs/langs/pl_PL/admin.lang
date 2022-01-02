@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Fundacja
 Version=Wersja
 Publisher=Wydawca
@@ -265,8 +267,8 @@ OtherResources=Inne zasoby
 ExternalResources=Zasoby zewnętrzne
 SocialNetworks=Sieci społecznościowe
 SocialNetworkId=Identyfikator sieci społecznościowej
-ForDocumentationSeeWiki=Aby zapoznać się z dokumentacją użytkownika lub dewelopera (Doc, FAQ ...), <br> zajrzyj do Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
-ForAnswersSeeForum=Aby znaleźć odpowiedzi na pytania / uzyskać dodatkową pomoc, możesz skorzystać z  forum Dolibarr : <br> <a href="%s" target="_blank"><b> %s</b></a>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Oto niektóre zasoby pozwalające uzyskać pomoc i wsparcie z Dolibarr.
 HelpCenterDesc2=Niektóre z tych zasobów są dostępne tylko w języku <b>angielskim</b>.
 CurrentMenuHandler=Aktualne menu obsługi
@@ -353,6 +355,7 @@ LastStableVersion=Ostatnia stabilna wersja
 LastActivationDate=Data ostatniej aktywacji
 LastActivationAuthor=Najnowszy autor aktywacji
 LastActivationIP=Numer IP ostatniej aktywacji
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Aktualizacja serwera nieaktywny
 WithCounter=Zarządzaj licznikiem
 GenericMaskCodes=Możesz wprowadzić dowolną maskę numeracji. W tej masce można użyć następujących tagów: <br> <b> {000000} </b> odpowiada liczbie, która będzie zwiększana na każdym %s. Wpisz tyle zer, ile chcesz długości licznika. Licznik zostanie uzupełniony zerami od lewej, aby mieć tyle zer, ile jest w masce. <br> <b> {000000 + 000} </b> taki sam jak poprzedni, ale przesunięcie odpowiadające liczbie po prawej stronie znaku + jest stosowane począwszy od pierwszego %s. <br> <b> {000000 @ x} </b> tak samo jak poprzedni, ale licznik jest resetowany do zera po osiągnięciu miesiąca x (x między 1 a 12 lub 0, aby użyć pierwszych miesięcy roku podatkowego zdefiniowanego w konfiguracji lub zerować co miesiąc). Jeśli ta opcja jest używana, a x wynosi 2 lub więcej, to sekwencja {yy} {mm} lub {yyyy} {mm} jest również wymagana. <br> <b> {dd} </b> dzień (od 01 do 31). <br> <b> {mm} </b> miesiąc (od 01 do 12). <br> <b> {yy} </b>, <b> {yyyy} </b> lub <b> {y}</b>rok powyżej 2, 4 lub 1 numerów.<br>
@@ -762,6 +765,7 @@ Permission121=Przeglądaj kontrahentów związanych z użytkownikiem
 Permission122=Tworzenie / modyfikacja stron trzecich związanych z użytkownikiem
 Permission125=Usuń kontrahentów związanych z użytkownikiem z użytkownikiem
 Permission126=Eksport stron trzecich
+Permission130=Create/modify third parties payment information
 Permission141=Przeczytaj wszystkie projekty i zadania (także projekty prywatne, dla których nie jestem osobą kontaktową)
 Permission142=Twórz/modyfikuj wszystkie projekty i zadania (także projekty prywatne, dla których nie jestem kontaktem)
 Permission144=Delete all projects and tasks (also private projects i am not contact for)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Używasz przeglądarki internetowej %s. Ta przeglądarka jest dobra 
 BrowserIsKO=Używasz przeglądarki internetowej %s. Wiadomo, że ta przeglądarka jest złym wyborem pod względem bezpieczeństwa, wydajności i niezawodności. Zalecamy używanie przeglądarki Firefox, Chrome, Opera lub Safari.
 PHPModuleLoaded=Ładowany jest komponent PHP %s
 PreloadOPCode=Używany jest wstępnie załadowany kod OPCode
-AddRefInList=Wyświetl numer klienta/dostawcy lista informacji (lista wyboru lub pole wyboru) i większość hiperłączy. <br> Strony trzecie będą wyświetlane z nazwą w formacie „CC12345 - SC45678 - The Big Company corp”. zamiast „The Big Company corp”.
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Wyświetl listę informacji o adresach klientów / dostawców (lista wyboru lub pole wyboru) <br> Osoby trzecie będą wyświetlane z nazwą w formacie „The Big Company corp. - 21 jump street 123456 Big town - USA” zamiast „The Big Company corp”.
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Wyświetl kontaktowy adres e-mail (lub telefony, jeśli nie zostały zdefiniowane) i listę informacji o mieście (lista wyboru lub pole wyboru) <br> Kontakty będą wyświetlane z nazwami w formacie „Dupond Durand - dupond.durand@email.com - Paryż” lub „Dupond Durand - 06 07 59 65 66 - Paryż "zamiast" Dupond Durand ".
 AskForPreferredShippingMethod=Zapytaj o preferowaną metodę wysyłki dla stron trzecich.
 FieldEdition=Edycja pola% s
@@ -1708,8 +1712,9 @@ MailingDelay=Sekund po wysłaniu czekać następnej wiadomości
 NotificationSetup=Konfiguracja modułu powiadomień e-mail
 NotificationEMailFrom=E-mail nadawcy (Od) dla wiadomości e-mail wysłanych przez moduł Powiadomienia
 FixedEmailTarget=Odbiorca
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Konfiguracja modułu wysyłkowego
 SendingsReceiptModel=Wysyłanie otrzymania modelu
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Dowolny tekst na dokumentach dostawy
 ##### FCKeditor #####
 AdvancedEditor=Zaawansowany edytor
 ActivateFCKeditor=Uaktywnij FCKeditor za:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=WYSIWIG tworzenie/edycja linii szczegółów produktów dla wszystkich podmiotów (oferty, zamówienia, faktury itp.). <span class="warning"> Ostrzeżenie: Używanie tej opcji w tym przypadku zdecydowanie nie jest zalecane, ponieważ może powodować problemy ze znakami specjalnymi i formatowaniem stron podczas tworzenia plików PDF. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Ustawienia modułu "Raporty wydatków" - Reguły
 ExpenseReportNumberingModules=Moduł "Numerowanie raportów wydatków"
 NoModueToManageStockIncrease=Nie Moduł stanie zarządzać automatyczny wzrost akcji zostało aktywowane. Wzrost Zdjęcie zostanie zrobione tylko na ręczne wprowadzanie.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Opcje powiadomień e-mail można znaleźć, włączając i konfigurując moduł „Powiadomienia”.
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Lista automatycznych powiadomień na użytkownika*
 ListOfNotificationsPerUserOrContact=Lista możliwych automatycznych powiadomień (o wydarzeniach biznesowych) dostępnych dla użytkownika* lub kontaktu**
 ListOfFixedNotifications=Lista automatycznych stałych powiadomień
@@ -2209,3 +2215,7 @@ SkinAndColors=Skin and colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

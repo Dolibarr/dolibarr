@@ -169,7 +169,6 @@ DescVentilExpenseReportMore=Si configura una cuenta contable en el tipo de líne
 DescVentilDoneExpenseReport=Consulte aquí la lista de las líneas de informes de gastos y su cuenta contable de honorarios
 OverviewOfMovementsNotValidated=Paso 1/ Resumen de movimientos no validados. (Necesario para cerrar un año fiscal)
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de escritura, letras y eliminaciones. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrar
-AutomaticBindingDone=Unión automática realizada
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta de contabilidad porque se utiliza
 MvtNotCorrectlyBalanced=El movimiento no está correctamente equilibrado. Débito = %s | Crédito = %s
 Balancing=Balance

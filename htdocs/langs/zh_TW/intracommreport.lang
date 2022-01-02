@@ -11,7 +11,7 @@ INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introduc
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=申報人編號
 
 # Menu
 MenuIntracommReport=內部通訊報告
@@ -27,14 +27,14 @@ DEB=貨物交換報關單（DEB）
 DES=服務交換報單(DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=準備ProDouane格式的XML檔案
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of analysis
+IntracommReportList=已產生報單清單
+IntracommReportNumber=申報數量
+IntracommReportPeriod=分析週期
 IntracommReportTypeDeclaration=報單類型
-IntracommReportDownload=download XML file
+IntracommReportDownload=下載 XML檔案
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=運輸方式

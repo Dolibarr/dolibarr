@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Osnova
 Version=Verzija
 Publisher=Publisher
@@ -265,8 +267,8 @@ OtherResources=Other resources
 ExternalResources=External Resources
 SocialNetworks=Social Networks
 SocialNetworkId=Social Network ID
-ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Here are some resources for getting help and support with Dolibarr.
 HelpCenterDesc2=Some of these resources are only available in <b>english</b>.
 CurrentMenuHandler=Current menu handler
@@ -353,6 +355,7 @@ LastStableVersion=Latest stable version
 LastActivationDate=Latest activation date
 LastActivationAuthor=Latest activation author
 LastActivationIP=Latest activation IP
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Update server offline
 WithCounter=Manage a counter
 GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
@@ -762,6 +765,7 @@ Permission121=Read third parties linked to user
 Permission122=Create/modify third parties linked to user
 Permission125=Delete third parties linked to user
 Permission126=Export third parties
+Permission130=Create/modify third parties payment information
 Permission141=Read all projects and tasks (also private projects for which I am not a contact)
 Permission142=Create/modify all projects and tasks (also private projects for which I am not a contact)
 Permission144=Delete all projects and tasks (also private projects i am not contact for)
@@ -1358,9 +1362,9 @@ BrowserIsOK=You are using the %s web browser. This browser is ok for security an
 BrowserIsKO=You are using the %s web browser. This browser is known to be a bad choice for security, performance and reliability. We recommend using Firefox, Chrome, Opera or Safari.
 PHPModuleLoaded=PHP component %s is loaded
 PreloadOPCode=Preloaded OPCode is used
-AddRefInList=Display Customer/Vendor ref. info list (select list or combobox) and most of hyperlink.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Display Customer/Vendor adress info list (select list or combobox)<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@email.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=Ask for preferred shipping method for Third Parties.
 FieldEdition=Edition of field %s
@@ -1708,8 +1712,9 @@ MailingDelay=Seconds to wait after sending next message
 NotificationSetup=Email Notification module setup
 NotificationEMailFrom=Sender email (From) for emails sent by the Notifications module
 FixedEmailTarget=Primalac
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Shipping module setup
 SendingsReceiptModel=Sending receipt model
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Free text on delivery receipts
 ##### FCKeditor #####
 AdvancedEditor=Advanced editor
 ActivateFCKeditor=Activate advanced editor for:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Setup of module Expense Reports - Rules
 ExpenseReportNumberingModules=Expense reports numbering module
 NoModueToManageStockIncrease=No module able to manage automatic stock increase has been activated. Stock increase will be done on manual input only.
 YouMayFindNotificationsFeaturesIntoModuleNotification=You may find options for email notifications by enabling and configuring the module "Notification".
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=List of automatic notifications per user*
 ListOfNotificationsPerUserOrContact=List of possible automatic notifications (on business event) available per user* or per contact**
 ListOfFixedNotifications=List of automatic fixed notifications
@@ -2209,3 +2215,7 @@ SkinAndColors=Skin and colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

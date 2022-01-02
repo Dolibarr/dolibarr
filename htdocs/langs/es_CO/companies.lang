@@ -45,6 +45,7 @@ ProfId3CO=CIIU
 ProfId1ShortFR=SIRENA
 ProfId1LU=Identificación. profe. 1 (R.C.S. Luxemburgo)
 ProfId2LU=Identificación. profe. 2 (permiso comercial)
+ProfId4UA=Prof Id 4 (certificado)
 ProfId2DZ=Arte.
 VATIntra=RUT
 VATIntraShort=RUT
@@ -85,7 +86,7 @@ ThisUserIsNot=Este usuario no es un cliente potencial, cliente o proveedor.
 VATIntraCheckDesc=El número de identificación fiscal debe incluir el prefijo del país. El enlace <b> %s </b> utiliza el servicio de verificación de IVA europeo (VIES) que requiere acceso a Internet desde el servidor Dolibarr.
 VATIntraCheckURL=http://www.rues.org.co/RUES_Web/Consultas#tabs-3
 VATIntraCheckableOnEUSite=Verifique el ID de IVA intracomunitario en el sitio web de la Comisión Europea
-VATIntraManualCheck=También puede consultar manualmente en el sitio web de la Comisión Europea <a href="%s" target="_blank"> %s </a>
+VATIntraManualCheck=También puede consultar manualmente en el sitio web de la Comisión Europea <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a>
 NorProspectNorCustomer=No prospecto, ni cliente
 StatusProspect1=Para ser contactado
 ChangeToContact=Cambiar el estado a 'Para ser contactado'

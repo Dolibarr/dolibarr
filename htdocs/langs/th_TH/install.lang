@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=การติดตั้ง PHP ของคุณ
 ErrorPHPDoesNotSupportCalendar=การติดตั้ง PHP ของคุณไม่รองรับ php calendar extensions
 ErrorPHPDoesNotSupportUTF8=การติดตั้ง PHP ของคุณไม่สนับสนุนฟังก์ชั่น UTF8 Dolibarr ไม่สามารถทำงานได้อย่างถูกต้อง แก้ปัญหานี้ก่อนการติดตั้ง Dolibarr
 ErrorPHPDoesNotSupportIntl=การติดตั้ง PHP ของคุณไม่รองรับ Intl functions.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=การติดตั้ง PHP ของคุณไม่รองรับ extend debug functions.
 ErrorPHPDoesNotSupport=การติดตั้ง PHP ของคุณไม่รองรับ %s functions.
 ErrorDirDoesNotExists=ไดเร็กทอรี่ %s ไม่มีอยู่

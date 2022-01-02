@@ -390,8 +390,10 @@ if ($result) {
 
 			// Category
 			print '<td class="nowrap">';
-			$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			if (!empty($obp->category_code)) {
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
+				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			}
 			//print $objp->category_label;
 			print "</td>";
 

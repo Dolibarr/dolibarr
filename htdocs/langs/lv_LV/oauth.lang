@@ -23,10 +23,10 @@ TOKEN_DELETE=Dzēst saglabāto pilnvaru
 OAUTH_GOOGLE_NAME=OAuth Google pakalpojums
 OAUTH_GOOGLE_ID=OAuth Google ID
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Lai izveidotu OAuth akreditācijas datus, dodieties uz <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> šo lapu </a> un pēc tam "Kvalifikācijas dati"
+OAUTH_GOOGLE_DESC=Dodieties uz <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external"> šo lapu </a> un pēc tam uz "Akreditācijas dati", lai izveidotu OAuth akreditācijas datus.
 OAUTH_GITHUB_NAME=OAuth GitHub pakalpojums
 OAUTH_GITHUB_ID=OAuth GitHub ID
 OAUTH_GITHUB_SECRET=OAuth GitHub noslēpums
-OAUTH_GITHUB_DESC=Dodieties uz <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> šo lapu </a> un pēc tam "Reģistrējiet jaunu pieteikumu", lai izveidotu OAuth akreditācijas datus
+OAUTH_GITHUB_DESC=Dodieties uz <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external"> šo lapu </a> un pēc tam "Reģistrējiet jaunu lietojumprogrammu", lai izveidotu OAuth akreditācijas datus.
 OAUTH_STRIPE_TEST_NAME=OAuth svītras tests
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

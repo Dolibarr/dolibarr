@@ -48,7 +48,7 @@ CountriesNotInEEC=非歐盟國家
 CountriesInEECExceptMe=除了%s以外的歐盟國家
 CountriesExceptMe=除了%s以外的所有國家
 AccountantFiles=匯出來源文件
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=依會計科目檢視
 VueBySubAccountAccounting=依會計子分類帳檢視
@@ -286,7 +286,7 @@ ValidateMovements=驗證動作
 DescValidateMovements=禁止修改，刪除任何文字內容。所有條目都必須經過驗證，否則將無法結案
 
 ValidateHistory=自動關聯
-AutomaticBindingDone=自動關聯已完成
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=錯誤，您不能刪除此會計項目，因為已使用
 MvtNotCorrectlyBalanced=動作未正確平衡。借方= %s |貸方= %s
@@ -387,7 +387,8 @@ SaleExport=出口銷售
 SaleEEC=在歐盟銷售
 SaleEECWithVAT=在EEC中具有營業稅的銷售不為空，因此我們認為這不是內部銷售，建議的帳戶是標準產品帳戶。
 SaleEECWithoutVATNumber=在EEC中銷售沒有營業稅但合作方的營業稅ID未定義。我們退回標準銷售的產品帳戶。您可以根據需要修改合作方或產品帳戶的營業稅ID。
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=會計項目範圍
 Calculated=已計算
@@ -404,6 +405,7 @@ NoJournalDefined=沒有定義的日記帳
 Binded=關聯行數
 ToBind=關聯行
 UseMenuToSetBindindManualy=尚未綁定的行，請使用選單<a href="%s">%s</a>手動進行綁定
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=會計條目

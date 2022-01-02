@@ -173,7 +173,6 @@ OverviewOfMovementsNotValidated=Etapa 1 / Visão geral dos movimentos não valid
 ValidateMovements=Validar movimentações
 DescValidateMovements=Qualquer modificação ou exclusão de escrita, letras e exclusões será proibida. Todas as entradas para um exercício devem ser validadas, caso contrário, o fechamento não será possível
 ValidateHistory=Vincular Automaticamente
-AutomaticBindingDone=Vinculação automática realizada
 ErrorAccountancyCodeIsAlreadyUse=Erro, você não pode excluir esta conta contábil, pois ela esta em uso
 GeneralLedgerIsWritten=As transações estão escritas no Razão
 NoNewRecordSaved=Não há mais registro para lançar
