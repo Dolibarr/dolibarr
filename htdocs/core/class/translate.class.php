@@ -579,7 +579,7 @@ class Translate
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_currencies', 'code_iso', 'label');
 		} elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_shipment_mode', 'code', 'libelle');
-		} elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^PaymentType(?:Short)?([0-9A-Z]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_paiement', 'code', 'libelle', '', 1);
 		} elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_lead_status', 'code', 'label');
