@@ -1355,6 +1355,8 @@ if ($action == 'create') {
                             }
 							$("#selectremindertype").select2("destroy");
 							$("#selectremindertype").select2();
+							$("#select_offsetunittype_duration").select2("destroy");
+							$("#select_offsetunittype_duration").select2();
 	            		 });
 
 	            		$("#selectremindertype").change(function(){
