@@ -1315,7 +1315,7 @@ if ($action == 'create') {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
-		print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
+		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
 
 		print '<div class="reminderparameters" style="display: none;">';
 
@@ -1332,7 +1332,7 @@ if ($action == 'create') {
 
 		//Reminder Type
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-		print $form->selectarray('selectremindertype', $TRemindTypes, '', 0, 0, 0, '', 0, 0, 0, '', 'mimnwidth200', 1);
+		print $form->selectarray('selectremindertype', $TRemindTypes, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth500', 1);
 		print '</td></tr>';
 
 		//Mail Model
@@ -1347,14 +1347,18 @@ if ($action == 'create') {
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 	            		$("#addreminder").click(function(){
+							console.log("Click on addreminder");
 	            		    if (this.checked) {
-	            		      $(".reminderparameters").show();
+	            		    	$(".reminderparameters").show();
                             } else {
-                            $(".reminderparameters").hide();
+                            	$(".reminderparameters").hide();
                             }
+							$("#selectremindertype").select2("destroy");
+							$("#selectremindertype").select2();
 	            		 });
 
 	            		$("#selectremindertype").change(function(){
+							console.log("Change on selectremindertype");
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
