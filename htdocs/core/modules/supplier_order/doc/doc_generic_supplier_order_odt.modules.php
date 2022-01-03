@@ -123,6 +123,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="SUPPLIER_ORDER_ADDON_PDF_ODT_PATH">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
@@ -159,7 +160,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 		$texte .= $conf->global->SUPPLIER_ORDER_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small" name="Button"value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small reposition" name="Button" value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories

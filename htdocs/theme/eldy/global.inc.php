@@ -983,7 +983,7 @@ div.divsearchfield {
 	padding-top: 2px;
 }
 .divadvancedsearchfield span.select2.select2-container.select2-container--default {
-	padding-bottom: 4px;
+	/* padding-bottom: 4px; */
 }
 .search_component_params {
 	/*display: flex; */
@@ -1164,6 +1164,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax50 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 50px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax60 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 60px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax80 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 80px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -2219,7 +2231,7 @@ div.arearefnobottom {
 div.heightref {
 	min-height: 80px;
 }
-div.divphotoref {
+div.divphotoref:last-child {
 	padding-<?php echo $right; ?>: 30px;
 }
 div.paginationref {
@@ -4486,7 +4498,9 @@ table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
-.dolgraphchart canvas { width: calc(100% - 20px) !important; }
+.dolgraphchart canvas {
+	/* width: calc(100% - 20px) !important; */
+}
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: var(--dolgraphbg) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }
@@ -4504,8 +4518,8 @@ label.radioprivate {
 	border: 0px;
 }
 .photowithmargin {
-	margin-bottom: 2px;
-	margin-top: 10px;
+/*	margin-bottom: 2px;
+	margin-top: 2px; */
 }
 div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
@@ -5917,9 +5931,14 @@ input.select2-input {
 	border-right: none;
 	border-radius: 0 !important;
 	background: var(--inputbackgroundcolor);
+	line-height: normal;
 }
-.select2-container--default .select2-selection--multiple .select2-selection__choice{
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+	line-height: 1.4em;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
 	background-color: #ddd;
+	margin-top: 4px !important;
 }
 
 .select2-search__field
@@ -6115,10 +6134,12 @@ span#select2-boxbookmark-container {
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
+	margin-top: 1px !important;
+	margin-bottom: 0 !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
-	vertical-align: top;
+	/* vertical-align: top; */
 }
 span.noborderoncategories {
 	padding: 4px 5px 0px 5px;

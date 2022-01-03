@@ -2125,8 +2125,29 @@ class User extends CommonObject
 			$password = getRandomPassword(false);
 		}
 
-		// Crypt password
+		// Check and encrypt the password
 		if (empty($passwordalreadycrypted)) {
+			if (!empty($conf->global->USER_PASSWORD_GENERATED)) {
+				// Add a check on rules for password syntax using the setup of the password generator
+				$modGeneratePassClass = 'modGeneratePass'.ucfirst($conf->global->USER_PASSWORD_GENERATED);
+
+				include_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
+				if (class_exists($modGeneratePassClass)) {
+					$modGeneratePass = new $modGeneratePassClass($this->db, $conf, $langs, $user);
+
+					// To check an input user password, we disable the cleaning on ambiguous characters (this is used only for auto-generated password)
+					$modGeneratePass->WithoutAmbi = 0;
+
+					// Call to validatePassword($password) to check pass match rules
+					$testpassword = $modGeneratePass->validatePassword($password);
+					if (!$testpassword) {
+						$this->error = $modGeneratePass->error;
+						return -1;
+					}
+				}
+			}
+
+			// Now, we encrypt the new password
 			$password_crypted = dol_hash($password);
 		}
 

@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Yayasan
 Version=Versi
 Publisher=Penerbit
@@ -265,8 +267,8 @@ OtherResources=Sumber daya lainnya
 ExternalResources=Sumber Daya Eksternal
 SocialNetworks=Jaringan sosial
 SocialNetworkId=ID Jaringan Sosial
-ForDocumentationSeeWiki=Untuk dokumentasi pengguna atau pengembang (Doc, FAQs ...), <br> lihatlah pada Dolibarr Wiki: <br><b><a href="%s" target="_blank"> %s a0ebd08bc08bc08
-ForAnswersSeeForum=Untuk pertanyaan / bantuan lain, Anda dapat menggunakan forum Dolibarr: <br><b><a href="%s" target="_blank"> %s </a> </b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Berikut adalah beberapa sumber untuk mendapatkan bantuan dan dukungan dengan Dolibarr.
 HelpCenterDesc2=Beberapa sumber daya ini hanya tersedia di<b>bahasa inggris </b>.
 CurrentMenuHandler=Penangan menu saat ini
@@ -353,6 +355,7 @@ LastStableVersion=Versi stabil terbaru
 LastActivationDate=Tanggal aktivasi terbaru
 LastActivationAuthor=Penulis aktivasi terbaru
 LastActivationIP=IP aktivasi terbaru
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Perbarui server offline
 WithCounter=Kelola penghitung
 GenericMaskCodes=Anda dapat memasukkan topeng penomoran apa pun. Dalam topeng ini, tag berikut dapat digunakan: <br> <b> {000000} </b> sesuai dengan angka yang akan bertambah pada setiap %s. Masukkan angka nol sebanyak panjang penghitung yang diinginkan. Penghitung akan diselesaikan dengan angka nol dari kiri untuk mendapatkan angka nol sebanyak topeng. <br> <b> {000000 + 000} </b> sama dengan yang sebelumnya tetapi offset yang sesuai dengan nomor di sebelah kanan tanda + diterapkan mulai dari %s pertama. <br> <b> {000000 @ x} </b> sama dengan yang sebelumnya tetapi penghitung disetel ulang ke nol saat bulan x tercapai (x antara 1 dan 12, atau 0 untuk menggunakan bulan-bulan awal tahun fiskal yang ditentukan dalam konfigurasi Anda, atau 99 hingga reset ke nol setiap bulan). Jika opsi ini digunakan dan x adalah 2 atau lebih tinggi, maka urutan {yy} {mm} atau {yyyy} {mm} juga diperlukan. <br> <b> {dd} </b> hari (01 hingga 31). <br> <b> {mm} </b> bulan (01 hingga 12). <br> <b> {yy} </b>, <b> {yyyy} </b> atau <b> {y} a09a4b739 nomor. <br>
@@ -762,6 +765,7 @@ Permission121=Baca pihak ketiga yang tertaut ke pengguna
 Permission122=Buat / modifikasi pihak ketiga yang ditautkan dengan pengguna
 Permission125=Hapus pihak ketiga yang tertaut ke pengguna
 Permission126=Ekspor pihak ketiga
+Permission130=Create/modify third parties payment information
 Permission141=Baca semua proyek dan tugas (juga proyek pribadi yang bukan saya kontak)
 Permission142=Buat / modifikasi semua proyek dan tugas (juga proyek pribadi yang bukan saya kontak)
 Permission144=Hapus semua proyek dan tugas (juga proyek pribadi yang tidak saya hubungi)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Anda menggunakan browser web %s. Browser ini ok untuk keamanan dan k
 BrowserIsKO=Anda menggunakan browser web %s. Browser ini dikenal sebagai pilihan yang buruk untuk keamanan, kinerja, dan keandalan. Kami merekomendasikan menggunakan Firefox, Chrome, Opera atau Safari.
 PHPModuleLoaded=Komponen PHP %s dimuat
 PreloadOPCode=OPCode preloaded digunakan
-AddRefInList=Tampilkan Pelanggan / Vendor ref. daftar info (daftar pilih atau kotak kombo) dan sebagian besar hyperlink. <br> Pihak Ketiga akan muncul dengan format nama "CC12345 - SC45678 - The Big Company corp." alih-alih "Perusahaan Besar Perusahaan".
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Tampilkan daftar info alamat Pelanggan / Vendor (daftar pilih atau kotak kombo) <br> Pihak Ketiga akan muncul dengan format nama "Korporasi Perusahaan Besar - 21 lompat jalan 123456 Kota besar - AS" alih-alih "Korps Perusahaan Besar".
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Tampilan Kontak email (atau telepon jika tidak ditentukan) dan daftar info kota (pilih daftar atau kotak kombo) <br> Kontak akan muncul dengan format nama "Dupond Durand - dupond.durand@email.com - Paris" atau "Dupond Durand - 06 07 59 65 66 - Paris "bukan" Dupond Durand ".
 AskForPreferredShippingMethod=Mintalah metode pengiriman pilihan untuk Pihak Ketiga.
 FieldEdition=Edisi baris %s
@@ -1708,8 +1712,9 @@ MailingDelay=Detik untuk menunggu setelah mengirim pesan berikutnya
 NotificationSetup=Penyiapan modul Pemberitahuan Email
 NotificationEMailFrom=Email pengirim (Dari) untuk email yang dikirim oleh modul Notifikasi
 FixedEmailTarget=Penerima
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Pengaturan modul pengiriman
 SendingsReceiptModel=Mengirim model tanda terima
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Teks bebas pada tanda terima pengiriman
 ##### FCKeditor #####
 AdvancedEditor=Editor tingkat lanjut
 ActivateFCKeditor=Aktifkan editor lanjutan untuk:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=Pembuatan / edisi WYSIWIG baris detail produk untuk semua entitas (proposal, pesanan, faktur, dll ...). <span class="warning"> Peringatan: Menggunakan opsi ini untuk kasus ini sangat tidak disarankan karena dapat menimbulkan masalah dengan karakter khusus dan pemformatan halaman saat membuat file PDF. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Penyiapan modul Laporan Biaya - Aturan
 ExpenseReportNumberingModules=Modul penomoran laporan biaya
 NoModueToManageStockIncrease=Tidak ada modul yang dapat mengelola peningkatan stok otomatis yang diaktifkan. Peningkatan stok akan dilakukan hanya dengan input manual.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Anda dapat menemukan opsi untuk pemberitahuan email dengan mengaktifkan dan mengkonfigurasi modul "Pemberitahuan".
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Daftar pemberitahuan otomatis per pengguna *
 ListOfNotificationsPerUserOrContact=Daftar kemungkinan pemberitahuan otomatis (pada agenda bisnis) yang tersedia per pengguna * atau per kontak **
 ListOfFixedNotifications=Daftar notifikasi tetap otomatis
@@ -2209,3 +2215,7 @@ SkinAndColors=Kulit dan warna
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Jika Anda ingin menggunakan pajak kedua, Anda harus mengaktifkan juga pajak penjualan pertama
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Jika Anda ingin menggunakan pajak ketiga, Anda harus mengaktifkan juga pajak penjualan pertama
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

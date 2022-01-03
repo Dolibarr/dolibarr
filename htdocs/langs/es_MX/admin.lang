@@ -185,8 +185,6 @@ OfficialDemo=Dolibarr demo en línea
 OfficialMarketPlace=Tienda oficial para módulos / complementos
 OfficialWebHostingService=Servicios de alojamiento web referenciados (alojamiento en la nube)
 SocialNetworks=Redes Sociales
-ForDocumentationSeeWiki=Para la documentación del usuario o desarrollador (Doc, Preguntas frecuentes ...), <br> Echa un vistazo a la Wiki Dolibarr: <br> <b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=Para cualquier otra pregunta o ayuda, puede usar el foro Dolibarr: <br> <b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Aquí hay algunos recursos para obtener ayuda y apoyo con Dolibarr.
 HelpCenterDesc2=Algunos de estos recursos solo están disponibles en <b>inglés</b> .
 CurrentMenuHandler=Administrador de menú actual
@@ -247,6 +245,7 @@ WarningSettingSortOrder=Advertencia, establecer un orden predeterminado puede re
 Module20Name=Propuestas
 Module30Name=Facturas
 Module40Name=Vendedores
+Module56Name=Pago por transferencia de crédito
 Module610Name=Variantes de producto
 Module3400Name=Redes Sociales
 Module10000Name=Páginas web

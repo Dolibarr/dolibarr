@@ -906,7 +906,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				</div>
 				<div class="login_block_user">
 				<?php
-				print top_menu_user(1, DOL_URL_ROOT.'/user/logout.php');
+				print top_menu_user(1);
 				?>
 				</div>
 			</div>
@@ -1163,7 +1163,7 @@ if ($r % 3 == 2) {
 }
 
 if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
-	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
 }
 
 if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {

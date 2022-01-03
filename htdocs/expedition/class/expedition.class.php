@@ -2090,7 +2090,7 @@ class Expedition extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
-		$sql .= ' WHERE rowid='.$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 	}
@@ -2107,7 +2107,7 @@ class Expedition extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
-		$sql .= ' WHERE rowid='.$id;
+		$sql .= " WHERE rowid= ".((int) $id);
 
 		$resql = $this->db->query($sql);
 	}

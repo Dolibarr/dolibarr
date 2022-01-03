@@ -19,7 +19,7 @@
 ModulePartnershipName=Управление партнерством
 PartnershipDescription=Модуль Управление партнерством
 PartnershipDescriptionLong= Модуль Управление партнерством
-
+Partnership=Партнерство
 AddPartnership=Добавить партнерство
 CancelPartnershipForExpiredMembers=Партнерство: отмените партнерство участников с истекшими подписками
 PartnershipCheckBacklink=Партнерство: проверьте ссылающуюся обратную ссылку

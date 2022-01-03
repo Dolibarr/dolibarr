@@ -1220,7 +1220,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<td>';
 			print $langs->trans('TicketCategory');
 			print '</td><td>';
-			$formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2, 0, 0, 0, 'maxwidth500');
+			$formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2, 0, 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			print '</td>';
 			print '</tr>';
 			// Severity

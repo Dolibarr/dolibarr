@@ -186,8 +186,6 @@ OfficialDemo=Demo en línea de Dolibarr
 OfficialMarketPlace=Lugar oficial del mercado para módulos externos / complementos
 OfficialWebHostingService=Servicios de alojamiento web a los que se hace referencia (alojamiento en la nube)
 ReferencedPreferredPartners=Socios Preferidos
-ForDocumentationSeeWiki=Para documentación del usuario o desarrollador (Doc, Preguntas frecuentes ...), <br> echa un vistazo a la Wiki de Dolibarr: <br> <b> <a href="%s" target="_blank"> %s </a></b>
-ForAnswersSeeForum=Para cualquier otra pregunta/ayuda, puede utilizar el foro de Dolibarr: <br> <b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Aquí hay algunos recursos para obtener ayuda y apoyo con Dolibarr.
 HelpCenterDesc2=Algunos de estos recursos solo están disponibles en <b>inglés</b> .
 CurrentMenuHandler=Manejador de menú actual
@@ -891,8 +889,6 @@ YouDoNotUseBestDriver=Utiliza el controlador %s, pero se recomienda el controlad
 SearchOptim=Optimización de búsqueda
 BrowserIsOK=Está utilizando el navegador web %s. Este navegador está bien para la seguridad y el rendimiento.
 BrowserIsKO=Está utilizando el navegador web %s. Se sabe que este navegador es una mala elección para la seguridad, el rendimiento y la confiabilidad. Recomendamos usar Firefox, Chrome, Opera o Safari.
-AddRefInList=Mostrar cliente / vendedor ref. Lista de información (lista de selección o cuadro combinado) y la mayoría de los hipervínculos. <br> Aparecerán terceros con un formato de nombre de &quot;CC12345 - SC45678 - The Big Company corp&quot;. en lugar de &quot;The Big Company corp&quot;.
-AddAdressInList=Mostrar la lista de información de la dirección del cliente / proveedor (seleccionar lista o cuadro combinado) <br> Aparecerán terceros con el formato de nombre &quot;The Big Company corp. - 21 jump street 123456 Big town - USA&quot; en lugar de &quot;The Big Company corp&quot;.
 AskForPreferredShippingMethod=Pregunte por el método de envío preferido para terceros.
 FillThisOnlyIfRequired=Ejemplo: +2 (llenar solo si se experimentan problemas de compensación de zona horaria)
 PasswordGenerationNone=No sugiera una contraseña generada. La contraseña debe escribirse manualmente.

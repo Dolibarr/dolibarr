@@ -48,7 +48,7 @@ CountriesNotInEEC=Kraje spoza UE
 CountriesInEECExceptMe=Kraje UE oprócz %s
 CountriesExceptMe=Wszystkie kraje oprócz %s
 AccountantFiles=Eksportuj dokumenty źródłowe
-ExportAccountingSourceDocHelp=Za pomocą tego narzędzia możesz wyeksportować zdarzenia źródłowe (listę w formacie CSV i PDF), które zostały użyte do wygenerowania Twojej księgowości.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Aby wyeksportować swoje dzienniki, użyj pozycji menu %s - %s.
 VueByAccountAccounting=Wyświetl według konta księgowego
 VueBySubAccountAccounting=Wyświetl według subkonta księgowego
@@ -286,7 +286,7 @@ ValidateMovements=Zatwierdź ruchy
 DescValidateMovements=Jakakolwiek modyfikacja lub usunięcie pisma, napisów i usunięcia będzie zabronione. Wszystkie wpisy do ćwiczenia muszą zostać zatwierdzone, w przeciwnym razie zamknięcie nie będzie możliwe
 
 ValidateHistory=Dowiąż automatycznie
-AutomaticBindingDone=Automatyczne dowiązanie ukończone
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąc tego konta księgowego, ponieważ jest w użyciu
 MvtNotCorrectlyBalanced=Ruch nie jest prawidłowo wyważony. Obciążenie = %s | Kredyt = %s
@@ -387,7 +387,8 @@ SaleExport=Sprzedaż eksportowa
 SaleEEC=Sprzedaż w EWG
 SaleEECWithVAT=Sprzedaż w EWG z podatkiem VAT niezerowym, więc przypuszczamy, że NIE jest to sprzedaż wewnątrzwspólnotowa, a sugerowane konto to standardowe konto produktu.
 SaleEECWithoutVATNumber=Sprzedaż w EWG bez podatku VAT, ale identyfikator VAT strony trzeciej nie jest zdefiniowany. Wracamy na konto produktu dla sprzedaży standardowej. W razie potrzeby możesz poprawić identyfikator VAT strony trzeciej lub konto produktu.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Zakres konta księgowego
 Calculated=Przeliczone
@@ -404,6 +405,7 @@ NoJournalDefined=Nie zdefiniowano dziennika
 Binded=Linie związane
 ToBind=Linie do dowiązania
 UseMenuToSetBindindManualy=Wiersze jeszcze niezwiązane, użyj menu <a href="%s"> %s </a>, aby wykonać powiązanie ręcznie
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Zapisy księgowe

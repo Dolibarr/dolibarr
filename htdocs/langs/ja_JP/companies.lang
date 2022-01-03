@@ -51,7 +51,7 @@ CivilityCode=敬称コード
 RegisteredOffice=登録事務所
 Lastname=姓
 Firstname=姓名の名
-PostOrFunction=職位
+PostOrFunction=役職
 UserTitle=役職名
 NatureOfThirdParty=取引先の性質
 NatureOfContact=連絡の性質
@@ -369,7 +369,7 @@ VATIntraCheck=チェック
 VATIntraCheckDesc=VAT IDには、国のプレフィックスを含めることが必要。リンク<b>%s </b>は、欧州VATチェッカーサービス(VIES)を使用し、そのためにはDolibarrサーバーからのインターネットアクセスが必要。
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=欧州委員会のウェブサイトでコミュニティ間のVAT IDを確認
-VATIntraManualCheck=欧州委員会のウェブサイト<a href="%s" target="_blank">%s</a>で手動で確認可能
+VATIntraManualCheck=欧州委員会のウェブサイト<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>で手動で確認することもできる
 ErrorVATCheckMS_UNAVAILABLE=ことはできませんを確認してください。サービスは加盟国(%s)によって提供されていない確認してください。
 NorProspectNorCustomer=見込客でない、顧客でない
 JuridicalStatus=事業体種別

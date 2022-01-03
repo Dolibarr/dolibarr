@@ -6565,7 +6565,7 @@ class Form
 			unset($TDurationTypes[$value]);
 		}
 
-		$retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
+		$retstring = '<select class="flat minwidth75 maxwidth100" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
 		foreach ($TDurationTypes as $key => $typeduration) {
 			$retstring .= '<option value="'.$key.'"';
 			if ($key == $selected) {
@@ -8229,7 +8229,7 @@ class Form
 					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.$way.'</li>';
 				}
 			}
-			return '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+			return '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
 
 		if ($rendermode == 0) {
@@ -9667,9 +9667,10 @@ class Form
 	 * @param	array		$arrayofcriterias			          Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
 	 * @param	array		$search_component_params	          Array of selected search criterias
 	 * @param   array       $arrayofinputfieldsalreadyoutput      Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
+	 * @param	string		$search_component_params_hidden		  String with $search_component_params criterias
 	 * @return	string									          HTML component for advanced search
 	 */
-	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array())
+	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '')
 	{
 		global $langs;
 
@@ -9687,7 +9688,12 @@ class Form
 
 		$ret .= '<div class="search_component inline-block valignmiddle">'.$texttoshow.'</div>';
 		$ret .= '</div>';
-		$ret .= '<input type="hidden" name="search_component_params_hidden" class="search_component_params_hidden" value="'.GETPOST("search_component_params_hidden").'">';
+		$ret .= "<!-- Syntax of Generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
+		if (GETPOST('show_search_component_params_hidden', 'int')) {
+			$ret .= '<input type="hidden" name="show_search_component_params_hidden" value="1">';
+		}
+		$ret .= '<input type="'.(GETPOST('show_search_component_params_hidden', 'int') ? 'text' : 'hidden').'" name="search_component_params_hidden" class="search_component_params_hidden marginleftonly" value="'.$search_component_params_hidden.'">';
+
 		// For compatibility with forms that show themself the search criteria in addition of this component, we output the fields
 		foreach ($arrayofcriterias as $criterias) {
 			foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {

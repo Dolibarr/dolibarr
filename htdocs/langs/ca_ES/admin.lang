@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Entitat
 Version=Versió
 Publisher=Publicador
@@ -265,8 +267,8 @@ OtherResources=Altres recursos
 ExternalResources=Recursos externs
 SocialNetworks=Xarxes socials
 SocialNetworkId=Identificador de la xarxa social
-ForDocumentationSeeWiki=Per a la documentació d'usuari, desenvolupador o Preguntes Freqüents (FAQ), consulteu el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=Per altres qüestions o realitzar les seves pròpies consultes, pot utilitzar el fòrum Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Aquests són alguns recursos per a obtenir ajuda i suport amb Dolibarr.
 HelpCenterDesc2=Alguns d'aquests serveis només estan disponibles en <b>anglès</b>.
 CurrentMenuHandler=Gestor de menú
@@ -353,6 +355,7 @@ LastStableVersion=Última versió estable
 LastActivationDate=Data de l'última activació
 LastActivationAuthor=Últim autor d'activació
 LastActivationIP=Última IP d'activació
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Actualitza el servidor fora de línia
 WithCounter=Gestiona un comptador
 GenericMaskCodes=Podeu introduir qualsevol màscara de numeració. En aquesta màscara, es poden utilitzar les etiquetes següents: <br> <b> {000000} </b> correspon a un número que s'incrementarà a cada %s. Introduïu tants zeros com la longitud desitjada del comptador. El comptador es completarà amb zeros de l'esquerra per tal de tenir tants zeros com la màscara. <br> <b> {000000 + 000} </b> igual que l'anterior, però s'aplica un desplaçament que correspon al número a la dreta del signe + a partir del primer %s. <br> <b> {000000 @ x} </b> igual que l'anterior, però el comptador es restableix a zero quan s'arriba al mes x (x entre 1 i 12, o 0 per utilitzar els primers mesos de l'any fiscal definits a la vostra configuració, o 99 a restableix a zero cada mes). Si s’utilitza aquesta opció i x és 2 o superior, també és obligatòria la seqüència {yy} {mm} o {yyyy} {mm}. <br> <b> {dd} </b> dia (de l'1 al 31). <br> <b> {mm} </b> mes (01 a 12). <br> <b> {aa} </b>, <b> {aaaa} </b> o <b> {y} a09a4b. <br>
@@ -762,6 +765,7 @@ Permission121=Consulta tercers enllaçats a usuaris
 Permission122=Crea/modifica tercers enllaçats a l'usuari
 Permission125=Elimina tercers enllaçats a l'usuari
 Permission126=Exporta tercers
+Permission130=Create/modify third parties payment information
 Permission141=Consulta tots els projectes i tasques (també els projectes privats dels qui no en soc contacte)
 Permission142=Crea/modifica tots els projectes i tasques (també projectes privats dels qui no en soc contacte)
 Permission144=Elimina tots els projectes i tasques (també els projectes privats dels qui no en soc contacte)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Esteu utilitzant el navegador web %s. Aquest navegador està bé per
 BrowserIsKO=Esteu utilitzant el navegador web %s. Es considera que aquest navegador és una mala elecció per a la seguretat, el rendiment i la fiabilitat. Recomanem utilitzar Firefox, Chrome, Opera o Safari.
 PHPModuleLoaded=Es carrega el component PHP %s
 PreloadOPCode=S'utilitza un codi OPC precarregat
-AddRefInList=Mostra la llista d'informació de referència client/proveïdor (llista de selecció o llista desplegable) i la majoria d’enllaços. <br>Els tercers apareixeran amb un format de nom "CC12345 - SC45678 - Nom de l'organització". en lloc de "Nom de l'organització".
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Mostra la llista d'informació de la direcció de client / proveïdor (llista de selecció o combobox) <br> Els tercers apareixeran amb un format de nom de "The Big Company corp. - 21 jump street 123456 Big town - USA" en lloc de "The Big Company corp".
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Mostra el correu electrònic de contacte (o els telèfons si no està definit) i la llista d'informació de la ciutat (llista de selecció o llista desplegable) <br>Els contactes apareixeran amb un format de nom "Dupond Durand - dupond.durand@email.com - París" o "Dupond Durand - 06 07 59 65 66 - París "en lloc de" Dupond Durand".
 AskForPreferredShippingMethod=Demaneu un mètode d'enviament preferit per a tercers.
 FieldEdition=Edició del camp %s
@@ -1708,8 +1712,9 @@ MailingDelay=Segons d'espera després d'enviar el següent missatge
 NotificationSetup=Configuració del mòdul de notificació per correu electrònic
 NotificationEMailFrom=Correu electrònic del remitent (des de) per als correus electrònics enviats pel mòdul de notificacions
 FixedEmailTarget=Destinatari
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Configuració del mòdul d'enviament
 SendingsReceiptModel=Model de rebut d’enviament
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Text lliure en els rebuts de lliurament
 ##### FCKeditor #####
 AdvancedEditor=Editor avançat
 ActivateFCKeditor=Activar editor avançat per a :
-FCKeditorForNotePublic=WYSIWIG creació / edició del camp notes públiques d'elements
-FCKeditorForNotePrivate=WYSIWIG creació / edició del camp notes privades d'elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=Creació / edició de WYSIWIG de la descripció del camp d'elements (excepte productes / serveis)
 FCKeditorForProduct=Creació / edició de WYSIWIG de la descripció del camp de productes / serveis
 FCKeditorForProductDetails=Creació/edició WYSIWIG de línies de detalls de productes per a totes les entitats (pressupostos, comandes, factures, etc.). <span class="warning"> Advertiment: no es recomana utilitzar aquesta opció per a aquest cas, ja que pot crear problemes amb caràcters especials i format de pàgina en crear fitxers PDF. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Configurar mòdul Informes de despeses - Regles
 ExpenseReportNumberingModules=Mòdul de numeració d'informes de despeses
 NoModueToManageStockIncrease=No s'ha activat cap mòdul capaç de gestionar l'increment automàtic d'estoc. L’increment d’estoc es farà només amb entrada manual.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Podeu trobar opcions de notificacions per correu electrònic habilitant i configurant el mòdul "Notificació".
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Llista de notificacions automàtiques per usuari *
 ListOfNotificationsPerUserOrContact=Llista de possibles notificacions automàtiques (en un esdeveniment comercial) disponibles per usuari* o per contacte**
 ListOfFixedNotifications=Llista de notificacions fixes automàtiques
@@ -2209,3 +2215,7 @@ SkinAndColors=Pell i colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Si voleu utilitzar un segon impost, heu d’habilitar també el primer impost de venda
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Si voleu utilitzar un tercer impost, també heu d’habilitar l’impost de primera venda
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

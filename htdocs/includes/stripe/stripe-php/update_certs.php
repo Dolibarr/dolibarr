@@ -7,9 +7,9 @@
 $fp = \fopen(__DIR__ . '/data/ca-certificates.crt', 'w+b');
 
 $options = [
-    \CURLOPT_FILE => $fp,
-    \CURLOPT_TIMEOUT => 3600,
-    \CURLOPT_URL => 'https://curl.haxx.se/ca/cacert.pem',
+	\CURLOPT_FILE => $fp,
+	\CURLOPT_TIMEOUT => 3600,
+	\CURLOPT_URL => 'https://curl.haxx.se/ca/cacert.pem',
 ];
 
 $ch = \curl_init();

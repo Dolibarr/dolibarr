@@ -6,7 +6,6 @@ ReplaceWindow=Substituir guia atual
 BookmarkTargetReplaceWindowShort=Guia atual
 BehaviourOnClick=Comportamento quando a URL de marcador é selecionada
 SetHereATitleForLink=Definir um nome para o marcador
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use um link externo/absoluto (https://URL) ou um link interno/relativo (/DOLIBARR_ROOT/htdocs/...)
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolha se a página vinculada deve abrir na guia atual ou em uma nova guia
 BookmarksManagement=Gestor de marcadores
 BookmarksMenuShortCut=Ctrl + Shift + M
