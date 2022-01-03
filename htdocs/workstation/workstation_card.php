@@ -392,26 +392,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Groups
 	if ($object->type !== 'MACHINE') {
 		$toprint = array();
+		$g = new UserGroup($db);
 		foreach ($object->usergroups as $id_group) {
-			$g = new UserGroup($db);
 			$g->fetch($id_group);
-			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $g->getNomUrl(1) . '</li>';
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $g->getNomUrl(1, '', 0, 'categtextwhite') . '</li>';
 		}
+
 		print '<tr><td>' . $langs->trans('Groups') . '</td><td>';
-		print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		print '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		print '</td></tr>';
 	}
 
 	// Resources
 	if ($object->type !== 'HUMAN') {
 		$toprint = array();
+		$r = new Dolresource($db);
 		foreach ($object->resources as $id_resource) {
-			$r = new Dolresource($db);
 			$r->fetch($id_resource);
-			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $r->getNomUrl(1) . '</li>';
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $r->getNomUrl(1, '', '', 0, 'categtextwhite') . '</li>';
 		}
+
 		print '<tr><td>' . $langs->trans('Machines') . '</td><td>';
-		print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		print '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		print '</td></tr>';
 	}
 
