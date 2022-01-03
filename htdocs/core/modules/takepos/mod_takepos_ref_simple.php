@@ -138,11 +138,11 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 		// $sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-%'";
 		// $sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 
-        $sql = "SELECT CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED) as MAX ";
-        $sql .= " FROM ".MAIN_DB_PREFIX."facture ";
-        $sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-%'";
-        $sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-        $sql .= " ORDER BY rowid desc LIMIT 1;";
+		$sql = "SELECT CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED) as MAX ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture ";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-%'";
+		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
+		$sql .= " ORDER BY rowid desc LIMIT 1;";
 
 		$resql = $db->query($sql);
 		if ($resql) {
