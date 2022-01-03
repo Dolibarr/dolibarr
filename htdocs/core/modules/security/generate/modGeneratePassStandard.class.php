@@ -26,8 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 
 
 /**
- *	    \class      modGeneratePassStandard
- *		\brief      Class to generate a password according to a dolibarr standard rule (8 random chars)
+ *	Class to generate a password according to a dolibarr standard rule (12 random chars)
  */
 class modGeneratePassStandard extends ModeleGenPassword
 {
@@ -36,7 +35,19 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 */
 	public $id;
 
+	/**
+	 * Minimum length (text visible by end user)
+	 *
+	 * @var string
+	 */
 	public $length;
+
+	/**
+	 * Minimum length in number of characters
+	 *
+	 * @var integer
+	 */
+	public $length2;
 
 	/**
 	 * @var DoliDB Database handler.
@@ -60,6 +71,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	{
 		$this->id = "standard";
 		$this->length = 12;
+		$this->length2 = 12;
 
 		$this->db = $db;
 		$this->conf = $conf;

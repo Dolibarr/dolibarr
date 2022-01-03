@@ -25,8 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
- *  \class      ModeleGenPassword
- *  \brief      Parent class for password rules/management modules
+ *  Parent class for password rules/management modules
  */
 abstract class ModeleGenPassword
 {

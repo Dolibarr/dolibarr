@@ -28,8 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 
 
 /**
- *	    \class      modGeneratePassPerso
- *		\brief      Class to generate a password according to personal rules
+ *	Class to generate a password according to personal rules
  */
 class modGeneratePassPerso extends ModeleGenPassword
 {
@@ -38,8 +37,20 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 */
 	public $id;
 
+	/**
+	 * Minimum length (text visible by end user)
+	 *
+	 * @var string
+	 */
 	public $length;
-	public $length2; // didn't overright display
+
+	/**
+	 * Minimum length in number of characters
+	 *
+	 * @var integer
+	 */
+	public $length2;
+
 	public $NbMaj;
 	public $NbNum;
 	public $NbSpe;
@@ -81,7 +92,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->user = $user;
 
 		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
-			// default value (10carac, 1maj, 1digit, 1spe,  3 repeat, no ambi at auto generation.
+			// default value at auto generation (12 chars, 1 upercase, 1 digit, 1 special char,  3 repeat, no ambi).
 			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '12;1;1;1;3;1', 'chaine', 0, '', $conf->entity);
 		}
 
