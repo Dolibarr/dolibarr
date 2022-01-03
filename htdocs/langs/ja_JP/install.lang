@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=お使いのPHPインストールはCurlをサポー�
 ErrorPHPDoesNotSupportCalendar=PHPインストールは、phpカレンダー拡張機能をサポートしない。
 ErrorPHPDoesNotSupportUTF8=PHPインストールはUTF8関数をサポートしない。 Dolibarrは正しく機能しない。 Dolibarrをインストールする前にこれを解決すること。
 ErrorPHPDoesNotSupportIntl=PHPインストールはIntl関数をサポートしない。
+ErrorPHPDoesNotSupportMbstring=このPHPインストールはmbstring関数をサポートしない。
 ErrorPHPDoesNotSupportxDebug=PHPインストールは、拡張デバッグ機能をサポートしない。
 ErrorPHPDoesNotSupport=PHPインストールは、%s関数をサポートしない。
 ErrorDirDoesNotExists=%sディレクトリが存在しません。

@@ -225,6 +225,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	$sql .= " WHERE c.type = 0";
 	$sql .= " AND c.entity IN (".getEntity('category').")";
 	$sql .= " GROUP BY c.label";
+	$sql .= " ORDER BY nb desc";
 	$total = 0;
 	$result = $db->query($sql);
 	if ($result) {

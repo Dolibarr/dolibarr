@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Η εγκατάσταση της php δεν υποσ�
 ErrorPHPDoesNotSupportCalendar=Η εγκατάσταση της PHP δεν υποστηρίζει επεκτάσεις του php calendar.
 ErrorPHPDoesNotSupportUTF8=Η εγκατάσταση της PHP δεν υποστηρίζει λειτουργίες UTF8. Το Dolibarr δεν μπορεί να λειτουργήσει σωστά. Επιλύστε αυτό πριν εγκαταστήσετε Dolibarr.
 ErrorPHPDoesNotSupportIntl=Η εγκατάσταση της PHP δεν υποστηρίζει τις λειτουργίες Intl.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Η εγκατάσταση της PHP δεν υποστηρίζει επεκτάσεις εντοπισμού σφαλμάτων.
 ErrorPHPDoesNotSupport=Η εγκατάσταση της PHP σας δεν υποστηρίζει %s λειτουργίες .
 ErrorDirDoesNotExists=Κατάλογος %s δεν υπάρχει.

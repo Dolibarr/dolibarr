@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2019	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2021	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
@@ -1967,6 +1967,7 @@ if ($id) {
 								$class = "center";
 							} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
 								if (!empty($conf->accounting->enabled)) {
+									require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 									$tmpaccountingaccount = new AccountingAccount($db);
 									$tmpaccountingaccount->fetch(0, $valuetoshow, 1);
 									$titletoshow = $langs->transnoentitiesnoconv("Pcgtype").': '.$tmpaccountingaccount->pcg_type;

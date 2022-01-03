@@ -287,17 +287,17 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		if ($search_description) {
 			$param .= '&search_description='.urlencode($search_description);
 		}
-		if ($search_start_dt) {
-			$param .= '&search_start_dt='.urlencode($search_start_dt);
+		if (dol_strlen($search_dt_start) > 0) {
+			$param .= '&search_start_dtmonth='.GETPOST('search_start_dtmonth', 'int').'&search_start_dtday='.GETPOST('search_start_dtday', 'int').'&search_start_dtyear='.GETPOST('search_start_dtyear', 'int');
 		}
-		if ($search_end_dt) {
-			$param .= '&search_end_dt='.urlencode($search_end_dt);
+		if (dol_strlen($search_dt_end) > 0) {
+			$param .= '&search_end_dtmonth='.GETPOST('search_end_dtmonth', 'int').'&search_end_dtday='.GETPOST('search_end_dtday', 'int').'&search_end_dtyear='.GETPOST('search_end_dtyear', 'int');
 		}
-		if ($search_start_dv) {
-			$param .= '&search_start_dv='.urlencode($search_start_dv);
+		if (dol_strlen($search_dv_start) > 0) {
+			$param .= '&search_start_dvmonth='.GETPOST('search_start_dvmonth', 'int').'&search_start_dvday='.GETPOST('search_start_dvday', 'int').'&search_start_dvyear='.GETPOST('search_start_dvyear', 'int');
 		}
-		if ($search_end_dv) {
-			$param .= '&search_end_dv='.urlencode($search_end_dv);
+		if (dol_strlen($search_dv_end) > 0) {
+			$param .= '&search_end_dvmonth='.GETPOST('search_end_dvmonth', 'int').'&search_end_dvday='.GETPOST('search_end_dvday', 'int').'&search_end_dvyear='.GETPOST('search_end_dvyear', 'int');
 		}
 		if ($search_type) {
 			$param .= '&search_type='.urlencode($search_type);
@@ -622,14 +622,14 @@ if ($search_thirdparty_user) {
 	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
-	$sql.= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1)."))";
+	$sql.= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1).")";
 
 	$sql.= " OR b.rowid IN ";
 	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
 	$sql.= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
-	$sql.= ")";
+	$sql.= "))";
 }
 if ($search_description) {
 	$search_description_to_use = $search_description;

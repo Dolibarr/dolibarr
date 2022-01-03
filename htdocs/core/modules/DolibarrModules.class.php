@@ -348,8 +348,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $hidden = false;
 
-
-
+	/**
+	 * @var string url to check for module update
+	 */
+	public $url_last_version;
 
 
 	/**

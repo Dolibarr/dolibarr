@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Referencia e período en negrita en PDF 
+BoldLabelOnPDF=Etiqueta en negrita en PDF 
 Foundation=Fundación
 Version=Versión
 Publisher=Editor
@@ -265,8 +267,8 @@ OtherResources=Outros recursos
 ExternalResources=Recursos externos
 SocialNetworks=Redes sociais
 SocialNetworkId=ID Rede Social
-ForDocumentationSeeWiki=Para a documentación de usuario, desenvolvedor (Doc, FAQS),<br> visite o wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=Para calquera outra dúbida/axuda, pode facer uso do foro Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
+ForDocumentationSeeWiki=Para a documentación de usuario, desenvolvedor (Doc, FAQS),<br> visite o wiki Dolibarr: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=Para calquera outra dúbida/axuda, pode facer uso do foro Dolibarr: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Aquí hai algúns recursos para obter axuda e soporte de Dolibarr
 HelpCenterDesc2=Algúns destes recursos só están dispoñibles en <b>inglés</b>.
 CurrentMenuHandler=Xestor de menú actual
@@ -353,6 +355,7 @@ LastStableVersion=Última versión estable
 LastActivationDate=Última data de activación
 LastActivationAuthor=Último autor de activación
 LastActivationIP=Última IP activa
+LastActivationVersion=Última versión de activación 
 UpdateServerOffline=Actualizar servidor offline
 WithCounter=Con contador
 GenericMaskCodes=Pode introducir calquera máscara de numeración. Nesta máscara pódense usar as seguintes etiquetas: <br><b> {000000} </b> corresponde a un número que se incrementará en cada %s. Introduza tantos ceros como a lonxitude desexada do contador. O contador completarase con ceros desde a esquerda para ter tantos ceros como a máscara.<br><b>{000000+000}</b>igual que o anterior pero aplícase unha compensación correspondente ao número á dereita do signo + a partir do primeiro %s.<br><b> {000000@x} </b>igual que o anterior pero o contador restablécese a cero cando se alcanza o mes x (x entre 1 e 12 ou 0 para usar os primeiros meses do ano fiscal definidos na súa configuración ou 99 para restablecer a cero cada mes). Se se usa esta opción e x é 2 ou superior, entón tamén é necesaria a secuencia {yy} {mm} ou {yyyy} {mm}. <br><b>{dd} </b> días (01 a 31) .<br><b>{mm} </b>meses (01 a 12) . <br><b>{yy}</b>,<b>{yyyy}</b> ou <b>{y}</b>anos sobre 2, 4 ou 1 números.<br>
@@ -762,6 +765,7 @@ Permission121=Consultar empresas
 Permission122=Crear/modificar empresas ligadas ao usuario
 Permission125=Eliminar empresas ligadas ao usuario
 Permission126=Exportar las empresas
+Permission130=Crear/modificar información de pagamento de terceiros
 Permission141=Consultar todos os proxectos e tarefas (incluidos proxectos privados dos que non son contacto)
 Permission142=Crear/modificar todos os proxectos e tarefas (incluidos proxectos privados dos que non son contacto)
 Permission144=Eliminar todos os proxectos e tarefas (incluidos os proxectos privados dos que non son contacto)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Usa o navegador web %s. Este navegador está optimizado para a segur
 BrowserIsKO=Usa o navegador web %s.  Este navegador é unha mala escolla para a seguridade, rendemento e fiabilidade. Aconsellamos utilizar Firefox, Chrome, Opera ou Safari.
 PHPModuleLoaded=%s de compoñente PHP está cargado
 PreloadOPCode=Pregarca de OPCode está activa
-AddRefInList=Amosar código de cliente/provedor nas listaxes (e selectores) e ligazóns.<br>Os terceiros aparecerán co nome "CC12345 - SC45678 - The big company coorp", no lugar de "The big company coorp".
-AddVatInList=Amosar o número de IVE do cliente/provedor. listaxe de información (seleccionar lista ou combobox). 
-AddAdressInList=Amosar o enderezo do cliente/provedor nas listaxes (e selectores) <br>Os terceiros aparecerán co nome "The big company coorp - 21 jump street 123456 Big town - USA ", no lugar de "The big company coorp".
+AddRefInList=Amosar código de cliente/provedor nas listaxes combinadas.<br>Os terceiros aparecerán cun formato de nome "CC12345 - SC45678 - The Big Company corp.", no lugar de "The Big Company corp".
+AddVatInList=Amosar o número de IVE do cliente/provedor en listaxes combinadas
+AddAdressInList=Amosar o enderezo do cliente/provedor nas listaxes combinadas.<br> Os terceiros aparecerán cun formato de nome "The Big Company corp - 21 jump street 123456 Big town - USA ", no lugar de "The Big Company corp".
 AddEmailPhoneTownInContactList=Amosar o correo electrónico de contacto (ou os teléfonos se non é definido) e a lista de información da cidade (seleccionar lista ou caixa de combinación) <br> Os contactos aparecerán cun formato de nome "Dupond Durand-dupond.durand@email.com-Paris" ou "Dupond" Durand - 06 07 59 65 66 - París "en lugar de" Dupond Durand ".
 AskForPreferredShippingMethod=Consultar polo método preferido de envío a terceiros.
 FieldEdition=Edición do campo %s
@@ -1708,8 +1712,9 @@ MailingDelay=Segundos que agarda despois de enviar a mensaxe seguinte
 NotificationSetup=Configuración do módulo notificacións
 NotificationEMailFrom=E-Mail emisor (From) dos correos enviados ao través de notificacións
 FixedEmailTarget=Destinatario fixo
-NotificationDisableConfirmMessageFix=Desactiva a información de notificación na mensaxe de confirmación para a notificación de corrección 
-NotificationDisableConfirmMessageUser=Desactiva a información de notificación na mensaxe de confirmación para a notificación do usuario
+NotificationDisableConfirmMessageContact=Oculta a lista de destinatarios (subscritos como contacto) das notificacións na mensaxe de confirmación
+NotificationDisableConfirmMessageUser=Oculta a lista de destinatarios (subscritos como usuario) das notificacións na mensaxe de confirmación
+NotificationDisableConfirmMessageFix=Oculta a lista de destinatarios (subscritos como correo electrónico global) das notificacións na mensaxe de confirmación
 ##### Sendings #####
 SendingsSetup=Configuración do módulo Expedicións
 SendingsReceiptModel=Modelo de notas de entrega
@@ -1725,7 +1730,7 @@ FreeLegalTextOnDeliveryReceipts=Texto libre nas notas de recepción
 ##### FCKeditor #####
 AdvancedEditor=Editor avanzado
 ActivateFCKeditor=Activar editor avanzado para :
-FCKeditorForNotePublic=WYSIWYG creación/edición do campo notas públicas de elementos 
+FCKeditorForNotePublic=WYSIWYG creación/edición do campo "notas públicas" de elementos 
 FCKeditorForNotePrivate=WYSIWYG creación/edición do campo notas privadas de elementos 
 FCKeditorForCompany=WYSIWYG creación/edición da descrición do campo de elementos (excepto produtos/servizos) 
 FCKeditorForProduct=WYSIWYG creación/edición da descrición do campo de produtos/servizos 
@@ -1843,7 +1848,7 @@ ApiKey=Chave para API
 WarningAPIExplorerDisabled=Desactivouse o explorador de API. O explorador API non está obrigado a proporcionar servizos API. É unha ferramenta para que os desenvolvedores atopen/proben as API REST. Se precisa esta ferramenta, acceda á configuración do módulo API REST para activala.
 ##### Bank #####
 BankSetupModule=Configuración do módulo Banco
-FreeLegalTextOnChequeReceipts=Texto gratuíto nos recibos do talón
+FreeLegalTextOnChequeReceipts=Texto libre nos recibos do talón
 BankOrderShow=Amosar a orde das contas bancarias dos países que usan "número bancario detallado"
 BankOrderGlobal=Xeral
 BankOrderGlobalDesc=Orde xeral de visualización
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Configuración do módulo Informes de gastos - Regras
 ExpenseReportNumberingModules=Módulo de numeración de informes de gastos
 NoModueToManageStockIncrease=Non se activou ningún módulo capaz de xestionar o aumento automático de stock. O aumento do stock farase só en entrada manual.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Pode atopar opcións para as notificacións por correo electrónico habilitando e configurando o módulo "Notificación".
+TemplatesForNotifications=Padróns para notificacións
 ListOfNotificationsPerUser=Listaxe de notificacións automáticas por usuario *
 ListOfNotificationsPerUserOrContact=Listaxe de posibles notificacións automáticas (no evento empresarial) dispoñibles por usuario * ou por contacto **
 ListOfFixedNotifications=Listaxe de notificacións fixas automáticas
@@ -2209,3 +2215,7 @@ SkinAndColors=Pel e cores
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Se desexa utilizar un segundo imposto, debe habilitar tamén o primeiro imposto de venda 
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Se desexa utilizar un terceiro imposto, debe habilitar tamén o primeiro imposto de venda 
 PDF_USE_1A=Xera PDF con formato PDF/A-1b
+MissingTranslationForConfKey = Falta a tradución para %s
+NativeModules=Modulos nativos
+NoDeployedModulesFoundWithThisSearchCriteria=Non se atoparon módulos para estes criterios de busca
+API_DISABLE_COMPRESSION=Desactivar a compresión das respostas da API

@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Din PHP-installasjon støtter ikke Curl.
 ErrorPHPDoesNotSupportCalendar=PHP-installasjonen din støtter ikke php-kalenderutvidelser.
 ErrorPHPDoesNotSupportUTF8=Din PHP installasjon har ikke støtte for UTF8-funksjoner. Dolibarr vil ikke fungere riktig. Løs dette før du installerer Dolibarr.
 ErrorPHPDoesNotSupportIntl=PHP-installasjonen støtter ikke Intl-funksjoner.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=PHP-installasjonen din støtter ikke utvidede feilsøkingsfunksjoner.
 ErrorPHPDoesNotSupport=PHP-installasjonen din støtter ikke %s-funksjoner.
 ErrorDirDoesNotExists=Mappen %s finnes ikke.

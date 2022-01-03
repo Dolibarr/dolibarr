@@ -1272,6 +1272,18 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax60 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 60px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax80 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 80px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax100 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 100px;
 	overflow: hidden;
@@ -2222,7 +2234,7 @@ div.arearefnobottom {
 div.heightref {
 	min-height: 80px;
 }
-div.divphotoref {
+div.divphotoref:last-child {
 	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
@@ -4436,7 +4448,9 @@ table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
-.dolgraphchart canvas { width: calc(100% - 20px) !important; }
+.dolgraphchart canvas { 
+	/* width: calc(100% - 20px) !important; */
+}
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }
@@ -4454,8 +4468,8 @@ label.radioprivate {
 	border: 0px;
 }
 .photowithmargin {
-	margin-bottom: 2px;
-	margin-top: 2px;
+/*	margin-bottom: 2px;
+	margin-top: 2px; */
 }
 div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
@@ -5937,7 +5951,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 2px 5px 1px 5px;
+  padding: 3px 5px 2px 5px;
   margin: 0 0 2px 3px;
   position: relative;
   line-height: 13px;
@@ -5987,6 +6001,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
+	margin-bottom: 0 !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;

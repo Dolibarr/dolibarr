@@ -72,7 +72,6 @@ RequestLastAccessInError=Letzter Datenbankfehler
 ReturnCodeLastAccessInError=Rückgabewert des letzten Datenbankfehlers
 InformationLastAccessInError=Informationen zum letzten Datenbankfehler
 YouCanSetOptionDolibarrMainProdToZero=Für weitere Informationen schaust du in der Logdatei nach, oder setzest in der Konfigurationsdatei die Option $dolibarr_main_prod auf '0'.
-InformationToHelpDiagnose=Diese Informationen helfen dir bei der Fehlersuche. Wenn du das nicht mehr sehen möchtest, setze in der Konfigurationsdatei die Option $dolibarr_main_prod auf '1'.
 LineID=Zeilennummer
 WarningYouHaveAtLeastOneTaskLate=Obacht, mindestens ein Element ist verspätet.
 MediaBrowser=Mediabrowser
@@ -298,7 +297,6 @@ Calendar=Kalender
 GroupBy=Sortieren nach
 ViewFlatList=Einfache Liste anzeigen
 RemoveString=Entferne die Zeichenfolge '%s'
-SomeTranslationAreUncomplete=Du siehst ungenaue Übersetzungen oder unvollständig Übersetzte Sprachen? Hilf uns, das zu verbessern und registriere dich in der <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">Dolibarr - Übersetzungsumgebung</a>, Danke!
 ActualizeCurrency=Aktualisiere Währung
 ModuleBuilder=Modul und Applikationsentwicklungsumgebung
 SetMultiCurrencyCode=Setze Währung

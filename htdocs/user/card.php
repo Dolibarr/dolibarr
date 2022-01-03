@@ -615,7 +615,7 @@ if (empty($reshook)) {
 	) {
 		$object->fetch($id);
 
-		$newpassword = $object->setPassword($user, '');
+		$newpassword = $object->setPassword($user, '');	// This will generate a new password
 		if ($newpassword < 0) {
 			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');

@@ -61,6 +61,11 @@ class Validate
 			$this->outputLang = $outputLang;
 		}
 
+		if (!is_object($this->outputLang) || !method_exists($outputLang, 'load')) {
+			return false;
+		}
+
+		/** @var Translate $outputLang */
 		$outputLang->load('validate');
 
 		$this->db = $db;
@@ -212,7 +217,7 @@ class Validate
 	/**
 	 * Check Duration validity
 	 *
-	 * @param string $duration to validate
+	 * @param mixed $duration to validate
 	 * @return boolean Validity is ok or not
 	 */
 	public function isDuration($duration)

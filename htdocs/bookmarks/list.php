@@ -86,7 +86,7 @@ if ($action == 'delete') {
  * View
  */
 
-$userstatic = new User($db);
+$form = new Form($db);
 
 $title = $langs->trans("ListOfBookmarks");
 

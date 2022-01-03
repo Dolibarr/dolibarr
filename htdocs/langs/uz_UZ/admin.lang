@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Jamg'arma
 Version=Versiya
 Publisher=Nashriyotchi
@@ -265,8 +267,8 @@ OtherResources=Boshqa manbalar
 ExternalResources=Tashqi manbalar
 SocialNetworks=Ijtimoiy tarmoqlar
 SocialNetworkId=Ijtimoiy tarmoq identifikatori
-ForDocumentationSeeWiki=<br> foydalanuvchi yoki ishlab chiquvchi hujjatlari uchun (Dolib, Savol-javoblar ...) Dolibarr Wiki-ga qarang: <br> <b> <a href="%s" target="_blank"> %s a0e40dc079cf87
-ForAnswersSeeForum=Boshqa savollar / yordam uchun siz Dolibarr forumidan foydalanishingiz mumkin: <br> <b> <a href="%s" target="_blank"> %s </a> </b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Dolibarr bilan yordam va yordam olish uchun ba'zi manbalar.
 HelpCenterDesc2=Ushbu manbalardan ba'zilari faqat <b> inglizcha </b> da mavjud.
 CurrentMenuHandler=Joriy menyu boshqaruvchisi
@@ -353,6 +355,7 @@ LastStableVersion=Oxirgi barqaror versiya
 LastActivationDate=So'nggi faollashtirilgan sana
 LastActivationAuthor=Eng so'nggi faollashtirish muallifi
 LastActivationIP=So'nggi faollashtirilgan IP
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Serverni oflayn rejimda yangilang
 WithCounter=Hisoblagichni boshqarish
 GenericMaskCodes=Siz istalgan raqamlash maskasini kiritishingiz mumkin. Ushbu niqobda quyidagi teglardan foydalanish mumkin: <br> <b> {000000} </b> har bir %s bo'yicha ko'paytiriladigan raqamga mos keladi. Hisoblagichning istalgan uzunligidagi nollarni kiriting. Niqob kabi shuncha nolga ega bo'lish uchun hisoblagich chap tomondan nollar bilan to'ldiriladi. <br> <b> {000000 + 000} </b> oldingi bilan bir xil, lekin + belgisining o'ng tomonidagi raqamga mos keladigan ofset birinchi %s dan boshlab qo'llaniladi. <br> <b> {000000 @ x} </b> oldingisiga o'xshash, ammo x oyiga yetganda hisoblagich nolga o'rnatiladi (x 1 dan 12 gacha yoki 0 sizning konfiguratsiyangizda aniqlangan moliya yilining dastlabki oylaridan foydalanish uchun, yoki 99 dan har oy nolga qaytarish). Agar ushbu parametr ishlatilsa va x 2 yoki undan yuqori bo'lsa, unda {yy} {mm} yoki {yyyy} {mm} ketma-ketligi ham talab qilinadi. <br> <b> {dd} </b> kun (01 dan 31 gacha). <br> <b> {mm} </b> oy (01 dan 12 gacha). <br> <b> {yy} </b>, <b> {yyyy} </b> yoki <b> {y} af90, y0 a79 <br>
@@ -762,6 +765,7 @@ Permission121=Foydalanuvchiga bog'langan uchinchi tomonlarni o'qing
 Permission122=Foydalanuvchiga bog'langan uchinchi shaxslarni yaratish / o'zgartirish
 Permission125=Foydalanuvchiga bog'langan uchinchi tomonlarni o'chirib tashlang
 Permission126=Uchinchi tomonlarni eksport qilish
+Permission130=Create/modify third parties payment information
 Permission141=Barcha loyihalar va topshiriqlarni o'qing (shuningdek, men ular bilan aloqa qilmaydigan xususiy loyihalar)
 Permission142=Barcha loyihalar va vazifalarni yaratish / o'zgartirish (shuningdek, men ular bilan aloqa qilmaydigan xususiy loyihalar)
 Permission144=Barcha loyihalar va vazifalarni o'chirib tashlang (shuningdek, xususiy loyihalar bilan bog'lanmayman)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Siz %s veb-brauzeridan foydalanmoqdasiz. Ushbu brauzer xavfsizlik va
 BrowserIsKO=Siz %s veb-brauzeridan foydalanmoqdasiz. Ushbu brauzer xavfsizlik, ishlash va ishonchlilik uchun yomon tanlov ekanligi ma'lum. Firefox, Chrome, Opera yoki Safari-dan foydalanishni tavsiya etamiz.
 PHPModuleLoaded=PH0 komponenti %s yuklandi
 PreloadOPCode=Oldindan yuklangan OPCode ishlatiladi
-AddRefInList=Mijoz / sotuvchini ko'rsatish. ma'lumot ro'yxati (ro'yxat yoki kombinatsion qutini tanlang) va ko'prikning ko'pligi. <br> Uchinchi tomonlar "CC12345 - SC45678 - Katta kompaniya korpusi" nom formatida paydo bo'ladi. "Katta kompaniya korpusi" o'rniga.
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=<br> uchinchi tomonlar "Buyuk Kompaniya korpusi" o'rniga "Katta kompaniya korpusi. - 21 o'tish ko'chasi 123456 Katta shahar - AQSh" formatidagi "Uchinchi tomonlar" paydo bo'ladi.
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=<br> Aloqa uchun elektron pochta manzilini (yoki aniqlanmagan telefonlar bilan) va shahar haqida ma'lumot ro'yxatini (tanlang ro'yxati yoki kombinat qutisi) ko'rsating "Dupond Durand - dupond.durand@email.com - Parij" yoki "Dyupond Durand - 06 07 59 65 66 - "Dyupond Dyurand" o'rniga "Parij".
 AskForPreferredShippingMethod=Uchinchi shaxslar uchun jo'natilgan transport usulini so'rang.
 FieldEdition=%s maydonining nashri
@@ -1708,8 +1712,9 @@ MailingDelay=Keyingi xabarni yuborgandan keyin kutish uchun soniya
 NotificationSetup=Elektron pochta xabarnomasi modulini sozlash
 NotificationEMailFrom=Bildirishnomalar moduli tomonidan yuborilgan elektron pochta xabarlari uchun jo'natuvchi elektron pochtasi (dan)
 FixedEmailTarget=Qabul qiluvchi
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Yuk tashish modulini sozlash
 SendingsReceiptModel=Qabul qilish modelini yuborish
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Yetkazib berish kvitansiyalari bo'yicha bepul ma
 ##### FCKeditor #####
 AdvancedEditor=Murakkab muharrir
 ActivateFCKeditor=Kengaytirilgan tahrirlovchini faollashtirish:
-FCKeditorForNotePublic=WYSIWIG elementlarning ochiq yozuvlarini yaratish/nashr etish
-FCKeditorForNotePrivate=WYSIWIG elementlarining shaxsiy yozuvlarini yaratish/nashr etish
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG elementlarining tavsifini yaratish/nashr qilish (mahsulotlar/xizmatlardan tashqari)
 FCKeditorForProduct=WYSIWIG yaratish/mahsulotlar/xizmatlar tavsifi nashrlari
 FCKeditorForProductDetails=WYSIWIG mahsulotlarini yaratish / nashr qilish barcha sub'ektlar uchun tafsilotlar liniyalari (takliflar, buyurtmalar, hisob-fakturalar va boshqalar ...). <span class="warning"> Ogohlantirish: ushbu holat uchun ushbu parametrdan foydalanish jiddiy tavsiya etilmaydi, chunki u PDF-fayllarni yaratishda maxsus belgilar va sahifalarni formatlash bilan bog'liq muammolarni keltirib chiqarishi mumkin. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Xarajatlar bo'yicha hisobotlar modulini sozlash - qoida
 ExpenseReportNumberingModules=Xarajatlar bo'yicha hisobotlarni raqamlash moduli
 NoModueToManageStockIncrease=Zaxiralarni avtomatik ravishda oshirishni boshqaradigan biron bir modul faollashtirilmagan. Aksiyalarni ko'paytirish faqat qo'lda kiritish orqali amalga oshiriladi.
 YouMayFindNotificationsFeaturesIntoModuleNotification="Bildirishnoma" modulini yoqish va sozlash orqali elektron pochta xabarlari uchun variantlarni topishingiz mumkin.
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Har bir foydalanuvchi uchun avtomatik bildirishnomalar ro'yxati *
 ListOfNotificationsPerUserOrContact=Har bir foydalanuvchi * yoki har bir kontakt uchun mavjud bo'lgan avtomatik xabarnomalar ro'yxati (ishbilarmonlik tadbirlarida) **
 ListOfFixedNotifications=Avtomatik sobit xabarnomalar ro'yxati
@@ -2209,3 +2215,7 @@ SkinAndColors=Teri va ranglar
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Agar siz ikkinchi soliqni ishlatmoqchi bo'lsangiz, birinchi sotishdan olinadigan soliqni ham yoqishingiz kerak
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Agar siz uchinchi soliqni ishlatmoqchi bo'lsangiz, birinchi sotishdan olinadigan soliqni ham yoqishingiz kerak
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

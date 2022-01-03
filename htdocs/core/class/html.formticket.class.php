@@ -1322,6 +1322,7 @@ class FormTicket
 
 				// Print recipient list
 				if (is_array($sendto) && count($sendto) > 0) {
+					print img_picto('', 'email', 'class="pictofixedwidth"');
 					print implode(', ', $sendto);
 				} else {
 					print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';

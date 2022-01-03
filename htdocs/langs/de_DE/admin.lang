@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Fettgedruckte Referenz und Zeitraum im PDF
+BoldLabelOnPDF=Fettgedrucktes Label im PDF
 Foundation=Stiftung
 Version=Version
 Publisher=Verfasser
@@ -265,8 +267,8 @@ OtherResources=Weitere Ressourcen
 ExternalResources=Externe Ressourcen
 SocialNetworks=Soziale Netzwerke
 SocialNetworkId=ID des sozialen Netzwerks
-ForDocumentationSeeWiki=Für Benutzer-und Entwickler-Dokumentationen und FAQs<br>werfen Sie bitte einen Blick auf die Dolibarr-Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
-ForAnswersSeeForum=Für alle anderen Fragen können Sie das Dolibarr-Forum <br> <a href="%s" target="_blank"><b> %s</b></a> benutzen.
+ForDocumentationSeeWiki=Für Benutzer- oder Entwicklerdokumentation (Doc, FAQs...), <br> schauen Sie in das Dolibarr-Wiki: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>
+ForAnswersSeeForum=Für weitere Fragen/Hilfe können Sie das Dolibarr-Forum nutzen: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>
 HelpCenterDesc1=In diesem Bereich finden Sie eine Übersicht an verfügbaren Quellen, bei denen Sie im Fall von Problemen und Fragen Unterstützung bekommen können.
 HelpCenterDesc2=Einige dieser Angebote sind nur in <b>Englisch</b> verfügbar. 
 CurrentMenuHandler=Aktuelle Menü-Handler
@@ -353,6 +355,7 @@ LastStableVersion=Letzte stabile Version
 LastActivationDate=Datum der letzten Aktivierung
 LastActivationAuthor=Benutzer der letzten Aktivierung
 LastActivationIP=IP der letzten Aktivierung
+LastActivationVersion=Neueste Aktivierungsversion
 UpdateServerOffline=Update-Server offline  (nicht erreichbar)
 WithCounter=Zähler verwenden
 GenericMaskCodes=Sie können ein beliebiges Nummerierungsschema eingeben. Folgende Tags können verwendet werden:<br><b>{000000}</b> steht für eine 6-stellige Nummer, die sich bei jedem neuen %s automatisch erhöht. Wählen Sie die Anzahl der Nullen je nach gewünschter Nummernlänge. Der Zähler füllt sich automatisch bis zum linken Ende mit Nullen, um das gewünschte Format abzubilden. <br><b>{000000+000}</b> führt zu einem ähnlichen Ergebnis, allerdings mit einem Wertsprung in Höhe des Werts rechts des Pluszeichens, der beim ersten %s angewandt wird. <br><b>{000000@x}</b> wie zuvor, jedoch stellt sich der Zähler bei Erreichen des Monats x (zwischen 1 und 12) automatisch auf 0 zurück, bei setzen von 0 wird der Anfangsmonat des Fiskaljahrs für das Rücksetzen verwendet, mit dem Wert 99 erfolgt jeden Monat ein Rücksetzen auf 0. Ist die Rücksetzoption gewählt und x hat den Wert 2 oder höher, ist die Folge {mm}{yy} or {mm}{yyyy} ebenfalls erforderlich. <br><b>{dd}</b> Tag (01 bis 31).<br><b>{mm}</b> Monat (01 bis 12).<br><b>{y}</b>, <b>{yy}</b> or <b>{yyyy}</b> Jahreszahl 1-, 2- oder 4-stellig. <br>
@@ -762,6 +765,7 @@ Permission121=Mit Benutzer verbundene Partner einsehen
 Permission122=Mit Benutzer verbundene Partner erstellen/bearbeiten
 Permission125=Mit Benutzer verbundene Partner löschen
 Permission126=Partner exportieren
+Permission130=Zahlungsinformationen von Geschäftspartnern erstellen/ändern
 Permission141=Alle Projekte und Aufgaben anzeigen. \n(auch private Projekte, in denen ich nicht Kontakt bin)
 Permission142=Projekte und Aufgaben erstellen und ändern \n(auch private Projekte, in denen ich nicht Kontakt bin)
 Permission144=Löschen Sie alle Projekte und Aufgaben (einschließlich privater Projekte in denen ich kein Kontakt bin)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Sie verwenden %s als Webbrowser. Dieser ist hinsichtlich Sicherheit 
 BrowserIsKO=Sie verwenden %s als Webbrowser. Dieser ist bekanntlich eine schlechte Wahl wenn es um Sicherheit, Leistung und Zuverlässigkeit geht. Wir empfehlen Firefox, Chrome, Opera oder Safari zu benutzen.
 PHPModuleLoaded=PHP Komponente %s ist geladen
 PreloadOPCode=Vorgeladener OPCode wird verwendet
-AddRefInList=Anzeigen der Info-Liste mit Kunden- / Lieferantenreferenz (Auswahlliste oder Combobox) und die meisten Hyperlinks. <br> Drittanbieter werden mit dem Namensformat "CC12345 - SC45678 - The Big Company corp." anstelle von "The Big Company corp" angezeigt.
-AddVatInList=Umsatzsteuer-Identifikationsnummer des Kunden/Lieferanten anzeigen. Info-Liste (Auswahlliste oder Combobox).
-AddAdressInList=Anzeigen der Info-Liste mit Kunden- / Lieferantenadressen (Auswahlliste oder Kombinationsfeld) <br> Dritte werden mit dem Namensformat "The Big Company Corp. - 21 jump street 123456 Big Town - USA" anstelle von "The Big Company Corp." angezeigt.
+AddRefInList=Kunden-/Lieferanten-Ref. in Auswahllisten anzeigen. <br> Geschäftspartner werden mit dem Namensformat "CC12345 - SC45678 - The Big Company corp." angezeigt statt "The Big Company Corp".
+AddVatInList=Umsatzsteuer-ID des Kunden/Lieferanten in Auswahllisten anzeigen.
+AddAdressInList=Kunden-/Lieferantenadresse in Auswahllisten anzeigen. <br> Geschäftspartner werden mit dem Namensformat "The Big Company corp. - 21 jump street 123456 Big town - USA" anstelle von "The Big Company corp" angezeigt.
 AddEmailPhoneTownInContactList=Kontakt-E-Mail (oder Telefone, falls nicht definiert) und Stadtinfo-Liste (Auswahlliste oder Combobox) anzeigen <br> Kontakte werden mit dem Namensformat "Dupond Durand - dupond.durand@email.com - Paris" oder "Dupond Durand - 06 07" angezeigt 59 65 66 - Paris "statt" Dupond Durand ".
 AskForPreferredShippingMethod=Nach der bevorzugten Versandart für Drittanbieter fragen.
 FieldEdition=Bearbeitung von Feld %s
@@ -1708,8 +1712,9 @@ MailingDelay=Wartezeit in Sekunden, bevor die nächste Nachricht gesendet wird
 NotificationSetup=E-Mail Benachrichtigungs-Einstellungen
 NotificationEMailFrom=Standard-Absender-E-Mail-Adresse des Kampagnen-Moduls
 FixedEmailTarget=Empfänger
-NotificationDisableConfirmMessageFix=Info-Anzeige zu Benachrichtigungen an festgelegte E-Mail-Adressen deaktivieren
-NotificationDisableConfirmMessageUser=Info-Anzeige zu Benachrichtigungen an Benutzer deaktivieren
+NotificationDisableConfirmMessageContact=Bei Benachrichtigungen die Liste der Empfänger (hinterlegt als Kontakte), die die Benachrichtigung erhalten, nicht anzeigen
+NotificationDisableConfirmMessageUser=Bei Benachrichtigungen die Liste der Empfänger (hinterlegt als Benutzer), die die Benachrichtigung erhalten, nicht anzeigen
+NotificationDisableConfirmMessageFix=Bei Benachrichtigungen die Liste der Empfänger (hinterlegt als globale E-Mail-Adresse), die die Benachrichtigung erhalten, nicht anzeigen
 ##### Sendings #####
 SendingsSetup=Versandmoduleinstellungen
 SendingsReceiptModel=Versandbelegsvorlage
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Freier Rechtstext auf Empfangsbelegen
 ##### FCKeditor #####
 AdvancedEditor=Erweiterter Editor
 ActivateFCKeditor=FCKEditor aktivieren für:
-FCKeditorForNotePublic=WYSIWIG Erstellung/Bearbeitung des Feldes öffentliche Notizen von Elementen
-FCKeditorForNotePrivate=WYSIWIG Erstellung/Bearbeitung des Feldes private Notizen von Elementen
+FCKeditorForNotePublic=WYSIWIG Erstellung/Bearbeitung des Feldes "öffentliche Notizen" von Elementen
+FCKeditorForNotePrivate=WYSIWIG Erstellung/Bearbeitung des Feldes "private Notizen" von Elementen
 FCKeditorForCompany=WYSIWIG Erstellung/Bearbeitung der Feldbeschreibung von Elementen (ausgenommen Produkte/Leistungen)
 FCKeditorForProduct=WYSIWIG Erstellung/Bearbeitung der Feldbeschreibung Produkte/Leistungen
 FCKeditorForProductDetails=WYSIWIG Erstellung / Ausgabe von Produkt-Detailzeilen für alle Dokumente (Vorschläge, Bestellungen, Rechnungen usw.). <span class="warning"> Warnung: Die Verwendung dieser Option für diesen Fall wird nicht empfohlen, da dies beim Erstellen von PDF-Dateien zu Problemen mit Sonderzeichen und Seitenformatierung führen kann. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Einrichtung vom Modul Spesenabrechnungen - Regeln
 ExpenseReportNumberingModules=Modul zur Nummerierung von Spesenabrechnungen
 NoModueToManageStockIncrease=Kein Modul zur automatische Bestandserhöhung ist aktiviert. Lager Bestandserhöhung kann nur durch manuelle Eingabe erfolgen.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Möglicherweise finden Sie Optionen für E-Mail-Benachrichtigungen, indem Sie das Modul "Benachrichtigung" aktivieren und konfigurieren.
+TemplatesForNotifications=Vorlagen für Benachrichtigungen
 ListOfNotificationsPerUser=Liste der automatischen Benachrichtigungen nach Benutzer*
 ListOfNotificationsPerUserOrContact=Liste möglicher automatischer Benachrichtigungen (bei Geschäftsereignissen) verfügbar pro Benutzer * oder pro Kontakt **
 ListOfFixedNotifications=Liste der automatischen festen Benachrichtigungen
@@ -2209,3 +2215,7 @@ SkinAndColors=Oberfläche und Farben
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Wenn Sie eine zweite Steuer verwenden möchten, müssen Sie auch die erste Umsatzsteuer aktivieren
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Wenn Sie eine dritte Steuer verwenden möchten, müssen Sie auch die erste Umsatzsteuer aktivieren
 PDF_USE_1A=PDF im PDF/A-1b-Format generieren
+MissingTranslationForConfKey = Fehlende Übersetzung für %s
+NativeModules=Native Module
+NoDeployedModulesFoundWithThisSearchCriteria=Keine Module für diese Suchkriterien gefunden
+API_DISABLE_COMPRESSION=Komprimierung von API-Antworten deaktivieren

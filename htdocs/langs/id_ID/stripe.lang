@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Pengaturan modul stripe
-StripeDesc=Menawarkan pelanggan halaman pembayaran online Stripe untuk pembayaran dengan kartu kredit / cebit melalui <a href="http://www.stripe.com" target="_blank"> Stripe </a>. Ini dapat digunakan untuk memungkinkan pelanggan Anda melakukan pembayaran ad-hoc atau untuk pembayaran yang terkait dengan objek Dolibarr tertentu (faktur, pesanan, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Bayar dengan kartu kredit atau Stripe
 FollowingUrlAreAvailableToMakePayments=URL berikut tersedia untuk menawarkan halaman kepada pelanggan untuk melakukan pembayaran pada objek Dolibarr
 PaymentForm=Formulir pembayaran
@@ -28,7 +28,6 @@ AccountParameter=Parameter akun
 UsageParameter=Parameter penggunaan
 InformationToFindParameters=Membantu menemukan informasi akun %s Anda
 STRIPE_CGI_URL_V2=Url modul Stripe CGI untuk pembayaran
-VendorName=Nama vendor
 CSSUrlForPaymentForm=URL style sheet CSS untuk formulir pembayaran
 NewStripePaymentReceived=Pembayaran Stripe Baru diterima
 NewStripePaymentFailed=Pembayaran Stripe baru telah dicoba tetapi gagal

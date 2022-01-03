@@ -48,7 +48,7 @@ CountriesNotInEEC=Χώρες που δεν βρίσκονται στην ΕΟΚ
 CountriesInEECExceptMe=Χώρες στην ΕΟΚ εκτός από το %s
 CountriesExceptMe=Όλες οι χώρες εκτός από το %s
 AccountantFiles=Εξαγωγή εγγράφων προέλευσης
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=Προβολή κατά λογιστικό λογαριασμό
 VueBySubAccountAccounting=View by accounting subaccount
@@ -286,7 +286,7 @@ ValidateMovements=Επικυρώστε τις κινήσεις
 DescValidateMovements=Απαγορεύεται οποιαδήποτε τροποποίηση ή διαγραφή γραφής, γράμματος και διαγραφής. Όλες οι καταχωρήσεις για μια άσκηση πρέπει να επικυρωθούν, διαφορετικά το κλείσιμο δεν θα είναι δυνατό
 
 ValidateHistory=Δεσμεύστε αυτόματα
-AutomaticBindingDone=Έγινε αυτόματη σύνδεση
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
 MvtNotCorrectlyBalanced=Η κίνηση δεν είναι σωστά ισορροπημένη. Χρέωση = %s | Πιστωτικό = %s
@@ -387,7 +387,8 @@ SaleExport=Εξαγωγή πώλησης
 SaleEEC=Πώληση στην ΕΟΚ
 SaleEECWithVAT=Πώληση σε ΕΟΚ με μηδενικό ΦΠΑ, επομένως υποθέτουμε ότι ΔΕΝ είναι ενδοκοινοτική πώληση και ο προτεινόμενος λογαριασμός είναι ο τυπικός λογαριασμός προϊόντος.
 SaleEECWithoutVATNumber=Πώληση σε ΕΟΚ χωρίς ΦΠΑ, αλλά δεν ορίζεται το ΑΦΜ τρίτου μέρους. Εφεδρικός λογαριασμός προϊόντος για τυπικές πωλήσεις. Εάν χρειαστεί, μπορείτε να διορθώσετε το αναγνωριστικό ΦΠΑ τρίτου μέρους ή τον λογαριασμό προϊόντος.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Εύρος λογιστικού λογαριασμού
 Calculated=Υπολογίστηκε
@@ -404,6 +405,7 @@ NoJournalDefined=Δεν έχει οριστεί περιοδικό
 Binded=Γραμμές δεσμευμένες
 ToBind=Γραμμές που δεσμεύουν
 UseMenuToSetBindindManualy=Οι γραμμές που δεν έχουν ακόμη δεσμευτεί, χρησιμοποιήστε το μενού <a href="%s">%s</a> για να κάνετε τη σύνδεση μη αυτόματα
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Λογιστικές εγγραφές

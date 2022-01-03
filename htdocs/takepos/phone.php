@@ -329,7 +329,7 @@ function TakeposPrintingOrder(){
 }
 
 function Exit(){
-	window.location.href='../user/logout.php';
+	window.location.href='../user/logout.php?token=<?php echo newToken(); ?>';
 }
 
 function CheckPlease(payment){
