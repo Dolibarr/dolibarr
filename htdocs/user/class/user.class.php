@@ -2130,39 +2130,21 @@ class User extends CommonObject
 			if (!empty($conf->global->USER_PASSWORD_GENERATED)) {
 				// Add a check on rules for password syntax using the setup of the password generator
 				$modGeneratePassClass = 'modGeneratePass'.ucfirst($conf->global->USER_PASSWORD_GENERATED);
-				/*
-				include_once DOl_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
+
+				include_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
 				if (class_exists($modGeneratePassClass)) {
 					$modGeneratePass = new $modGeneratePassClass($this->db, $conf, $langs, $user);
 
-					// Check length
-					if (property_exists($modGeneratePass, 'length2') && $modGeneratePass->length2 > 0) {
-						if (strlen($password) < $modGeneratePass->length2) {
-							$this->error = "PasswordMustHaveNCharMin";
-							return -1;
-						}
-					}
+					// To check an input user password, we disable the cleaning on ambiguous characters (this is used only for auto-generated password)
+					$modGeneratePass->WithoutAmbi = 0;
 
-					// Check on $modGeneratePass->NbMaj
-					if (property_exists($modGeneratePass, 'NbMaj') && $modGeneratePass->NbMaj > 0) {
-						// TODO
+					// Call to validatePassword($password) to check pass match rules
+					$testpassword = $modGeneratePass->validatePassword($password);
+					if (!$testpassword) {
+						$this->error = $modGeneratePass->error;
+						return -1;
 					}
-
-					}
-					// Check on $modGeneratePass->NbNum
-					if (property_exists($modGeneratePass, 'NbNum') && $modGeneratePass->NbNum > 0) {
-						// TODO
-
-					}
-					// Check on $modGeneratePass->NbSpe
-					if (property_exists($modGeneratePass, 'NbSpe') && $modGeneratePass->NbSpe > 0) {
-						// TODO
-					}
-					// Check on $modGeneratePass->NbRepeat
-					if (property_exists($modGeneratePass, 'NbRepeat') && $modGeneratePass->NbRepeat > 0) {
-						// TODO
-					}
-				}*/
+				}
 			}
 
 			// Now, we encrypt the new password
