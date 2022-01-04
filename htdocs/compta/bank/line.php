@@ -646,10 +646,10 @@ if ($result) {
 			}
 			print '</tr>';
 
-			print "<tr><td>".$langs->trans("BankLineConciliated")."</td>";
+			print '<tr><td><label for="reconciled">'.$langs->trans("BankLineConciliated").'</label></td>';
 			if ($user->rights->banque->consolidate) {
 				print '<td>';
-				print '<input type="checkbox" name="reconciled" class="flat" '.(GETPOSTISSET("reconciled") ? (GETPOST("reconciled") ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
+				print '<input type="checkbox" id="reconciled" name="reconciled" class="flat" '.(GETPOSTISSET("reconciled") ? (GETPOST("reconciled") ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
 				print '</td>';
 			} else {
 				print '<td>'.yn($objp->rappro).'</td>';

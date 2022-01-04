@@ -331,8 +331,8 @@ if (empty($numref)) {
 				} else {
 					print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';
-					print '<input type="submit" class="button" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
-					print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button small" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
+					print '<input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 				}
 				print '</td>';
 
@@ -364,7 +364,7 @@ if (empty($numref)) {
 
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
+					print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
 				}
 				print '</td>';
 
@@ -669,6 +669,7 @@ if (empty($numref)) {
     		var current = $(this);
     		current.click(function()
     		{
+				console.log("We click on ajaxforbankoperationchange");
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
     			$.get(url, function(data)
     			{

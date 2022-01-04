@@ -64,6 +64,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
+$optioncss = GETPOST('optioncss', 'aZ09');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -264,7 +265,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	}
 
 	if (!$error) {
-		$param = 'action=reconcile&contextpage=banktransactionlist&id='.$id.'&search_account='.$id;
+		$param = 'action=reconcile&contextpage=banktransactionlist&id='.((int) $id).'&search_account='.((int) $id);
 		if ($page) {
 			$param .= '&page='.urlencode($page);
 		}
@@ -448,7 +449,7 @@ if (!empty($search_debit)) {
 if (!empty($search_credit)) {
 	$param .= '&search_credit='.urlencode($search_credit);
 }
-if (!empty($search_account)) {
+if ($search_account > 0) {
 	$param .= '&search_account='.urlencode($search_account);
 }
 if (!empty($search_num_releve)) {
@@ -758,7 +759,7 @@ if ($resql) {
 	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="'.($action ? $action : 'search').'">';
+	print '<input type="hidden" name="action" value="'.($action != 'delete' ? $action : 'search').'">';
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -766,7 +767,7 @@ if ($resql) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
 	if (GETPOST('bid')) {
-		print '<input type="hidden" name="bid" value="'.GETPOST("bid").'">';
+		print '<input type="hidden" name="bid" value="'.GETPOST("bid", 'int').'">';
 	}
 
 	// Form to reconcile
@@ -1663,16 +1664,16 @@ if ($resql) {
 		print '<td class="nowraponall" align="center">';
 		// Transaction reconciliated or edit link
 		if ($objp->conciliated && $bankaccount->canBeConciliated() > 0) {  // If line not conciliated and account can be conciliated
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 			print img_edit();
 			print '</a>';
 		} else {
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 				print img_edit();
 				print '</a>';
 			} else {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 				print img_view();
 				print '</a>';
 			}
@@ -1682,7 +1683,7 @@ if ($resql) {
 				}
 			}
 			if ($user->rights->banque->modifier) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';
 			}
