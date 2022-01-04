@@ -1216,10 +1216,12 @@ if (empty($reshook)) {
 					$classname = ucfirst($subelement);
 					if ($origin == 'propal' || $origin == 'proposal') {
 						$element = 'comm/propal'; $subelement = 'propal';
-					}
+						$classname = 'Propal';
+					} 
 					if ($origin == 'order' || $origin == 'commande') {
 						$element = $subelement = 'commande';
-					}
+						$classname = 'Commande';
+					} 
 					if ($origin == 'supplier_proposal') {
 						$classname = 'SupplierProposal';
 						$element = 'supplier_proposal';
@@ -1541,15 +1543,19 @@ if ($action == 'create') {
 		if ($origin == 'propal' || $origin == 'proposal') {
 			$classname = 'Propal';
 			$element = 'comm/propal'; $subelement = 'propal';
-		} elseif ($origin == 'order' || $origin == 'commande') {
+		}
+		if ($origin == 'order' || $origin == 'commande') {
 			$classname = 'Commande';
 			$element = $subelement = 'commande';
-		} else {
+		}
+		if ($origin == 'supplier_proposal') {
 			$classname = 'SupplierProposal';
 			$element = 'supplier_proposal';
 			$subelement = 'supplier_proposal';
 		}
 
+		
+		
 		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
 		$objectsrc = new $classname($db);
