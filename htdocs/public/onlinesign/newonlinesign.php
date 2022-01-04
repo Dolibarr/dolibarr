@@ -48,6 +48,7 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -334,9 +335,22 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	} else {
-		/* TODO If the file of proposal signed is newer than the default proposal file, get link of proposal signed
+		$last_main_doc_file = $proposal->last_main_doc;
+		if (preg_match('/_signed-(\d+)/', $last_main_doc_file)) {	// If the last main doc has been signed
+			$last_main_doc_file_not_signed = preg_replace('/_signed-(\d+)/', '', $last_main_doc_file);
 
-		*/
+			$datefilesigned = dol_filemtime($last_main_doc_file);
+			$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
+
+			if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
+				$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+				if ($directdownloadlink) {
+					print '<br><a href="'.$directdownloadlink.'">';
+					print img_mime($proposal->last_main_doc, '');
+					print $langs->trans("DownloadDocument").'</a>';
+				}
+			}
+		}
 	}
 
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
