@@ -131,6 +131,8 @@ if ($action == "importSignature") {
 				$pdf->Close();
 				$pdf->Output($newpdffilename, "F");
 
+				$db->begin();
+
 				// Index the new file and update the last_main_doc property of object.
 				$object->indexFile($newpdffilename, 1);
 
@@ -138,11 +140,11 @@ if ($action == "importSignature") {
 				$online_sign_name = '';		// TODO Ask name on form to sign
 
 				$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-				$sql .= " SET fk_statut = ".((int) $object::STATUS_SIGNED).", note_private = '".$this->db->escape($object->note_private)."',";
-				$sql .= " date_signature = '".$this->db->idate(dol_now())."',";
-				$sql .= " online_sign_ip = '".$this->db->escape($online_sign_ip)."'";
+				$sql .= " SET fk_statut = ".((int) $object::STATUS_SIGNED).", note_private = '".$db->escape($object->note_private)."',";
+				$sql .= " date_signature = '".$db->idate(dol_now())."',";
+				$sql .= " online_sign_ip = '".$db->escape($online_sign_ip)."'";
 				if ($online_sign_name) {
-					$sql .= ", online_sign_name = '".$this->db->escape($online_sign_name)."'";
+					$sql .= ", online_sign_name = '".$db->escape($online_sign_name)."'";
 				}
 				$sql .= " WHERE rowid = ".((int) $object->id);
 
