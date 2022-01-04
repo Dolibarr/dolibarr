@@ -57,7 +57,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-    if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
+	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -67,12 +67,12 @@ function contact_prepare_head(Contact $object)
 		if (!is_null($dataretrieved)) {
 			$nbProject = $dataretrieved;
 		} else {
-            $sql = 'SELECT COUNT(n.rowid) as nb';
-            $sql .= ' FROM '.MAIN_DB_PREFIX.'projet as n';
-            $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (n.rowid = cc.element_id)';
-            $sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-            $sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
-            $sql .= ' AND n.entity IN ('.getEntity('project').')';
+			$sql = 'SELECT COUNT(n.rowid) as nb';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as n';
+			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (n.rowid = cc.element_id)';
+			$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
+			$sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
+			$sql .= ' AND n.entity IN ('.getEntity('project').')';
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -184,14 +184,14 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		print "\n".'<table class="noborder" width=100%>';
 
 		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
-        $sql .= ', cls.code as opp_status_code';
-        $sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
-        $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
-        $sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-        $sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
-        $sql .= ' AND p.entity IN ('.getEntity('project').')';
-        $sql .= ' ORDER BY p.dateo DESC';
+		$sql .= ', cls.code as opp_status_code';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
+		$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
+		$sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
+		$sql .= ' AND p.entity IN ('.getEntity('project').')';
+		$sql .= ' ORDER BY p.dateo DESC';
 
 		$result = $db->query($sql);
 		if ($result) {
