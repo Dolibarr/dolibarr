@@ -220,6 +220,8 @@ class pdf_azur extends ModelePDFPropales
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
+		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
 		}
@@ -228,13 +230,22 @@ class pdf_azur extends ModelePDFPropales
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		// Load traductions files required by page
+		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "propal", "products"));
+
+		global $outputlangsbis;
+		$outputlangsbis = null;
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+			$outputlangsbis = new Translate('', $conf);
+			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
+		}
 
 		$nblines = count($object->lines);
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
+		$this->atleastonephoto = false;
 		if (!empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE)) {
 			$objphoto = new Product($this->db);
 
@@ -274,6 +285,7 @@ class pdf_azur extends ModelePDFPropales
 
 							$realpath = $dir.$filename;
 							$arephoto = true;
+							$this->atleastonephoto = true;
 						}
 					}
 				}
@@ -321,6 +333,10 @@ class pdf_azur extends ModelePDFPropales
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
+				// Set nblines with the new content of lines after hook
+				$nblines = count($object->lines);
+				//$nbpayments = count($object->getListOfPayments());
+
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
@@ -356,7 +372,7 @@ class pdf_azur extends ModelePDFPropales
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
-				// Positionne $this->atleastonediscount si on a au moins une remise
+				// Set $this->atleastonediscount if you have at least one discount
 				for ($i = 0; $i < $nblines; $i++) {
 					if ($object->lines[$i]->remise_percent) {
 						$this->atleastonediscount++;
@@ -389,7 +405,7 @@ class pdf_azur extends ModelePDFPropales
 				}
 				//print $heightforinfotot + $heightforsignature + $heightforfreetext + $heightforfooter;exit;
 
-				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
+				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
@@ -399,6 +415,7 @@ class pdf_azur extends ModelePDFPropales
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 
 				// Incoterm
+				$height_incoterms = 0;
 				if (!empty($conf->incoterm->enabled)) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
@@ -414,10 +431,11 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
 
 						$tab_top = $nexY + 6;
+						$height_incoterms += 4;
 					}
 				}
 
-				// Affiche notes
+				// Displays notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE)) {
 					// Get first sale rep
@@ -438,14 +456,15 @@ class pdf_azur extends ModelePDFPropales
 				if (!empty($conf->global->MAIN_ADD_CREATOR_IN_NOTE) && $object->user_author_id > 0) {
 					$tmpuser = new User($this->db);
 					$tmpuser->fetch($object->user_author_id);
-					$notetoshow .= $langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
-					if ($tmpuser->email) {
-						$notetoshow .= ',  Mail: '.$tmpuser->email;
-					}
-					if ($tmpuser->office_phone) {
-						$notetoshow .= ', Tel: '.$tmpuser->office_phone;
-					}
+
+
+					$creator_info = $langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
+					if ($tmpuser->email) $creator_info .= ',  '.$langs->trans("EMail").': '.$tmpuser->email;
+					if ($tmpuser->office_phone) $creator_info .= ', '.$langs->trans("Phone").': '.$tmpuser->office_phone;
+
+					$notetoshow = dol_concatdesc($notetoshow, $creator_info);
 				}
+
 				if ($notetoshow) {
 					$tab_top -= 2;
 

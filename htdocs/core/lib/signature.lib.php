@@ -51,12 +51,13 @@ function showOnlineSignatureUrl($type, $ref)
 /**
  * Return string with full Url
  *
- * @param   int		$mode		0=True url, 1=Url formated with colors
- * @param   string	$type		Type of URL ('proposal', ...)
- * @param	string	$ref		Ref of object
- * @return	string				Url string
+ * @param   int		$mode				0=True url, 1=Url formated with colors
+ * @param   string	$type				Type of URL ('proposal', ...)
+ * @param	string	$ref				Ref of object
+ * @param   string  $localorexternal  	0=Url for browser, 1=Url for external access
+ * @return	string						Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref = '')
+function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 {
 	global $conf, $db, $langs, $dolibarr_main_url_root;
 
@@ -68,16 +69,16 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	$localorexternal = 1; // external
-
 	$urltouse = DOL_MAIN_URL_ROOT;
 	if ($localorexternal) {
 		$urltouse = $urlwithroot;
 	}
 
-	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+	$securekeyseed = '';
 
 	if ($type == 'proposal') {
+		$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'proposal_ref';
