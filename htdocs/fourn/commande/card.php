@@ -1216,10 +1216,10 @@ if (empty($reshook)) {
 					$classname = ucfirst($subelement);
 					if ($origin == 'propal' || $origin == 'proposal') {
 						$element = 'comm/propal'; $subelement = 'propal';
-					} 
+					}
 					if ($origin == 'order' || $origin == 'commande') {
 						$element = $subelement = 'commande';
-					} 
+					}
 					if ($origin == 'supplier_proposal') {
 						$classname = 'SupplierProposal';
 						$element = 'supplier_proposal';
