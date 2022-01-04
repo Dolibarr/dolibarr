@@ -244,7 +244,7 @@ if (empty($reshook)) {
  */
 
 $help_url = '';
-llxHeader('', $langs->trans("RepeatableSupplierInvoicesList"), $help_url);
+llxHeader('', $langs->trans("RepeatableSupplierInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -475,11 +475,11 @@ if ($resql) {
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-    $title = $langs->trans("SupplierRepeatableInvoices");
+    $title = $langs->trans("RepeatableSupplierInvoices");
 
     print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
-    print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
+    print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedSupplierInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
 
     $i = 0;
 

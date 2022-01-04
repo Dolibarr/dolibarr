@@ -51,3 +51,4 @@ RepeatableSupplierInvoice=Facture fournisseur modèle
 RepeatableSupplierInvoices=Factures fournisseurs modèles
 RepeatableSupplierInvoicesList=Factures fournisseurs modèles
 RecurringSupplierInvoices=Factures fournisseurs récurrentes
+ToCreateAPredefinedSupplierInvoice=Pour créer un modèle de facture fournisseur, créez une facture fournisseur standard puis, sans la valider, cliquez sur le bouton "%s".
