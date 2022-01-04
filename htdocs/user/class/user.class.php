@@ -1393,6 +1393,8 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::create login=".$this->login.", user=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
 
+		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', '/[,@<>"\']/');
+
 		// Check parameters
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
@@ -1403,7 +1405,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
 			return -1;
-		} elseif (preg_match('/[,@<>"\']/', $this->login)) {
+		} elseif (preg_match($badCharUnauthorizedIntoLoginName, $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
 			return -1;
@@ -1787,6 +1789,8 @@ class User extends CommonObject
 		$this->fk_warehouse = (int) $this->fk_warehouse;
 
 		// Check parameters
+		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', '/[,@<>"\']/');
+
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
@@ -1796,7 +1800,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", 'Login');
 			return -1;
-		} elseif (preg_match('/[,@<>"\']/', $this->login)) {
+		} elseif (preg_match($badCharUnauthorizedIntoLoginName, $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
 			return -1;
