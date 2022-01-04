@@ -22,7 +22,7 @@ FIX: fatal error on cron list.
 FIX: holiday list: only mass delete if leave request is not in draft, canceled or refused, like in card
 FIX: holiday mass deletion: correct return of record deleted
 FIX: Holiday month report
-FIX:  info tab on customer invoice record not found
+FIX: info tab on customer invoice record not found
 FIX: line extrafields are inoperative in dispatch cards even when they exist
 FIX: list of categories in stats of supplier invoices
 FIX: missing default value for more comprehensive
@@ -30,7 +30,6 @@ FIX: multicurrency: fields in discount unitialized when creating deposit
 FIX: Navigation on bank transaction list
 FIX: Option MAIN_DIRECT_STATUS_UPDATE broken. Ajax on/off not saving value in DB after updating to version >=12
 FIX: postgresql compatibility, "" as is not authorized
-FIX: postgresql compatibility, '' as is not authorized
 FIX: printFieldListWhere called twice (at different locations) for the same SQL query, can result in syntax errors
 FIX: select too large into addrights (pb of missing parenthesis)
 FIX: set optional from post
