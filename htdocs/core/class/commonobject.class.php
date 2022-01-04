@@ -5337,7 +5337,7 @@ abstract class CommonObject
 	 */
 	public function indexFile($destfull, $update_main_doc_field)
 	{
-		global $user;
+		global $conf, $user;
 
 		$upload_dir = dirname($destfull);
 		$destfile = basename($destfull);
