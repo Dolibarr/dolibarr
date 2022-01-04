@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'products', 'banks'));
+$langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'products', 'banks', 'suppliers'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
@@ -284,6 +284,7 @@ if (empty($reshook)) {
                 setEventMessages($object->error, $object->errors, 'errors');
             }
         }
+        //TODO : Droits
     } elseif ($action == 'setbankaccount' && $user->rights->facture->creer) {
         // Set bank account
         $result = $object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -348,6 +349,15 @@ if (empty($reshook)) {
     } elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
         // Multicurrency rate
         $result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
+    } elseif ($action == 'setlibelle' && $usercancreate) {
+        // Set label
+        $object->fetch($id);
+        $object->libelle = GETPOST('libelle');
+        $result = $object->update($user);
+
+        if ($result < 0) {
+            dol_print_error($db);
+        }
     }
 
     // Delete line
@@ -400,7 +410,7 @@ if (empty($reshook)) {
         $error = 0;
 
         // Set if we used free entry or predefined product
-        $predef = '';
+
         $product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
         $ref_fournisseur = (GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'restricthtml') : '');
         $price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
@@ -594,14 +604,13 @@ if (empty($reshook)) {
                 if (empty($tva_tx)) {
                     $tva_npr = 0;
                 }
-                $label = (GETPOST('product_label') ? GETPOST('product_label') : '');
                 $desc = $product_desc;
                 $type = GETPOST('type');
                 $fk_unit = GETPOST('units', 'alpha');
             }
 
-            $date_start_fill = GETPOST('date_start_fill', 'int');
-            $date_end_fill = GETPOST('date_end_fill', 'int');
+            $date_start_fill = !empty(GETPOST('date_start_fill', 'int')) ? GETPOST('date_start_fill', 'int') : null;
+            $date_end_fill = !empty(GETPOST('date_end_fill', 'int')) ? GETPOST('date_start_fill', 'int') : null;
 
             // Margin
             $fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
@@ -681,7 +690,7 @@ if (empty($reshook)) {
         $date_start = '';
         $date_end = '';
         $description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
-        $pu_ht = GETPOST('fourn_ref', 'alpha');
+        $ref_fourn = GETPOST('fourn_ref', 'alpha');
         $pu_ht = price2num(GETPOST('price_ht'), '', 2);
         $vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
         $qty = GETPOST('qty');
@@ -697,10 +706,6 @@ if (empty($reshook)) {
         $vat_rate = str_replace('*', '', $vat_rate);
         $localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty);
         $localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
-
-        // Add buying price
-        $fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
-        $buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we muste keep this value
 
         // Extrafields
         $extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -731,17 +736,6 @@ if (empty($reshook)) {
             $special_code = 3;
         }
 
-        /*$line = new FactureLigne($db);
-        $line->fetch(GETPOST('lineid', 'int'));
-        $percent = $line->get_prev_progress($object->id);
-
-        if (GETPOST('progress') < $percent)
-        {
-                $mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
-                setEventMessages($mesg, null, 'warnings');
-                $error++;
-                $result = -1;
-        }*/
 
         $remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 
@@ -781,56 +775,13 @@ if (empty($reshook)) {
             $error++;
         }
 
-        $date_start_fill = GETPOST('date_start_fill', 'int');
-        $date_end_fill = GETPOST('date_end_fill', 'int');
+        $date_start_fill = !empty(GETPOST('date_start_fill', 'int')) ? GETPOST('date_start_fill', 'int') : 'NULL';
+        $date_end_fill = !empty(GETPOST('date_end_fill', 'int')) ? GETPOST('date_start_fill', 'int') : 'NULL';
 
         // Update line
         if (!$error) {
-            $result = $object->updateline(
-                GETPOST('lineid', 'int'),
-                $description,
-                $pu_ht,
-                $qty,
-                $vat_rate,
-                $localtax1_rate,
-                $localtax1_rate,
-                GETPOST('productid', 'int'),
-                $remise_percent,
-                'HT',
-                $info_bits,
-                0,
-                0,
-                $type,
-                $position,
-                $special_code,
-                $label,
-                GETPOST('units'),
-                $pu_ht_devise,
-                0,
-                $date_start_fill,
-                $date_end_fill,
-                $fournprice,
-                $buyingprice
-            );
-
+            $result = $object->updateline(GETPOST('lineid', 'int'), GETPOST('productid', 'int'), $ref_fourn, $label, $description, $pu_ht, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, - 1);
             if ($result >= 0) {
-                /*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-                    // Define output language
-                    $outputlangs = $langs;
-                    $newlang = '';
-                    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
-                        $newlang = GETPOST('lang_id','aZ09');
-                        if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-                            $newlang = $object->thirdparty->default_lang;
-                            if (! empty($newlang)) {
-                                $outputlangs = new Translate("", $conf);
-                                $outputlangs->setDefaultLang($newlang);
-                            }
-
-                            $ret = $object->fetch($id); // Reload to get new records
-                            $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-                }*/
-
                 $object->fetch($object->id); // Reload lines
 
                 unset($_POST['qty']);
@@ -881,7 +832,7 @@ if (empty($reshook)) {
  */
 
 $help_url = '';
-llxHeader('', $langs->trans("RepeatableSupplierInvoices"), $help_url);
+llxHeader('', $langs->trans("RepeatableSupplierInvoice"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -967,6 +918,11 @@ if ($action == 'create') {
         }
         $htmltext .= '</i>';
 
+        // Libelle
+        print '<tr><td class="titlefieldcreate">'.$langs->trans("Label").'</td><td>';
+        print '<input class="flat quatrevingtpercent" type="text" name="libelle" value="'.$object->label.'">';
+        print '</td></tr>';
+
         // Public note
         print '<tr>';
         print '<td class="tdtop">';
@@ -1021,9 +977,9 @@ if ($action == 'create') {
 
         // Model pdf
         print "<tr><td>".$langs->trans('Model')."</td><td>";
-        include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-        $list = ModelePDFFactures::liste_modeles($db);
-        print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
+        include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
+        $list = ModelePDFSuppliersInvoices::liste_modeles($db);
+        print $form->selectarray('modelpdf', $list, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
         print "</td></tr>";
 
         print "</table>";
@@ -1148,7 +1104,7 @@ if ($action == 'create') {
 
         // Recurring invoice content
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans('BackToList').'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list-rec.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans('BackToList').'</a>';
 
         $morehtmlref = '';
         //TODO :  Droits
@@ -1212,6 +1168,13 @@ if ($action == 'create') {
         print '<tr><td class="titlefield">'.$langs->trans('Author').'</td><td>';
         print $author->getNomUrl(-1);
         print "</td></tr>";
+
+        // Label
+        print '<tr>';
+        print '<td>'.$form->editfieldkey("Label", 'libelle', $object->libelle, $object, $usercancreate).'</td>';
+        print '<td>'.$form->editfieldval("Label", 'libelle', $object->libelle, $object, $usercancreate).'</td>';
+        print '</tr>';
+
 
         print '<tr><td>'.$langs->trans('AmountHT').'</td>';
         print '<td>'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).'</td>';
@@ -1389,13 +1352,14 @@ if ($action == 'create') {
         print '</tr></table>';
         print '</td><td>';
         if ($action == 'editmodelpdf') {
-            include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
+            include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
             $list = array();
-            $models = ModelePDFFactures::liste_modeles($db);
+            $models = ModelePDFSuppliersInvoices::liste_modeles($db);
             foreach ($models as $k => $model) {
                 $list[] = str_replace(':', '|', $k).':'.$model;
             }
             $select = 'select;'.implode(',', $list);
+            //TODO : Droits
             print $form->editfieldval($langs->trans('Model'), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
         } else {
             print $object->model_pdf;
@@ -1623,7 +1587,7 @@ if ($action == 'create') {
                     print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
                 } else {
                     if (empty($object->frequency) || $object->date_when <= $nowlasthour) {
-                        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card-rec.php?action=create&socid='.$object->thirdparty->id.'&fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+                        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->thirdparty->id.'&fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
                     } else {
                         print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
                     }

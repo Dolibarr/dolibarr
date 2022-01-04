@@ -249,8 +249,10 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $fk_facture_source;
 
+    public $fac_rec;
 
-	public $fields = array(
+
+    public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
 		'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
@@ -408,6 +410,119 @@ class FactureFournisseur extends CommonInvoice
 
 		$this->db->begin();
 
+        // Create invoice from a template recurring invoice
+        if ($this->fac_rec > 0) {
+            $this->fk_fac_rec_source = $this->fac_rec;
+
+            require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture-rec.class.php';
+            $_facrec = new FactureFournisseurRec($this->db);
+            $result = $_facrec->fetch($this->fac_rec);
+            $result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
+
+            // Define some dates
+            $originaldatewhen = $_facrec->date_when;
+            $nextdatewhen = dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency);
+            $previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
+
+            if (!empty($_facrec->frequency)) {  // Invoice are created on same thirdparty than template when there is a recurrence, but not necessarly when there is no recurrence.
+                $this->socid = $_facrec->socid;
+            }
+            $this->entity            = $_facrec->entity; // Invoice created in same entity than template
+
+            // Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
+            $this->fk_projet        = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_projet;
+            $this->note_public       = GETPOST('note_public', 'none') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
+            $this->note_private      = GETPOST('note_private', 'none') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
+            $this->model_pdf = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
+            $this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
+            $this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
+            $this->fk_account        = GETPOST('fk_account') > 0 ? ((int) GETPOST('fk_account')) : $_facrec->fk_account;
+
+            // Set here to have this defined for substitution into notes, should be recalculated after adding lines to get same result
+            $this->total_ht          = $_facrec->total_ht;
+            $this->total_ttc         = $_facrec->total_ttc;
+
+            // Fields always coming from template
+            $this->remise    = $_facrec->remise;
+            $this->fk_incoterms = $_facrec->fk_incoterms;
+            $this->location_incoterms = $_facrec->location_incoterms;
+
+            // Clean parameters
+            if (!$this->type) {
+                $this->type = self::TYPE_STANDARD;
+            }
+            $this->ref_supplier = trim($this->ref_supplier.'_'.($_facrec->nb_gen_done+1));
+            $this->note_public = trim($this->note_public);
+            $this->note_private = trim($this->note_private);
+            $this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
+
+            $this->array_options = $_facrec->array_options;
+
+            //if (! $this->remise) $this->remise = 0;
+            if (!$this->mode_reglement_id) {
+                $this->mode_reglement_id = 0;
+            }
+            $this->brouillon = 1;
+            $this->status = self::STATUS_DRAFT;
+            $this->statut = self::STATUS_DRAFT;
+
+            $this->linked_objects = $_facrec->linkedObjectsIds;
+            // We do not add link to template invoice or next invoice will be linked to all generated invoices
+            //$this->linked_objects['facturerec'][0] = $this->fac_rec;
+
+            $forceduedate = $this->calculate_date_lim_reglement();
+
+            // For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
+            if ($_facrec->frequency > 0) {
+                dol_syslog("This is a recurring invoice so we set date_last_gen and next date_when");
+                if (empty($_facrec->date_when)) {
+                    $_facrec->date_when = $now;
+                }
+                $next_date = $_facrec->getNextDate(); // Calculate next date
+                $result = $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date', '', $user, '');
+                //$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
+                $result = $_facrec->setNextDate($next_date, 1);
+            }
+
+            // Define lang of customer
+            $outputlangs = $langs;
+            $newlang = '';
+
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->thirdparty->default_lang)) {
+                $newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
+            }
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->default_lang)) {
+                $newlang = $this->default_lang; // for thirdparty
+            }
+            if (!empty($newlang)) {
+                $outputlangs = new Translate("", $conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+
+            // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
+            $substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $this);
+            $substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%m');
+            $substitutionarray['__INVOICE_MONTH__'] = dol_print_date($this->date, '%m');
+            $substitutionarray['__INVOICE_NEXT_MONTH__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%m');
+            $substitutionarray['__INVOICE_PREVIOUS_MONTH_TEXT__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%B');
+            $substitutionarray['__INVOICE_MONTH_TEXT__'] = dol_print_date($this->date, '%B');
+            $substitutionarray['__INVOICE_NEXT_MONTH_TEXT__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%B');
+            $substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
+            $substitutionarray['__INVOICE_YEAR__'] = dol_print_date($this->date, '%Y');
+            $substitutionarray['__INVOICE_NEXT_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
+            // Only for template invoice
+            $substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = dol_print_date($originaldatewhen, 'dayhour');
+            $substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = dol_print_date($nextdatewhen, 'dayhour');
+            $substitutionarray['__INVOICE_PREVIOUS_DATE_NEXT_INVOICE_AFTER_GEN__'] = dol_print_date($previousdaynextdatewhen, 'dayhour');
+            $substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $_facrec->nb_gen_done;
+            $substitutionarray['__INVOICE_COUNTER_MAX__'] = $_facrec->nb_gen_max;
+
+            complete_substitutions_array($substitutionarray, $outputlangs);
+
+            $this->note_public = make_substitutions($this->note_public, $substitutionarray);
+            $this->note_private = make_substitutions($this->note_private, $substitutionarray);
+        }
+
 		if (!$remise) {
 			$remise = 0;
 		}
@@ -503,9 +618,9 @@ class FactureFournisseur extends CommonInvoice
 					}
 				}
 			}
-
 			if (count($this->lines) && is_object($this->lines[0])) {	// If this->lines is array of InvoiceLines (preferred mode)
 				dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
+
 				foreach ($this->lines as $i => $val) {
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn, special_code, fk_remise_except)';
 					$sql .= " VALUES (".((int) $this->id).", ".((int) $this->lines[$i]->special_code).", ".($this->lines[$i]->fk_remise_except > 0 ? ((int) $this->lines[$i]->fk_remise_except) : 'NULL').')';

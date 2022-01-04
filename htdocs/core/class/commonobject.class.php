@@ -3357,7 +3357,7 @@ abstract class CommonObject
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		} elseif ($this->element == 'facture' || $this->element == 'invoice') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
-		} elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier') {
+		} elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
 		} elseif ($this->element == 'order_supplier' || $this->element == 'supplier_order') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
@@ -3428,7 +3428,6 @@ abstract class CommonObject
 		}
 		$sql .= ' ORDER by rowid'; // We want to be sure to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
 
-//        print $sql;exit;
 		dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3556,7 +3555,7 @@ abstract class CommonObject
 			if ($this->element == 'facture' || $this->element == 'facturerec') {
 				$fieldtva = 'total_tva';
 			}
-			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
+			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
 				$fieldtva = 'total_tva';
 			}
 			if ($this->element == 'propal') {

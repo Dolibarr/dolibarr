@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta', 'admin', 'other'));
+$langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'suppliers'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
@@ -243,7 +243,8 @@ if (empty($reshook)) {
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableSupplierInvoices"), 'ch-facture.html#s-fac-facture-rec');
+$help_url = '';
+llxHeader('', $langs->trans("RepeatableSupplierInvoicesList"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -474,7 +475,7 @@ if ($resql) {
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-    $title = $langs->trans("RepeatableInvoices");
+    $title = $langs->trans("SupplierRepeatableInvoices");
 
     print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 

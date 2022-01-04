@@ -47,3 +47,7 @@ BuyerName=Nom de l'acheteur
 AllProductServicePrices=Tous les prix du produits / service
 AllProductReferencesOfSupplier=Toutes les références du fournisseur
 BuyingPriceNumShort=Prix fournisseurs
+RepeatableSupplierInvoice=Facture fournisseur modèle
+RepeatableSupplierInvoices=Factures fournisseurs modèles
+RepeatableSupplierInvoicesList=Factures fournisseurs modèles
+RecurringSupplierInvoices=Factures fournisseurs récurrentes
