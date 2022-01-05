@@ -583,17 +583,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$arrayoftypes = array(
 		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
 		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
-		'recordjoinpiece'=>$langs->trans('recordjoinpieceonobject'),
+		'recordjoinpiece'=>'AttachJoinedDocumentsToObject',
 		'recordevent'=>'RecordEvent');
+	$arrayoftypesnocondition = $arrayoftypes;
 	if ($conf->projet->enabled) {
 		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	}
+	$arrayoftypesnocondition['project'] = 'CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) {
 		$arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 	}
+	$arrayoftypesnocondition['ticket'] = 'CreateTicketAndThirdParty';
 	if ($conf->recruitment->enabled) {
 		$arrayoftypes['candidature'] = 'CreateCandidature';
 	}
+	$arrayoftypesnocondition['candidature'] = 'CreateCandidature';
 
 	// support hook for add action
 	$parameters = array('arrayoftypes' => $arrayoftypes);
@@ -629,7 +633,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
 		print '<!-- type of action: '.$ruleaction['type'].' -->';
-		print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		if (array_key_exists($ruleaction['type'], $arrayoftypes)) {
+			print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		} else {
+			if (array_key_exists($ruleaction['type'], $arrayoftypesnocondition)) {
+				print '<span class="opacitymedium">'.$langs->trans($arrayoftypesnocondition[$ruleaction['type']]).' - '.$langs->trans("Disabled").'</span>';
+			}
+		}
+
 		if (in_array($ruleaction['type'], array('recordevent'))) {
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
 		} elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
