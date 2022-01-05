@@ -33,7 +33,7 @@
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
 	--listetotal: #888888;
 	--inputbackgroundcolor: #FFF;
-	--inputbordercolor: rgba(0,0,0,.2);
+	--inputbordercolor: rgba(0,0,0,.15);
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
 	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
 	--oddevencolor: #202020;
@@ -144,11 +144,6 @@ tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titr
 input {
 	font-size: unset;
 }
-input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	background-color: var(--inputbackgroundcolor);
-	color: var(--colortext);
-	border-radius: 2px;
-}
 select.vmenusearchselectcombo {
 	background-color: unset;
 }
@@ -172,6 +167,33 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
+input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
+	border: none;
+}
+input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
+	color: var(--colortext);
+	border-radius: 3px;
+	font-family: <?php print $fontlist ?>;
+	outline: none;
+	margin: 0px 0px 0px 0px;
+	background-color: var(--inputbackgroundcolor);
+}
+
+.liste_titre input, .liste_titre select {
+	border: none;
+	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+	/* padding: 5px; */
+}
+.pageplusone,
+div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
+{
+	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+	<?php $conf->global->THEME_ADD_BACKGROUND_ON_INPUT = 1; if (!empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
+	background-color: #f8f8fa;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	<?php } ?>
+}
 input[name=duration_value], input[name=durationhour]
 {
 	margin-right: 4px !important;
@@ -182,23 +204,10 @@ input[type=submit], input[type=submit]:hover {
 input[type=checkbox], input[type=radio] {
 	margin: 0 3px 0 3px;
 }
-input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	border: none;
-}
-input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	font-family: <?php print $fontlist ?>;
-	outline: none;
-	margin: 0px 0px 0px 0px;
-	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
-}
-
 input {
 	line-height: 1.3em;
 	padding: 4px;
 	padding-left: 5px;
-}
-.liste_titre input {
-	padding: 5px;
 }
 select {
 	padding-top: 5px;
@@ -243,11 +252,14 @@ input:invalid, select:invalid, input.--error , select.--error {
 .field-error-icon { color: #ea1212; !important; }
 
 /* Focus definitions must be after standard definition */
-textarea:focus {
+div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus, select:focus {
-	border-bottom: 1px solid #666;
+input:focus:not(.select2-search__field), select:focus, .select2-container--open .select2-selection--single {
+/* div.tabBar input:focus, div.tabBar select:focus { */
+	border-bottom: 1px solid #666 !important;
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
 }
 textarea.cke_source:focus
 {
@@ -258,10 +270,10 @@ div#cke_dp_desc {
 }
 textarea {
 	border-radius: 0;
-	border-top:solid 1px rgba(0,0,0,.2);
-	border-left:solid 1px rgba(0,0,0,.2);
-	border-right:solid 1px rgba(0,0,0,.2);
-	border-bottom:solid 1px rgba(0,0,0,.2);
+	border-top: solid 1px var(--inputbordercolor);
+	border-left: solid 1px var(--inputbordercolor);
+	border-right: solid 1px var(--inputbordercolor);
+	border-bottom: solid 1px var(--inputbordercolor);
 
 	padding:4px;
 	margin-left:0px;
@@ -403,6 +415,10 @@ select.flat, form.flat select, .pageplusone {
 input.pageplusone {
 	padding-bottom: 4px;
 	padding-top: 4px;
+	margin-right: 4px;
+}
+.paginationlastpage a {
+	padding-left: 8px;
 }
 
 .saturatemedium {
@@ -462,15 +478,15 @@ input.removedfile {
 	border: 0px !important;
 	vertical-align: text-bottom;
 }
-input[type=file ]    {
+input[type=file]    {
 	background-color: transparent;
 	box-shadow: none;
-	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	<?php if (!empty($conf->global->THEME_HIDE_BORDER_ON_INPUT)) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
 	<?php } ?>
-	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
@@ -994,7 +1010,7 @@ div.divsearchfield {
 	padding-bottom: 3px;
 	padding-left: 10px;
 	padding-right: 10px;
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px var(--inputbordercolor);
 	height: 24px;
 }
 .search_component_searchtext {
@@ -5818,7 +5834,7 @@ span#select2-taskid-container[title^='--'] {
 }
 
 span.select2.select2-container.select2-container--default {
-	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	<?php if (!empty($conf->global->THEME_HIDE_BORDER_ON_INPUT)) { ?>
 	border-left: none;
 	border-top: none;
 	border-right: none;
@@ -5843,6 +5859,8 @@ input.select2-input {
 }
 .select2-container--focus span.select2-selection.select2-selection--single {
 	border-bottom: 1px solid #666 !important;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,
@@ -5907,29 +5925,35 @@ input.select2-input {
 .select2-container--default .select2-selection--single
 {
 	outline: none;
-	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	<?php if (!empty($conf->global->THEME_HIDE_BORDER_ON_INPUT)) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
 	<?php } ?>
 
-	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
-	border-radius: 0 !important;
+	border-radius: 3px;
+}
+.select2-container--focus .select2-container--default .select2-selection--single {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple {
 	border-top: none;
 	border-left: none;
 	border-right: none;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
 }
 .select2-container--default .select2-selection--multiple {
 	border-bottom: solid 1px var(--inputbordercolor);
 	border-top: none;
 	border-left: none;
 	border-right: none;
-	border-radius: 0 !important;
+	border-radius: 3px;
 	background: var(--inputbackgroundcolor);
 	line-height: normal;
 }
@@ -5947,7 +5971,7 @@ input.select2-input {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom: solid 1px rgba(0,0,0,.2) !important;
+	border-bottom: solid 1px var(--inputbordercolor) !important;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 0 !important;
@@ -6196,14 +6220,17 @@ span.noborderoncategories {
   cursor: default;
 
   border: none;
-  border-bottom: solid 1px rgba(0,0,0,.2);
+  border-bottom: solid 1px var(--inputbordercolor);
   padding: 5px;
   padding-left: 2px;
   height: 17px;
+  border-radius: 3px;
 }
 .multi-select-button:focus {
   outline: none;
   border-bottom: 1px solid #666;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .multi-select-button:after {
@@ -6227,7 +6254,10 @@ span.noborderoncategories {
 .multi-select-menuitem {
 	clear: both;
 	float: left;
-	padding-left: 5px
+	padding-left: 5px;
+}
+label.multi-select-menuitem {
+	line-height: 24px;
 }
 
 

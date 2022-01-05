@@ -417,7 +417,7 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	font-family: <?php print $fontlist ?>;
 	border: none;
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px rgba(0,0,0,.2);
+	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	outline: none;
 	margin: 0px 0px 0px 0px;
 }
@@ -465,10 +465,10 @@ input.short {
 
 textarea {
 	border-radius: 0;
-	border-top:solid 1px rgba(0,0,0,.1);
-	border-left:solid 1px rgba(0,0,0,.1);
-	border-right:solid 1px rgba(0,0,0,.1);
-	border-bottom:solid 1px rgba(0,0,0,.2);
+	border-top:solid 1px var(--inputbordercolor);
+	border-left:solid 1px var(--inputbordercolor);
+	border-right:solid 1px var(--inputbordercolor);
+	border-bottom:solid 1px var(--inputbordercolor);
 
 	background-color: #FFF;
 	padding:4px;
@@ -6098,6 +6098,9 @@ span.noborderoncategories {
 	clear: both;
 	float: left;
 	padding-left: 5px
+}
+label.multi-select-menuitem {
+	line-height: 24px;
 }
 
 

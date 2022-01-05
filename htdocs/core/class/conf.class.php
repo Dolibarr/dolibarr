@@ -890,7 +890,7 @@ class Conf
 			}
 
 			if (!isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) {
-				$this->global->THEME_HIDE_BORDER_ON_INPUT = 0;
+				$this->global->THEME_HIDE_BORDER_ON_INPUT = 1;
 			}
 
 			// Save inconsistent option
