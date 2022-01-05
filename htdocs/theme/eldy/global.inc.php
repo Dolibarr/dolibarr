@@ -177,6 +177,9 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	outline: none;
 	margin: 0px 0px 0px 0px;
 	background-color: var(--inputbackgroundcolor);
+	<?php if (empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
+		border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	<?php } ?>
 }
 
 .liste_titre input, .liste_titre select {
@@ -189,7 +192,6 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 {
 	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	<?php
-	//$conf->global->THEME_ADD_BACKGROUND_ON_INPUT = 1;
 	if (!empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
