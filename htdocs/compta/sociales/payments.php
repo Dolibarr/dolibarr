@@ -135,8 +135,8 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-$sql = "SELECT c.id, c.libelle as label,";
-$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
+$sql = "SELECT c.id, c.libelle as type_label,";
+$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
 $sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
 $sql .= " u.rowid uid, u.lastname, u.firstname, u.email, u.login, u.admin,";
@@ -260,12 +260,15 @@ while ($i < min($num, $limit)) {
 
 	$payment_sc_static->id = $obj->pid;
 	$payment_sc_static->ref = $obj->pid;
+	$payment_sc_static->date = $db->jdate($obj->datep);
 
 	$socialcontrib->id = $obj->rowid;
+	$socialcontrib->ref = empty($obj->label_sc) ? $obj->type_label : $obj->label_sc;
+	$socialcontrib->paye = $obj->paye;
 	// $obj->label_sc is label of social contribution (may be empty)
-	// $obj->label is label of type of social contribution
-	$socialcontrib->ref = empty($obj->label_sc) ? $obj->label : $obj->label_sc;
-	$socialcontrib->label = empty($obj->label_sc) ? $obj->label : $obj->label_sc;
+	// $obj->type_label is label of type of social contribution
+	$socialcontrib->label = empty($obj->label_sc) ? $obj->type_label : $obj->label_sc;
+	$socialcontrib->type_label = $obj->type_label;
 
 	print '<tr class="oddeven">';
 	// Ref payment
