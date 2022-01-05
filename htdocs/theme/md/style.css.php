@@ -417,7 +417,7 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	font-family: <?php print $fontlist ?>;
 	border: none;
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	outline: none;
 	margin: 0px 0px 0px 0px;
 }
@@ -849,10 +849,10 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1) translate(2px, 0);
+	transform: scaleX(-1) translate(<?php print ($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, 2px);
+	transform: rotate(90deg) translate(0, <?php print ($left == 'left' ? '' : '-'); ?>2px);
 }
 .center {
 	text-align: center;
@@ -5905,6 +5905,7 @@ a span.select2-chosen
 }
 .select2-results__option {
 	word-break: break-word;
+	text-align: <?php echo $left; ?>;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;

@@ -181,13 +181,13 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 .liste_titre input, .liste_titre select {
 	border: none;
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	/* padding: 5px; */
 }
 .pageplusone,
 div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	<?php
 	//$conf->global->THEME_ADD_BACKGROUND_ON_INPUT = 1;
 	if (!empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
@@ -485,12 +485,12 @@ input.removedfile {
 input[type=file]    {
 	background-color: transparent;
 	box-shadow: none;
-	<?php if (!empty($conf->global->THEME_HIDE_BORDER_ON_INPUT)) { ?>
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
 	<?php } ?>
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
@@ -700,10 +700,10 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1) translate(2px, 0);
+	transform: scaleX(-1) translate(<?php print ($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, 2px);
+	transform: rotate(90deg) translate(0, <?php print ($left == 'left' ? '' : '-'); ?>2px);
 }
 .center {
 	text-align: center;
@@ -1129,6 +1129,10 @@ ul.attendees li {
 }
 select.flat.selectlimit {
 	max-width: 62px;
+	text-align: end;
+	border-bottom: 1px solid var(--inputbordercolor);
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
 }
 .selectlimit, .marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
@@ -5838,7 +5842,7 @@ span#select2-taskid-container[title^='--'] {
 }
 
 span.select2.select2-container.select2-container--default {
-	<?php if (!empty($conf->global->THEME_HIDE_BORDER_ON_INPUT)) { ?>
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
 	border-left: none;
 	border-top: none;
 	border-right: none;
@@ -5929,13 +5933,13 @@ input.select2-input {
 .select2-container--default .select2-selection--single
 {
 	outline: none;
-	<?php if (!empty($conf->global->THEME_HIDE_BORDER_ON_INPUT)) { ?>
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
 	<?php } ?>
 
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
@@ -6055,6 +6059,7 @@ a span.select2-chosen
 }
 .select2-results__option {
 	word-break: break-word;
+	text-align: <?php echo $left; ?>;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: var(--colorbackvmenu1);

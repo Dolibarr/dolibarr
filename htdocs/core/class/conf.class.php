@@ -889,10 +889,6 @@ class Conf
 				$this->global->MAIN_SIZE_SHORTLIST_LIMIT = 3;
 			}
 
-			if (!isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) {
-				$this->global->THEME_HIDE_BORDER_ON_INPUT = 1;
-			}
-
 			// Save inconsistent option
 			if (empty($this->global->AGENDA_USE_EVENT_TYPE) && (!isset($this->global->AGENDA_DEFAULT_FILTER_TYPE) || $this->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO')) {
 				$this->global->AGENDA_DEFAULT_FILTER_TYPE = '0'; // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
