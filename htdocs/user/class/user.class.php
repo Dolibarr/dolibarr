@@ -2596,9 +2596,10 @@ class User extends CommonObject
 		$companylink = '';
 
 		if (!empty($this->photo)) {
-			$label .= '<div class="photointooltip">';
-			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
-			$label .= '</div><div style="clear: both;"></div>';
+			$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
 		}
 
 		// Info Login

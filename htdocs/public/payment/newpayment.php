@@ -247,7 +247,6 @@ $urlok = preg_replace('/&$/', '', $urlok); // Remove last &
 $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 
 
-
 // Make special controls
 
 if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
@@ -442,21 +441,21 @@ if ($action == 'dopayment') {
 		$origfulltag = GETPOST("fulltag", 'alpha');
 
 		// Securekey into back url useless for back url and we need an url lower than 150.
-		$urlok = preg_replace('/securekey=[^&]+/', '', $urlok);
-		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
+		$urlok = preg_replace('/securekey=[^&]+&?/', '', $urlok);
+		$urlko = preg_replace('/securekey=[^&]+&?/', '', $urlko);
 
 		if (empty($PRICE) || !is_numeric($PRICE)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
 		} elseif (empty($email)) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("YourEMail"));
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ONLINE_PAYMENT_SENDEMAIL"));
 		} elseif (!isValidEMail($email)) {
 			$mesg = $langs->trans("ErrorBadEMail", $email);
 		} elseif (!$origfulltag) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentCode"));
 		} elseif (dol_strlen($urlok) > 150) {
-			$mesg = 'Error urlok too long '.$urlok.'( Paybox requires 150, found '.strlen($urlok).')';
+			$mesg = 'Error urlok too long '.$urlok.' (Paybox requires 150, found '.strlen($urlok).')';
 		} elseif (dol_strlen($urlko) > 150) {
-			$mesg = 'Error urlko too long '.$urlko.'( Paybox requires 150, found '.strlen($urlok).')';
+			$mesg = 'Error urlko too long '.$urlko.' (Paybox requires 150, found '.strlen($urlok).')';
 		}
 
 		if (empty($mesg)) {
@@ -986,13 +985,13 @@ if (!$source) {
 	if (empty($amount) || !is_numeric($amount)) {
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
+		// Currency
+		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	} else {
-		print '<b>'.price($amount).'</b>';
+		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
@@ -1085,13 +1084,13 @@ if ($source == 'order') {
 	if (empty($amount) || !is_numeric($amount)) {
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
+		// Currency
+		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	} else {
-		print '<b>'.price($amount).'</b>';
+		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
@@ -1216,18 +1215,16 @@ if ($source == 'invoice') {
 		if (empty($amount) || !is_numeric($amount)) {
 			print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
+			print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 		} else {
-			print '<b>'.price($amount).'</b>';
+			print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 			print '<input type="hidden" name="amount" value="'.$amount.'">';
 			print '<input type="hidden" name="newamount" value="'.$amount.'">';
 		}
-		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-		print '<input type="hidden" name="currency" value="'.$currency.'">';
 	} else {
-		print '<b>'.price($object->total_ttc, 1, $langs).'</b>';
-		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-		print '<input type="hidden" name="currency" value="'.$currency.'">';
+		print '<b class="amount">'.price($object->total_ttc, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 	}
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -1420,13 +1417,13 @@ if ($source == 'contractline') {
 	if (empty($amount) || !is_numeric($amount)) {
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
+		// Currency
+		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	} else {
-		print '<b>'.price($amount).'</b>';
+		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		print '<input type="hidden" name="amount" value="'.$amount.'">';
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
@@ -1652,23 +1649,22 @@ if ($source == 'member' || $source == 'membersubscription') {
 		}
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-			print '<input class="flat maxwidth75" type="text" name="newamountbis" value="'.$valtoshow.'" disabled>';
+			print '<input class="flat maxwidth75" type="text" name="newamountbis" value="'.$valtoshow.'" disabled="disabled">';
 			print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
 		} else {
 			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 		}
+		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	} else {
 		$valtoshow = $amount;
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
 			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 			$amount = $valtoshow;
 		}
-		print '<b>'.price($valtoshow).'</b>';
+		print '<b class="amount">'.price($valtoshow, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
 	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
@@ -1813,18 +1809,18 @@ if ($source == 'donation') {
 		}
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
+		// Currency
+		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	} else {
 		$valtoshow = $amount;
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
 			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 			$amount = $valtoshow;
 		}
-		print '<b>'.price($valtoshow).'</b>';
+		print '<b class="amount">'.price($valtoshow, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
 	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
@@ -1913,12 +1909,9 @@ if ($source == 'organizedeventregistration') {
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	print '</td><td class="CTableRow2">';
 	$valtoshow = $amount;
-	print '<b>'.price($valtoshow).'</b>';
+	print '<b class="amount">'.price($valtoshow, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 	print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 	print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
-
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
@@ -1999,12 +1992,9 @@ if ($source == 'boothlocation') {
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	print '</td><td class="CTableRow2">';
 	$valtoshow = $amount;
-	print '<b>'.price($valtoshow).'</b>';
+	print '<b class="amount">'.price($valtoshow, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 	print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 	print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
-
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 

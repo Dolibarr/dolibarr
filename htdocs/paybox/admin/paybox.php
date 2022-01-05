@@ -261,7 +261,7 @@ $doleditor->Create();
 print '</td></tr>';
 
 
-print '<tr class="oddeven"><td>';
+print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';

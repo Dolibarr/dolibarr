@@ -4800,9 +4800,10 @@ class Product extends CommonObject
 		if (!empty($this->entity)) {
 			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
 			if ($this->nbphoto > 0) {
-				$label .= '<div class="photointooltip">';
+				$label .= '<div class="photointooltip floatright">';
 				$label .= $tmpphoto;
-				$label .= '</div><div style="clear: both;"></div>';
+				$label .= '</div>';
+				//$label .= '<div style="clear: both;"></div>';
 			}
 		}
 
