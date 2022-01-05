@@ -136,7 +136,7 @@ llxHeader('', $langs->trans('ConferenceOrBoothAttendee'), $help_url);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
-	$head = conferenceorboothattendeePrepareHead($object);
+	$head = conferenceorboothAttendeePrepareHead($object);
 
 	print dol_get_fiche_head($head, 'note', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
 

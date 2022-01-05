@@ -334,11 +334,7 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 	$options[$bankcategory->id] = $bankcategory->label;
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Create mode                                                                */
-/*                                                                            */
-/* ************************************************************************** */
+// Create mode
 if ($action == 'create') {
 	// Update fields properties in realtime
 	if (!empty($conf->use_javascript_ajax)) {
@@ -350,6 +346,7 @@ if ($action == 'create') {
             			});
             			function setPaymentType()
             			{
+							console.log("setPaymentType");
             				var code = $("#selectpaymenttype option:selected").val();
                             if (code == \'CHQ\' || code == \'VIR\')
             				{
@@ -415,7 +412,8 @@ if ($action == 'create') {
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($accountid, "accountid", 0, '', 2, '', 0, '', 1); 	// Affiche liste des comptes courant
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $form->select_comptes($accountid, "accountid", 0, '', 2, '', 0, '', 1); // Show list of main accounts (comptes courants)
 		print '</td></tr>';
 	}
 

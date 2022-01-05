@@ -714,7 +714,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
-	$sql .= ' AND a.fk_soc = '.$socid;
+	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) {

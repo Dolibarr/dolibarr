@@ -321,7 +321,7 @@ class pdf_cyan extends ModelePDFPropales
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-				// Set nblines with the new facture lines content after hook
+				// Set nblines with the new content of lines after hook
 				$nblines = count($object->lines);
 				//$nbpayments = count($object->getListOfPayments());
 
@@ -816,11 +816,11 @@ class pdf_cyan extends ModelePDFPropales
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
+						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-
+					$nexY += 2; // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter) {

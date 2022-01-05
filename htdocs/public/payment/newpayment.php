@@ -300,21 +300,23 @@ if ($tmpsource == 'membersubscription') {
 }
 $valid = true;
 if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-	$token = '';
-	$tokenoldcompat = '';
+	$tokenisok = false;
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		if ($tmpsource && $REF) {
-			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$tmpsource.$REF, 2); // Use the source in the hash to avoid duplicates if the references are identical
+			// Use the source in the hash to avoid duplicates if the references are identical
+			$tokenisok = dol_verifyHash($conf->global->PAYMENT_SECURITY_TOKEN.$tmpsource.$REF, $SECUREKEY, '2');
+			// Do a second test for retro-compatibility (token may have been hashed with membersubscription in external module)
 			if ($tmpsource != $source) {
-				$tokenoldcompat = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$source.$REF, 2); // for retro-compatibility (token may have been hashed with membersubscription in external module)
+				$tokenisok = dol_verifyHash($conf->global->PAYMENT_SECURITY_TOKEN.$source.$REF, $SECUREKEY, '2');
 			}
 		} else {
-			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+			$tokenisok = dol_verifyHash($conf->global->PAYMENT_SECURITY_TOKEN, $SECUREKEY, '2');
 		}
 	} else {
-		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
+		$tokenisok = ($conf->global->PAYMENT_SECURITY_TOKEN == $SECUREKEY);
 	}
-	if ($SECUREKEY != $token && (empty($tokenoldcompat) || $SECUREKEY != $tokenoldcompat)) {
+
+	if (! $tokenisok) {
 		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 			$valid = false; // PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
 		} else {
@@ -324,7 +326,7 @@ if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 
 	if (!$valid) {
 		print '<div class="error">Bad value for key.</div>';
-		//print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+		//print 'SECUREKEY='.$SECUREKEY.' valid='.$valid;
 		exit;
 	}
 }

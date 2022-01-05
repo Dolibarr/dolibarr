@@ -74,7 +74,7 @@ class AdherentStats extends Stats
 		if ($this->memberid) {
 			$this->where .= " AND m.rowid = ".((int) $this->memberid);
 		}
-		//if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
+		//if ($this->userid > 0) $this->where .= " AND fk_user_author = ".((int) $this->userid);
 	}
 
 
