@@ -2176,9 +2176,10 @@ class Adherent extends CommonObject
 		$linkend = '';
 
 		if (!empty($this->photo)) {
-			$label .= '<div class="photointooltip">';
-			$label .= Form::showphoto('memberphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
-			$label .= '</div><div style="clear: both;"></div>';
+			$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('memberphoto', $this, 80, 0, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1);
+			$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
 		}
 
 		$label .= '<div class="centpercent">';

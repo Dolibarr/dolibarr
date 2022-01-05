@@ -2113,7 +2113,7 @@ class User extends CommonObject
 	 *	@param	int		$notrigger				1=Does not launch triggers
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is crypted value.
-	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
+	 *  @return string 			          		If OK return clear password, 0 if no change (warning, you may retreive 1 instead of 0 even if password was same), < 0 if error
 	 */
 	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0)
 	{
@@ -2600,9 +2600,10 @@ class User extends CommonObject
 		$companylink = '';
 
 		if (!empty($this->photo)) {
-			$label .= '<div class="photointooltip">';
-			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
-			$label .= '</div><div style="clear: both;"></div>';
+			$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
 		}
 
 		// Info Login
