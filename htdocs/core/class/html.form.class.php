@@ -1690,17 +1690,18 @@ class Form
 				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
 
-            if($showempty && !is_numeric($showempty)) {
-                    $textforempty = $showempty;
-                    $out .= '<option class="optiongrey" value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'>'.$textforempty.'</option>';
-            } else {
-                if(($showempty == 1 || ($showempty == 3 && $num > 1)) && ! $multiple) {
-                    $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
-                }
-                if($showempty == 2) {
-                    $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
-                }
-            }
+			if ($showempty && ! is_numeric($showempty)) {
+				$textforempty = $showempty;
+				$out .= '<option class="optiongrey" value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'>'.$textforempty.'</option>';
+			}
+			else {
+				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && ! $multiple) {
+					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
+				}
+				if ($showempty == 2) {
+					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
+				}
+			}
 
 			$i = 0;
 			if ($num) {

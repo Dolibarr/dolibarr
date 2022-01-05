@@ -371,7 +371,7 @@ $sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
-		if($obj->source == 'internal') $listofprojectcontacttype[$obj->rowid] = $obj->code;
+		if ($obj->source == 'internal') $listofprojectcontacttype[$obj->rowid] = $obj->code;
 		else $listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
 	}
 } else {
