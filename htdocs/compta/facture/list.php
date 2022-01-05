@@ -1743,7 +1743,7 @@ if ($resql) {
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.$obj->name_alias.'">';
-				print $obj->name_alias;
+				print $obj->alias;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
