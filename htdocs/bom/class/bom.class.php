@@ -795,7 +795,7 @@ class BOM extends CommonObject
 			if ($resultFetch < 0) {
 				setEventMessages($product->error, $product->errors, 'errors');
 			} else {
-				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->getNomUrl(0,'',0,-1,1);
+				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->getNomUrl(0, '', 0, -1, 1);
 			}
 		}
 
