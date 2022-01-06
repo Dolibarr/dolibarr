@@ -1160,8 +1160,8 @@ while ($i < min($num, $limit)) {
 		// TODO Use a cache
 		$sql = "SELECT label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-		$sql .= " WHERE fk_product=".$objp->rowid;
-		$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+		$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+		$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 		$sql .= " LIMIT 1";
 
 		$result = $db->query($sql);
