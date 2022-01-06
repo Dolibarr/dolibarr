@@ -910,7 +910,7 @@ class AccountancyExport
 		*/
 		// Code remplacé
 		print "DateLimitReglmt".$separator;
-		print "NumFacture".$separator;
+		print "NumFacture";
 		// Easya 2022 - PR18949 - Fin
 		print $end_line;
 
@@ -998,12 +998,15 @@ class AccountancyExport
 				print $line->multicurrency_code.$separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
-
 				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
-				// Code ajouté
+				// Code annulé
+				/*
+				print $date_limit_payment;
+				*/
+				// Code remplacé
+				print $date_limit_payment . $separator;
 				// FEC_suppl:NumFacture
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1) . $separator;
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 				// Easya 2022 - PR18949 - Fin
 
 				print $end_line;
@@ -1049,7 +1052,7 @@ class AccountancyExport
 		*/
 		// Code remplacé
 		print "DateLimitReglmt".$separator;
-		print "NumFacture".$separator;
+		print "NumFacture";
 		// Easya 2022 - PR18949 - Fin
 		print $end_line;
 
@@ -1137,12 +1140,15 @@ class AccountancyExport
 				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
-
 				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
-				// Code ajouté
+				// Code annulé
+				/*
+				print $date_limit_payment;
+				*/
+				// Code remplacé
+				print $date_limit_payment . $separator;
 				// FEC_suppl:NumFacture
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1) . $separator;
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 				// Easya 2022 - PR18949 - Fin
 
 				print $end_line;
