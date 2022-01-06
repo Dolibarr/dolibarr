@@ -485,6 +485,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 		width: 100%;
 		max-width: unset;
 	}
+
+	.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version {
+		width: 60px;
+	}
 	.info-box-sm .info-box-icon {
 		width: 60px;
 	}
