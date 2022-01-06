@@ -172,7 +172,7 @@ class PaymentTerm // extends CommonObject
 	 *    Load object in memory from database
 	 *
 	 *    @param      int		$id     Id object
-	 *    @param      string    $code
+	 *    @param      string    $code   Code object
 	 *    @return     int         		<0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '')
