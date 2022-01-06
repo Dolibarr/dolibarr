@@ -23,7 +23,7 @@
  *      \brief      Fichier de gestion d'une box des factures fournisseurs impayees
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
+include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 
 /**
  * Class to manage the box to show not paid suppliers invoices
@@ -78,6 +78,9 @@ class box_factures_fourn_imp extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
+		$hookmanager = new HookManager($this->db);
+		$hookmanager->initHooks(array('box_factures_fourn_imp'));
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills", $max));
 
 		if ($user->rights->fournisseur->facture->lire) {
@@ -93,11 +96,17 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.paye, f.fk_statut as status, f.type";
 			$sql .= ", f.tms";
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printBoxFieldListSelect', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ",".MAIN_DB_PREFIX."facture_fourn as f";
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printBoxFieldListFrom', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity = ".$conf->entity;
 			$sql .= " AND f.paye = 0";
@@ -108,6 +117,9 @@ class box_factures_fourn_imp extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printBoxFieldListWhere', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY datelimite DESC, f.ref_supplier DESC ";
 			$sql .= $this->db->plimit($max, 0);
 

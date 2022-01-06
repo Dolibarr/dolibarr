@@ -25,6 +25,7 @@
  *  \brief      Module to show Projet activity of the current Year
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 /**
  * Class to manage the box to show last projet
@@ -98,9 +99,21 @@ class box_project extends ModeleBoxes
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
+			$hookmanager = new HookManager($this->db);
+			$hookmanager->initHooks(array('box_project'));
+
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.public";
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListSelect', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListFrom', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListWhere', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " AND p.fk_statut = 1"; // Only open projects
 			if (empty($user->rights->projet->all->lire)) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users

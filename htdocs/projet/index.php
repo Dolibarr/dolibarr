@@ -208,6 +208,9 @@ $sql .= ", s.logo, s.email, s.entity";
 $sql .= ", s.canvas, s.status as thirdpartystatus";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$parameters = array('alias' => ['projet' => 'p']);
+$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 if ($mine || empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
@@ -215,6 +218,9 @@ if ($mine || empty($user->rights->projet->all->lire)) {
 if ($socid) {
 	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
+$parameters = array('alias' => ['projet' => 'p']);
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY p.tms DESC";
 $sql .= $db->plimit($max, 0);
 
@@ -315,6 +321,9 @@ $sql .= ", s.logo, s.email, s.entity";
 $sql .= ", s.canvas, s.status";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$parameters = array('alias' => ['projet' => 'p']);
+$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) {
@@ -323,6 +332,9 @@ if ($mine || empty($user->rights->projet->all->lire)) {
 if ($socid > 0) {
 	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
+$parameters = array('alias' => ['projet' => 'p']);
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.canvas, s.status";
 $sql .= $db->order($sortfield, $sortorder);
 //$sql .= $db->plimit($max + 1, 0);

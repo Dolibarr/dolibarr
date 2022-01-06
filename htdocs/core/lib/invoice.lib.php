@@ -759,10 +759,16 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 	$sql .= ", s.code_client, s.code_compta";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql .= " JOIN ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListFromSupplierDraft', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".FactureFournisseur::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
 	if (empty($user->rights->societe->client->voir) && !$socid) {

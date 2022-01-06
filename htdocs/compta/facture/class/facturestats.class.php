@@ -27,6 +27,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+
 
 /**
  *	Class to manage stats for invoices (customer and supplier)
@@ -56,8 +58,9 @@ class FactureStats extends Stats
 	 * 	@param	int			$userid    	Id user for filter (creation user)
 	 * 	@param	int			$typentid   Id typent of thirdpary for filter
 	 * 	@param	int			$categid    Id category of thirdpary for filter
+	 *  @param  HookManager $hookmanager The hook manager to use
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
+	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0, $hookmanager = null)
 	{
 		global $user, $conf;
 
@@ -112,6 +115,15 @@ class FactureStats extends Stats
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_soc = f.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
 			$this->where .= ' AND c.rowid = '.((int) $categid);
+		}
+
+		if ($hookmanager) {
+			$parameters = array();
+			$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+			$this->join .= $hookmanager->resPrint;
+
+			$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+			$this->where .= $hookmanager->resPrint;
 		}
 	}
 
@@ -188,7 +200,6 @@ class FactureStats extends Stats
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
-
 		$res = $this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
 		return $res;

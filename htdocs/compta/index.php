@@ -132,6 +132,12 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
+
+	// Add joins from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListFromCustomerLastModified', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -282,6 +288,11 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
+	// Add join from (joins) hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListFromSupplierLastModified', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	$sql .= " AND ff.entity = ".$conf->entity;
 	if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -403,6 +414,11 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 
 	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListFromLastDonations', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " WHERE d.entity IN (".getEntity('donation').")";
 	// Add where from hooks
 	$parameters = array();
@@ -494,6 +510,12 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 		$sql .= " SUM(pc.amount) as sumpaid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."c_chargesociales as cc, ".MAIN_DB_PREFIX."chargesociales as c)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = c.rowid";
+
+		// Add joins from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListFromSocialContributions', $parameters);
+		$sql .= $hookmanager->resPrint;
+
 		$sql .= " WHERE c.fk_type = cc.id";
 		$sql .= " AND c.entity IN (".getEntity('tax').')';
 		$sql .= " AND c.paye = 0";
@@ -595,6 +617,12 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_source = c.rowid AND el.sourcetype = 'commande'";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON el.fk_target = f.rowid AND el.targettype = 'facture'";
+
+	// Add where from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListFromCustomerOrderToBill', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity = ".$conf->entity;
 	if (empty($user->rights->societe->client->voir) && !$socid) {

@@ -265,13 +265,19 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
 	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid = x.fk_user_author)";
+	$parameters = array('alias' => ['expensereport' => 'x']);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE u.rowid = x.fk_user_author";
-	$sql .= " AND x.entity = ".$conf->entity;
+	$sql .= " WHERE x.entity = ".$conf->entity;
 	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
+	$parameters = array('alias' => ['expensereport' => 'x']);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");

@@ -2405,7 +2405,7 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  */
 function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array())
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $hookmanager;
 	global $theme_datacolor;
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -2451,6 +2451,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	} else {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
+	$parameters = array();
+	$hookmanager->executeHooks('printFieldListFromProjectTask', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")";
 	if ($socid) {
@@ -2477,6 +2480,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($project_year_filter, 1, false)).")";
 		}
 	}
+
+	$parameters = array();
+	$hookmanager->executeHooks('printFieldListWhereProjectTask', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 
 	// Get id of project we must show tasks
 	$arrayidofprojects = array();

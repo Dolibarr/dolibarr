@@ -24,6 +24,7 @@
  * \brief      Module that generates the latest supplier orders box
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 
 /**
  * Class that manages the box showing latest supplier orders
@@ -74,10 +75,14 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 		$this->max = $max;
 
+
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$supplierorderstatic = new CommandeFournisseur($this->db);
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
+
+		$hookmanager = new HookManager($this->db);
+		$hookmanager->initHooks(array('box_supplier_orders_awaiting_reception'));
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleSupplierOrdersAwaitingReception", $max));
 
@@ -90,11 +95,17 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
 			$sql .= ", c.fk_statut as status";
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListSelect', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListFrom', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 			$sql .= " AND c.date_livraison IS NOT NULL";
@@ -105,6 +116,9 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListWhere', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
 				$sql .= " ORDER BY c.date_commande DESC, c.ref DESC";
 			} else {

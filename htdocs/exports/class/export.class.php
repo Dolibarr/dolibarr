@@ -42,6 +42,7 @@ class Export
 	public $array_export_module = array(); // Tableau de "nom de modules"
 	public $array_export_label = array(); // Tableau de "libelle de lots"
 	public $array_export_sql_start = array(); // Tableau des "requetes sql"
+	public $array_export_sql_from = array(); // Tableau des "requetes sql"
 	public $array_export_sql_end = array(); // Tableau des "requetes sql"
 	public $array_export_sql_order = array(); // Tableau des "requetes sql"
 
@@ -198,6 +199,7 @@ class Export
 
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i] = $module->export_sql_start[$r];
+									$this->array_export_sql_from[$i] = (!empty($module->export_sql_from[$r]) ? $module->export_sql_from[$r] : null);
 									$this->array_export_sql_end[$i] = $module->export_sql_end[$r];
 									$this->array_export_sql_order[$i] = (!empty($module->export_sql_order[$r]) ? $module->export_sql_order[$r] : null);
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
@@ -235,6 +237,9 @@ class Export
 		$sql = $this->array_export_sql_start[$indice];
 		$i = 0;
 
+		$hookmanager = new HookManager($this->db);
+		$hookmanager->initHooks(array('export'));
+
 		//print_r($array_selected);
 		foreach ($this->array_export_fields[$indice] as $key => $value) {
 			if (!array_key_exists($key, $array_selected)) {
@@ -257,6 +262,20 @@ class Export
 
 			$sql .= $newfield;
 		}
+
+		$parameters = array(
+			//'module' => $this->array_export_module,
+			'export_code' => $this->array_export_code
+		);
+		$hookmanager->executeHooks('printFieldListSelect', $parameters, $object);
+		$sql .= $hookmanager->resPrint;
+
+		if ($this->array_export_sql_from[$indice]) {
+			$sql .= $this->array_export_sql_from[$indice];
+			$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
+		}
+
 		$sql .= $this->array_export_sql_end[$indice];
 
 		// Add the WHERE part. Filtering into sql if a filtering array is provided
@@ -273,6 +292,9 @@ class Export
 			}
 			$sql .= $sqlWhere;
 		}
+
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+		$sql .= $hookmanager->resPrint;
 
 		// Add the order
 		$sql .= $this->array_export_sql_order[$indice];

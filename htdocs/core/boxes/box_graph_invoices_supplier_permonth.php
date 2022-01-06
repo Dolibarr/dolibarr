@@ -80,6 +80,9 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			$startmonth = 1;
 		}
 
+		$hookmanager = new HookManager($this->db);
+		$hookmanager->initHooks(array('box_graph_invoices_supplier_permonth'));
+
 		$text = $langs->trans("BoxSuppliersInvoicesPerMonth", $max);
 		$this->info_box_head = array(
 				'text' => $text,
@@ -134,7 +137,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
 
-			$stats = new FactureStats($this->db, $socid, $mode, 0);
+			$stats = new FactureStats($this->db, $socid, $mode, 0, 0, 0, $hookmanager);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {

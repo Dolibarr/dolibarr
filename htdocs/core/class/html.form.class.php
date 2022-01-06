@@ -7465,7 +7465,7 @@ class Form
 		}
 
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array('htmlname' => $htmlname, 'searchkey' => $searchkey, 'fieldstoshow' => $fieldstoshow);
 		$reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		if (!empty($hookmanager->resPrint)) {
 			$sql .= $hookmanager->resPrint;

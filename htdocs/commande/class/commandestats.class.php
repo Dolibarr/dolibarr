@@ -61,8 +61,9 @@ class CommandeStats extends Stats
 	 * @param   int		$userid     Id user for filter (creation user)
 	 * @param	int		$typentid   Id typent of thirdpary for filter
 	 * @param	int		$categid    Id category of thirdpary for filter
+	 * @param	Hookmanager		$hookmanager    A hook manager for more filtering
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
+	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0, $hookmanager = null)
 	{
 		global $user, $conf;
 
@@ -112,6 +113,15 @@ class CommandeStats extends Stats
 			$this->join .= ' LEFT JOIN '.$this->categ_link.' as cats ON cats.fk_soc = c.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cat.rowid = cats.fk_categorie';
 			$this->where .= ' AND cat.rowid = '.((int) $categid);
+		}
+
+		if ($hookmanager) {
+			$parameters = array();
+			$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+			$this->join .= $hookmanager->resPrint;
+
+			$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+			$this->where .= $hookmanager->resPrint;
 		}
 	}
 

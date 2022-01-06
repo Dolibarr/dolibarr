@@ -65,12 +65,12 @@ if (!$sortorder) {
 
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Security check
-//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
-$result = restrictedArea($user, 'stock');
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('warehousecard', 'globalcard'));
+
+// Security check
+//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
+$result = restrictedArea($user, 'stock', $id);
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);

@@ -70,6 +70,9 @@ $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
+$parameters = array('alias' => ['commande_fournisseur' => 'cf']);
+$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE cf.fk_soc = s.rowid";
 $sql .= " AND cf.entity IN (".getEntity('supplier_order').")";
 if ($user->socid) {
@@ -78,6 +81,9 @@ if ($user->socid) {
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
+$parameters = array('alias' => ['commande_fournisseur' => 'cf']);
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
@@ -175,19 +181,24 @@ if ($resql) {
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON (c.fk_soc = s.rowid)";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON (sc.fk_soc = s.rowid)";
 	}
-	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
+	$parameters = array('alias' => ['commande_fournisseur' => 'c']);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
+	$sql .= " WHERE c.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
 	$sql .= " AND c.fk_statut = 0";
 	if (!empty($socid)) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
+	$parameters = array('alias' => ['commande_fournisseur' => 'c']);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -225,9 +236,8 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_T
 $sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-	$sql .= " WHERE ((ug.fk_user = u.rowid";
-	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (ug.fk_user = u.rowid)";
+	$sql .= " WHERE (ug.entity IN (".getEntity('usergroup').")";
 	$sql .= " OR u.entity = 0)"; // Show always superadmin
 } else {
 	$sql .= " WHERE (u.entity IN (".getEntity('user')."))";
@@ -282,12 +292,14 @@ $max = 5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = c.fk_soc)";
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON (sc.fk_soc = s.rowid)";
 }
-$sql .= " WHERE c.fk_soc = s.rowid";
-$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
+$parameters = array('alias' => ['commande_fournisseur' => 'c']);
+$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE c.entity IN (".getEntity('supplier_order').")";
 //$sql.= " AND c.fk_statut > 2";
 if (!empty($socid)) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -295,6 +307,9 @@ if (!empty($socid)) {
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
+$parameters = array('alias' => ['commande_fournisseur' => 'c']);
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 

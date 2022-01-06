@@ -240,6 +240,10 @@ if ($separatedPMP) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as pa ON pa.fk_product = p.rowid AND pa.fk_product = ps.fk_product AND pa.entity = ". (int) $conf->entity;
 }
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE t.entity IN (".getEntity('stock').")";
 
 if (!empty($conf->categorie->enabled)) {
@@ -289,6 +293,8 @@ $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters); // 
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $totalnboflines = 0;
+
+echo $sql;
 
 $result = $db->query($sql);
 if ($result) {

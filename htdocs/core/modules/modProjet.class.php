@@ -273,15 +273,15 @@ class modProjet extends DolibarrModules
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('f.ref'=>"task_time"));
 		}
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r] = ' FROM '.MAIN_DB_PREFIX.'projet as p';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_extrafields as extra ON p.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls ON p.fk_opp_status = cls.rowid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet_task as pt ON p.rowid = pt.fk_projet";
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
+		$this->export_sql_from[$r] = ' FROM '.MAIN_DB_PREFIX.'projet as p';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_extrafields as extra ON p.rowid = extra.fk_object';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls ON p.fk_opp_status = cls.rowid';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet_task as pt ON p.rowid = pt.fk_projet";
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON ptt.invoice_id = f.rowid';
+			$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON ptt.invoice_id = f.rowid';
 		}
 		$this->export_sql_end[$r] .= " WHERE p.entity IN (".getEntity('project').")";
 

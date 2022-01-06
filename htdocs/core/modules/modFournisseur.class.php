@@ -337,18 +337,18 @@ class modFournisseur extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields line
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
+		$this->export_sql_from[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+			$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'facture_fourn as f';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_extrafields as extra ON f.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .= ' , '.MAIN_DB_PREFIX.'facture_fourn_det as fd';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det_extrafields as extraline ON fd.rowid = extraline.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
+		$this->export_sql_from[$r] .= ' '.MAIN_DB_PREFIX.'facture_fourn as f';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_extrafields as extra ON f.rowid = extra.fk_object';
+		$this->export_sql_from[$r] .= ' , '.MAIN_DB_PREFIX.'facture_fourn_det as fd';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det_extrafields as extraline ON fd.rowid = extraline.fk_object';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
@@ -475,21 +475,23 @@ class modFournisseur extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields line
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
+		$this->export_sql_from[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+			$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'commande_fournisseur as f';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON uv.rowid = f.fk_user_valid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua1 ON ua1.rowid = f.fk_user_approve';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua2 ON ua2.rowid = f.fk_user_approve2';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur_extrafields as extra ON f.rowid = extra.fk_object,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as fd';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields as extraline ON fd.rowid = extraline.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
+
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
+		$this->export_sql_from[$r] .= ' '.MAIN_DB_PREFIX.'commande_fournisseur as f';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON uv.rowid = f.fk_user_valid';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua1 ON ua1.rowid = f.fk_user_approve';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua2 ON ua2.rowid = f.fk_user_approve2';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur_extrafields as extra ON f.rowid = extra.fk_object,';
+		$this->export_sql_from[$r] .= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as fd';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields as extraline ON fd.rowid = extraline.fk_object';
+		$this->export_sql_from[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
+
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_order').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {

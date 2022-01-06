@@ -24,6 +24,7 @@
  *      \brief      Fichier de gestion d'une box des factures fournisseurs
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 
 /**
@@ -80,6 +81,9 @@ class box_factures_fourn extends ModeleBoxes
 		$facturestatic = new FactureFournisseur($this->db);
 		$thirdpartystatic = new Fournisseur($this->db);
 
+		$hookmanager = new HookManager($this->db);
+		$hookmanager->initHooks(array('box_factures_fourn'));
+
 		$this->info_box_head = array(
 			'text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierBills", $max)
 		);
@@ -98,11 +102,17 @@ class box_factures_fourn extends ModeleBoxes
 			$sql .= ', f.datef as df';
 			$sql .= ', f.datec as datec';
 			$sql .= ', f.date_lim_reglement as datelimite, f.tms, f.type';
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListSelect', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListFrom', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity = ".$conf->entity;
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
@@ -111,6 +121,9 @@ class box_factures_fourn extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
+			$parameters = array();
+			$hookmanager->executeHooks('printBoxFieldListWhere', $parameters, $object);
+			$sql .= $hookmanager->resPrint;
 			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
 				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";
 			} else {
