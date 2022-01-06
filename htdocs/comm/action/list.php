@@ -740,7 +740,7 @@ if ($resql)
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
 			$late = 0;
-			if($actioncomm->hasDelay() && $actioncomm->percentage >= 0 && $actioncomm->percentage < 100 ) $late = 1;
+			if ($actioncomm->hasDelay() && $actioncomm->percentage >= 0 && $actioncomm->percentage < 100 ) $late = 1;
 			if ($late) print img_warning($langs->trans("Late")).' ';
 			print '</td>';
 		}
