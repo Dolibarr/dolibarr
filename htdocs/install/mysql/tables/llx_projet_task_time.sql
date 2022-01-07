@@ -24,6 +24,7 @@ create table llx_projet_task_time
   task_datehour    datetime,				-- day + hour
   task_date_withhour integer DEFAULT 0,	-- 0 by default, 1 if date was entered with start hour
   task_duration    double,
+  fk_product       integer NULL,
   fk_user          integer,
   thm			   double(24,8),
   invoice_id       integer DEFAULT NULL,				-- If we need to invoice each line of timespent, we can save invoice id here
