@@ -57,7 +57,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-    if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
+	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -67,12 +67,12 @@ function contact_prepare_head(Contact $object)
 		if (!is_null($dataretrieved)) {
 			$nbProject = $dataretrieved;
 		} else {
-            $sql = 'SELECT COUNT(n.rowid) as nb';
-            $sql .= ' FROM '.MAIN_DB_PREFIX.'projet as n';
-            $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (n.rowid = cc.element_id)';
-            $sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-            $sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
-            $sql .= ' AND n.entity IN ('.getEntity('project').')';
+			$sql = 'SELECT COUNT(n.rowid) as nb';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as n';
+			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (n.rowid = cc.element_id)';
+			$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
+			$sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
+			$sql .= ' AND n.entity IN ('.getEntity('project').')';
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -184,15 +184,15 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		print "\n".'<table class="noborder" width=100%>';
 
 		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
-        $sql .= ', cls.code as opp_status_code, ctc.libelle';
-        $sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
-        $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
-        $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid = cc.fk_c_type_contact)';
-        $sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-        $sql .= ' AND ctc.element="project" AND ctc.source="external"';
-        $sql .= ' AND p.entity IN ('.getEntity('project').')';
-        $sql .= ' ORDER BY p.dateo DESC';
+		$sql .= ', cls.code as opp_status_code, ctc.libelle';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid = cc.fk_c_type_contact)';
+		$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
+		$sql .= ' AND ctc.element="project" AND ctc.source="external"';
+		$sql .= ' AND p.entity IN ('.getEntity('project').')';
+		$sql .= ' ORDER BY p.dateo DESC';
 
 		$result = $db->query($sql);
 		if ($result) {
@@ -201,7 +201,6 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Ref").'</td>';
 			print '<td>'.$langs->trans("Name").'</td>';
-			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td class="center">'.$langs->trans("DateStart").'</td>';
 			print '<td class="center">'.$langs->trans("DateEnd").'</td>';
 			print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
@@ -234,7 +233,6 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 						// Label
 						print '<td>'.$obj->title.'</td>';
-						print '<td>'.$obj->libelle.'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end

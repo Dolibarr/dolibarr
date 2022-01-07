@@ -40,8 +40,8 @@ $hookmanager->initHooks(array('projectcontact'));
 
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if($reshook < 0) {
-    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 /*
@@ -50,67 +50,66 @@ if($reshook < 0) {
 
 $form = new Form($db);
 
-if($id) {
-    require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
+if ($id) {
+	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
-    $object = new Contact($db);
+	$object = new Contact($db);
 
-    $result = $object->fetch($id);
-    if(empty($object->thirdparty)) {
-        $object->fetch_thirdparty();
-    }
-    $socid = $object->thirdparty->id;
-    $title = $langs->trans("Projects");
-    if(! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-        $title = $object->name." - ".$title;
-    }
-    llxHeader('', $title);
+	$result = $object->fetch($id);
+	if (empty($object->thirdparty)) {
+		$object->fetch_thirdparty();
+	}
+	$socid = $object->thirdparty->id;
+	$title = $langs->trans("Projects");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+		$title = $object->name." - ".$title;
+	}
+	llxHeader('', $title);
 
-    if(! empty($conf->notification->enabled)) {
-        $langs->load("mails");
-    }
-    $head = contact_prepare_head($object);
+	if (! empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
+	$head = contact_prepare_head($object);
 
-    print dol_get_fiche_head($head, 'project', $langs->trans("Contact"), -1, 'contact');
+	print dol_get_fiche_head($head, 'project', $langs->trans("Contact"), -1, 'contact');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref = '<div class="refidno">';
-    if(empty($conf->global->SOCIETE_DISABLE_CONTACTS) && !empty($socid)) {
-        $object->thirdparty->fetch($socid);
-        // Thirdparty
-        $morehtmlref .= $langs->trans('ThirdParty').' : ';
-        if($object->thirdparty->id > 0) {
-            $morehtmlref .= $object->thirdparty->getNomUrl(1, 'contact');
-        }
-        else {
-            $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
-        }
-    }
-    $morehtmlref .= '</div>';
+	$morehtmlref = '<div class="refidno">';
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS) && !empty($socid)) {
+		$object->thirdparty->fetch($socid);
+		// Thirdparty
+		$morehtmlref .= $langs->trans('ThirdParty').' : ';
+		if ($object->thirdparty->id > 0) {
+			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'contact');
+		} else {
+			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+		}
+	}
+	$morehtmlref .= '</div>';
 
-    dol_banner_tab($object, 'id', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', $morehtmlref);
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent tableforfield">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent tableforfield">';
 
-// Civility
-    print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
-    print $object->getCivilityLabel();
-    print '</td></tr>';
+	// Civility
+	print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
+	print $object->getCivilityLabel();
+	print '</td></tr>';
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    print dol_get_fiche_end();
-    print '<br>';
+	print dol_get_fiche_end();
+	print '<br>';
 
-    // Projects list
-    $result = show_contacts_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?id='.$object->id, 1);
+	// Projects list
+	$result = show_contacts_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?id='.$object->id, 1);
 }
 
 // End of page
