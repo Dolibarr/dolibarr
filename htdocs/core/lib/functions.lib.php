@@ -44,20 +44,33 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 /**
  * Return dolibarr global constant string value
  * @param string $key key to return value, return '' if not set
+ * @param string $default value to return
  * @return string
  */
+// Easya 2022 - PR19649 - FontAwesome - Add constant to define your own directory and font family
+// Code annulé
+/*
 function getDolGlobalString($key)
 {
 	global $conf;
 	// return $conf->global->$key ?? '';
 	return (string) (empty($conf->global->$key) ? '' : $conf->global->$key);
 }
+*/
+// Code remplacé
+function getDolGlobalString($key, $default = '')
+{
+	global $conf;
+	// return $conf->global->$key ?? $default;
+	return (string) (empty($conf->global->$key) ? $default : $conf->global->$key);
+}
+// Easya 2022 - PR19649 - Fin
 
 /**
- * Return dolibarr global constant int value
- * @param string $key key to return value, return 0 if not set
- * @return int
- */
+* Return dolibarr global constant int value
+* @param string $key key to return value, return 0 if not set
+* @return int
+*/
 function getDolGlobalInt($key)
 {
 	global $conf;
