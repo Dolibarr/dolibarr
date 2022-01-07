@@ -1855,10 +1855,10 @@ class BonPrelevement extends CommonObject
 			$addressline1 = strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""));
 			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => ""));
 			if (trim($addressline1)) {
-				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline1), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			if (trim($addressline2)) {
-				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline2), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			$XML_DEBITOR .= '					</PstlAdr>'.$CrLf;
 			$XML_DEBITOR .= '				</Dbtr>'.$CrLf;
@@ -1906,10 +1906,10 @@ class BonPrelevement extends CommonObject
 			$addressline1 = strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""));
 			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => ""));
 			if (trim($addressline1)) {
-				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline1), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			if (trim($addressline2)) {
-				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline2), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			$XML_CREDITOR .= '					</PstlAdr>'.$CrLf;
 			$XML_CREDITOR .= '				</Cdtr>'.$CrLf;
@@ -2078,10 +2078,10 @@ class BonPrelevement extends CommonObject
 				$addressline1 = strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => ""));
 				$addressline2 = strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => ""));
 				if ($addressline1) {
-					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML($addressline1).'</AdrLine>'.$CrLf;
+					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline1), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
 				if ($addressline2) {
-					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML($addressline2).'</AdrLine>'.$CrLf;
+					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline2), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
 				$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '			</Cdtr>'.$CrLf;
@@ -2099,8 +2099,8 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf;
 				 $XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
-				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>').$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN).'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
 				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
@@ -2144,10 +2144,10 @@ class BonPrelevement extends CommonObject
 				$addressline1 = strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => ""));
 				$addressline2 = strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => ""));
 				if ($addressline1) {
-					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML($addressline1).'</AdrLine>'.$CrLf;
+					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline1), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
 				if ($addressline2) {
-					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML($addressline2).'</AdrLine>'.$CrLf;
+					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline2), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
 				$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '			</Dbtr>'.$CrLf;
@@ -2165,8 +2165,8 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf;
 				 $XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
-				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ADDRESS).'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN).'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
 				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
