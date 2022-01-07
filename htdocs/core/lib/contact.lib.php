@@ -201,6 +201,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Ref").'</td>';
 			print '<td>'.$langs->trans("Name").'</td>';
+			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td class="center">'.$langs->trans("DateStart").'</td>';
 			print '<td class="center">'.$langs->trans("DateEnd").'</td>';
 			print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
@@ -233,6 +234,7 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 						// Label
 						print '<td>'.$obj->title.'</td>';
+						print '<td>'.$obj->libelle.'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end
