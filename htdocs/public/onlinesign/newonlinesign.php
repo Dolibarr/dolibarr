@@ -62,6 +62,8 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+
 
 $refusepropal = GETPOST('refusepropal', 'alpha');
 $message = GETPOST('message', 'aZ09');
@@ -148,7 +150,7 @@ if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
  * Actions
  */
 
-if ($action == 'confirm_refusepropal') {
+if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -213,6 +215,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="page_y" value="" />';
 print "\n";
 print '<!-- Form to sign -->'."\n";
 
@@ -336,18 +339,28 @@ if ($source == 'proposal') {
 		}
 	} else {
 		$last_main_doc_file = $proposal->last_main_doc;
-		if (preg_match('/_signed-(\d+)/', $last_main_doc_file)) {	// If the last main doc has been signed
-			$last_main_doc_file_not_signed = preg_replace('/_signed-(\d+)/', '', $last_main_doc_file);
 
-			$datefilesigned = dol_filemtime($last_main_doc_file);
-			$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
+		if ($proposal->status == $proposal::STATUS_NOTSIGNED) {
+			$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+			if ($directdownloadlink) {
+				print '<br><a href="'.$directdownloadlink.'">';
+				print img_mime($proposal->last_main_doc, '');
+				print $langs->trans("DownloadDocument").'</a>';
+			}
+		} elseif ($proposal->status == $proposal::STATUS_SIGNED || $proposal->status == $proposal::STATUS_BILLED) {
+			if (preg_match('/_signed-(\d+)/', $last_main_doc_file)) {	// If the last main doc has been signed
+				$last_main_doc_file_not_signed = preg_replace('/_signed-(\d+)/', '', $last_main_doc_file);
 
-			if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
-				$directdownloadlink = $proposal->getLastMainDocLink('proposal');
-				if ($directdownloadlink) {
-					print '<br><a href="'.$directdownloadlink.'">';
-					print img_mime($proposal->last_main_doc, '');
-					print $langs->trans("DownloadDocument").'</a>';
+				$datefilesigned = dol_filemtime($last_main_doc_file);
+				$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
+
+				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
+					$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+					if ($directdownloadlink) {
+						print '<br><a href="'.$directdownloadlink.'">';
+						print img_mime($proposal->last_main_doc, '');
+						print $langs->trans("DownloadDocument").'</a>';
+					}
 				}
 			}
 		}
@@ -392,6 +405,7 @@ if ($action == "dosign" && empty($cancel)) {
 	print '<input type="button" class="buttonDelete small" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
+	// Do not use class="reposition" here: It breaks the submit and there is a message on top to say it's ok, so going back top is better.
 	print '<input type="button" class="button" id="signbutton" value="'.$langs->trans("Sign").'">';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 
@@ -459,7 +473,7 @@ if ($action == "dosign" && empty($cancel)) {
 			}
 		} else {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignPropal").'">';
-			print '<input name="refusepropal" type="submit" class="butActionDelete small wraponsmartphone marginbottomonly marginleftonly marginrightonly" value="'.$langs->trans("RefusePropal").'">';
+			print '<input name="refusepropal" type="submit" class="butActionDelete small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("RefusePropal").'">';
 		}
 	}
 }
