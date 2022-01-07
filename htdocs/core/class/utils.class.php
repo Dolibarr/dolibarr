@@ -347,17 +347,19 @@ class Utils
 				{
 					$handlein = popen($fullcommandclear, 'r');
 					$i=0;
-					while (!feof($handlein))
-					{
-						$i++;   // output line number
-						$read = fgets($handlein);
-						// Exclude warning line we don't want
-						if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
-						fwrite($handle, $read);
-						if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) $ok=1;
-						elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) $ok=1;
+					if ($handlein) {
+						while (!feof($handlein))
+						{
+							$i++;   // output line number
+							$read = fgets($handlein);
+							// Exclude warning line we don't want
+							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
+							fwrite($handle, $read);
+							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) $ok=1;
+							elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) $ok=1;
+						}
+						pclose($handlein);
 					}
-					pclose($handlein);
 				}
 
 
