@@ -763,11 +763,11 @@ class EmailCollector extends CommonObject
 			$flags .= '/norsh';
 		}
 		//Used in shared mailbox from Office365
-		if (strpos($this->login,'/') != false) {
-			$partofauth = explode ('/',$this->login);
+		if (strpos($this->login, '/') != false) {
+			$partofauth = explode('/', $this->login);
 			$flags .= '/authuser='.$partofauth[0].'/user='.$partofauth[1];
 		}
-		
+
 		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
 
 		return $connectstringserver;
