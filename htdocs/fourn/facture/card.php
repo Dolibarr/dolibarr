@@ -1325,6 +1325,8 @@ if (empty($reshook)) {
 			unset($_POST['date_endday']);
 			unset($_POST['date_endmonth']);
 			unset($_POST['date_endyear']);
+			unset($_POST['price_ttc']);
+			unset($_POST['price_ht']);
 
 			$db->commit();
 		} else {
