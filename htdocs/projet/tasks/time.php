@@ -1776,7 +1776,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					if ($resultFetch < 0) {
 						setEventMessages($product->error, $product->errors, 'errors');
 					} else {
-
 						print $product->getNomUrl(1);
 					}
 				}
