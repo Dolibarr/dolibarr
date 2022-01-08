@@ -47,7 +47,7 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 
 require '../../main.inc.php';
 
-$htmlname = GETPOST('htmlname', 'alpha');
+$htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOST('socid', 'int');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'int');
@@ -242,7 +242,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	// Filter on the product to search can be:
 	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
 	// Into a var with name $htmlname can be 'prodid', 'productid', ...
-	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
+	$match = preg_grep('/('.preg_quote($htmlname, '/').'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
 	$idprod = (empty($match[0]) ? '' : $match[0]);		// Take first key found into GET array with matching $htmlname123

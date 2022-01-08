@@ -476,6 +476,19 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			// Test we don't have @var array(
 			$ok=true;
 			$matches=array();
+			preg_match_all('/preg_grep\(.*\$/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				if (strpos($val[0], 'preg_quote') === false) {
+					$ok=false;
+					break;
+				}
+			}
+			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
+
+
+			// Test we don't have @var array(
+			$ok=true;
+			$matches=array();
 			preg_match_all('/@var\s+array\(/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
 				$ok=false;
