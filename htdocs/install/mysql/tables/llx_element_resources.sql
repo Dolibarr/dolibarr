@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -- ============================================================================
 -- Table used to link an element actioncomm with a resource or user (llx_resource or llx_user)
 -- ============================================================================
@@ -28,5 +28,5 @@ CREATE TABLE llx_element_resources
   mandatory		  integer,
   duree				real,               -- total duration of using ressource
   fk_user_create  integer,
-  tms             timestamp
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,34 +26,38 @@ require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("cron");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'cron'));
 
 // Security check
-if (!$user->rights->cron->read) accessforbidden();
+if (!$user->rights->cron->read) {
+	accessforbidden();
+}
 
-$id=GETPOST('id','int');
+$id = GETPOST('id', 'int');
 
-$mesg = '';
+$object = new Cronjob($db);
+
 
 /*
  * View
-*/
+ */
 
-llxHeader('',$langs->trans("CronInfo"));
+$form = new Form($db);	// $form is required as global value into dol_banner_tab
 
-$object = new Cronjob($db);
+llxHeader('', $langs->trans("CronInfo"));
+
 $object->fetch($id);
 $object->info($id);
 
 $head = cron_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("CronTask"), -1, 'cron');
+print dol_get_fiche_head($head, 'info', $langs->trans("CronTask"), -1, 'cron');
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/cron/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref='<div class="refidno">';
-$morehtmlref.='</div>';
+$morehtmlref = '<div class="refidno">';
+$morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 

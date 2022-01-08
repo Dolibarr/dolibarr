@@ -48,4 +48,4 @@ SmsInfoNumero= (format international ie : +33899701761)
 DelayBeforeSending=Delay before sending (minutes)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=No target available. Check setup of your SMS provider.
-
+DisableStopIfSupported=Disable STOP message (if supported)

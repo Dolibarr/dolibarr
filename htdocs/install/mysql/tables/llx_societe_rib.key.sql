@@ -12,9 +12,11 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 
 ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(label, fk_soc);
+
+ALTER TABLE llx_societe_rib ADD CONSTRAINT llx_societe_rib_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);

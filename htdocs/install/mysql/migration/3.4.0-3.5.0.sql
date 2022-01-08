@@ -43,7 +43,7 @@ ALTER TABLE llx_socpeople ADD COLUMN statut tinyint DEFAULT 1 NOT NULL AFTER imp
 create table llx_fichinter_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -55,7 +55,7 @@ ALTER TABLE llx_product ADD COLUMN desiredstock integer DEFAULT 0;
 create table llx_commandedet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    
   import_key       varchar(14)      	
 )ENGINE=innodb;
@@ -69,7 +69,7 @@ ALTER TABLE llx_facturedet_rec ADD COLUMN info_bits	integer DEFAULT 0 after tota
 create table llx_facturedet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -79,7 +79,7 @@ ALTER TABLE llx_facturedet_extrafields ADD INDEX idx_facturedet_extrafields (fk_
 create table llx_propaldet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -248,7 +248,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA32', 1204, '', 0, '', 'Province de Driouch', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA33', 1204, '', 0, '', 'Province de Figuig', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA34', 1204, '', 0, '', 'Province de Jerada', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA35', 1204, '', 0, '', 'Province de Nadorgg', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA35', 1204, '', 0, '', 'Province de Nador', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA36', 1204, '', 0, '', 'Province de Taourirt', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA37', 1216, '', 0, '', 'Province d''Aousserd', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA38', 1216, '', 0, '', 'Province d''Oued Ed-Dahab', 1);
@@ -314,7 +314,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 
 -- Add ref_ext on bordereau_cheque
 ALTER TABLE llx_bordereau_cheque ADD ref_ext VARCHAR(255);
-ALTER TABLE llx_bordereau_cheque ADD tms timestamp;
+ALTER TABLE llx_bordereau_cheque ADD tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 -- Task 1011
@@ -337,7 +337,7 @@ ALTER TABLE llx_contratdet ADD column product_type integer DEFAULT 1 after total
 create table llx_contrat_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;

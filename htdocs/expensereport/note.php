@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,13 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/commande/note.php
- *  \ingroup    commande
- *  \brief      Fiche de notes sur une commande
+ *  \file       htdocs/expensereport/note.php
+ *  \ingroup    expensereport
+ *  \brief      Tab for notes on expense reports
  */
 
 require '../main.inc.php';
@@ -29,76 +29,97 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-$langs->load("trips");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$socid=GETPOST('socid','int');
-$action=GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$socid = GETPOST('socid', 'int');
+$action = GETPOST('action', 'aZ09');
+
+$childids = $user->getAllChildIds(1);
 
 // Security check
-$socid=0;
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'expensereport',$id,'expensereport');
+$socid = 0;
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$hookmanager->initHooks(array('expensereportnote'));
+
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 $object = new ExpenseReport($db);
-if (! $object->fetch($id, $ref) > 0)
-{
+if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
-$permissionnote=$user->rights->expensereport->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
 
+if ($object->id > 0) {
+	// Check current user can read this expense report
+	$canread = 0;
+	if (!empty($user->rights->expensereport->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
  * View
  */
-$title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Note");
-$helpurl="EN:Module_Expense_Reports";
-llxHeader("",$title,$helpurl);
+$title = $langs->trans("ExpenseReport")." - ".$langs->trans("Note");
+$helpurl = "EN:Module_Expense_Reports";
+llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
+	print dol_get_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
-	$morehtmlref='<div class="refidno">';
-    $morehtmlref.='</div>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	
+	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= '</div>';
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
-	 
-	$cssclass="titlefield";
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+
+	$cssclass = "titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
-	
-	dol_fiche_end();
+
+	print dol_get_fiche_end();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

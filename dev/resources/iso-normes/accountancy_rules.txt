@@ -1,0 +1,14 @@
+
+Gestion escompte:
+
+Sur une facture de 120 € TTC :
+707xxx                 100 € HT
+44571x                 20 € TVA
+411xxx    120 € TTC
+ 
+Le client règle rapidement et on lui accorde un escompte de 3% (120 € * 3% = 3.6 € TTC), on aura donc :
+665000     3,00 € HT
+44571x     0,60 € TVA
+411xxx                 3.60 € TVA
+ 
+Et ça marche à l’inverse avec un fournisseur sauf que l’on est en 775000 au lieu de 665000 pour escompte obtenus.

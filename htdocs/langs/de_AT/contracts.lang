@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Vertragsgebiet
 ContractStatusValidated=Bestätigt
+ContractStatusClosed=geschlossen
 ServiceStatusNotLate=Läuft (nicht abgelaufen)
 ServiceStatusNotLateShort=Läuft
 ServiceStatusLateShort=abgelaufen
@@ -24,7 +25,5 @@ DateStartPlannedShort=geplanter Start
 DateEndPlanned=geplantes Ende
 DateEndPlannedShort=geplantes Ende
 CloseService=Service schließen
-BoardRunningServices=Abgelaufene, aktive Services
 ServiceStatus=Service-Status
-CloseRefusedBecauseOneServiceActive=Schließen nicht möglich, es existieren noch aktive Services
 DeleteContractLine=Lösche Vertragsposition

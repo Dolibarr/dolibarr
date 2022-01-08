@@ -12,17 +12,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *     	\file       htdocs/public/members/index.php
  *		\ingroup    core
  *		\brief      A redirect page to an error
- *		\author	    Laurent Destailleur
  */
 
 require '../../master.inc.php';
 
 header("Location: ".DOL_URL_ROOT.'/public/error-404.php');
-

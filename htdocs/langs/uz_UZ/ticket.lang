@@ -1,0 +1,324 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Chiptalar
+Module56000Desc=Chiqarish yoki so'rovlarni boshqarish uchun chiptalar tizimi
+
+Permission56001=Chiptalarni ko'ring
+Permission56002=Chiptalarni o'zgartirish
+Permission56003=Chiptalarni o'chirish
+Permission56004=Chiptalarni boshqarish
+Permission56005=Uchinchi tomonlarning chiptalarini ko'ring (tashqi foydalanuvchilar uchun samarali emas, har doim ular bog'liq bo'lgan uchinchi tomon bilan cheklaning)
+
+TicketDictType=Chipta - turlari
+TicketDictCategory=Chipta - guruhlar
+TicketDictSeverity=Chipta - jiddiyliklar
+TicketDictResolution=Chipta - Qaror
+
+TicketTypeShortCOM=Tijorat savoli
+TicketTypeShortHELP=Funktsional yordam uchun so'rov
+TicketTypeShortISSUE=Muammo yoki xato
+TicketTypeShortPROBLEM=Muammo
+TicketTypeShortREQUEST=O'zgartirish yoki takomillashtirish bo'yicha so'rov
+TicketTypeShortPROJET=Loyiha
+TicketTypeShortOTHER=Boshqalar
+
+TicketSeverityShortLOW=Kam
+TicketSeverityShortNORMAL=Oddiy
+TicketSeverityShortHIGH=Yuqori
+TicketSeverityShortBLOCKING=Muhim, blokirovka qilish
+
+TicketCategoryShortOTHER=Boshqa
+
+ErrorBadEmailAddress='%s' maydoni noto'g'ri
+MenuTicketMyAssign=Mening chiptalarim
+MenuTicketMyAssignNonClosed=Mening ochiq chiptalarim
+MenuListNonClosed=Ochiq chiptalar
+
+TypeContact_ticket_internal_CONTRIBUTOR=Xissador
+TypeContact_ticket_internal_SUPPORTTEC=Tayinlangan foydalanuvchi
+TypeContact_ticket_external_SUPPORTCLI=Mijozlar bilan aloqa / hodisalarni kuzatish
+TypeContact_ticket_external_CONTRIBUTOR=Tashqi yordamchi
+
+OriginEmail=Muxbirning elektron pochtasi
+Notify_TICKET_SENTBYMAIL=Elektron pochta orqali chiptani yuboring
+
+# Status
+Read=O'qing
+Assigned=Tayinlangan
+InProgress=Jarayonda
+NeedMoreInformation=Muxbirlarning fikri kutilmoqda
+NeedMoreInformationShort=Fikr-mulohaza kutilmoqda
+Answered=Javob berdi
+Waiting=Kutish
+SolvedClosed=Yechilgan
+Deleted=O'chirildi
+
+# Dict
+Type=Turi
+Severity=Jiddiylik
+TicketGroupIsPublic=Guruh hammaga ochiq
+TicketGroupIsPublicDesc=Agar chiptalar guruhi ommaviy bo'lsa, u umumiy interfeysdan chipta yaratishda shaklda ko'rinadi
+
+# Email templates
+MailToSendTicketMessage=Chipta xabaridan elektron pochta xabarini yuborish
+
+#
+# Admin page
+#
+TicketSetup=Chipta modulini sozlash
+TicketSettings=Sozlamalar
+TicketSetupPage=
+TicketPublicAccess=Identifikatsiyani talab qilmaydigan umumiy interfeys quyidagi urlda mavjud
+TicketSetupDictionaries=Chipta turi, jiddiyligi va analitik kodlari lug'atlarda sozlanishi mumkin
+TicketParamModule=Modulning o'zgaruvchini sozlash
+TicketParamMail=Elektron pochtani sozlash
+TicketEmailNotificationFrom=Bildirishnoma elektron pochtasi
+TicketEmailNotificationFromHelp=Misol uchun chipta xabarining javobiga ishlatilgan
+TicketEmailNotificationTo=Bildirishnomalar elektron pochta manziliga
+TicketEmailNotificationToHelp=Ushbu manzilga elektron pochta xabarnomalarini yuboring.
+TicketNewEmailBodyLabel=Chipta yaratilgandan so'ng yuborilgan matnli xabar
+TicketNewEmailBodyHelp=Bu erda ko'rsatilgan matn ommaviy interfeysdan yangi chipta yaratilganligini tasdiqlovchi elektron pochtaga kiritiladi. Chipta maslahati to'g'risidagi ma'lumotlar avtomatik ravishda qo'shiladi.
+TicketParamPublicInterface=Umumiy interfeysni sozlash
+TicketsEmailMustExist=Chipta yaratish uchun mavjud elektron pochta manzilini talab qiling
+TicketsEmailMustExistHelp=Umumiy interfeysda elektron pochta manzili yangi chipta yaratish uchun ma'lumotlar bazasida to'ldirilgan bo'lishi kerak.
+PublicInterface=Ommaviy interfeys
+TicketUrlPublicInterfaceLabelAdmin=Umumiy interfeys uchun muqobil URL
+TicketUrlPublicInterfaceHelpAdmin=Veb-server uchun taxallusni aniqlash va shu bilan umumiy interfeysni boshqa URL bilan ta'minlash mumkin (server ushbu yangi URL-da proksi sifatida ishlashi kerak)
+TicketPublicInterfaceTextHomeLabelAdmin=Umumiy interfeysning xush kelibsiz matni
+TicketPublicInterfaceTextHome=Siz qo'llab-quvvatlash chiptasini yaratishingiz yoki uning identifikatorini kuzatish chiptasidan mavjud narsalarni ko'rishingiz mumkin.
+TicketPublicInterfaceTextHomeHelpAdmin=Bu erda belgilangan matn umumiy interfeysning asosiy sahifasida paydo bo'ladi.
+TicketPublicInterfaceTopicLabelAdmin=Interfeys nomi
+TicketPublicInterfaceTopicHelp=Ushbu matn umumiy interfeys nomi sifatida paydo bo'ladi.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Xabarni kiritish uchun matnga yordam bering
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Ushbu matn foydalanuvchining xabarlarni kiritish maydonchasi ustida paydo bo'ladi.
+ExtraFieldsTicket=Qo'shimcha atributlar
+TicketCkEditorEmailNotActivated=HTML muharriri faollashtirilmagan. Iltimos, FCKEDITOR_ENABLE_MAIL tarkibini olish uchun uni 1 tagacha joylashtiring.
+TicketsDisableEmail=Chipta yaratish yoki xabar yozish uchun elektron pochta xabarlarini yubormang
+TicketsDisableEmailHelp=Odatiy bo'lib, elektron pochta xabarlari yangi chiptalar yoki xabarlar yaratilganda yuboriladi. * Barcha * elektron pochta xabarlarini o'chirib qo'yish uchun ushbu parametrni yoqing
+TicketsLogEnableEmail=Elektron pochta orqali jurnalni yoqish
+TicketsLogEnableEmailHelp=Har bir o'zgarganda, chiptaga aloqador ** har bir kontaktga ** elektron pochta orqali xabar yuboriladi.
+TicketParams=Paramlar
+TicketsShowModuleLogo=Modul logotipini umumiy interfeysda ko'rsatish
+TicketsShowModuleLogoHelp=Logotip modulini umumiy interfeys sahifalarida yashirish uchun ushbu parametrni yoqing
+TicketsShowCompanyLogo=Kompaniya logotipini ommaviy interfeysda namoyish eting
+TicketsShowCompanyLogoHelp=Asosiy kompaniyaning logotipini umumiy interfeys sahifalarida yashirish uchun ushbu parametrni yoqing
+TicketsEmailAlsoSendToMainAddress=Asosiy elektron pochta manziliga xabarnoma yuboring
+TicketsEmailAlsoSendToMainAddressHelp="%s" sozlamalarida belgilangan manzilga elektron pochta xabarlarini yuborish uchun ushbu parametrni yoqing ("%s" yorlig'iga qarang)
+TicketsLimitViewAssignedOnly=Displeyni joriy foydalanuvchiga tayinlangan chiptalar bilan cheklang (tashqi foydalanuvchilar uchun samarali emas, har doim ular bog'liq bo'lgan uchinchi shaxs bilan cheklaning)
+TicketsLimitViewAssignedOnlyHelp=Faqat joriy foydalanuvchiga tayinlangan chiptalar ko'rinadi. Chiptalarni boshqarish huquqiga ega foydalanuvchiga taalluqli emas.
+TicketsActivatePublicInterface=Umumiy interfeysni faollashtiring
+TicketsActivatePublicInterfaceHelp=Umumiy interfeys har qanday tashrif buyuruvchilarga chiptalarni yaratishga imkon beradi.
+TicketsAutoAssignTicket=Chiptani yaratgan foydalanuvchini avtomatik ravishda tayinlash
+TicketsAutoAssignTicketHelp=Chiptani yaratishda foydalanuvchiga avtomatik ravishda chiptani tayinlash mumkin.
+TicketNumberingModules=Chiptalarni raqamlash moduli
+TicketsModelModule=Chiptalar uchun hujjatlar shablonlari
+TicketNotifyTiersAtCreation=Yaratilganda uchinchi tomonga xabar bering
+TicketsDisableCustomerEmail=Ochiq interfeysdan chipta yaratilganda har doim elektron pochta xabarlarini o'chirib qo'ying
+TicketsPublicNotificationNewMessage=Chipta yangi xabar / sharh qo'shilganda elektron pochta xabarlarini yuboring
+TicketsPublicNotificationNewMessageHelp=Umumiy interfeysdan yangi xabar qo'shilganda elektron pochta xabarlarini yuboring (tayinlangan foydalanuvchiga yoki bildirishnomalar elektron pochtasiga (yangilash) va / yoki elektron pochta xabarlariga)
+TicketPublicNotificationNewMessageDefaultEmail=Bildirishnomalar elektron pochtasi (yangilash)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Agar chiptada foydalanuvchi tayinlanmagan bo'lsa yoki foydalanuvchi ma'lum bir elektron pochta xabariga ega bo'lmasa, har bir yangi xabar xabarnomasi uchun ushbu manzilga elektron pochta xabarini yuboring.
+#
+# Index & list page
+#
+TicketsIndex=Chiptalar maydoni
+TicketList=Chiptalar ro'yxati
+TicketAssignedToMeInfos=Ushbu sahifada joriy foydalanuvchi tomonidan yaratilgan yoki unga tayinlangan chiptalar ro'yxati ko'rsatilgan
+NoTicketsFound=Hech qanday chipta topilmadi
+NoUnreadTicketsFound=O'qilmagan chipta topilmadi
+TicketViewAllTickets=Barcha chiptalarni ko'ring
+TicketViewNonClosedOnly=Faqat ochiq chiptalarni ko'ring
+TicketStatByStatus=Status bo'yicha chiptalar
+OrderByDateAsc=Sana bo'yicha o'sish sanasi bo'yicha saralash
+OrderByDateDesc=Kamayish sanasi bo'yicha saralash
+ShowAsConversation=Suhbat ro'yxati sifatida ko'rsatish
+MessageListViewType=Jadval ro'yxati sifatida ko'rsatish
+
+#
+# Ticket card
+#
+Ticket=Chipta
+TicketCard=Chipta kartasi
+CreateTicket=Chipta yarating
+EditTicket=Chiptani tahrirlash
+TicketsManagement=Chiptalarni boshqarish
+CreatedBy=Tomonidan yaratilgan
+NewTicket=Yangi chipta
+SubjectAnswerToTicket=Chipta javobi
+TicketTypeRequest=So'rov turi
+TicketCategory=Chiptalarni turkumlash
+SeeTicket=Chiptani ko'ring
+TicketMarkedAsRead=Chipta o'qilgan deb belgilandi
+TicketReadOn=O'qing
+TicketCloseOn=Tugatish sanasi
+MarkAsRead=Chiptani o'qilgan deb belgilang
+TicketHistory=Chipta tarixi
+AssignUser=Foydalanuvchiga tayinlash
+TicketAssigned=Endi chipta tayinlandi
+TicketChangeType=Turini o'zgartirish
+TicketChangeCategory=Analitik kodni o'zgartiring
+TicketChangeSeverity=Zo'ravonlikni o'zgartiring
+TicketAddMessage=Xabar qo'shing
+AddMessage=Xabar qo'shing
+MessageSuccessfullyAdded=Chipta qo'shildi
+TicketMessageSuccessfullyAdded=Xabar muvaffaqiyatli qo'shildi
+TicketMessagesList=Xatlar ro'yxati
+NoMsgForThisTicket=Ushbu chipta uchun xabar yo'q
+TicketProperties=Tasniflash
+LatestNewTickets=Eng so'nggi %s eng yangi chiptalar (o'qilmaydi)
+TicketSeverity=Jiddiylik
+ShowTicket=Chiptani ko'ring
+RelatedTickets=Tegishli chiptalar
+TicketAddIntervention=Aralashuvni yarating
+CloseTicket=Yoping | Chiptani hal qiling
+AbandonTicket=Chiptadan voz kechish
+CloseATicket=Yoping | Chiptani hal qiling
+ConfirmCloseAticket=Chipta yopilishini tasdiqlang
+ConfirmAbandonTicket=Chiptaning "tashlab ketilgan" maqomiga yopilishini tasdiqlaysizmi?
+ConfirmDeleteTicket=Iltimos, chipta o'chirilishini tasdiqlang
+TicketDeletedSuccess=Muvaffaqiyat bilan chipta o'chirildi
+TicketMarkedAsClosed=Chipta yopiq deb belgilangan
+TicketDurationAuto=Hisoblangan muddat
+TicketDurationAutoInfos=Davomiylik bilan bog'liq bo'lgan muddat avtomatik ravishda hisoblab chiqiladi
+TicketUpdated=Chipta yangilandi
+SendMessageByEmail=Elektron pochta orqali xabar yuboring
+TicketNewMessage=Yangi xabar
+ErrorMailRecipientIsEmptyForSendTicketMessage=Qabul qiluvchi bo'sh. Elektron pochta xabarlari yo'q
+TicketGoIntoContactTab=Ularni tanlash uchun "Kontaktlar" yorlig'iga o'ting
+TicketMessageMailIntro=Kirish
+TicketMessageMailIntroHelp=Ushbu matn faqat elektron pochta boshida qo'shiladi va saqlanmaydi.
+TicketMessageMailIntroLabelAdmin=Elektron pochta xabarlarini yuborishda xabar bilan tanishish
+TicketMessageMailIntroText=Salom, <br> Siz bog'langan chiptaga yangi javob yuborildi. Mana xabar: <br>
+TicketMessageMailIntroHelpAdmin=Ushbu matn chiptaga javob matnidan oldin kiritiladi.
+TicketMessageMailSignature=Imzo
+TicketMessageMailSignatureHelp=Ushbu matn faqat elektron pochta oxirida qo'shiladi va saqlanmaydi.
+TicketMessageMailSignatureText= <p> Hurmat bilan, </p> <p> - </p>
+TicketMessageMailSignatureLabelAdmin=Javob elektron pochtasining imzosi
+TicketMessageMailSignatureHelpAdmin=Ushbu matn javob xabaridan keyin kiritiladi.
+TicketMessageHelp=Faqat ushbu matn chipta kartasidagi xabarlar ro'yxatida saqlanadi.
+TicketMessageSubstitutionReplacedByGenericValues=O'zgartirish o'zgaruvchilari umumiy qiymatlar bilan almashtiriladi.
+TimeElapsedSince=O'shandan beri vaqt o'tgan
+TicketTimeToRead=O'qishdan oldin o'tgan vaqt
+TicketTimeElapsedBeforeSince=Oldin / keyin o'tgan vaqt
+TicketContacts=Aloqa chiptasi
+TicketDocumentsLinked=Chipta bilan bog'langan hujjatlar
+ConfirmReOpenTicket=Ushbu chipta qayta ochilganligini tasdiqlaysizmi?
+TicketMessageMailIntroAutoNewPublicMessage=%s mavzusida chiptada yangi xabar joylashtirildi:
+TicketAssignedToYou=Chipta tayinlandi
+TicketAssignedEmailBody=Sizga %s tomonidan # %s chiptasi tayinlangan
+MarkMessageAsPrivate=Xabarni shaxsiy sifatida belgilash
+TicketMessagePrivateHelp=Ushbu xabar tashqi foydalanuvchilarga ko'rsatilmaydi
+TicketEmailOriginIssuer=Chiptalarning kelib chiqishi bo'yicha emitent
+InitialMessage=Dastlabki xabar
+LinkToAContract=Shartnomaga havola
+TicketPleaseSelectAContract=Shartnomani tanlang
+UnableToCreateInterIfNoSocid=Uchinchi tomon aniqlanmaganida aralashuvni yaratib bo'lmaydi
+TicketMailExchanges=Pochta almashinuvi
+TicketInitialMessageModified=Dastlabki xabar o'zgartirildi
+TicketMessageSuccesfullyUpdated=Xabar muvaffaqiyatli yangilandi
+TicketChangeStatus=Vaziyatni o'zgartirish
+TicketConfirmChangeStatus=Vaziyat o'zgarishini tasdiqlang: %s?
+TicketLogStatusChanged=Holat o'zgartirildi: %s dan %s ga
+TicketNotNotifyTiersAtCreate=Yaratganda kompaniyani xabardor qilmang
+Unread=O'qilmagan
+TicketNotCreatedFromPublicInterface=Mavjud emas. Chipta umumiy interfeysdan yaratilmagan.
+ErrorTicketRefRequired=Chipta ma'lumotnomasining nomi talab qilinadi
+
+#
+# Logs
+#
+TicketLogMesgReadBy=%s o'qigan %s chiptasi
+NoLogForThisTicket=Ushbu chipta uchun jurnal yo'q
+TicketLogAssignedTo=%s ga tayinlangan %s chiptasi
+TicketLogPropertyChanged=%s chiptasi o'zgartirildi: %s dan %s gacha tasnif
+TicketLogClosedBy=%s chiptasi %s tomonidan yopilgan
+TicketLogReopen=%s chiptasi qayta ochiladi
+
+#
+# Public pages
+#
+TicketSystem=Chipta tizimi
+ShowListTicketWithTrackId=Track ID-dan chiptalar ro'yxatini ko'rsatish
+ShowTicketWithTrackId=Track ID-dan chiptani ko'rsatish
+TicketPublicDesc=Siz qo'llab-quvvatlash chiptasini yaratishingiz yoki mavjud bo'lgan identifikatordan tekshirishingiz mumkin.
+YourTicketSuccessfullySaved=Chipta muvaffaqiyatli saqlanib qoldi!
+MesgInfosPublicTicketCreatedWithTrackId=%s va Ref %s identifikatorlari bilan yangi chipta yaratildi.
+PleaseRememberThisId=Iltimos, keyinroq so'rashimiz mumkin bo'lgan kuzatuv raqamini saqlang.
+TicketNewEmailSubject=Chiptani yaratishni tasdiqlash - Ref %s (%s jamoat chiptasi identifikatori)
+TicketNewEmailSubjectCustomer=Yangi qo'llab-quvvatlash chiptasi
+TicketNewEmailBody=Bu yangi chiptani ro'yxatdan o'tkazganingizni tasdiqlovchi avtomatik elektron pochta xabaridir.
+TicketNewEmailBodyCustomer=Bu sizning hisobingizda yangi chipta yaratilganligini tasdiqlovchi avtomatik elektron pochta xabaridir.
+TicketNewEmailBodyInfosTicket=Chiptani kuzatish uchun ma'lumot
+TicketNewEmailBodyInfosTrackId=Chiptalarni kuzatish raqami: %s
+TicketNewEmailBodyInfosTrackUrl=Yuqoridagi havolani bosish orqali chipta borishi bilan tanishishingiz mumkin.
+TicketNewEmailBodyInfosTrackUrlCustomer=Siz quyidagi havolani bosish orqali ma'lum bir interfeysda chipta borishini ko'rishingiz mumkin
+TicketEmailPleaseDoNotReplyToThisEmail=Iltimos, ushbu elektron pochtaga to'g'ridan-to'g'ri javob bermang! Interfeysga javob berish uchun havoladan foydalaning.
+TicketPublicInfoCreateTicket=Ushbu shakl sizning boshqaruv tizimimizda qo'llab-quvvatlash chiptasini yozib olishga imkon beradi.
+TicketPublicPleaseBeAccuratelyDescribe=Iltimos, muammoni aniq tasvirlab bering. Sizning so'rovingizni to'g'ri aniqlab olishimiz uchun imkon qadar ko'proq ma'lumotlarni taqdim eting.
+TicketPublicMsgViewLogIn=Iltimos, chiptani kuzatish guvohnomasini kiriting
+TicketTrackId=Ommaviy kuzatuv identifikatori
+OneOfTicketTrackId=Kuzatuv identifikatoringizdan biri
+ErrorTicketNotFound=%s kuzatuv identifikatori bo'lgan chipta topilmadi!
+Subject=Mavzu
+ViewTicket=Chiptani ko'rish
+ViewMyTicketList=Mening chiptalarim ro'yxatini ko'rish
+ErrorEmailMustExistToCreateTicket=Xato: ma'lumotlar bazasida elektron pochta manzili topilmadi
+TicketNewEmailSubjectAdmin=Yangi chipta yaratildi - Ref %s (%s jamoat chiptasi identifikatori)
+TicketNewEmailBodyAdmin= <p> chiptasi # %s ID bilan yaratilgan, ma'lumotga qarang: </p>
+SeeThisTicketIntomanagementInterface=Boshqaruv interfeysida chiptani ko'ring
+TicketPublicInterfaceForbidden=Chiptalar uchun umumiy interfeys yoqilmagan
+ErrorEmailOrTrackingInvalid=ID yoki elektron pochtani kuzatish uchun yomon qiymat
+OldUser=Eski foydalanuvchi
+NewUser=Yangi foydalanuvchi
+NumberOfTicketsByMonth=Oyiga chiptalar soni
+NbOfTickets=Chiptalar soni
+# notifications
+TicketNotificationEmailSubject=%s chiptasi yangilandi
+TicketNotificationEmailBody=Bu sizga %s chiptasi yangilanganligi haqida xabar berish uchun avtomatik xabar
+TicketNotificationRecipient=Bildirishnoma oluvchi
+TicketNotificationLogMessage=Xabar jurnali
+TicketNotificationEmailBodyInfosTrackUrlinternal=Interfeysda chiptani ko'rish
+TicketNotificationNumberEmailSent=Bildirish xati yuborildi: %s
+
+ActionsOnTicket=Chiptadagi tadbirlar
+
+#
+# Boxes
+#
+BoxLastTicket=Oxirgi yaratilgan chiptalar
+BoxLastTicketDescription=Oxirgi %s chiptalari yaratildi
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Yaqinda o'qilmagan chiptalar yo'q
+BoxLastModifiedTicket=Eng so'nggi o'zgartirilgan chiptalar
+BoxLastModifiedTicketDescription=Eng so'nggi o'zgartirilgan chiptalar %s
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Yaqinda o'zgartirilgan chiptalar yo'q
+BoxTicketType=Ochiq chiptalarni turlari bo'yicha taqsimlash
+BoxTicketSeverity=Og'irligi bo'yicha ochiq chiptalar soni
+BoxNoTicketSeverity=Hech qanday chiptalar ochilmagan
+BoxTicketLastXDays=Oxirgi %s kunlar ichida yangi chiptalar soni
+BoxTicketLastXDayswidget = Oxirgi X kunlardagi kunlar bo'yicha yangi chiptalar soni
+BoxNoTicketLastXDays=Oxirgi %s kunida yangi chiptalar yo'q
+BoxNumberOfTicketByDay=Kuniga yangi chiptalar soni
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Bugun yaratilgan chipta
+TicketClosedToday=Bugun chipta yopildi
+KMFoundForTicketGroup=Biz sizning savolingizga javob beradigan mavzular va savol -javoblarni topdik, chiptani topshirishdan oldin ularni tekshirib ko'ring

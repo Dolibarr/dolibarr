@@ -16,12 +16,13 @@ MarginDetails=Szczegóły marży
 ProductMargins=Marża produktu
 CustomerMargins=Marża klienta
 SalesRepresentativeMargins=Sprzedaż marże reprezentatywne
+ContactOfInvoice=Kontakt do faktury
 UserMargins=Marginesy użytkownika
 ProductService=Produkt lub usługa
 AllProducts=Wszystkie produkty i usługi
 ChooseProduct/Service=Wybierz produkt lub usługę
 ForceBuyingPriceIfNull=Wymuszaj cenę zakupu/cenę fabryczną jako cenę sprzedaży jeżeli ta nie jest zdefiniowana
-ForceBuyingPriceIfNullDetails=Jeżeli cena zakupu/koszt nie jest zdefiniowana, a ta opcja jest "ON", marża będzie równa 0 (cena zakupu/koszt = cena sprzedaży), w przeciwnym razie ("OFF"), marża będzie równa sugerowanej domyślnie.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Sposób na marżę dla globalnych rabatów
 UseDiscountAsProduct=Jako produkt
 UseDiscountAsService=Jako usługa
@@ -29,16 +30,16 @@ UseDiscountOnTotal=Na podsumy
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Określa, czy globalne rabatu jest traktowana jako produktu, usługi lub tylko na sumy częściowej obliczania marży.
 MARGIN_TYPE=Cena zakupu/cena fabryczna jest sugerowana jako domyślna do obliczenia marży
 MargeType1=Marża na najlepszej cenie dostawcy
-MargeType2=Marża na średniej cenie ważonej
+MargeType2=Marża na Średniej Cenie Produktu (ŚCP)
 MargeType3=Marża na cenie fabrycznej
-MarginTypeDesc=* Marża na najlepszej cenie zakupu = Cena sprzedaży - Najlepsza cena dostawcy zdefiniowana na karcie produktu<br>* Marża na średnio ważonej cenie (WAP) = Cena sprzedaży - Średnio ważona cena (WAP) lub najlepsza cena dostawcy jeżeli WAP nie jest zdefiniowana<br>* Marża na cenie fabrycznej = Cena sprzedaży -  Cena fabryczna zdefiniowana na karcie produktu lub WAP jeżeli cena fabryczna nie jest zdefiniowana, lub najlepsza cena dostawcy jeżeli WAP nie jest jeszcze zdefiniowana
+MarginTypeDesc=* Marża od najlepszej ceny zakupu = cena sprzedaży - najlepsza cena dostawcy określona na karcie produktu <br> * Marża od średniej ważonej ceny (WAP) = cena sprzedaży - średnia cena ważona produktu (WAP) lub najlepsza cena dostawcy, jeśli WAP nie został jeszcze zdefiniowany <br> * Marża Cena kosztowa = Cena sprzedaży - Cena własna zdefiniowana na karcie produktu lub WAP, jeśli cena kosztowa nie została zdefiniowana, lub najlepsza cena dostawcy, jeśli WAP nie został jeszcze zdefiniowany
 CostPrice=Cena fabryczna
 UnitCharges=Koszty jednostkowe
 Charges=Opłaty
 AgentContactType=Przedstawiciel handlowy typ kontaktu
-AgentContactTypeDetails=Zdefiniować, jaki rodzaj (związane na fakturach) kontaktowe będą wykorzystywane do raportu marży na reprezentatywną sprzedaż
+AgentContactTypeDetails=Zdefiniuj, jaki typ kontaktu (powiązany na fakturach) będzie używany do raportowania marży na kontakt/adres. Należy pamiętać, że czytanie statystyk dotyczących kontaktu nie jest wiarygodne, ponieważ w większości przypadków kontakt może nie być wyraźnie zdefiniowany na fakturach.
 rateMustBeNumeric=Stawka musi być wartością liczbową
 markRateShouldBeLesserThan100=Stopa znak powinien być niższy niż 100
 ShowMarginInfos=Pokaż informacje o marżę
 CheckMargins=Szczegóły marż
-MarginPerSaleRepresentativeWarning=Raport marży na użytkownika wykorzystuje powiązanie między kontrahentami a przedstawicielami handlowymi w celu obliczenia marży każdego przedstawiciela handlowego. Ze względu na to, że niektórzy kontrahenci mogą nie posiadać przedstawiciela handlowego, a niektórzy mogą być powiązani z kilkoma, niektóre kwoty mogą nie zostać uwzględnione w tym raporcie (jeśli nie ma przedstawiciela sprzedaży), a niektóre mogą pojawić się w różnych wierszach (dla każdego przedstawiciela sprzedaży).
+MarginPerSaleRepresentativeWarning=Raprot marży na użytkownika wykorzystuje połączenie między kontrahentami a przedstawicielami handlowymi w celu obliczenia marży każdego przedstawiciela handlowego. Ponieważ niektórzy kontrahenci mogą nie posiadać przedstawiciela handlowego a niektórzy kontrahenci mogą być połączeni z wieloma przedstawicielami handlowymi, niektóre wartości mogą nie być wliczone w ten raport (jeśli brakuje przedstawiciela handlowego) a niektóre mogą pojawić się w innych wierszach (dla każdego przedstawiciela handlowego). 

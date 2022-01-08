@@ -1,0 +1,92 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=Partnerschap beheer
+PartnershipDescription=Module Partnerschap beheer
+PartnershipDescriptionLong= Module Partnerschap beheer
+Partnership=Partnership
+AddPartnership=Partnerschap toevoegen
+CancelPartnershipForExpiredMembers=Partnerschap: annuleer partnerschap van leden met verlopen abonnementen
+PartnershipCheckBacklink=Partnerschap: controleer verwijzende backlink
+
+#
+# Menu
+#
+NewPartnership=Nieuw partnerschap
+ListOfPartnerships=Overzicht van partnerschappen
+
+#
+# Admin page
+#
+PartnershipSetup=Partnerschap instellingen
+PartnershipAbout=Over module partnerschap
+PartnershipAboutPage=Over module Partnerschap page
+partnershipforthirdpartyormember=Partnerstatus moet zijn ingesteld op een 'relatie' of een 'lid'
+PARTNERSHIP_IS_MANAGED_FOR=Partnerschap beheerd voor
+PARTNERSHIP_BACKLINKS_TO_CHECK=Te controleren backlinks
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Aantal dagen voordat de status van een partnerschap wordt opgezegd wanneer een abonnement is verlopen
+ReferingWebsiteCheck=Controle van de website die verwijst
+ReferingWebsiteCheckDesc=U kunt een functie inschakelen om te controleren of uw partners een backlink hebben toegevoegd aan uw websitedomeinen op hun eigen website.
+
+#
+# Object
+#
+DeletePartnership=Verwijder een partnerschap
+PartnershipDedicatedToThisThirdParty=Partnerschap gewijd aan deze derde partij
+PartnershipDedicatedToThisMember=Partnerschap opgedragen aan dit lid
+DatePartnershipStart=Begindatum
+DatePartnershipEnd=Einddatum
+ReasonDecline=Reden afwijzing
+ReasonDeclineOrCancel=Reden afwijzing
+PartnershipAlreadyExist=Partnerschap bestaat reeds
+ManagePartnership=Partnerschap beheren
+BacklinkNotFoundOnPartnerWebsite=Backlink niet gevonden op partnerwebsite
+ConfirmClosePartnershipAsk=Weet u zeker dat u deze partnerschap wilt opzeggen?
+PartnershipType=Partnerschapstype
+PartnershipRefApproved=Partnership %s approved
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerschap wordt binnenkort opgezegd
+SendingEmailOnPartnershipRefused=Partnerschap geweigerd
+SendingEmailOnPartnershipAccepted=Partnerschap geaccepteerd
+SendingEmailOnPartnershipCanceled=Partnerschap geannuleerd
+
+YourPartnershipWillSoonBeCanceledTopic=Partnerschap wordt binnenkort opgezegd
+YourPartnershipRefusedTopic=Partnerschap geweigerd
+YourPartnershipAcceptedTopic=Partnerschap geaccepteerd
+YourPartnershipCanceledTopic=Partnerschap geannuleerd
+
+YourPartnershipWillSoonBeCanceledContent=Wij informeren u dat uw partnerschap binnenkort wordt geannuleerd (Backlink niet gevonden)
+YourPartnershipRefusedContent=Wij informeren u dat uw partnerschapsverzoek is afgewezen.
+YourPartnershipAcceptedContent=Wij informeren u dat uw partnerschapsverzoek is geaccepteerd.
+YourPartnershipCanceledContent=Wij informeren u dat uw partnerschap is beëindigd.
+
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Reden afwijzing
+
+#
+# Status
+#
+PartnershipDraft=Ontwerp
+PartnershipAccepted=Geaccepteerd
+PartnershipRefused=Geweigerd
+PartnershipCanceled=Geannuleerd
+PartnershipManagedFor=Partners zijn

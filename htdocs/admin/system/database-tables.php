@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,27 +16,46 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/admin/system/database-tables.php
- *	\brief      Page d'infos des tables de la base
+ *	\brief      Page with information on database tables. Add also some maintenance action to convert tables.
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
+
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
-if (! $user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
-$action=GETPOST('action','alpha');
+$action = GETPOST('action', 'aZ09');
 
 
-if ($action == 'convert')
-{
-	$db->query("alter table ".$_GET["table"]." ENGINE=INNODB");
+/*
+ * Actions
+ */
+
+if ($action == 'convert') {
+	$sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ENGINE=INNODB";
+	$db->query($sql);
+}
+if ($action == 'convertutf8') {
+	$sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+	$db->query($sql);
+}
+if ($action == 'convertdynamic') {
+	$sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ROW_FORMAT=DYNAMIC;";
+	$db->query($sql);
 }
 
 
@@ -46,80 +65,81 @@ if ($action == 'convert')
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','title_setup');
+print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), '', 'title_setup');
 
 
 // Define request to get table description
-$base=0;
-if (preg_match('/mysql/i',$conf->db->type))
-{
+$base = 0;
+if (preg_match('/mysql/i', $conf->db->type)) {
 	$sql = "SHOW TABLE STATUS";
-	$base=1;
-}
-else if ($conf->db->type == 'pgsql')
-{
+	$base = 1;
+} elseif ($conf->db->type == 'pgsql') {
 	$sql = "SELECT conname, contype FROM pg_constraint;";
-	$base=2;
-}
-else if ($conf->db->type == 'mssql')
-{
+	$base = 2;
+} elseif ($conf->db->type == 'mssql') {
 	//$sqls[0] = "";
 	//$base=3;
-}
-else if ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
-{
+} elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3') {
 	//$sql = "SELECT name, type FROM sqlite_master";
 	$base = 4;
 }
 
 
-if (! $base)
-{
+if (!$base) {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
-}
-else
-{
-	if ($base == 1)
-	{
-        print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder">';
+} else {
+	if ($base == 1) {
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
+		print '<td>#</td>';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td colspan="2">'.$langs->trans("Type").'</td>';
 		print '<td>'.$langs->trans("Format").'</td>';
-		print '<td align="right">'.$langs->trans("NbOfRecord").'</td>';
-		print '<td align="right">Avg_row_length</td>';
-		print '<td align="right">Data_length</td>';
-		print '<td align="right">Max_Data_length</td>';
-		print '<td align="right">Index_length</td>';
-		print '<td align="right">Increment</td>';
-		print '<td align="right">Last check</td>';
-		print '<td align="right">Collation</td>';
+		print '<td class="right">'.$langs->trans("NbOfRecord").'</td>';
+		print '<td class="right">Avg_row_length</td>';
+		print '<td class="right">Data_length</td>';
+		print '<td class="right">Max_Data_length</td>';
+		print '<td class="right">Index_length</td>';
+		print '<td class="right">Increment</td>';
+		print '<td class="right">Last check</td>';
+		print '<td class="right">Collation</td>';
 		print "</tr>\n";
 
 		$sql = "SHOW TABLE STATUS";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
-			{
+			$i = 0;
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 
-				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
-				print '<td>'.$obj->Engine.'</td>';
-				if (isset($row[1]) && $row[1] == "MyISAM")
-				{
-					print '<td><a href="database-tables.php?action=convert&amp;table='.$row[0].'">'.$langs->trans("Convert").'</a></td>';
+				print '<td>'.($i+1).'</td>';
+				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a>';
+				$tablename = preg_replace('/^'.MAIN_DB_PREFIX.'/', 'llx_', $obj->Name);
+				if (dol_is_file(DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tablename.'.sql')) {
+					$img = "info";
+					//print img_picto($langs->trans("ExternalModule"), $img);
+				} else {
+					$img = "info_black";
+					//print DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tablename.'.sql';
+					print img_picto($langs->trans("ExternalModule"), $img, 'class="small"');
 				}
-				else
-				{
+				print '</td>';
+				print '<td>'.$obj->Engine.'</td>';
+				if (isset($obj->Engine) && $obj->Engine == "MyISAM") {
+					print '<td><a class="reposition" href="database-tables.php?action=convert&table='.urlencode($obj->Name).'&token='.newToken().'">'.$langs->trans("Convert").' InnoDb</a></td>';
+				} else {
 					print '<td>&nbsp;</td>';
 				}
-				print '<td>'.$obj->Row_format.'</td>';
+				print '<td>';
+				print $obj->Row_format;
+				if (isset($obj->Row_format) && (in_array($obj->Row_format, array("Compact")))) {
+					print '<br><a class="reposition" href="database-tables.php?action=convertdynamic&table='.urlencode($obj->Name).'&token='.newToken().'">'.$langs->trans("Convert").' Dynamic</a>';
+				}
+				print '</td>';
 				print '<td align="right">'.$obj->Rows.'</td>';
 				print '<td align="right">'.$obj->Avg_row_length.'</td>';
 				print '<td align="right">'.$obj->Data_length.'</td>';
@@ -127,7 +147,11 @@ else
 				print '<td align="right">'.$obj->Index_length.'</td>';
 				print '<td align="right">'.$obj->Auto_increment.'</td>';
 				print '<td align="right">'.$obj->Check_time.'</td>';
-				print '<td align="right">'.$obj->Collation.'</td>';
+				print '<td align="right">'.$obj->Collation;
+				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci")))) {
+					print '<br><a class="reposition" href="database-tables.php?action=convertutf8&table='.urlencode($obj->Name).'&token='.newToken().'">'.$langs->trans("Convert").' UTF8</a>';
+				}
+				print '</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -136,11 +160,12 @@ else
 		print '</div>';
 	}
 
-	if ($base == 2)
-	{
-        print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder">';
+	if ($base == 2) {
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
+
+		print '<td>#</td>';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>Nb of tuples</td>';
 		print '<td>Nb index fetcher.</td>';
@@ -150,23 +175,22 @@ else
 		print "</tr>\n";
 
 		$sql = "SELECT relname, seq_tup_read, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del";
-		$sql.= " FROM pg_stat_user_tables";
+		$sql .= " FROM pg_stat_user_tables";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
-			{
+			$i = 0;
+			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
+				print '<td>'.($i+1).'</td>';
 				print '<td>'.$row[0].'</td>';
-				print '<td align="right">'.$row[1].'</td>';
-				print '<td align="right">'.$row[2].'</td>';
-				print '<td align="right">'.$row[3].'</td>';
-				print '<td align="right">'.$row[4].'</td>';
-				print '<td align="right">'.$row[5].'</td>';
+				print '<td class="right">'.$row[1].'</td>';
+				print '<td class="right">'.$row[2].'</td>';
+				print '<td class="right">'.$row[3].'</td>';
+				print '<td class="right">'.$row[4].'</td>';
+				print '<td class="right">'.$row[5].'</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -175,12 +199,12 @@ else
 		print '</div>';
 	}
 
-	if ($base == 4)
-	{
+	if ($base == 4) {
 		// Sqlite by PDO or by Sqlite3
-    print '<div class="div-table-responsive-no-min">';
-	  print '<table class="noborder">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
+		print '<td>#</td>';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
 		print "</tr>\n";
@@ -188,11 +212,9 @@ else
 		$sql = "SELECT name, type FROM sqlite_master where type='table' and name not like 'sqlite%' ORDER BY name";
 		$resql = $db->query($sql);
 
-		if ($resql)
-		{
+		if ($resql) {
 			while ($row = $db->fetch_row($resql)) {
-
-				$rescount = $db->query("SELECT COUNT(*) FROM " . $row[0]);
+				$rescount = $db->query("SELECT COUNT(*) FROM ".$row[0]);
 				if ($rescount) {
 					$row_count = $db->fetch_row($rescount);
 					$count = $row_count[0];
@@ -201,6 +223,7 @@ else
 				}
 
 				print '<tr class="oddeven">';
+				print '<td>'.($i+1).'</td>';
 				print '<td>'.$row[0].'</td>';
 				print '<td>'.$count.'</td>';
 				print '</tr>';
@@ -212,5 +235,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -13,7 +13,7 @@
 *.lang text eol=lf
 *.txt text eol=lf
 *.md text eol=lf
-*.bat text eol=crlf
+*.bat text eol=lf
 
 # Denote all files that are truly binary and should not be modified.
 *.ico binary

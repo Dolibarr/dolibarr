@@ -1,7 +1,8 @@
 <?php
+
 namespace Luracast\Restler\Format;
 
-use Luracast\Restler\Data\Object;
+use Luracast\Restler\Data\Obj;
 use Luracast\Restler\RestException;
 
 /**
@@ -14,7 +15,7 @@ use Luracast\Restler\RestException;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class JsonFormat extends Format
 {
@@ -42,6 +43,13 @@ class JsonFormat extends Format
      * use smart defaults
      */
     public static $bigIntAsString = null;
+
+    /**
+     * @var boolean|null  shim for json_decode JSON_NUMERIC_CHECK set it to
+     * null to
+     * use smart defaults
+     */
+    public static $numbersAsNumbers = null;
 
     const MIME = 'application/json';
     const EXTENSION = 'json';
@@ -80,13 +88,17 @@ class JsonFormat extends Format
                 $options |= JSON_UNESCAPED_UNICODE;
             }
 
-            $result = json_encode(Object::toArray($data, true), $options);
+            if (self::$numbersAsNumbers) {
+                $options |= JSON_NUMERIC_CHECK;
+            }
+
+            $result = json_encode(Obj::toArray($data, true), $options);
             $this->handleJsonError();
 
             return $result;
         }
 
-        $result = json_encode(Object::toArray($data, true));
+        $result = json_encode(Obj::toArray($data, true));
         $this->handleJsonError();
 
         if ($humanReadable) {
@@ -116,6 +128,10 @@ class JsonFormat extends Format
 
     public function decode($data)
     {
+        if (empty($data)) {
+            return null;
+        }
+
         $options = 0;
         if (self::$bigIntAsString) {
             if ((PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 4) // PHP >= 5.4
@@ -132,7 +148,7 @@ class JsonFormat extends Format
         }
 
         try {
-            $decoded = json_decode($data, $options);
+            $decoded = json_decode($data, true, 512, $options);
             $this->handleJsonError();
         } catch (\RuntimeException $e) {
             throw new RestException(400, $e->getMessage());
@@ -142,13 +158,13 @@ class JsonFormat extends Format
             throw new RestException(400, 'Error parsing JSON');
         }
 
-        return Object::toArray($decoded);
+        return $decoded; //Obj::toArray($decoded);
     }
 
     /**
      * Pretty print JSON string
      *
-     * @param  string $json
+     * @param string $json
      *
      * @return string formatted json
      */
@@ -256,7 +272,7 @@ class JsonFormat extends Format
         }
 
         if (isset($message)) {
-            throw new \RuntimeException('Error encoding/decoding JSON: '. $message);
+            throw new \RuntimeException('Error encoding/decoding JSON: ' . $message);
         }
     }
 }

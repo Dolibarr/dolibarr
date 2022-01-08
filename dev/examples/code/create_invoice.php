@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,8 +29,8 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Global variables
@@ -40,7 +40,7 @@ $error=0;
 
 // -------------------- START OF YOUR CODE HERE --------------------
 // Include Dolibarr environment
-require_once($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 // After this $db, $mysoc, $langs and $conf->entity are defined. Opened handler to database will be closed at end of file.
 
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
@@ -48,8 +48,11 @@ $langs->load("main");				// To load language file for default language
 @set_time_limit(0);
 
 // Load user and its permissions
-$result=$user->fetch('','admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('',$user->error); exit; }
+$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+if (! $result > 0) {
+	dol_print_error('', $user->error);
+	exit;
+}
 $user->getrights();
 
 
@@ -58,7 +61,7 @@ print "***** ".$script_file." (".$version.") *****\n";
 // Start of transaction
 $db->begin();
 
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 
 // Create invoice object
 $obj = new Facture($db);
@@ -66,8 +69,9 @@ $obj = new Facture($db);
 
 $obj->ref            = 'ABCDE';
 $obj->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$obj->date           = mktime();
-$obj->note           = 'A comment';
+$obj->date           = dol_now();
+$obj->note_public    = 'A public comment';
+$obj->note_private   = 'A private comment';
 $obj->cond_reglement_id = 1;
 
 $line1=new FactureLigne($db);
@@ -81,33 +85,27 @@ $obj->lines[]=$line1;
 
 // Create invoice
 $idobject=$obj->create($user);
-if ($idobject > 0)
-{
+if ($idobject > 0) {
 	// Change status to validated
 	$result=$obj->validate($user);
-	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else
-	{
+	if ($result > 0) {
+		print "OK Object created with id ".$idobject."\n";
+	} else {
 		$error++;
-		dol_print_error($db,$obj->error);
+		dol_print_error($db, $obj->error);
 	}
-}
-else
-{
+} else {
 	$error++;
-	dol_print_error($db,$obj->error);
+	dol_print_error($db, $obj->error);
 }
 
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (! $error)
-{
+if (! $error) {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else
-{
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

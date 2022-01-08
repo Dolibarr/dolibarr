@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Table to setup advanced targeting for emailing
 -- ============================================================================
@@ -20,12 +20,13 @@
 CREATE TABLE llx_advtargetemailing
 (
   rowid integer NOT NULL auto_increment PRIMARY KEY,
-  name varchar(200) NOT NULL,
+  name varchar(180) NOT NULL,
   entity integer NOT NULL DEFAULT 1,
-  fk_mailing	integer NOT NULL,
+  fk_element	integer NOT NULL,
+  type_element	varchar(180) NOT NULL,
   filtervalue	text,
   fk_user_author integer NOT NULL,
   datec datetime NOT NULL,
   fk_user_mod integer NOT NULL,
-  tms timestamp NOT NULL
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 )ENGINE=innodb;

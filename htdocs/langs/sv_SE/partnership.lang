@@ -1,0 +1,92 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=Partnerskapshantering
+PartnershipDescription=Partnerskapshanteringsmodul
+PartnershipDescriptionLong= Partnerskapshanteringsmodul
+Partnership=Partnership
+AddPartnership=Lägg till partnerskap
+CancelPartnershipForExpiredMembers=Partnerskap: Avbryt partnerskap med inaktiva abonnemang
+PartnershipCheckBacklink=Partnerskap: Kontrollera hänvisningslänk
+
+#
+# Menu
+#
+NewPartnership=Nytt partnerskap
+ListOfPartnerships=Lista över partnerskap
+
+#
+# Admin page
+#
+PartnershipSetup=Partnerskapsupplägg
+PartnershipAbout=Om partnerskap
+PartnershipAboutPage=Om partnerskapssidan
+partnershipforthirdpartyormember=Partnerstatus måste ställas in på "tredje part" eller "medlem"
+PARTNERSHIP_IS_MANAGED_FOR=Partnerskap hanterad för
+PARTNERSHIP_BACKLINKS_TO_CHECK=Bakåtlänkar att kontrollera
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dagar innan partnerskap avbryts när ett abonnemang har löpt ut
+ReferingWebsiteCheck=Kontroll av webbplatsens hänvisning
+ReferingWebsiteCheckDesc=Du kan aktivera en funktion för att kontrollera om din partner har länkat tillbaka till er hemsida via deras egen hemsida.
+
+#
+# Object
+#
+DeletePartnership=Ta bort partnerskap
+PartnershipDedicatedToThisThirdParty=Partnerskap dedikerat till denna kund/leverantör
+PartnershipDedicatedToThisMember=Partnerskap tillägnad denna medlem
+DatePartnershipStart=Startdatum
+DatePartnershipEnd=Slutdatum
+ReasonDecline=Avslagsanledning
+ReasonDeclineOrCancel=Avslagsanledning
+PartnershipAlreadyExist=Partnerskap finns redan
+ManagePartnership=Hantera partnerskap
+BacklinkNotFoundOnPartnerWebsite=Backlink hittades inte på partnerwebbplatsen
+ConfirmClosePartnershipAsk=Är du säker på att du vill avbryta detta partnerskap?
+PartnershipType=Partnerskapstyp
+PartnershipRefApproved=Partnership %s approved
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerskap kommer snart att avbrytas
+SendingEmailOnPartnershipRefused=Partnerskap nekat
+SendingEmailOnPartnershipAccepted=Partnerskap accepterat
+SendingEmailOnPartnershipCanceled=Partnerskap avbrutet
+
+YourPartnershipWillSoonBeCanceledTopic=Partnerskap kommer snart att avbrytas
+YourPartnershipRefusedTopic=Partnerskap nekat
+YourPartnershipAcceptedTopic=Partnerskap accepterat
+YourPartnershipCanceledTopic=Partnerskap avbrutet
+
+YourPartnershipWillSoonBeCanceledContent=Vi informerar dig om att ditt partnerskap snart kommer att avbrytas (Backlink hittades inte)
+YourPartnershipRefusedContent=Vi vill informera dig om att parnterskapsförfrågan har blivit nekad.
+YourPartnershipAcceptedContent=Vi vill informera dig om att partnerskapsförfrågan har blivit accepterad
+YourPartnershipCanceledContent=Vi vill informera dig om att partnerskapsförfrågan har blivit avbruten
+
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Avslagsanledning
+
+#
+# Status
+#
+PartnershipDraft=Utkast
+PartnershipAccepted=Accepterad
+PartnershipRefused=Refused
+PartnershipCanceled=Annullerad
+PartnershipManagedFor=Partnerutrymme

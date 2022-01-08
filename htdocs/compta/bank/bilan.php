@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,14 +22,15 @@
  *		\brief      Page de bilan
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
-if (!$user->rights->banque->lire)
-  accessforbidden();
+if (empty($user->rights->banque->lire)) {
+	accessforbidden();
+}
 
 
 /**
@@ -41,10 +42,12 @@ if (!$user->rights->banque->lire)
 function valeur($sql)
 {
 	global $db;
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj=$db->fetch_object($resql);
+
+	$valeur = 0;
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
 		$valeur = $obj->amount;
 		$db->free($resql);
 	}
@@ -61,7 +64,7 @@ llxHeader();
 print load_fiche_titre("Bilan");
 print '<br>';
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="noborder" width="100%" cellpadding="2">';
 print "<tr class=\"liste_titre\">";
 echo '<td colspan="2">'.$langs->trans("Summary").'</td>';
 print "</tr>\n";
@@ -89,5 +92,6 @@ print "<tr class=\"oddeven\"><td>".$langs->trans("BankBalance")."</td><td align=
 
 print "</table>";
 
+// End of page
 llxFooter();
 $db->close();

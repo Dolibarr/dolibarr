@@ -1,7 +1,7 @@
 <?php
 namespace Luracast\Restler\Format;
 
-use Luracast\Restler\Data\Object;
+use Luracast\Restler\Data\Obj;
 use CFPropertyList\CFTypeDetector;
 use CFPropertyList\CFPropertyList;
 
@@ -18,7 +18,7 @@ use CFPropertyList\CFPropertyList;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class PlistFormat extends DependentMultiFormat
 {
@@ -61,7 +61,7 @@ class PlistFormat extends DependentMultiFormat
         $plist = new CFPropertyList ();
         $td = new CFTypeDetector ();
         $guessedStructure = $td->toCFType(
-            Object::toArray($data)
+            Obj::toArray($data)
         );
         $plist->add($guessedStructure);
 

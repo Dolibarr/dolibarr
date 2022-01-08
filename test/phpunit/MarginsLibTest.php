@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/margin/lib/margins.lib.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -45,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class MarginsLibTest extends PHPUnit_Framework_TestCase
+class MarginsLibTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -58,8 +57,10 @@ class MarginsLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return DateLibTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -72,57 +73,65 @@ class MarginsLibTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin();   // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    // tear down after class
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testGetMarginInfos
-     *
-     * @return	void
-     */
-    public function testGetMarginInfos()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testGetMarginInfos
+	 *
+	 * @return	void
+	 */
+	public function testGetMarginInfos()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -131,21 +140,20 @@ class MarginsLibTest extends PHPUnit_Framework_TestCase
 		$result=getMarginInfos(10, 0, 19.6, 0, 0, 0, 8);
 		//var_dump($result);
 		print __METHOD__." result[0]=".$result[0]."\n";
-		$this->assertEquals(8,$result[0]);
+		$this->assertEquals(8, $result[0]);
 		print __METHOD__." result[1]=".$result[1]."\n";
-		$this->assertEquals(25,$result[1]);
+		$this->assertEquals(25, $result[1]);
 		print __METHOD__." result[2]=".$result[2]."\n";
-		$this->assertEquals(20,$result[2]);
-		
+		$this->assertEquals(20, $result[2]);
+
 		$result=getMarginInfos(10, 10, 19.6, 0, 0, 0, 8);
 		print __METHOD__." result[0]=".$result[0]."\n";
-		$this->assertEquals(8,$result[0]);
+		$this->assertEquals(8, $result[0]);
 		print __METHOD__." result[1]=".$result[1]."\n";
-		$this->assertEquals(12.5,$result[1]);
+		$this->assertEquals(12.5, $result[1]);
 		print __METHOD__." result[2]=".$result[2]."\n";
-		$this->assertEquals(1/9*100,$result[2]);
-		
-		return 0;
-    }
+		$this->assertEquals(1/9*100, $result[2]);
 
+		return 0;
+	}
 }

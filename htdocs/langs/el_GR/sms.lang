@@ -48,4 +48,4 @@ SmsInfoNumero= (Μορφή διεθνούς δηλαδή: +308997017610)
 DelayBeforeSending=Καθυστέρηση πριν από την αποστολή (λεπτά)
 SmsNoPossibleSenderFound=Δεν υπάρχει αποστολέας. Ελέξτε τις ρυθμίσεις από τον πάροχο των SMS
 SmsNoPossibleRecipientFound=Δεν υπάρχει στόχος. Ελέγξτε την εγκατάσταση του SMS του παροχέα σας.
-
+DisableStopIfSupported=Disable STOP message (if supported)

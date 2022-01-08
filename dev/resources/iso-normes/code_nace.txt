@@ -1,0 +1,5 @@
+NACE 
+
+https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=LST_CLS_DLD&StrNom=NACE_REV2&StrLanguageCode=EN&StrLayoutCode=
+
+https://en.wikipedia.org/wiki/Statistical_Classification_of_Economic_Activities_in_the_European_Community

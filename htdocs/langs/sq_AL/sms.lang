@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
-SmsSetup=Sms setup
-SmsDesc=This page allows you to define globals options on SMS features
+SmsSetup=Konfigurimi i SMS
+SmsDesc=Kjo faqe ju mundeson percaktimin e parametrave globale per SMS
 SmsCard=SMS Card
 AllSms=All SMS campains
 SmsTargets=Targets
 SmsRecipients=Targets
 SmsRecipient=Target
 SmsTitle=Përshkrimi
-SmsFrom=Sender
+SmsFrom=Dërguesi
 SmsTo=Target
 SmsTopic=Topic of SMS
 SmsText=Message
@@ -48,4 +48,4 @@ SmsInfoNumero= (format ndërkombëtar p.sh: +33899701761)
 DelayBeforeSending=Delay before sending (minutes)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=No target available. Check setup of your SMS provider.
-
+DisableStopIfSupported=Disable STOP message (if supported)

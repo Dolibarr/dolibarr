@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,15 +21,16 @@
  *       \brief      File of the superclass of orders classes (customer and supplier)
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *      Superclass for orders classes
  */
 abstract class CommonOrder extends CommonObject
 {
-
+	use CommonIncoterm;
 }
 
 /**
@@ -38,26 +39,32 @@ abstract class CommonOrder extends CommonObject
 abstract class CommonOrderLine extends CommonObjectLine
 {
 	/**
+	 * Custom label of line. Not used by default.
+	 * @deprecated
+	 */
+	public $label;
+
+	/**
 	 * Product ref
 	 * @var string
 	 * @deprecated Use product_ref
-	 * @see product_ref
+	 * @see $product_ref
 	 */
 	public $ref;
+
+	/**
+	 * Product label
+	 * @var string
+	 * @deprecated Use product_label
+	 * @see $product_label
+	 */
+	public $libelle;
 
 	/**
 	 * Product ref
 	 * @var string
 	 */
 	public $product_ref;
-
-	/**
-	 * Product label
-	 * @var string
-	 * @deprecated Use product_label
-	 * @see product_label
-	 */
-	public $libelle;
 
 	/**
 	 * Product label
@@ -72,17 +79,29 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_desc;
 
 	/**
+	 * Product use lot
+	 * @var string
+	 */
+	public $product_tobatch;
+
+	/**
+	 * Product barcode
+	 * @var string
+	 */
+	public $product_barcode;
+
+	/**
 	 * Quantity
-	 * @var int
+	 * @var float
 	 */
 	public $qty;
 
 	/**
 	 * Unit price
 	 * @deprecated
-	 * @see subprice
+	 * @see $subprice
 	 */
-	var $price;
+	public $price;
 
 	/**
 	 * Unit price before taxes
@@ -115,6 +134,12 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $remise_percent;
 
 	/**
+	 * VAT code
+	 * @var string
+	 */
+	public $vat_src_code;
+
+	/**
 	 * VAT %
 	 * @var float
 	 */
@@ -145,5 +170,10 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	public $special_code = 0;
 
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 }
-

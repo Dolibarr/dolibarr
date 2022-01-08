@@ -1,5 +1,11 @@
 # Dolibarr language file - Source file is en_US - loan
 ShowLoanPayment=Zeige Kreidtauszahlung
-PurchaseFinanceInfo=Kauf und Finanzierungs Inforamtionen
-ShowMeCalculationsAndAmortization=Zeigen Sie mir die Berechnungen und Amortization
-AmortizationPaymentDesc=Die <a href="#amortization">Amortisation</a> reisst ab wie viel von Ihrer monatlichen Zahlung geht für die Bankzinsen, und wie viel für die Tilgung des Haupt-Darlehen geht.
+LoanAccountancyInsuranceCode=Buchhaltungskonto Kreditversicherung
+LoanAccountancyInterestCode=Buchhaltungskonto Kreditzins
+ListLoanAssociatedProject=Kredite für dieses Projekt
+AddLoan=Erzeuge Kredit
+CapitalRemain=Restkapital
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard - Buchhaltungskonto Kapital
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard - Buchhaltungskonto Zins
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard - Buchhaltungskonto Kreditversicherung
+CreateCalcSchedule=Finanzielle Verpflichtung anpassen.

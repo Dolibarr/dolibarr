@@ -5,7 +5,7 @@ DeleteResource=Xóa tài nguyên
 ConfirmDeleteResourceElement=Xác nhận xóa tài nguyên này
 NoResourceInDatabase=Chưa có tài nguyên trong cơ sở dữ liệu
 NoResourceLinked=Chưa có tài nguyên được liên kết
-
+ActionsOnResource=Sự kiện về tài nguyên này
 ResourcePageIndex=Danh sách tài nguyên
 ResourceSingular=Tài nguyên
 ResourceCard=Thẻ tài nguyên
@@ -16,7 +16,7 @@ ResourceFormLabel_description=Mô tả tài nguyên
 
 ResourcesLinkedToElement=Tài nguyên được liên kết tới các thành phần
 
-ShowResource=Show resource
+ShowResource=Hiển thị tài nguyên
 
 ResourceElementPage=Các tài nguyên thành tố
 ResourceCreatedWithSuccess=Đã tạo tài nguyên thành công
@@ -30,7 +30,10 @@ DictionaryResourceType=Loại tài nguyên
 
 SelectResource=Chọn tài nguyên
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=ID Tài nguyên
+AssetNumber=Số sê-ri
+ResourceTypeCode=Mã loại tài nguyên
 ImportDataset_resource_1=Tài nguyên
+
+ErrorResourcesAlreadyInUse=Một số tài nguyên đang được sử dụng
+ErrorResourceUseInEvent=%s được sử dụng trong %s sự kiện

@@ -7,4 +7,5 @@ ErrorFileNotLinked=Failu nevar salinkot
 LinkRemoved=Saite %s tika dzēsta
 ErrorFailedToDeleteLink= Kļūda dzēšot saiti '<b>%s</b>'
 ErrorFailedToUpdateLink= Kļūda atjaunojot saiti '<b>%s</b>'
-URLToLink=URL to link
+URLToLink=Saites uz URL
+OverwriteIfExists=Overwrite file if exists

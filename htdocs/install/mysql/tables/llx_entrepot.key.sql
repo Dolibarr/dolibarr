@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,9 +12,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
 
-ALTER TABLE llx_entrepot ADD UNIQUE INDEX uk_entrepot_label (label, entity);
+ALTER TABLE llx_entrepot ADD UNIQUE INDEX uk_entrepot_label (ref, entity);

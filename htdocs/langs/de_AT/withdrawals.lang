@@ -3,6 +3,5 @@ WithdrawalRefused=Abbuchungen abgelehnt
 InvoiceRefused=Ablehnung in Rechnung stellen
 StatusWaiting=Wartestellung
 StatusMotif2=Abbuchung angefochten
-StatusMotif4=Ablehnung durch Kontoinhaber
 StatusMotif5=Fehlerhafte Kontodaten
 OrderWaiting=Wartestellung

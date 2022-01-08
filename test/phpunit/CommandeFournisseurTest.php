@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -31,9 +31,9 @@ require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.c
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -46,296 +46,355 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
+class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	protected $savconf;
+	protected $savuser;
+	protected $savlangs;
+	protected $savdb;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return CommandeFournisseurTest
-     */
-    function __construct()
-    {
-        //$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @return CommandeFournisseurTest
+	 */
+	public function __construct()
+	{
+		parent::__construct();
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
 
-    // Static methods
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
 
-        print __METHOD__."\n";
-    }
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-    // tear down after class
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+		print __METHOD__."\n";
+	}
 
-        print __METHOD__."\n";
-    }
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->rollback();
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		print __METHOD__."\n";
+	}
 
-        print __METHOD__."\n";
-        //print $db->getVersion()."\n";
-    }
-    /**
-     * End phpunit tests
-     *
-     * @return	void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+	/**
+	 * Init phpunit tests
+	 *
+	 * @return  void
+	 */
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    /**
-     * testCommandeFournisseurCreate
-     *
-     * @return	void
-     */
-    public function testCommandeFournisseurCreate()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		print __METHOD__."\n";
+		//print $db->getVersion()."\n";
+	}
+	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
+	 */
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-        // Set supplier and product to use
-        $socid=1;
-        $societe=new Societe($db);
-        $societe->fetch($socid);
-        $product=new ProductFournisseur($db);
-        $product->fetch(0,'PIDRESS');
-        if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
+	/**
+	 * testCommandeFournisseurCreate
+	 *
+	 * @return	int		ID of purchase order
+	 */
+	public function testCommandeFournisseurCreate()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $quantity=10;
-        $ref_fourn='SUPPLIER_REF_PHPUNIT';
-        $tva_tx=19.6;
+		// Set supplier and product to use
+		$socid=1;
+		$societe=new Societe($db);
+		$societe->fetch($socid);
+		$product=new ProductFournisseur($db);
+		$product->fetch(0, 'PINKDRESS');
+		if ($product->id <= 0) {
+			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database"; die(1);
+		}
 
-        // Create supplier price
-        $result=$product->add_fournisseur($user, $societe->id, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
-        $this->assertGreaterThanOrEqual(1, $result);
-        $result=$product->update_buyprice($quantity, 20, $user, 'HT', $societe, '', $ref_fourn, $tva_tx, 0, 0);
-        $this->assertGreaterThanOrEqual(0, $result);
+		$quantity=10;
+		$ref_fourn='SUPPLIER_REF_PHPUNIT';
+		$tva_tx=19.6;
 
-        // Create supplier order with a too low quantity
-        $localobject=new CommandeFournisseur($db);
-        $localobject->initAsSpecimen();
-        $localobject->lines=array();    // Overwrite lines of order
-        $line=new CommandeFournisseurLigne($db);
-        $line->desc=$langs->trans("Description")." specimen line too low";
-        $line->qty=1;                   // So lower than $quantity
-        $line->fk_product=$product->id;
-        $line->ref_fourn=$ref_fourn;
-        $localobject->lines[]=$line;
+		// Delete existing supplier prices
+		// TODO
 
-        $result=$localobject->create($user);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-1, $result);   // must be -1 because quantity is lower than minimum of supplier price
+		// Create 1 supplier price with min qty = 10;
+		$result=$product->add_fournisseur($user, $societe->id, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
+		print __METHOD__." add_fournisseur result=".$result."\n";
+		$this->assertGreaterThanOrEqual(0, $result, 'Create 1 supplier price with min qty = 10 if not exists');
+		$result=$product->update_buyprice($quantity, 20, $user, 'HT', $societe, '', $ref_fourn, $tva_tx, 0, 0);
+		print __METHOD__." update_buyprice result=".$result."\n";
+		$this->assertGreaterThanOrEqual(0, $result, 'Update buyprice');
 
-        $sql="DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where ref=''";
-        $db->query($sql);
+		// Create purchase order with a too low quantity and option SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY is on
+		$conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY = 1;
 
-        // Create supplier order
-        $localobject2=new CommandeFournisseur($db);
-        $localobject2->initAsSpecimen();    // This create 5 lines of first product found for socid 1
-        $localobject2->lines=array();       // Overwrite lines of order
-        $line=new CommandeFournisseurLigne($db);
-        $line->desc=$langs->trans("Description")." specimen line ok";
-        $line->qty=10;                      // So enough quantity
-        $line->fk_product=$product->id;
-        $line->ref_fourn=$ref_fourn;
-        $localobject2->lines[]=$line;
+		$localobject=new CommandeFournisseur($db);
+		$localobject->initAsSpecimen();
+		$localobject->lines=array();    // Overwrite lines of order
+		$line=new CommandeFournisseurLigne($db);
+		$line->desc=$langs->trans("Description")." specimen line with qty too low";
+		$line->qty=1;                   // So lower than $quantity
+		$line->subprice=100;
+		$line->fk_product=$product->id;
+		$line->ref_fourn=$ref_fourn;
+		$localobject->lines[]=$line;
 
-        $result=$localobject2->create($user);
-        print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(0, $result);
+		$result=$localobject->create($user);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(-1, $result, 'Creation of too low quantity');   // must be -1 because quantity is lower than minimum of supplier price
 
-        return $result;
-    }
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where ref IN ('', '(PROV)')";
+		$db->query($sql);
+
+		// Create purchase order
+		$localobject2=new CommandeFournisseur($db);
+		$localobject2->initAsSpecimen();    // This create 5 lines of first product found for socid 1
+		$localobject2->lines=array();       // Overwrite lines of order
+		$line=new CommandeFournisseurLigne($db);
+		$line->desc=$langs->trans("Description")." specimen line ok";
+		$line->qty=10;                      // So enough quantity
+		$line->subprice=100;
+		$line->fk_product=$product->id;
+		$line->ref_fourn=$ref_fourn;
+		$localobject2->lines[]=$line;
+
+		$result=$localobject2->create($user);
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
 
-    /**
-     * testCommandeFournisseurFetch
-     *
-     * @param   int $id     Id of supplier order
-     * @return  void
-     *
-     * @depends testCommandeFournisseurCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeFournisseurFetch($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		// Create purchase order with a too low quantity but option SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY is off
+		$conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY = 0;
 
-        $localobject=new CommandeFournisseur($this->savdb);
-        $result=$localobject->fetch($id);
+		$localobject3=new CommandeFournisseur($db);
+		$localobject3->initAsSpecimen();
+		$localobject3->lines=array();    // Overwrite lines of order
+		$line=new CommandeFournisseurLigne($db);
+		$line->desc=$langs->trans("Description")." specimen line with qty too low";
+		$line->qty=1;                   // So lower than $quantity
+		$line->subprice=100;
+		$line->fk_product=$product->id;
+		$line->ref_fourn=$ref_fourn;
+		$localobject3->lines[]=$line;
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		$result=$localobject3->create($user);
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, 'Creation of too low quantity should be ok');   // must be id of line because there is no test on minimum quantity
 
-    /**
-     * testCommandeFournisseurValid
-     *
-     * @param   Object $localobject     Supplier order
-     * @return  void
-     *
-     * @depends testCommandeFournisseurFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeFournisseurValid($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where ref=''";
+		$db->query($sql);
 
-        $result=$localobject->valid($user);
+		// Create purchase order
+		$localobject4=new CommandeFournisseur($db);
+		$localobject4->initAsSpecimen();    // This create 5 lines of first product found for socid 1
+		$localobject4->lines=array();       // Overwrite lines of order
+		$line=new CommandeFournisseurLigne($db);
+		$line->desc=$langs->trans("Description")." specimen line ok";
+		$line->qty=10;                      // So enough quantity
+		$line->subprice=100;
+		$line->fk_product=$product->id;
+		$line->ref_fourn=$ref_fourn;
+		$localobject4->lines[]=$line;
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+		$result=$localobject4->create($user);
+		print __METHOD__." id for purchase order created by testCommandeFournisseurCreate = ".$result."\n";
+		$this->assertGreaterThan(0, $result, 'Test to create a purchase order by testCommandeFournisseurCreate');
 
-    /**
-     * testCommandeFournisseurApprove
-     *
-     * @param   Object $localobject Supplier order
-     * @return  void
-     *
-     * @depends testCommandeFournisseurValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeFournisseurApprove($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		return $result;
+	}
 
-        $result=$localobject->approve($user);
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+	/**
+	 * testCommandeFournisseurFetch
+	 *
+	 * @param   int 		$id     			Id of purchase order
+	 * @return  CommandeFournisseur				Purchase order
+	 *
+	 * @depends testCommandeFournisseurCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeFournisseurFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    /**
-     * testCommandeFournisseurCancel
-     *
-     * @param   Object  $localobject        Supplier order
-     * @return  void
-     *
-     * @depends testCommandeFournisseurApprove
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeFournisseurCancel($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$localobject=new CommandeFournisseur($this->savdb);
+		$result=$localobject->fetch($id);
 
-        $result=$localobject->cancel($user);
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0, 'Failed to fetch supplier order with id '.$id);
+		return $localobject;
+	}
 
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
+	/**
+	 * testCommandeFournisseurValid
+	 *
+	 * @param   CommandeFournisseur $localobject     Supplier order
+	 * @return  CommandeFournisseur		Supplier order
+	 *
+	 * @depends testCommandeFournisseurFetch
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeFournisseurValid($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    /**
-     * testCommandeFournisseurOther
-     *
-     * @param   Object $localobject     Supplier order
-     * @return  void
-     *
-     * @depends testCommandeFournisseurCancel
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeFournisseurOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		$result=$localobject->valid($user);
 
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-        /*$localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
-        */
+	/**
+	 * testCommandeFournisseurApprove
+	 *
+	 * @param   CommandeFournisseur $localobject 	Supplier order
+	 * @return  CommandeFournisseur		Supplier order
+	 *
+	 * @depends testCommandeFournisseurValid
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeFournisseurApprove($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        return $localobject->id;
-    }
+		$result=$localobject->approve($user);
 
-    /**
-     * testCommandeFournisseurDelete
-     *
-     * @param   int $id     Id of order
-     * @return  void
-     *
-     * @depends testCommandeFournisseurOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeFournisseurDelete($id)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
 
-        $localobject=new CommandeFournisseur($this->savdb);
-        $result=$localobject->fetch($id);
-        $result=$localobject->delete($user);
+	/**
+	 * testCommandeFournisseurCancel
+	 *
+	 * @param   CommandeFournisseur  $localobject    Supplier order
+	 * @return  CommandeFournisseur		Supplier order
+	 *
+	 * @depends testCommandeFournisseurApprove
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeFournisseurCancel($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $result;
-    }
+		$result=$localobject->cancel($user);
 
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
+
+	/**
+	 * testCommandeFournisseurOther
+	 *
+	 * @param   CommandeFournisseur $localobject     Supplier order
+	 * @return  int						Id of purchase order
+	 *
+	 * @depends testCommandeFournisseurCancel
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeFournisseurOther($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		/*$result=$localobject->setstatus(0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		*/
+
+		/*$localobject->info($localobject->id);
+		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+		$this->assertNotEquals($localobject->date_creation, '');
+		*/
+		$this->assertEquals(1, 1);
+
+		return $localobject->id;
+	}
+
+	/**
+	 * testCommandeFournisseurDelete
+	 *
+	 * @param   int $id     Id of order
+	 * @return  int			Result of delete
+	 *
+	 * @depends testCommandeFournisseurOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCommandeFournisseurDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new CommandeFournisseur($this->savdb);
+		$result=$localobject->fetch($id);
+		$result=$localobject->delete($user);
+
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		return $result;
+	}
 }

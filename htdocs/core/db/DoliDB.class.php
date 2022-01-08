@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,21 +22,21 @@
  * \brief 		Class file to manage Dolibarr database access
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/db/Database.interface.php';
+require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
 
 /**
  * Class to manage Dolibarr database access
  */
 abstract class DoliDB implements Database
 {
-	/** @var resource Database handler */
+	/** @var bool|resource|SQLite3 Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
 	/** @var string Charset used to force charset when creating database */
-	public $forcecharset='utf8';
+	public $forcecharset = 'utf8';
 	/** @var string Collate used to force collate when creating database */
-	public $forcecollate='utf8_unicode_ci';
+	public $forcecollate = 'utf8_unicode_ci';
 	/** @var resource Resultset of last query */
 	private $_results;
 	/** @var bool true if connected, else false */
@@ -59,7 +59,7 @@ abstract class DoliDB implements Database
 	public $lastqueryerror;
 	/** @var string Last error message */
 	public $lasterror;
-	/** @var int Last error number */
+	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
 	/** @var bool Status */
@@ -75,9 +75,10 @@ abstract class DoliDB implements Database
 	 *	@param	string	$resko          resultat si test non egal
 	 *	@return	string          		SQL string
 	 */
-	function ifsql($test,$resok,$resko)
+	public function ifsql($test, $resok, $resko)
 	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
+		//return 'IF('.$test.','.$resok.','.$resko.')';		// Not sql standard
+		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
 	}
 
 	/**
@@ -85,11 +86,13 @@ abstract class DoliDB implements Database
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    int		$param      Date TMS to convert
-	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 *	 @param		mixed	$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
+	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-	function idate($param)
+	public function idate($param, $gm = 'tzserver')
 	{
-		return dol_print_date($param,"%Y%m%d%H%M%S");
+		// TODO $param should be gmt, so we should add $gm to 'gmt' instead of default 'tzserver'
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", $gm);
 	}
 
 	/**
@@ -97,9 +100,25 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string	lasterrno
 	 */
-	function lasterrno()
+	public function lasterrno()
 	{
 		return $this->lasterrno;
+	}
+
+	/**
+	 * Sanitize a string for SQL forging
+	 *
+	 * @param   string 	$stringtosanitize 	String to escape
+	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
+	 * @return  string                      String escaped
+	 */
+	public function sanitize($stringtosanitize, $allowsimplequote = 0)
+	{
+		if ($allowsimplequote) {
+			return preg_replace('/[^a-z0-9_\-\.,\']/i', '', $stringtosanitize);
+		} else {
+			return preg_replace('/[^a-z0-9_\-\.,]/i', '', $stringtosanitize);
+		}
 	}
 
 	/**
@@ -107,23 +126,19 @@ abstract class DoliDB implements Database
 	 *
 	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	function begin()
+	public function begin()
 	{
-		if (! $this->transaction_opened)
-		{
-			$ret=$this->query("BEGIN");
-			if ($ret)
-			{
+		if (!$this->transaction_opened) {
+			$ret = $this->query("BEGIN");
+			if ($ret) {
 				$this->transaction_opened++;
-				dol_syslog("BEGIN Transaction",LOG_DEBUG);
-				dol_syslog('',0,1);
+				dol_syslog("BEGIN Transaction", LOG_DEBUG);
+				dol_syslog('', 0, 1);
 			}
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened++;
-			dol_syslog('',0,1);
+			dol_syslog('', 0, 1);
 			return 1;
 		}
 	}
@@ -134,48 +149,39 @@ abstract class DoliDB implements Database
 	 * @param	string	$log		Add more log to default log line
 	 * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
-	function commit($log='')
+	public function commit($log = '')
 	{
-		dol_syslog('',0,-1);
-		if ($this->transaction_opened<=1)
-		{
-			$ret=$this->query("COMMIT");
-			if ($ret)
-			{
-				$this->transaction_opened=0;
-				dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
+		dol_syslog('', 0, -1);
+		if ($this->transaction_opened <= 1) {
+			$ret = $this->query("COMMIT");
+			if ($ret) {
+				$this->transaction_opened = 0;
+				dol_syslog("COMMIT Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened--;
 			return 1;
 		}
 	}
 
 	/**
-	 *	Annulation d'une transaction et retour aux anciennes valeurs
+	 *	Cancel a transaction and go back to initial data values
 	 *
 	 * 	@param	string			$log		Add more log to default log line
-	 * 	@return	resource|int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@return	resource|int         		1 if cancelation is ok or transaction not open, 0 if error
 	 */
-	function rollback($log='')
+	public function rollback($log = '')
 	{
-		dol_syslog('',0,-1);
-		if ($this->transaction_opened<=1)
-		{
-			$ret=$this->query("ROLLBACK");
-			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
+		dol_syslog('', 0, -1);
+		if ($this->transaction_opened <= 1) {
+			$ret = $this->query("ROLLBACK");
+			$this->transaction_opened = 0;
+			dol_syslog("ROLLBACK Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened--;
 			return 1;
 		}
@@ -188,13 +194,20 @@ abstract class DoliDB implements Database
 	 *	@param	int		$offset     Numero of line from where starting fetch
 	 *	@return	string      		String with SQL syntax to add a limit and offset
 	 */
-	function plimit($limit=0,$offset=0)
+	public function plimit($limit = 0, $offset = 0)
 	{
 		global $conf;
-		if (empty($limit)) return "";
-		if ($limit < 0) $limit=$conf->liste_limit;
-		if ($offset > 0) return " LIMIT $offset,$limit ";
-		else return " LIMIT $limit ";
+		if (empty($limit)) {
+			return "";
+		}
+		if ($limit < 0) {
+			$limit = $conf->liste_limit;
+		}
+		if ($offset > 0) {
+			return " LIMIT ".((int) $offset).",".((int) $limit)." ";
+		} else {
+			return " LIMIT ".((int) $limit)." ";
+		}
 	}
 
 	/**
@@ -202,9 +215,9 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	        array  		Version array
 	 */
-	function getVersionArray()
+	public function getVersionArray()
 	{
-		return preg_split("/[\.,-]/",$this->getVersion());
+		return preg_split("/[\.,-]/", $this->getVersion());
 	}
 
 	/**
@@ -212,7 +225,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	string					Last query
 	 */
-	function lastquery()
+	public function lastquery()
 	{
 		return $this->lastquery;
 	}
@@ -220,40 +233,44 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string	        $sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
-	 * @param	'ASC'|'DESC'	$sortorder  Sort order
-	 * @return	string      		        String to provide syntax of a sort sql string
+	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
+	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	function order($sortfield=null,$sortorder=null)
+	public function order($sortfield = null, $sortorder = null)
 	{
-		if (! empty($sortfield))
-		{
-			$return='';
-			$fields=explode(',',$sortfield);
-			$orders=explode(',',$sortorder);
-			$i=0;
-			foreach($fields as $val)
-			{
-				if (! $return) $return.=' ORDER BY ';
-				else $return.=', ';
+		if (!empty($sortfield)) {
+			$oldsortorder = '';
+			$return = '';
+			$fields = explode(',', $sortfield);
+			$orders = explode(',', $sortorder);
+			$i = 0;
+			foreach ($fields as $val) {
+				if (!$return) {
+					$return .= ' ORDER BY ';
+				} else {
+					$return .= ', ';
+				}
 
-				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-				
-				$tmpsortorder = trim($orders[$i]);
-				
+				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
+
+				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
+
 				// Only ASC and DESC values are valid SQL
 				if (strtoupper($tmpsortorder) === 'ASC') {
+					$oldsortorder = 'ASC';
 					$return .= ' ASC';
 				} elseif (strtoupper($tmpsortorder) === 'DESC') {
+					$oldsortorder = 'DESC';
 					$return .= ' DESC';
+				} else {
+					$return .= ' '.($oldsortorder ? $oldsortorder : 'ASC');
 				}
-				
+
 				$i++;
 			}
 			return $return;
-		}
-		else
-		{
+		} else {
 			return '';
 		}
 	}
@@ -263,7 +280,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string		Last error
 	 */
-	function lasterror()
+	public function lasterror()
 	{
 		return $this->lasterror;
 	}
@@ -274,15 +291,18 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	bool				$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 *	@param	mixed				$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
-	function jdate($string, $gm=false)
+	public function jdate($string, $gm = 'tzserver')
 	{
-		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
-		$string=preg_replace('/([^0-9])/i','',$string);
-		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
+		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
+		if ($string == 0 || $string == "0000-00-00 00:00:00") {
+			return '';
+		}
+		$string = preg_replace('/([^0-9])/i', '', $string);
+		$tmp = $string.'000000';
+		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
 		return $date;
 	}
 
@@ -291,9 +311,58 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string	lastqueryerror
 	 */
-	function lastqueryerror()
+	public function lastqueryerror()
 	{
 		return $this->lastqueryerror;
 	}
-}
 
+	/**
+	 * Return first result from query as object
+	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
+	 * Dont add LIMIT to your query, it will be added by this method
+	 *
+	 * @param 	string 				$sql 	The sql query string
+	 * @return 	bool|int|object    			False on failure, 0 on empty, object on success
+	 */
+	public function getRow($sql)
+	{
+		$sql .= ' LIMIT 1';
+
+		$res = $this->query($sql);
+		if ($res) {
+			$obj = $this->fetch_object($res);
+			if ($obj) {
+				return $obj;
+			} else {
+				return 0;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Return all results from query as an array of objects
+	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
+	 * be carefull with this method use it only with some limit of results to avoid performences loss.
+	 *
+	 * @param 	string 		$sql 		The sql query string
+	 * @return 	bool|array				Result
+	 * @deprecated
+	 */
+	public function getRows($sql)
+	{
+		$res = $this->query($sql);
+		if ($res) {
+			$results = array();
+			if ($this->num_rows($res) > 0) {
+				while ($obj = $this->fetch_object($res)) {
+					$results[] = $obj;
+				}
+			}
+			return $results;
+		}
+
+		return false;
+	}
+}

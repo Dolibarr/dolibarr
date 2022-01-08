@@ -1,6 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
@@ -25,7 +25,7 @@ create table llx_projet_task
   fk_projet				integer NOT NULL,
   fk_task_parent		integer DEFAULT 0 NOT NULL,
   datec					datetime,						-- date creation
-  tms					timestamp,						-- date creation/modification
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,						-- last modification date
   dateo					datetime,						-- date start task
   datee					datetime,						-- date end task
   datev					datetime,						-- date validation
@@ -35,7 +35,9 @@ create table llx_projet_task
   planned_workload		real DEFAULT 0,
   progress				integer DEFAULT 0,				-- percentage increase
   priority				integer DEFAULT 0,				-- priority
+  budget_amount         double(24,8),
   fk_user_creat			integer,						-- user who created the task
+  fk_user_modif			integer,						-- user who modify the task
   fk_user_valid			integer,						-- user who validated the task
   fk_statut				smallint DEFAULT 0 NOT NULL,
   note_private			text,

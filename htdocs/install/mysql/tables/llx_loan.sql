@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2014		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2014		Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -22,25 +22,27 @@ create table llx_loan
   rowid							integer AUTO_INCREMENT PRIMARY KEY,
   entity						integer DEFAULT 1 NOT NULL,
   datec							datetime,
-  tms							timestamp,
-  
+  tms							timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   label							varchar(80) NOT NULL,
   fk_bank						integer,
-  
-  capital						real     default 0 NOT NULL,
+
+  capital						double(24,8) DEFAULT 0 NOT NULL,
+  insurance_amount				double(24,8) DEFAULT 0,
+
   datestart						date,
   dateend						date,
   nbterm						real,
   rate							double  NOT NULL,
-  
-  note_private                  text,
-  note_public                   text,
-  
-  capital_position				real     default 0,		-- If not a new loan, just have the position of capital
+
+  note_private					text,
+  note_public					text,
+
+  capital_position				double(24,8) DEFAULT 0,		-- If not a new loan, just have the position of capital
   date_position					date,
   
   paid							smallint default 0 NOT NULL,
-  
+
   accountancy_account_capital	varchar(32),
   accountancy_account_insurance	varchar(32),
   accountancy_account_interest	varchar(32),

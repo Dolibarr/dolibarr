@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP Client module setup
-NewFTPClient=New FTP connection setup
-FTPArea=FTP Area
-FTPAreaDesc=This screen show you content of a FTP server view
-SetupOfFTPClientModuleNotComplete=Setup of FTP client module seems to be not complete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP functions
-FailedToConnectToFTPServer=Failed to connect to FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with defined login/password
-FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b> (Check permissions and that directory is empty).
-FTPPassiveMode=Passive mode
-ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
-FailedToGetFile=Failed to get files %s
+FTPClientSetup=Pengaturan modul Klien FTP atau SFTP
+NewFTPClient=Pengaturan koneksi FTP / FTPS baru
+FTPArea=Area FTP / FTPS
+FTPAreaDesc=Layar ini menunjukkan tampilan server FTP dan SFTP.
+SetupOfFTPClientModuleNotComplete=Penyiapan modul klien FTP atau SFTP tampaknya tidak lengkap
+FTPFeatureNotSupportedByYourPHP=PHP Anda tidak mendukung fungsi FTP atau SFTP
+FailedToConnectToFTPServer=Gagal terhubung ke server (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Gagal masuk ke server dengan login / kata sandi yang ditentukan
+FTPFailedToRemoveFile=Gagal menghapus file<b>%s </b>.
+FTPFailedToRemoveDir=Gagal menghapus direktori<b>%s </b>: periksa izin dan direktori tersebut kosong.
+FTPPassiveMode=Mode pasif
+ChooseAFTPEntryIntoMenu=Pilih situs FTP/SFTP dari menu...
+FailedToGetFile=Gagal mendapatkan file %s

@@ -26,6 +26,12 @@
 
 
 
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) COLLATE utf8_unicode_ci;
+
+
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 
 ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
@@ -55,7 +61,7 @@ ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_suppli
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
 
--- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
@@ -151,9 +157,10 @@ ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_projet ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
-ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
+ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_code	varchar(255);
@@ -164,12 +171,12 @@ ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DE
 ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_creat integer;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_product_price_by_qty DROP COLUMN date_price;
-ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN import_key varchar(14);
 
 ALTER TABLE llx_user ADD COLUMN import_key varchar(14);
 
-ALTER TABLE llx_facture_rec ADD COLUMN tms timestamp;
+ALTER TABLE llx_facture_rec ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 UPDATE llx_facture_rec SET tms = datec where tms < '2000-01-01';
 
 CREATE TABLE llx_product_attribute
@@ -235,7 +242,7 @@ UPDATE llx_bank_account SET accountancy_journal = 'OD' WHERE accountancy_journal
 ALTER TABLE llx_bank_account ADD COLUMN fk_accountancy_journal integer;
 ALTER TABLE llx_bank_account ADD INDEX idx_fk_accountancy_journal (fk_accountancy_journal);
 
-UPDATE llx_bank_account AS ba SET fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal AS aj WHERE ba.accountancy_journal = aj.code) WHERE accountancy_journal NOT IN ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
+UPDATE llx_bank_account AS ba SET fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal AS aj WHERE ba.accountancy_journal = aj.code AND aj.entity = ba.entity) WHERE accountancy_journal NOT IN ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 --Update general ledger for FEC format & harmonization
@@ -288,7 +295,7 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
-  tms                   timestamp,					--					| date last modification 
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,					--					| date last modification 
   import_key            varchar(14),
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
@@ -297,10 +304,10 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   date_validated        datetime					-- FEC:ValidDate
 ) ENGINE=innodb;
 
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_numero_compte (numero_compte);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_code_journal (code_journal);
 
 
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN debit double(24,8);
@@ -310,6 +317,7 @@ ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN multicurrency_amount double
 
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expensereport',201);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
@@ -338,6 +346,7 @@ UPDATE llx_const SET value = __ENCRYPT('moono-lisa')__   WHERE value = __ENCRYPT
 DELETE FROM llx_document_model where nom = 'fsfe.fr.php' and type='donation';
 
 ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
 
 ALTER TABLE llx_user ADD COLUMN model_pdf varchar(255);
@@ -374,12 +383,15 @@ ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     d
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 
+ALTER TABLE llx_product_customer_price_log ADD COLUMN default_vat_code varchar(10);
+
 UPDATE llx_contrat SET ref = rowid WHERE ref IS NULL OR ref = '';
+ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '';
 
 CREATE TABLE llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec                 datetime,
   datep                 date,
   datev                 date,
@@ -426,7 +438,7 @@ rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 entity integer DEFAULT 0, 
 ref varchar(48),
 datec datetime DEFAULT NULL,
-tms timestamp, 
+tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 fk_user_author	integer,
 fk_user_modif     integer,
 fk_user_valid		integer,
@@ -441,7 +453,7 @@ CREATE TABLE llx_inventorydet
 ( 
 rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
 datec datetime DEFAULT NULL,
-tms timestamp, 
+tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 fk_inventory integer DEFAULT 0, 
 fk_warehouse integer DEFAULT 0,
 fk_product integer DEFAULT 0,  
@@ -455,6 +467,7 @@ new_pmp double DEFAULT 0
 )ENGINE=InnoDB;
 
 ALTER TABLE llx_inventory ADD COLUMN datec datetime DEFAULT NULL;
+ALTER TABLE llx_inventory ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);
@@ -478,7 +491,7 @@ DELETE FROM llx_categorie_product WHERE fk_categorie NOT IN (SELECT rowid FROM l
 DELETE FROM llx_categorie_societe WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type IN (1, 2));
 DELETE FROM llx_categorie_member WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 3);
 DELETE FROM llx_categorie_contact WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 4);
-DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 5);
+DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 6);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
 
@@ -489,7 +502,7 @@ CREATE TABLE llx_loan_schedule
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   fk_loan			integer,
   datec				datetime,         
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep				datetime,         
   amount_capital	real DEFAULT 0,
   amount_insurance	real DEFAULT 0,
@@ -534,7 +547,7 @@ CREATE TABLE llx_website_page
     fk_user_create integer,
     fk_user_modif  integer,
     date_creation  datetime,
-	tms            timestamp
+	tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
 ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
@@ -553,7 +566,7 @@ UPDATE llx_extrafields set elementtype='categorie' where elementtype='categories
 CREATE TABLE llx_blockedlog 
 ( 
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
-	tms	timestamp,
+	tms	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	action varchar(50), 
 	amounts real NOT NULL, 
 	signature varchar(100) NOT NULL, 
@@ -580,7 +593,7 @@ CREATE TABLE llx_blockedlog_authority
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	blockchain longtext NOT NULL,
 	signature varchar(100) NOT NULL,
-	tms timestamp
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
 ALTER TABLE llx_blockedlog_authority ADD INDEX signature (signature);
@@ -600,7 +613,7 @@ ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_url varchar(255);
 CREATE TABLE llx_facture_rec_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)
 ) ENGINE=innodb;
@@ -610,12 +623,18 @@ ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (f
 CREATE TABLE llx_facturedet_rec_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,
   import_key       varchar(14)
 )ENGINE=innodb;
 
 ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
 
-insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'CGST+SGST', 0,  9, '1', 9, '1', 0, 'CGST+SGST - Same state sales', 1);
-insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'IGST'     , 18, 0, '0', 0, '0', 0, 'IGST',      1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1178, 117, 'C+S-5',   0, 2.5, '1', 2.5, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1179, 117, 'I-5'     ,   5,   0, '0',   0, '0', 0, 'IGST',      1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1180, 117, 'C+S-12',   0,   6, '1',   6, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1181, 117, 'I-12'     ,  12,   0, '0',   0, '0', 0, 'IGST',      1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'C+S-18',  0,   9, '1',   9, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1177, 117, 'I-18'     , 18,   0, '0',   0, '0', 0, 'IGST',      1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1182, 117, 'C+S-28',  0,  14, '1',  14, '1', 0, 'CGST+SGST - Same state sales', 1);
+insert into llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1183, 117, 'I-28'     , 28,   0, '0',   0, '0', 0, 'IGST',      1);

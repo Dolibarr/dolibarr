@@ -48,4 +48,4 @@ SmsInfoNumero= (Tarptautinis formatas, pvz.: +33899701761)
 DelayBeforeSending=Siuntimo uždelsimas (minutėmis)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Negalima užduotis. Patikrinkite Jūsų SMS paslaugų tiekėjo nustatymus.
-
+DisableStopIfSupported=Disable STOP message (if supported)

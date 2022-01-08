@@ -10,7 +10,7 @@ namespace Luracast\Restler;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class PassThrough
 {
@@ -34,7 +34,6 @@ class PassThrough
      * @param bool   $isPublic      cache control, is it public or private
      *
      * @throws RestException
-     * @internal param string $pragma
      *
      */
     public static function file($filename, $forceDownload = false, $expires = 0, $isPublic = true)

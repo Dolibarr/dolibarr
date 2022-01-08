@@ -12,28 +12,6 @@ ConfirmDeleteLoan=Confirmer la suppression de ce prêt
 LoanDeleted=Prêt supprimé avec succès
 ConfirmPayLoan=Confirmer classer payé ce prêt
 LoanPaid=Prêt payé
-LoanCalc=Calculatrice de prêts bancaires
-PurchaseFinanceInfo=Informations sur l'achat et le financement
-SalePriceOfAsset=Prix ​​de vente de l'actif
-PercentageDown=Pourcentage en baisse
-AnnualInterestRate=Taux d'intérêt annuel
-ExplainCalculations=Expliquer les calculs
-ShowMeCalculationsAndAmortization=Montrez-moi les calculs et l'amortissement
-MortgagePaymentInformation=Information sur le paiement hypothécaire
-DownPaymentDesc=Le paiement <b> </ b> = Le prix de la maison multiplié par le pourcentage réduit divisé par 100 (pour 5% inférieur devient 5/100 ou 0.05)
-InterestRateDesc=Le taux d'intérêt <b> </ b> = Le pourcentage d'intérêt annuel divisé par 100
-MonthlyFactorDesc=<B> facteur mensuel </ b> = Le résultat de la formule suivante
-MonthlyInterestRateDesc=Le taux d'intérêt mensuel <b> </ b> = Le taux d'intérêt annuel divisé par 12 (pour les 12 mois par an)
-MonthTermDesc=Le terme <b> mois </ b> du prêt en mois = Le nombre d'années où vous avez pris le prêt pour les périodes 12
-MonthlyPaymentDesc=Le paiement mensuel est calculé en utilisant la formule suivante
-AmortizationPaymentDesc=La <a href="#amortization"> amortissement </a> décompose la quantité de votre paiement mensuel vers l'intérêt de la banque, et combien coûte le remboursement du capital de votre prêt.
-AmountFinanced=Montant Financé
-AmortizationMonthlyPaymentOverYears=Amortissement pour paiement mensuel: <b>%s</b> sur %s années
-Totalsforyear=Totaux pour l'année
-LoanCalcDesc=Ce <b> calculateur d'hypothèque </ b> peut être utilisé pour calculer les paiements mensuels d'un prêt, en fonction du montant emprunté, de la durée du prêt souhaité et du taux d'intérêt. <br> Ce calculateur comprend également PMI (Private Mortgage Assurance) pour les prêts dont moins de 20%% est mis en paiement. Les taxes sur la propriété de la ville et leurs effets sur le paiement mensuel total de l'hypothèque sont également pris en considération.
-GoToInterest=%s ira vers INTÉRÊT
-GoToPrincipal=%s ira vers PRINCIPAL
-YouWillSpend=Vous passerez %s en année %s
 AddLoan=Créer un prêt
 ConfigLoan=Configuration du prêt du module
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital de comptabilité par défaut

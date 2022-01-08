@@ -1,0 +1,324 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=切符売場
+Module56000Desc=発行または要求管理のためのチケットシステム
+
+Permission56001=チケットを見る
+Permission56002=チケットを変更する
+Permission56003=チケットを削除する
+Permission56004=チケットを管理する
+Permission56005=すべての取引先のチケットを参照すること(外部ユーザーには有効ではなく、常に依存している取引先に限定される)
+
+TicketDictType=チケット-タイプ
+TicketDictCategory=チケット-グループ
+TicketDictSeverity=チケット-重大度
+TicketDictResolution=チケット-解決策
+
+TicketTypeShortCOM=商業的な質問
+TicketTypeShortHELP=機能的なヘルプのリクエスト
+TicketTypeShortISSUE=問題またはバグ
+TicketTypeShortPROBLEM=問題
+TicketTypeShortREQUEST=変更または拡張リクエスト
+TicketTypeShortPROJET=プロジェクト
+TicketTypeShortOTHER=その他
+
+TicketSeverityShortLOW=低い
+TicketSeverityShortNORMAL=正常
+TicketSeverityShortHIGH=高い
+TicketSeverityShortBLOCKING=クリティカル、ブロッキング
+
+TicketCategoryShortOTHER=その他
+
+ErrorBadEmailAddress=フィールド '%s'が正しくない
+MenuTicketMyAssign=私のチケット
+MenuTicketMyAssignNonClosed=私のオープンチケット
+MenuListNonClosed=オープンチケット
+
+TypeContact_ticket_internal_CONTRIBUTOR=貢献者
+TypeContact_ticket_internal_SUPPORTTEC=割り当てられたユーザー
+TypeContact_ticket_external_SUPPORTCLI=顧客連絡/インシデント追跡
+TypeContact_ticket_external_CONTRIBUTOR=外部寄稿者
+
+OriginEmail=レポーターのメール
+Notify_TICKET_SENTBYMAIL=メールでチケットメッセージを送信する
+
+# Status
+Read=読む
+Assigned=割り当て済
+InProgress=進行中
+NeedMoreInformation=記者のフィードバック待機中
+NeedMoreInformationShort=フィードバック待機中
+Answered=答えた
+Waiting=待っている
+SolvedClosed=解決した
+Deleted=削除
+
+# Dict
+Type=タイプ
+Severity=重大度
+TicketGroupIsPublic=グループは公開されている
+TicketGroupIsPublicDesc=チケットグループが公開の場合、公開インターフェイスからチケットを作成するときにフォームに表示される
+
+# Email templates
+MailToSendTicketMessage=チケットメッセージからメールを送信するには
+
+#
+# Admin page
+#
+TicketSetup=チケットモジュールの設定
+TicketSettings=設定
+TicketSetupPage=
+TicketPublicAccess=IDを必要としない公開インターフェイスは、次のURLで入手できる。
+TicketSetupDictionaries=チケットのタイプ、重大度、および分析コードは辞書から構成できる
+TicketParamModule=モジュール変数の設定
+TicketParamMail=メールの設定
+TicketEmailNotificationFrom=からの通知メール
+TicketEmailNotificationFromHelp=例によるチケットメッセージの回答に使用
+TicketEmailNotificationTo=通知メール
+TicketEmailNotificationToHelp=このアドレスに電子メール通知を送信する。
+TicketNewEmailBodyLabel=チケット作成後に送信されるテキストメッセージ
+TicketNewEmailBodyHelp=ここで指定されたテキストは、公開インターフェイスからの新規チケットの作成を確認する電子メールに挿入される。チケットの相談に関する情報は自動的に追加される。
+TicketParamPublicInterface=公開インターフェイスの設定
+TicketsEmailMustExist=チケットを作成するには、既存のメールアドレスが必要 
+TicketsEmailMustExistHelp=公開インターフェイスでは、新規チケットを作成するために、電子メールアドレスがデータベースにすでに入力されている必要がある。
+PublicInterface=公開インターフェイス
+TicketUrlPublicInterfaceLabelAdmin=公開インターフェイスの代替URL
+TicketUrlPublicInterfaceHelpAdmin=Webサーバーのエイリアスを定義して、別のURLで公開インターフェイスを利用できるようにすることができる(サーバーはこの新規URLのプロキシとして機能する必要がある)
+TicketPublicInterfaceTextHomeLabelAdmin=公開インターフェイスのウェルカムテキスト
+TicketPublicInterfaceTextHome=サポートチケットを作成するか、その識別子追跡チケットから既存のものを表示できる。
+TicketPublicInterfaceTextHomeHelpAdmin=ここで定義されたテキストは、公開インターフェイスのホームページに表示される。
+TicketPublicInterfaceTopicLabelAdmin=インターフェイスタイトル
+TicketPublicInterfaceTopicHelp=このテキストは、公開インターフェイスのタイトルとして表示される。
+TicketPublicInterfaceTextHelpMessageLabelAdmin=メッセージエントリへのヘルプテキスト
+TicketPublicInterfaceTextHelpMessageHelpAdmin=このテキストは、ユーザーのメッセージ入力領域の上に表示される。
+ExtraFieldsTicket=追加の属性
+TicketCkEditorEmailNotActivated=HTMLエディタがアクティブ化されていない。 FCKEDITOR_ENABLE_MAILのコンテンツを1に設定して取得すること。
+TicketsDisableEmail=チケットの作成やメッセージの記録のためにメールを送信しないこと
+TicketsDisableEmailHelp=デフォルトでは、新規チケットまたはメッセージが作成されたときに電子メールが送信される。このオプションを有効にすると、*すべての*電子メール通知が無効になる
+TicketsLogEnableEmail=メールでログを有効にする
+TicketsLogEnableEmailHelp=変更のたびに、チケットに関連付けられた**各連絡先**にメールが送信される。
+TicketParams=パラメータ
+TicketsShowModuleLogo=公開インターフェイスにモジュールのロゴを表示する
+TicketsShowModuleLogoHelp=このオプションを有効にすると、公開インターフェイスのページでロゴモジュールが非表示になる
+TicketsShowCompanyLogo=公開インターフェイスに法人のロゴを表示する
+TicketsShowCompanyLogoHelp=このオプションを有効にすると、公開インターフェイスのページで主要法人のロゴが非表示になる。
+TicketsEmailAlsoSendToMainAddress=また、メインの電子メールアドレスに通知を送信する
+TicketsEmailAlsoSendToMainAddressHelp=このオプションを有効にすると、設定「%s」で定義されたアドレスにも電子メールが送信される（タブ「%s」を参照）。
+TicketsLimitViewAssignedOnly=現在のユーザーに割り当てられたチケットに表示を制限する(外部ユーザーには無効で、常に依存している取引先に制限される)
+TicketsLimitViewAssignedOnlyHelp=現在のユーザーに割り当てられているチケットのみが表示される。チケット管理権を持つユーザーには適用されない。
+TicketsActivatePublicInterface=公開インターフェイスをアクティブ化する
+TicketsActivatePublicInterfaceHelp=公開インターフェイスにより、すべての訪問者がチケットを作成できる。
+TicketsAutoAssignTicket=チケットを作成したユーザーを自動的に割り当てる
+TicketsAutoAssignTicketHelp=チケットを作成するときに、ユーザーを自動的にチケットに割り当てることができる。
+TicketNumberingModules=チケット番号付けモジュール
+TicketsModelModule=チケットのドキュメントテンプレート
+TicketNotifyTiersAtCreation=作成時に取引先に通知する
+TicketsDisableCustomerEmail=公開インターフェイスからチケットを作成するときは、常にメールを無効にすること
+TicketsPublicNotificationNewMessage=新規メッセージ/コメントがチケットに追加されたときにメール(s)を送信する
+TicketsPublicNotificationNewMessageHelp=新規メッセージが公開インターフェイスから追加されたときに電子メール(s)を送信する(割り当てられたユーザーまたは通知電子メールを(更新)および/または通知電子メールに)
+TicketPublicNotificationNewMessageDefaultEmail=通知メール(更新)
+TicketPublicNotificationNewMessageDefaultEmailHelp=チケットにユーザが割り当てられていない場合、またはユーザに既知の電子メールがない場合は、新規メッセージ通知ごとにこのアドレスに電子メールを送信する。
+#
+# Index & list page
+#
+TicketsIndex=チケットエリア
+TicketList=チケット一覧
+TicketAssignedToMeInfos=このページには、現在のユーザーによって作成または割り当てられたチケットリストが表示される
+NoTicketsFound=チケットが見つからない
+NoUnreadTicketsFound=未読のチケットは見つからないでした
+TicketViewAllTickets=すべてのチケットを見る
+TicketViewNonClosedOnly=開いているチケットのみを表示する
+TicketStatByStatus=ステータス別のチケット
+OrderByDateAsc=昇順で並べ替え
+OrderByDateDesc=日付の降順で並べ替え
+ShowAsConversation=会話リストとして表示
+MessageListViewType=テーブルリストとして表示
+
+#
+# Ticket card
+#
+Ticket=チケット
+TicketCard=チケットカード
+CreateTicket=チケットを作成する
+EditTicket=チケットの編集
+TicketsManagement=チケット管理
+CreatedBy=によって作成された
+NewTicket=新規チケット
+SubjectAnswerToTicket=チケットの回答
+TicketTypeRequest=リクエストの種類
+TicketCategory=チケット分類
+SeeTicket=チケットを見る
+TicketMarkedAsRead=チケットは既読としてマークされている
+TicketReadOn=読む
+TicketCloseOn=日付を閉じる
+MarkAsRead=チケットに既読のマークを付ける
+TicketHistory=チケット履歴
+AssignUser=ユーザーに割り当てる
+TicketAssigned=チケットが割り当てられました
+TicketChangeType=タイプを変更する
+TicketChangeCategory=分析コードを変更する
+TicketChangeSeverity=重大度の変更
+TicketAddMessage=メッセージを追加
+AddMessage=メッセージを追加
+MessageSuccessfullyAdded=チケット追加
+TicketMessageSuccessfullyAdded=メッセージが正常に追加された
+TicketMessagesList=メッセージリスト
+NoMsgForThisTicket=このチケットのメッセージはない
+TicketProperties=分類
+LatestNewTickets=最新の%s最新のチケット(未読)
+TicketSeverity=重大度
+ShowTicket=チケットを見る
+RelatedTickets=関連チケット
+TicketAddIntervention=介入を作成する
+CloseTicket=チケットを 閉じる|解決 する
+AbandonTicket=チケットを放棄する
+CloseATicket=チケット１つを 閉じる|解決 する
+ConfirmCloseAticket=チケットの終了を確認する
+ConfirmAbandonTicket=チケットを終了し、ステータスを「放棄」に確定するか
+ConfirmDeleteTicket=チケットの削除を確認すること
+TicketDeletedSuccess=チケットは正常に削除された
+TicketMarkedAsClosed=チケットはクローズとしてマークされている
+TicketDurationAuto=計算された期間
+TicketDurationAutoInfos=関連する介入から自動的に計算された期間
+TicketUpdated=チケット更新
+SendMessageByEmail=メールでメッセージを送る
+TicketNewMessage=新規メッセージ
+ErrorMailRecipientIsEmptyForSendTicketMessage=受信者は空。メール送信なし
+TicketGoIntoContactTab=「連絡先」タブに移動して選択すること
+TicketMessageMailIntro=前書き
+TicketMessageMailIntroHelp=このテキストはメールの冒頭にのみ追加され、保存されない。
+TicketMessageMailIntroLabelAdmin=メール送信時のメッセージの紹介
+TicketMessageMailIntroText=こんにちは、<br>連絡したチケットに新規応答が送信された。メッセージは次のとおり：<br>
+TicketMessageMailIntroHelpAdmin=このテキストは、チケットへの応答のテキストの前に挿入される。
+TicketMessageMailSignature=署名
+TicketMessageMailSignatureHelp=このテキストはメールの最後にのみ追加され、保存されない。
+TicketMessageMailSignatureText= <p>敬具。</p><p>--</p>
+TicketMessageMailSignatureLabelAdmin=返信メールの署名
+TicketMessageMailSignatureHelpAdmin=このテキストは、応答メッセージの後に挿入される。
+TicketMessageHelp=このテキストのみがチケットカードのメッセージリストに保存される。
+TicketMessageSubstitutionReplacedByGenericValues=置換変数は一般的な値に置き換えられる。
+TimeElapsedSince=からの経過時間
+TicketTimeToRead=読み取るまでの経過時間
+TicketTimeElapsedBeforeSince=前後の経過時間
+TicketContacts=連絡先チケット
+TicketDocumentsLinked=チケットにリンクされているドキュメント
+ConfirmReOpenTicket=このチケットを再度開くことを確認するか？
+TicketMessageMailIntroAutoNewPublicMessage=件名が%sの新規メッセージがチケットに投稿された。
+TicketAssignedToYou=割り当てられたチケット
+TicketAssignedEmailBody=%sによってチケット＃%sが割り当てられました
+MarkMessageAsPrivate=メッセージを非公開としてマークする
+TicketMessagePrivateHelp=このメッセージは外部ユーザーには表示されない
+TicketEmailOriginIssuer=チケットの発行元の発行者
+InitialMessage=最初のメッセージ
+LinkToAContract=契約へのリンク
+TicketPleaseSelectAContract=契約を選択する
+UnableToCreateInterIfNoSocid=取引先が定義されていない場合、介入を作成できない
+TicketMailExchanges=メール交換
+TicketInitialMessageModified=最初のメッセージが変更された
+TicketMessageSuccesfullyUpdated=メッセージが正常に更新された
+TicketChangeStatus=ステータスを変更する
+TicketConfirmChangeStatus=ステータスの変更を確認する：%s？
+TicketLogStatusChanged=ステータスが変更された：%sから%s
+TicketNotNotifyTiersAtCreate=作成時に法人に通知しない
+Unread=未読
+TicketNotCreatedFromPublicInterface=利用不可。チケットは公開インターフェイスから作成されなかった。
+ErrorTicketRefRequired=チケット参照名が必要
+
+#
+# Logs
+#
+TicketLogMesgReadBy=%sによって読み取られたチケット%s
+NoLogForThisTicket=このチケットのログはまだない
+TicketLogAssignedTo=%sに割り当てられたチケット%s
+TicketLogPropertyChanged=チケット%sが変更された：%sから%sへの分類
+TicketLogClosedBy=チケット%sは%sによってクローズされた
+TicketLogReopen=チケット%s再開
+
+#
+# Public pages
+#
+TicketSystem=チケットシステム
+ShowListTicketWithTrackId=トラックIDからチケットリストを表示する
+ShowTicketWithTrackId=トラックIDからチケットを表示
+TicketPublicDesc=サポートチケットを作成したり、既存のIDから確認したりできる。
+YourTicketSuccessfullySaved=チケットが正常に保存された！
+MesgInfosPublicTicketCreatedWithTrackId=ID%sおよびRef%sで新規チケットが作成された。
+PleaseRememberThisId=後で尋ねる可能性のある追跡番号を保管すること。
+TicketNewEmailSubject=チケット作成の確認-Ref%s(公開チケットID %s)
+TicketNewEmailSubjectCustomer=新規サポートチケット
+TicketNewEmailBody=これは、新規チケットを登録したことを確認するための自動メール。
+TicketNewEmailBodyCustomer=これは、新規チケットがアカウントに作成されたことを確認するための自動メール。
+TicketNewEmailBodyInfosTicket=チケットを監視するための情報
+TicketNewEmailBodyInfosTrackId=チケット追跡番号：%s
+TicketNewEmailBodyInfosTrackUrl=上のリンクをクリックすると、チケットの進行状況を確認できる。
+TicketNewEmailBodyInfosTrackUrlCustomer=次のリンクをクリックすると、特定のインターフェイスでチケットの進行状況を確認できる。
+TicketEmailPleaseDoNotReplyToThisEmail=このメールに直接返信しないこと。リンクを使用して、インターフェースに返信する。
+TicketPublicInfoCreateTicket=このフォームを使用すると、管理システムにサポートチケットを記録できる。
+TicketPublicPleaseBeAccuratelyDescribe=問題を正確に説明すること。お客様のリクエストを正しく特定できるように、可能な限り多くの情報を提供すること。
+TicketPublicMsgViewLogIn=チケット追跡IDを入力すること
+TicketTrackId=公開トラッキングID
+OneOfTicketTrackId=トラッキングIDの1つ
+ErrorTicketNotFound=追跡ID%sのチケットが見つからない！
+Subject=科目
+ViewTicket=チケットを見る
+ViewMyTicketList=チケットリストを見る
+ErrorEmailMustExistToCreateTicket=エラー：データベースにメールアドレスが見つからない
+TicketNewEmailSubjectAdmin=新規チケットが作成された-Ref%s(公開チケットID %s)
+TicketNewEmailBodyAdmin= <p>チケットはID＃%sで作成された。情報を参照すること：</p>
+SeeThisTicketIntomanagementInterface=管理インターフェースでチケットを見る
+TicketPublicInterfaceForbidden=チケットの公開インターフェイスが有効になっていない
+ErrorEmailOrTrackingInvalid=IDまたは電子メールを追跡するための不正な値
+OldUser=古いユーザー
+NewUser=新規ユーザ
+NumberOfTicketsByMonth=1か月あたりのチケット数
+NbOfTickets=チケット数
+# notifications
+TicketNotificationEmailSubject=チケット%sが更新された
+TicketNotificationEmailBody=これは、チケット%sが更新されたことを通知する自動メッセージ。
+TicketNotificationRecipient=通知の受信者
+TicketNotificationLogMessage=ログメッセージ
+TicketNotificationEmailBodyInfosTrackUrlinternal=チケットをインターフェースに表示
+TicketNotificationNumberEmailSent=送信された通知メール：%s
+
+ActionsOnTicket=チケットのイベント
+
+#
+# Boxes
+#
+BoxLastTicket=最新に作成されたチケット
+BoxLastTicketDescription=最新の%sが作成したチケット
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=最近の未読チケットはない
+BoxLastModifiedTicket=最新の変更されたチケット
+BoxLastModifiedTicketDescription=最新の%s変更チケット
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=最近変更されたチケットはない
+BoxTicketType=オープンチケットの種類別分布
+BoxTicketSeverity=重大度別のオープンチケットの数
+BoxNoTicketSeverity=開いているチケットなし
+BoxTicketLastXDays=過去%s日ごとの新規チケットの数
+BoxTicketLastXDayswidget = 過去X日間の日ごとの新規チケットの数
+BoxNoTicketLastXDays=過去%s日間に新規チケットなし
+BoxNumberOfTicketByDay=日ごとの新規チケット数
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=今日作成されたチケット
+TicketClosedToday=本日終息したチケット
+KMFoundForTicketGroup=質問の回答となるトピックやFAQが見つかった。チケット送信前の確認に感謝する

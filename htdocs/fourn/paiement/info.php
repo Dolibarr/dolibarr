@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,13 +28,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-$langs->load("bills");
-$langs->load("suppliers");
-$langs->load("companies");
+$langs->loadLangs(array("bills", "suppliers", "companies"));
 
-$paiement = new PaiementFourn($db);
-$paiement->fetch($_GET["id"], $user);
-$paiement->info($_GET["id"]);
+$id = GETPOST('id', 'int');
+
+$object = new PaiementFourn($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+$result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+// Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
+// It should be enough because all payments are done on invoices of the same thirdparty.
+if ($socid && $socid != $object->thirdparty->id) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -42,16 +63,22 @@ $paiement->info($_GET["id"]);
 
 llxHeader();
 
-$head = payment_supplier_prepare_head($paiement);
+$object->info($id);
 
-dol_fiche_head($head, 'info', $langs->trans("SupplierPayment"), 0, 'payment');
+$head = payment_supplier_prepare_head($object);
+
+print dol_get_fiche_head($head, 'info', $langs->trans("SupplierPayment"), 0, 'payment');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'id', $linkback, -1, 'rowid', 'ref');
+
+print dol_get_fiche_end();
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($paiement);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
-print '</div>';
-
+// End of page
 llxFooter();
-
 $db->close();

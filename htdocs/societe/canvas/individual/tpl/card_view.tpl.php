@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,25 +12,31 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || !is_object($conf)) {
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $object = $GLOBALS['objcanvas']->control->object;
 
-?>
 
-<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->
-<?php
+print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->\n";
 
 $head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-?>
-
-<?php if ($this->control->tpl['error']) echo $this->control->tpl['error']; ?>
-<?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
+if ($this->control->tpl['error']) {
+	echo $this->control->tpl['error'];
+}
+if ($this->control->tpl['action_delete']) {
+	echo $this->control->tpl['action_delete'];
+} ?>
 
 <table class="border allwidth">
 
@@ -39,7 +45,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
-<?php if (! empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
@@ -51,7 +57,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 	<td><?php echo $langs->trans('CustomerCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_client']; ?>
 	<?php if ($this->control->tpl['checkcustomercode'] <> 0) { ?>
-	<font class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</font>
+	<span class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</span>
 	<?php } ?>
 	</td>
 </tr>
@@ -62,13 +68,13 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 	<td><?php echo $langs->trans('SupplierCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_fournisseur']; ?>
 	<?php if ($this->control->tpl['checksuppliercode'] <> 0) { ?>
-	<font class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</font>
+	<span class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</span>
 	<?php } ?>
 	</td>
 </tr>
 <?php } ?>
 
-<?php if (! empty($conf->barcode->enabled)) { ?>
+<?php if (!empty($conf->barcode->enabled)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['barcode']; ?></td>
@@ -116,14 +122,16 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 	<td colspan="3"><?php echo $this->control->tpl['tva_assuj']; ?></td>
 </tr>
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
 <tr>
 	<td><?php echo $langs->trans("Type"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['typent']; ?></td>
 </tr>
 
-<?php if (! empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['default_lang']; ?></td>
@@ -135,9 +143,9 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
-			<td align="right">
+			<td class="right">
 			<?php if ($user->rights->societe->creer) { ?>
-			<a href="<?php echo DOL_URL_ROOT.'/societe/rib.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
+			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
 			<?php } ?>
@@ -153,7 +161,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
-			<td align="right">
+			<td class="right">
 			<?php if ($user->rights->societe->creer) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
@@ -163,10 +171,10 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 		</tr>
 	</table>
 	</td>
-	<td colspan="3"><?php echo $this->control->tpl['sales_representatives'];	?></td>
+	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (! empty($conf->adherent->enabled)) { ?>
+<?php if (!empty($conf->adherent->enabled)) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>
@@ -175,18 +183,18 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>
-<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("Modify"); ?></a>
+<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
-	<?php }	else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
+	<?php } else { ?>
+		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>
 </div>
@@ -197,14 +205,14 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 <div id="builddoc"></div>
 <?php
 /*
- * Documents generes
+ * Generated documents
  */
-$filedir=$conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
-$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-$genallowed=$user->rights->societe->creer;
-$delallowed=$user->rights->societe->supprimer;
+$filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
+$urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
+$genallowed = $user->rights->societe->lire;
+$delallowed = $user->rights->societe->creer;
 
-print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
+print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
 ?>
 
 </td>
@@ -216,13 +224,12 @@ print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,
 
 <?php
 // Subsidiaries list
-$result=show_subsidiaries($conf,$langs,$db,$object);
+$result = show_subsidiaries($conf, $langs, $db, $object);
 
 // Contacts list
-$result=show_contacts($conf,$langs,$db,$object);
+$result = show_contacts($conf, $langs, $db, $object);
 
 // Projects list
-$result=show_projects($conf,$langs,$db,$object);
-?>
+$result = show_projects($conf, $langs, $db, $object);
 
-<!-- END PHP TEMPLATE -->
+print "<!-- END PHP TEMPLATE -->\n";

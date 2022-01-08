@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry	  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,26 +29,40 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 $langs->load("companies");
 
-// Security check
-$id = GETPOST('id')?GETPOST('id','int'):GETPOST('socid','int');
-if ($user->societe_id) $id=$user->societe_id;
-$result = restrictedArea($user, 'societe', $id, '&societe');
+$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 
 $object = new Societe($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
-$permissionnote=$user->rights->societe->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('thirdpartynote', 'globalcard'));
+
+// Security check
+if ($user->socid > 0) {
+	unset($action);
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $object->id, '&societe');
 
 
 /*
  * Actions
  */
-
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -57,70 +71,84 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 
 $form = new Form($db);
 
-$title=$langs->trans("ThirdParty").' - '.$langs->trans("Notes");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notes");
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+$title = $langs->trans("ThirdParty").' - '.$langs->trans("Notes");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->name.' - '.$langs->trans("Notes");
+}
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('', $title, $help_url);
 
-if ($id > 0)
-{
-    /*
-     * Affichage onglets
-     */
-    if (! empty($conf->notification->enabled)) $langs->load("mails");
+if ($object->id > 0) {
+	/*
+	 * Affichage onglets
+	 */
+	if (!empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
 
-    $head = societe_prepare_head($object);
+	$head = societe_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'note', $langs->trans("ThirdParty"), -1, 'company');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    $cssclass='titlefield';
-    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
-    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+	$cssclass = 'titlefield';
+	//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+	//if ($action == 'editnote_private') $cssclass='titlefieldcreate';
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent tableforfield">';
 
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-        print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-    }
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
 
-    if ($object->client)
-    {
-        print '<tr><td class="'.$cssclass.'">';
-        print $langs->trans('CustomerCode').'</td><td colspan="3">';
-        print $object->code_client;
-        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-        print '</td></tr>';
-    }
+	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+		print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+	}
 
-    if ($object->fournisseur)
-    {
-        print '<tr><td class="'.$cssclass.'">';
-        print $langs->trans('SupplierCode').'</td><td colspan="3">';
-        print $object->code_fournisseur;
-        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-        print '</td></tr>';
-    }
+	if ($object->client) {
+		print '<tr><td class="'.$cssclass.'">';
+		print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+		$tmpcheck = $object->check_codeclient();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+		}
+		print '</td></tr>';
+	}
 
-    print "</table>";
+	if ($object->fournisseur) {
+		print '<tr><td class="'.$cssclass.'">';
+		print $langs->trans('SupplierCode').'</td><td colspan="3">';
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
+		$tmpcheck = $object->check_codefournisseur();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+		}
+		print '</td></tr>';
+	}
 
-    print '</div>';
+	print "</table>";
 
-    //print '<br>';
+	print '</div>';
 
-    //print '<div class="underbanner clearboth"></div>';
-    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+	//print '<br>';
 
-    dol_fiche_end();
+	//print '<div class="underbanner clearboth"></div>';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+
+	print dol_get_fiche_end();
+} else {
+	$langs->load("errors");
+	print $langs->trans("ErrorRecordNotFound");
 }
 
+// End of page
 llxFooter();
 $db->close();
-

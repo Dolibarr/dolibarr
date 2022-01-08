@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2009-2012	Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2010		Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -24,7 +24,7 @@ create table llx_deplacement
   ref				varchar(30) DEFAULT NULL,		-- Ref donation (TODO change to NOT NULL)
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   datec				datetime NOT NULL,
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   dated				datetime,
   fk_user			integer NOT NULL,
   fk_user_author	integer,

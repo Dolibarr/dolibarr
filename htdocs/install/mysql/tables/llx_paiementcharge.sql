@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -21,9 +21,9 @@ create table llx_paiementcharge
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_charge       integer,
   datec           datetime,           -- date de creation
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           datetime,           -- payment date
-  amount          real DEFAULT 0,
+  amount          double(24,8) DEFAULT 0,
   fk_typepaiement integer NOT NULL,
   num_paiement    varchar(50),
   note            text,

@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -24,7 +24,7 @@ create table llx_prelevement_lignes
   statut              smallint DEFAULT 0,
 
   client_nom          varchar(255),
-  amount              real DEFAULT 0,
+  amount              double(24,8) DEFAULT 0,
   code_banque         varchar(128),
   code_guichet        varchar(6),
   number              varchar(255),

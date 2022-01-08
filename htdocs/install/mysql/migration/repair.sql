@@ -31,6 +31,10 @@
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
@@ -67,30 +71,36 @@
 UPDATE llx_user set api_key = null where api_key = '';
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
+-- DELETE FROM llx_c_email_templates WHERE label = '(SendAnEMailToMember)';		-- Now it is '(SendingAnEMailToMemner)'
+
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
 ALTER TABLE llx_facture DROP FOREIGN KEY fk_facture_fk_currency;
 
-delete from llx_facturedet where fk_facture in (select rowid from llx_facture where facnumber in ('(PROV)','ErrorBadMask'));
-delete from llx_facture where facnumber in ('(PROV)','ErrorBadMask');
+delete from llx_facturedet where fk_facture in (select rowid from llx_facture where ref in ('(PROV)','ErrorBadMask'));
+delete from llx_facture where ref in ('(PROV)','ErrorBadMask');
 delete from llx_commandedet where fk_commande in (select rowid from llx_commande where ref in ('(PROV)','ErrorBadMask'));
 delete from llx_commande where ref in ('(PROV)','ErrorBadMask');
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref in ('(PROV)','ErrorBadMask'));
 delete from llx_propal where ref in ('(PROV)','ErrorBadMask');
-delete from llx_facturedet where fk_facture in (select rowid from llx_facture where facnumber = '');
-delete from llx_facture where facnumber = '';
+delete from llx_facturedet where fk_facture in (select rowid from llx_facture where ref = '');
+delete from llx_facture where ref = '';
 delete from llx_commandedet where fk_commande in (select rowid from llx_commande where ref = '');
 delete from llx_commande where ref = '';
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref = '');
 delete from llx_propal where ref = '';
-delete from llx_livraisondet where fk_livraison in (select rowid from llx_livraison where ref = '');
-delete from llx_livraison where ref = '';
+delete from llx_deliverydet where fk_delivery in (select rowid from llx_delivery where ref = '');
+delete from llx_delivery where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
 delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
+
+delete from llx_rights_def where perms IS NULL;
 delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
+delete from llx_usergroup_rights where fk_usergroup not in (select rowid from llx_usergroup);
+delete from llx_usergroup_rights where fk_id not in (select id from llx_rights_def);
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
@@ -117,6 +127,8 @@ delete from llx_societe_extrafields where fk_object not in (select rowid from ll
 delete from llx_adherent_extrafields where fk_object not in (select rowid from llx_adherent);
 delete from llx_product_extrafields where fk_object not in (select rowid from llx_product);
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
+
+UPDATE llx_product SET datec = tms WHERE datec IS NULL;
 
 
 -- Clean stocks
@@ -153,6 +165,10 @@ DELETE FROM llx_product_batch WHERE qty = 0;
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 
+-- Fix: delete orphelins in product_association
+delete from llx_product_association where fk_product_pere NOT IN (select rowid from llx_product);
+delete from llx_product_association where fk_product_fils NOT IN (select rowid from llx_product);
+
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;
 create table tmp_categorie as select * from llx_categorie; 
@@ -165,12 +181,15 @@ delete from llx_categorie_fournisseur where fk_categorie not in (select rowid fr
 delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type = 2);
 delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
 delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
-delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 5);
+delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 6);
 
+-- Fix: delete orphelins in ecm_files
+delete from llx_ecm_files where src_object_type = 'expensereport' and src_object_id NOT IN (select rowid from llx_expensereport);
+delete from llx_ecm_files where (src_object_type = 'contrat' OR src_object_type = 'contract') and src_object_id NOT IN (select rowid from llx_contrat);
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
-delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
-delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+delete from llx_deliverydet where fk_delivery not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_delivery not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+delete from llx_delivery    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
 
 
 -- Fix delete element_element orphelins (right side)
@@ -187,6 +206,20 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 
 -- Fix: delete orphelin actioncomm_resources
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
+
+
+-- Fix: delete orphelin links in llx_bank_url
+DELETE from llx_bank_url where type = 'payment' and url_id not in (select rowid from llx_paiement);
+DELETE from llx_bank_url where type = 'payment_supplier' and url_id not in (select rowid from llx_paiementfourn);
+DELETE from llx_bank_url where type = 'company' and url_id not in (select rowid from llx_societe);
+--SELECT * from llx_bank where rappro = 0 and label LIKE '(CustomerInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment');
+--SELECT * from llx_bank where rappro = 0 and label LIKE '(SupplierInvoicePayment%)' and rowid not in (select fk_bank from llx_bank_url where type = 'payment_supplier');
+
+-- Fix link on parent that were removed
+DROP table tmp_user;
+CREATE TABLE tmp_user as (select * from llx_user);
+UPDATE llx_user SET fk_user = NULL where fk_user NOT IN (select rowid from tmp_user);
+
 
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
@@ -318,9 +351,14 @@ UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 -- To replace amount on all invoice and lines when forgetting to apply a 20% vat
 -- update llx_facturedet set tva_tx = 20 where tva_tx = 0;
 -- update llx_facturedet set total_ht = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
--- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
 -- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
--- update llx_facture set tva = total_ttc - total where tva = 0;
+
+-- To fix bad total of price excluding tax, vat and price tax including tax.
+-- select * from llx_facture where tva <> (total_ttc - total - localtax1 - localtax2 - revenuestamp);
+-- update llx_facture set tva = (total_ttc - total - localtax1 - localtax2 - revenuestamp) where tva <> (total_ttc - total - localtax1 - localtax2 - revenuestamp);
+-- select * from llx_facturedet where total_tva <> (total_ttc - total_ht - total_localtax1 - total_localtax2);
+-- update llx_facturedet set total_tva = (total_ttc - total_ht - total_localtax1 - total_localtax2) where total_tva <> (total_ttc - total_ht - total_localtax1 - total_localtax2);
+
 
 -- To insert elements into a category
 -- Search idcategory: select rowid from llx_categorie where type=0 and ref like '%xxx%'
@@ -338,12 +376,15 @@ update llx_facturedet set product_type = 1 where product_type = 2;
 --update llx_commandedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 --update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 
+update llx_propal set fk_statut = 1 where fk_statut = -1;
+
 delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or fk_commandefourndet IS NULL;
 
 
 delete from llx_menu where menu_handler = 'smartphone';
 
 update llx_expedition set date_valid = date_creation where fk_statut = 1 and date_valid IS NULL;
+update llx_expedition set date_valid = NOW() where fk_statut = 1 and date_valid IS NULL;
 
 -- Detect bad consistency between duraction_effective of a task and sum of time of tasks
 -- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
@@ -364,6 +405,18 @@ update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_ur
 drop table tmp_bank_url_expense_user;
 
 
+-- Delete duplicate accounting account, but only if not used
+DROP TABLE tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
+--SELECT * from tmp_llx_accouting_account;
+DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accouting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
+
+ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+
+-- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
+
 
 -- Clean product prices
 --delete from llx_product_price where date_price between '2017-04-20 06:51:00' and '2017-04-20 06:51:05'; 
@@ -376,6 +429,12 @@ drop table tmp_bank_url_expense_user;
 -- p.tva_tx = 0
 -- where price = 17.5
 
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
@@ -406,7 +465,95 @@ drop table tmp_bank_url_expense_user;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_facture_fourn set date_lim_reglement = null where DATE(STR_TO_DATE(date_lim_reglement, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_facture_fourn set date_lim_reglement = null where DATE(STR_TO_DATE(date_lim_reglement, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_inventory set date_cre = null where DATE(STR_TO_DATE(date_cre, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_inventory set date_cre = null where DATE(STR_TO_DATE(date_cre, '%Y-%m-%d')) IS NULL;
+
+-- Note that you can manually set the default value of a date or datetime to CURRENT_TIMESTAMP with:
+--ALTER TABLE llx_table modify column columnname datetime DEFAULT CURRENT_TIMESTAMP;
+
 
 -- Backport a change of value into the hourly rate. 
 -- update llx_projet_task_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
+
+
+-- select * from llx_facturedet as fd, llx_product as p where fd.fk_product = p.rowid AND fd.product_type != p.fk_product_type;
+update llx_facturedet set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
+update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
+
+update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
+update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
+ 
+
+DELETE FROM llx_mrp_production where qty = 0;
+
+
+UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
+
+ 
+-- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
+-- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
+
+
+--Fix bad sign on multicompany column for customer invoice lines
+UPDATE llx_facturedet SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and subprice > 0) OR (multicurrency_subprice > 0 and subprice < 0));
+UPDATE llx_facturedet SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facturedet SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0)); 
+UPDATE llx_facturedet SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicompany column for customer invoices
+UPDATE llx_facture SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
+UPDATE llx_facture SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
+UPDATE llx_facture SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicurrency column for supplier invoice lines
+UPDATE llx_facture_fourn_det SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and pu_ht > 0) OR (multicurrency_subprice > 0 and pu_ht < 0));
+UPDATE llx_facture_fourn_det SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facture_fourn_det SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and tva > 0) OR (multicurrency_total_tva > 0 and tva < 0)); 
+UPDATE llx_facture_fourn_det SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicompany column for customer invoices
+UPDATE llx_facture_fourn SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
+UPDATE llx_facture_fourn SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
+UPDATE llx_facture_fourn SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+
+
+UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
+
+-- Test inconsistency of data into situation invoices: If it differs, it may be the total_ht that is wrong and situation_percent that is good.
+-- select f.rowid, f.type, fd.qty, fd.subprice, fd.situation_percent, fd.total_ht, fd.total_ttc, fd.total_tva, fd.multicurrency_total_ht, fd.multicurrency_total_tva, fd.multicurrency_total_ttc, (situation_percent  / 100 * subprice * qty * (1 - (fd.remise_percent / 100)))
+-- from llx_facturedet as fd, llx_facture as f where fd.fk_facture = f.rowid AND (total_ht - situation_percent  / 100 * subprice * qty * (1 - (fd.remise_percent / 100))) > 0.01 and f.type = 5;
+
+
+-- Note to make all deposit as paid when there is already a discount generated from it.
+--drop table tmp_invoice_deposit_mark_as_available;
+--create table tmp_invoice_deposit_mark_as_available as select * from llx_facture as f where f.type = 3 and f.paye = 0 and f.rowid in (select fk_facture_source from llx_societe_remise_except);
+--update llx_facture set paye = 1, fk_statut = 2 where rowid in (select rowid from tmp_invoice_deposit_mark_as_available);
+
+
+-- TODO We should fix multicurrency_amount that are empty into llx_societe_remise_except, but we can't because we don't know what is the rate 
+-- We may retreive info fro minvoice line by using fk_facture_line or fk_facture_supplier_line
+-- select * from llx_societe_remise_except where multicurrency_amount_ht = 0 and amount_ht <> 0;
+
+
+-- Note to migrate from old counter aquarium to new one
+-- drop table tmp;
+-- create table tmp select rowid, code_client, concat(substr(code_client, 1, 6),'-0',substr(code_client, 8, 5)) as code_client2 from llx_societe where code_client like 'CU____-____';
+-- update llx_societe as s set code_client = (select code_client2 from tmp as t where t.rowid = s.rowid) where code_client like 'CU____-____';
+-- drop table tmp;
+-- create table tmp select rowid, code_fournisseur, concat(substr(code_fournisseur, 1, 6),'-0',substr(code_fournisseur, 8, 5)) as code_fournisseur2 from llx_societe where code_fournisseur like 'SU____-____';
+-- select * from tmp;
+-- update llx_societe as s set s.code_fournisseur = (select code_fournisseur2 from tmp as t where t.rowid = s.rowid) where s.code_fournisseur like 'SU____-____';
+-- update llx_societe set code_compta =  concat('411', substr(code_client, 3, 2),substr(code_client, 8, 5)) where client in (1,2,3) and code_compte is not null;
+-- update llx_societe set code_compta_fournisseur =  concat('401', substr(code_fournisseur, 3, 2),substr(code_fournisseur, 8, 5)) where fournisseur in (1,2,3) and code_fournisseur is not null;
+
+
+-- To fix a table with error 'ERROR 1118 (42000): Row size too large. The maximum row size for the used table type, not counting BLOBs, is 8126. This includes storage overhead, check the manual. You have to change some columns to TEXT or BLOBs'
+--ALTER TABLE llx_tablename ROW_FORMAT=DYNAMIC;
+
+
+DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 

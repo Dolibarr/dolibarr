@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Tài sản
+NewAsset = Tài sản mới
+AccountancyCodeAsset = Mã kế toán (tài sản)
+AccountancyCodeDepreciationAsset = Mã kế toán (tài khoản khấu hao tài sản)
+AccountancyCodeDepreciationExpense = Mã kế toán (tài khoản chi phí khấu hao)
+NewAssetType=Loại tài sản mới
+AssetsTypeSetup=Thiết lập loại tài sản
+AssetTypeModified=Loại tài sản sửa đổi
+AssetType=Loại tài sản
+AssetsLines=Tài sản
+DeleteType=Xóa
+DeleteAnAssetType=Xóa một loại tài sản
+ConfirmDeleteAssetType=Bạn có chắc chắn muốn xóa loại tài sản này?
+ShowTypeCard=Hiển thị loại '% s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Tài sản
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Mô tả tài sản
+
+#
+# Admin page
+#
+AssetsSetup = Thiết lập tài sản
+Settings = Cài đặt
+AssetsSetupPage = Trang thiết lập tài sản
+ExtraFieldsAssetsType = Thuộc tính bổ sung (loại tài sản)
+AssetsType=Loại tài sản
+AssetsTypeId=ID Loại tài sản
+AssetsTypeLabel=Nhãn loại tài sản
+AssetsTypes=Các loại tài sản
+
+#
+# Menu
+#
+MenuAssets = Tài sản
+MenuNewAsset = Tài sản mới
+MenuTypeAssets = Loại tài sản
+MenuListAssets = Danh sách
+MenuNewTypeAssets = Mới
+MenuListTypeAssets = Danh sách
+
+#
+# Module
+#
+NewAssetType=Loại tài sản mới
+NewAsset=Tài sản mới

@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 -- List of tables for available import models
@@ -21,8 +21,9 @@
 create table llx_import_model
 (
   	rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  	entity        integer DEFAULT 0 NOT NULL,      				-- by default on all entities for compatibility
 	fk_user		  integer DEFAULT 0 NOT NULL,
   	label         varchar(50) NOT NULL,
-  	type		  varchar(50) NOT NULL,
+  	type		  varchar(64) NOT NULL,
   	field         text NOT NULL
 )ENGINE=innodb;

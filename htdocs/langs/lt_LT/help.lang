@@ -5,9 +5,9 @@ RemoteControlSupport=Tiesioginis realaus laiko/nuotolinis palaikymas
 OtherSupport=Kita pagalba
 ToSeeListOfAvailableRessources=Susisiekti/pamatyti turimus išteklius:
 HelpCenter=Pagalbos centras
-DolibarrHelpCenter=Dolibarr pagalbos ir palaikymo centras
-ToGoBackToDolibarr=Priešingu atveju, spauskite <a href="%s"> čia norėdami naudoti Dolibarr</a>
-TypeOfSupport=Palaikymo šaltinis
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
 TypeSupportCommunauty=Bendruomenė (nemokamai)
 TypeSupportCommercial=Komercinis
 TypeOfHelp=Tipas
@@ -15,12 +15,9 @@ NeedHelpCenter=Need help or support?
 Efficiency=Efektyvumas
 TypeHelpOnly=Tik pagalba
 TypeHelpDev=Pagalba + vystymas
-TypeHelpDevForm=Pagalba+Vystymas+Formavimas
-ToGetHelpGoOnSparkAngels1=Kai kurios įmonės gali užtikrinti greitą (kartais nedelsiamą) ir efektyvesnį tiesioginį palaikymą, perimant Jūsų kompiuterio kontrolę. Tokius padėjėjus galima rasti <b>%s</b> web svetainėje:
-ToGetHelpGoOnSparkAngels3=Taip pat galite eiti į visų galimų Dolibarr trenerių sąrašą, paspausdami šį mygtuką
-ToGetHelpGoOnSparkAngels2=Kartais nėra galimų įmonių tuo metu pagal Jūsų paiešką, todėl pakeiskite paieškos filtrą į "visų prieinamumą". Galėsite siųsti daugiau užklausų.
-BackToHelpCenter=Priešingu atveju, spauskite čia norėdami grįžti <a href="%s"> atgal į Pagrindinio puslapio Pagalbos centrą</a> .
-LinkToGoldMember=Galite paskambinti vienam iš trenerių, iš anksto atrinktų Dolibarr Jūsų kalbai (%s), spustelėdami jo Widget (būklė ir maksimali kaina yra automatiškai atnaujinami):
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Palaikomos kalbos
-SubscribeToFoundation=Padėkite Dolibarr projektui, tapkite nariu
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=Oficialiam Dolibarr palaikymui Jūsų kalba: <br><b><a href="%s" target="_blank">%s</a></b>

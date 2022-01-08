@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -20,4 +20,6 @@
 ALTER TABLE llx_mailing_cibles ADD UNIQUE uk_mailing_cibles (fk_mailing, email);
 
 ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_email (email);
+
+ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_tag (tag);
 

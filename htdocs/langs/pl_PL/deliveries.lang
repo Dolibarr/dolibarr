@@ -2,7 +2,7 @@
 Delivery=Dostawa
 DeliveryRef=Numer referencyjny dostawy
 DeliveryCard=Karta przyjęcia
-DeliveryOrder=Zamówienie dostawy
+DeliveryOrder=Kwit dostawy
 DeliveryDate=Data dostawy
 CreateDeliveryOrder=Generuj przyjęcie dostawy
 DeliveryStateSaved=Stan dostawy zapisany
@@ -18,7 +18,7 @@ StatusDeliveryCanceled=Anulowano
 StatusDeliveryDraft=Projekt
 StatusDeliveryValidated=Przyjęto
 # merou PDF model
-NameAndSignature=Nazwisko i podpis:
+NameAndSignature=Imię i nazwisko oraz podpis:
 ToAndDate=To___________________________________ na ____ / _____ / __________
 GoodStatusDeclaration=Otrzymano towary w dobrym stanie,
 Deliverer=Dostawca:
@@ -27,4 +27,7 @@ Recipient=Odbiorca
 ErrorStockIsNotEnough=Brak wystarczającego zapasu w magazynie
 Shippable=Możliwa wysyłka
 NonShippable=Nie do wysyłki
+ShowShippableStatus=Pokaż status do wysyłki
 ShowReceiving=Pokaż przyjęte dostawy
+NonExistentOrder=Nieistniejący porządek
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Ilości magazynowe już przydzielone na poprzednich liniach

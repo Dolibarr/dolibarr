@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Mot de passe pour le domaine
 YouMustChangePassNextLogon=Le mot de passe pour l'utilisateur <b>%s</b> sur le domaine <b>%s</b> doit être modifié.
 UserMustChangePassNextLogon=L'utilisateur doit modifier le mot de passe sur le domaine %s
 LDAPInformationsForThisContact=Information dans la base de données LDAP pour ce contact

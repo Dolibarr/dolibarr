@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 
@@ -32,7 +32,6 @@
 
 delete from llx_c_typent;
 -- Entries for all countries
-insert into llx_c_typent (id,code,libelle,fk_country,active) values (  0, 'TE_UNKNOWN', '-',             NULL, 1);
 insert into llx_c_typent (id,code,libelle,fk_country,active) values (  1, 'TE_STARTUP', 'Start-up',      NULL, 0);
 insert into llx_c_typent (id,code,libelle,fk_country,active) values (  2, 'TE_GROUP',   'Grand groupe',  NULL, 1);
 insert into llx_c_typent (id,code,libelle,fk_country,active) values (  3, 'TE_MEDIUM',  'PME/PMI',       NULL, 1);

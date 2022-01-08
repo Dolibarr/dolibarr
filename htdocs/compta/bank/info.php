@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,16 +21,30 @@
  *     \brief      Onglet info d'une ecriture bancaire
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'companies'));
 
-$id = GETPOST("rowid");
+$id = GETPOST("rowid", 'int');
+$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$ref = GETPOST('ref', 'alpha');
+
+// Security check
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
+
+$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+$result = restrictedArea($user, 'banque', $accountid, 'bank_account');
+if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
+	accessforbidden();
+}
 
 
 /*
@@ -44,10 +58,10 @@ $object->fetch($id);
 $object->info($id);
 
 
-$h=0;
+$h = 0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
+$head[$h][1] = $langs->trans("BankTransaction");
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$id;
@@ -56,9 +70,9 @@ $hselected = $h;
 $h++;
 
 
-dol_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'account');
+print dol_get_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'accountline');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 
 dol_banner_tab($object, 'rowid', $linkback);
@@ -72,5 +86,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

@@ -5,7 +5,7 @@ DeleteResource=Verwijder resource
 ConfirmDeleteResourceElement=Bevestig het verwijderen van de resource voor dit element
 NoResourceInDatabase=Geen resource in de database
 NoResourceLinked=Geen gelinkte resource
-
+ActionsOnResource=Gebeurtenissen over deze bron
 ResourcePageIndex=Resource lijst
 ResourceSingular=Resource
 ResourceCard=Resource kaart
@@ -16,7 +16,7 @@ ResourceFormLabel_description=Resource beschrijving
 
 ResourcesLinkedToElement=Resources gekoppeld aan element
 
-ShowResource=Show resource
+ShowResource=Laat resource zien
 
 ResourceElementPage=Element resources
 ResourceCreatedWithSuccess=Resource met succes gecreeerd 
@@ -31,6 +31,9 @@ DictionaryResourceType=Type resources
 SelectResource=Kies resource
 
 IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+AssetNumber=Serienummer
+ResourceTypeCode=Code type resource
 ImportDataset_resource_1=Resources
+
+ErrorResourcesAlreadyInUse=Sommige bronnen zijn in gebruik
+ErrorResourceUseInEvent=%s gebruikt in %s-gebeurtenis

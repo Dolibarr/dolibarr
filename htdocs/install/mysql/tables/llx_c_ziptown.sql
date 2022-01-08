@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2010 Regis Houssin <regis.houssin@capnetworks.com>
+-- Copyright (C) 2010 Regis Houssin <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -23,6 +23,6 @@ create table llx_c_ziptown
   fk_county			integer,	         			-- State id in llx_c_departements
   fk_pays           integer NOT NULL DEFAULT 0,     -- Country id in llx_c_country
   zip	 			varchar(10) NOT NULL,			-- Zip code
-  town				varchar(255) NOT NULL,			-- Town name
+  town				varchar(180) NOT NULL,			-- Town name
   active 			tinyint NOT NULL DEFAULT 1
 )ENGINE=innodb;

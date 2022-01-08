@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -21,9 +21,9 @@ create table llx_payment_expensereport
   rowid                   integer AUTO_INCREMENT PRIMARY KEY,
   fk_expensereport        integer,
   datec                   datetime,           -- date de creation
-  tms                     timestamp,
+  tms                     timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep                   datetime,           -- payment date
-  amount                  real DEFAULT 0,
+  amount                  double(24,8) DEFAULT 0,
   fk_typepayment          integer NOT NULL,
   num_payment             varchar(50),
   note                    text,

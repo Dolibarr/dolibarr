@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+-- Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -30,8 +30,10 @@ CREATE TABLE llx_ecm_directories
   fullpath    		varchar(750),
   extraparams		varchar(255),					-- for stock other parameters with json format
   date_c			datetime,
-  date_m			timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,
+  note_private		text,
+  note_public		text,
   acl				text
 ) ENGINE=innodb;

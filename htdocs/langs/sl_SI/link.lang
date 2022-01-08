@@ -8,3 +8,4 @@ LinkRemoved=Povezava %s je bila odstranjena
 ErrorFailedToDeleteLink= Napaka pri odstranitvi povezave '<b>%s</b>'.
 ErrorFailedToUpdateLink= Napaka pri posodobitvi povezave '<b>%s</b>'.
 URLToLink=URL to link
+OverwriteIfExists=Overwrite file if exists

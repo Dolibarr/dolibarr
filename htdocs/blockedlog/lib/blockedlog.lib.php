@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,30 +28,37 @@
  */
 function blockedlogadmin_prepare_head()
 {
-	global $langs, $conf;
+	global $db, $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php";
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php?withtab=1";
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'blockedlog';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/fingerprints.php";
-	$head[$h][1] = $langs->trans("Fingerprints");
+	$langs->load("blockedlog");
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=1";
+	$head[$h][1] = $langs->trans("BrowseBlockedLog");
+
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+	$b = new BlockedLog($db);
+	if ($b->alreadyUsed()) {
+		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">...</span>' : '');
+	}
 	$head[$h][2] = 'fingerprints';
 	$h++;
 
-	$object=new stdClass();
+	$object = new stdClass();
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'blockedlog');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'blockedlog');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'blockedlog','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'blockedlog', 'remove');
 
-    return $head;
+	return $head;
 }

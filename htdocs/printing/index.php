@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2018  Frederic France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,12 @@
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
+// Load translation files required by the page
 $langs->load("printing");
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -39,7 +44,7 @@ $langs->load("printing");
  * View
  */
 
-llxHeader("",$langs->trans("Printing"));
+llxHeader("", $langs->trans("Printing"));
 
 print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0, 0, 'title_setup.png');
 
@@ -48,25 +53,23 @@ print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 // List Jobs from printing modules
 $object = new PrintingDriver($db);
 $result = $object->listDrivers($db, 10);
-foreach ($result as $driver) 
-{
-    require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
-    $classname = 'printing_'.$driver;
-    $langs->load($driver);
-    $printer = new $classname($db);
-    if ($conf->global->{$printer->active}) 
-    {
-        //$printer->list_jobs('commande');
-        $result = $printer->list_jobs();
-        print $printer->resprint;
-        
-        if ($result > 0) 
-        {
-            setEventMessages($printer->error, $printer->errors, 'errors');
-        }
-    }
+foreach ($result as $driver) {
+	require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+	$classname = 'printing_'.$driver;
+	$langs->load($driver);
+	$printer = new $classname($db);
+	$keyforprinteractive = $printer->active;
+	if ($keyforprinteractive && $conf->global->$keyforprinteractive) {
+		//$printer->listJobs('commande');
+		$result = $printer->listJobs();
+		print $printer->resprint;
+
+		if ($result > 0) {
+			setEventMessages($printer->error, $printer->errors, 'errors');
+		}
+	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

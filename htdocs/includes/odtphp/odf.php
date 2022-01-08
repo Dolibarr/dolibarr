@@ -2,6 +2,9 @@
 
 require 'Segment.php';
 
+/**
+ * Class of ODT Exception
+ */
 class OdfException extends Exception
 {
 }
@@ -15,7 +18,7 @@ class OdfException extends Exception
  * @copyright  2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
  * @copyright  2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
  * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
- * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
+ * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.5.0
  */
 class Odf
@@ -36,14 +39,14 @@ class Odf
 	protected $images = array();
 	protected $vars = array();
 	protected $segments = array();
-	
+
 	public $creator;
 	public $title;
 	public $subject;
 	public $userdefined=array();
-	
+
 	const PIXEL_TO_CM = 0.026458333;
-	
+
 	/**
 	 * Class constructor
 	 *
@@ -65,24 +68,24 @@ class Odf
 		}
 
 		$md5uniqid = md5(uniqid());
-		if ($this->config['PATH_TO_TMP']) $this->tmpdir = preg_replace('|[\/]$|','',$this->config['PATH_TO_TMP']);	// Remove last \ or /
+		if ($this->config['PATH_TO_TMP']) $this->tmpdir = preg_replace('|[\/]$|', '', $this->config['PATH_TO_TMP']);	// Remove last \ or /
 		$this->tmpdir .= ($this->tmpdir?'/':'').$md5uniqid;
 		$this->tmpfile = $this->tmpdir.'/'.$md5uniqid.'.odt';	// We keep .odt extension to allow OpenOffice usage during debug.
 
 		// A working directory is required for some zip proxy like PclZipProxy
-		if (in_array($this->config['ZIP_PROXY'],array('PclZipProxy')) && ! is_dir($this->config['PATH_TO_TMP'])) {
+		if (in_array($this->config['ZIP_PROXY'], array('PclZipProxy')) && ! is_dir($this->config['PATH_TO_TMP'])) {
 			throw new OdfException('Temporary directory '.$this->config['PATH_TO_TMP'].' must exists');
 		}
 
 		// Create tmp direcoty (will be deleted in destructor)
 		if (!file_exists($this->tmpdir)) {
-			$result=mkdir($this->tmpdir);
+			$result = mkdir($this->tmpdir);
 		}
 
 		// Load zip proxy
 		$zipHandler = $this->config['ZIP_PROXY'];
-		if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR',$this->tmpdir);
-		include_once('zip/'.$zipHandler.'.php');
+		if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $this->tmpdir);
+		include_once 'zip/'.$zipHandler.'.php';
 		if (! class_exists($this->config['ZIP_PROXY'])) {
 			throw new OdfException($this->config['ZIP_PROXY'] . ' class not found - check your php settings');
 		}
@@ -113,7 +116,7 @@ class Odf
 
 		copy($filename, $this->tmpfile);
 
-		// Now file has been loaded, we must move the [!-- BEGIN and [!-- END tags outside the 
+		// Now file has been loaded, we must move the [!-- BEGIN and [!-- END tags outside the
 		// <table:table-row tag and clean bad lines tags.
 		$this->_moveRowSegments();
 	}
@@ -124,7 +127,7 @@ class Odf
 	 * @param string   $key        Name of the variable within the template
 	 * @param string   $value      Replacement value
 	 * @param bool     $encode     If true, special XML characters are encoded
-	 * @param string   $charset    Charset  
+	 * @param string   $charset    Charset
 	 * @throws OdfException
 	 * @return odf
 	 */
@@ -143,18 +146,17 @@ class Odf
 
 		$this->vars[$tag] = $this->convertVarToOdf($value, $encode, $charset);
 
-		return $this;
+    return $this;
 	}
 
-
 	/**
-     * Replaces html tags in odt tags and returns a compatible string
-     * @param string   $key        Name of the variable within the template
+   * Replaces html tags in odt tags and returns a compatible string
+   * @param string   $key        Name of the variable within the template
 	 * @param string   $value      Replacement value
 	 * @param bool     $encode     If true, special XML characters are encoded
 	 * @param string   $charset    Charset
-     * @return string
-     */
+   * @return string
+   */
 	public function convertVarToOdf($value, $encode = true, $charset = 'ISO-8859')
 	{
 		$value = $encode ? htmlspecialchars($value) : $value;
@@ -197,12 +199,12 @@ class Odf
 			}
 			$this->contentXml = str_replace('</office:font-face-decls>', $fonts . '</office:font-face-decls>', $this->contentXml);
 		}
-		else $convertedValue = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $value);
+    else $convertedValue = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $value);
 
 		return $convertedValue;
 	}
 
-	/**
+  /**
 	 * Miguel Erill - 2019/03/27 -Add a function to retrieve var values
 	 * Return a template variable value
 	 *
@@ -415,6 +417,7 @@ class Odf
 	 * Function to convert a HTML string into an ODT string
 	 *
 	 * @param	string	$value	String to convert
+	 * @return	string			String converted
 	 */
 	public function htmlToUTFAndPreOdf($value)
 	{
@@ -423,16 +426,15 @@ class Odf
 
 		// We convert html tags
 		$ishtml=dol_textishtml($value);
-		if ($ishtml)
-		{
-	        // If string is "MYPODUCT - Desc <strong>bold</strong> with &eacute; accent<br />\n<br />\nUn texto en espa&ntilde;ol ?"
-    	    // Result after clean must be "MYPODUCT - Desc bold with é accent\n\nUn texto en espa&ntilde;ol ?"
+		if ($ishtml) {
+			// If string is "MYPODUCT - Desc <strong>bold</strong> with &eacute; accent<br />\n<br />\nUn texto en espa&ntilde;ol ?"
+			// Result after clean must be "MYPODUCT - Desc bold with é accent\n\nUn texto en espa&ntilde;ol ?"
 
 			// We want to ignore \n and we want all <br> to be \n
-			$value=preg_replace('/(\r\n|\r|\n)/i','',$value);
-			$value=preg_replace('/<br>/i',"\n",$value);
-			$value=preg_replace('/<br\s+[^<>\/]*>/i',"\n",$value);
-			$value=preg_replace('/<br\s+[^<>\/]*\/>/i',"\n",$value);
+			$value=preg_replace('/(\r\n|\r|\n)/i', '', $value);
+			$value=preg_replace('/<br>/i', "\n", $value);
+			$value=preg_replace('/<br\s+[^<>\/]*>/i', "\n", $value);
+			$value=preg_replace('/<br\s+[^<>\/]*\/>/i', "\n", $value);
 
 			//$value=preg_replace('/<strong>/','__lt__text:p text:style-name=__quot__bold__quot____gt__',$value);
 			//$value=preg_replace('/<\/strong>/','__lt__/text:p__gt__',$value);
@@ -448,6 +450,7 @@ class Odf
 	 * Function to convert a HTML string into an ODT string
 	 *
 	 * @param	string	$value	String to convert
+	 * @return	string			String converted
 	 */
 	public function preOdfToOdf($value)
 	{
@@ -522,17 +525,19 @@ IMG;
 	 */
 	private function _moveRowSegments()
 	{
-	    // Replace BEGIN<text:s/>xxx into BEGIN xxx
-	    $this->contentXml = preg_replace('/\[!--\sBEGIN<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- BEGIN \\1 --]', $this->contentXml);
-	    // Replace END<text:s/>xxx into END xxx
-	    $this->contentXml = preg_replace('/\[!--\sEND<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- END \\1 --]', $this->contentXml);
+	  // Replace BEGIN<text:s/>xxx into BEGIN xxx
+	  $this->contentXml = preg_replace('/\[!--\sBEGIN<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- BEGIN \\1 --]', $this->contentXml);
+	  // Replace END<text:s/>xxx into END xxx
+	  $this->contentXml = preg_replace('/\[!--\sEND<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- END \\1 --]', $this->contentXml);
 
-	    // Search all possible rows in the document
+	  // Search all possible rows in the document
 		$reg1 = "#<table:table-row[^>]*>(.*)</table:table-row>#smU";
+		$matches = array();
 		preg_match_all($reg1, $this->contentXml, $matches);
 		for ($i = 0, $size = count($matches[0]); $i < $size; $i++) {
 			// Check if the current row contains a segment row.*
 			$reg2 = '#\[!--\sBEGIN\s(row.[\S]*)\s--\](.*)\[!--\sEND\s\\1\s--\]#sm';
+			$matches2 = array();
 			if (preg_match($reg2, $matches[0][$i], $matches2)) {
 				$balise = str_replace('row.', '', $matches2[1]);
 				// Move segment tags around the row
@@ -555,31 +560,29 @@ IMG;
 	 * @param  string	$type		'content', 'styles' or 'meta'
 	 * @return void
 	 */
-	private function _parse($type='content')
+	private function _parse($type = 'content')
 	{
-	    // Search all tags fou into condition to complete $this->vars, so we will proceed all tests even if not defined
-	    $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
-	    preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+	   // Search all tags fou into condition to complete $this->vars, so we will proceed all tests even if not defined
+	   $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+	   preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
 
-	    //var_dump($this->vars);exit;
-	    foreach($matches as $match)   // For each match, if there is no entry into this->vars, we add it
-		{
-		    if (! empty($match[1]) && ! isset($this->vars[$match[1]]))
-			{
-			    $this->vars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
-			}
-	    }
-	    //var_dump($this->vars);exit;
+	   //var_dump($this->vars);exit;
+	   foreach($matches as $match)   // For each match, if there is no entry into this->vars, we add it
+     {
+	 	    if (! empty($match[1]) && ! isset($this->vars[$match[1]]))
+		  	{
+			      $this->vars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
+			  }
+	   }
+	   //var_dump($this->vars);exit;
 
 		// Conditionals substitution
 		// Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
-	    foreach($this->vars as $key => $value)
-		{
+		foreach ($this->vars as $key => $value) {
 			// If value is true (not 0 nor false nor null nor empty string)
-			if ($value)
-			{
-			    //dol_syslog("Var ".$key." is defined, we remove the IF, ELSE and ENDIF ");
-			    //$sav=$this->contentXml;
+			if ($value) {
+				//dol_syslog("Var ".$key." is defined, we remove the IF, ELSE and ENDIF ");
+				//$sav=$this->contentXml;
 				// Remove the IF tag
 				$this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
@@ -587,27 +590,26 @@ IMG;
 				$this->contentXml = preg_replace($reg, '', $this->contentXml);
 				/*if ($sav != $this->contentXml)
 				{
-				    dol_syslog("We found a IF and it was processed");
-				    //var_dump($sav);exit;
+					dol_syslog("We found a IF and it was processed");
+					//var_dump($sav);exit;
 				}*/
-			}
-			// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
-			else
-			{
-			    //dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
-			    //$sav=$this->contentXml;
+			} else {
+				// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
+
+				//dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
+				//$sav=$this->contentXml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
 				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
-				foreach($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
+				foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
 					if (!empty($match[3])) $this->contentXml = str_replace($match[0], $match[3], $this->contentXml);
 				}
 				// Cleanup the other conditional blocks (all the others where there were no ELSE clause, we can just remove them altogether)
 				$this->contentXml = preg_replace($reg, '', $this->contentXml);
 				/*if ($sav != $this->contentXml)
 				{
-				    dol_syslog("We found a IF and it was processed");
-				    //var_dump($sav);exit;
+					dol_syslog("We found a IF and it was processed");
+					//var_dump($sav);exit;
 				}*/
 			}
 		}
@@ -617,7 +619,7 @@ IMG;
 		if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
 		if ($type == 'meta')	$this->metaXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->metaXml);
 
-	}
+  }
 
 	/**
 	 * Add the merged segment to the document
@@ -684,6 +686,7 @@ IMG;
 		}
 		// $reg = "#\[!--\sBEGIN\s$segment\s--\]<\/text:p>(.*)<text:p\s.*>\[!--\sEND\s$segment\s--\]#sm";
 		$reg = "#\[!--\sBEGIN\s$segment\s--\](.*)\[!--\sEND\s$segment\s--\]#sm";
+		$m = array();
 		if (preg_match($reg, html_entity_decode($this->contentXml), $m) == 0) {
 			throw new OdfException("'".$segment."' segment not found in the document. The tag [!-- BEGIN xxx --] or [!-- END xxx --] is not present into content file.");
 		}
@@ -756,7 +759,7 @@ IMG;
 	 */
 	public function setMetaData()
 	{
-	    if (empty($this->creator)) $this->creator='';
+		if (empty($this->creator)) $this->creator='';
 
 		$this->metaXml = preg_replace('/<dc:date>.*<\/dc:date>/', '<dc:date>'.gmdate("Y-m-d\TH:i:s").'</dc:date>', $this->metaXml);
 		$this->metaXml = preg_replace('/<dc:creator>.*<\/dc:creator>/', '<dc:creator>'.htmlspecialchars($this->creator).'</dc:creator>', $this->metaXml);
@@ -804,8 +807,7 @@ IMG;
 			throw new OdfException("headers already sent ($filename at $linenum)");
 		}
 
-		if( $name == "" )
-		{
+		if ( $name == "" ) {
 			$name = md5(uniqid()) . ".odt";
 		}
 
@@ -823,7 +825,7 @@ IMG;
 	 * @throws OdfException
 	 * @return void
 	 */
-	public function exportAsAttachedPDF($name="")
+	public function exportAsAttachedPDF($name = "")
 	{
 		global $conf;
 
@@ -921,8 +923,7 @@ IMG;
 				dol_syslog(get_class($this)."Run command ".$command,LOG_DEBUG);
 				fwrite($handle, $command."\n");
 				$handlein = popen($command, 'r');
-				while (!feof($handlein))
-				{
+				while (!feof($handlein)) {
 					$read = fgets($handlein);
 					fwrite($handle, $read);
 					$output_arr[]=$read;
@@ -1040,6 +1041,7 @@ IMG;
 	public function getvalue($valuename)
 	{
 		$searchreg="/\\[".$valuename."\\](.*)\\[\\/".$valuename."\\]/";
+		$matches = array();
 		preg_match($searchreg, $this->contentXml, $matches);
 		$this->contentXml = preg_replace($searchreg, "", $this->contentXml);
 		return  $matches[1];

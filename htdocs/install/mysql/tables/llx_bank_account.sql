@@ -1,8 +1,8 @@
 -- =============================================================================
 -- Copyright (C) 2000-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2014	Laurent Destailleur 	<eldy@users.sourceforge.net>
--- Copyright (C) 2005-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
--- Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2005-2012	Regis Houssin       	<regis.houssin@inodbox.com>
+-- Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- =============================================================================
 
@@ -26,7 +26,7 @@ create table llx_bank_account
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   datec						datetime,
-  tms						timestamp,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   ref						varchar(12) NOT NULL,
   label						varchar(30) NOT NULL,
   entity					integer DEFAULT 1 NOT NULL,	-- multi company id
@@ -59,5 +59,7 @@ create table llx_bank_account
   note_public				text,
   model_pdf					varchar(255),
   import_key				varchar(14),
-  extraparams			    varchar(255)				-- for other parameters with json format
+  extraparams			    varchar(255),				-- for other parameters with json format
+  ics						varchar(32),			-- Creditor Identifier CI
+  ics_transfer			varchar(32)				-- Creditor Identifier CI for transfer
 )ENGINE=innodb;

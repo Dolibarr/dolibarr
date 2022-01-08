@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017		 Oscss-Shop              <support@oscss-shop.fr>.
  * Copyright (C) 2008-2011   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.
@@ -12,30 +13,24 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
-if (!defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
+if (!defined('REQUIRE_JQUERY_BLOCKUI')) {
+	define('REQUIRE_JQUERY_BLOCKUI', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
 
 
 /**
- *      \file       htdocs/commande/info.php
- *      \ingroup    commande
- * 		\brief      Page des informations d'une commande
+ *      \file       htdocs/admin/dolistore/ajax/image.php
+ *      \ingroup    admin
+ *      \brief      Page des informations dolistore
  */
-$res = 0;
-if (!$res && file_exists("../main.inc.php")) $res = @include("../main.inc.php");
-if (!$res && file_exists("../../main.inc.php")) $res = @include("../../main.inc.php");
-if (!$res && file_exists("../../../main.inc.php")) $res = @include("../../../main.inc.php");
-if (!$res && file_exists("../../../../main.inc.php")) $res = @include("../../../../main.inc.php");
-if (!$res && file_exists("../../../dolibarr/htdocs/main.inc.php"))
-        $res = @include("../../../dolibarr/htdocs/main.inc.php");     // Used on dev env only
-if (!$res && file_exists("../../../../dolibarr/htdocs/main.inc.php"))
-        $res = @include("../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
-if (!$res && file_exists("../../../../../dolibarr/htdocs/main.inc.php"))
-        $res = @include("../../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
-if (!$res) die("Include of main fails");
+require "../../../main.inc.php";
 
 // CORE
 
@@ -51,17 +46,24 @@ $id_image   = GETPOST('id_image', 'int');
 $quality    = GETPOST('quality', 'alpha');
 
 try {
-    $url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
-    $api        = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
-        $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api);
-    //echo $url;
-    $request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
-    header('Content-type:image');
-    print $request['response'];
+	$url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
+	$api = new PrestaShopWebservice(
+		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
+		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY,
+		$dolistore->debug_api
+	);
+	//echo $url;
+	$request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
+	header('Content-type:image');
+	print $request['response'];
 } catch (PrestaShopWebserviceException $e) {
-    // Here we are dealing with errors
-    $trace = $e->getTrace();
-    if ($trace[0]['args'][0] == 404) die('Bad ID');
-    else if ($trace[0]['args'][0] == 401) die('Bad auth key');
-    else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+	// Here we are dealing with errors
+	$trace = $e->getTrace();
+	if ($trace[0]['args'][0] == 404) {
+		die('Bad ID');
+	} elseif ($trace[0]['args'][0] == 401) {
+		die('Bad auth key');
+	} else {
+		die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+	}
 }

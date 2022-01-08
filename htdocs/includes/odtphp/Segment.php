@@ -11,7 +11,7 @@ class SegmentException extends Exception
  *
  * @copyright  2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
- * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
+ * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.4.5 (last update 2013-04-07)
  */
 class Segment implements IteratorAggregate, Countable
@@ -212,17 +212,17 @@ class Segment implements IteratorAggregate, Countable
 			$tmp = $invarr[0].$invarr[2].$invarr[1];
 	}
 	// Now we have, at last, the invoice date in the format that the dol_stringtotime/dol_getdate needs
-        $tmp = dol_stringtotime($tmp);
-        $tmp = dol_getdate($tmp, true);
+  $tmp = dol_stringtotime($tmp);
+  $tmp = dol_getdate($tmp, true);
 
 	// Old style -> get date of processing. May be needed for new invoices
 	//$tmp = dol_getdate(dol_now(), true));
-        $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-        $tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
-        $tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-        $tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
+  $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+  $tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
+  $tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+  $tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
 
-        $substitutionarray=array(
+  $substitutionarray=array(
 	// Compatibility
           '__DAY__' => $tmp['mday'],
           '__MONTH__' => $tmp['mon'],
@@ -230,7 +230,7 @@ class Segment implements IteratorAggregate, Countable
           '__MONTHTEXT__' => monthArray($langs)[$tmp['mon']],
           '__NEXTMONTH__' => $tmp5['month'],
           '__NEXTYEAR__' => ($tmp['year'] + 1),
-
+  
 	// New format
           '__CURRENTDAY__' => $tmp['mday'],
           '__CURRENTMONTH__' => $tmp['mon'],
@@ -246,8 +246,7 @@ class Segment implements IteratorAggregate, Countable
         );
 
         complete_substitutions_array($substitutionarray, $langs);
-        $text=make_substitutions($text,$substitutionarray);
-	return $text;
+        return make_substitutions($text,$substitutionarray);
     }
 
     /**
@@ -287,14 +286,10 @@ class Segment implements IteratorAggregate, Countable
             //throw new SegmentException("var $key not found in {$this->getName()}");
         }
 
-		$value=$this->odf->htmlToUTFAndPreOdf($value);
+        $tag = $this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT');
 
-		$value = $encode ? htmlspecialchars($value) : $value;
-		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
-
-		$value=$this->odf->preOdfToOdf($value);
-
-        $this->vars[$this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')] = $value;
+		$this->vars[$tag] = $this->odf->convertVarToOdf($value, $encode, $charset);
+        
         return $this;
     }
     /**

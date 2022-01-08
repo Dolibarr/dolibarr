@@ -1,2 +1,23 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxProductsAlertStock=Alarm producten voorraad
+BoxLastProductsInContract=Laatste %s producten/diensten met contract.
+BoxOldestUnpaidCustomerBills=Oudste onbetaalde klantenfacturen
+BoxLastProposals=Laatste commerciële offerten/voorstellen
+BoxLastProspects=Laatste aangepaste propecten
+BoxLastCustomers=Laatste aangepaste klanten
+BoxLastSuppliers=Laatste aangapaste leveranciers
+BoxLastContacts=Laatste contacten/adressen
+BoxFicheInter=Laatste interventie
+BoxTitleLastRssInfos=Laatste %s nieuws van %s
+BoxTitleLastSuppliers=Laatste %s geregistreerde leveranciers
+BoxTitleLastFicheInter=Laatste %s gemodificeerde interventies
+BoxLastExpiredServices=Laatste %s oudste contacten met actieve verlopen services
+BoxTitleLastActionsToDo=Laatste %s acties om te doen
+LastRefreshDate=Laatste vernieuwingsdatum
+NoActionsToDo=Geen acties te doen
+NoRecordedInvoices=Geen geregistreerde klantfacturen
+NoUnpaidCustomerBills=Geen onbetaalde klantfacturen
+BoxTitleLastModifiedPropals=Laatste %s gewijzigde offertes
+LastXMonthRolling=De laatste %s maand rollen
+ChooseBoxToAdd=Widget toevoegen aan uw dashboard
+BoxAdded=Widget is toegevoegd in je dashbord

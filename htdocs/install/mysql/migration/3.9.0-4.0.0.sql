@@ -54,7 +54,7 @@ CREATE TABLE llx_product_lot (
   eatby           date DEFAULT NULL,			-- Eatby date
   sellby          date DEFAULT NULL, 			-- Sellby date
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer
@@ -140,7 +140,7 @@ CREATE TABLE llx_website
 	fk_default_home integer,
     date_creation     datetime,
     date_modification datetime,
-	tms           timestamp
+	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 ALTER TABLE llx_website ADD COLUMN fk_default_home integer;
 ALTER TABLE llx_website CHANGE COLUMN shortname ref varchar(24) NOT NULL;
@@ -158,7 +158,7 @@ CREATE TABLE llx_website_page
     status        integer,
     date_creation     datetime,
     date_modification datetime,
-	tms           timestamp
+	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
 ALTER TABLE llx_website_page ADD UNIQUE INDEX uk_website_page_url (fk_website,pageurl);
@@ -475,7 +475,7 @@ CREATE TABLE llx_advtargetemailing
   fk_user_author integer NOT NULL,
   datec datetime NOT NULL,
   fk_user_mod integer NOT NULL,
-  tms timestamp NOT NULL
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=InnoDB;
 
 ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (name);

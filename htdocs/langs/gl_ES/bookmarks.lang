@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Engadir a páxina actual aos marcadores
+Bookmark=Marcador
+Bookmarks=Marcadores
+ListOfBookmarks=Listaxe de marcadores
+EditBookmarks=Listar/editar marcadores
+NewBookmark=Novo marcador
+ShowBookmark=Amosar marcadores
+OpenANewWindow=Abrir nunha nova xanela
+ReplaceWindow=Reemplazar a xanela actual
+BookmarkTargetNewWindowShort=Nova xanela
+BookmarkTargetReplaceWindowShort=Xanela actual
+BookmarkTitle=Nome do marcador
+UrlOrLink=URL
+BehaviourOnClick=Comportamento cando un marcador URL é seleccionado
+CreateBookmark=Crear marcador
+SetHereATitleForLink=Indicar un nome para o marcador
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use unha ligazón externa/absoluta (https://externalurl.com) ou unha ligazón interna/relativa (/mypage.php). Tamén pode usar o teléfono como tel:0123456. 
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolla se debe abrir a páxina nesta xanela ou nunha nova xanela
+BookmarksManagement=Xestión de marcadores
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=Bookmarks non definidos

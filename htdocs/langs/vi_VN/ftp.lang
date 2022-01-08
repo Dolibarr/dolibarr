@@ -2,13 +2,13 @@
 FTPClientSetup=Cài đặt máy trạm FTP
 NewFTPClient=Tạo thiết lập FTP
 FTPArea=Kết nối FTP
-FTPAreaDesc=Màn hình này hiển thị cho bạn xem nội dung của một máy chủ FTP
-SetupOfFTPClientModuleNotComplete=Thiết lập mô-đun FTP client có vẻ là chưa hoàn thành
+FTPAreaDesc=Màn hình này hiển thị chế độ xem của máy chủ FTP.
+SetupOfFTPClientModuleNotComplete=Việc thiết lập mô đun máy khách FTP dường như chưa hoàn tất
 FTPFeatureNotSupportedByYourPHP=PHP của bạn không hỗ trợ chức năng FTP
 FailedToConnectToFTPServer=Không thể kết nối đến máy chủ FTP (máy chủ% s, cổng% s)
 FailedToConnectToFTPServerWithCredentials=Không thể đăng nhập vào máy chủ FTP với tên đăng nhập / mật khẩu đã được khai báo
 FTPFailedToRemoveFile=Không thể xóa bỏ các tập tin <b>%s.</b>
-FTPFailedToRemoveDir=Không thể loại bỏ thư mục <b>%s</b> (Kiểm tra quyền truy cập và thư mục là trống).
+FTPFailedToRemoveDir=Không thể xóa thư mục <b>%s</b> : kiểm tra quyền và thư mục đó là rỗng.
 FTPPassiveMode=Chế độ thụ động
-ChooseAFTPEntryIntoMenu=Chọn 1 mục FTP vào trong trình đơn...
+ChooseAFTPEntryIntoMenu=Chọn một trang FTP từ menu ...
 FailedToGetFile=Lỗi khi tải tệp tin %s

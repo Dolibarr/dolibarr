@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,133 +48,133 @@ class SMTPs
 	/**
 	 * Host Name or IP of SMTP Server to use
 	 */
-	var $_smtpsHost = 'localhost';
+	private $_smtpsHost = 'localhost';
 
 	/**
 	 * SMTP Server Port definition. 25 is default value
 	 * This can be defined via a INI file or via a setter method
 	 */
-	var $_smtpsPort = '25';
+	private $_smtpsPort = '25';
 
 	/**
 	 * Secure SMTP Server access ID
 	 * This can be defined via a INI file or via a setter method
 	 */
-	var $_smtpsID = null;
+	private $_smtpsID = null;
 
 	/**
 	 * Secure SMTP Server access Password
 	 * This can be defined via a INI file or via a setter method
 	 */
-	var $_smtpsPW = null;
+	private $_smtpsPW = null;
 
 	/**
 	 * Who sent the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
-	var $_msgFrom = null;
+	private $_msgFrom = null;
 
 	/**
 	 * Where are replies and errors to be sent to
 	 * This can be defined via a INI file or via a setter method
 	 */
-	var $_msgReplyTo = null;
+	private $_msgReplyTo = null;
 
 	/**
 	 * Who will the Message be sent to; TO, CC, BCC
 	 * Multi-diminsional array containg addresses the message will
 	 * be sent TO, CC or BCC
 	 */
-	var $_msgRecipients = null;
+	private $_msgRecipients = null;
 
 	/**
 	 * Message Subject
 	 */
-	var $_msgSubject = null;
+	private $_msgSubject = null;
 
 	/**
 	 * Message Content
 	 */
-	var $_msgContent = null;
+	private $_msgContent = null;
 
 	/**
 	 * Custom X-Headers
 	 */
-	var $_msgXheader = null;
+	private $_msgXheader = null;
 
 	/**
 	 * Character set
 	 * Defaulted to 'iso-8859-1'
 	 */
-	var $_smtpsCharSet = 'iso-8859-1';
+	private $_smtpsCharSet = 'iso-8859-1';
 
 	/**
 	 * Message Sensitivity
 	 * Defaults to ZERO - None
 	 */
-	var $_msgSensitivity = 0;
+	private $_msgSensitivity = 0;
 
 	/**
 	 * Message Sensitivity
 	 */
-	var $_arySensitivity = array ( false,
-                                  'Personal',
-                                  'Private',
-                                  'Company Confidential' );
+	private $_arySensitivity = array(false,
+								  'Personal',
+								  'Private',
+								  'Company Confidential');
 
 	/**
 	 * Message Sensitivity
 	 * Defaults to 3 - Normal
 	 */
-	var $_msgPriority = 3;
+	private $_msgPriority = 3;
 
 	/**
 	 * Message Priority
 	 */
-	var $_aryPriority = array ( 'Bulk',
-                                'Highest',
-                                'High',
-                                'Normal',
-                                'Low',
-                                'Lowest' );
+	private $_aryPriority = array('Bulk',
+								'Highest',
+								'High',
+								'Normal',
+								'Low',
+								'Lowest');
 
 	/**
 	 * Content-Transfer-Encoding
 	 * Defaulted to 0 - 7bit
 	 */
-	var $_smtpsTransEncodeType = 0;
+	private $_smtpsTransEncodeType = 0;
 
 	/**
 	 * Content-Transfer-Encoding
 	 */
-	var $_smtpsTransEncodeTypes = array( '7bit',               // Simple 7-bit ASCII
-                                         '8bit',               // 8-bit coding with line termination characters
-                                         'base64',             // 3 octets encoded into 4 sextets with offset
-                                         'binary',             // Arbitrary binary stream
-                                         'mac-binhex40',       // Macintosh binary to hex encoding
-                                         'quoted-printable',   // Mostly 7-bit, with 8-bit characters encoded as "=HH"
-                                         'uuencode' );         // UUENCODE encoding
+	private $_smtpsTransEncodeTypes = array('7bit', // Simple 7-bit ASCII
+										 '8bit', // 8-bit coding with line termination characters
+										 'base64', // 3 octets encoded into 4 sextets with offset
+										 'binary', // Arbitrary binary stream
+										 'mac-binhex40', // Macintosh binary to hex encoding
+										 'quoted-printable', // Mostly 7-bit, with 8-bit characters encoded as "=HH"
+										 'uuencode'); // UUENCODE encoding
 
 	/**
 	 * Content-Transfer-Encoding
 	 * Defaulted to '7bit'
 	 */
-	var $_smtpsTransEncode = '7bit';
+	private $_smtpsTransEncode = '7bit';
 
 	/**
 	 * Boundary String for MIME seperation
 	 */
-	var $_smtpsBoundary = null;
+	private $_smtpsBoundary = null;
 
 	/**
 	 * Related Boundary
 	 */
-	var $_smtpsRelatedBoundary = null;
+	private $_smtpsRelatedBoundary = null;
 
 	/**
 	 * Alternative Boundary
 	 */
-	var $_smtpsAlternativeBoundary = null;
+	private $_smtpsAlternativeBoundary = null;
 
 	/**
 	 * Determines the method inwhich the message are to be sent.
@@ -183,28 +183,28 @@ class SMTPs
 	 * - 'phpmail  [2] - use the PHP built-in mail function
 	 * NOTE: Only 'sockets' is implemented
 	 */
-	var $_transportType = 0;
+	private $_transportType = 0;
 
 	/**
 	 * If '$_transportType' is set to '1', then this variable is used
 	 * to define the UNIX file system path to the sendmail execuable
 	 */
-	var $_mailPath = '/usr/lib/sendmail';
+	private $_mailPath = '/usr/lib/sendmail';
 
 	/**
 	 * Sets the SMTP server timeout in seconds.
 	 */
-	var $_smtpTimeout = 10;
+	private $_smtpTimeout = 10;
 
 	/**
 	 * Determines whether to calculate message MD5 checksum.
 	 */
-	var $_smtpMD5 = false;
+	private $_smtpMD5 = false;
 
 	/**
 	 * Class error codes and messages
 	 */
-	var $_smtpsErrors = null;
+	private $_smtpsErrors = null;
 
 	/**
 	 * Defines log level
@@ -213,71 +213,86 @@ class SMTPs
 	 *  2 - message generation logging
 	 *  3 - detail logging
 	 */
-	var $_log_level = 0;
+	private $_log_level = 0;
 
 	/**
 	 * Place Class in" debug" mode
 	 */
-	var $_debug = false;
+	private $_debug = false;
 
 
 	// @CHANGE LDR
-	var $log = '';
-	var $_errorsTo = '';
-	var $_deliveryReceipt = 0;
-	var $_trackId = '';
-	var $_moreInHeader = '';
+	public $log = '';
+	private $_errorsTo = '';
+	private $_deliveryReceipt = 0;
+	private $_trackId = '';
+	private $_moreInHeader = '';
 
+	/**
+	 * An array of options for stream_context_create()
+	 */
+	private $_options = array();
 
-    /**
-     * Set delivery receipt
-     *
-     * @param	int		$_val		Value
-     * @return	void
-     */
-	function setDeliveryReceipt($_val = 0)
+	/**
+	 * Set delivery receipt
+	 *
+	 * @param	array		$_options		An array of options for stream_context_create()
+	 * @return	void
+	 */
+	public function setOptions($_options = array())
+	{
+		$this->_options = $_options;
+	}
+
+	/**
+	 * Set delivery receipt
+	 *
+	 * @param	int		$_val		Value
+	 * @return	void
+	 */
+	public function setDeliveryReceipt($_val = 0)
 	{
 		$this->_deliveryReceipt = $_val;
 	}
 
-    /**
-     * get delivery receipt
-     *
-     * @return	int		Delivery receipt
-     */
-	function getDeliveryReceipt()
+	/**
+	 * get delivery receipt
+	 *
+	 * @return	int		Delivery receipt
+	 */
+	public function getDeliveryReceipt()
 	{
 		return $this->_deliveryReceipt;
 	}
 
-    /**
-     * Set trackid
-     *
-     * @param	string		$_val		Value
-     * @return	void
-     */
-	function setTrackId($_val = '')
+	/**
+	 * Set trackid
+	 *
+	 * @param	string		$_val		Value
+	 * @return	void
+	 */
+	public function setTrackId($_val = '')
 	{
 		$this->_trackId = $_val;
 	}
 
-    /**
-     * Set moreInHeader
-     *
-     * @param	string		$_val		Value
-     * @return	void
-     */
-	function setMoreInHeader($_val = '')
+	/**
+	 * Set moreInHeader
+	 *
+	 * @param	string		$_val		Value
+	 * @return	void
+	 */
+	public function setMoreInHeader($_val = '')
 	{
 		$this->_moreinheader = $_val;
 	}
 
 	/**
-     * get trackid
-     *
-     * @return	string		Track id
-     */
-	function getTrackId()
+	 * get trackid
+	 *
+	 * @return	string		Track id
+	 */
+	public function getTrackId()
 	{
 		return $this->_trackId;
 	}
@@ -287,37 +302,39 @@ class SMTPs
 	 *
 	 * @return	string		moreInHeader
 	 */
-	function getMoreInHeader()
+	public function getMoreInHeader()
 	{
-	    return $this->_moreinheader;
+		return $this->_moreinheader;
 	}
 
-    /**
-     * Set errors to
-     *
-     * @param	string		$_strErrorsTo		Errors to
-     * @return	void
-     */
-	function setErrorsTo($_strErrorsTo)
+	/**
+	 * Set errors to
+	 *
+	 * @param	string		$_strErrorsTo		Errors to
+	 * @return	void
+	 */
+	public function setErrorsTo($_strErrorsTo)
 	{
-		if ( $_strErrorsTo )
-		$this->_errorsTo = $this->_strip_email($_strErrorsTo);
+		if ($_strErrorsTo) {
+			$this->_errorsTo = $this->_strip_email($_strErrorsTo);
+		}
 	}
 
-    /**
-     * Get errors to
-     *
-     * @param	boolean		$_part		Variant
-     * @return	string					Errors to
-     */
-	function getErrorsTo($_part = true )
+	/**
+	 * Get errors to
+	 *
+	 * @param	boolean		$_part		Variant
+	 * @return	string					Errors to
+	 */
+	public function getErrorsTo($_part = true)
 	{
 		$_retValue = '';
 
-		if ( $_part === true )
-		$_retValue = $this->_errorsTo;
-		else
-		$_retValue = $this->_errorsTo[$_part];
+		if ($_part === true) {
+			$_retValue = $this->_errorsTo;
+		} else {
+			$_retValue = $this->_errorsTo[$_part];
+		}
 
 		return $_retValue;
 	}
@@ -328,7 +345,7 @@ class SMTPs
 	 * @param	boolean		$_vDebug		Value for debug
 	 * @return 	void
 	 */
-	function setDebug($_vDebug = false )
+	public function setDebug($_vDebug = false)
 	{
 		$this->_debug = $_vDebug;
 	}
@@ -338,66 +355,82 @@ class SMTPs
 	 *
 	 * @return void
 	 */
-	function buildRCPTlist()
+	public function buildRCPTlist()
 	{
 		// Pull TO list
 		$_aryToList = $this->getTO();
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Attempt a connection to mail server
 	 *
 	 * @return mixed  $_retVal   Boolean indicating success or failure on connection
 	 */
-	function _server_connect()
+	private function _server_connect()
 	{
+		// phpcs:enable
 		// Default return value
 		$_retVal = true;
 
 		// We have to make sure the HOST given is valid
 		// This is done here because '@fsockopen' will not give me this
 		// information if it failes to connect because it can't find the HOST
-		$host=$this->getHost();
-		$usetls = preg_match('@tls://@i',$host);
+		$host = $this->getHost();
+		$usetls = preg_match('@tls://@i', $host);
 
-		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
-		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+		$host = preg_replace('@tcp://@i', '', $host); // Remove prefix
+		$host = preg_replace('@ssl://@i', '', $host); // Remove prefix
+		$host = preg_replace('@tls://@i', '', $host); // Remove prefix
 
 		// @CHANGE LDR
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		if ( (! is_ip($host)) && ((gethostbyname($host)) == $host))
-		{
-			$this->_setErr(99, $host . ' is either offline or is an invalid host name.');
+		if ((!is_ip($host)) && ((gethostbyname($host)) == $host)) {
+			$this->_setErr(99, $host.' is either offline or is an invalid host name.');
 			$_retVal = false;
-		}
-		else
-		{
+		} else {
+			if (function_exists('stream_socket_client') && !empty($this->_options)) {
+				$socket_context = stream_context_create($this->_options); // An array of options for stream_context_create()
+				$this->socket = @stream_socket_client(
+					preg_replace('@tls://@i', '', $this->getHost()).// Host to 'hit', IP or domain
+					':'.$this->getPort(), // which Port number to use
+					$this->errno, // actual system level error
+					$this->errstr, // and any text that goes with the error
+					$this->_smtpTimeout, // timeout for reading/writing data over the socket
+					STREAM_CLIENT_CONNECT,
+					$socket_context                     // Options for connection
+				);
+			} else {
+				$this->socket = @fsockopen(
+					preg_replace('@tls://@i', '', $this->getHost()), // Host to 'hit', IP or domain
+					$this->getPort(), // which Port number to use
+					$this->errno, // actual system level error
+					$this->errstr, // and any text that goes with the error
+					$this->_smtpTimeout     // timeout for reading/writing data over the socket
+				);
+			}
+
 			//See if we can connect to the SMTP server
-			if ($this->socket = @fsockopen(
-    			preg_replace('@tls://@i','',$this->getHost()),       // Host to 'hit', IP or domain
-    			$this->getPort(),       // which Port number to use
-    			$this->errno,           // actual system level error
-    			$this->errstr,          // and any text that goes with the error
-    			$this->_smtpTimeout
-			))  // timeout for reading/writing data over the socket
-			{
+			if (is_resource($this->socket)) {
 				// Fix from PHP SMTP class by 'Chris Ryan'
 				// Sometimes the SMTP server takes a little longer to respond
 				// so we will give it a longer timeout for the first read
 				// Windows still does not have support for this timeout function
-				if (function_exists('stream_set_timeout')) stream_set_timeout($this->socket, $this->_smtpTimeout, 0);
+				if (function_exists('stream_set_timeout')) {
+					stream_set_timeout($this->socket, $this->_smtpTimeout, 0);
+				}
 
 				// Check response from Server
-				if ( $_retVal = $this->server_parse($this->socket, "220") )
-				$_retVal = $this->socket;
-			}
-			// This connection attempt failed.
-			else
-			{
+				if ($_retVal = $this->server_parse($this->socket, "220")) {
+					$_retVal = $this->socket;
+				}
+			} else {
+				// This connection attempt failed.
 				// @CHANGE LDR
-				if (empty($this->errstr)) $this->errstr='Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
+				if (empty($this->errstr)) {
+					$this->errstr = 'Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
+				}
 				$this->_setErr($this->errno, $this->errstr);
 				$_retVal = false;
 			}
@@ -406,52 +439,102 @@ class SMTPs
 		return $_retVal;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
 	 * @return boolean|null  $_retVal   Boolean indicating success or failure of authentication
 	 */
-	function _server_authenticate()
+	private function _server_authenticate()
 	{
+		// phpcs:enable
 		global $conf;
 
 		// Send the RFC2554 specified EHLO.
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
-		$host=$this->getHost();
-		$usetls = preg_match('@tls://@i',$host);
+		$host = $this->getHost();
+		$usetls = preg_match('@tls://@i', $host);
 
-		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
-		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+		$host = preg_replace('@tcp://@i', '', $host); // Remove prefix
+		$host = preg_replace('@ssl://@i', '', $host); // Remove prefix
+		$host = preg_replace('@tls://@i', '', $host); // Remove prefix
 
-		if ($usetls) $host='tls://'.$host;
+		if ($usetls && !empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) {
+			$host = 'tls://'.$host;
+		}
 
-		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
-		{
-			if ($usetls)
-			{
-			    /*
-			    The following dialog illustrates how a client and server can start a TLS STARTTLS session
-			    S: <waits for connection on TCP port 25>
-			    C: <opens connection>
-			    S: 220 mail.imc.org SMTP service ready
-			    C: EHLO mail.ietf.org
-			    S: 250-mail.imc.org offers a warm hug of welcome
-			    S: 250 STARTTLS
-			    C: STARTTLS
-			    S: 220 Go ahead
-			    C: <starts TLS negotiation>
-			    C & S: <negotiate a TLS session>
-			    C & S: <check result of negotiation>
-                // Second pass EHLO
-                C: EHLO client-domain.com
-                S: 250-server-domain.com
-                S: 250 AUTH LOGIN
-			    C: <continues by sending an SMTP command
-			    */
-				if (!$_retVal = $this->socket_send_str('STARTTLS', 220))
-				{
+		$hosth = $host;	// so for example 'localhost' or 'smtp-relay.gmail.com'
+
+		if (!empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+			if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
+				$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
+			} else {
+				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
+				// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+				$hosth = $this->getFrom('addr');
+				$hosth = preg_replace('/^.*</', '', $hosth);
+				$hosth = preg_replace('/>.*$/', '', $hosth);
+				$hosth = preg_replace('/.*@/', '', $hosth);
+			}
+		}
+
+		if ($_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
+			if ($usetls) {
+				/*
+				The following dialog illustrates how a client and server can start a TLS STARTTLS session:
+				S: <waits for connection on TCP port 25>
+				C: <opens connection>
+				S: 220 mail.imc.org SMTP service ready
+				C: EHLO mail.ietf.org
+				S: 250-mail.imc.org offers a warm hug of welcome
+				S: 250 STARTTLS
+				C: STARTTLS
+				S: 220 Go ahead
+				C: <starts TLS negotiation>
+				C & S: <negotiate a TLS session>
+				C & S: <check result of negotiation>
+				// Second pass EHLO
+				C: EHLO client-domain.com
+				S: 250-server-domain.com
+				S: 250 AUTH LOGIN
+				C: <continues by sending an SMTP command
+
+				Another example here:
+				S: 220 smtp.server.com Simple Mail Transfer Service Ready
+				C: EHLO client.example.com
+				S: 250-smtp.server.com Hello client.example.com
+				S: 250-SIZE 1000000
+				S: 250-AUTH LOGIN PLAIN CRAM-MD5
+				S: 250-STARTTLS
+				S: 250 HELP
+				C: STARTTLS
+				S: 220 TLS go ahead
+				C: EHLO client.example.com *
+				S: 250-smtp.server.com Hello client.example.com
+				S: 250-SIZE 1000000
+				S: 250-AUTH LOGIN PLAIN CRAM-MD5
+				S: 250 HELP
+				C: AUTH LOGIN
+				S: 334 VXNlcm5hbWU6
+				C: adlxdkej
+				S: 334 UGFzc3dvcmQ6
+				C: lkujsefxlj
+				S: 235 2.7.0 Authentication successful
+				C: MAIL FROM:<mail@samlogic.com>
+				S: 250 OK
+				C: RCPT TO:<john@mail.com>
+				S: 250 OK
+				C: DATA
+				S: 354 Send message, end with a "." on a line by itself
+				C: <The message data (body text, subject, e-mail header, attachments etc) is sent>
+				S .
+				S: 250 OK, message accepted for delivery: queued as 12345
+				C: QUIT
+				S: 221 Bye
+				*/
+				if (!$_retVal = $this->socket_send_str('STARTTLS', 220)) {
 					$this->_setErr(131, 'STARTTLS connection is not supported.');
 					return $_retVal;
 				}
@@ -469,34 +552,54 @@ class SMTPs
 					$crypto_method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
 				}
 
-				if (!stream_socket_enable_crypto($this->socket, true, $crypto_method))
-				{
+				if (!stream_socket_enable_crypto($this->socket, true, $crypto_method)) {
 					$this->_setErr(132, 'STARTTLS connection failed.');
 					return $_retVal;
 				}
-				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time
+				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
-				if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
-				{
-					$this->_setErr(126, '"' . $host . '" does not support authenticated connections.');
+				if (! $_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
+					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
 					return $_retVal;
 				}
 			}
+
+			// Default authentication method is LOGIN
+			if (empty($conf->global->MAIL_SMTP_AUTH_TYPE)) {
+				$conf->global->MAIL_SMTP_AUTH_TYPE = 'LOGIN';
+			}
+
 			// Send Authentication to Server
 			// Check for errors along the way
-			$this->socket_send_str('AUTH LOGIN', '334');
-
-			// User name will not return any error, server will take anything we give it.
-			$this->socket_send_str(base64_encode($this->_smtpsID), '334');
-
-			// The error here just means the ID/password combo doesn't work.
-			// There is not a method to determine which is the problem, ID or password
-			if ( ! $_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235') )
-			$this->_setErr(130, 'Invalid Authentication Credentials.');
-		}
-		else
-		{
-			$this->_setErr(126, '"' . $host . '" does not support authenticated connections.');
+			switch ($conf->global->MAIL_SMTP_AUTH_TYPE) {
+				case 'NONE':
+					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
+					$_retVal = true;
+					break;
+				case 'PLAIN':
+					$this->socket_send_str('AUTH PLAIN', '334');
+					// The error here just means the ID/password combo doesn't work.
+					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					break;
+				case 'LOGIN':	// most common case
+				default:
+					$_retVal = $this->socket_send_str('AUTH LOGIN', '334');
+					if (!$_retVal) {
+						$this->_setErr(130, 'Error when asking for AUTH LOGIN');
+					} else {
+						// User name will not return any error, server will take anything we give it.
+						$this->socket_send_str(base64_encode($this->_smtpsID), '334');
+						// The error here just means the ID/password combo doesn't work.
+						// There is not a method to determine which is the problem, ID or password
+						$_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235');
+					}
+					break;
+			}
+			if (!$_retVal) {
+				$this->_setErr(130, 'Invalid Authentication Credentials.');
+			}
+		} else {
+			$this->_setErr(126, '"'.$host.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
 		}
 
 		return $_retVal;
@@ -505,62 +608,78 @@ class SMTPs
 	/**
 	 * Now send the message
 	 *
-	 * @param  boolean $_bolTestMsg  whether to run this method in 'Test' mode.
-	 * @param  boolean $_bolDebug    whether to log all communication between this Class and the Mail Server.
-	 * @return boolean|null   void
-	 *                 $_strMsg      If this is run in 'Test' mode, the actual message structure will be returned
+	 * @return boolean|null   Result
 	 */
-	function sendMsg($_bolTestMsg = false, $_bolDebug = false)
+	public function sendMsg()
 	{
+		global $conf;
+
 		/**
 		 * Default return value
 		 */
 		$_retVal = false;
 
 		// Connect to Server
-		if ( $this->socket = $this->_server_connect() )
-		{
+		if ($this->socket = $this->_server_connect()) {
 			// If a User ID *and* a password is given, assume Authentication is desired
-			if( !empty($this->_smtpsID) && !empty($this->_smtpsPW) )
-			{
+			if (!empty($this->_smtpsID) && !empty($this->_smtpsPW)) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
-			}
-
-			// This is a "normal" SMTP Server "handshack"
-			else
-			{
+			} else {
+				// This is a "normal" SMTP Server "handshack"
 				// Send the RFC821 specified HELO.
-				$host=$this->getHost();
-				$usetls = preg_match('@tls://@i',$host);
+				$host = $this->getHost();
+				$usetls = preg_match('@tls://@i', $host);
 
-				$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
-				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+				$host = preg_replace('@tcp://@i', '', $host); // Remove prefix
+				$host = preg_replace('@ssl://@i', '', $host); // Remove prefix
+				$host = preg_replace('@tls://@i', '', $host); // Remove prefix
 
-				$_retVal = $this->socket_send_str('HELO ' . $host, '250');
+				if ($usetls && !empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) {
+					$host = 'tls://'.$host;
+				}
+
+				$hosth = $host;
+
+				if (!empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+					if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
+						$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
+					} else {
+						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
+						// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+						$hosth = $this->getFrom('addr');
+						$hosth = preg_replace('/^.*</', '', $hosth);
+						$hosth = preg_replace('/>.*$/', '', $hosth);
+						$hosth = preg_replace('/.*@/', '', $hosth);
+					}
+				}
+
+				$_retVal = $this->socket_send_str('HELO '.$hosth, '250');
 			}
 
 			// Well, did we get to the server?
-			if ( $_retVal )
-			{
+			if ($_retVal) {
 				// From this point onward most server response codes should be 250
 				// Specify who the mail is from....
 				// This has to be the raw email address, strip the "name" off
-				$this->socket_send_str('MAIL FROM: ' . $this->getFrom('addr'), '250');
+				$resultmailfrom = $this->socket_send_str('MAIL FROM: '.$this->getFrom('addr'), '250');
+				if (!$resultmailfrom) {
+					fclose($this->socket);
+					return false;
+				}
 
 				// 'RCPT TO:' must be given a single address, so this has to loop
 				// through the list of addresses, regardless of TO, CC or BCC
 				// and send it out "single file"
-				foreach ( $this->get_RCPT_list() as $_address )
-				{
-				    /* Note:
-				     * BCC email addresses must be listed in the RCPT TO command list,
-                     * but the BCC header should not be printed under the DATA command.
-				     * http://stackoverflow.com/questions/2750211/sending-bcc-emails-using-a-smtp-server
-				     */
+				foreach ($this->get_RCPT_list() as $_address) {
+					/* Note:
+					 * BCC email addresses must be listed in the RCPT TO command list,
+					 * but the BCC header should not be printed under the DATA command.
+					 * http://stackoverflow.com/questions/2750211/sending-bcc-emails-using-a-smtp-server
+					 */
 
-    				/*
+					/*
 					 * TODO
 					 * After each 'RCPT TO:' is sent, we need to make sure it was kosher,
 					 * if not, the whole message will fail
@@ -568,7 +687,7 @@ class SMTPs
 					 * mark the last address as "bad" and start the address loop over again.
 					 * If any address fails, the entire message fails.
 					 */
-					$this->socket_send_str('RCPT TO: <' . $_address . '>', '250');
+					$this->socket_send_str('RCPT TO: <'.$_address.'>', '250');
 				}
 
 				// Tell the server we are ready to start sending data
@@ -578,7 +697,7 @@ class SMTPs
 
 				// Now we are ready for the message...
 				// Ok, all the ingredients are mixed in let's cook this puppy...
-				$this->socket_send_str($this->getHeader().$this->getBodyContent() . "\r\n" . '.', '250');
+				$this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
 				fputs($this->socket, 'QUIT');
@@ -619,39 +738,37 @@ class SMTPs
 	 * @param mixed $_strConfigPath path to config file or VOID
 	 * @return boolean
 	 */
-	function setConfig($_strConfigPath = null)
+	public function setConfig($_strConfigPath = null)
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
 		// if we have a path...
-		if ( ! empty ($_strConfigPath) )
-		{
+		if (!empty($_strConfigPath)) {
 			// If the path is not valid, this will NOT generate an error,
-			// it will simply return FALSE.
-			if ( ! @include ( $_strConfigPath ) )
-			{
-				$this->_setErr(110, '"' . $_strConfigPath . '" is not a valid path.');
+			// it will simply return false.
+			if (!@include $_strConfigPath) {
+				$this->_setErr(110, '"'.$_strConfigPath.'" is not a valid path.');
 				$_retVal = false;
 			}
-		}
-
-		// Read the Systems php.ini file
-		else
-		{
+		} else {
+			// Read the Systems php.ini file
 			// Set these properties ONLY if they are set in the php.ini file.
 			// Otherwise the default values will be used.
-			if ( $_host = ini_get('SMTPs') )
-			$this->setHost($_host);
+			if ($_host = ini_get('SMTPs')) {
+				$this->setHost($_host);
+			}
 
-			if ( $_port = ini_get('smtp_port') )
-			$this->setPort($_port);
+			if ($_port = ini_get('smtp_port')) {
+				$this->setPort($_port);
+			}
 
-			if ( $_from = ini_get('sendmail_from') )
-			$this->setFrom($_from);
+			if ($_from = ini_get('sendmail_from')) {
+				$this->setFrom($_from);
+			}
 		}
 
 		// Send back what we have
@@ -667,11 +784,11 @@ class SMTPs
 	 * @param int $_type  Interger value representing Mail Transport Type
 	 * @return void
 	 */
-	function setTransportType($_type = 0)
+	public function setTransportType($_type = 0)
 	{
-		if ( ( is_numeric($_type) ) &&
-		( ( $_type >= 0 ) && ( $_type <= 3 ) ) )
-		$this->_transportType = $_type;
+		if ((is_numeric($_type)) && (($_type >= 0) && ($_type <= 3))) {
+			$this->_transportType = $_type;
+		}
 	}
 
 	/**
@@ -682,7 +799,7 @@ class SMTPs
 	 *
 	 * @return int $_strHost Host Name or IP of the Mail Server to use
 	 */
-	function getTransportType()
+	public function getTransportType()
 	{
 		return $this->_transportType;
 	}
@@ -694,7 +811,7 @@ class SMTPs
 	 * @return boolean
 	 *
 	 */
-	function setMailPath($_path)
+	public function setMailPath($_path)
 	{
 		// This feature is not yet implemented
 		return true;
@@ -710,10 +827,11 @@ class SMTPs
 	 * @param 	string 	$_strHost 		Host Name or IP of the Mail Server to use
 	 * @return 	void
 	 */
-	function setHost($_strHost)
+	public function setHost($_strHost)
 	{
-		if ( $_strHost )
-		$this->_smtpsHost = $_strHost;
+		if ($_strHost) {
+			$this->_smtpsHost = $_strHost;
+		}
 	}
 
 	/**
@@ -722,7 +840,7 @@ class SMTPs
 	 *
 	 * @return 	string 	$_strHost 		Host Name or IP of the Mail Server to use
 	 */
-	function getHost()
+	public function getHost()
 	{
 		return $this->_smtpsHost;
 	}
@@ -735,11 +853,12 @@ class SMTPs
 	 * @param 	int 	$_intPort 		Port Number of the Mail Server to use
 	 * @return 	void
 	 */
-	function setPort($_intPort)
+	public function setPort($_intPort)
 	{
-		if ( ( is_numeric($_intPort) ) &&
-		( ( $_intPort >= 1 ) && ( $_intPort <= 65536 ) ) )
-		$this->_smtpsPort = $_intPort;
+		if ((is_numeric($_intPort)) &&
+		(($_intPort >= 1) && ($_intPort <= 65536))) {
+			$this->_smtpsPort = $_intPort;
+		}
 	}
 
 	/**
@@ -748,7 +867,7 @@ class SMTPs
 	 *
 	 * @return 	string 		Port Number of the Mail Server to use
 	 */
-	function getPort()
+	public function getPort()
 	{
 		return $this->_smtpsPort;
 	}
@@ -759,7 +878,7 @@ class SMTPs
 	 * @param 	string 	$_strID 	User Name for authentication on Mail Server
 	 * @return 	void
 	 */
-	function setID($_strID)
+	public function setID($_strID)
 	{
 		$this->_smtpsID = $_strID;
 	}
@@ -769,7 +888,7 @@ class SMTPs
 	 *
 	 * @return string 	User Name for authentication on Mail Server
 	 */
-	function getID()
+	public function getID()
 	{
 		return $this->_smtpsID;
 	}
@@ -780,7 +899,7 @@ class SMTPs
 	 * @param 	string 	$_strPW 	User Password for authentication on Mail Server
 	 * @return 	void
 	 */
-	function setPW($_strPW)
+	public function setPW($_strPW)
 	{
 		$this->_smtpsPW = $_strPW;
 	}
@@ -790,7 +909,7 @@ class SMTPs
 	 *
 	 * @return 	string 		User Password for authentication on Mail Server
 	 */
-	function getPW()
+	public function getPW()
 	{
 		return $this->_smtpsPW;
 	}
@@ -802,10 +921,11 @@ class SMTPs
 	 * @param string $_strCharSet Character set used for current message
 	 * @return void
 	 */
-	function setCharSet($_strCharSet)
+	public function setCharSet($_strCharSet)
 	{
-		if ( $_strCharSet )
-		$this->_smtpsCharSet = $_strCharSet;
+		if ($_strCharSet) {
+			$this->_smtpsCharSet = $_strCharSet;
+		}
 	}
 
 	/**
@@ -813,7 +933,7 @@ class SMTPs
 	 *
 	 * @return string $_smtpsCharSet Character set used for current message
 	 */
-	function getCharSet()
+	public function getCharSet()
 	{
 		return $this->_smtpsCharSet;
 	}
@@ -833,10 +953,11 @@ class SMTPs
 	 * @param string $_strTransEncode Content-Transfer-Encoding
 	 * @return void
 	 */
-	function setTransEncode($_strTransEncode)
+	public function setTransEncode($_strTransEncode)
 	{
-		if (array_search($_strTransEncode, $this->_smtpsTransEncodeTypes))
-		$this->_smtpsTransEncode = $_strTransEncode;
+		if (array_search($_strTransEncode, $this->_smtpsTransEncodeTypes)) {
+			$this->_smtpsTransEncode = $_strTransEncode;
+		}
 	}
 
 	/**
@@ -844,7 +965,7 @@ class SMTPs
 	 *
 	 * @return string $_smtpsTransEncode Content-Transfer-Encoding
 	 */
-	function getTransEncode()
+	public function getTransEncode()
 	{
 		return $this->_smtpsTransEncode;
 	}
@@ -865,10 +986,11 @@ class SMTPs
 	 * @return void
 	 *
 	 */
-	function setTransEncodeType($_strTransEncodeType)
+	public function setTransEncodeType($_strTransEncodeType)
 	{
-		if (array_search($_strTransEncodeType, $this->_smtpsTransEncodeTypes))
-		$this->_smtpsTransEncodeType = $_strTransEncodeType;
+		if (array_search($_strTransEncodeType, $this->_smtpsTransEncodeTypes)) {
+			$this->_smtpsTransEncodeType = $_strTransEncodeType;
+		}
 	}
 
 	/**
@@ -876,7 +998,7 @@ class SMTPs
 	 *
 	 * @return 	string 		Content-Transfer-Encoding
 	 */
-	function getTransEncodeType()
+	public function getTransEncodeType()
 	{
 		return $this->_smtpsTransEncodeTypes[$this->_smtpsTransEncodeType];
 	}
@@ -890,10 +1012,11 @@ class SMTPs
 	 * @param 	string 	$_strFrom 	Address from which mail will be sent
 	 * @return 	void
 	 */
-	function setFrom($_strFrom)
+	public function setFrom($_strFrom)
 	{
-		if ( $_strFrom )
-		$this->_msgFrom = $this->_strip_email($_strFrom);
+		if ($_strFrom) {
+			$this->_msgFrom = $this->_strip_email($_strFrom);
+		}
 	}
 
 	/**
@@ -902,14 +1025,15 @@ class SMTPs
 	 * @param  	boolean $_part		To "strip" 'Real name' from address
 	 * @return 	string 				Address from which mail will be sent
 	 */
-	function getFrom($_part = true)
+	public function getFrom($_part = true)
 	{
 		$_retValue = '';
 
-		if ( $_part === true )
-		$_retValue = $this->_msgFrom;
-		else
-		$_retValue = $this->_msgFrom[$_part];
+		if ($_part === true) {
+			$_retValue = $this->_msgFrom;
+		} else {
+			$_retValue = $this->_msgFrom[$_part];
+		}
 
 		return $_retValue;
 	}
@@ -920,10 +1044,11 @@ class SMTPs
 	 * @param 	string 	$_strReplyTo 	Address from which mail will be the reply-to
 	 * @return 	void
 	 */
-	function setReplyTo($_strReplyTo)
+	public function setReplyTo($_strReplyTo)
 	{
-	    if ( $_strReplyTo )
-	        $this->_msgReplyTo = $this->_strip_email($_strReplyTo);
+		if ($_strReplyTo) {
+			$this->_msgReplyTo = $this->_strip_email($_strReplyTo);
+		}
 	}
 
 	/**
@@ -932,16 +1057,17 @@ class SMTPs
 	 * @param  	boolean $_part		To "strip" 'Real name' from address
 	 * @return 	string 				Address from which mail will be the reply-to
 	 */
-	function getReplyTo($_part = true)
+	public function getReplyTo($_part = true)
 	{
-	    $_retValue = '';
+		$_retValue = '';
 
-	    if ( $_part === true )
-	        $_retValue = $this->_msgReplyTo;
-	    else
-	        $_retValue = $this->_msgReplyTo[$_part];
+		if ($_part === true) {
+			$_retValue = $this->_msgReplyTo;
+		} else {
+			$_retValue = $this->_msgReplyTo[$_part];
+		}
 
-	    return $_retValue;
+		return $_retValue;
 	}
 
 	/**
@@ -956,30 +1082,27 @@ class SMTPs
 	 * @return void
 	 *
 	 */
-	function _buildAddrList($_type, $_addrList)
+	private function _buildAddrList($_type, $_addrList)
 	{
 		// Pull existing list
 		$aryHost = $this->_msgRecipients;
 
 		// Only run this if we have something
-		if ( !empty ($_addrList ))
-		{
+		if (!empty($_addrList)) {
 			// $_addrList can be a STRING or an array
-			if ( is_string($_addrList) )
-			{
+			if (is_string($_addrList)) {
 				// This could be a COMMA delimited string
-				if ( strstr($_addrList, ',') )
-				// "explode "list" into an array
-				$_addrList = explode(',', $_addrList);
-
-				// Stick it in an array
-				else
-				$_addrList = array($_addrList);
+				if (strstr($_addrList, ',')) {
+					// "explode "list" into an array
+					$_addrList = explode(',', $_addrList);
+				} else {
+					// Stick it in an array
+					$_addrList = array($_addrList);
+				}
 			}
 
 			// take the array of addresses and split them further
-			foreach ( $_addrList as $_strAddr )
-			{
+			foreach ($_addrList as $_strAddr) {
 				// Strip off the end '>'
 				$_strAddr = str_replace('>', '', $_strAddr);
 
@@ -988,15 +1111,12 @@ class SMTPs
 				$_tmpaddr = explode('<', $_strAddr);
 
 				// We have a "Real Name" and eMail address
-				if ( count($_tmpaddr) == 2 )
-				{
+				if (count($_tmpaddr) == 2) {
 					$_tmpHost = explode('@', $_tmpaddr[1]);
 					$_tmpaddr[0] = trim($_tmpaddr[0], ' ">');
 					$aryHost[$_tmpHost[1]][$_type][$_tmpHost[0]] = $_tmpaddr[0];
-				}
-				// We only have an eMail address
-				else
-				{
+				} else {
+					// We only have an eMail address
 					// Strip off the beggining '<'
 					$_strAddr = str_replace('<', '', $_strAddr);
 
@@ -1012,6 +1132,7 @@ class SMTPs
 		$this->_msgRecipients = $aryHost;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns an array of the various parts of an email address
 	 * This assumes a well formed address:
@@ -1028,8 +1149,9 @@ class SMTPs
 	 *	@param		string		$_strAddr		Email address
 	 * 	@return 	array	 					An array of the various parts of an email address
 	 */
-	function _strip_email($_strAddr)
+	private function _strip_email($_strAddr)
 	{
+		// phpcs:enable
 		// Keep the orginal
 		$_aryEmail['org'] = $_strAddr;
 
@@ -1043,26 +1165,27 @@ class SMTPs
 		$_tmpAry = explode('<', $_strAddr);
 
 		// Do we have a "Real name"
-		if ( count($_tmpAry) == 2 )
-		{
+		if (count($_tmpAry) == 2) {
 			// We may not really have a "Real Name"
-			if ( $_tmpAry[0])
-			$_aryEmail['real'] = trim($_tmpAry[0], ' ">');
+			if ($_tmpAry[0]) {
+				$_aryEmail['real'] = trim($_tmpAry[0], ' ">');
+			}
 
 			$_aryEmail['addr'] = $_tmpAry[1];
+		} else {
+			$_aryEmail['addr'] = $_tmpAry[0];
 		}
-		else
-		$_aryEmail['addr'] = $_tmpAry[0];
 
 		// Pull User Name and Host.tld apart
-		list($_aryEmail['user'], $_aryEmail['host'] ) = explode('@', $_aryEmail['addr']);
+		list($_aryEmail['user'], $_aryEmail['host']) = explode('@', $_aryEmail['addr']);
 
 		// Put the brackets back around the address
-		$_aryEmail['addr'] = '<' . $_aryEmail['addr'] . '>';
+		$_aryEmail['addr'] = '<'.$_aryEmail['addr'].'>';
 
 		return $_aryEmail;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns an array of bares addresses for use with 'RCPT TO:'
 	 * This is a "build as you go" method. Each time this method is called
@@ -1070,22 +1193,20 @@ class SMTPs
 	 *
 	 * @return 		array		Returns an array of bares addresses
 	 */
-	function get_RCPT_list()
+	public function get_RCPT_list()
 	{
+		// phpcs:enable
 		/**
 		 * An array of bares addresses for use with 'RCPT TO:'
 		 */
-		$_RCPT_list=array();
+		$_RCPT_list = array();
 
 		// walk down Recipients array and pull just email addresses
-		foreach ( $this->_msgRecipients as $_host => $_list )
-		{
-			foreach ( $_list as $_subList )
-			{
-				foreach ( $_subList as $_name => $_addr )
-				{
+		foreach ($this->_msgRecipients as $_host => $_list) {
+			foreach ($_list as $_subList) {
+				foreach ($_subList as $_name => $_addr) {
 					// build RCPT list
-					$_RCPT_list[] = $_name . '@' . $_host;
+					$_RCPT_list[] = $_name.'@'.$_host;
 				}
 			}
 		}
@@ -1093,55 +1214,44 @@ class SMTPs
 		return $_RCPT_list;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns an array of addresses for a specific type; TO, CC or BCC
 	 *
 	 * @param 		string 	       $_which 	    Which collection of addresses to return ('to', 'cc', 'bcc')
 	 * @return 		string|false 				Array of emaill address
 	 */
-	function get_email_list($_which = null)
+	public function get_email_list($_which = null)
 	{
+		// phpcs:enable
 		// We need to know which address segment to pull
-		if ( $_which )
-		{
+		if ($_which) {
 			// Make sure we have addresses to process
-			if ( $this->_msgRecipients )
-			{
-				$_RCPT_list=array();
+			if ($this->_msgRecipients) {
+				$_RCPT_list = array();
 				// walk down Recipients array and pull just email addresses
-				foreach ( $this->_msgRecipients as $_host => $_list )
-				{
-					if ( $this->_msgRecipients[$_host][$_which] )
-					{
-						foreach ( $this->_msgRecipients[$_host][$_which] as $_addr => $_realName )
-						{
-							if ( $_realName )	// @CHANGE LDR
-							{
-								$_realName = '"' . $_realName . '"';
-								$_RCPT_list[] = $_realName . ' <' . $_addr . '@' . $_host . '>';
-							}
-							else
-							{
-								$_RCPT_list[] = $_addr . '@' . $_host;
+				foreach ($this->_msgRecipients as $_host => $_list) {
+					if ($this->_msgRecipients[$_host][$_which]) {
+						foreach ($this->_msgRecipients[$_host][$_which] as $_addr => $_realName) {
+							if ($_realName) {	// @CHANGE LDR
+								$_realName = '"'.$_realName.'"';
+								$_RCPT_list[] = $_realName.' <'.$_addr.'@'.$_host.'>';
+							} else {
+								$_RCPT_list[] = $_addr.'@'.$_host;
 							}
 						}
 					}
 				}
 
 				return implode(', ', $_RCPT_list);
-			}
-			else
-			{
+			} else {
 				$this->_setErr(101, 'No eMail Address for message to be sent to.');
 				return false;
 			}
-		}
-		else
-		{
+		} else {
 			$this->_setErr(102, 'eMail type not defined.');
 			return false;
 		}
-
 	}
 
 	/**
@@ -1150,10 +1260,11 @@ class SMTPs
 	 * @param 	string 	$_addrTo 	TO Address[es] inwhich to send mail to
 	 * @return 	void
 	 */
-	function setTO($_addrTo)
+	public function setTO($_addrTo)
 	{
-		if ( $_addrTo )
-		$this->_buildAddrList('to', $_addrTo);
+		if ($_addrTo) {
+			$this->_buildAddrList('to', $_addrTo);
+		}
 	}
 
 	/**
@@ -1161,7 +1272,7 @@ class SMTPs
 	 *
 	 * @return 	string 	TO Address[es] inwhich to send mail to
 	 */
-	function getTo()
+	public function getTo()
 	{
 		return $this->get_email_list('to');
 	}
@@ -1172,10 +1283,11 @@ class SMTPs
 	 * @param 	string	$_strCC		CC Address[es] inwhich to send mail to
 	 * @return 	void
 	 */
-	function setCC($_strCC)
+	public function setCC($_strCC)
 	{
-		if ( $_strCC )
-		$this->_buildAddrList('cc', $_strCC);
+		if ($_strCC) {
+			$this->_buildAddrList('cc', $_strCC);
+		}
 	}
 
 	/**
@@ -1183,7 +1295,7 @@ class SMTPs
 	 *
 	 * @return 	string 		CC Address[es] inwhich to send mail to
 	 */
-	function getCC()
+	public function getCC()
 	{
 		return $this->get_email_list('cc');
 	}
@@ -1194,10 +1306,11 @@ class SMTPs
 	 * @param 	string		$_strBCC	Recipients BCC Address[es] inwhich to send mail to
 	 * @return 	void
 	 */
-	function setBCC($_strBCC)
+	public function setBCC($_strBCC)
 	{
-		if ( $_strBCC )
-		$this->_buildAddrList('bcc', $_strBCC);
+		if ($_strBCC) {
+			$this->_buildAddrList('bcc', $_strBCC);
+		}
 	}
 
 	/**
@@ -1205,7 +1318,7 @@ class SMTPs
 	 *
 	 * @return 	string		BCC Address[es] inwhich to send mail to
 	 */
-	function getBCC()
+	public function getBCC()
 	{
 		return $this->get_email_list('bcc');
 	}
@@ -1216,10 +1329,11 @@ class SMTPs
 	 * @param 	string 	$_strSubject	Message Subject
 	 * @return 	void
 	 */
-	function setSubject($_strSubject = '')
+	public function setSubject($_strSubject = '')
 	{
-		if ( $_strSubject )
-		$this->_msgSubject = $_strSubject;
+		if ($_strSubject) {
+			$this->_msgSubject = $_strSubject;
+		}
 	}
 
 	/**
@@ -1227,7 +1341,7 @@ class SMTPs
 	 *
 	 * @return 	string 		Message Subject
 	 */
-	function getSubject()
+	public function getSubject()
 	{
 		return $this->_msgSubject;
 	}
@@ -1237,15 +1351,16 @@ class SMTPs
 	 *
 	 * @return string Complete message header
 	 */
-	function getHeader()
+	public function getHeader()
 	{
 		global $conf;
 
-		$_header = 'From: '       . $this->getFrom('org') . "\r\n"
-		. 'To: '         . $this->getTO()          . "\r\n";
+		$_header = 'From: '.$this->getFrom('org')."\r\n"
+		. 'To: '.$this->getTO()."\r\n";
 
-		if ( $this->getCC() )
-		$_header .= 'Cc: ' . $this->getCC()  . "\r\n";
+		if ($this->getCC()) {
+			$_header .= 'Cc: '.$this->getCC()."\r\n";
+		}
 
 		/* Note:
 		 * BCC email addresses must be listed in the RCPT TO command list,
@@ -1256,58 +1371,57 @@ class SMTPs
 		/*
 		if ( $this->getBCC() )
 		$_header .= 'Bcc: ' . $this->getBCC()  . "\r\n";
-        */
+		*/
 
-		$host=$this->getHost();
-		$usetls = preg_match('@tls://@i',$host);
-
-		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
-		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
-
-		$host=dol_getprefix('email');
+		$host = dol_getprefix('email');
 
 		//NOTE: Message-ID should probably contain the username of the user who sent the msg
-		$_header .= 'Subject: '    . $this->getSubject()     . "\r\n";
-		$_header .= 'Date: '       . date("r")               . "\r\n";
+		$_header .= 'Subject: '.$this->getSubject()."\r\n";
+		$_header .= 'Date: '.date("r")."\r\n";
 
 		$trackid = $this->getTrackId();
-		if ($trackid)
-		{
+		if ($trackid) {
 			// References is kept in response and Message-ID is returned into In-Reply-To:
-			$_header .= 'Message-ID: <' . time() . '.SMTPs-dolibarr-'.$trackid.'@' . $host . ">\r\n";
-			$_header .= 'References: <' . time() . '.SMTPs-dolibarr-'.$trackid.'@' . $host . ">\r\n";
-			$_header .= 'X-Dolibarr-TRACKID: ' . $trackid . "\r\n";
+			$_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
+			$_header .= 'References: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
+			$_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
+		} else {
+			$_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
 		}
-		else
-		{
-			$_header .= 'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n";
+		if (!empty($_SERVER['REMOTE_ADDR'])) {
+			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
 		}
-		if ( $this->getMoreInHeader() )
-		    $_header .= $this->getMoreInHeader();     // Value must include the "\r\n";
+		if ($this->getMoreInHeader()) {
+			$_header .= $this->getMoreInHeader(); // Value must include the "\r\n";
+		}
 
 		//$_header .=
 		//                 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
 		//                 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
 
-		if ( $this->getSensitivity() )
-		$_header .= 'Sensitivity: ' . $this->getSensitivity()  . "\r\n";
+		if ($this->getSensitivity()) {
+			$_header .= 'Sensitivity: '.$this->getSensitivity()."\r\n";
+		}
 
-		if ( $this->_msgPriority != 3 )
-		$_header .= $this->getPriority();
+		if ($this->_msgPriority != 3) {
+			$_header .= $this->getPriority();
+		}
 
 
 		// @CHANGE LDR
-		if ( $this->getDeliveryReceipt() )
-		    $_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
-		if ( $this->getErrorsTo() )
-		    $_header .= 'Errors-To: '.$this->getErrorsTo('addr') . "\r\n";
-		if ( $this->getReplyTo() )
-		    $_header .= "Reply-To: ".$this->getReplyTo('addr') ."\r\n";
+		if ($this->getDeliveryReceipt()) {
+			$_header .= 'Disposition-Notification-To: '.$this->getFrom('addr')."\r\n";
+		}
+		if ($this->getErrorsTo()) {
+			$_header .= 'Errors-To: '.$this->getErrorsTo('addr')."\r\n";
+		}
+		if ($this->getReplyTo()) {
+			$_header .= "Reply-To: ".$this->getReplyTo('addr')."\r\n";
+		}
 
-		$_header .= 'X-Mailer: Dolibarr version ' . DOL_VERSION .' (using SMTPs Mailer)' . "\r\n";
-		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART?'MAIN_MAIL_USE_MULTI_PART':'No MAIN_MAIL_USE_MULTI_PART') . "\r\n";
-		$_header .= 'Mime-Version: 1.0' . "\r\n";
+		$_header .= 'X-Mailer: Dolibarr version '.DOL_VERSION.' (using SMTPs Mailer)'."\r\n";
+		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
+		$_header .= 'Mime-Version: 1.0'."\r\n";
 
 
 		return $_header;
@@ -1320,28 +1434,31 @@ class SMTPs
 	 * @param	string	$strType		Type
 	 * @return 	void
 	 */
-	function setBodyContent($strContent, $strType = 'plain')
+	public function setBodyContent($strContent, $strType = 'plain')
 	{
 		//if ( $strContent )
 		//{
-		if ( $strType == 'html' )
-		$strMimeType = 'text/html';
-		else
-		$strMimeType = 'text/plain';
+		if ($strType == 'html') {
+			$strMimeType = 'text/html';
+		} else {
+			$strMimeType = 'text/plain';
+		}
 
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent);
 
 		$strContentAltText = '';
-		if ($strType == 'html')
-		{
-			$strContentAltText = html_entity_decode(strip_tags($strContent));
-			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
+		if ($strType == 'html') {
+			// Similar code to forge a text from html is also in CMailFile.class.php
+			$strContentAltText = preg_replace('/<head><title>.*<\/style><\/head>/', '', $strContent);
+			$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContentAltText);
+			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
+			$strContentAltText = trim(wordwrap($strContentAltText, 75, "\r\n"));
 		}
 
 		// Make RFC2045 Compliant
 		//$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
-		$strContent = rtrim(wordwrap($strContent, 75, "\r\n"));   // TODO Using this method creates unexpected line break on text/plain content.
+		$strContent = rtrim(wordwrap($strContent, 75, "\r\n")); // TODO Using this method creates unexpected line break on text/plain content.
 
 		$this->_msgContent[$strType] = array();
 
@@ -1349,8 +1466,9 @@ class SMTPs
 		$this->_msgContent[$strType]['data']     = $strContent;
 		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
 
-		if ( $this->getMD5flag() )
-		$this->_msgContent[$strType]['md5']      = dol_hash($strContent, 3);
+		if ($this->getMD5flag()) {
+			$this->_msgContent[$strType]['md5'] = dol_hash($strContent, 3);
+		}
 		//}
 	}
 
@@ -1359,9 +1477,9 @@ class SMTPs
 	 *
 	 * @return 	string			Message Content
 	 */
-	function getBodyContent()
+	public function getBodyContent()
 	{
-	    global $conf;
+		global $conf;
 
 		// Generate a new Boundary string
 		$this->_setBoundary();
@@ -1373,49 +1491,44 @@ class SMTPs
 		$keyCount = count($_types);
 
 		// If we have ZERO, we have a problem
-		if( $keyCount === 0 )
-		die ("Sorry, no content");
-
-		// If we have ONE, we can use the simple format
-		else if( $keyCount === 1 && empty($conf->global->MAIN_MAIL_USE_MULTI_PART))
-		{
+		if ($keyCount === 0) {
+			die("Sorry, no content");
+		} elseif ($keyCount === 1 && empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {
+			// If we have ONE, we can use the simple format
 			$_msgData = $this->_msgContent;
 			$_msgData = $_msgData[$_types[0]];
 
-			$content = 'Content-Type: ' . $_msgData['mimeType'] . '; charset="' . $this->getCharSet() . '"' . "\r\n"
-			. 'Content-Transfer-Encoding: ' . $this->getTransEncodeType() . "\r\n"
-			. 'Content-Disposition: inline'  . "\r\n"
-			. 'Content-Description: message' . "\r\n";
+			$content = 'Content-Type: '.$_msgData['mimeType'].'; charset="'.$this->getCharSet().'"'."\r\n"
+			. 'Content-Transfer-Encoding: '.$this->getTransEncodeType()."\r\n"
+			. 'Content-Disposition: inline'."\r\n"
+			. 'Content-Description: Message'."\r\n";
 
-			if ( $this->getMD5flag() )
-			$content .= 'Content-MD5: ' . $_msgData['md5'] . "\r\n";
+			if ($this->getMD5flag()) {
+				$content .= 'Content-MD5: '.$_msgData['md5']."\r\n";
+			}
 
 			$content .= "\r\n"
-			.  $_msgData['data'] . "\r\n";
-		}
-
-		// If we have more than ONE, we use the multi-part format
-		else if( $keyCount >= 1 || ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))
-		{
+			.  $_msgData['data']."\r\n";
+		} elseif ($keyCount >= 1 || !empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {
+			// If we have more than ONE, we use the multi-part format
 			// Since this is an actual multi-part message
 			// We need to define a content message Boundary
 			// NOTE: This was 'multipart/alternative', but Windows based mail servers have issues with this.
 
 			//$content = 'Content-Type: multipart/related; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
-			$content = 'Content-Type: multipart/mixed; boundary="' . $this->_getBoundary('mixed') . '"'   . "\r\n";
+			$content = 'Content-Type: multipart/mixed; boundary="'.$this->_getBoundary('mixed').'"'."\r\n";
 
 			//                     . "\r\n"
 			//                     . 'This is a multi-part message in MIME format.' . "\r\n";
 			$content .= "Content-Transfer-Encoding: 8bit\r\n";
 			$content .= "\r\n";
 
-			$content .= "--" . $this->_getBoundary('mixed') . "\r\n";
+			$content .= "--".$this->_getBoundary('mixed')."\r\n";
 
-			if (key_exists('image', $this->_msgContent))     // If inline image found
-			{
-				$content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
+			if (key_exists('image', $this->_msgContent)) {     // If inline image found
+				$content .= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"'."\r\n";
 				$content .= "\r\n";
-				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
+				$content .= "--".$this->_getBoundary('alternative')."\r\n";
 			}
 
 
@@ -1423,102 +1536,86 @@ class SMTPs
 
 
 			// Loop through message content array
-			foreach ($this->_msgContent as $type => $_content )
-			{
-				if ( $type == 'attachment' )
-				{
+			foreach ($this->_msgContent as $type => $_content) {
+				if ($type == 'attachment') {
 					// loop through all attachments
-					foreach ( $_content as $_file => $_data )
-					{
-						$content .= "--" . $this->_getBoundary('mixed') . "\r\n"
-						.  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
-						.  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
-						.  'Content-Transfer-Encoding: base64' . "\r\n"
-						.  'Content-Description: File Attachment' . "\r\n";
+					foreach ($_content as $_file => $_data) {
+						$content .= "--".$this->_getBoundary('mixed')."\r\n"
+						.  'Content-Disposition: attachment; filename="'.$_data['fileName'].'"'."\r\n"
+						.  'Content-Type: '.$_data['mimeType'].'; name="'.$_data['fileName'].'"'."\r\n"
+						.  'Content-Transfer-Encoding: base64'."\r\n"
+						.  'Content-Description: '.$_data['fileName']."\r\n";
 
-						if ( $this->getMD5flag() )
-						$content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
+						if ($this->getMD5flag()) {
+							$content .= 'Content-MD5: '.$_data['md5']."\r\n";
+						}
 
-						$content .= "\r\n" .  $_data['data'] . "\r\n\r\n";
+						$content .= "\r\n".$_data['data']."\r\n\r\n";
 					}
-				}
-				// @CHANGE LDR
-				else if ( $type == 'image' )
-				{
+				} elseif ($type == 'image') {
+					// @CHANGE LDR
 					// loop through all images
-					foreach ( $_content as $_image => $_data )
-					{
-						$content .= "--" . $this->_getBoundary('related') . "\r\n";  // always related for an inline image
+					foreach ($_content as $_image => $_data) {
+						$content .= "--".$this->_getBoundary('related')."\r\n"; // always related for an inline image
 
-						$content .= 'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['imageName'] . '"' . "\r\n"
-						.  'Content-Transfer-Encoding: base64' . "\r\n"
-						.  'Content-Disposition: inline; filename="' . $_data['imageName'] . '"' . "\r\n"
-						.  'Content-ID: <' . $_data['cid'] . '> ' . "\r\n";
+						$content .= 'Content-Type: '.$_data['mimeType'].'; name="'.$_data['imageName'].'"'."\r\n"
+						.  'Content-Transfer-Encoding: base64'."\r\n"
+						.  'Content-Disposition: inline; filename="'.$_data['imageName'].'"'."\r\n"
+						.  'Content-ID: <'.$_data['cid'].'> '."\r\n";
 
-						if ( $this->getMD5flag() )
-						$content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
+						if ($this->getMD5flag()) {
+							$content .= 'Content-MD5: '.$_data['md5']."\r\n";
+						}
 
 						$content .= "\r\n"
-						. $_data['data'] . "\r\n";
+						. $_data['data']."\r\n";
 					}
 
 					// always end related and end alternative after inline images
-					$content.= "--" . $this->_getBoundary('related') . "--" . "\r\n";
-					$content.= "\r\n" . "--" . $this->_getBoundary('alternative') . "--" . "\r\n";
-					$content.= "\r\n";
-				}
-				else
-				{
-					if (key_exists('image', $this->_msgContent))
-					{
-						$content.= "Content-Type: text/plain; charset=" . $this->getCharSet() . "\r\n";
-						$content.= "\r\n" . ($_content['dataText']?$_content['dataText']:strip_tags($_content['data'])) . "\r\n"; // Add plain text message
-						$content.= "--" . $this->_getBoundary('alternative') . "\r\n";
-						$content.= 'Content-Type: multipart/related; boundary="' . $this->_getBoundary('related') . '"' . "\r\n";
-						$content.= "\r\n";
-						$content.= "--" . $this->_getBoundary('related') . "\r\n";
+					$content .= "--".$this->_getBoundary('related')."--\r\n";
+					$content .= "\r\n--".$this->_getBoundary('alternative')."--\r\n";
+					$content .= "\r\n";
+				} else {
+					if (key_exists('image', $this->_msgContent)) {
+						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= "\r\n".($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n"; // Add plain text message
+						$content .= "--".$this->_getBoundary('alternative')."\r\n";
+						$content .= 'Content-Type: multipart/related; boundary="'.$this->_getBoundary('related').'"'."\r\n";
+						$content .= "\r\n";
+						$content .= "--".$this->_getBoundary('related')."\r\n";
 					}
 
-					if (! key_exists('image', $this->_msgContent) && $_content['dataText'] && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part before html part
-					{
-					    $content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
-    					$content .= "\r\n";
-	       				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
+					if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {
+						// Add plain text message part before html part
+						$content .= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"'."\r\n";
+						$content .= "\r\n";
+						   $content .= "--".$this->_getBoundary('alternative')."\r\n";
 
-	       				$content.= "Content-Type: text/plain; charset=" . $this->getCharSet() . "\r\n";
-	       				$content.= "\r\n". $_content['dataText'] . "\r\n";
-	       				$content.= "--" . $this->_getBoundary('alternative') . "\r\n";
+						   $content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						   $content .= "\r\n".$_content['dataText']."\r\n";
+						   $content .= "--".$this->_getBoundary('alternative')."\r\n";
 					}
 
-					$content .= 'Content-Type: ' . $_content['mimeType'] . '; '
-					//                             . 'charset="' . $this->getCharSet() . '"';
-					. 'charset=' . $this->getCharSet() . '';
+					$content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
 
-					//                    $content .= ( $type == 'html') ? '; name="HTML Part"' : '';
-					$content .=  "\r\n";
-					//                    $content .= 'Content-Transfer-Encoding: ';
-					//                    $content .= ($type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
-					//                    $content .=  "\r\n"
-					//                             . 'Content-Disposition: inline'  . "\r\n"
-					//                             . 'Content-Description: ' . $type . ' message' . "\r\n";
+					$content .= "\r\n";
 
-					if ( $this->getMD5flag() )
-					$content .= 'Content-MD5: ' . $_content['md5'] . "\r\n";
+					if ($this->getMD5flag()) {
+						$content .= 'Content-MD5: '.$_content['md5']."\r\n";
+					}
 
-					$content .= "\r\n"	. $_content['data'] . "\r\n";
+					$content .= "\r\n".$_content['data']."\r\n";
 
-					if (! key_exists('image', $this->_msgContent) && $_content['dataText'] && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part after html part
-					{
-					    $content.= "--" . $this->_getBoundary('alternative') . "--". "\r\n";
+					if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {
+						// Add plain text message part after html part
+						$content .= "--".$this->_getBoundary('alternative')."--\r\n";
 					}
 
 					$content .= "\r\n";
 				}
 			}
 
-			// Close message boundries
-			//            $content .= "\r\n--" . $this->_getBoundary() . '--' . "\r\n" ;
-			$content .= "--" . $this->_getBoundary('mixed') . '--' . "\r\n" ;
+			$content .= "--".$this->_getBoundary('mixed').'--'."\r\n";
 		}
 
 		return $content;
@@ -1533,18 +1630,18 @@ class SMTPs
 	 * @param string $strMimeType File Mime Type of attachment
 	 * @return void
 	 */
-	function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown')
+	public function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown')
 	{
-		if ( $strContent )
-		{
-			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n"));    // 76 max is defined into http://tools.ietf.org/html/rfc2047
+		if ($strContent) {
+			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n")); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 
 			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
 			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;
 			$this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
 
-			if ( $this->getMD5flag() )
-			$this->_msgContent['attachment'][$strFileName]['md5']      = dol_hash($strContent, 3);
+			if ($this->getMD5flag()) {
+				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, 3);
+			}
 		}
 	}
 
@@ -1561,17 +1658,17 @@ class SMTPs
 	 * @param 	string $strImageCid		CID
 	 * @return 	void
 	 */
-	function setImageInline($strContent, $strImageName = 'unknown', $strMimeType = 'unknown', $strImageCid = 'unknown')
+	public function setImageInline($strContent, $strImageName = 'unknown', $strMimeType = 'unknown', $strImageCid = 'unknown')
 	{
-		if ($strContent)
-		{
+		if ($strContent) {
 			$this->_msgContent['image'][$strImageName]['mimeType'] = $strMimeType;
 			$this->_msgContent['image'][$strImageName]['imageName'] = $strImageName;
 			$this->_msgContent['image'][$strImageName]['cid']      = $strImageCid;
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
 
-			if ( $this->getMD5flag() )
-			$this->_msgContent['image'][$strImageName]['md5']      = dol_hash($strContent, 3);
+			if ($this->getMD5flag()) {
+				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, 3);
+			}
 		}
 	}
 	// END @CHANGE LDR
@@ -1588,11 +1685,12 @@ class SMTPs
 	 * @param 	integer	$_value		Message Sensitivity
 	 * @return 	void
 	 */
-	function setSensitivity($_value = 0)
+	public function setSensitivity($_value = 0)
 	{
-		if ( ( is_numeric($_value) ) &&
-		( ( $_value >= 0 ) && ( $_value <= 3 ) ) )
-		$this->_msgSensitivity = $_value;
+		if ((is_numeric($_value)) &&
+		(($_value >= 0) && ($_value <= 3))) {
+			$this->_msgSensitivity = $_value;
+		}
 	}
 
 	/**
@@ -1603,9 +1701,9 @@ class SMTPs
 	 *   - [2] Private
 	 *   - [3] Company Confidential
 	 *
-	 * @return 	void
+	 * @return 	string|boolean
 	 */
-	function getSensitivity()
+	public function getSensitivity()
 	{
 		return $this->_arySensitivity[$this->_msgSensitivity];
 	}
@@ -1623,11 +1721,12 @@ class SMTPs
 	 * @param 	integer 	$_value 	Message Priority
 	 * @return 	void
 	 */
-	function setPriority ( $_value = 3 )
+	public function setPriority($_value = 3)
 	{
-		if ( ( is_numeric($_value) ) &&
-		( ( $_value >= 0 ) && ( $_value <= 5 ) ) )
-		$this->_msgPriority = $_value;
+		if ((is_numeric($_value)) &&
+		(($_value >= 0) && ($_value <= 5))) {
+			$this->_msgPriority = $_value;
+		}
 	}
 
 	/**
@@ -1642,11 +1741,11 @@ class SMTPs
 	 *
 	 * @return string
 	 */
-	function getPriority()
+	public function getPriority()
 	{
-		return 'Importance: ' . $this->_aryPriority[$this->_msgPriority] . "\r\n"
-		. 'Priority: '   . $this->_aryPriority[$this->_msgPriority] . "\r\n"
-		. 'X-Priority: ' . $this->_msgPriority . ' (' . $this->_aryPriority[$this->_msgPriority] . ')' . "\r\n";
+		return 'Importance: '.$this->_aryPriority[$this->_msgPriority]."\r\n"
+		. 'Priority: '.$this->_aryPriority[$this->_msgPriority]."\r\n"
+		. 'X-Priority: '.$this->_msgPriority.' ('.$this->_aryPriority[$this->_msgPriority].')'."\r\n";
 	}
 
 	/**
@@ -1655,7 +1754,7 @@ class SMTPs
 	 * @param 	string 	$_flag		Message Priority
 	 * @return 	void
 	 */
-	function setMD5flag($_flag = false)
+	public function setMD5flag($_flag = false)
 	{
 		$this->_smtpMD5 = $_flag;
 	}
@@ -1665,7 +1764,7 @@ class SMTPs
 	 *
 	 * @return 	boolean 				Message Priority
 	 */
-	function getMD5flag()
+	public function getMD5flag()
 	{
 		return $this->_smtpMD5;
 	}
@@ -1678,10 +1777,11 @@ class SMTPs
 	 * @param string $strXdata Message X-Header Content
 	 * @return void
 	 */
-	function setXheader($strXdata)
+	public function setXheader($strXdata)
 	{
-		if ( $strXdata )
-		$this->_msgXheader[] = $strXdata;
+		if ($strXdata) {
+			$this->_msgXheader[] = $strXdata;
+		}
 	}
 
 	/**
@@ -1689,7 +1789,7 @@ class SMTPs
 	 *
 	 * @return string[] $_msgContent Message X-Header Content
 	 */
-	function getXheader()
+	public function getXheader()
 	{
 		return $this->_msgXheader;
 	}
@@ -1699,9 +1799,9 @@ class SMTPs
 	 *
 	 * @return void
 	 */
-	function _setBoundary()
+	private function _setBoundary()
 	{
-		$this->_smtpsBoundary = "multipart_x." . time() . ".x_boundary";
+		$this->_smtpsBoundary = "multipart_x.".time().".x_boundary";
 		$this->_smtpsRelatedBoundary = 'mul_'.dol_hash(uniqid("dolibarr2"), 3);
 		$this->_smtpsAlternativeBoundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3);
 	}
@@ -1712,45 +1812,51 @@ class SMTPs
 	 * @param  string $type				Type of boundary
 	 * @return string $_smtpsBoundary 	MIME message Boundary
 	 */
-	function _getBoundary($type='mixed')
+	private function _getBoundary($type = 'mixed')
 	{
-		if ($type == 'mixed') return $this->_smtpsBoundary;
-		else if ($type == 'related') return $this->_smtpsRelatedBoundary;
-		else if ($type == 'alternative') return $this->_smtpsAlternativeBoundary;
+		if ($type == 'mixed') {
+			return $this->_smtpsBoundary;
+		} elseif ($type == 'related') {
+			return $this->_smtpsRelatedBoundary;
+		} elseif ($type == 'alternative') {
+			return $this->_smtpsAlternativeBoundary;
+		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions
 	 *
-	 * @param	Handler		$socket			Socket handler
-	 * @param	string		$response		Response
+	 * @param	resource    $socket			Socket handler
+	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
-	function server_parse($socket, $response)
+	public function server_parse($socket, $response)
 	{
+		// phpcs:enable
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
 		$server_response = '';
-        // avoid infinite loop
-        $limit=0;
 
-		while ( substr($server_response,3,1) != ' ' && $limit<100)
-		{
-			if( !( $server_response = fgets($socket, 256) ) )
-			{
+		// avoid infinite loop
+		$limit = 0;
+
+		while (substr($server_response, 3, 1) != ' ' && $limit < 100) {
+			if (!($server_response = fgets($socket, 256))) {
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
+				break;
 			}
-            $limit++;
+			$this->log .= $server_response;
+			$limit++;
 		}
 
-		if( !( substr($server_response, 0, 3) == $response ) )
-		{
+		if (!(substr($server_response, 0, 3) == $response)) {
 			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
 			$_retVal = false;
 		}
@@ -1758,6 +1864,7 @@ class SMTPs
 		return $_retVal;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Send str
 	 *
@@ -1766,14 +1873,20 @@ class SMTPs
 	 * @param 	string		$CRLF			CRLF
 	 * @return 	boolean|null						True or false
 	 */
-	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
+	public function socket_send_str($_strSend, $_returnCode = null, $CRLF = "\r\n")
 	{
-		if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
-		fputs($this->socket, $_strSend . $CRLF);
-		if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;
+		// phpcs:enable
+		if ($this->_debug) {
+			$this->log .= $_strSend; // @CHANGE LDR for log
+		}
+		fputs($this->socket, $_strSend.$CRLF);
+		if ($this->_debug) {
+			$this->log .= ' ('.$_returnCode.')'.$CRLF;
+		}
 
-		if ( $_returnCode )
-		return $this->server_parse($this->socket, $_returnCode);
+		if ($_returnCode) {
+			return $this->server_parse($this->socket, $_returnCode);
+		}
 	}
 
 	// =============================================================
@@ -1786,10 +1899,12 @@ class SMTPs
 	 * @param  string $_errMsg  Error Message
 	 * @return void
 	 */
-	function _setErr ( $_errNum, $_errMsg )
+	private function _setErr($_errNum, $_errMsg)
 	{
-		$this->_smtpsErrors[] = array( 'num' => $_errNum,
-                                       'msg' => $_errMsg );
+		$this->_smtpsErrors[] = array(
+			'num' => $_errNum,
+			'msg' => $_errMsg,
+		);
 	}
 
 	/**
@@ -1797,19 +1912,18 @@ class SMTPs
 	 *
 	 * @return string $_errMsg  Error Message
 	 */
-	function getErrors()
+	public function getErrors()
 	{
 		$_errMsg = array();
 
-		foreach ( $this->_smtpsErrors as $_err => $_info )
-		{
-			$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+		if (is_array($this->_smtpsErrors)) {
+			foreach ($this->_smtpsErrors as $_err => $_info) {
+				$_errMsg[] = 'Error ['.$_info['num'].']: '.$_info['msg'];
+			}
 		}
 
 		return implode("\n", $_errMsg);
 	}
-
-
 }
 
 
@@ -2017,4 +2131,3 @@ class SMTPs
  *  - basic shell with some commets
  *
  */
-

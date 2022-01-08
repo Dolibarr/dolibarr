@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,60 +22,68 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
 
+
 /**
- *	\class      ActionsCardIndividual
- *	\brief      Class with controller methods for individual canvas
+ *	ActionsCardIndividual
+ *
+ *	Class with controller methods for individual canvas
  */
 class ActionsCardIndividual extends ActionsCardCommon
 {
-    /**
+	/**
 	 *    Constructor
 	 *
-     *    @param	DoliDB	$db				Handler acces base de donnees
-     *    @param	string	$dirmodule		Name of directory of module
-     *    @param	string	$targetmodule	Name of directory of module where canvas is stored
-     *    @param	string	$canvas			Name of canvas
-     *    @param	string	$card			Name of tab (sub-canvas)
-     */
-	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+	 *    @param	DoliDB	$db				Handler acces base de donnees
+	 *    @param	string	$dirmodule		Name of directory of module
+	 *    @param	string	$targetmodule	Name of directory of module where canvas is stored
+	 *    @param	string	$canvas			Name of canvas
+	 *    @param	string	$card			Name of tab (sub-canvas)
+	 */
+	public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
-		$this->db				= $db;
-		$this->dirmodule		= $dirmodule;
-		$this->targetmodule		= $targetmodule;
-        $this->canvas			= $canvas;
-        $this->card				= $card;
+		$this->db = $db;
+		$this->dirmodule = $dirmodule;
+		$this->targetmodule = $targetmodule;
+		$this->canvas = $canvas;
+		$this->card = $card;
 	}
 
 
-    /**
-     *  Return the title of card
-     *
-     *  @param	string	$action		Action code
-     *  @return	string				Title
-     */
-    private function getTitle($action)
-    {
-        global $langs;
+	/**
+	 *  Return the title of card
+	 *
+	 *  @param	string	$action		Action code
+	 *  @return	string				Title
+	 */
+	private function getTitle($action)
+	{
+		global $langs;
 
-        $out='';
+		$out = '';
 
-        if ($action == 'view')      $out.= $langs->trans("Individual");
-        if ($action == 'edit')      $out.= $langs->trans("EditCompany");
-        if ($action == 'create')    $out.= $langs->trans("NewCompany");
+		if ($action == 'view') {
+			$out .= $langs->trans("Individual");
+		}
+		if ($action == 'edit') {
+			$out .= $langs->trans("EditCompany");
+		}
+		if ($action == 'create') {
+			$out .= $langs->trans("NewCompany");
+		}
 
-        return $out;
-    }
+		return $out;
+	}
 
 
 	/**
 	 * Execute actions
-     * @deprecated Use the doActions of hooks instead of this.
+	 * @deprecated Use the doActions of hooks instead of this.
 	 *
 	 * @param	string	$action	Action
 	 * @param	int		$id			Id of object (may be empty for creation)
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function doActions(&$action, $id)
+	public function doActions(&$action, $id)
 	{
 		$ret = $this->getObject($id);
 
@@ -84,6 +92,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 		return $return;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -92,27 +101,24 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id=0, $ref='')
+	public function assign_values(&$action, $id = 0, $ref = '')
 	{
+		// phpcs:enable
 		global $conf, $langs;
 		global $form, $formcompany;
 
-		$ret = $this->getObject($id,$ref);
+		$ret = $this->getObject($id, $ref);
 
 		parent::assign_values($action);
 
-        $this->tpl['title'] = load_fiche_titre($this->getTitle($action));
+		$this->tpl['title'] = load_fiche_titre($this->getTitle($action));
 
-		if ($action == 'create' || $action == 'edit')
-		{
+		if ($action == 'create' || $action == 'edit') {
 			$this->tpl['select_civility'] = $formcompany->select_civility(GETPOST('civility_id'));
-		}
-		else
-		{
+		} else {
 			// Confirm delete third party
-			if ($action == 'delete' || $conf->use_javascript_ajax)
-			{
-				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,"1,action-delete");
+			if ($action == 'delete' || $conf->use_javascript_ajax) {
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id, $langs->trans("DeleteAnIndividual"), $langs->trans("ConfirmDeleteIndividual"), "confirm_delete", '', 0, "1,action-delete");
 			}
 		}
 	}
@@ -130,10 +136,8 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 *  @param      string	$dbt_select		Field name for select if not rowid. (optional)
 	 *  @return		int						1
 	 */
-	function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
+	public function restrictedArea($user, $features = 'societe', $objectid = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
 	{
-		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
+		return restrictedArea($user, $features, $objectid, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
 	}
-
 }
-

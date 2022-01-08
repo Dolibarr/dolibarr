@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,21 +33,20 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 class Fournisseur extends Societe
 {
-	var $next_prev_filter="te.fournisseur = 1";		// Used to add a filter in Form::showrefnav method
-	
-	
+	public $next_prev_filter = "te.fournisseur = 1"; // Used to add a filter in Form::showrefnav method
+
+
 	/**
 	 *	Constructor
 	 *
 	 *  @param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
+
 		$this->client = 0;
-		$this->fournisseur = 0;
-		$this->effectif_id  = 0;
-		$this->forme_juridique_code  = 0;
+		$this->fournisseur = 1;
 	}
 
 
@@ -56,19 +55,17 @@ class Fournisseur extends Societe
 	 *
 	 * @return 	int		Nb of orders
 	 */
-	function getNbOfOrders()
+	public function getNbOfOrders()
 	{
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-		$sql .= " WHERE cf.fk_soc = ".$this->id;
+		$sql .= " WHERE cf.fk_soc = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if ($num == 1)
-			{
+			if ($num == 1) {
 				$row = $this->db->fetch_row($resql);
 
 				$this->single_open_commande = $row[0];
@@ -82,69 +79,63 @@ class Fournisseur extends Societe
 	 *
 	 * @return	int		Nb of ref prices, or <0 if error
 	 */
-	function nbOfProductRefs()
+	public function nbOfProductRefs()
 	{
 		global $conf;
 
 		$sql = "SELECT count(pfp.rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-		$sql.= " WHERE pfp.entity = ".$conf->entity;
-		$sql.= " AND pfp.fk_soc = ".$this->id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+		$sql .= " WHERE pfp.entity = ".$conf->entity;
+		$sql .= " AND pfp.fk_soc = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
-		if ( $resql )
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			return $obj->nb;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load statistics indicators
 	 *
 	 * @return     int         <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+	public function load_state_board()
 	{
+		// phpcs:enable
 		global $conf, $user;
 
-		$this->nb=array();
+		$this->nb = array();
 		$clause = "WHERE";
 
 		$sql = "SELECT count(s.rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
-		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql.= " WHERE sc.fk_user = " .$user->id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." s.fournisseur = 1";
-		$sql.= " AND s.entity IN (".getEntity('societe').")";
+		$sql .= " ".$clause." s.fournisseur = 1";
+		$sql .= " AND s.entity IN (".getEntity('societe').")";
 
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj=$this->db->fetch_object($resql))
-			{
-				$this->nb["suppliers"]=$obj->nb;
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->nb["suppliers"] = $obj->nb;
 			}
-            $this->db->free($resql);
+			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			return -1;
 		}
-
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Create a supplier category
 	 *
@@ -152,62 +143,77 @@ class Fournisseur extends Societe
 	 *	@param		string	$name		Category name
 	 *  @return     int         		<0 if KO, 0 if OK
 	 */
-	function CreateCategory($user, $name)
+	public function CreateCategory($user, $name)
 	{
+		// phpcs:enable
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
-		$sql.= " VALUES ";
-		$sql.= " ('".$this->db->escape($name)."',1,1)";
+		$sql .= " VALUES ";
+		$sql .= " ('".$this->db->escape($name)."',1,1)";
 
 		dol_syslog("Fournisseur::CreateCategory", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			dol_syslog("Fournisseur::CreateCategory : Success");
 			return 0;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
+		} else {
+			$this->error = $this->db->lasterror();
 			dol_syslog("Fournisseur::CreateCategory : Failed (".$this->error.")");
 			return -1;
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return the suppliers list
 	 *
 	 *	@return		array		Array of suppliers
 	 */
-	function ListArray()
+	public function ListArray()
 	{
+		// phpcs:enable
 		global $conf;
 		global $user;
 
 		$arr = array();
 
 		$sql = "SELECT s.rowid, s.nom as name";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE s.fournisseur = 1";
-		$sql.= " AND s.entity IN (".getEntity('societe').")";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE s.fournisseur = 1";
+		$sql .= " AND s.entity IN (".getEntity('societe').")";
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		}
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 
-		if ($resql)
-		{
-			while ($obj=$this->db->fetch_object($resql))
-			{
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$arr[$obj->rowid] = $obj->name;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 		}
 		return $arr;
 	}
 
-}
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param  DoliDB  $db             Database handler
+	 * @param  int     $origin_id      Old third-party id
+	 * @param  int     $dest_id        New third-party id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facture_fourn'
+		);
 
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+}

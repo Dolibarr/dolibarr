@@ -48,4 +48,4 @@ SmsInfoNumero= (รูปแบบเช่นระหว่างประเ�
 DelayBeforeSending=หน่วงเวลาก่อนที่จะส่ง (นาที)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=ไม่มีเป้าหมาย ตรวจสอบการตั้งค่าของผู้ให้บริการ SMS ของคุณ
-
+DisableStopIfSupported=Disable STOP message (if supported)

@@ -1,45 +1,47 @@
 
 [CustomMessages]
 
-NameAndVersion=%1 versiÛn %2
+NameAndVersion=%1 versi√≥n %2
 AdditionalIcons=Iconos adicionales:
 CreateDesktopIcon=Crear un icono en el &escritorio
-CreateQuickLaunchIcon=Crear un icono de Inicio R·pido
+CreateQuickLaunchIcon=Crear un icono de Inicio R√°pido
 ProgramOnTheWeb=%1 en la Web
 UninstallProgram=Desinstalar %1
 LaunchProgram=Ejecutar %1
-AssocFileExtension=&Asociar %1 con la extensiÛn de archivo %2
-AssocingFileExtension=Asociando %1 con la extensiÛn de archivo %2...
+AssocFileExtension=&Asociar %1 con la extensi√≥n de archivo %2
+AssocingFileExtension=Asociando %1 con la extensi√≥n de archivo %2...
 
-YouWillInstallDoliWamp=Va a instalar o actualizar (Apache+Mysql+PHP+Dolibarr) en su ordenador.
-ThisAssistantInstallOrUpgrade=Este asistente instala o actualiza Dolibarr ERP-CRM y todos sus requisitos (Apache, Mysql y PHP) optimizados para el uso de  Dolibarr.
-IfYouHaveTechnicalKnowledge=Si tiene conocimientos tÈcnicos y necesita usar su Apache, Mysql y PHP con otras aplicaciones aparte de Dolibarr, no deberÌa usar este asistente, deberÌa realizar una instalaciÛn manual de Dolibarr sobre un Apache, Mysql y PHP existente.
-ButIfYouLook=Pero si busca una instalaciÛn autom·tica, se encuentra en el buen camino...
-DoYouWantToStart=øQuiere iniciar el proceso de instalaciÛn/actualizaciÛn?
+YouWillInstallDoliWamp=Va a instalar DoliWamp (Dolibarr y otro software como Apache, Mysql y PHP) en su ordenador.
+ThisAssistantInstallOrUpgrade=ALERTA: Utilizar un ERP CRM instalado en un ordenador en local puede ser peligroso: si el ordenador se estropea, puede perder todos sus datos. H√°galo si est√° preparado para autogestionar sus copias de seguridad. Si no, puede utilizar una instalacion Saas (puede ver https://saas.dolibarr.org).
+IfYouHaveTechnicalKnowledge=Si tiene conocimientos t√©cnicos y necesita usar su Apache, Mysql y PHP con otras aplicaciones aparte de Dolibarr, no deber√≠a usar este asistente, deber√≠a realizar una instalaci√≥n manual de Dolibarr sobre un Apache, Mysql y PHP existente.
+ButIfYouLook=Pero si busca una instalaci√≥n autom√°tica en tu propio ordenador, se encuentra en el buen camino...
+DoYouWantToStart=¬øQuiere iniciar el proceso de instalaci√≥n?
 
-TechnicalParameters=Par·metros tÈcnicos
-IfFirstInstall=Si se trata de la primera instalaciÛn, deber· especificar algunos par·metros tÈcnicos. Si no los entiende, no est· seguro o va a proceder a una actualizaciÛn, deje los campos con los valores propuestos por defecto.
+TechnicalParameters=Par√°metros t√©cnicos
+IfFirstInstall=Si se trata de la primera instalaci√≥n, deber√° especificar algunos par√°metros t√©cnicos. Si no los entiende, no est√° seguro o va a proceder a una actualizaci√≥n, deje los campos con los valores propuestos por defecto.
 
-; WARNING !!! STRINGS HERE MUST BE LOWER THAN 70 CHARACTERS
-SMTPServer=Servidor SMTP (El suyo o el de su ISP, ˙nicamente primera instalaciÛn) :
-ApachePort=Puerto Apache (˙nicamente primera instalaciÛn, normalmente es el 80) :
-MySqlPort=Puerto Mysql (˙nicamente primera instalaciÛn, normalmente es el 3306) :
-MySqlPassword=ContraseÒa del servidor y la base de datos MySQL de root (˙nicamente primera instalaciÛn):
+; WARNING !!! STRINGS HERE MUST BE LOWER THAN 60 CHARACTERS
+SMTPServer=Servidor SMTP (propio o su ISP, s√≥lo primera instalaci√≥n) :
+ApachePort=Puerto Apache (s√≥lo primera instalaci√≥n, normalmente el 80) :
+MySqlPort=Puerto Mysql (s√≥lo primera instalaci√≥n, normalmente el 3306) :
+MySqlPassword=Contrase√±a del servidor y la base de datos MySQL de root (s√≥lo primera instalaci√≥n):
 
-FailedToDeleteLock=Error en la eliminaciÛn del archivo %1/www/dolibarr/install.lock. Puede ignorar el aviso pero es posible que deba eliminarlo manualmente m·s tarde. En este caso, ser· informado. Haga clic en OK para continuar...
+FailedToDeleteLock=Error en la eliminaci√≥n del archivo %1/www/dolibarr/install.lock. Puede ignorar el aviso pero es posible que deba eliminarlo manualmente m√°s tarde. En este caso, ser√° informado. Haga clic en OK para continuar...
 
-PortAlreadyInUse=Parece que el puerto %1 ya esta siendo usado. Se recomienda cancelar, volver atras y especificar otro valor para el puerto %2. øCancelar y escojer otro valor?
+PortAlreadyInUse=Parece que el puerto %1 ya esta siendo usado. Se recomienda cancelar, volver atras y especificar otro valor para el puerto %2. ¬øCancelar y escojer otro valor?
 
 FirefoxDetected=Se ha detectado Firefox en su ordenador. Desea activarlo por defecto como navegador para Dolibarr ?
 ChromeDetected=Se ha detectado Chrome en su ordenador. Desea activarlo por defecto como navegador para Dolibarr ?
-ChooseDefaultBrowser=Escoja su navegador por defecto. Si no est· seguro, simplementa haga clic en Abrir :
+ChooseDefaultBrowser=Escoja su navegador por defecto (iexplore.exe, firefox.exe, chrome.exe, MicrosoftEdge.exe...). Si no est√° seguro, simplementa haga clic en Abrir :
 
 LaunchNow=Lanzar ahora Dolibarr
 
-ProgramHasBeenRemoved=Los archivos del programa Dolibarr han sido eliminados. Sin embargo todos sus archivos de datos se encuentran todavÌa en el directorio %1. Deber· eliminar este directorio manualmente para una desinstalaciÛn completa.
+ProgramHasBeenRemoved=Los archivos del programa Dolibarr han sido eliminados. Sin embargo todos sus archivos de datos se encuentran todav√≠a en el directorio %1. Deber√° eliminar este directorio manualmente para una desinstalaci√≥n completa.
 
-DoliWampWillStartApacheMysql=El instalador DoliWamp intentar· iniciar o reiniciar Apache y MySQL, esto puede durar desde varios segundos a un minuto despuÈs de la confirmaciÛn. øIniciar la instalaciÛn o actualizaciÛn de los servidores Web y bases de datos requeridas por Dolibarr?
+DoliWampWillStartApacheMysql=El instalador DoliWamp intentar√° iniciar o reiniciar Apache y MySQL, esto puede durar desde varios segundos a un minuto despu√©s de la confirmaci√≥n. ¬øIniciar la instalaci√≥n o actualizaci√≥n de los servidores Web y bases de datos requeridas por Dolibarr?
 
-OldVersionFoundAndMoveInNew=Se ha encontrado una versiÛn antigua de base de datos y ha sido movida para ser utilizada por la nueva versiÛn de Dolibarr
-OldVersionFoundButFailedToMoveInNew=Se ha encontrado una versiÛn antigua de base de datos, pero no se pudo mover para ser utilizada por la nueva versiÛn de Dolibarr
+OldVersionFoundAndMoveInNew=Se ha encontrado una versi√≥n antigua de base de datos y ha sido movida para ser utilizada por la nueva versi√≥n de Dolibarr
+OldVersionFoundButFailedToMoveInNew=Se ha encontrado una versi√≥n antigua de base de datos, pero no se pudo mover para ser utilizada por la nueva versi√≥n de Dolibarr
  	  	 
+DLLMissing=Su instalaci√≥n Windows no tiene el componente "Microsoft Visual C++ Redistributable for Visual Studio 2012". Instale primero la versi√≥n de 32-bit (vcredist_x86.exe) (puedes encontrarlo en https://www.microsoft.com/en-us/download/) y reiniciar despu√©s la instalaci√≥n/actualizaci√≥n de DoliWamp.
+ContinueAnyway=Continua igualmente (el proceso de instalaci√≥n podr√≠a fallar sin este prerequisito)

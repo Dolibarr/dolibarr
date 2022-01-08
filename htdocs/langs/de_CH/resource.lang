@@ -1,3 +1,7 @@
 # Dolibarr language file - Source file is en_US - resource
+ConfirmDeleteResourceElement=Bestätige das Entfernen der Ressource von diesem Element.
 ResourceCard=Ressourcen-Karte
-ShowResource=Resource anzeigen
+ResourceFormLabel_ref=Name der Ressource
+ResourceType=Typ der Ressource
+ResourceFormLabel_description=Beschreibung
+ResourceTypeCode=Ressourcentyp - Code

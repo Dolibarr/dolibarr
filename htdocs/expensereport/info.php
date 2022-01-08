@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -28,12 +28,38 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
+// Load translation files required by the page
 $langs->load("trips");
 
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+
+$childids = $user->getAllChildIds(1);
+
 // Security check
-$id = GETPOST('id','int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
+
+$object = new ExpenseReport($db);
+if (!$object->fetch($id, $ref) > 0) {
+	dol_print_error($db);
+}
+
+if ($object->id > 0) {
+	// Check current user can read this expense report
+	$canread = 0;
+	if (!empty($user->rights->expensereport->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
 
 
 /*
@@ -42,42 +68,41 @@ $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 $form = new Form($db);
 
-$title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Info");
-$helpurl="EN:Module_Expense_Reports";
-llxHeader("",$title,$helpurl);
+$title = $langs->trans("ExpenseReport")." - ".$langs->trans("Info");
+$helpurl = "EN:Module_Expense_Reports";
+llxHeader("", $title, $helpurl);
 
-if ($id > 0 || ! empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new ExpenseReport($db);
-	$object->fetch($id,$ref);
+	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
+	print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
-	$morehtmlref='<div class="refidno">';
-    $morehtmlref.='</div>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	
+	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= '</div>';
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
-	print '<br>';
-	
-	print '<table width="100%"><tr><td>';
-    dol_print_object_info($object);
-    print '</td></tr></table>';
 
-    print '</div>';
-    
-    dol_fiche_end();
+	print '<br>';
+
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($object);
+	print '</td></tr></table>';
+
+	print '</div>';
+
+	print dol_get_fiche_end();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

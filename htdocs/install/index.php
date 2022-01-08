@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,10 +32,9 @@ global $langs;
 $err = 0;
 
 // If the config file exists and is filled, we're not on first install so we skip the language selection page
-if (file_exists($conffile) && isset($dolibarr_main_url_root))
-{
-    header("Location: check.php?testget=ok");
-    exit;
+if (file_exists($conffile) && isset($dolibarr_main_url_root)) {
+	header("Location: check.php?testget=ok");
+	exit;
 }
 
 $langs->load("admin");
@@ -45,9 +44,9 @@ $langs->load("admin");
  * View
  */
 
-$formadmin=new FormAdmin('');	// Note: $db does not exist yet but we don't need it, so we put ''.
+$formadmin = new FormAdmin(''); // Note: $db does not exist yet but we don't need it, so we put ''.
 
-pHeader("", "check");   // Next step = check
+pHeader("", "check"); // Next step = check
 
 
 // Ask installation language
@@ -55,15 +54,16 @@ print '<br><br><div class="center">';
 print '<table>';
 
 print '<tr>';
-print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';
-print $formadmin->select_language('auto','selectlang',1,0,0,1);
+print '<td>'.$langs->trans("DefaultLanguage").' : </td><td>';
+print $formadmin->select_language('auto', 'selectlang', 1, 0, 0, 1);
 print '</td>';
 print '</tr>';
 
 print '</table></div>';
 
-print '<br><br>'.$langs->trans("SomeTranslationAreUncomplete");
+print '<br><br><span class="opacitymedium">'.$langs->trans("SomeTranslationAreUncomplete").'</span>';
 
 // If there's no error, we display the next step button
-if ($err == 0) pFooter(0);
-
+if ($err == 0) {
+	pFooter(0);
+}

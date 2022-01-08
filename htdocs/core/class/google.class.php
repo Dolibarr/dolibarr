@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -26,10 +26,17 @@
  */
 class GoogleAPI
 {
-	var $db;
-	var $error;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-	var $key;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	public $key;
 
 	/**
 	 * Constructor
@@ -37,10 +44,10 @@ class GoogleAPI
 	 * @param 	DoliDB		$db			Database handler
 	 * @param	string		$key		Google key
 	 */
-	function __construct($db,$key)
+	public function __construct($db, $key)
 	{
-		$this->db=$db;
-		$this->key=$key;
+		$this->db = $db;
+		$this->key = $key;
 	}
 
 
@@ -52,26 +59,28 @@ class GoogleAPI
 	 *								Example: 188, rue de Fontenay,+94300,+Vincennes,+France
 	 *	@return	string				Coordinates
 	 */
-	function getGeoCoordinatesOfAddress($address)
+	public function getGeoCoordinatesOfAddress($address)
 	{
 		global $conf;
 
-		$i=0;
+		$i = 0;
 
 		// Desired address
-		$urladdress = "https://maps.google.com/maps/geo?q=".urlencode($address)."&output=xml&key=".$this->key;
+		$urladdress = "https://maps.google.com/maps/geo?q=".urlencode($address)."&output=xml&key=".urlencode($this->key);
 
 		// Retrieve the URL contents
-		$page = file_get_contents($urladdress);
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		$pagearray = getURLContent($urladdress, 'GET');
+		$page = $pagearray['content'];
 
 		$code = strstr($page, '<coordinates>');
 		$code = strstr($code, '>');
-		$val=strpos($code, "<");
-		$code = substr($code, 1, $val-1);
+		$val = strpos($code, "<");
+		$code = substr($code, 1, $val - 1);
 		//print $code;
 		//print "<br>";
 		$latitude = substr($code, 0, strpos($code, ","));
-		$longitude = substr($code, strpos($code, ",")+1, dol_strlen(strpos($code, ","))-3);
+		$longitude = substr($code, strpos($code, ",") + 1, dol_strlen(strpos($code, ",")) - 3);
 
 		// Output the coordinates
 		//echo "Longitude: $longitude ',' Latitude: $latitude";

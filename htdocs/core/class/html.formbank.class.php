@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,39 +23,48 @@
  *	\brief      File of class with all html predefined components
  */
 
+include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
 
 /**
  *	Class to manage generation of HTML components for bank module
  */
 class FormBank
 {
-    var $db;
-    var $error;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 
-    /**
-     * Constructor
-     *
-     * @param		DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
-    /**
-     *  Retourne la liste des types de comptes financiers
-     *
-     *  @param	integer	$selected        Type pre-selectionne
-     *  @param  string	$htmlname        Nom champ formulaire
-     *  @return	void
-     */
-    public function selectTypeOfBankAccount($selected = Account::TYPE_CURRENT, $htmlname = 'type')
-    {
-        $account = new Account($this->db);
+	/**
+	 *  Retourne la liste des types de comptes financiers
+	 *
+	 *  @param	integer	$selected        Type pre-selectionne
+	 *  @param  string	$htmlname        Nom champ formulaire
+	 *  @return	void
+	 */
+	public function selectTypeOfBankAccount($selected = Account::TYPE_CURRENT, $htmlname = 'type')
+	{
+		$account = new Account($this->db);
 
-        print Form::selectarray($htmlname, $account->type_lib, $selected);
-    }
+		print Form::selectarray($htmlname, $account->type_lib, $selected);
+	}
 
 	/**
 	 * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.
@@ -72,4 +81,3 @@ class FormBank
 		return 'IBANNumber';
 	}
 }
-

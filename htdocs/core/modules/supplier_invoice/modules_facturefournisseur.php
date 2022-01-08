@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2016   Philippe Grand  <philippe.grand@atoo-net.com>
- * Copyright (C) 2014   Marcos García   <marcosgdf@gmail.com>
+/* Copyright (C) 2010       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2016  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -26,7 +26,7 @@
  *					and parent class for supplier invoices numbering models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
 /**
@@ -34,29 +34,33 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
  */
 abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation models
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of numbers
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of numbers
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
+		// phpcs:enable
 		global $conf;
 
-		$type='invoice_supplier';
-		$liste=array();
+		$type = 'invoice_supplier';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
-
 }
 
 /**
@@ -64,13 +68,16 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
  */
 abstract class ModeleNumRefSuppliersInvoices
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**  Return if a model can be used or not
 	 *
 	 *   @return	boolean     true if model can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -79,7 +86,7 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *   @return    string      Description Text
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("invoices");
@@ -90,7 +97,7 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *    @return   string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("invoices");
@@ -101,19 +108,19 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *   @return	boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
 
-    /**  Returns next value assigned
-     *
-     * @param	Societe		$objsoc     Object third party
-     * @param  	Object	    $object		Object
-     * @param	string		$mode       'next' for next value or 'last' for last value
-     * @return 	string      			Value if OK, 0 if KO
-     */
-    function getNextValue($objsoc,$object,$mode)
+	/**  Returns next value assigned
+	 *
+	 * @param	Societe		$objsoc     Object third party
+	 * @param  	Object	    $object		Object
+	 * @param	string		$mode       'next' for next value or 'last' for last value
+	 * @return 	string      			Value if OK, 0 if KO
+	 */
+	public function getNextValue($objsoc, $object, $mode)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -123,15 +130,23 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *    @return     string      Value
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

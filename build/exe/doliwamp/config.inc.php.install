@@ -402,7 +402,7 @@ $cfg['RecodingEngine'] = 'auto';
 
 // Specify some parameters for iconv used in charset conversion. See iconv
 // documentation for details:
-// http://www.gnu.org/software/libiconv/documentation/libiconv/iconv_open.3.html
+// https://www.gnu.org/software/libiconv/documentation/libiconv/iconv_open.3.html
 $cfg['IconvExtraParams'] = '//TRANSLIT';
 
 // Available charsets for MySQL conversion. currently contains all which could
@@ -542,7 +542,7 @@ $cfg['ThemePerServer']      = FALSE;         // allow diferent theme for each co
  * %f will be replaced by a list of field names.
  * (%t and %f only applies to DefaultQueryTable)
  */
-$cfg['DefaultQueryTable']    = 'SELECT * FROM %t WHERE 1';
+$cfg['DefaultQueryTable']    = 'SELECT * FROM %t WHERE 1 = 1';
 $cfg['DefaultQueryDatabase'] = '';
 
 /**

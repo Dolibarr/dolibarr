@@ -1,9 +1,5 @@
 # Dolibarr language file - Source file is en_US - install
-AdminLogin=Login für Dolibarr Datenbank-Administrator. Halten Sie leer, wenn Sie in anonymisierter
-KeepEmptyIfNoPassword=Leer lassen um kein Passwort zu setzen (nicht empfohlen)
 GoToDolibarr=Zu dolibarr
 GoToUpgradePage=Zur Aktualisierungsseite
 DBSortingCollation=Reihenfolge der Zeichensortierung (Collation)
-NextStepMightLastALongTime=Der aktuelle Vorgang kann mehrere Minuten dauern. Holen Sie sich eine frische Tasse Kaffee, oder nutzen Sie die Gelegenheit für eine Rauchpause. Warten Sie jedoch bitte in jedem Fall, bis der nächste Bildschirm vollständig angezeigt wird, bevor Sir fortfahren.
-LastStepDesc=<strong>Letzter Schritt:</strong> Legen Sie hier Benutzernamen und Passwort, die Sie verwenden möchten, um Software zu verbinden. Verlieren Sie ihn nicht, wie es das Konto für alle anderen zu verwalten ist.
 MigrationActioncommElement=Update-Daten über die Maßnahmen

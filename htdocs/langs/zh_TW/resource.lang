@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=資源
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceAdd=新資源
+DeleteResource=刪除資源
+ConfirmDeleteResourceElement=確認刪除此元件的資源
+NoResourceInDatabase=資料庫中沒有資源。
+NoResourceLinked=沒有已連結資源
+ActionsOnResource=有關此資源的事件
+ResourcePageIndex=資源清單
+ResourceSingular=資源
+ResourceCard=資源卡
+AddResource=建立資源
+ResourceFormLabel_ref=資源名稱
+ResourceType=資源類型
+ResourceFormLabel_description=資源說明
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=已與元件連結之資源
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=顯示資源
 
-ShowResource=Show resource
+ResourceElementPage=元件資源
+ResourceCreatedWithSuccess=資源已成功建立
+RessourceLineSuccessfullyDeleted=資源行已成功刪除
+RessourceLineSuccessfullyUpdated=資源行已成功地更新
+ResourceLinkedWithSuccess=已成功連結資源
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=確認刪除此資源
+RessourceSuccessfullyDeleted=資源已成功地刪除
+DictionaryResourceType=資源類型
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=選擇資源
 
-SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=ID資源
+AssetNumber=序號
+ResourceTypeCode=資源類型代碼
 ImportDataset_resource_1=資源
+
+ErrorResourcesAlreadyInUse=一些資源正在使用中
+ErrorResourceUseInEvent=%s被使用於%s事件

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,25 +12,34 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$object=$GLOBALS['object'];
+// Protection to avoid direct call of template
+if (empty($conf) || !is_object($conf)) {
+	print "Error, template page can't be called as URL";
+	exit;
+}
 
-$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+
+$object = $GLOBALS['object'];
+
+$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>
 
 <!-- BEGIN PHP TEMPLATE CREATE.TPL -->
 
-<?php print load_fiche_titre($langs->trans("Service")); ?>
+<?php
+print load_fiche_titre($langs->trans("NewService"), '', 'service');
+print dol_get_fiche_head('');
+?>
 
-<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
+<?php dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']); ?>
 
-<?php dol_htmloutput_errors($GLOBALS['mesg'],$GLOBALS['mesgs']); ?>
+<?php dol_htmloutput_errors($GLOBALS['mesg'], $GLOBALS['mesgs']); ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="type" value="1">
 <input type="hidden" name="canvas" value="<?php echo $canvas; ?>">
@@ -40,22 +49,24 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
 <td><input name="ref" size="40" maxlength="32" value="<?php echo $object->ref; ?>">
-<?php if ($refalreadyexists == 1) echo $langs->trans("RefAlreadyExists"); ?>
+<?php if ($refalreadyexists == 1) {
+	echo $langs->trans("RefAlreadyExists");
+} ?>
 </td></tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td>
-<td><input name="libelle" size="40" value="<?php echo $object->label; ?>"></td>
+<td><input name="label" size="40" value="<?php echo $object->label; ?>"></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $form->selectarray('statut',$statutarray,$object->status); ?></td>
+<td><?php echo $form->selectarray('statut', $statutarray, $object->status); ?></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_tobuy); ?></td>
+<td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>
@@ -70,13 +81,12 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 
 <br>
 
-<?php if (! $conf->global->PRODUIT_MULTIPRICES) { ?>
-
+<?php if (!$conf->global->PRODUIT_MULTIPRICES) { ?>
 <table class="border allwidth">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
 <td><input name="price" size="10" value="<?php echo $object->price; ?>">
-<?php echo $object->price_base_type; ?>
+	<?php echo $object->price_base_type; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("MinPrice"); ?></td>
@@ -84,7 +94,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 </td></tr>
 
 <tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
-<?php echo $object->tva_tx; ?>
+	<?php echo $object->tva_tx; ?>
 </td></tr>
 
 </table>

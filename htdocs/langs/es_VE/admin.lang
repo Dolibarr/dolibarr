@@ -1,15 +1,34 @@
 # Dolibarr language file - Source file is en_US - admin
-ModuleFamilyCrm=Gestión cliente (CRM)
-Module2660Desc=Habilitar los servicios web cliente de Dolibarr (puede ser utilizado para grabar datos/solicitudes de servidores externos. De momento solo se soporta pedidos a proveedor)
+VersionLastInstall=Versión de instalación inicial
+VersionLastUpgrade=Última actualización de la versión
+ConfirmPurgeSessions=¿De verdad quieres purgar todas las sesiones? Esto desconectará a todos los usuarios (excepto a usted).
+SetupArea=Parametrizaje
+NotConfigured=Módulo / Aplicación no configurada
+Module1780Desc=Crear etiquetas/Categoría (Productos, clientes, proveedores, contactos y miembros)
 Permission254=Modificar la contraseña de otros usuarios
 Permission255=Eliminar o desactivar otros usuarios
 Permission256=Consultar sus permisos
-Permission20002=Crear/modificar sus días retribuidos
+Permission1321=Exportar facturas a clientes, atributos y cobros
 Permission20003=Eliminar peticiones de días libres retribuidos
-Permission2402=Crear/eliminar acciones (eventos o tareas) vinculadas a su cuenta
-Permission2403=Modificar acciones (eventos o tareas) vinculadas a su cuenta
+ExtraFields=Atributos adicionales
+ExtraFieldsLines=Atributos adicionales (líneas)
+ExtraFieldsSupplierOrdersLines=Atributos complementarios (líneas de pedido)
+ExtraFieldsSupplierInvoicesLines=Atributos complementarios (líneas de factura)
+ExtraFieldsMember=Atributos adicionales (miembros)
+ExtraFieldsMemberType=Atributos adicionales  (tipos de miembros)
+ExtraFieldsCustomerInvoices=Atributos adicionales (facturas a clientes)
+ExtraFieldsSupplierOrders=Atributos adicionales (pedidos a proveedores)
+ExtraFieldsSupplierInvoices=Atributos adicionales (facturas)
+ExtraFieldsProject=Atributos adicionales (proyectos)
+ExtraFieldsProjectTask=Atributos adicionales (tareas)
+ExtraFieldHasWrongValue=El atributo %s tiene un valor no válido
 SupplierProposalSetup=Configuración del módulo Solicitudes a proveedor
 SupplierProposalNumberingModules=Modelos de numeración de solicitud de precios a proveedor
 SupplierProposalPDFModules=Modelos de documentos de solicitud de precios a proveedores
 FreeLegalTextOnSupplierProposal=Texto libre en solicitudes de precios a proveedores
 WatermarkOnDraftSupplierProposal=Marca de agua en solicitudes de precios a proveedor (en caso de estar vacío)
+LDAPMemberObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+LDAPUserObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+LDAPContactObjectClassListExample=Lista de objectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted a string 'Name: name to find' found into the body, use sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>

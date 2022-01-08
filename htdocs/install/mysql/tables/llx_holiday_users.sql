@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2012-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2012-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,13 +12,14 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
+-- Table with remain quantity of holiday for each type of leave.
 -- ===================================================================
 
 CREATE TABLE llx_holiday_users 
 (
 	fk_user     integer NOT NULL,
 	fk_type     integer NOT NULL,
-	nb_holiday   real NOT NULL DEFAULT '0'
+	nb_holiday  real NOT NULL DEFAULT 0
 ) ENGINE=innodb;

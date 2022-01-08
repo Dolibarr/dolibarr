@@ -1,0 +1,92 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=ການຄຸ້ມຄອງຄູ່ຮ່ວມງານ
+PartnershipDescription=ການຄຸ້ມຄອງຫຸ້ນສ່ວນໂມດູນ
+PartnershipDescriptionLong= ການຄຸ້ມຄອງຫຸ້ນສ່ວນໂມດູນ
+Partnership=Partnership
+AddPartnership=ເພີ່ມການຮ່ວມມື
+CancelPartnershipForExpiredMembers=ການເປັນຫຸ້ນສ່ວນ: ຍົກເລີກການເປັນຫຸ້ນສ່ວນຂອງສະມາຊິກດ້ວຍການສະັກທີ່iredົດອາຍຸ
+PartnershipCheckBacklink=ການຮ່ວມມື: ກວດເບິ່ງລິງຍ້ອນກັບ
+
+#
+# Menu
+#
+NewPartnership=ຫຸ້ນສ່ວນໃNew່
+ListOfPartnerships=ລາຍຊື່ຫຸ້ນສ່ວນ
+
+#
+# Admin page
+#
+PartnershipSetup=ການຕັ້ງຄ່າຫຸ້ນສ່ວນ
+PartnershipAbout=ກ່ຽວກັບການຮ່ວມມື
+PartnershipAboutPage=ການຮ່ວມມືກ່ຽວກັບຫນ້າ
+partnershipforthirdpartyormember=ສະຖານະຂອງຫຸ້ນສ່ວນຕ້ອງຖືກຕັ້ງຢູ່ໃນ 'part່າຍທີສາມ' ຫຼື 'ສະມາຊິກ'
+PARTNERSHIP_IS_MANAGED_FOR=ການຮ່ວມມືຄຸ້ມຄອງສໍາລັບ
+PARTNERSHIP_BACKLINKS_TO_CHECK=ລິງຍ້ອນກັບເພື່ອກວດສອບ
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb ຂອງມື້ກ່ອນຍົກເລີກສະຖານະການເປັນຫຸ້ນສ່ວນເມື່ອການສະsubscriptionັກໃຊ້ົດອາຍຸ
+ReferingWebsiteCheck=ກວດເບິ່ງການອ້າງອີງເວັບໄຊທ
+ReferingWebsiteCheckDesc=ເຈົ້າສາມາດເປີດໃຊ້ຄຸນສົມບັດເພື່ອກວດເບິ່ງວ່າຄູ່ຮ່ວມງານຂອງເຈົ້າໄດ້ເພີ່ມ backlink ເຂົ້າໄປໃນໂດເມນເວັບໄຊທ your ຂອງເຈົ້າຢູ່ໃນເວັບໄຊທ their ຂອງເຂົາເຈົ້າເອງ.
+
+#
+# Object
+#
+DeletePartnership=ລຶບຫຸ້ນສ່ວນ
+PartnershipDedicatedToThisThirdParty=ການເປັນຫຸ້ນສ່ວນທີ່ອຸທິດໃຫ້ພາກສ່ວນທີສາມນີ້
+PartnershipDedicatedToThisMember=ການເປັນຫຸ້ນສ່ວນທີ່ອຸທິດໃຫ້ສະມາຊິກຄົນນີ້
+DatePartnershipStart=ວັນ​ທີ່​ເລີ່ມ
+DatePartnershipEnd=ວັນທີສິ້ນສຸດ
+ReasonDecline=ປະຕິເສດເຫດຜົນ
+ReasonDeclineOrCancel=ປະຕິເສດເຫດຜົນ
+PartnershipAlreadyExist=ມີຮຸ້ນສ່ວນຢູ່ແລ້ວ
+ManagePartnership=ການຄຸ້ມຄອງການຮ່ວມມື
+BacklinkNotFoundOnPartnerWebsite=ບໍ່ພົບລິງຍ້ອນກັບຢູ່ໃນເວັບໄຊທ partner ຂອງຄູ່ຮ່ວມງານ
+ConfirmClosePartnershipAsk=ເຈົ້າແນ່ໃຈບໍວ່າເຈົ້າຕ້ອງການຍົກເລີກການຮ່ວມມືນີ້?
+PartnershipType=ປະເພດຫຸ້ນສ່ວນ
+PartnershipRefApproved=Partnership %s approved
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=ການຮ່ວມມືຈະຖືກຍົກເລີກໃນໄວ soon ນີ້
+SendingEmailOnPartnershipRefused=ການຮ່ວມມືຖືກປະຕິເສດ
+SendingEmailOnPartnershipAccepted=ການຮ່ວມມືຍອມຮັບ
+SendingEmailOnPartnershipCanceled=ຍົກເລີກການເປັນຮຸ້ນສ່ວນ
+
+YourPartnershipWillSoonBeCanceledTopic=ການຮ່ວມມືຈະຖືກຍົກເລີກໃນໄວ soon ນີ້
+YourPartnershipRefusedTopic=ການຮ່ວມມືຖືກປະຕິເສດ
+YourPartnershipAcceptedTopic=ການຮ່ວມມືຍອມຮັບ
+YourPartnershipCanceledTopic=ຍົກເລີກການເປັນຮຸ້ນສ່ວນ
+
+YourPartnershipWillSoonBeCanceledContent=ພວກເຮົາແຈ້ງໃຫ້ເຈົ້າຊາບວ່າການຮ່ວມມືຂອງເຈົ້າຈະຖືກຍົກເລີກໃນໄວ soon ນີ້ (ບໍ່ພົບ Backlink)
+YourPartnershipRefusedContent=ພວກເຮົາແຈ້ງໃຫ້ເຈົ້າຊາບວ່າການຮ້ອງຂໍການຮ່ວມມືຂອງເຈົ້າໄດ້ຖືກປະຕິເສດ.
+YourPartnershipAcceptedContent=ພວກເຮົາແຈ້ງໃຫ້ເຈົ້າຊາບວ່າ ຄຳ ຮ້ອງຂໍການຮ່ວມມືຂອງເຈົ້າໄດ້ຖືກຍອມຮັບ.
+YourPartnershipCanceledContent=ພວກເຮົາແຈ້ງໃຫ້ເຈົ້າຊາບວ່າການຮ່ວມມືຂອງເຈົ້າໄດ້ຖືກຍົກເລີກ.
+
+CountLastUrlCheckError=ຈໍານວນຂໍ້ຜິດພາດສໍາລັບການກວດ URL ສຸດທ້າຍ
+LastCheckBacklink=ວັນທີກວດສອບ URL ສຸດທ້າຍ
+ReasonDeclineOrCancel=ປະຕິເສດເຫດຜົນ
+
+#
+# Status
+#
+PartnershipDraft=ຮ່າງ
+PartnershipAccepted=ຍອມຮັບແລ້ວ
+PartnershipRefused=ປະຕິເສດ
+PartnershipCanceled=ຍົກເລີກແລ້ວ
+PartnershipManagedFor=ຄູ່ຮ່ວມງານແມ່ນ

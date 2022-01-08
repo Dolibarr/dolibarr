@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 -- Remises exceptionnelles
@@ -23,12 +23,14 @@ create table llx_societe_remise_except
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   entity					integer DEFAULT 1 NOT NULL,				-- multi company id
-  fk_soc					integer NOT NULL,						-- client
+  fk_soc					integer NOT NULL,						-- customer or supplier
+  discount_type				integer DEFAULT 0 NOT NULL,				-- 0 => customer, 1 => supplier
   datec						datetime,
   amount_ht					double(24,8) NOT NULL,
   amount_tva				double(24,8) DEFAULT 0 NOT NULL,
   amount_ttc				double(24,8) DEFAULT 0 NOT NULL,
-  tva_tx					double(6,3)  DEFAULT 0 NOT NULL,
+  tva_tx					double(7,4)  DEFAULT 0 NOT NULL,
+  vat_src_code				varchar(10)  DEFAULT '',				-- Vat code used as source of vat fields. Not strict foreign key here.
   fk_user					integer NOT NULL,
   fk_facture_line			integer,
   fk_facture				integer,

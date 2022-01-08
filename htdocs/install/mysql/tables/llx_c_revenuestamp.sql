@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -21,6 +21,7 @@ create table llx_c_revenuestamp
   rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_pays           integer NOT NULL,
   taux              double  NOT NULL,
+  revenuestamp_type varchar(16) DEFAULT 'fixed' NOT NULL,
   note              varchar(128),
   active            tinyint DEFAULT 1 NOT NULL,
   accountancy_code_sell	varchar(32) DEFAULT NULL,

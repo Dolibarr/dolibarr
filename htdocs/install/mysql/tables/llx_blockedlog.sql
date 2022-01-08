@@ -12,25 +12,28 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 CREATE TABLE llx_blockedlog 
 ( 
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
-	tms	timestamp,
+	entity integer DEFAULT 1 NOT NULL, 
+	date_creation	datetime,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	action varchar(50), 
-	amounts real NOT NULL, 
+	amounts double(24,8) NOT NULL, 
+	element varchar(50), 
+	fk_user	integer,
+	user_fullname varchar(255),
+	fk_object integer,
+	ref_object varchar(255), 
+	date_object	datetime,
 	signature varchar(100) NOT NULL, 
 	signature_line varchar(100) NOT NULL, 
-	element varchar(50), 
-	fk_object integer,
-	ref_object varchar(100), 
-	date_object	datetime,
-	object_data	text,
-	fk_user	integer,
-	entity integer DEFAULT 1 NOT NULL, 
+	object_data	mediumtext,
+	object_version varchar(32) DEFAULT '',
 	certified integer
 ) ENGINE=innodb;
 

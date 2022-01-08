@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Presupuestos de proveedor
 supplier_proposalDESC=Gestionar presupuestos de proveedor
-SupplierProposalNew=Nueva petición
+SupplierProposalNew=Nuevo presupuesto
 CommRequest=Presupuesto
 CommRequests=Presupuestos
 SearchRequest=Buscar un presupuesto
@@ -13,6 +13,7 @@ SupplierProposalArea=Área presupuestos de proveedores
 SupplierProposalShort=Presupuesto de proveedor
 SupplierProposals=Presupuestos de proveedor
 SupplierProposalsShort=Presupuestos de proveedor
+AskPrice=Presupuesto
 NewAskPrice=Nuevo presupuesto
 ShowSupplierProposal=Mostrar presupuesto
 AddSupplierProposal=Crear un presupuesto
@@ -32,9 +33,8 @@ SupplierProposalStatusValidatedShort=Validado
 SupplierProposalStatusClosedShort=Cerrado
 SupplierProposalStatusSignedShort=Aceptado
 SupplierProposalStatusNotSignedShort=Rechazado
-CopyAskFrom=Crear presupuesto por copia de uno existente
+CopyAskFrom=Crear presupuesto copiando uno existente
 CreateEmptyAsk=Crear un presupuesto en blanco
-CloneAsk=Clonar presupuesto
 ConfirmCloneAsk=¿Está seguro de querer clonar el presupuesto <b>%s</b>?
 ConfirmReOpenAsk=¿Está seguro de querer reabrir el presupuesto <b>%s</b>?
 SendAskByMail=Envío presupuesto por e-mail

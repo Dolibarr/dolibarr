@@ -12,7 +12,8 @@ start WAMPROOT\bin\apache\apacheWAMPAPACHEVERSION\bin\httpd.exe -f conf\httpd.co
 echo 
 
 echo Running Mysql as user process (this process does not return so we use "start")
-start WAMPROOT\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --defaults-file=WAMPROOT\bin\mysql\mysqlWAMPMYSQLVERSION\my.ini --console
+REM start WAMPROOT\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --defaults-file=WAMPROOT\bin\mysql\mysqlWAMPMYSQLVERSION\my.ini --console
 REM start WAMPROOT\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld.exe --defaults-file=WAMPROOT\bin\mysql\mysqlWAMPMYSQLVERSION\my.ini --console
+start WAMPROOT\bin\mariadb\mariadbWAMPMYSQLVERSION\bin\mysqld.exe --defaults-file=WAMPROOT\bin\mariadb\mariadbWAMPMYSQLVERSION\my.ini --console
 
 pause

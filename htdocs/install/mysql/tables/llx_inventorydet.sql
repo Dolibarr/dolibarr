@@ -13,24 +13,22 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 CREATE TABLE llx_inventorydet 
 ( 
-rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-datec datetime DEFAULT NULL,
-tms timestamp, 
-fk_inventory integer DEFAULT 0, 
-fk_warehouse integer DEFAULT 0,
-fk_product integer DEFAULT 0,  
-batch varchar(30) DEFAULT NULL,	 -- Lot or serial number
-qty_view double DEFAULT NULL, 	     -- must be filled once regulation is done
-qty_stock double DEFAULT NULL,   -- can be filled during draft edition
-qty_regulated double DEFAULT NULL,  -- must be filled once regulation is done
-pmp double DEFAULT 0, 
-pa double DEFAULT 0, 
-new_pmp double DEFAULT 0
+	rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+	datec datetime DEFAULT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+	fk_inventory integer DEFAULT 0, 
+	fk_warehouse integer DEFAULT 0,
+	fk_product integer DEFAULT 0,  
+	batch varchar(128) DEFAULT NULL,   -- Lot or serial number
+	qty_stock double DEFAULT NULL,     -- Value or real stock we have, when we start the inventory (may be updated during intermediary steps).
+	qty_view double DEFAULT NULL, 	   -- Quantity found during inventory. It is the targeted value, filled during edition of inventory.
+	qty_regulated double DEFAULT NULL, -- Never used. Deprecated because we already have the fk_movement now.
+	fk_movement integer NULL           -- can contain the id of stock movement we recorded to make the inventory regulation of this line
 ) 
-ENGINE=InnoDB;
+ENGINE=innodb;

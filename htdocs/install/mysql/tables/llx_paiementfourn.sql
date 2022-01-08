@@ -13,25 +13,26 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 create table llx_paiementfourn
 (
-  rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  ref				varchar(30),
-  entity			integer DEFAULT 1,
-  tms               timestamp,
-  datec             datetime,          -- date de creation de l'enregistrement
-  datep             datetime,          -- date de paiement
-  amount            real DEFAULT 0,    -- montant
-  multicurrency_amount double(24,8) DEFAULT 0,    -- multicurrency amount
-  fk_user_author    integer,           -- auteur
-  fk_paiement       integer NOT NULL,  -- moyen de paiement
-  num_paiement      varchar(50),       -- numero de paiement (cheque)
-  note              text,
-  fk_bank           integer NOT NULL,
-  statut			smallint NOT NULL DEFAULT 0,
-  model_pdf         varchar(255)
+  rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  ref					varchar(30),
+  entity				integer DEFAULT 1,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  datec					datetime,          -- date de creation de l'enregistrement
+  datep					datetime,          -- date de paiement
+  amount				double(24,8) DEFAULT 0,    -- montant
+  multicurrency_amount	double(24,8) DEFAULT 0,    -- multicurrency amount
+  fk_user_author		integer,           -- auteur
+  fk_user_modif 		integer,
+  fk_paiement			integer NOT NULL,  -- moyen de paiement
+  num_paiement			varchar(50),       -- numero de paiement (cheque)
+  note					text,
+  fk_bank				integer NOT NULL,
+  statut				smallint NOT NULL DEFAULT 0,
+  model_pdf				varchar(255)
 )ENGINE=innodb;

@@ -16,7 +16,12 @@ use Luracast\Restler\Scope;
  */
 class Explorer implements iProvideMultiVersionApi
 {
-    const SWAGGER_VERSION = '1.2';
+    const SWAGGER = '2.0';
+
+    /**
+     * @var array http schemes supported. http or https or both http and https
+     */
+    public static $schemes = array();
     /**
      * @var bool should protected resources be shown to unauthenticated users?
      */
@@ -70,17 +75,17 @@ class Explorer implements iProvideMultiVersionApi
      */
     public static $dataTypeAlias = array(
         //'string' => 'string',
-        'int' => 'integer',
-        'number' => 'number',
-        'float' => array('number', 'float'),
-        'bool' => 'boolean',
+        'int'      => 'integer',
+        'number'   => 'number',
+        'float'    => array('number', 'float'),
+        'bool'     => 'boolean',
         //'boolean' => 'boolean',
         //'NULL' => 'null',
-        'array' => 'array',
+        'array'    => 'array',
         //'object' => 'object',
         'stdClass' => 'object',
-        'mixed' => 'string',
-        'date' => array('string', 'date'),
+        'mixed'    => 'string',
+        'date'     => array('string', 'date'),
         'datetime' => array('string', 'date-time'),
     );
 
@@ -89,9 +94,9 @@ class Explorer implements iProvideMultiVersionApi
      * protected api
      */
     public static $apiDescriptionSuffixSymbols = array(
-        0 => '&nbsp; <i class="fa fa-lg fa-unlock-alt"></i>', //public api
-        1 => '&nbsp; <i class="fa fa-lg fa-adjust"></i>', //hybrid api
-        2 => '&nbsp; <i class="fa fa-lg fa-lock"></i>', //protected api
+        0 => ' 🔓', //'&nbsp; <i class="fa fa-lg fa-unlock-alt"></i>', //public api
+        1 => ' ◑', //'&nbsp; <i class="fa fa-lg fa-adjust"></i>', //hybrid api
+        2 => ' 🔐', //'&nbsp; <i class="fa fa-lg fa-lock"></i>', //protected api
     );
 
     protected $models = array();
@@ -100,27 +105,23 @@ class Explorer implements iProvideMultiVersionApi
      */
     protected $_fullDataRequested = false;
     protected $crud = array(
-        'POST' => 'create',
-        'GET' => 'retrieve',
-        'PUT' => 'update',
+        'POST'   => 'create',
+        'GET'    => 'retrieve',
+        'PUT'    => 'update',
         'DELETE' => 'delete',
-        'PATCH' => 'partial update'
+        'PATCH'  => 'partial update'
     );
     protected static $prefixes = array(
-        'get' => 'retrieve',
-        'index' => 'list',
-        'post' => 'create',
-        'put' => 'update',
-        'patch' => 'modify',
+        'get'    => 'retrieve',
+        'index'  => 'list',
+        'post'   => 'create',
+        'put'    => 'update',
+        'patch'  => 'modify',
         'delete' => 'remove',
     );
     protected $_authenticated = false;
     protected $cacheName = '';
 
-    public function __construct()
-    {
-
-    }
 
     /**
      * Serve static files for exploring
@@ -131,7 +132,7 @@ class Explorer implements iProvideMultiVersionApi
      */
     public function get()
     {
-        if (func_num_args() > 1 && func_get_arg(0) == 'resources') {
+        if (func_num_args() > 1 && func_get_arg(0) == 'swagger') {
             /**
              * BUGFIX:
              * If we use common resourcePath (e.g. $r->addAPIClass([api-class], 'api/shop')), than we must determine resource-ID of e.g. 'api/shop'!
@@ -141,6 +142,7 @@ class Explorer implements iProvideMultiVersionApi
             array_shift($arguments);
             // create ID
             $id = implode('/', $arguments);
+
             return $this->getResources($id);
         }
         $filename = implode('/', func_get_args());
@@ -161,125 +163,75 @@ class Explorer implements iProvideMultiVersionApi
         ) {
             $filename .= '.js';
         }
-        PassThrough::file(__DIR__ . '/explorer/' . (empty($filename) ? 'index.html' : $filename), false, 0); //60 * 60 * 24);
+        PassThrough::file(__DIR__ . '/explorer/' . (empty($filename) ? 'index.html' : $filename), false,
+            0); //60 * 60 * 24);
     }
 
-    public function resources()
+    /**
+     * @return stdClass
+     */
+    public function swagger()
     {
         $r = new stdClass();
-        $r->apiVersion = (string)$this->restler->getRequestedApiVersion();
-        $r->swaggerVersion = static::SWAGGER_VERSION;
-        $r->apis = $this->apis($r->apiVersion);
-        $r->authorizations = $this->authorizations();
-        $r->info = array_filter(get_class_vars(static::$infoClass));
-        return $r;
-    }
+        $version = (string)$this->restler->getRequestedApiVersion();
+        $r->swagger = static::SWAGGER;
 
-    public function getResources($id)
-    {
-        $r = new stdClass();
-        $r->apiVersion = (string)$this->restler->getRequestedApiVersion();
-        $r->swaggerVersion = static::SWAGGER_VERSION;
-        $r->basePath = $this->restler->getBaseUrl();
-        $r->resourcePath = "/$id";
-
-        $r->apis = $this->apis($r->apiVersion, $id);
-        $r->models = (object)$this->models;
+        $info = parse_url($this->restler->getBaseUrl());
+        $r->host = $info['host'];
+        if (isset($info['port'])) {
+            $r->host .= ':' . $info['port'];
+        }
+        $r->basePath = isset($info['path']) ?  $info['path'] : '';
+        if (!empty(static::$schemes)) {
+            $r->schemes = static::$schemes;
+        }
 
         $r->produces = $this->restler->getWritableMimeTypes();
         $r->consumes = $this->restler->getReadableMimeTypes();
-        $r->authorizations = $this->authorizations();
+
+        $r->paths = $this->paths($version);
+        $r->definitions = (object)$this->models;
+        $r->securityDefinitions = $this->securityDefinitions();
+        $r->info = compact('version') + array_filter(get_class_vars(static::$infoClass));
+
         return $r;
     }
 
-    private function apis($version = 1, $resource = false)
+    private function paths($version = 1)
     {
         $map = Routes::findAll(static::$excludedPaths + array($this->base()), static::$excludedHttpMethods, $version);
-        $r = array();
-        $a = array();
+        $paths = array();
         foreach ($map as $path => $data) {
-            $route = $data[0]['route'];
             $access = $data[0]['access'];
-            if ($access && !Text::contains($path, '{')) {
-                $r[] = array(
-                    'path' => empty($path) ? '/root' : "/$path",
-                    //'description' => ''
-                    //TODO: Util::nestedValue($route, 'metadata', 'classDescription') ? : ''
-                );
-            }
-            if (static::$hideProtected && !$access)
+            if (static::$hideProtected && !$access) {
                 continue;
-            $grouper = array();
+            }
             foreach ($data as $item) {
                 $route = $item['route'];
                 $access = $item['access'];
-                if (static::$hideProtected && !$access)
+                if (static::$hideProtected && !$access) {
                     continue;
+                }
                 $url = $route['url'];
-                if (isset($grouper[$url])) {
-                    $grouper[$url]['operations'][] = $this->operation($route);
-                } else {
-                    $api = array(
-                        'path' => "/$url",
-                        'description' =>
-                            Util::nestedValue($route, 'metadata', 'classDescription') ? : '',
-                        'operations' => array($this->operation($route))
-                    );
-                    static::$groupOperations
-                        ? $grouper[$url] = $api
-                        : $a[$path][] = $api;
-                }
+                $paths["/$url"][strtolower($route['httpMethod'])] = $this->operation($route);
             }
-            if (!empty($grouper)) {
-                $a[$path] = array_values($grouper);
-                // sort REST-endpoints by path
-                foreach ($a as & $b) {
-                    usort(
-                        $b,
-                        function ($x, $y) {
-                            return $x['path'] > $y['path'];
-                        }
-                    );
-                }
-            } else {
-                $order = array(
-                    'GET' => 1,
-                    'POST' => 2,
-                    'PUT' => 3,
-                    'PATCH' => 4,
-                    'DELETE' => 5
-                );
-                foreach ($a as & $b) {
-                    usort(
-                        $b,
-                        function ($x, $y) use ($order) {
-                            return
-                                $x['operations'][0]->method ==
-                                $y['operations'][0]->method
-                                    ? $x['path'] > $y['path']
-                                    : $order[$x['operations'][0]->method] >
-                                    $order[$y['operations'][0]->method];
+        }
 
-                        }
-                    );
-                }
-            }
-        }
-        if (false !== $resource) {
-            if ($resource == 'root') $resource = '';
-            if (isset($a[$resource])) return $a[$resource];
-        }
-        return $r;
+        return $paths;
     }
 
     private function operation($route)
     {
         $r = new stdClass();
-        $r->method = $route['httpMethod'];
-        $r->nickname = $this->nickname($route);
+        $m = $route['metadata'];
+        $r->operationId = $this->operationId($route);
+        $base = strtok($route['url'], '/');
+        if (empty($base)) {
+            $base = 'root';
+        }
+        $r->tags = array($base);
         $r->parameters = $this->parameters($route);
 
-        $m = $route['metadata'];
 
         $r->summary = isset($m['description'])
             ? $m['description']
@@ -287,13 +239,18 @@ class Explorer implements iProvideMultiVersionApi
         $r->summary .= $route['accessLevel'] > 2
             ? static::$apiDescriptionSuffixSymbols[2]
             : static::$apiDescriptionSuffixSymbols[$route['accessLevel']];
-        $r->notes = isset($m['longDescription'])
+        $r->description = isset($m['longDescription'])
             ? $m['longDescription']
             : '';
-        $r->responseMessages = $this->responseMessages($route);
+        $r->responses = $this->responses($route);
+        //TODO: avoid hard coding. Properly detect security
+        if ($route['accessLevel']) {
+            $r->security = array(array('api_key' => array()));
+        }
+        /*
         $this->setType(
             $r,
-            new ValidationInfo(Util::nestedValue($m, 'return') ? : array())
+            new ValidationInfo(Util::nestedValue($m, 'return') ?: array())
         );
         if (is_null($r->type) || 'mixed' == $r->type) {
             $r->type = 'array';
@@ -302,7 +259,7 @@ class Explorer implements iProvideMultiVersionApi
         } elseif (Text::contains($r->type, '|')) {
             $r->type = 'array';
         }
-
+        */
         //TODO: add $r->authorizations
         //A list of authorizations required to execute this operation. While not mandatory, if used, it overrides
         //the value given at the API Declaration's authorizations. In order to completely remove API Declaration's
@@ -324,8 +281,9 @@ class Explorer implements iProvideMultiVersionApi
             $info = new ValidationInfo($param);
             $description = isset($param['description']) ? $param['description'] : '';
             if ('body' == $info->from) {
-                if ($info->required)
+                if ($info->required) {
                     $required = true;
+                }
                 $param['description'] = $description;
                 $children[] = $param;
             } else {
@@ -341,31 +299,31 @@ class Explorer implements iProvideMultiVersionApi
                 if (empty($firstChild['children'])) {
                     $description = $firstChild['description'];
                 } else {
-                    $description = '<section class="body-param">';
+                    $description = ''; //'<section class="body-param">';
                     foreach ($firstChild['children'] as $child) {
                         $description .= isset($child['required']) && $child['required']
-                            ? '<strong>' . $child['name'] . '</strong> (required)<br/>'
-                            : $child['name'] . '<br/>';
+                            ? '**' . $child['name'] . '** (required)  '.PHP_EOL
+                            : $child['name'] . '  '.PHP_EOL;
                     }
-                    $description .= '</section>';
+                    //$description .= '</section>';
                 }
                 $r[] = $this->parameter(new ValidationInfo($firstChild), $description);
             } else {
-                $description = '<section class="body-param">';
+                $description = ''; //'<section class="body-param">';
                 foreach ($children as $child) {
-                    $description .= isset($child['required'])  && $child['required']
-                        ? '<strong>' . $child['name'] . '</strong> (required)<br/>'
-                        : $child['name'] . '<br/>';
+                    $description .= isset($child['required']) && $child['required']
+                        ? '**' . $child['name'] . '** (required)  '.PHP_EOL
+                        : $child['name'] . '  '.PHP_EOL;
                 }
-                $description .= '</section>';
+                //$description .= '</section>';
 
                 //lets group all body parameters under a generated model name
-                $name = $this->nameModel($route);
+                $name = $this->modelName($route);
                 $r[] = $this->parameter(
                     new ValidationInfo(array(
-                        'name' => $name,
-                        'type' => $name,
-                        'from' => 'body',
+                        'name'     => $name,
+                        'type'     => $name,
+                        'from'     => 'body',
                         'required' => $required,
                         'children' => $children
                     )),
@@ -373,196 +331,224 @@ class Explorer implements iProvideMultiVersionApi
                 );
             }
         }
+
         return $r;
     }
 
     private function parameter(ValidationInfo $info, $description = '')
     {
         $p = new stdClass();
-        if(isset($info->rules['model'])){
-            $info->type = $info->rules['model'];
+        if (isset($info->rules['model'])) {
+            //$info->type = $info->rules['model'];
         }
         $p->name = $info->name;
         $this->setType($p, $info);
         if (empty($info->children) || $info->type != 'array') {
             //primitives
-            if ($info->default)
+            if ($info->default) {
                 $p->defaultValue = $info->default;
-            if ($info->choice)
+            }
+            if ($info->choice) {
                 $p->enum = $info->choice;
-            if ($info->min)
+            }
+            if ($info->min) {
                 $p->minimum = $info->min;
-            if ($info->max)
+            }
+            if ($info->max) {
                 $p->maximum = $info->max;
+            }
             //TODO: $p->items and $p->uniqueItems boolean
         }
         $p->description = $description;
-        $p->paramType = $info->from; //$info->from == 'body' ? 'form' : $info->from;
+        $p->in = $info->from; //$info->from == 'body' ? 'form' : $info->from;
         $p->required = $info->required;
-        $p->allowMultiple = false;
+
+        //$p->allowMultiple = false;
+
+        if (isset($p->{'$ref'})) {
+            $p->schema = (object)array('$ref' => ($p->{'$ref'}));
+            unset($p->{'$ref'});
+        }
+
         return $p;
     }
 
-    private function responseMessages(array $route)
+    private function responses(array $route)
     {
-        $r = array();
+        $code = '200';
+        $r = array(
+            $code => (object)array(
+                'description' => 'Success',
+                'schema'      => new stdClass()
+            )
+        );
+        $return = Util::nestedValue($route, 'metadata', 'return');
+        if (!empty($return)) {
+            $this->setType($r[$code]->schema, new ValidationInfo($return));
+        }
+
         if (is_array($throws = Util::nestedValue($route, 'metadata', 'throws'))) {
             foreach ($throws as $message) {
-                $m = (object)$message;
-                //TODO: add $m->responseModel from composer class
-                $r[] = $m;
+                $r[$message['code']] = array('description' => $message['message']);
             }
         }
+
         return $r;
     }
 
     private function model($type, array $children)
     {
-        /**
-         * Bugfix:
-         * If we use namespaces, than the model will not be correct, if we use a short name for the type!
-         *
-         * Example (phpDoc/annotations in API-class, which uses custom domain-model with namespace):
-         * @param Car $car {@from body} {@type Aoe\RestServices\Domain\Model\Car}
-         * @return Car {@type Aoe\RestServices\Domain\Model\Car}
-         * Than, the model (in swagger-spec) must also be 'Aoe\RestServices\Domain\Model\Car' and not 'Car'
-         *
-         * When we use namespaces, than we must use the @type-annotation, otherwise the automatic reconstitution
-         * from request-data (e.g. when it is a POST-request) to custom domain-model-object will not work!
-         *
-         * Summary:
-         * - When we use no namespaces, than the type would not be changed, if we would call 'Util::getShortName'
-         * - When we use namespaces, than the model will not be correct, if we would call 'Util::getShortName'
-         * ...so this method-call is either needless or will create a bug/error
-         */
-        //$type = Util::getShortName($type);
-        if (isset($this->models[$type]))
+        if (isset($this->models[$type])) {
             return $this->models[$type];
+        }
         $r = new stdClass();
-        $r->id = $type;
-        $r->description = "$type Model"; //TODO: enhance this on Router
-        $r->required = array();
         $r->properties = array();
+        $required = array();
         foreach ($children as $child) {
             $info = new ValidationInfo($child);
             $p = new stdClass();
             $this->setType($p, $info);
             $p->description = isset($child['description']) ? $child['description'] : '';
-            if ($info->default)
+            if ($info->default) {
                 $p->defaultValue = $info->default;
-            if ($info->choice)
+            }
+            if ($info->choice) {
                 $p->enum = $info->choice;
-            if ($info->min)
+            }
+            if ($info->min) {
                 $p->minimum = $info->min;
-            if ($info->max)
+            }
+            if ($info->max) {
                 $p->maximum = $info->max;
-            if ($info->required)
-                $r->required[] = $info->name;
+            }
+            if ($info->required) {
+                $required[] = $info->name;
+            }
             $r->properties[$info->name] = $p;
+        }
+        if (!empty($required)) {
+            $r->required = $required;
         }
         //TODO: add $r->subTypes https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#527-model-object
         //TODO: add $r->discriminator https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md#527-model-object
         $this->models[$type] = $r;
+
         return $r;
     }
 
     private function setType(&$object, ValidationInfo $info)
     {
         //TODO: proper type management
+        $type = Util::getShortName($info->type);
         if ($info->type == 'array') {
+            $object->type = 'array';
             if ($info->children) {
-                $this->model($info->contentType, $info->children);
+                $contentType = Util::getShortName($info->contentType);
+                $model = $this->model($contentType, $info->children);
                 $object->items = (object)array(
-                    '$ref' => $info->contentType
+                    '$ref' => "#/definitions/$contentType"
                 );
             } elseif ($info->contentType && $info->contentType == 'associative') {
                 unset($info->contentType);
                 $this->model($info->type = 'Object', array(
                     array(
-                        'name' => 'property',
-                        'type' => 'string',
-                        'default' => '',
-                        'required' => false,
+                        'name'        => 'property',
+                        'type'        => 'string',
+                        'default'     => '',
+                        'required'    => false,
                         'description' => ''
                     )
                 ));
             } elseif ($info->contentType && $info->contentType != 'indexed') {
-                $object->items = (object)array(
-                    'type' => $info->contentType
-                );
+                if (is_string($info->contentType) && $t = Util::nestedValue(static::$dataTypeAlias,
+                        strtolower($info->contentType))) {
+                    if (is_array($t)) {
+                        $object->items = (object)array(
+                            'type'   => $t[0],
+                            'format' => $t[1],
+                        );
+                    } else {
+                        $object->items = (object)array(
+                            'type' => $t,
+                        );
+                    }
+                } else {
+                    $contentType = Util::getShortName($info->contentType);
+                    $object->items = (object)array(
+                        '$ref' => "#/definitions/$contentType"
+                    );
+                }
             } else {
                 $object->items = (object)array(
                     'type' => 'string'
                 );
             }
         } elseif ($info->children) {
-            $this->model($info->type, $info->children);
+            $this->model($type, $info->children);
+            $object->{'$ref'} = "#/definitions/$type";
         } elseif (is_string($info->type) && $t = Util::nestedValue(static::$dataTypeAlias, strtolower($info->type))) {
             if (is_array($t)) {
-                list($info->type, $object->format) = $t;
+                $object->type = $t[0];
+                $object->format = $t[1];
             } else {
-                $info->type = $t;
+                $object->type = $t;
             }
         } else {
-            $info->type = 'string';
+            $object->type = 'string';
         }
-        $object->type = $info->type;
         $has64bit = PHP_INT_MAX > 2147483647;
-        if ($object->type == 'integer') {
-            $object->format = $has64bit
-                ? 'int64'
-                : 'int32';
-        } elseif ($object->type == 'number') {
-            $object->format = $has64bit
-                ? 'double'
-                : 'float';
+        if (isset($object->type)) {
+            if ($object->type == 'integer') {
+                $object->format = $has64bit
+                    ? 'int64'
+                    : 'int32';
+            } elseif ($object->type == 'number') {
+                $object->format = $has64bit
+                    ? 'double'
+                    : 'float';
+            }
         }
     }
 
-    private function nickname(array $route)
+    private function operationId(array $route)
     {
         static $hash = array();
+        $id = $route['httpMethod'] . ' ' . $route['url'];
+        if (isset($hash[$id])) {
+            return $hash[$id];
+        }
+        $class = Util::getShortName($route['className']);
         $method = $route['methodName'];
+
         if (isset(static::$prefixes[$method])) {
-            $method = static::$prefixes[$method];
+            $method = static::$prefixes[$method] . $class;
         } else {
             $method = str_replace(
                 array_keys(static::$prefixes),
                 array_values(static::$prefixes),
                 $method
             );
+            $method = lcfirst($class) . ucfirst($method);
         }
-        while (isset($hash[$method]) && $route['url'] != $hash[$method]) {
-            //create another one
-            $method .= '_';
-        }
-        $hash[$method] = $route['url'];
+        $hash[$id] = $method;
+
         return $method;
     }
 
-    private function nameModel(array $route)
+    private function modelName(array $route)
     {
-        static $hash = array();
-        $count = 1;
-        //$name = str_replace('/', '-', $route['url']) . 'Model';
-        $name = $route['className'] . 'Model';
-        while (isset($hash[$name . $count])) {
-            //create another one
-            $count++;
-        }
-        $name .= $count;
-        $hash[$name] = $route['url'];
-        return $name;
+        return $this->operationId($route) . 'Model';
     }
 
-    private function authorizations()
+    private function securityDefinitions()
     {
         $r = new stdClass();
-        $r->apiKey = (object)array(
+        $r->api_key = (object)array(
             'type' => 'apiKey',
-            'passAs' => 'query',
-            'keyname' => 'api_key',
+            'name' => 'api_key',
+            'in'   => 'query',
         );
+
         return $r;
     }
 
