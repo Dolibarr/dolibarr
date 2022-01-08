@@ -156,6 +156,9 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
+		$this->localtax1 = array();
+		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 	}
