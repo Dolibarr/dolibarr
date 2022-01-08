@@ -174,6 +174,7 @@ class pdf_standard extends ModelePDFStock
 			$this->postotalht -= 20;
 		}
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
