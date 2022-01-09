@@ -2395,17 +2395,22 @@ if ($action == 'create') {
 
 		$productstatic = new Product($db);
 
-		$object->fetch($id, $ref);
-		$result = $object->fetch_thirdparty();
-		if ($result < 0) {
-			dol_print_error($db);
+		$result = $object->fetch($id, $ref);
+		if ($result <= 0) {
+			$langs->load("errors");
+			print $langs->trans("ErrorRecordNotFound");
+			llxFooter();
+			$db->close();
+			exit;
 		}
 
-		$societe = new Fournisseur($db);
-		$result = $societe->fetch($object->socid);
+		$result = $object->fetch_thirdparty();
 		if ($result < 0) {
-			dol_print_error($db);
+			dol_print_error($db, $object->error, $object->errors);
+			exit;
 		}
+
+		$societe = $object->thirdparty;
 
 		$totalpaye = $object->getSommePaiement();
 		$totalcreditnotes = $object->getSumCreditNotesUsed();
