@@ -377,27 +377,27 @@ class Recruitment extends DolibarrApi
 	*
 	* @url	POST candidature/
 	*/
-   public function postCandidature($request_data = null)
-   {
-	   if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->write) {
-		   throw new RestException(401);
-	   }
+	public function postCandidature($request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->recruitment->recruitmentjobposition->write) {
+			throw new RestException(401);
+		}
 
-	   // Check mandatory fields
-	   $result = $this->_validate($request_data);
+		// Check mandatory fields
+		$result = $this->_validate($request_data);
 
-	   foreach ($request_data as $field => $value) {
-		   $this->jobposition->$field = $this->_checkValForAPI($field, $value, $this->jobposition);
-	   }
+		foreach ($request_data as $field => $value) {
+			$this->jobposition->$field = $this->_checkValForAPI($field, $value, $this->jobposition);
+		}
 
-	   // Clean data
-	   // $this->jobposition->abc = checkVal($this->jobposition->abc, 'alphanohtml');
+		// Clean data
+		// $this->jobposition->abc = checkVal($this->jobposition->abc, 'alphanohtml');
 
-	   if ($this->candidature->create(DolibarrApiAccess::$user)<0) {
-		   throw new RestException(500, "Error creating candidature", array_merge(array($this->candidature->error), $this->candidature->errors));
-	   }
-	   return $this->candidature->id;
-   }
+		if ($this->candidature->create(DolibarrApiAccess::$user)<0) {
+			throw new RestException(500, "Error creating candidature", array_merge(array($this->candidature->error), $this->candidature->errors));
+		}
+		return $this->candidature->id;
+	}
 
 	/**
 	 * Update jobposition
