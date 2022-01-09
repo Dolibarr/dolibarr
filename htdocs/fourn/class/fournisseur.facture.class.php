@@ -2418,19 +2418,20 @@ class FactureFournisseur extends CommonInvoice
 		// phpcs:enable
 		global $conf, $langs;
 
-		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
+		$clause = " WHERE";
+
+		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut, ff.total_ht';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc";
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
+			$clause = " AND";
 		}
-		$sql .= ' WHERE ff.paye=0';
+		$sql .= $clause.' ff.paye=0';
 		$sql .= ' AND ff.fk_statut = '.self::STATUS_VALIDATED;
 		$sql .= " AND ff.entity = ".$conf->entity;
 		if ($user->socid) {
 			$sql .= ' AND ff.fk_soc = '.((int) $user->socid);
-		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -2449,16 +2450,18 @@ class FactureFournisseur extends CommonInvoice
 			$facturestatic = new FactureFournisseur($this->db);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
 				$facturestatic->date_echeance = $this->db->jdate($obj->datefin);
 				$facturestatic->statut = $obj->fk_statut;
+
+				$response->nbtodo++;
+				$response->total += $obj->total_ht;
 
 				if ($facturestatic->hasDelay()) {
 					$response->nbtodolate++;
 					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?search_option=late&mainmenu=billing&leftmenu=suppliers_bills';
 				}
 			}
+
 			$this->db->free($resql);
 			return $response;
 		} else {

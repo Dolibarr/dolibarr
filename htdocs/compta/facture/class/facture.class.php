@@ -4263,10 +4263,10 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total_ht";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin, f.fk_statut, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
+			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
 		}
@@ -4304,6 +4304,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
+			$this->db->free($resql);
 			return $response;
 		} else {
 			dol_print_error($this->db);
