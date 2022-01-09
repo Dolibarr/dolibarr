@@ -65,6 +65,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
 $massaction = GETPOST('massaction', 'alpha');
+$optioncss = GETPOST('optioncss', 'aZ09');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -268,7 +269,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	}
 
 	if (!$error) {
-		$param = 'action=reconcile&contextpage=banktransactionlist&id='.$id.'&search_account='.$id;
+		$param = 'action=reconcile&contextpage=banktransactionlist&id='.((int) $id).'&search_account='.((int) $id);
 		if ($page) {
 			$param .= '&page='.urlencode($page);
 		}
@@ -452,7 +453,7 @@ if (!empty($search_debit)) {
 if (!empty($search_credit)) {
 	$param .= '&search_credit='.urlencode($search_credit);
 }
-if (!empty($search_account)) {
+if ($search_account > 0) {
 	$param .= '&search_account='.urlencode($search_account);
 }
 if (!empty($search_num_releve)) {
@@ -767,7 +768,7 @@ if ($resql) {
 	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="'.($action ? $action : 'search').'">';
+	print '<input type="hidden" name="action" value="'.($action != 'delete' ? $action : 'search').'">';
 	if (!empty($view)) {
 		print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	}
@@ -777,7 +778,7 @@ if ($resql) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
 	if (GETPOST('bid')) {
-		print '<input type="hidden" name="bid" value="'.GETPOST("bid").'">';
+		print '<input type="hidden" name="bid" value="'.GETPOST("bid", 'int').'">';
 	}
 
 	// Form to reconcile
@@ -1101,8 +1102,7 @@ if ($resql) {
 		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
 		print '</td>';
 	}
-	print '<td class="liste_titre" align="middle">';
-	print '</td>';
+	// Actions and select
 	print '<td class="liste_titre" align="middle">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
@@ -1159,7 +1159,7 @@ if ($resql) {
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'class="right"', $sortfield, $sortorder, 'maxwidthsearch ');
+	// Actions and select
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -1278,7 +1278,7 @@ if ($resql) {
 							</script>';
 					print '</td>';
 				}
-				print '<td colspan="'.($tmpnbfieldafterbalance + 2).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance + 1).'">';
 				print '&nbsp;';
 				print '</td>';
 				print '</tr>';
@@ -1663,20 +1663,20 @@ if ($resql) {
 			}
 		}
 
-		// Action edit/delete
+		// Action edit/delete and select
 		print '<td class="nowraponall" align="center">';
 		// Transaction reconciliated or edit link
 		if ($objp->conciliated && $bankaccount->canBeConciliated() > 0) {  // If line not conciliated and account can be conciliated
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 			print img_edit();
 			print '</a>';
 		} else {
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 				print img_edit();
 				print '</a>';
 			} else {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 				print img_view();
 				print '</a>';
 			}
@@ -1686,24 +1686,19 @@ if ($resql) {
 				}
 			}
 			if ($user->rights->banque->modifier) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&id='.$objp->bankid.'&page='.$page.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';
 			}
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
 
 		// Action column
-		print '<td class="nowrap" align="center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($obj->rowid, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {

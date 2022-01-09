@@ -290,7 +290,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$conf->global->USER_PASSWORD_GENERATED = 'standard';
 
 		$localobject->error = '';
-		$result = $localobject->setPassword($user, '12345678901');
+		$result = $localobject->setPassword($user, '123456789AA');
 		print __METHOD__." set a too small password with USER_PASSWORD_GENERATED = standard\n";
 		print __METHOD__." localobject->error=".$localobject->error."\n";
 		$this->assertEquals(-1, $result, 'We must receive a negative error code (pass too small) and we did not here');
@@ -301,7 +301,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$conf->global->USER_PASSWORD_PATTERN = '12;2;2;2;3;1';
 
 		$localobject->error = '';
-		$result = $localobject->setPassword($user, '12345678901');
+		$result = $localobject->setPassword($user, '1234567892BB');
 		print __METHOD__." set a too small password with USER_PASSWORD_GENERATED = perso\n";
 		print __METHOD__." localobject->error=".$localobject->error."\n";
 		$this->assertEquals(-1, $result, 'We must receive a negative error code (pass too small) and we did not here');
@@ -321,10 +321,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(-1, $result, 'We must receive a negative error code (pass without enough uppercase) and we did not here');
 
 		$localobject->error = '';
-		$result = $localobject->setPassword($user, '$*34567890AB');
+		$result = $localobject->setPassword($user, '$*34567890CD');
 		print __METHOD__." set a password with enough uppercase\n";
 		print __METHOD__." localobject->error=".$localobject->error."\n";
-		$this->assertEquals('$*34567890AB', $result, 'We must get the password as it is valid (pass with enough uppercase) and we did not here');
+		$this->assertEquals('$*34567890CD', $result, 'We must get the password as it is valid (pass with enough uppercase) and we did not here');
 
 		// Test digits : $chartofound = "!@#$%&*()_-+={}[]\\|:;'/";
 

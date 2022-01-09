@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1154,6 +1154,24 @@ while ($i < min($num, $limit)) {
 	$userstatic->photo = $objp->photo;
 	$userstatic->email = $objp->user_email;
 	$userstatic->statut = $objp->user_status;
+
+	// Multilangs
+	if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+		// TODO Use a cache
+		$sql = "SELECT label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+		$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+		$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
+		$sql .= " LIMIT 1";
+
+		$result = $db->query($sql);
+		if ($result) {
+			$objtp = $db->fetch_object($result);
+			if (!empty($objtp->label)) {
+				$objp->produit = $objtp->label;
+			}
+		}
+	}
 
 	$productstatic->id = $objp->rowid;
 	$productstatic->ref = $objp->product_ref;

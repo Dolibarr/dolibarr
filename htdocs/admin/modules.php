@@ -540,7 +540,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
+	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
 	$moreforfilter .= '</div>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 		$array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
@@ -563,7 +563,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
-	if ($search_keyword || $search_status || $search_nature || $search_version) {
+	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
 		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
 	}

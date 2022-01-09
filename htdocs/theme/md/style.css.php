@@ -417,7 +417,7 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	font-family: <?php print $fontlist ?>;
 	border: none;
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px rgba(0,0,0,.2);
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	outline: none;
 	margin: 0px 0px 0px 0px;
 }
@@ -465,10 +465,10 @@ input.short {
 
 textarea {
 	border-radius: 0;
-	border-top:solid 1px rgba(0,0,0,.1);
-	border-left:solid 1px rgba(0,0,0,.1);
-	border-right:solid 1px rgba(0,0,0,.1);
-	border-bottom:solid 1px rgba(0,0,0,.2);
+	border-top:solid 1px var(--inputbordercolor);
+	border-left:solid 1px var(--inputbordercolor);
+	border-right:solid 1px var(--inputbordercolor);
+	border-bottom:solid 1px var(--inputbordercolor);
 
 	background-color: #FFF;
 	padding:4px;
@@ -590,7 +590,7 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
-td.amount, span.amount, div.amount {
+td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
 }
 td.actionbuttons a {
@@ -849,10 +849,10 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1) translate(2px, 0);
+	transform: scaleX(-1) translate(<?php print ($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, 2px);
+	transform: rotate(90deg) translate(0, <?php print ($left == 'left' ? '' : '-'); ?>2px);
 }
 .center {
 	text-align: center;
@@ -1712,6 +1712,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: 95%;
 	}
 
+	div.tabs div.tab a.tab  {
+		max-width: 200px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	
 	select {
 		padding-top: 4px;
 		padding-bottom: 5px;
@@ -3612,8 +3619,10 @@ tr.liste_titre_filter td.liste_titre {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 	padding: 8px 6px 8px 6px;			/* t r b l */
 }
-table.noborder td, div.noborder form, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
+
+table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 6px 4px 6px;			/* t r b l */
+	height: 22px;
 }
 form.tagtable {
 	padding: unset !important;
@@ -5903,6 +5912,7 @@ a span.select2-chosen
 }
 .select2-results__option {
 	word-break: break-word;
+	text-align: <?php echo $left; ?>;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
@@ -6098,6 +6108,9 @@ span.noborderoncategories {
 	clear: both;
 	float: left;
 	padding-left: 5px
+}
+label.multi-select-menuitem {
+	line-height: 24px;
 }
 
 

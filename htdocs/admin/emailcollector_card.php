@@ -490,7 +490,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive-no-min">';
 	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
+	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
 	// Add filter
 	print '<tr class="oddeven nodrag nodrop">';
@@ -575,7 +575,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder margintable noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
+	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
 	print '</tr>';
 	// Add operation
 	print '<tr class="oddeven nodrag nodrop">';
@@ -583,17 +583,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$arrayoftypes = array(
 		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
 		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
-		'recordjoinpiece'=>$langs->trans('recordjoinpieceonobject'),
+		'recordjoinpiece'=>'AttachJoinedDocumentsToObject',
 		'recordevent'=>'RecordEvent');
+	$arrayoftypesnocondition = $arrayoftypes;
 	if ($conf->projet->enabled) {
 		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	}
+	$arrayoftypesnocondition['project'] = 'CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) {
 		$arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 	}
+	$arrayoftypesnocondition['ticket'] = 'CreateTicketAndThirdParty';
 	if ($conf->recruitment->enabled) {
 		$arrayoftypes['candidature'] = 'CreateCandidature';
 	}
+	$arrayoftypesnocondition['candidature'] = 'CreateCandidature';
 
 	// support hook for add action
 	$parameters = array('arrayoftypes' => $arrayoftypes);
@@ -629,7 +633,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
 		print '<!-- type of action: '.$ruleaction['type'].' -->';
-		print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		if (array_key_exists($ruleaction['type'], $arrayoftypes)) {
+			print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		} else {
+			if (array_key_exists($ruleaction['type'], $arrayoftypesnocondition)) {
+				print '<span class="opacitymedium">'.$langs->trans($arrayoftypesnocondition[$ruleaction['type']]).' - '.$langs->trans("Disabled").'</span>';
+			}
+		}
+
 		if (in_array($ruleaction['type'], array('recordevent'))) {
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
 		} elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {

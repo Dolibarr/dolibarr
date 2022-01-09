@@ -600,7 +600,7 @@ if ($id > 0) {
 			print '<input type="text" name="amount" size="12" class="flat" value="'.price($object->amount).'">';
 			print "</td></tr>";
 		} else {
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td><span class="amount">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 		}
 
 		// Mode of payment
@@ -741,8 +741,8 @@ if ($id > 0) {
 				print '</tr>';
 			}
 
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaye)."</td></tr>\n";
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaye)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->amount)."</td></tr>\n";
 
 			$resteapayer = $object->amount - $totalpaye;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';

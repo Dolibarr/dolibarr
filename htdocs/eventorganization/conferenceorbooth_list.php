@@ -31,9 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-if ($conf->categorie->enabled) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 global $dolibarr_main_url_root;
 
@@ -231,9 +229,9 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
+$title = $langs->trans('ListOfConferencesOrBooths');
 //$help_url="EN:Module_ConferenceOrBooth|FR:Module_ConferenceOrBooth_FR|ES:Módulo_ConferenceOrBooth";
 $help_url = '';
-$title = $langs->trans('ListOfConferencesOrBooths');
 
 if ($projectid > 0 || $projectref) {
 	$project = new Project($db);
@@ -302,34 +300,36 @@ if ($projectid > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	print '<tr><td class="tdtop">';
-	print $langs->trans("Usage");
-	print '</td>';
-	print '<td>';
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-		print '<input type="checkbox" disabled name="usage_opportunity"'.($project->usage_opportunity ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("ProjectFollowOpportunity");
-		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-		print '<br>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+		print '<tr><td class="tdtop">';
+		print $langs->trans("Usage");
+		print '</td>';
+		print '<td>';
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			print '<input type="checkbox" disabled name="usage_opportunity"'.($project->usage_opportunity ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("ProjectFollowOpportunity");
+			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			print '<input type="checkbox" disabled name="usage_task"'.($project->usage_task ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("ProjectFollowTasks");
+			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+			print '<input type="checkbox" disabled name="usage_bill_time"'.($project->usage_bill_time ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("ProjectBillTimeDescription");
+			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+			print '<br>';
+		}
+		if (!empty($conf->eventorganization->enabled)) {
+			print '<input type="checkbox" disabled name="usage_organize_event"'.($project->usage_organize_event ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+		}
+		print '</td></tr>';
 	}
-	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-		print '<input type="checkbox" disabled name="usage_task"'.($project->usage_task ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("ProjectFollowTasks");
-		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-		print '<br>';
-	}
-	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-		print '<input type="checkbox" disabled name="usage_bill_time"'.($project->usage_bill_time ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("ProjectBillTimeDescription");
-		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-		print '<br>';
-	}
-	if (!empty($conf->eventorganization->enabled)) {
-		print '<input type="checkbox" disabled name="usage_organize_event"'.($project->usage_organize_event ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
-		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
-	}
-	print '</td></tr>';
 
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -381,7 +381,7 @@ if ($projectid > 0) {
 
 	// Categories
 	if ($conf->categorie->enabled) {
-		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($project->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
 	}

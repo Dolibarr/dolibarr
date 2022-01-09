@@ -5292,103 +5292,14 @@ abstract class CommonObject
 					// Index file in database
 					if (!empty($obj->result['fullpath'])) {
 						$destfull = $obj->result['fullpath'];
-						$upload_dir = dirname($destfull);
-						$destfile = basename($destfull);
-						$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
 
-						if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a tmp dir
-							$filename = basename($destfile);
-							$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-							$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-
-							include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-							$ecmfile = new EcmFiles($this->db);
-							$result = $ecmfile->fetch(0, '', ($rel_dir ? $rel_dir.'/' : '').$filename);
-
-							 // Set the public "share" key
-							$setsharekey = false;
-							if ($this->element == 'propal') {
-								$useonlinesignature = 1; // Replace this with 1 when feature to make online signature is ok
-								if ($useonlinesignature) {
-									$setsharekey = true;
-								}
-								if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
-									$setsharekey = true;
-								}
-							}
-							if ($this->element == 'commande' && !empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
-								$setsharekey = true;
-							}
-							if ($this->element == 'facture' && !empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
-								$setsharekey = true;
-							}
-							if ($this->element == 'bank_account' && !empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
-								$setsharekey = true;
-							}
-							if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
-								$setsharekey = true;
-							}
-							if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
-								$setsharekey = true;
-							}
-
-							if ($setsharekey) {
-								if (empty($ecmfile->share)) {	// Because object not found or share not set yet
-									require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-									$ecmfile->share = getRandomPassword(true);
-								}
-							}
-
-							if ($result > 0) {
-								$ecmfile->label = md5_file(dol_osencode($destfull)); // hash of file content
-								$ecmfile->fullpath_orig = '';
-								$ecmfile->gen_or_uploaded = 'generated';
-								$ecmfile->description = ''; // indexed content
-								$ecmfile->keywords = ''; // keyword content
-								$result = $ecmfile->update($user);
-								if ($result < 0) {
-									setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-								}
-							} else {
-								$ecmfile->entity = $conf->entity;
-								$ecmfile->filepath = $rel_dir;
-								$ecmfile->filename = $filename;
-								$ecmfile->label = md5_file(dol_osencode($destfull)); // hash of file content
-								$ecmfile->fullpath_orig = '';
-								$ecmfile->gen_or_uploaded = 'generated';
-								$ecmfile->description = ''; // indexed content
-								$ecmfile->keywords = ''; // keyword content
-								$ecmfile->src_object_type = $this->table_element;	// $this->table_name is 'myobject' or 'mymodule_myobject'.
-								$ecmfile->src_object_id   = $this->id;
-
-								$result = $ecmfile->create($user);
-								if ($result < 0) {
-									setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-								}
-							}
-
-							/*$this->result['fullname']=$destfull;
-							$this->result['filepath']=$ecmfile->filepath;
-							$this->result['filename']=$ecmfile->filename;*/
-							//var_dump($obj->update_main_doc_field);exit;
-
-							// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
-							$update_main_doc_field = 0;
-							if (!empty($obj->update_main_doc_field)) {
-								$update_main_doc_field = 1;
-							}
-							if ($update_main_doc_field && !empty($this->table_element)) {
-								$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath."/".$ecmfile->filename)."'";
-								$sql .= " WHERE rowid = ".((int) $this->id);
-
-								$resql = $this->db->query($sql);
-								if (!$resql) {
-									dol_print_error($this->db);
-								} else {
-									$this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
-								}
-							}
+						// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
+						$update_main_doc_field = 0;
+						if (!empty($obj->update_main_doc_field)) {
+							$update_main_doc_field = 1;
 						}
+
+						$this->indexFile($destfull, $update_main_doc_field);
 					} else {
 						dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
 					}
@@ -5415,6 +5326,115 @@ abstract class CommonObject
 		} else {
 			return $reshook;
 		}
+	}
+
+	/**
+	 * Index a file into the ECM database
+	 *
+	 * @param	string	$destfull				Full path of file to index
+	 * @param	int		$update_main_doc_field	Update field main_doc file into table of object
+	 * @return	int								<0 if KO, >0 if OK
+	 */
+	public function indexFile($destfull, $update_main_doc_field)
+	{
+		global $conf, $user;
+
+		$upload_dir = dirname($destfull);
+		$destfile = basename($destfull);
+		$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
+
+		if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a tmp dir
+			$filename = basename($destfile);
+			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+			$ecmfile = new EcmFiles($this->db);
+			$result = $ecmfile->fetch(0, '', ($rel_dir ? $rel_dir.'/' : '').$filename);
+
+			// Set the public "share" key
+			$setsharekey = false;
+			if ($this->element == 'propal' || $this->element == 'proposal') {
+				if (!isset($conf->global->PROPOSAL_ALLOW_ONLINESIGN) || !empty($conf->global->PROPOSAL_ALLOW_ONLINESIGN)) {
+					$setsharekey = true;	// feature to make online signature is not set or set to on (default)
+				}
+				if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
+					$setsharekey = true;
+				}
+			}
+			if ($this->element == 'commande' && !empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'facture' && !empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'bank_account' && !empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
+				$setsharekey = true;
+			}
+
+			if ($setsharekey) {
+				if (empty($ecmfile->share)) {	// Because object not found or share not set yet
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+					$ecmfile->share = getRandomPassword(true);
+				}
+			}
+
+			if ($result > 0) {
+				$ecmfile->label = md5_file(dol_osencode($destfull)); // hash of file content
+				$ecmfile->fullpath_orig = '';
+				$ecmfile->gen_or_uploaded = 'generated';
+				$ecmfile->description = ''; // indexed content
+				$ecmfile->keywords = ''; // keyword content
+				$result = $ecmfile->update($user);
+				if ($result < 0) {
+					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+					return -1;
+				}
+			} else {
+				$ecmfile->entity = $conf->entity;
+				$ecmfile->filepath = $rel_dir;
+				$ecmfile->filename = $filename;
+				$ecmfile->label = md5_file(dol_osencode($destfull)); // hash of file content
+				$ecmfile->fullpath_orig = '';
+				$ecmfile->gen_or_uploaded = 'generated';
+				$ecmfile->description = ''; // indexed content
+				$ecmfile->keywords = ''; // keyword content
+				$ecmfile->src_object_type = $this->table_element;	// $this->table_name is 'myobject' or 'mymodule_myobject'.
+				$ecmfile->src_object_id   = $this->id;
+
+				$result = $ecmfile->create($user);
+				if ($result < 0) {
+					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+					return -1;
+				}
+			}
+
+			/*$this->result['fullname']=$destfull;
+			 $this->result['filepath']=$ecmfile->filepath;
+			 $this->result['filename']=$ecmfile->filename;*/
+			//var_dump($obj->update_main_doc_field);exit;
+
+			if ($update_main_doc_field && !empty($this->table_element)) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath."/".$ecmfile->filename)."'";
+				$sql .= " WHERE rowid = ".((int) $this->id);
+
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					dol_print_error($this->db);
+					return -1;
+				} else {
+					$this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
+				}
+			}
+		}
+
+		return 1;
 	}
 
 	/**
@@ -7766,7 +7786,8 @@ abstract class CommonObject
 							}
 						}
 
-						$out .= $extrafields->showSeparator($key, $this, ($colspan + 1), $display_type);
+						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
+						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type);
 					} else {
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
@@ -7865,6 +7886,7 @@ abstract class CommonObject
 
 						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
 						if ($display_type == 'card') {
+							// a first td column was already output (and may be another on before if MAIN_VIEW_LINE_NUMBER set), so this td is the next one
 							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="'.$this->element.'_extras_'.$key.'">';

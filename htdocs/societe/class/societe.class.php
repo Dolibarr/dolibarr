@@ -905,8 +905,8 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_sell";
 			}
 			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
+			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".((int) $this->status);
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -2518,9 +2518,10 @@ class Societe extends CommonObject
 	 *		@param	int		$maxlen			          Max length of name
 	 *      @param	int  	$notooltip		          1=Disable tooltip
 	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *      @param	int		$noaliasinname			  1=Do not add alias into the link ref
 	 *		@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2558,7 +2559,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (!empty($this->name_alias)) {
+		if (!empty($this->name_alias) && empty($noaliasinname)) {
 			$name .= ' ('.$this->name_alias.')';
 		}
 
@@ -2566,9 +2567,10 @@ class Societe extends CommonObject
 		$linkstart = ''; $linkend = '';
 
 		if (!empty($this->logo) && class_exists('Form')) {
-			$label .= '<div class="photointooltip">';
-			$label .= Form::showphoto('societe', $this, 0, 40, 0, '', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
-			$label .= '</div><div style="clear: both;"></div>';
+			$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('societe', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
 		} elseif (!empty($this->logo_squarred) && class_exists('Form')) {
 			/*$label.= '<div class="photointooltip">';
 			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
