@@ -49,7 +49,7 @@ $mainroundingruletot = 'MAIN_ROUNDING_RULE_TOT'.(!empty($currencycode) ? '_'.$cu
 $valmainmaxdecimalsunit = GETPOST($mainmaxdecimalsunit, 'int');
 $valmainmaxdecimalstot = GETPOST($mainmaxdecimalstot, 'int');
 $valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'int');
-$valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alpha'));
+$valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alphanohtml'), '', 2);
 
 if ($action == 'update') {
 	$error = 0;

@@ -5318,7 +5318,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *      		                            'CT'=Round to Max for totals with Tax of foreign currency accuracy
  *											Numeric = Nb of digits for rounding (For example 2 for a percentage)
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
- * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
+ * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
  *											If conversion fails to return a numeric, it returns:
  *											- text unchanged or partial if ($rounding = ''): price2num('W9ç', '', 0)   => '9ç', price2num('W9ç', '', 1)   => 'W9ç', price2num('W9ç', '', 2)   => '9ç'
