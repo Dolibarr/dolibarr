@@ -193,6 +193,10 @@ class HookManager
 				'getFormatedSupplierRef',
 				'getIdProfUrl',
 				'getInputIdProf',
+				// Easya 2022 - PR17966 - Review quickadd menu
+				// Code ajouté
+				'menuDropdownQuickaddItems',
+				// Easya 2022 - PR17966 - Fin
 				'moveUploadedFile',
 				'moreHtmlStatus',
 				'pdf_build_address',
