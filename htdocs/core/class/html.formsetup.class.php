@@ -215,7 +215,7 @@ class FormSetup
 			$out = '<table class="noborder centpercent">';
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
-			$out .= '	<td class="titlefield">' . $this->langs->trans("Parameter") . '</td>';
+			$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
 			$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
 			$out .= '</tr>';
 			$out .= '</thead>';
@@ -353,7 +353,8 @@ class FormSetup
 		 */
 
 		$item = new FormSetupItem($confKey);
-		$item->setTypeFromTypeString($params['type']);
+		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developper to use object oriented usage
+		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
 			$item->enabled = $params['enabled'];
@@ -560,13 +561,16 @@ class FormSetupItem
 	/** @var string $helpText  */
 	public $helpText = '';
 
-	/** @var string $value  */
+	/** @var string $fieldValue  */
 	public $fieldValue;
+
+	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
+	public $fieldAttr;
 
 	/** @var bool|string set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too */
 	public $fieldOverride = false;
 
-	/** @var bool|string set this var to override field output */
+	/** @var bool|string set this var to override field input */
 	public $fieldInputOverride = false;
 
 	/** @var bool|string set this var to override field output */
@@ -583,6 +587,7 @@ class FormSetupItem
 	/**
 	 * TODO each type must have setAs{type} method to help configuration
 	 *   And set var as protected when its done configuration must be done by method
+	 *   this is important for retrocompatibility of futures versions
 	 * @var string $type  'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 */
 	protected $type = 'string';
@@ -594,13 +599,19 @@ class FormSetupItem
 	/**
 	 * Constructor
 	 *
-	 * @param $confKey the conf key used in database
+	 * @param string $confKey the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
-		global $langs, $db, $conf;
+		global $langs, $db, $conf, $form;
 		$this->db = $db;
-		$this->form = new Form($this->db);
+
+		if (!empty($form) && is_object($form) && get_class($form) == 'Form') { // the form class has a cache inside so I am using it to optimize
+			$this->form = $form;
+		} else {
+			$this->form = new Form($this->db);
+		}
+
 		$this->langs = $langs;
 		$this->entity = $conf->entity;
 
@@ -700,6 +711,10 @@ class FormSetupItem
 			return $this->fieldInputOverride;
 		}
 
+		$this->fieldAttr['name'] = $this->confKey;
+		$this->fieldAttr['id'] = 'setup-'.$this->confKey;
+		$this->fieldAttr['value'] = $this->fieldValue;
+
 		$out = '';
 
 		if ($this->type == 'title') {
@@ -726,7 +741,9 @@ class FormSetupItem
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} else {
-			$out.= '<input name="'.$this->confKey.'"  class="flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass).'" value="'.$this->fieldValue.'">';
+			if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
+
+			$out.= '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 		}
 
 		return $out;
