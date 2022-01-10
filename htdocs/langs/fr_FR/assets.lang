@@ -52,9 +52,9 @@ ASSET_ACCOUNTANCY_CODE=Code comptable immobilisation
 #
 MenuAssets = Immobilisations
 MenuNewAsset = Nouvelle immobilisation
-MenuAssetModels = Model d'immobilisations
+MenuAssetModels = Modèle d'immobilisations
 MenuListAssets = Liste
-MenuNewAssetModel = Nouveau model
+MenuNewAssetModel = Nouveau modèle d'immobilisation
 MenuListAssetModels = Liste
 
 #
@@ -107,13 +107,13 @@ AssetDisposalDate=Date de cession
 AssetDisposalAmount=Valeur de cession
 AssetDisposalType=Type de cession
 AssetDisposalDepreciated=Amortir l'année de cession
-AssetDisposalSubjectToVat=Cession sounis à la TVA
+AssetDisposalSubjectToVat=Cession soumis à la TVA
 
 #
 # Asset model
 #
-AssetModel = Model d'immobilisation
-AssetModels = Models d'immobilisation
+AssetModel = Modèle d'immobilisation
+AssetModels = Modèles d'immobilisation
 
 #
 # Asset depreciation options
@@ -122,7 +122,7 @@ AssetDepreciationOptionEconomic=Amortissement économique
 AssetDepreciationOptionAcceleratedDepreciation=Amortissement dérogatoire (fiscal)
 AssetDepreciationOptionDepreciationType=Type d'amortissement
 AssetDepreciationOptionDepreciationTypeLinear=Linéaire
-AssetDepreciationOptionDepreciationTypeDegressive=Dégréssif
+AssetDepreciationOptionDepreciationTypeDegressive=Dégressif
 AssetDepreciationOptionDepreciationTypeExceptional=Exceptionnel
 AssetDepreciationOptionDegressiveRate=Coefficient dégressif
 AssetDepreciationOptionAcceleratedDepreciation=Dérogatoire (fiscal)
@@ -143,7 +143,7 @@ AssetAccountancyCodeDepreciationEconomic=Amortissement économique
 AssetAccountancyCodeAsset=Immobilisation
 AssetAccountancyCodeDepreciationAsset=Amortissement
 AssetAccountancyCodeDepreciationExpense=Dotation
-AssetAccountancyCodeValueAssetSold=Valeure comptable immobilisation cédée
+AssetAccountancyCodeValueAssetSold=Valeur comptable immobilisation cédée
 AssetAccountancyCodeReceivableOnAssignment=Créance sur cession
 AssetAccountancyCodeProceedsFromSales=Produit de cession
 AssetAccountancyCodeVatCollected=TVA collectée
@@ -185,5 +185,5 @@ AssetErrorCalculationDepreciationLines=Erreur lors du calcule des lignes d'amort
 AssetErrorReversalDateNotProvidedForMode=La date de reprise n'est pas fournie pour le mode d'amortissement '%s'
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=La date de reprise doit être supérieur ou égale au début de l'exercice fiscal en cours pour le mode d'amortissement '%s'
 AssetErrorReversalAmountNotProvidedForMode=Le montant de reprise n'est pas fournie pour le mode d'amortissement '%s'
-AssetErrorFetchCumulativeDepreciation=Erreur lors de la récupération du montant d'amortisement cumulé de la ligne d'amortisement
-AssetErrorSetLastCumulativeDepreciation=Erreur lors de l'enregistrement du dernier montant d'amortisement cumulé
+AssetErrorFetchCumulativeDepreciation=Erreur lors de la récupération du montant d'amortissement cumulé de la ligne d'amortissement
+AssetErrorSetLastCumulativeDepreciation=Erreur lors de l'enregistrement du dernier montant d'amortissement cumulé

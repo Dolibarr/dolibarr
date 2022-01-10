@@ -962,7 +962,7 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = 360;
+				$nb_days_in_year = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 360;
 				$period_amount = (double)price2num($depreciation_period_amount * ($fields['duration_type'] == 1 ? 12 : ($fields['duration_type'] == 2 ? $nb_days_in_year : 1)) / $fields['duration'], 'MT');
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
