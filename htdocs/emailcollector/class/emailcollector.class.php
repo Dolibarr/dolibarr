@@ -2381,6 +2381,7 @@ class EmailCollector extends CommonObject
 							'messagetext'=>$messagetext,
 							'subject'=>$subject,
 							'header'=>$header,
+							'attachments'=>$attachments,
 						);
 						$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
 
