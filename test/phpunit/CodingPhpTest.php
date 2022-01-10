@@ -432,7 +432,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					break;
 				}
 			}
-			$this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['relativename'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
+			$this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['relativename'].'. Bad.');
 
 
 			// Test that first param of print_liste_field_titre is a translation key and not the translated value
