@@ -124,8 +124,8 @@ CREATE TABLE llx_facture_fourn_det_rec
   total_localtax2	double(24,8) DEFAULT 0,
   total_ttc			double(24,8),
   product_type		integer DEFAULT 0,
-  date_start        datetime   DEFAULT NULL,
-  date_end          datetime   DEFAULT NULL,
+  date_start        integer   DEFAULT NULL,
+  date_end          integer   DEFAULT NULL,
   info_bits			integer DEFAULT 0,
   special_code		integer UNSIGNED DEFAULT 0,
   rang				integer DEFAULT 0,
@@ -152,3 +152,5 @@ CREATE TABLE llx_facture_fourn_det_rec_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_facture_fourn_det_rec_extrafields ADD INDEX idx_facture_fourn_det_rec_extrafields (fk_object);
+
+ALTER TABLE llx_facture_fourn ADD fk_fac_rec_source integer;
