@@ -6109,6 +6109,7 @@ abstract class CommonObject
 			}
 
 			$sql .= ")";
+
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
