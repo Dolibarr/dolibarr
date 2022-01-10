@@ -2905,13 +2905,15 @@ if ($action == 'create') {
 				print '</span><br>';
 			}
 		}
+
         if ($object->fk_fac_rec_source > 0) {
             $tmptemplate = new FactureFournisseurRec($db);
             $result = $tmptemplate->fetch($object->fk_fac_rec_source);
             if ($result > 0) {
                 print ' <span class="opacitymediumbycolor paddingleft">';
-                $s = $langs->transnoentities("GeneratedFromTemplate", '{s1}');
-                $s = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card-rec.php?facid='.$tmptemplate->id.'">'.dol_escape_htmltag($tmptemplate->ref).'</a>', $s);
+                $link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card-rec.php?facid='.$tmptemplate->id.'">'.dol_escape_htmltag($tmptemplate->titre).'</a>';
+                $s = $langs->transnoentities("GeneratedFromSupplierTemplate", $link);
+
                 print $s;
                 print '</span>';
             }

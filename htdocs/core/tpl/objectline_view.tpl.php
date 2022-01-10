@@ -166,9 +166,6 @@ if (($line->info_bits & 2) == 2) {
         if ($line->element == 'invoice_supplier_det_rec' && $line->product_type != Product::TYPE_PRODUCT){
             $line->date_start_fill = $line->date_start;
             $line->date_end_fill = $line->date_end;
-        } else {
-            $line->date_start_fill = null;
-            $line->date_end_fill = null;
         }
 		if ($line->date_start_fill || $line->date_end_fill) {
 			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
