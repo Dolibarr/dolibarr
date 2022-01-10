@@ -99,7 +99,6 @@ if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	// Load attribute_label
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);

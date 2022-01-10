@@ -159,7 +159,7 @@ if (empty($reshook)) {
 	$objectlabel = 'WebsiteAccount';
 	$permissiontoread = $user->rights->societe->lire;
 	$permissiontodelete = $user->rights->societe->supprimer;
-	$uploaddir = $conf->societe->dir_output;
+	$uploaddir = $conf->societe->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

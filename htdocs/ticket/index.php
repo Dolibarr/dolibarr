@@ -224,7 +224,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-$stringtoshow = '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();
@@ -390,8 +390,10 @@ if ($result) {
 
 			// Category
 			print '<td class="nowrap">';
-			$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			if (!empty($obp->category_code)) {
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
+				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			}
 			//print $objp->category_label;
 			print "</td>";
 

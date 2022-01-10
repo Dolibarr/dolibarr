@@ -185,10 +185,7 @@ if ($resql) {
 				// Show file name with link to download
 				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 				$mime = dol_mimetype($relativepath, '', 0);
-				if (preg_match('/text/', $mime)) {
-					$out .= ' target="_blank"';
-				}
-				$out .= ' target="_blank">';
+				$out .= ' target="_blank" rel="noopener noreferrer">';
 				$out .= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);
 				$out .= $filearray["name"];
 				$out .= '</a>'."\n";

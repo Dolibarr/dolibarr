@@ -57,7 +57,7 @@ if (!empty($conf->dol_use_jmobile)) {
 	$conf->use_javascript_ajax = 1;
 }
 
-$php_self = dol_escape_htmltag($_SERVER['PHP_SELF']);
+$php_self = empty($php_self) ? dol_escape_htmltag($_SERVER['PHP_SELF']) : $php_self;
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
 if (!preg_match('/mainmenu=/', $php_self)) {
 	$php_self .= (preg_match('/\?/', $php_self) ? '&' : '?').'mainmenu=home';
@@ -147,7 +147,7 @@ $(document).ready(function () {
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if ($disablenofollow) {
-	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
 }
 echo dol_escape_htmltag($title);
 if ($disablenofollow) {
@@ -291,7 +291,7 @@ if ($forgetpasslink || $helpcenterlink) {
 		if (!empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) {
 			$url = $conf->global->MAIN_HELPCENTER_LINKTOUSE;
 		}
-		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer">';
 		echo $langs->trans('NeedHelpCenter');
 		echo '</a>';
 	}

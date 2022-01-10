@@ -75,7 +75,7 @@ class FormAdmin
 
 		// If the language to select is not inside the list of available language and empty value is not available, we must find
 		// an alternative as the language code to pre-select (to avoid to have first element in list pre-selected).
-		if ($selected && !in_array($selected, $langs_available) && empty($showempty)) {
+		if ($selected && !array_key_exists($selected, $langs_available) && empty($showempty)) {
 			$tmparray = explode('_', $selected);
 			if (!empty($tmparray[1])) {
 				$selected = getLanguageCodeFromCountryCode($tmparray[1]);
@@ -304,7 +304,7 @@ class FormAdmin
 								if (preg_match('/\.lib/i', $filelib)) {
 									continue;
 								}
-								if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file, $expdevmenu)) {
+								if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 0 && in_array($file, $expdevmenu)) {
 									continue;
 								}
 

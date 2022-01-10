@@ -75,7 +75,7 @@ if ($object->id > 0) {
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 }
 
-
+$permissiontoadd = $user->rights->supplier_proposal->creer;
 
 /*
  * Actions

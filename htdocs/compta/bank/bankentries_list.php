@@ -65,6 +65,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
 $massaction = GETPOST('massaction', 'alpha');
+$optioncss = GETPOST('optioncss', 'aZ09');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -178,7 +179,6 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
-
 /*
  * Actions
  */
@@ -269,13 +269,15 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	}
 
 	if (!$error) {
-		$param = 'action=reconcile&contextpage=banktransactionlist&id='.$id.'&search_account='.$id;
-		$param .= '&search_conciliated='.urlencode($search_conciliated);
+		$param = 'action=reconcile&contextpage=banktransactionlist&id='.((int) $id).'&search_account='.((int) $id);
 		if ($page) {
 			$param .= '&page='.urlencode($page);
 		}
 		if ($offset) {
 			$param .= '&offset='.urlencode($offset);
+		}
+		if ($search_conciliated != '' && $search_conciliated != '-1') {
+			$param .= '&search_conciliated='.urlencode($search_conciliated);
 		}
 		if ($search_thirdparty_user) {
 			$param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
@@ -286,17 +288,17 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		if ($search_description) {
 			$param .= '&search_description='.urlencode($search_description);
 		}
-		if ($search_start_dt) {
-			$param .= '&search_start_dt='.urlencode($search_start_dt);
+		if (dol_strlen($search_dt_start) > 0) {
+			$param .= '&search_start_dtmonth='.GETPOST('search_start_dtmonth', 'int').'&search_start_dtday='.GETPOST('search_start_dtday', 'int').'&search_start_dtyear='.GETPOST('search_start_dtyear', 'int');
 		}
-		if ($search_end_dt) {
-			$param .= '&search_end_dt='.urlencode($search_end_dt);
+		if (dol_strlen($search_dt_end) > 0) {
+			$param .= '&search_end_dtmonth='.GETPOST('search_end_dtmonth', 'int').'&search_end_dtday='.GETPOST('search_end_dtday', 'int').'&search_end_dtyear='.GETPOST('search_end_dtyear', 'int');
 		}
-		if ($search_start_dv) {
-			$param .= '&search_start_dv='.urlencode($search_start_dv);
+		if (dol_strlen($search_dv_start) > 0) {
+			$param .= '&search_start_dvmonth='.GETPOST('search_start_dvmonth', 'int').'&search_start_dvday='.GETPOST('search_start_dvday', 'int').'&search_start_dvyear='.GETPOST('search_start_dvyear', 'int');
 		}
-		if ($search_end_dv) {
-			$param .= '&search_end_dv='.urlencode($search_end_dv);
+		if (dol_strlen($search_dv_end) > 0) {
+			$param .= '&search_end_dvmonth='.GETPOST('search_end_dvmonth', 'int').'&search_end_dvday='.GETPOST('search_end_dvday', 'int').'&search_end_dvyear='.GETPOST('search_end_dvyear', 'int');
 		}
 		if ($search_type) {
 			$param .= '&search_type='.urlencode($search_type);
@@ -419,7 +421,6 @@ $banklinestatic = new AccountLine($db);
 
 $now = dol_now();
 
-
 // Must be before button action
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -452,7 +453,7 @@ if (!empty($search_debit)) {
 if (!empty($search_credit)) {
 	$param .= '&search_credit='.urlencode($search_credit);
 }
-if (!empty($search_account)) {
+if ($search_account > 0) {
 	$param .= '&search_account='.urlencode($search_account);
 }
 if (!empty($search_num_releve)) {
@@ -622,14 +623,14 @@ if ($search_thirdparty_user) {
 	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
-	$sql.= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1)."))";
+	$sql.= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1).")";
 
 	$sql.= " OR b.rowid IN ";
 	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
 	$sql.= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
-	$sql.= ")";
+	$sql.= "))";
 }
 if ($search_description) {
 	$search_description_to_use = $search_description;
@@ -757,7 +758,7 @@ if ($resql) {
 	// Confirmation delete
 	if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteTransaction');
-		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&rowid='.GETPOST("rowid"), $langs->trans('DeleteTransaction'), $text, 'confirm_delete', null, '', 1);
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&rowid='.GETPOST("rowid", 'int'), $langs->trans('DeleteTransaction'), $text, 'confirm_delete', null, '', 1);
 	}
 
 	// Lines of title fields
@@ -767,7 +768,7 @@ if ($resql) {
 	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="'.($action ? $action : 'search').'">';
+	print '<input type="hidden" name="action" value="'.($action != 'delete' ? $action : 'search').'">';
 	if (!empty($view)) {
 		print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	}
@@ -777,7 +778,7 @@ if ($resql) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '<input type="hidden" name="ref" value="'.$ref.'">';
 	if (GETPOST('bid')) {
-		print '<input type="hidden" name="bid" value="'.GETPOST("bid").'">';
+		print '<input type="hidden" name="bid" value="'.GETPOST("bid", 'int').'">';
 	}
 
 	// Form to reconcile
@@ -1101,8 +1102,7 @@ if ($resql) {
 		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
 		print '</td>';
 	}
-	print '<td class="liste_titre" align="middle">';
-	print '</td>';
+	// Actions and select
 	print '<td class="liste_titre" align="middle">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
@@ -1159,7 +1159,7 @@ if ($resql) {
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'class="right"', $sortfield, $sortorder, 'maxwidthsearch ');
+	// Actions and select
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -1200,7 +1200,7 @@ if ($resql) {
 				$objforbalance = $db->fetch_object($resqlforbalance);
 				if ($objforbalance) {
 					// If sort is desc,desc,desc then total of previous date + amount is the balancebefore of the previous line before the line to show
-					if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc') {
+					if ($sortfield == 'b.datev,b.dateo,b.rowid' && ($sortorder == 'desc' || $sortorder == 'desc,desc' || $sortorder == 'desc,desc,desc')) {
 						$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
 					} else {
 						// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
@@ -1278,15 +1278,14 @@ if ($resql) {
 							</script>';
 					print '</td>';
 				}
-				print '<td colspan="'.($tmpnbfieldafterbalance + 2).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance + 1).'">';
 				print '&nbsp;';
 				print '</td>';
 				print '</tr>';
 			}
 		}
 
-
-		if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc') {
+		if ($sortfield == 'b.datev,b.dateo,b.rowid' && ($sortorder == 'desc' || $sortorder == 'desc,desc' || $sortorder == 'desc,desc,desc')) {
 			$balance = price2num($balancebefore, 'MT'); // balance = balancebefore of previous line (sort is desc)
 			$balancebefore = price2num($balancebefore - ($sign * $objp->amount), 'MT');
 		} else {
@@ -1664,20 +1663,20 @@ if ($resql) {
 			}
 		}
 
-		// Action edit/delete
+		// Action edit/delete and select
 		print '<td class="nowraponall" align="center">';
 		// Transaction reconciliated or edit link
 		if ($objp->conciliated && $bankaccount->canBeConciliated() > 0) {  // If line not conciliated and account can be conciliated
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 			print img_edit();
 			print '</a>';
 		} else {
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 				print img_edit();
 				print '</a>';
 			} else {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&rowid='.$objp->rowid.($object->id > 0 ? '&account='.$object->id : '').'&page='.$page.'">';
 				print img_view();
 				print '</a>';
 			}
@@ -1687,24 +1686,19 @@ if ($resql) {
 				}
 			}
 			if ($user->rights->banque->modifier) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&id='.$objp->bankid.'&page='.$page.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';
 			}
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
 
 		// Action column
-		print '<td class="nowrap" align="center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($obj->rowid, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {

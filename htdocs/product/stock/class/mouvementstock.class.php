@@ -156,7 +156,7 @@ class MouvementStock extends CommonObject
 	 *	@param		int				$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string			$label				Label of stock movement
 	 *	@param		string			$inventorycode		Inventory code
-	 *	@param		string			$datem				Force date of movement
+	 *	@param		integer|string	$datem				Force date of movement
 	 *	@param		integer|string	$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		integer|string	$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		string			$batch				batch number
@@ -439,7 +439,7 @@ class MouvementStock extends CommonObject
 			$sql .= " datem, fk_product, batch, eatby, sellby,";
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $this->product_id).", ";
+			$sql .= " VALUES ('".$this->db->idate($this->datem)."', ".((int) $this->product_id).", ";
 			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
@@ -764,19 +764,19 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Decrease stock for product and subproducts
 	 *
-	 * 	@param 		User	$user			    Object user
-	 * 	@param		int		$fk_product		    Id product
-	 * 	@param		int		$entrepot_id	    Warehouse id
-	 * 	@param		int		$qty			    Quantity
-	 * 	@param		int		$price			    Price
-	 * 	@param		string	$label			    Label of stock movement
-	 * 	@param		string	$datem			    Force date of movement
-	 *	@param		integer	$eatby			    eat-by date
-	 *	@param		integer	$sellby			    sell-by date
-	 *	@param		string	$batch			    batch number
-	 * 	@param		int		$id_product_batch	Id product_batch
-	 *  @param      string  $inventorycode      Inventory code
-	 * 	@return		int						    <0 if KO, >0 if OK
+	 * 	@param 		User			$user			    Object user
+	 * 	@param		int				$fk_product		    Id product
+	 * 	@param		int				$entrepot_id	    Warehouse id
+	 * 	@param		int				$qty			    Quantity
+	 * 	@param		int				$price			    Price
+	 * 	@param		string			$label			    Label of stock movement
+	 * 	@param		integer|string	$datem			    Force date of movement
+	 *	@param		integer			$eatby			    eat-by date
+	 *	@param		integer			$sellby			    sell-by date
+	 *	@param		string			$batch			    batch number
+	 * 	@param		int				$id_product_batch	Id product_batch
+	 *  @param      string  		$inventorycode      Inventory code
+	 * 	@return		int								    <0 if KO, >0 if OK
 	 */
 	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '')
 	{
@@ -799,7 +799,7 @@ class MouvementStock extends CommonObject
 	 *	@param		integer|string	$eatby			     eat-by date
 	 *	@param		integer|string	$sellby			     sell-by date
 	 *	@param		string			$batch			     batch number
-	 * 	@param		string			$datem			     Force date of movement
+	 * 	@param		integer|string	$datem			     Force date of movement
 	 * 	@param		int				$id_product_batch    Id product_batch
 	 *  @param      string			$inventorycode       Inventory code
 	 *	@return		int								     <0 if KO, >0 if OK
@@ -812,28 +812,6 @@ class MouvementStock extends CommonObject
 
 		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
 	}
-
-
-	// /**
-	//  * Return nb of subproducts lines for a product
-	//  *
-	//  * @param      int		$id				Id of product
-	//  * @return     int						<0 if KO, nb of subproducts if OK
-	//  * @deprecated A count($product->getChildsArbo($id,1)) is same. No reason to have this in this class.
-	//  */
-	// public function nbOfSubProducts($id)
-	// {
-	// 	$nbSP=0;
-
-	// 	$resql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_association";
-	// 	$resql.= " WHERE fk_product_pere = ".((int) $id);
-	// 	if ($this->db->query($resql))
-	// 	{
-	// 		$obj=$this->db->fetch_object($resql);
-	// 		$nbSP=$obj->nb;
-	// 	}
-	// 	return $nbSP;
-	// }
 
 	/**
 	 * Count number of product in stock before a specific date
@@ -1093,7 +1071,7 @@ class MouvementStock extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
+	 *	@param	string	$option				On what the link point to ('' = Tab of stock movement of warehouse, 'movements' = list of movements)
 	 *  @param	integer	$notooltip			1=Disable tooltip
 	 *  @param	int		$maxlen				Max length of visible user name
 	 *  @param  string  $morecss            Add more css on link
@@ -1104,16 +1082,21 @@ class MouvementStock extends CommonObject
 		global $langs, $conf, $db;
 
 		$result = '';
-		$companylink = '';
 
-		$label = '<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
+		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
 		$label .= '<div width="100%">';
 		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
-		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.$this->qty;
+		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.($this->qty > 0 ? '+' : '').$this->qty;
 		$label .= '</div>';
 
-		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
-		$link .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
+		// Link to page of warehouse tab
+		if ($option == 'movements') {
+			$url = DOL_URL_ROOT.'/product/stock/movement_list.php?search_ref='.$this->id;
+		} else {
+			$url = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id;
+		}
+
+		$link = '<a href="'.$url.'"'.($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
 		$link .= '>';
 		$linkend = '</a>';
 

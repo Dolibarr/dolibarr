@@ -6,5 +6,4 @@ ShowBookmark=Mostrar marcador
 OpenANewWindow=Abre una nueva pestaña
 BehaviourOnClick=Comportamiento cuando se selecciona una URL de marcador
 SetHereATitleForLink=Establecer un nombre para el marcador
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Utilice un enlace externo / absoluto (https: // URL) o un enlace interno / relativo (/ DOLIBARR_ROOT / htdocs / ...)
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elija si la página vinculada debería abrirse en la pestaña actual o en una nueva pestaña

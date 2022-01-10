@@ -317,6 +317,19 @@ if ($result) {
 			continue;
 		}
 
+		// Special cases
+		if (!empty($conf->reception->enabled)) {
+			// The 2 permission in fournisseur modules has been replaced by permissions into reception module
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
+				$i++;
+				continue;
+			}
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+				$i++;
+				continue;
+			}
+		}
+
 		$objMod = $modules[$obj->module];
 
 		// Save field module_position in database if value is wrong

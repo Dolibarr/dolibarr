@@ -37,8 +37,8 @@ OtherInfo=Boshqa ma'lumotlar
 DeleteCptCategory=Buxgalteriya hisobini guruhdan olib tashlang
 ConfirmDeleteCptCategory=Ushbu buxgalteriya hisobini buxgalteriya hisobi guruhidan olib tashlamoqchimisiz?
 JournalizationInLedgerStatus=Jurnalizatsiya holati
-AlreadyInGeneralLedger=Buxgalteriya jurnallarida va daftarchada allaqachon topshirilgan
-NotYetInGeneralLedger=Hisoblash jurnallari va daftarchasiga hali topshirilmagan
+AlreadyInGeneralLedger=Buxgalteriya jurnallari va buxgalteriya kitoblariga o'tkazilgan
+NotYetInGeneralLedger=Hali ham jurnallar va daftarlarga o'tkazilmagan
 GroupIsEmptyCheckSetup=Guruh bo'sh, shaxsiylashtirilgan buxgalteriya guruhini sozlashni tekshiring
 DetailByAccount=Hisob bo'yicha tafsilotlarni ko'rsatish
 AccountWithNonZeroValues=Nolga teng bo'lmagan qiymatlar bilan hisob-kitoblar
@@ -48,7 +48,7 @@ CountriesNotInEEC=EEC tarkibiga kirmagan mamlakatlar
 CountriesInEECExceptMe=%s dan tashqari EECdagi mamlakatlar
 CountriesExceptMe=%s dan tashqari barcha mamlakatlar
 AccountantFiles=Dastlabki hujjatlarni eksport qilish
-ExportAccountingSourceDocHelp=Ushbu vosita yordamida siz buxgalteriya hisobini yaratish uchun foydalanilgan manba hodisalarini (CSV va PDF-lardagi ro'yxat) eksport qilishingiz mumkin.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Jurnallaringizni eksport qilish uchun %s - %s menyu yozuvidan foydalaning.
 VueByAccountAccounting=Buxgalteriya hisobi bo'yicha ko'rish
 VueBySubAccountAccounting=Buxgalteriya subkontaji bo'yicha ko'rish
@@ -246,9 +246,9 @@ DescThirdPartyReport=Uchinchi tomon mijozlari va sotuvchilari ro'yxati va ularni
 ListAccounts=List of the accounting accounts
 UnknownAccountForThirdparty=Uchinchi tomon hisobi noma'lum. Biz %s dan foydalanamiz
 UnknownAccountForThirdpartyBlocking=Uchinchi tomon hisobi noma'lum. Bloklash xatosi
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Sublegger hisobi aniqlanmagan yoki uchinchi tomon yoki foydalanuvchi noma'lum. Biz %s dan foydalanamiz
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=To'lovda aniqlanmagan uchinchi shaxs noma'lum va subledger. Biz subledger hisob qiymatini bo'sh holda saqlaymiz.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Sublegger hisobi aniqlanmagan yoki uchinchi tomon yoki foydalanuvchi noma'lum. Bloklash xatosi.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Noma'lum uchinchi tomon hisobi va kutish hisobi aniqlanmagan. Bloklash xatosi
 PaymentsNotLinkedToProduct=To'lov hech qanday mahsulot / xizmatga bog'liq emas
 OpeningBalance=Balansni ochish
@@ -286,7 +286,7 @@ ValidateMovements=Harakatlarni tasdiqlang
 DescValidateMovements=Yozishni, xatlarni va o'chirishni har qanday o'zgartirish yoki o'chirish taqiqlanadi. Jismoniy mashqlar uchun barcha yozuvlar tasdiqlanishi kerak, aks holda yopish mumkin bo'lmaydi
 
 ValidateHistory=Avtomatik bog'lash
-AutomaticBindingDone=Avtomatik ulanish amalga oshirildi
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Harakat to'g'ri muvozanatlashtirilmagan. Debit = %s | Kredit = %s
@@ -298,7 +298,7 @@ NoNewRecordSaved=Jurnalizatsiya qilish uchun boshqa yozuv yo'q
 ListOfProductsWithoutAccountingAccount=Hech qanday buxgalteriya hisobiga bog'lanmagan mahsulotlar ro'yxati
 ChangeBinding=Majburiylikni o'zgartiring
 Accounted=Hisob kitobida hisobga olingan
-NotYetAccounted=Hisob kitobida hali hisobga olinmagan
+NotYetAccounted=Buxgalteriya hisobiga hali o'tkazilmagan
 ShowTutorial=Qo'llanmani ko'rsatish
 NotReconciled=Yarashtirilmagan
 WarningRecordWithoutSubledgerAreExcluded=Ogohlantirish, subledger hisobi aniqlanmagan barcha operatsiyalar filtrlanadi va ushbu ko'rinishdan chiqarib tashlanadi
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Xaridlar bo'yicha buxgalteriyada majburi
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Xarajatlar hisobotlari bo'yicha buxgalteriyada majburiy va o'tkazishni o'chirib qo'ying (xarajatlar hisoboti buxgalteriya hisobida hisobga olinmaydi)
 
 ## Export
-NotifiedExportDate=Xabar qilingan eksport sanasi (yozuvlarni o'zgartirish mumkin bo'lmaydi)
-NotifiedValidationDate=Yozuvlarni tasdiqlash (yozuvlarni o'zgartirish yoki o'chirish mumkin bo'lmaydi)
+NotifiedExportDate=Eksport qilingan chiziqlarni eksport qilingan deb belgilang (chiziqlarni o'zgartirish mumkin bo'lmaydi)
+NotifiedValidationDate=Eksport qilingan yozuvlarni tasdiqlang (satrlarni o'zgartirish yoki o'chirish mumkin bo'lmaydi)
 ConfirmExportFile=Buxgalteriya eksporti faylini yaratishni tasdiqlashmi?
 ExportDraftJournal=Jurnal jurnalini eksport qiling
 Modelcsv=Model of export
@@ -339,11 +339,11 @@ Modelcsv_normal=Classic export
 Modelcsv_CEGID=CEGID Expert Comptabilité uchun eksport
 Modelcsv_COALA=Sage Coala uchun eksport
 Modelcsv_bob50=Sage BOB 50 uchun eksport
-Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
+Modelcsv_ciel=Sage50, Ciel Compta yoki Compta Evo uchun eksport qiling. (XIMPORT formati)
 Modelcsv_quadratus=Quadratus QuadraCompta uchun eksport
 Modelcsv_ebp=EBP uchun eksport
 Modelcsv_cogilog=Cogilog uchun eksport
-Modelcsv_agiris=Agiris uchun eksport
+Modelcsv_agiris=Agiris Isacompta uchun eksport
 Modelcsv_LDCompta=LD Compta (v9) uchun eksport (sinov)
 Modelcsv_LDCompta10=LD Compta uchun eksport (v10 va undan yuqori)
 Modelcsv_openconcerto=OpenConcerto uchun eksport (Test)
@@ -351,9 +351,10 @@ Modelcsv_configurable=CSV konfiguratsiyasini eksport qilish
 Modelcsv_FEC=FECni eksport qilish
 Modelcsv_FEC2=FEC-ni eksport qilish (sanalarni yozish / hujjatni o'zgartirish bilan)
 Modelcsv_Sage50_Swiss=Sage 50 uchun Shveytsariya uchun eksport
-Modelcsv_winfic=Winfic - eWinfic - WinSis Compta-ni eksport qiling
+Modelcsv_winfic=Winfic - eWinfic - WinSis Compta uchun eksport
 Modelcsv_Gestinumv3=Gestinum uchun eksport (v3)
-Modelcsv_Gestinumv5Export Gestinum uchun (v5)
+Modelcsv_Gestinumv5=Gestinum uchun eksport (v5)
+Modelcsv_charlemagne=Aplim Buyuk Karl uchun eksport
 ChartofaccountsId=Hisob-kitoblar rejasi
 
 ## Tools - Init accounting account on product / service
@@ -386,7 +387,8 @@ SaleExport=Eksportni sotish
 SaleEEC=EECda sotish
 SaleEECWithVAT=EECda QQS bilan sotish bekor bo'lmaydi, shuning uchun bu kommunal ichki savdo emas va taklif qilingan hisob standart mahsulot hisobvarag'i.
 SaleEECWithoutVATNumber=EECda QQSsiz sotish, lekin uchinchi tomonning QQS identifikatori aniqlanmagan. Biz standart sotuvlar uchun mahsulot hisobiga tushamiz. Agar kerak bo'lsa, siz uchinchi tomonning QQS identifikatorini yoki mahsulot hisobini tuzatishingiz mumkin.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Buxgalteriya hisobi doirasi
 Calculated=Hisoblangan
@@ -403,6 +405,7 @@ NoJournalDefined=Hech qanday jurnal aniqlanmagan
 Binded=Chiziqlar bog'langan
 ToBind=Bog'lash uchun chiziqlar
 UseMenuToSetBindindManualy=Chiziqlar hali bog'lanmagan, bog'lanishni qo'lda bajarish uchun <a href="%s"> %s </a> menyusidan foydalaning
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Buxgalteriya yozuvlari

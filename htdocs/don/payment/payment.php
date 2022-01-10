@@ -162,7 +162,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("DoPayment"));
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
 		print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){

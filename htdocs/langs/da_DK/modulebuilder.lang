@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Dette værktøj må kun bruges af erfarne brugere eller udviklere. Det giver værktøjer til at opbygge eller redigere dit eget modul. Dokumentation for alternativ <a href="%s" target="_blank">manuel udvikling er her</a>.
+ModuleBuilderDesc=Dette værktøj må kun bruges af erfarne brugere eller udviklere. Det giver værktøjer til at bygge eller redigere dit eget modul. Dokumentation for alternativ <a href="%s" target="_blank" rel="noopener noreferrer"> manuel udvikling er her </a> .
 EnterNameOfModuleDesc=Indtast navnet på modulet / programmet for at oprette uden mellemrum. Brug store bogstaver til at adskille ord (For eksempel: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Indtast navnet på objektet, der skal oprettes uden mellemrum. Brug store bogstaver til at adskille ord (For eksempel: MyObject, Student, Lærer ...). CRUD-klassefilen, men også API-filen, vil der blive genereret sider til liste / tilføj / rediger / slet objekt og SQL-filer.
 ModuleBuilderDesc2=Sti, hvor moduler genereres / redigeres (første bibliotek for eksterne moduler defineret i %s):<strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Menuerne leveret af dit modul / din applikation defineres i 
 DictionariesDefDescTooltip=Ordbøgerne leveret af dit modul / din applikation defineres i matrixen\n<strong>$ dette-> ordbøger</strong> i modulbeskrivelsesfilen. Du kan redigere manuelt denne fil eller bruge den integrerede editor.<br><br>Note: Når defineret (og modul re-aktiveret), ordbøger er også synlige i opsætningen område til administrator brugere på%s.
 PermissionsDefDescTooltip=Tilladelserne fra din modul / ansøgning er defineret i array <strong>$ this-> rettigheder</strong> i modulet deskriptor fil. Du kan redigere manuelt denne fil eller bruge den integrerede editor.<br><br>Note: Når defineret (og modul re-aktiveret), tilladelser er synlige i standardtilladelser opsætning%s.
 HooksDefDesc=Definer i egenskaben <b> module_parts ['hooks'] </b> i modulbeskrivelsen den kontekst af kroge, du vil administrere (liste over sammenhænge kan findes ved en søgning på '<b> initHooks (</b> 'i kernekode). <br> Rediger krogfilen for at tilføje kode for dine hooked funktioner (hookable funktioner kan findes ved en søgning på' <b> executeHooks </b> 'i kernekode).
-TriggerDefDesc=Definer i udløseren filen den kode, du vil udføre for hver forretningsbegivenhed, der udføres.
+TriggerDefDesc=Definer i triggerfilen den kode, som du ønsker at udføre, når en forretningsbegivenhed eksternt til dit modul udføres (hændelser udløst af andre moduler).
 SeeIDsInUse=Se ID'er i brug i din installation
 SeeReservedIDsRangeHere=Se række af reserverede id'er
 ToolkitForDevelopers=Værktøjskasse til Dolibarr-udviklere
@@ -144,3 +144,4 @@ AsciiToPdfConverter=Ascii til PDF konverter
 TableNotEmptyDropCanceled=Tabellen er ikke tom. Drop er annulleret.
 ModuleBuilderNotAllowed=Modulbyggeren er tilgængelig, men ikke tilladt for din bruger.
 ImportExportProfiles=Import og eksport af profiler
+ValidateModBuilderDesc=Sæt 1, hvis dette felt skal valideres med $ this-> validateField () eller 0, hvis validering er påkrævet

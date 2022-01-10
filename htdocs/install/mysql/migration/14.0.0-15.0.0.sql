@@ -78,7 +78,31 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationMassEmailSpeakers)',  60, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailSpeakers)__', '__(Hello)__,<br /><br />__(OrganizationEventBulkMailToSpeakers)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 
 
+--Fix bad sign on multicompany column for customer invoice lines
+UPDATE llx_facturedet SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and subprice > 0) OR (multicurrency_subprice > 0 and subprice < 0));
+UPDATE llx_facturedet SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facturedet SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0)); 
+UPDATE llx_facturedet SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicompany column for customer invoices
+UPDATE llx_facture SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
+UPDATE llx_facture SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
+UPDATE llx_facture SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicurrency column for supplier invoice lines
+UPDATE llx_facture_fourn_det SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and pu_ht > 0) OR (multicurrency_subprice > 0 and pu_ht < 0));
+UPDATE llx_facture_fourn_det SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facture_fourn_det SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and tva > 0) OR (multicurrency_total_tva > 0 and tva < 0)); 
+UPDATE llx_facture_fourn_det SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicompany column for customer invoices
+UPDATE llx_facture_fourn SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
+UPDATE llx_facture_fourn SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
+UPDATE llx_facture_fourn SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+
+
 -- v15
+
+ALTER TABLE llx_c_partnership_type ADD UNIQUE INDEX uk_c_partnership_type(entity, code);
+
+ALTER TABLE llx_partnership ADD COLUMN fk_type integer DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_c_holiday_types CHANGE COLUMN newByMonth newbymonth double(8,5) DEFAULT 0 NOT NULL;
 
@@ -276,19 +300,10 @@ CREATE TABLE llx_hrm_job_user(
     fk_user_modif integer
 ) ENGINE=innodb;
 
+ALTER TABLE llx_hrm_job_user ADD COLUMN abort_comment varchar(255);
+
 ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_rowid (rowid);
 -- ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_ref (ref);
-
-
-create table llx_hrm_job_user_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_job_user_extrafields ADD INDEX idx_position_fk_object(fk_object);
 
 
 
@@ -334,19 +349,10 @@ CREATE TABLE llx_hrm_skilldet
     rankorder integer
 ) ENGINE=innodb;
 
+ALTER TABLE llx_hrm_skilldet ADD COLUMN rankorder integer NOT NULL DEFAULT '1';
+
 ALTER TABLE llx_hrm_skilldet ADD INDEX idx_hrm_skilldet_rowid (rowid);
 ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
-
-create table llx_hrm_skilldet_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_skilldet_extrafields ADD INDEX idx_skilldet_fk_object(fk_object);
-
 
 CREATE TABLE llx_hrm_skillrank
 (
@@ -424,226 +430,3 @@ ALTER TABLE llx_socpeople DROP COLUMN googleplus;
 ALTER TABLE llx_socpeople DROP COLUMN youtube;
 ALTER TABLE llx_socpeople DROP COLUMN whatsapp;
 
--- ---------------------
--- Assets
--- ---------------------
-ALTER TABLE llx_asset DROP INDEX idx_asset_fk_asset_type;
-ALTER TABLE llx_asset DROP FOREIGN KEY fk_asset_asset_type;
-
-ALTER TABLE llx_asset CHANGE COLUMN amount_ht acquisition_value_ht double(24,8) NOT NULL;
-ALTER TABLE llx_asset CHANGE COLUMN amount_vat recovered_vat double(24,8) NOT NULL;
-DELETE FROM llx_asset WHERE fk_asset_type IS NOT NULL;
-ALTER TABLE llx_asset DROP COLUMN fk_asset_type;
-ALTER TABLE llx_asset DROP COLUMN description;
-ALTER TABLE llx_asset ADD COLUMN reversal_amount_ht double(24,8) AFTER fk_asset_model;
-ALTER TABLE llx_asset ADD COLUMN fk_asset_model integer AFTER label;
-ALTER TABLE llx_asset ADD COLUMN reversal_date date AFTER recovered_vat;
-ALTER TABLE llx_asset ADD COLUMN date_acquisition date NOT NULL AFTER reversal_date;
-ALTER TABLE llx_asset ADD COLUMN date_start date NOT NULL AFTER date_acquisition;
-ALTER TABLE llx_asset ADD COLUMN qty real DEFAULT 1 NOT NULL AFTER date_start;
-ALTER TABLE llx_asset ADD COLUMN acquisition_type smallint DEFAULT 0 NOT NULL AFTER qty;
-ALTER TABLE llx_asset ADD COLUMN asset_type smallint DEFAULT 0 NOT NULL AFTER acquisition_type;
-ALTER TABLE llx_asset ADD COLUMN not_depreciated integer(1) DEFAULT 0 AFTER asset_type;
-ALTER TABLE llx_asset ADD COLUMN disposal_date date AFTER not_depreciated;
-ALTER TABLE llx_asset ADD COLUMN disposal_amount_ht double(24,8) AFTER disposal_date;
-ALTER TABLE llx_asset ADD COLUMN fk_disposal_type integer AFTER disposal_amount_ht;
-ALTER TABLE llx_asset ADD COLUMN disposal_depreciated integer(1) DEFAULT 0 AFTER fk_disposal_type;
-ALTER TABLE llx_asset ADD COLUMN disposal_subject_to_vat integer(1) DEFAULT 0 AFTER disposal_depreciated;
-ALTER TABLE llx_asset ADD COLUMN last_main_doc varchar(255) AFTER fk_user_modif;
-ALTER TABLE llx_asset ADD COLUMN model_pdf varchar(255) AFTER import_key;
-
-DROP TABLE llx_asset_type;
-
-CREATE TABLE llx_c_asset_disposal_type
-(
-  rowid    integer            AUTO_INCREMENT PRIMARY KEY,
-  entity 	 integer NOT NULL DEFAULT 1,
-  code     varchar(16)        NOT NULL,
-  label    varchar(50)        NOT NULL,
-  active   integer  DEFAULT 1 NOT NULL
-)ENGINE=innodb;
-
-CREATE TABLE llx_asset_accountancy_codes_economic(
-	rowid						integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	fk_asset					integer,
-	fk_asset_model				integer,
-
- 	asset						varchar(32),
-    depreciation_asset			varchar(32),
-    depreciation_expense		varchar(32),
-    value_asset_sold			varchar(32),
-    receivable_on_assignment	varchar(32),
-    proceeds_from_sales			varchar(32),
-    vat_collected				varchar(32),
-    vat_deductible				varchar(32),
-
-	tms							timestamp,
-	fk_user_modif				integer
-) ENGINE=innodb;
-
-CREATE TABLE llx_asset_accountancy_codes_fiscal(
-	rowid									integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	fk_asset								integer,
-	fk_asset_model							integer,
-
-    accelerated_depreciation				varchar(32),
-    endowment_accelerated_depreciation		varchar(32),
-    provision_accelerated_depreciation		varchar(32),
-
-	tms										timestamp,
-	fk_user_modif							integer
-) ENGINE=innodb;
-
-CREATE TABLE llx_asset_depreciation_options_economic(
-	rowid								integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	fk_asset							integer,
-	fk_asset_model						integer,
-
-	depreciation_type					smallint		DEFAULT 0 NOT NULL,		-- 0:linear, 1:degressive, 2:exceptional
-	accelerated_depreciation_option		integer(1),								-- activate accelerated depreciation mode (fiscal)
-
-    degressive_coefficient				double(24,8),
-    duration							smallint		NOT NULL,
-    duration_type						smallint		DEFAULT 0  NOT NULL,	-- 0:annual, 1:monthly, 2:daily
-
-	amount_base_depreciation_ht			double(24,8),
-	amount_base_deductible_ht			double(24,8),
-	total_amount_last_depreciation_ht	double(24,8),
-
-	tms									timestamp,
-	fk_user_modif						integer
-) ENGINE=innodb;
-
-CREATE TABLE llx_asset_depreciation_options_fiscal(
-	rowid								integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	fk_asset							integer,
-	fk_asset_model						integer,
-
-	depreciation_type					smallint		DEFAULT 0 NOT NULL,		-- 0:linear, 1:degressive, 2:exceptional
-
-    degressive_coefficient				double(24,8),
-    duration							smallint		NOT NULL,
-    duration_type						smallint		DEFAULT 0  NOT NULL,	-- 0:annual, 1:monthly, 2:daily
-
-	amount_base_depreciation_ht			double(24,8),
-	amount_base_deductible_ht			double(24,8),
-	total_amount_last_depreciation_ht	double(24,8),
-
-	tms									timestamp,
-	fk_user_modif						integer
-) ENGINE=innodb;
-
-CREATE TABLE llx_asset_depreciation(
-	rowid								integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
-
-	fk_asset							integer			NOT NULL,
-	depreciation_mode					varchar(255)	NOT NULL,	-- (economic, fiscal or other)
-
-	ref 								varchar(255)	NOT NULL,
-	depreciation_date					datetime		NOT NULL,
-	depreciation_ht						double(24,8)	NOT NULL,
-	cumulative_depreciation_ht			double(24,8)	NOT NULL,
-
-    accountancy_code_debit				varchar(32),
-    accountancy_code_credit				varchar(32),
-
-	tms									timestamp,
-	fk_user_modif						integer
-) ENGINE=innodb;
-
-CREATE TABLE llx_asset_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-CREATE TABLE llx_asset_model(
-	rowid					integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	entity					integer			DEFAULT 1 NOT NULL,  -- multi company id
-	ref						varchar(128)	NOT NULL,
-	label					varchar(255)	NOT NULL,
-
-	asset_type				smallint		NOT NULL,
-
-	note_public				text,
-	note_private			text,
-	date_creation			datetime		NOT NULL,
-	tms						timestamp,
-	fk_user_creat			integer			NOT NULL,
-	fk_user_modif			integer,
-	import_key				varchar(14),
-	status					smallint		NOT NULL
-) ENGINE=innodb;
-
-CREATE TABLE llx_asset_model_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_c_asset_disposal_type ADD UNIQUE INDEX uk_c_asset_disposal_type(code, entity);
-
-ALTER TABLE llx_asset ADD INDEX idx_asset_fk_asset_model (fk_asset_model);
-ALTER TABLE llx_asset ADD INDEX idx_asset_fk_disposal_type (fk_disposal_type);
-
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_asset_model	FOREIGN KEY (fk_asset_model)	REFERENCES llx_asset_model (rowid);
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_disposal_type	FOREIGN KEY (fk_disposal_type)	REFERENCES llx_c_asset_disposal_type (rowid);
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_user_creat	FOREIGN KEY (fk_user_creat)		REFERENCES llx_user (rowid);
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
-
-ALTER TABLE llx_asset_accountancy_codes_economic ADD INDEX idx_asset_ace_rowid (rowid);
-ALTER TABLE llx_asset_accountancy_codes_economic ADD UNIQUE uk_asset_ace_fk_asset (fk_asset);
-ALTER TABLE llx_asset_accountancy_codes_economic ADD UNIQUE uk_asset_ace_fk_asset_model (fk_asset_model);
-
-ALTER TABLE llx_asset_accountancy_codes_economic ADD CONSTRAINT fk_asset_ace_asset			FOREIGN KEY (fk_asset)			REFERENCES llx_asset (rowid);
-ALTER TABLE llx_asset_accountancy_codes_economic ADD CONSTRAINT fk_asset_ace_asset_model	FOREIGN KEY (fk_asset_model)	REFERENCES llx_asset_model (rowid);
-ALTER TABLE llx_asset_accountancy_codes_economic ADD CONSTRAINT fk_asset_ace_user_modif		FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
-
-ALTER TABLE llx_asset_accountancy_codes_fiscal ADD INDEX idx_asset_acf_rowid (rowid);
-ALTER TABLE llx_asset_accountancy_codes_fiscal ADD UNIQUE uk_asset_acf_fk_asset (fk_asset);
-ALTER TABLE llx_asset_accountancy_codes_fiscal ADD UNIQUE uk_asset_acf_fk_asset_model (fk_asset_model);
-
-ALTER TABLE llx_asset_accountancy_codes_fiscal ADD CONSTRAINT fk_asset_acf_asset		FOREIGN KEY (fk_asset)			REFERENCES llx_asset (rowid);
-ALTER TABLE llx_asset_accountancy_codes_fiscal ADD CONSTRAINT fk_asset_acf_asset_model	FOREIGN KEY (fk_asset_model)	REFERENCES llx_asset_model (rowid);
-ALTER TABLE llx_asset_accountancy_codes_fiscal ADD CONSTRAINT fk_asset_acf_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
-
-ALTER TABLE llx_asset_depreciation_options_economic ADD INDEX idx_asset_doe_rowid (rowid);
-ALTER TABLE llx_asset_depreciation_options_economic ADD UNIQUE uk_asset_doe_fk_asset (fk_asset);
-ALTER TABLE llx_asset_depreciation_options_economic ADD UNIQUE uk_asset_doe_fk_asset_model (fk_asset_model);
-
-ALTER TABLE llx_asset_depreciation_options_economic ADD CONSTRAINT fk_asset_doe_asset		FOREIGN KEY (fk_asset)			REFERENCES llx_asset (rowid);
-ALTER TABLE llx_asset_depreciation_options_economic ADD CONSTRAINT fk_asset_doe_asset_model	FOREIGN KEY (fk_asset_model)	REFERENCES llx_asset_model (rowid);
-ALTER TABLE llx_asset_depreciation_options_economic ADD CONSTRAINT fk_asset_doe_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
-
-ALTER TABLE llx_asset_depreciation_options_fiscal ADD INDEX idx_asset_dof_rowid (rowid);
-ALTER TABLE llx_asset_depreciation_options_fiscal ADD UNIQUE uk_asset_dof_fk_asset (fk_asset);
-ALTER TABLE llx_asset_depreciation_options_fiscal ADD UNIQUE uk_asset_dof_fk_asset_model (fk_asset_model);
-
-ALTER TABLE llx_asset_depreciation_options_fiscal ADD CONSTRAINT fk_asset_dof_asset			FOREIGN KEY (fk_asset)			REFERENCES llx_asset (rowid);
-ALTER TABLE llx_asset_depreciation_options_fiscal ADD CONSTRAINT fk_asset_dof_asset_model	FOREIGN KEY (fk_asset_model)	REFERENCES llx_asset_model (rowid);
-ALTER TABLE llx_asset_depreciation_options_fiscal ADD CONSTRAINT fk_asset_dof_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
-
-ALTER TABLE llx_asset_depreciation ADD INDEX idx_asset_depreciation_rowid (rowid);
-ALTER TABLE llx_asset_depreciation ADD INDEX idx_asset_depreciation_rowid (fk_asset);
-ALTER TABLE llx_asset_depreciation ADD INDEX idx_asset_depreciation_rowid (depreciation_mode);
-ALTER TABLE llx_asset_depreciation ADD INDEX idx_asset_depreciation_rowid (ref);
-ALTER TABLE llx_asset_depreciation ADD UNIQUE uk_asset_depreciation_fk_asset (fk_asset, depreciation_mode, ref);
-
-ALTER TABLE llx_asset_depreciation ADD CONSTRAINT fk_asset_depreciation_asset		FOREIGN KEY (fk_asset)			REFERENCES llx_asset (rowid);
-ALTER TABLE llx_asset_depreciation ADD CONSTRAINT fk_asset_depreciation_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
-
-ALTER TABLE llx_asset_extrafields ADD INDEX idx_asset_extrafields (fk_object);
-
-ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_rowid (rowid);
-ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_ref (ref);
-ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_entity (entity);
-ALTER TABLE llx_asset_model ADD UNIQUE INDEX uk_asset_model (entity, ref);
-
-ALTER TABLE llx_asset_model ADD CONSTRAINT fk_asset_model_user_creat	FOREIGN KEY (fk_user_creat)		REFERENCES llx_user (rowid);
-ALTER TABLE llx_asset_model ADD CONSTRAINT fk_asset_model_user_modif	FOREIGN KEY (fk_user_modif)		REFERENCES llx_user (rowid);
-
-ALTER TABLE llx_asset_model_extrafields ADD INDEX idx_asset_model_extrafields (fk_object);

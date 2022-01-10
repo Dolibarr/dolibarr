@@ -37,8 +37,8 @@ OtherInfo=Αλλες πληροφορίες
 DeleteCptCategory=Κατάργηση λογαριασμού λογιστικής από την ομάδα
 ConfirmDeleteCptCategory=Είστε βέβαιοι ότι θέλετε να καταργήσετε αυτόν τον λογαριασμό λογιστικής από την ομάδα λογαριασμών λογαριασμού;
 JournalizationInLedgerStatus=Κατάσταση της περιοδικής εγγραφής
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Η ομάδα είναι κενή, ελέγξτε τη ρύθμιση της εξατομικευμένης ομάδας λογιστικής
 DetailByAccount=Εμφάνιση λεπτομερειών βάσει λογαριασμού
 AccountWithNonZeroValues=Λογαριασμοί με μη μηδενικές τιμές
@@ -48,7 +48,7 @@ CountriesNotInEEC=Χώρες που δεν βρίσκονται στην ΕΟΚ
 CountriesInEECExceptMe=Χώρες στην ΕΟΚ εκτός από το %s
 CountriesExceptMe=Όλες οι χώρες εκτός από το %s
 AccountantFiles=Εξαγωγή εγγράφων προέλευσης
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=Προβολή κατά λογιστικό λογαριασμό
 VueBySubAccountAccounting=View by accounting subaccount
@@ -286,7 +286,7 @@ ValidateMovements=Επικυρώστε τις κινήσεις
 DescValidateMovements=Απαγορεύεται οποιαδήποτε τροποποίηση ή διαγραφή γραφής, γράμματος και διαγραφής. Όλες οι καταχωρήσεις για μια άσκηση πρέπει να επικυρωθούν, διαφορετικά το κλείσιμο δεν θα είναι δυνατό
 
 ValidateHistory=Δεσμεύστε αυτόματα
-AutomaticBindingDone=Έγινε αυτόματη σύνδεση
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
 MvtNotCorrectlyBalanced=Η κίνηση δεν είναι σωστά ισορροπημένη. Χρέωση = %s | Πιστωτικό = %s
@@ -298,7 +298,7 @@ NoNewRecordSaved=Δεν υπάρχει πλέον ρεκόρ για να κάν�
 ListOfProductsWithoutAccountingAccount=Κατάλογος προϊόντων που δεν δεσμεύονται σε κανένα λογιστικό λογαριασμό
 ChangeBinding=Αλλάξτε τη σύνδεση
 Accounted=Πληρώθηκε σε
-NotYetAccounted=Not yet accounted in the ledger
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Εμφάνιση εκπαιδευτικού προγράμματος
 NotReconciled=Δεν ταιριάζουν
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Εξαγωγή σχεδίου περιοδικού
 Modelcsv=Πρότυπο εξαγωγής
@@ -343,7 +343,7 @@ Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Εξαγωγή για Quadratus QuadraCompta
 Modelcsv_ebp=Εξαγωγή για EBP
 Modelcsv_cogilog=Εξαγωγή για το Cogilog
-Modelcsv_agiris=Εξαγωγή για Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Εξαγωγή για LD Compta (v10 και άνω)
 Modelcsv_openconcerto=Εξαγωγή για OpenConcerto (Test)
@@ -351,9 +351,10 @@ Modelcsv_configurable=Εξαγωγή CSV εξαγωγής
 Modelcsv_FEC=Εξαγωγή FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Εξαγωγή για Sage 50 Ελβετία
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Λογαριασμός Id
 
 ## Tools - Init accounting account on product / service
@@ -386,7 +387,8 @@ SaleExport=Εξαγωγή πώλησης
 SaleEEC=Πώληση στην ΕΟΚ
 SaleEECWithVAT=Πώληση σε ΕΟΚ με μηδενικό ΦΠΑ, επομένως υποθέτουμε ότι ΔΕΝ είναι ενδοκοινοτική πώληση και ο προτεινόμενος λογαριασμός είναι ο τυπικός λογαριασμός προϊόντος.
 SaleEECWithoutVATNumber=Πώληση σε ΕΟΚ χωρίς ΦΠΑ, αλλά δεν ορίζεται το ΑΦΜ τρίτου μέρους. Εφεδρικός λογαριασμός προϊόντος για τυπικές πωλήσεις. Εάν χρειαστεί, μπορείτε να διορθώσετε το αναγνωριστικό ΦΠΑ τρίτου μέρους ή τον λογαριασμό προϊόντος.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Εύρος λογιστικού λογαριασμού
 Calculated=Υπολογίστηκε
@@ -403,6 +405,7 @@ NoJournalDefined=Δεν έχει οριστεί περιοδικό
 Binded=Γραμμές δεσμευμένες
 ToBind=Γραμμές που δεσμεύουν
 UseMenuToSetBindindManualy=Οι γραμμές που δεν έχουν ακόμη δεσμευτεί, χρησιμοποιήστε το μενού <a href="%s">%s</a> για να κάνετε τη σύνδεση μη αυτόματα
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Λογιστικές εγγραφές

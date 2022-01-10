@@ -359,11 +359,15 @@ a.top-menu-dropdown-link {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	margin-right: 5px;
+	margin-<?php echo $right; ?>: 5px;
 	display: inline-block;
 	content: "\f0da";
 	/* color: rgba(0,0,0,0.3); */
 }
+.multicompany-item::before {
+	content: none !important;
+}
+
 .dropdown-item.bookmark-item-external::before {
 	content: "\f35d";
 }

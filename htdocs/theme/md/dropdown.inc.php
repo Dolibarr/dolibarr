@@ -342,7 +342,7 @@ a.top-menu-dropdown-link {
 	display: block !important;
 	box-sizing: border-box;
 	width: 100%;
-	padding: .25rem 1.5rem .25rem 1rem;
+	padding: .3em 1.5em .4em 1em;
 	clear: both;
 	font-weight: 400;
 	color: #212529  !important;
@@ -365,12 +365,18 @@ a.top-menu-dropdown-link {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	margin-right: 5px;
+	margin-<?php echo $right; ?>: 5px;
 	display: inline-block;
 	content: "\f0da";
 	color: rgba(0,0,0,0.3);
 }
+.multicompany-item::before {
+	content: none !important;
+}
 
+.dropdown-item.bookmark-item-external::before {
+	content: "\f35d";
+}
 
 .dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
