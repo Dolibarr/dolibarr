@@ -794,7 +794,7 @@ class BOM extends CommonObject
 			$product = new Product($db);
 			$resultFetch = $product->fetch($this->fk_product);
 			if ($resultFetch > 0) {
-				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->label;
+				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
 			}
 		}
 
