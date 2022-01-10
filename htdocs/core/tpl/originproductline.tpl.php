@@ -40,6 +40,7 @@ if ($conf->global->PRODUCT_USE_UNITS)
 	print '<td class="left">'.$langs->trans($this->tpl['unit']).'</td>';
 
 print '<td class="right">'.$this->tpl['remise_percent'].'</td>';
+print '<td class="right">'.$this->tpl['total_ht'].'</td>';
 
 $selected = 1;
 if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) $selected = 0;

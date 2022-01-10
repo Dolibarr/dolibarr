@@ -4441,6 +4441,7 @@ abstract class CommonObject
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
 		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="right">'.$langs->trans('TotalHT').'</td>';
         print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
         print '</tr>';
 		$i = 0;
@@ -4593,6 +4594,7 @@ abstract class CommonObject
         if (!empty($line->vat_src_code) && !preg_match('/\(/', $this->tpl['vat_rate'])) $this->tpl['vat_rate'] .= ' ('.$line->vat_src_code.')';
 
 		$this->tpl['price'] = price($line->subprice);
+		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		if ($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
