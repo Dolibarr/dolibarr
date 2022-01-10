@@ -278,15 +278,15 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string, or an (int) if int, when forging sql request.
 			$ok=true;
 			$matches=array();
-			preg_match_all('/(DELETE|OR|AND|WHERE|INSERT)\s.*([^\s][^\s][^\s])\s*=\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
+			preg_match_all('/(DELETE|OR|AND|WHERE|INSERT)\s.*([^\s][^\s][^\s])\s*=\s*(\'|")\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if ($val[2] == 'ity' && $val[3] == 'con') {		// exclude entity = ".$conf->entity
+				if ($val[2] == 'ity' && $val[4] == 'con') {		// exclude entity = ".$conf->entity
 					continue;
 				}
-				if ($val[2] == 'ame' && $val[3] == 'db-' && preg_match('/WHERE name/', $val[0])) {		// exclude name = ".$db->encrypt(
+				if ($val[2] == 'ame' && $val[4] == 'db-' && preg_match('/WHERE name/', $val[0])) {		// exclude name = ".$db->encrypt(
 					continue;
 				}
-				if ($val[2] == 'ame' && $val[3] == 'thi' && preg_match('/WHERE name/', $val[0])) {		// exclude name = ".$this->db->encrypt(
+				if ($val[2] == 'ame' && $val[4] == 'thi' && preg_match('/WHERE name/', $val[0])) {		// exclude name = ".$this->db->encrypt(
 					continue;
 				}
 				var_dump($matches);
@@ -471,6 +471,19 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				}
 			}
 			$this->assertTrue($ok, 'Found a forbidden string sequence into '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
+
+
+			// Test we don't have @var array(
+			$ok=true;
+			$matches=array();
+			preg_match_all('/preg_grep\(.*\$/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				if (strpos($val[0], 'preg_quote') === false) {
+					$ok=false;
+					break;
+				}
+			}
+			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
 
 
 			// Test we don't have @var array(

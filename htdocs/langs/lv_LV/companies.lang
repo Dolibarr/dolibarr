@@ -369,7 +369,7 @@ VATIntraCheck=Pārbaudīt
 VATIntraCheckDesc=PVN ID ir jāiekļauj valsts prefikss. Saite <b> %s </b> izmanto Eiropas PVN pārbaudes pakalpojumu (VIES), kas pieprasa interneta piekļuvi no Dolibarr servera.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Pārbaudiet Kopienas iekšējo PVN identifikācijas numuru Eiropas Komisijas tīmekļa vietnē
-VATIntraManualCheck=Jūs varat manuāli pārbaudīt arī Eiropas Komisijas vietnē <a href="%s" target="_blank">%s</a>
+VATIntraManualCheck=Varat arī manuāli pārbaudīt Eiropas Komisijas tīmekļa vietnē <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a>
 ErrorVATCheckMS_UNAVAILABLE=Pārbaude nav iespējams. Pārbaudes pakalpojums netiek nodrošināts no dalībvalsts (%s).
 NorProspectNorCustomer=Nav izredzes, ne klients
 JuridicalStatus=Uzņēmējdarbības vienības tips

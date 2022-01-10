@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Қор
 Version=Нұсқа
 Publisher=Баспа
@@ -265,8 +267,8 @@ OtherResources=Басқа ресурстар
 ExternalResources=Сыртқы ресурстар
 SocialNetworks=Әлеуметтік желілер
 SocialNetworkId=Әлеуметтік желі идентификаторы
-ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=Басқа сұрақтар/көмек үшін сіз Dolibarr форумын пайдалана аласыз: <br> <b> <a href="%s" target="_blank"> %s </a> </b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Міне, Dolibarr көмегімен көмек пен қолдау алуға арналған бірнеше ресурстар.
 HelpCenterDesc2=Бұл ресурстардың кейбірі <b> ағылшын тілінде </b> қол жетімді.
 CurrentMenuHandler=Ағымдағы мәзір өңдегіші
@@ -353,6 +355,7 @@ LastStableVersion=Соңғы тұрақты нұсқа
 LastActivationDate=Соңғы активтендіру күні
 LastActivationAuthor=Соңғы активация авторы
 LastActivationIP=Ең соңғы IP активтендіру
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Серверді желіден тыс жаңарту
 WithCounter=Есептегішті басқарыңыз
 GenericMaskCodes=Сіз кез келген нөмірлеу маскасын енгізе аласыз. Бұл маскада келесі тегтерді қолдануға болады: <br> <b> {000000} </b> әр %s көбейтілетін санға сәйкес келеді. Есептегіштің қажетті ұзындығына қанша нөлді енгізіңіз. Есептегішті маска сияқты нөлге тең болу үшін сол жақтан нөлдер толтырады. <br> <b> {000000 + 000} </b> бұрынғыға ұқсас, бірақ + белгісінің оң жағындағы санға сәйкес келетін есеп бірінші %s бастап қолданылады. <br> <b> {000000@x} </b> бұрынғыға ұқсас, бірақ x айына жеткенде санауыш нөлге ысырылады (1 -ден 12 -ге дейін немесе 0 сіздің конфигурацияңызда анықталған қаржылық жылдың алғашқы айларын пайдалану үшін ай сайын нөлге қалпына келтіріңіз). Егер бұл опция қолданылса және x 2 немесе одан жоғары болса, онда {yy} {mm} немесе {yyyy} {мм} реттілігі де қажет. <br> <b> {dd} </b> күн (01 -ден 31 -ге дейін). <br> <b> {mm} </b> ай (01 -ден 12 -ге дейін). <br> <b> {yy} </b>, <b> {yyyy} </b> немесе a0aee83365837fz4 2b3 a09 a09 a09 a4 <br>
@@ -762,6 +765,7 @@ Permission121=Пайдаланушымен байланыстырылған үш
 Permission122=Пайдаланушымен байланыстырылған үшінші жақтарды құру/өзгерту
 Permission125=Пайдаланушымен байланыстырылған үшінші тараптарды жою
 Permission126=Үшінші тараптарға экспорттау
+Permission130=Create/modify third parties payment information
 Permission141=Барлық жобалар мен тапсырмаларды оқу (сонымен қатар мен байланыста болмайтын жеке жобалар)
 Permission142=Барлық жобалар мен тапсырмаларды жасау/өзгерту (сонымен қатар мен байланысқа шықпайтын жеке жобалар)
 Permission144=Барлық жобалар мен тапсырмаларды жою (сонымен қатар мен байланыспайтын жеке жобалар)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Сіз %s веб -шолғышын қолданасыз. Бұл шо
 BrowserIsKO=Сіз %s веб -шолғышын қолданасыз. Бұл шолғыш қауіпсіздіктің, өнімділіктің және сенімділіктің нашар таңдауы екені белгілі. Біз Firefox, Chrome, Opera немесе Safari қолдануды ұсынамыз.
 PHPModuleLoaded=%s PHP компоненті жүктелген
 PreloadOPCode=Алдын ала жүктелген OPCode қолданылады
-AddRefInList=Тапсырыс беруші/сатушы сілтемесін көрсету. ақпарат тізімі (таңдау тізімі немесе комбокс) және гиперсілтеменің көп бөлігі. <br> Үшінші жақтар «CC12345 - SC45678 - Үлкен компания корпорациясы» атау форматымен пайда болады. «The Big Company corp» орнына.
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Тапсырыс берушінің/сатушының мекен -жайлары туралы ақпарат тізімін көрсету (таңдау тізімі немесе комбокс) <br> Үшінші тараптар «The Big Company corp.» Орнына «Big Company corp. - 21 jump street 123456 Big town - USA» атау форматымен шығады.
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Байланыс электрондық поштасын (немесе телефондар анықталмаса) және қала ақпаратының тізімін (тізім немесе комбоксты таңдаңыз) көрсету <br> Байланыстар «Dupond Durand - dupond.durand@email.com - Париж» немесе «Дюпонд Дюран - 06 07» атау форматында пайда болады. 59 65 66 - «Дюпон Дюранның» орнына Париж «.
 AskForPreferredShippingMethod=Үшінші тараптар үшін жөнелтудің қолайлы әдісін сұраңыз.
 FieldEdition=%s өрісінің басылымы
@@ -1708,8 +1712,9 @@ MailingDelay=Келесі хабарламаны жібергеннен кейі
 NotificationSetup=Электрондық пошта хабарландыру модулін орнату
 NotificationEMailFrom=Хабарламалар модулі жіберетін электрондық хаттар үшін жіберуші электрондық поштасы (Кімнен)
 FixedEmailTarget=Алушы
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Жеткізу модулін орнату
 SendingsReceiptModel=Түбіртек үлгісін жіберу
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Жеткізу түбіртектері тура
 ##### FCKeditor #####
 AdvancedEditor=Жетілдірілген редактор
 ActivateFCKeditor=Қосымша редакторды іске қосыңыз:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=WYSIWIG өнімдерінің егжей -тегжейлі желілерін құру/шығару барлық субъектілер үшін (ұсыныстар, тапсырыстар, шот -фактуралар және т.б.). <span class="warning"> Ескерту: Бұл жағдайда бұл параметрді қолдану қатаң ұсынылмайды, себебі ол PDF файлдарын құру кезінде арнайы таңбалар мен беттерді пішімдеуде қиындықтар тудыруы мүмкін. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Шығыстық есептер модулін орна
 ExpenseReportNumberingModules=Шығындар бойынша есептерді нөмірлеу модулі
 NoModueToManageStockIncrease=Акциялардың автоматты түрде өсуін басқара алатын модуль іске қосылмаған. Акцияны көбейту тек қолмен енгізу арқылы жүзеге асады.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Сіз «Хабарландыру» модулін қосу және конфигурациялау арқылы электрондық пошта хабарландыруларының нұсқаларын таба аласыз.
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Бір пайдаланушыға автоматты хабарламалар тізімі*
 ListOfNotificationsPerUserOrContact=Мүмкін болатын автоматты хабарландырулардың тізімі (іскерлік оқиға бойынша) бір пайдаланушыға* немесе бір контактіге ** қол жетімді
 ListOfFixedNotifications=Автоматты тіркелген хабарламалардың тізімі
@@ -2209,3 +2215,7 @@ SkinAndColors=Skin and colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

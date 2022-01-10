@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Joslas moduļa iestatīšana
-StripeDesc=Piedāvājiet klientiem Stripe tiešsaistes maksājumu lapu maksājumiem ar kredītkartēm / kredītkartēm, izmantojot <a href="http://www.stripe.com" target="_blank"> Stripe </a>. To var izmantot, lai ļautu saviem klientiem veikt ad-hoc maksājumus vai maksājumus, kas saistīti ar konkrētu Dolibarr objektu (rēķins, pasūtījums, ...)
+StripeDesc=Piedāvājiet saviem klientiem tiešsaistes maksājumu lapu maksājumiem ar kredītkartēm/debetkartēm, izmantojot <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . To var izmantot, lai ļautu jūsu klientiem veikt ad hoc maksājumus vai maksājumus, kas saistīti ar konkrētu Dolibarr objektu (rēķins, pasūtījums, ...)
 StripeOrCBDoPayment=Maksājiet ar kredītkarti vai Stripe
 FollowingUrlAreAvailableToMakePayments=Pēc URL ir pieejami, lai piedāvātu lapu, lai klients varētu veikt maksājumu par Dolibarr objektiem
 PaymentForm=Maksājuma forma
@@ -28,11 +28,10 @@ AccountParameter=Konta parametri
 UsageParameter=Izmantošanas parametri
 InformationToFindParameters=Palīdzēt atrast savu %s konta informāciju
 STRIPE_CGI_URL_V2=CGI moduļa norēķinu URL
-VendorName=Pārdevēja nosaukums
 CSSUrlForPaymentForm=CSS stila lapas url maksājuma formu
 NewStripePaymentReceived=Saņemta jauna josla maksājums
 NewStripePaymentFailed=New Stripe maksājums tika izmēģināts, bet neizdevās
-FailedToChargeCard=Failed to charge card
+FailedToChargeCard=Neizdevās iekasēt karti
 STRIPE_TEST_SECRET_KEY=Slepena testa atslēga
 STRIPE_TEST_PUBLISHABLE_KEY=Publicējamais testa taustiņš
 STRIPE_TEST_WEBHOOK_KEY=Webhooka testa atslēga
@@ -69,4 +68,4 @@ ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IP
 ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
 PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
 ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Stingro klientu autentifikācijas noteikumu dēļ karte jāizveido no Stripe biroja. Jūs varat noklikšķināt šeit, lai ieslēgtu Stripe klientu ierakstu: %s

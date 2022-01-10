@@ -168,6 +168,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
+
 		if ($result >= 0) {
 			return $result;
 		} else {
@@ -809,6 +810,64 @@ abstract class CommonInvoice extends CommonObject
 			dol_syslog(get_class($this).'::demande_prelevement_delete Error '.$this->error);
 			return -1;
 		}
+	}
+
+
+	/**
+	 * Build string for ZATCA QR Code (Arabi Saudia)
+	 *
+	 * @return	string			String for ZATCA QR Code
+	 */
+	public function buildZATCAQRString()
+	{
+		global $conf;
+
+		$tmplang = new Translate('', $conf);
+		$tmplang->setDefaultLang('en_US');
+		$tmplang->load("main");
+
+		$datestring = dol_print_date($this->date, 'dayhourrfc');
+		$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
+		$pricetaxstring = price($this->total_tva, 0, $tmplang, 0, -1, 2);
+
+		/*
+		$name = implode(unpack("H*", $this->thirdparty->name));
+		$vatnumber = implode(unpack("H*", $this->thirdparty->tva_intra));
+		$date = implode(unpack("H*", $datestring));
+		$pricewithtax = implode(unpack("H*", price2num($pricewithtaxstring, 2)));
+		$pricetax = implode(unpack("H*", $pricetaxstring));
+
+		var_dump(strlen($this->thirdparty->name));
+		var_dump(str_pad(dechex('9'), 2, '0', STR_PAD_LEFT));
+		var_dump($this->thirdparty->name);
+		var_dump(implode(unpack("H*", $this->thirdparty->name)));
+		var_dump(price($this->total_tva, 0, $tmplang, 0, -1, 2));
+
+		$s = '01'.str_pad(dechex(strlen($this->thirdparty->name)), 2, '0', STR_PAD_LEFT).$name;
+		$s .= '02'.str_pad(dechex(strlen($this->thirdparty->tva_intra)), 2, '0', STR_PAD_LEFT).$vatnumber;
+		$s .= '03'.str_pad(dechex(strlen($datestring)), 2, '0', STR_PAD_LEFT).$date;
+		$s .= '04'.str_pad(dechex(strlen($pricewithtaxstring)), 2, '0', STR_PAD_LEFT).$pricewithtax;
+		$s .= '05'.str_pad(dechex(strlen($pricetaxstring)), 2, '0', STR_PAD_LEFT).$pricetax;
+		$s .= '';					// Hash of xml invoice
+		$s .= '';					// ecda signature
+		$s .= '';					// ecda public key
+		$s .= '';					// ecda signature of public key stamp
+		*/
+
+		// Using TLV format
+		$s = pack('C1', 1).pack('C1', strlen($this->thirdparty->name)).$this->thirdparty->name;
+		$s .= pack('C1', 2).pack('C1', strlen($this->thirdparty->tva_intra)).$this->thirdparty->tva_intra;
+		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$date;
+		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
+		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
+		$s .= '';					// Hash of xml invoice
+		$s .= '';					// ecda signature
+		$s .= '';					// ecda public key
+		$s .= '';					// ecda signature of public key stamp
+
+		$s = base64_encode($s);
+
+		return $s;
 	}
 }
 

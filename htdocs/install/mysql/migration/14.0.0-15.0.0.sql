@@ -478,3 +478,7 @@ ALTER TABLE llx_entrepot ADD COLUMN warehouse_usage integer DEFAULT 1;
 ALTER TABLE llx_session MODIFY COLUMN user_agent VARCHAR(255) NULL;
 
 ALTER TABLE llx_inventorydet ADD COLUMN fk_movement integer NULL;
+
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN origintype varchar(64);
+
+ALTER TABLE llx_intracommreport CHANGE COLUMN period periods varchar(32);

@@ -8,7 +8,8 @@
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022      Charlene Benke        <charlene@patas-monkey.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -1211,13 +1212,17 @@ if (empty($reshook)) {
 			if (!$error) {
 				// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (!empty($origin) && !empty($originid)) {
+					$element = $subelement = $origin;
+					$classname = ucfirst($subelement);
 					if ($origin == 'propal' || $origin == 'proposal') {
-						$classname = 'Propal';
 						$element = 'comm/propal'; $subelement = 'propal';
-					} elseif ($origin == 'order' || $origin == 'commande') {
-						$classname = 'Commande';
+						$classname = 'Propal';
+					}
+					if ($origin == 'order' || $origin == 'commande') {
 						$element = $subelement = 'commande';
-					} else {
+						$classname = 'Commande';
+					}
+					if ($origin == 'supplier_proposal') {
 						$classname = 'SupplierProposal';
 						$element = 'supplier_proposal';
 						$subelement = 'supplier_proposal';
@@ -1529,6 +1534,7 @@ if ($action == 'create') {
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$classname = ucfirst($subelement);
 		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 			$element = $regs[1];
@@ -1538,14 +1544,18 @@ if ($action == 'create') {
 		if ($origin == 'propal' || $origin == 'proposal') {
 			$classname = 'Propal';
 			$element = 'comm/propal'; $subelement = 'propal';
-		} elseif ($origin == 'order' || $origin == 'commande') {
+		}
+		if ($origin == 'order' || $origin == 'commande') {
 			$classname = 'Commande';
 			$element = $subelement = 'commande';
-		} else {
+		}
+		if ($origin == 'supplier_proposal') {
 			$classname = 'SupplierProposal';
 			$element = 'supplier_proposal';
 			$subelement = 'supplier_proposal';
 		}
+
+
 
 		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -1649,8 +1659,9 @@ if ($action == 'create') {
 			$(document).ready(function() {
 				$("#socid").change(function() {
 					var socid = $(this).val();
+					var prjid = $("#projectid").val();
 					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&projectid="+prjid
 				});
 			});
 			</script>';
@@ -2007,7 +2018,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
+				$morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 1, 1, 0, 0, '', 1, 0, 'maxwidth500');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Aquesta eina només l’han d’utilitzar usuaris o desenvolupadors experimentats. Proporciona utilitats per a construir o editar el vostre propi mòdul. La documentació per al desenvolupament manual alternatiu <a href="%s" target="_blank"> és aquí </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Introduïu el nom del mòdul/aplicació per a crear sense espais. Utilitzeu majúscules per separar paraules (per exemple: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Introduïu el nom de l'objecte que voleu crear sense espais. Utilitzeu majúscules per separar paraules (Per exemple: MyObject, Estudiant, Professor...). El fitxer de classes CRUD, però també el fitxer API, pàgines per a llistar/afegir/editar/eliminar objectes i els fitxers SQL es generaran.
 ModuleBuilderDesc2=Camí on es generen / editen els mòduls (primer directori per als mòduls externs definits en %s): <strong> %s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Els menús proporcionats pel vostre mòdul / aplicació es d
 DictionariesDefDescTooltip=Els diccionaris subministrats pel vostre mòdul/aplicació es defineixen a la matriu <strong>$this->dictionaries</strong> del fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definit (i reactivat el mòdul), els diccionaris també són visibles a la zona de configuració per als usuaris administradors a %s.
 PermissionsDefDescTooltip=Els permisos proporcionats pel vostre mòdul / aplicació es defineixen a la matriu <strong>$ this-> rights</strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definits (i el mòdul reactivat), els permisos es visualitzen a la configuració de permisos per defecte %s.
 HooksDefDesc=Definiu a la propietat <b>module_parts['hooks']</b>, en el descriptor del mòdul, el context dels "hooks" que voleu gestionar (una llista de contextos es pot trobar si cerqueu '<b>initHooks</b>' (en el codi del nucli de Dolibarr. <br> Editeu el fitxer del "hook" per afegir el codi de les vostres funcions "hookables" (les quals es poden trobar cercant "<b>executeHooks</b>" en el codi del nucli de Dolibarr).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Consulteu els identificadors que s’utilitzen a la instal·lació
 SeeReservedIDsRangeHere=Consultar l'interval d'identificadors reservats
 ToolkitForDevelopers=Kit d'eines per als desenvolupadors de Dolibarr

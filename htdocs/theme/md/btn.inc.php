@@ -320,7 +320,7 @@ div.pagination li:first-child a.btnTitle {
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
-	background-color: #fbfbfb;
+	/* background-color: #fbfbfb; */
 }
 
 a.btnTitle.btnTitleSelected {
@@ -370,6 +370,11 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	font-size: 20px;
 	display: block;
 }
+
+.paginationafterarrows a.btnTitlePlus, .titre_right a.btnTitlePlus {
+	border: 1px solid var(--colorbackbody);
+}
+
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */

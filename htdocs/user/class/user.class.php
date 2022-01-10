@@ -687,6 +687,7 @@ class User extends CommonObject
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
+			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
 			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
@@ -2108,7 +2109,7 @@ class User extends CommonObject
 	 *	@param	int		$notrigger				1=Does not launch triggers
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is crypted value.
-	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
+	 *  @return string 			          		If OK return clear password, 0 if no change (warning, you may retreive 1 instead of 0 even if password was same), < 0 if error
 	 */
 	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0)
 	{
@@ -2124,8 +2125,29 @@ class User extends CommonObject
 			$password = getRandomPassword(false);
 		}
 
-		// Crypt password
+		// Check and encrypt the password
 		if (empty($passwordalreadycrypted)) {
+			if (!empty($conf->global->USER_PASSWORD_GENERATED)) {
+				// Add a check on rules for password syntax using the setup of the password generator
+				$modGeneratePassClass = 'modGeneratePass'.ucfirst($conf->global->USER_PASSWORD_GENERATED);
+
+				include_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
+				if (class_exists($modGeneratePassClass)) {
+					$modGeneratePass = new $modGeneratePassClass($this->db, $conf, $langs, $user);
+
+					// To check an input user password, we disable the cleaning on ambiguous characters (this is used only for auto-generated password)
+					$modGeneratePass->WithoutAmbi = 0;
+
+					// Call to validatePassword($password) to check pass match rules
+					$testpassword = $modGeneratePass->validatePassword($password);
+					if (!$testpassword) {
+						$this->error = $modGeneratePass->error;
+						return -1;
+					}
+				}
+			}
+
+			// Now, we encrypt the new password
 			$password_crypted = dol_hash($password);
 		}
 
@@ -2574,9 +2596,10 @@ class User extends CommonObject
 		$companylink = '';
 
 		if (!empty($this->photo)) {
-			$label .= '<div class="photointooltip">';
-			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
-			$label .= '</div><div style="clear: both;"></div>';
+			$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
 		}
 
 		// Info Login
@@ -2797,7 +2820,7 @@ class User extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut(isset($this->statut) ? $this->statut : $this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Organisasjon
 Version=Versjon
 Publisher=Utgiver
@@ -265,8 +267,8 @@ OtherResources=Andre ressurser
 ExternalResources=Eksterne ressurser
 SocialNetworks=Sosiale nettverk
 SocialNetworkId=Sosialt nettverk ID
-ForDocumentationSeeWiki=For bruker- eller utviklerdokumentasjon (Doc, FAQs ...), <br> ta en titt på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
-ForAnswersSeeForum=For andre spørsmål/hjelp, kan du bruke Dolibarr forumet: <br> <a href="%s" target="_blank"><b>%s</b></a>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Her er noen ressurser for å få hjelp og støtte med Dolibarr.
 HelpCenterDesc2=Noen av disse ressursene er bare tilgjengelige på <b> engelsk </b>.
 CurrentMenuHandler=Gjeldende menyen behandler
@@ -353,6 +355,7 @@ LastStableVersion=Siste stabile versjon
 LastActivationDate=Siste aktiveringsdato
 LastActivationAuthor=Siste aktiveringsforfatter
 LastActivationIP=Siste aktivering IP
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Oppdater serveren offline
 WithCounter=Administrer en teller
 GenericMaskCodes=Her kan du legge inn nummereringsmal. I malen kan du bruke følgende tagger:<br><b>{000000}</b> tilsvarer et tall som økes ved hver %s. Angi så mange nuller som du ønsker at lengden på telleren skal være. Telleren vil ha ledende nuller i henhold til malens lengde. <br><b>{000000+000}</b> samme som forrige, men med en forskyvning til høyre for + tegnet, starter fra første %s. <br><b>{000000@x}</b> samme som forrige, men telleren starter fra null når måned x nås (x mellom 1 og 12, eller 0 for de første månedene i året, eller 99 for nullstilling hver måned). Hvis dette valget brukes og x er 2 eller mer kreves også sekvensen {yy}{mm} eller {yyyy}{mm} kreves også. <br><b>{dd}</b> dag (01 til 31).<br><b>{mm}</b> måned (01 til 12).<br><b>{yy}</b>, <b>{yyyy}</b> eller <b>{y}</b> årstall over 2, 4 eller 1 siffer. <br>
@@ -762,6 +765,7 @@ Permission121=Les tredjeparter lenket til bruker
 Permission122=Opprett/endre tredjeparter lenket til bruker
 Permission125=Slett tredjeparter lenket til bruker
 Permission126=Eksportere tredjeparter
+Permission130=Create/modify third parties payment information
 Permission141=Les alle prosjekter og oppgaver (også prosjekter jeg ikke er kontakt for)
 Permission142=Opprett/endre alle prosjekter og oppgaver (også prosjekter jeg ikke er kontakt for)
 Permission144=Slett alle prosjekter og oppgaver (også prosjekter jeg ikke er kontakt for)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Du bruker nettleseren %s. Denne nettleseren er ok for sikkerhet og y
 BrowserIsKO=Du bruker nettleseren %s. Denne nettleseren er kjent for å være et dårlig valg for sikkerhet, ytelse og pålitelighet. Vi anbefaler deg å bruke Firefox, Chrome, Opera eller Safari.
 PHPModuleLoaded=PHP-komponent %s lastet
 PreloadOPCode=Forhåndslastet OPCode brukes
-AddRefInList=Vis kunde/leverandør-ref i liste (velg liste eller kombinasjonsboks), og det meste av hyperkobling. Tredjepart vil vises med navnet "CC12345 - SC45678 - Stort selskap", i stedet for "Stort selskap".
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Vis liste over kunde-/leverandøradresseinfo (velg liste eller kombinasjonsboks) <br> Tredjeparter vil vises med et navnformat av "The Big Company Corp." - 21 Jump Street 123456 Big Town - USA "i stedet for" The Big Company Corp ".
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Vis kontakt-epost (eller telefoner hvis ikke definert) og poststed (velg liste eller kombinasjonsfelt) <br> Kontakter vises med navneformatet "Ola Nordmann - ola.nordmann@email.com - Bergen" eller "Ola Nordmann - 55 55 55 55 - Bergen "i stedet for"Ola Nordmann".
 AskForPreferredShippingMethod=Spør etter foretrukket sendingsmetode for tredjeparter
 FieldEdition=Endre felt %s
@@ -1708,8 +1712,9 @@ MailingDelay=Sekunder å vente før utsendelse av neste melding
 NotificationSetup=Oppset av e-postvarsling-modulen
 NotificationEMailFrom=Avsender-e-post (Fra) for e-postmeldinger sendt av varslingsmodulen
 FixedEmailTarget=Mottager
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Oppsett av forsendelser-modulen
 SendingsReceiptModel=Modell for forsendelseskvitteringer
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Fritekst for leveringskvitteringer
 ##### FCKeditor #####
 AdvancedEditor=Avansert editor
 ActivateFCKeditor=Aktiver avansert editor for:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=WYSIWIG oppretting/endring av varedetaljer for alle enheter (tilbud, ordre, fakturaer, etc ...). <span class="warning"> Advarsel: Det er ikke anbefalt å bruke dette alternativet i dette tilfellet, da det kan skape problemer med spesialtegn og sideformatering når du bygger PDF-filer. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Oppsett av modul Utgiftsrapporter - Regler
 ExpenseReportNumberingModules=Utgiftsrapport nummereringsmodul
 NoModueToManageStockIncrease=Ingen modul i stand til å håndtere automatisk lagerøkning er blitt aktivert. Lagerøkning kan bare gjøres manuelt.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Du kan finne alternativer for e-postmeldinger ved å aktivere og konfigurere modulen "Varslingen".
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Liste over automatiske varsler per bruker *
 ListOfNotificationsPerUserOrContact=Liste over mulige automatiske varsler (på forretningshendelse) tilgjengelig pr. bruker * eller pr. kontakt **
 ListOfFixedNotifications=Liste over faste automatiske varslinger
@@ -2209,3 +2215,7 @@ SkinAndColors=Skin and colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

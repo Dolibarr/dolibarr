@@ -101,7 +101,7 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
-			if ($imgSize) {
+			if (!empty($imgSize)) {
 				$icon = new stdClass();
 				$icon->src = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode($iconRelativePath);
 				$icon->sizes = $imgSize[0]."x".$imgSize[1];

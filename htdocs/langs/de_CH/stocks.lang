@@ -21,6 +21,7 @@ CurentlyUsingVirtualStock=Theoretisches Warenlager
 CurentlyUsingPhysicalStock=Physisches Warenlager
 ReceivingForSameOrder=Empfänger zu dieser Bestellung
 StockMovementRecorded=aufgezeichnete Lagerbewegungen
+MovementTransferStock=Umlagerung des Produkt %s in ein anderes Lager
 InventoryCodeShort=Inv. / Mov. Kode
 NoPendingReceptionOnSupplierOrder=Keine ausstehenden Lieferungen auf dieser Lieferantenbestellung
 ThisSerialAlreadyExistWithDifferentDate=Diese Charge- / Seriennummer (<strong>%s</strong>) ist bereits vorhanden, jedoch mit unterschiedlichen Haltbarkeits- oder Verfallsdatum. \n(Gefunden: <strong>%s</strong> Erfasst: <strong>%s</strong>)

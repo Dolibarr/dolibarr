@@ -48,7 +48,7 @@ CountriesNotInEEC=Países non CEE
 CountriesInEECExceptMe=Todos os paises incluidos na CEE excepto %s
 CountriesExceptMe=Todos os países excepto %s
 AccountantFiles=Exportar documentos contables
-ExportAccountingSourceDocHelp=Con esta ferramenta, pode exportar os eventos de orixe (lista en CSV e PDF) que se empregaron para xerar a súa contabilidade. 
+ExportAccountingSourceDocHelp=Con esta ferramenta, pode exportar os eventos de orixe (listaxe en CSV e PDF) que se empregan para xerar a súa contabilidade.
 ExportAccountingSourceDocHelp2=Para exportar as súas revistas, use a entrada de menú %s - %s
 VueByAccountAccounting=Ver por conta contable
 VueBySubAccountAccounting=Ver pos subconta contable
@@ -286,7 +286,7 @@ ValidateMovements=Validar os movementos
 DescValidateMovements=Prohíbese calquera modificación ou eliminación de rexistros. Todas as entradas para un exercicio deben validarse doutro xeito ou non será posible pechalo
 
 ValidateHistory=Contabilizar automáticamente
-AutomaticBindingDone=Ligazón automática finalizada
+AutomaticBindingDone=Ligazóns automáticas finalizadas (%s) -A ligazón automática non é posible para algún rexistro (%s) 
 
 ErrorAccountancyCodeIsAlreadyUse=Erro, non pode eliminar esta conta xa que está a ser utilizada
 MvtNotCorrectlyBalanced=Asento contabilizado incorrectamente. Debe=%s. Haber=%s
@@ -387,7 +387,8 @@ SaleExport=Venda de exportación
 SaleEEC=Venda na CEE
 SaleEECWithVAT=Vendas na CEE con IVE non nulo, polo que supoñemos que isto non é unha venda intracomunitaria e a conta suxerida é a conta estandar de produto.
 SaleEECWithoutVATNumber=Venda na CEE sen IVE pero non se define o número de identificación do IVE de terceiros. Respondemos á conta do produto para as vendas estándar. Pode corrixir o ID de IVE de terceiros ou a conta do produto se é preciso.
-
+ForbiddenTransactionAlreadyExported=Prohibido: a transacción foi validada e/ou exportada. 
+ForbiddenTransactionAlreadyValidated=Prohibido: a transacción foi validada.
 ## Dictionary
 Range=Rango de conta contable
 Calculated=Calculado
@@ -404,6 +405,7 @@ NoJournalDefined=Sen diario definido
 Binded=Liñas contabilizadas
 ToBind=Liñas a contabilizar
 UseMenuToSetBindindManualy=Non é posible autodetectar, utilice o menú <a href="%s"> %s </a> para realizar o apunte manualmente
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sentímolo, este módulo non é compatible coa función experimental da situación das facturas 
 
 ## Import
 ImportAccountingEntries=Entradas contables

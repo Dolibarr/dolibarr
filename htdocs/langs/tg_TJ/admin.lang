@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Бунёд
 Version=Версия
 Publisher=Ношир
@@ -265,8 +267,8 @@ OtherResources=Дигар захираҳо
 ExternalResources=Захираҳои беруна
 SocialNetworks=Шабакаҳои иҷтимоӣ
 SocialNetworkId=ID шабакаи иҷтимоӣ
-ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=Барои ҳама гуна саволҳо/кӯмаки дигар, шумо метавонед форуми Dolibarr -ро истифода баред: <br> <b> <a href="%s" target="_blank"> %s </a> </b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Инҳоянд чанд манбаъ барои гирифтани кӯмак ва дастгирӣ бо Dolibarr.
 HelpCenterDesc2=Баъзе аз ин захираҳо танҳо дар <b> англисӣ </b> дастрасанд.
 CurrentMenuHandler=Корбари менюи ҷорӣ
@@ -353,6 +355,7 @@ LastStableVersion=Версияи охирини устувор
 LastActivationDate=Санаи охирини фаъолкунӣ
 LastActivationAuthor=Муаллифи охирини фаъолсозӣ
 LastActivationIP=Охирин фаъолсозии IP
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Навсозии сервер дар офлайн
 WithCounter=Ҳисобкунакро идора кунед
 GenericMaskCodes=Шумо метавонед ягон ниқоби рақамгузориро ворид кунед. Дар ин ниқоб барчаспҳои зеринро истифода бурдан мумкин аст: <br> <b> {000000} </b> ба рақаме мувофиқат мекунад, ки дар ҳар як %s афзоиш хоҳад ёфт. Ҳар қадар сифрро ба дарозии дилхоҳи ҳисобкунак ворид кунед. Ҳисобкунакро сифрҳо аз чап ба итмом мерасонанд, то шумораи сифрҳо ба миқдори ниқоб дошта бошанд. <br> <b> {000000 + 000} </b> ҳамонанди қаблӣ, аммо ҷуброни мувофиқ ба рақами рости аломати + аз аввали %s истифода мешавад. <br> <b> {000000@x} </b> ҳамонанди қаблӣ, аммо ҳисобкунак ҳангоми расидан ба моҳи x ба сифр баргардонида мешавад (x аз 1 то 12 ё 0 барои истифода бурдани моҳҳои аввали соли молиявӣ, ки дар конфигуратсияи шумо муайян шудааст ё 99 ба ҳар моҳ ба сифр баргардонед). Агар ин хосият истифода шавад ва x 2 ё баландтар бошад, пас пайдарпаии {yy} {mm} ё {yyyy} {mm} низ лозим аст. <br> <b> {dd} </b> рӯз (01 то 31). <br> <b> {mm} </b> моҳ (01 то 12). <br> <b> {yy} </b>, <b> {yyyy} </b> or <b> 2 y3 a09 a09 a09 a4 <br>
@@ -762,6 +765,7 @@ Permission121=Шахсони сеюмеро, ки ба корбар пайван
 Permission122=Эҷод/тағир додани шахсони сеюм, ки ба корбар пайванданд
 Permission125=Шахсони сеюмеро, ки ба корбар пайванданд, нест кунед
 Permission126=Ба шахсони сеюм содирот кунед
+Permission130=Create/modify third parties payment information
 Permission141=Ҳама лоиҳаҳо ва вазифаҳоро хонед (инчунин лоиҳаҳои хусусие, ки ман бо онҳо тамос намегирам)
 Permission142=Ҳама лоиҳаҳо ва вазифаҳоро эҷод/тағир диҳед (инчунин лоиҳаҳои хусусие, ки ман бо онҳо тамос намегирам)
 Permission144=Ҳама лоиҳаҳо ва вазифаҳоро нест кунед (инчунин лоиҳаҳои хусусие, ки ман бо онҳо тамос намегирам)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Шумо браузери вебии %s -ро истифода ме�
 BrowserIsKO=Шумо браузери вебии %s -ро истифода мебаред. Маълум аст, ки ин браузер интихоби бад барои амният, фаъолият ва эътимод аст. Мо тавсия медиҳем, ки Firefox, Chrome, Opera ё Safari -ро истифода барем.
 PHPModuleLoaded=Ҷузъи PHP %s бор карда шудааст
 PreloadOPCode=OPCode -и пешакӣ боршуда истифода мешавад
-AddRefInList=Намоиши муштарӣ/фурӯшандаи реф. рӯйхати иттилоот (рӯйхат ё комбокс интихоб кунед) ва аксари истинодҳо. <br> Тарафҳои сеюм бо формати номи "CC12345 - SC45678 - The Big Company corp." пайдо мешаванд. ба ҷои "The Big Company corp".
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Рӯйхати иттилооти мизоҷон/фурӯшандагонро нишон диҳед (рӯйхати интихобшуда ё combobox) <br> Тарафҳои сеюм бо формати номи "The Big Company corp. - 21 jump street 123456 Big Town - USA" ба ҷои "The Big Company corp" пайдо мешаванд.
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Намоиши почтаи электронии тамос (ё телефонҳо, агар муайян нашуда бошад) ва рӯйхати иттилооти шаҳр (рӯйхати интихобшуда ё комбокс) <br> Тамос бо формати номи "Dupond Durand - dupond.durand@email.com - Париж" ё "Dupond Durand - 06 07 59 65 66 - Париж "ба ҷои" Дюпонд Дуранд ".
 AskForPreferredShippingMethod=Усули афзалиятноки интиқолро барои шахсони сеюм дархост кунед.
 FieldEdition=Нашри майдони %s
@@ -1708,8 +1712,9 @@ MailingDelay=Пас аз фиристодани паёми навбатӣ, со�
 NotificationSetup=Танзими модули огоҳиномаи почтаи электронӣ
 NotificationEMailFrom=Почтаи ирсолкунанда (Аз) барои мактубҳое, ки модули Огоҳномаҳо фиристодаанд
 FixedEmailTarget=Гиранда
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Танзими модули интиқол
 SendingsReceiptModel=Фиристодани модели квитансия
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Матни ройгон дар бораи кви
 ##### FCKeditor #####
 AdvancedEditor=Муҳаррири пешрафта
 ActivateFCKeditor=Муҳаррири пешрафтаро фаъол созед:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=Таъсис/нашри WYSIWIG хатҳои тафсилоти маҳсулот барои ҳама субъектҳо (пешниҳодҳо, фармоишҳо, фактураҳо ва ғайра). <span class="warning"> Огоҳӣ: Истифодаи ин хосият барои ин ҳолат ба таври ҷиддӣ тавсия дода намешавад, зеро он метавонад ҳангоми сохтани файлҳои PDF бо аломатҳои махсус ва форматкунии саҳифа мушкилот эҷод кунад. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Танзими ҳисоботи хароҷоти мод
 ExpenseReportNumberingModules=Модули рақамгузории ҳисоботҳои хароҷот
 NoModueToManageStockIncrease=Ягон модули қодир ба афзоиши автоматии саҳмияҳо фаъол карда нашудааст. Афзоиши саҳмия танҳо бо воридкунии дастӣ сурат мегирад.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Шумо метавонед имконоти огоҳиномаҳои почтаро тавассути фаъол ва танзим кардани модули "Огоҳинома" пайдо кунед.
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Рӯйхати огоҳиҳои автоматӣ барои як корбар*
 ListOfNotificationsPerUserOrContact=Рӯйхати огоҳиҳои имконпазири автоматӣ (дар бораи чорабинии корӣ) барои ҳар як корбар* ё барои тамос **
 ListOfFixedNotifications=Рӯйхати огоҳиҳои худкори собит
@@ -2209,3 +2215,7 @@ SkinAndColors=Skin and colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

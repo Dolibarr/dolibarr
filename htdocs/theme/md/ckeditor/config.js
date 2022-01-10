@@ -17,7 +17,7 @@ CKEDITOR.editorConfig = function( config )
 	//config.resize_maxWidth = 3000;
 	//config.height = '300px';
 	//config.resize_dir = 'vertical';	// horizontal, vertical, both
-	config.removePlugins = 'elementspath,save'; // config.removePlugins = 'elementspath,save,font';
+	config.removePlugins = 'elementspath,save'; // this list is modified into DolEditor::Create()
 	//config.extraPlugins = 'docprops,scayt,showprotected';
 	config.removeDialogTabs = 'flash:advanced';	// config.removeDialogTabs = 'flash:advanced;image:Link';
 	config.protectedSource.push( /<\?[\s\S]*?\?>/g );   // Prevent PHP Code to be formatted

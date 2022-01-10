@@ -856,35 +856,43 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="header">
 		<div class="topnav">
 			<div class="topnav-left">
-			<div class="inline-block valignmiddle">
-			<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
-			<span class="fa fa-cash-register"></span>
-			<span class="hideonsmartphone">
-			<?php echo $langs->trans("Terminal"); ?>
-			</span>
-			<?php echo " ";
-			if ($_SESSION["takeposterminal"] == "") {
-				echo "1";
-			} else {
-				echo $_SESSION["takeposterminal"];
-			}
-			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
-			?>
-			</a>
-			<?php
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
-				print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
-				print '</a>';
-			}
-			?>
-			</div>
-			<!-- section for customer and open sales -->
-			<div class="inline-block valignmiddle" id="customerandsales">
-			</div>
-			<!-- More info about customer -->
-			<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
-			<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
+				<div class="inline-block valignmiddle">
+				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
+				<span class="fa fa-cash-register"></span>
+				<span class="hideonsmartphone">
+				<?php echo $langs->trans("Terminal"); ?>
+				</span>
+				<?php echo " ";
+				if ($_SESSION["takeposterminal"] == "") {
+					echo "1";
+				} else {
+					echo $_SESSION["takeposterminal"];
+				}
+				echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
+				?>
+				</a>
+				<?php
+				if (!empty($conf->multicurrency->enabled)) {
+					print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
+					print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
+					print '</a>';
+				}
+				?>
+				</div>
+				<!-- section for customer -->
+				<div class="inline-block valignmiddle" id="customerandsales"></div>
+				<!-- section for shopping carts -->
+				<div class="inline-block valignmiddle" id="shoppingcart"></div>
+				<!-- More info about customer -->
+				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
+				<?php
+				if (!empty($conf->stock->enabled)) {
+					?>
+				<!-- More info about warehouse -->
+				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
+					<?php
+				}
+				?>
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
@@ -898,7 +906,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				</div>
 				<div class="login_block_user">
 				<?php
-				print top_menu_user(1, DOL_URL_ROOT.'/user/logout.php');
+				print top_menu_user(1);
 				?>
 				</div>
 			</div>
@@ -1155,7 +1163,7 @@ if ($r % 3 == 2) {
 }
 
 if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
-	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
 }
 
 if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {

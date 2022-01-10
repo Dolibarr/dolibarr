@@ -320,7 +320,7 @@ if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
 			print 'Sorry, your application is offline.'."\n";
 			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
-			$nexturl = DOL_URL_ROOT.'/user/logout.php';
+			$nexturl = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
 			print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
@@ -1854,7 +1854,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
 				$logouthtmltext .= $langs->trans("Logout").'<br>';
 
-				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
+				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
 				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin');
 				$logouttext .= '</a>';
 			} else {
@@ -1932,9 +1932,9 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			// Link to help pages
 			if ($helpbaseurl && $helppage) {
 				$text = '';
-				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage').'...';
+				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage').', ';
 				if ($mode == 'wiki') {
-					$title .= '<br>'.$langs->trans("PageWiki").' '.dol_escape_htmltag('"'.strtr($helppage, '_', ' ').'"');
+					$title .= '<br>'.img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans("PageWiki").' '.dol_escape_htmltag('"'.strtr($helppage, '_', ' ').'"');
 					if ($helppresent) {
 						$title .= ' <span class="opacitymedium">('.$langs->trans("DedicatedPageAvailable").')</span>';
 					} else {
@@ -1949,7 +1949,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				}
 				$text .= '">';
 				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
-				$text .= '<span class="fa fa-circle helppresentcircle'.($helppresent ? '' : ' unvisible').'"></span>';
+				$text .= '<span class="fa fa-long-arrow-alt-up helppresentcircle'.($helppresent ? '' : ' unvisible').'"></span>';
 				$text .= '</a>';
 				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
@@ -2020,7 +2020,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
  * Build the tooltip on user login
  *
  * @param	int			$hideloginname		Hide login name. Show only the image.
- * @param	string		$urllogout			URL for logout
+ * @param	string		$urllogout			URL for logout (Will use DOL_URL_ROOT.'/user/logout.php?token=...' if empty)
  * @return  string                  		HTML content
  */
 function top_menu_user($hideloginname = 0, $urllogout = '')
@@ -2136,7 +2136,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	}
 
 	if (empty($urllogout)) {
-		$urllogout = DOL_URL_ROOT.'/user/logout.php';
+		$urllogout = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
 	}
 	$logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
 	$profilLink = '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" ><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';

@@ -48,7 +48,7 @@ CountriesNotInEEC=Land ikke i EEC
 CountriesInEECExceptMe=Land i EEC unntatt %s
 CountriesExceptMe=Alle land unntatt %s
 AccountantFiles=Eksporter kildedokumenter
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=Vis etter regnskapskonto
 VueBySubAccountAccounting=Vis etter regnskaps-subkonto
@@ -286,7 +286,7 @@ ValidateMovements=Valider bevegelser
 DescValidateMovements=Enhver modifisering eller fjerning av skriving, bokstaver og sletting vil være forbudt. Alle påmeldinger for en oppgave må valideres, ellers er det ikke mulig å lukke
 
 ValidateHistory=Bind automatisk
-AutomaticBindingDone=Automatisk binding utført
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Feil, du kan ikke slette denne regnskapskontoen fordi den er i bruk
 MvtNotCorrectlyBalanced=Bevegelse er ikke riktig balansert. Debet = %s | Kreditt = %s
@@ -387,7 +387,8 @@ SaleExport=Eksportsalg
 SaleEEC=Salg i EU
 SaleEECWithVAT=Salg i EU med mva som ikke er null, så vi antar at dette IKKE er et intra-EU salg og den foreslåtte kontoen er standard produktkonto.
 SaleEECWithoutVATNumber=Salg i EU uten mva, men mva-ID for tredjepart er ikke definert. Vi faller tilbake på produktkontoen for standard salg. Du kan fikse mva-ID for tredjepart eller produktkonto om nødvendig.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range= Oversikt over regnskapskonto
 Calculated=Kalkulert
@@ -404,6 +405,7 @@ NoJournalDefined=Ingen journal definert
 Binded=Bundne linjer
 ToBind=Linjer som skal bindes
 UseMenuToSetBindindManualy=Linjer som ennå ikke er bundet, bruk menyen <a href="%s"> %s </a> for å gjøre bindingen manuelt
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Regnskapsposter

@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Stiftelse
 Version=Version
 Publisher=Utgivare
@@ -265,8 +267,8 @@ OtherResources=Andra resurser
 ExternalResources=Externa resurser
 SocialNetworks=Sociala nätverk
 SocialNetworkId=Socialt nätverks-ID
-ForDocumentationSeeWiki=För användarens eller utvecklarens dokumentation (Doc, FAQs ...), <br> ta en titt på Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>%s</b></a>
-ForAnswersSeeForum=För alla andra frågor / hjälp, kan du använda Dolibarr forumet: <br> <a href="%s" target="_blank"><b>%s</b></a>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Här finns några resurser för att få hjälp och support med Dolibarr.
 HelpCenterDesc2=Några av dessa resurser finns endast i <b> engelska </b>.
 CurrentMenuHandler=Aktuell meny handler
@@ -353,6 +355,7 @@ LastStableVersion=Senaste stabila versionen
 LastActivationDate=Senaste aktiveringsdatum
 LastActivationAuthor=Senaste aktiveringsförfattaren
 LastActivationIP=Senaste aktivering IP
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Uppdatera server offline
 WithCounter=Hantera en räknare
 GenericMaskCodes=Du kan ange valfri numreringsmask. I den här masken kan följande taggar användas: <br> <b> {000000} </b> motsvarar ett nummer som kommer att ökas på varje %s. Ange så många nollor som önskad längd på räknaren. Räknaren kompletteras med nollor från vänster för att ha lika många nollor som masken. <br> <b> {000000+000} </b> samma som den föregående men en förskjutning som motsvarar numret till höger om + -tecknet tillämpas med början på den första %s. <br> <b> {000000@x} </b> samma som föregående men räknaren återställs till noll när månad x nås (x mellan 1 och 12, eller 0 för att använda de första månaderna av räkenskapsåret som definierats i din konfiguration, eller 99 till återställs till noll varje månad). Om detta alternativ används och x är 2 eller högre krävs också sekvensen {åå} {mm} eller {åååå} {mm}. <br> <b> {dd} </b> dag (01 till 31). <br> <b> {mm} </b> månad (01 till 12). <br> <b> {yy} </b>, <b> {yyyy} </b> eller <b> {y} år över 2,4 eller 1 nummer.<br>
@@ -762,6 +765,7 @@ Permission121=Läs tredje part kopplad till användaren
 Permission122=Skapa / ändra tredje part kopplad till användaren
 Permission125=Radera tredje part kopplad till användaren
 Permission126=Export tredje part
+Permission130=Create/modify third parties payment information
 Permission141=Läs alla projekt och uppgifter (även privata projekt som jag inte är kontakt med)
 Permission142=Skapa / ändra alla projekt och uppgifter (även privata projekt som jag inte är kontakt med)
 Permission144=Ta bort alla projekt och uppgifter (även privata projekt jag är inte kontakta för)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Du använder %s webbläsaren. Den här webbläsaren är ok för säk
 BrowserIsKO=Du använder %s webbläsaren. Den här webbläsaren är känd för att vara ett dåligt val för säkerhet, prestanda och tillförlitlighet. Vi rekommenderar att du använder Firefox, Chrome, Opera eller Safari.
 PHPModuleLoaded=PHP-komponenten %s är laddad
 PreloadOPCode=Förinstallerad OPCode används
-AddRefInList=Visa kund / leverantör ref. info lista (välj lista eller combobox) och de flesta av hyperlänken. <br> Tredje part kommer att visas med ett namnformat av "CC12345 - SC45678 - The Big Company corp." istället för "The Big Company Corp".
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Visa adresslista för kund / leverantörs adress (välj lista eller combobox) <br> Tredje parten kommer att visas med ett namnformat för "The Big Company Corp." - 21 Jump Street 123456 Big Town - USA "istället för" The Big Company Corp ".
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Visa kontakt-e-post (eller telefoner om det inte är definierat) och stadsinfo-lista (välj lista eller kombinationsruta) <br> Kontakter visas med namnformatet "Dupond Durand - dupond.durand@email.com - Paris" eller "Dupond Durand - 06 07 59 65 66 - Paris "istället för" Dupond Durand ".
 AskForPreferredShippingMethod=Be om föredragen leveransmetod för tredje parter.
 FieldEdition=Edition av fält %s
@@ -1708,8 +1712,9 @@ MailingDelay=Sekunder fördröjning efter sändning av nästa meddelande
 NotificationSetup=Anmälan för e-postmeddelandemodul
 NotificationEMailFrom=Sender-e-post (Från) för e-postmeddelanden som skickas av Notifieringsmodulen
 FixedEmailTarget=Mottagare
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Inmatning av fraktmodul
 SendingsReceiptModel=Att skicka kvitto modell
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Fri text om leverans kvitton
 ##### FCKeditor #####
 AdvancedEditor=Avancerad redaktör
 ActivateFCKeditor=Aktivera FCKeditor för:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=WYSIWIG skapande / utgåva av produktdetaljer för alla enheter (förslag, order, fakturor, etc ...). <span class="warning"> Varning: Att använda det här alternativet i det här fallet rekommenderas på allvar inte eftersom det kan skapa problem med specialtecken och sidformatering när du bygger PDF-filer. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Inställning av modul Utläggsrapportsregler
 ExpenseReportNumberingModules=Modul för utläggsrapporteringsnummer
 NoModueToManageStockIncrease=Ingen modul kunna hantera automatiska lagerökningen har aktiverats. Stock ökning kommer att ske på bara manuell inmatning.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Du kan hitta alternativ för e-postmeddelanden genom att aktivera och konfigurera modulen "Meddelande".
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Lista över automatiska aviseringar per användare *
 ListOfNotificationsPerUserOrContact=Lista över möjliga automatiska aviseringar (på affärshändelse) tillgängliga per användare * eller per kontakt **
 ListOfFixedNotifications=Lista över automatiska fasta aviseringar
@@ -2209,3 +2215,7 @@ SkinAndColors=Skin and colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

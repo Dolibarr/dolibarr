@@ -70,10 +70,10 @@ print '</tr>';
 
 foreach ($triggers as $trigger) {
 	print '<tr class="oddeven">';
-	print '<td class="tdtop" width="32">'.$trigger['picto'].'</td>';
-	print '<td class="tdtop">'.$trigger['file'].'</td>';
-	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
-	print '<td class="tdtop">';
+	print '<td class=" width="32">'.$trigger['picto'].'</td>';
+	print '<td>'.$trigger['file'].'</td>';
+	print '<td class="center">'.$trigger['status'].'</td>';
+	print '<td>';
 	$text = $trigger['info'];
 	$text .= "<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
 	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);

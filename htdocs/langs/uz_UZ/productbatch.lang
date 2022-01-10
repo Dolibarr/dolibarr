@@ -30,7 +30,7 @@ ManageLotMask=Maxsus niqob
 CustomMasks=Har bir mahsulot uchun boshqa raqamlash niqobini tanlash imkoniyati
 BatchLotNumberingModules=Lot raqamini avtomatik ravishda ishlab chiqarish uchun raqamlash qoidasi
 BatchSerialNumberingModules=Seriya raqamini avtomatik ishlab chiqarish uchun raqamlash qoidasi (har bir mahsulot uchun 1 ta noyob lot/seriyali mahsulotlar uchun)
-QtyToAddAfterBarcodeScan=Har bir shtrix / lot / ketma-ket skanerlash uchun qo'shish uchun miqdor
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Hayot davomiyligi (kunlar ichida)
 EndOfLife=Hayotning oxiri
 ManufacturingDate=Ishlab chiqarilgan sana
@@ -42,3 +42,4 @@ HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Ishdan chiqdi
 InWorkingOrder=Ish tartibida
+ToReplace=Replace

@@ -251,7 +251,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " GROUP BY i.rowid";
+$sql .= " GROUP BY i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity";
 
 /*
 // Add fields from extrafields
@@ -348,7 +348,7 @@ if ($resql) {
 		print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 	}
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'intracommreport', 0, $newcardbutton, '', $limit);
 
 	$topicmail = "Information";
 	$modelmail = "product";

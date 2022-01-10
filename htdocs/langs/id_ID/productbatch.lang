@@ -30,7 +30,7 @@ ManageLotMask=Masker kustom
 CustomMasks=Opsi untuk menentukan masker penomoran yang berbeda untuk setiap produk
 BatchLotNumberingModules=Aturan penomoran untuk pembuatan otomatis nomor lot
 BatchSerialNumberingModules=Aturan penomoran untuk pembuatan nomor seri secara otomatis (untuk produk dengan properti 1 lot/seri unik untuk setiap produk)
-QtyToAddAfterBarcodeScan=Qty untuk ditambahkan untuk setiap barcode/lot/serial yang di scan
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Rentang hidup (dalam hari)
 EndOfLife=Akhir Hidup
 ManufacturingDate=Tanggal pembuatan
@@ -42,3 +42,4 @@ HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Diluar urutan kerja
 InWorkingOrder=Dalam urutan kerja
+ToReplace=Replace

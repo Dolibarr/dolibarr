@@ -93,7 +93,7 @@ class PaiementFourn extends Paiement
 
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as payment_code, c.libelle as payment_type,';
-		$sql .= ' p.num_paiement as num_payment, p.note, b.fk_account';
+		$sql .= ' p.num_paiement as num_payment, p.note, b.fk_account, p.fk_paiement';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -130,6 +130,7 @@ class PaiementFourn extends Paiement
 				$this->note_private         = $obj->note;
 				$this->type_code            = $obj->payment_code;
 				$this->type_label           = $obj->payment_type;
+				$this->fk_paiement           = $obj->fk_paiement;
 				$this->statut               = $obj->statut;
 
 				$error = 1;

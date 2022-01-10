@@ -417,7 +417,7 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	font-family: <?php print $fontlist ?>;
 	border: none;
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px rgba(0,0,0,.2);
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	outline: none;
 	margin: 0px 0px 0px 0px;
 }
@@ -465,10 +465,10 @@ input.short {
 
 textarea {
 	border-radius: 0;
-	border-top:solid 1px rgba(0,0,0,.1);
-	border-left:solid 1px rgba(0,0,0,.1);
-	border-right:solid 1px rgba(0,0,0,.1);
-	border-bottom:solid 1px rgba(0,0,0,.2);
+	border-top:solid 1px var(--inputbordercolor);
+	border-left:solid 1px var(--inputbordercolor);
+	border-right:solid 1px var(--inputbordercolor);
+	border-bottom:solid 1px var(--inputbordercolor);
 
 	background-color: #FFF;
 	padding:4px;
@@ -590,7 +590,7 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
-td.amount, span.amount, div.amount {
+td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
 }
 td.actionbuttons a {
@@ -688,8 +688,8 @@ input[type=checkbox], input[type=radio] {
 input:-moz-placeholder { color:#ccc; }
 
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
-fieldset { 
-	border: 1px solid #AAAAAA !important; 
+fieldset {
+	border: 1px solid #AAAAAA !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
 }
@@ -849,10 +849,10 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1) translate(2px, 0);
+	transform: scaleX(-1) translate(<?php print ($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, 2px);
+	transform: rotate(90deg) translate(0, <?php print ($left == 'left' ? '' : '-'); ?>2px);
 }
 .center {
 	text-align: center;
@@ -1158,6 +1158,10 @@ if ($conf->browser->layout == 'phone') {
 }
 
 
+/* ============================================================================== */
+/* Styles for scan tool                                                           */
+/* ============================================================================== */
+
 div.div-for-modal {
 	/* display: none; */
 	position:absolute;
@@ -1171,18 +1175,25 @@ div.div-for-modal {
 	z-index: 100;
 }
 
+#scantoolmessage {
+	height: 3em;
+	border: none;
+	overflow-y: auto;
+}
+
 div.div-for-modal-topright {
 	/* display: none; */
 	position: fixed;
 	top: 0;
 	right: 0;
 	width:50%;  /* adjust as per your needs */
-	height:250px;   /* adjust as per your needs */
+	height:300px;   /* adjust as per your needs */
 	background: #fff;
 	border: 1px solid #bbb;
 	box-shadow: 2px 2px 20px #ddd;
 	z-index: 1100;
 }
+
 
 
 div.confirmmessage {
@@ -1263,6 +1274,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax50 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 50px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax60 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 60px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax80 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 80px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -1689,6 +1712,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: 95%;
 	}
 
+	div.tabs div.tab a.tab  {
+		max-width: 200px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	
 	select {
 		padding-top: 4px;
 		padding-bottom: 5px;
@@ -1823,7 +1853,7 @@ td.showDragHandle {
 	width: 100%;
 	padding-bottom: 20px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
-	padding-left: 229px;
+	padding-<?php print $left; ?>: 229px;
 	padding-top: 16px;
 <?php } ?>
 }
@@ -1849,13 +1879,13 @@ td.showDragHandle {
 	display: none;
 <?php } else { ?>
 	background: var(--colorbackvmenu1);
-	border-right: 1px solid rgba(0,0,0,0.2);
+	border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2);
 	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
 	color: #333;
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
-	left: 0;
+	<?php echo $left; ?>: 0;
 	<?php
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	} else { ?>
@@ -1909,12 +1939,13 @@ td.showDragHandle {
 }
 
 body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
-	margin-left: 0;padding-left:0
+	margin-left: 0;
+	padding-left:0
 }
 
 
 .side-nav-vert {
-	margin-left: 228px;
+	margin-<?php echo $left; ?>: 228px;
 }
 
 /* body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other, body.sidebar-collapse #topmenu-login-dropdown */
@@ -1980,7 +2011,7 @@ div.backgroundsemitransparent {
 
 
 #id-right {
-	padding-left: 0 ! important;
+	padding-<?php print $left; ?>: 0 ! important;
 }
 #id-left {
 	z-index: 91;
@@ -2216,7 +2247,7 @@ div.arearefnobottom {
 div.heightref {
 	min-height: 80px;
 }
-div.divphotoref {
+div.divphotoref:last-child {
 	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
@@ -2930,7 +2961,7 @@ form[name="addtime"] img.userphoto {
 div.vmenu, td.vmenu {
 	margin-<?php print $right; ?>: 2px;
 	position: relative;
-	float: left;
+	float: <?php print $left; ?>;
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 0px;
@@ -2938,7 +2969,7 @@ div.vmenu, td.vmenu {
 }
 
 .vmenu {
-	margin-left: 4px;
+	margin-<?php print $left; ?>: 4px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -2959,8 +2990,8 @@ div.vmenu, td.vmenu {
 .searchform { padding-top: 10px; }
 .searchform .bordertransp { border: 0; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { 
-	white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; 
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu {
+	white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold;
 }
 span.vmenudisabled, font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
 a.vmenu:link, a.vmenu:visited {
@@ -2968,8 +2999,8 @@ a.vmenu:link, a.vmenu:visited {
 }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
-span.vsmenudisabled, font.vsmenudisabled { 
-	font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; 
+span.vsmenudisabled, font.vsmenudisabled {
+	font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -2978,18 +3009,21 @@ a.vsmenu:link, a.vsmenu:visited {
 span.vsmenudisabledmargin, font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
-	text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; 
+	text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none;
 }
 
 .helppresentcircle {
+	/*
 	color: var(--colorbackhmenu1);
 	filter: invert(0.5);
-	margin-left: -7px;
+	*/
+	color: var(--colortextbackhmenu);
+	margin-left: -4px;
 	display: inline-block;
-	margin-top: -10px;
 	font-size: x-small;
 	vertical-align: super;
 	opacity: 0.95;
+	transform: rotate(<?php echo ($left == 'left' ? '55deg' : '305deg'); ?>);
 }
 
 div.blockvmenulogo
@@ -3585,8 +3619,10 @@ tr.liste_titre_filter td.liste_titre {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 	padding: 8px 6px 8px 6px;			/* t r b l */
 }
-table.noborder td, div.noborder form, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
+
+table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 6px 4px 6px;			/* t r b l */
+	height: 22px;
 }
 form.tagtable {
 	padding: unset !important;
@@ -3647,14 +3683,17 @@ div.refidpadding  {
 div.refid  {
 	font-weight: bold;
 	color: rgb(--colortexttitlenotab);
-	  font-size: 160%;
+	font-size: 160%;
+}
+a.refid {
+	color: var(--colortexttitlenotab) !important;
 }
 div.refidno  {
 	padding-top: 8px;
 	font-weight: normal;
-	  color: #444;
-	  font-size: <?php print $fontsize ?>px;
-	  line-height: 21px;
+	color: #444;
+	font-size: <?php print $fontsize ?>px;
+	line-height: 21px;
 }
 div.refidno form {
 	display: inline-block;
@@ -4021,7 +4060,6 @@ input.liste_titre {
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;
 }
-
 
 tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 2px solid #aaa;
@@ -4425,7 +4463,9 @@ table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
-.dolgraphchart canvas { width: calc(100% - 20px) !important; }
+.dolgraphchart canvas { 
+	/* width: calc(100% - 20px) !important; */
+}
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }
@@ -4443,8 +4483,8 @@ label.radioprivate {
 	border: 0px;
 }
 .photowithmargin {
-	margin-bottom: 2px;
-	margin-top: 2px;
+/*	margin-bottom: 2px;
+	margin-top: 2px; */
 }
 div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
@@ -4517,7 +4557,15 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 span.buttonpaymentsmall {
 	text-shadow: none;
 }
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+
+#dolpublictable {
+	min-width: 300px; font-size: 16px;
+	padding: 6px;
+}
+#dolpaymenttable {
+	min-width: 320px; font-size: 16px;
+}	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -5864,6 +5912,7 @@ a span.select2-chosen
 }
 .select2-results__option {
 	word-break: break-word;
+	text-align: <?php echo $left; ?>;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
@@ -5918,7 +5967,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 2px 5px 1px 5px;
+  padding: 3px 5px 2px 5px;
   margin: 0 0 2px 3px;
   position: relative;
   line-height: 13px;
@@ -5968,6 +6017,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
+	margin-bottom: 0 !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
@@ -6058,6 +6108,9 @@ span.noborderoncategories {
 	clear: both;
 	float: left;
 	padding-left: 5px
+}
+label.multi-select-menuitem {
+	line-height: 24px;
 }
 
 
@@ -6997,7 +7050,7 @@ div.clipboardCPValue.hidewithsize {
 		border-right: 1px solid rgba(0,0,0,0.3);
 		top: auto;
 	}
-	
+
 	div#tmenu_tooltip {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 		display:none;
@@ -7069,6 +7122,17 @@ div.clipboardCPValue.hidewithsize {
 		border-left: unset;
 		boerder-right: unset;
 		padding-left: 5px;
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		display: block;
+		margin-bottom: 6px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	.a-mesure, .a-mesure-disabled {
+		text-align: center;
 	}
 }
 

@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('commande', 'propal', 'bills', 'other'));
+$langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -212,7 +212,7 @@ if ($mode && $mode != '-1') {
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product = ".((int) $prodid);
-			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$resultp = $db->query($sql);
