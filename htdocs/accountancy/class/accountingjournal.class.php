@@ -1002,7 +1002,8 @@ class AccountingJournal extends CommonObject
 	 * @param string	$account	Accounting account number
 	 * @return array				Accounting account infos
 	 */
-	public function getAccountingAccountInfos($account) {
+	public function getAccountingAccountInfos($account)
+	{
 		if (!isset(self::$accounting_account_cached[$account])) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
