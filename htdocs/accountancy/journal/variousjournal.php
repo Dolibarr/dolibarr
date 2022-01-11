@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021		Open-DSI	            <support@open-dsi.fr>
+/* Copyright (C) 2021-2022  Open-DSI            <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,6 +122,7 @@ if ($action == 'writebookkeeping') {
 
 	$reload = true;
 }
+
 // Export
 elseif ($action == 'exportcsv') {
 	$result = $object->exportCsv($journal_data, $date_end);
@@ -173,12 +174,10 @@ if ($object->nature == 2) {
 	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
 } elseif ($object->nature == 4) {
 	$title = $langs->trans("FinanceJournal");
-	$some_mandatory_steps_of_setup_were_not_done =
-		$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
+	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
 		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
-	$account_accounting_not_defined =
-		$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
+	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
 } elseif ($object->nature == 5) {
 	$title = $langs->trans("ExpenseReportsJournal");
