@@ -311,7 +311,7 @@ if ($nolinesbefore) {
 			echo '</span>';
 		}
 
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
 			echo '<br>'.$langs->trans('AddLineOnPosition').' : <input type="number" name="rank" step="1" min="0" style="width: 5em;">';
 		}
 

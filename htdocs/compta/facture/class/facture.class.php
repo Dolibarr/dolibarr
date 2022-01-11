@@ -2088,7 +2088,7 @@ class Facture extends CommonInvoice
 			$facligne->rang = -1;
 			$facligne->info_bits = 2;
 
-			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+			if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
 				$facligne->rang = 1;
 				$linecount = count($this->lines);
 				for ($ii = 1; $ii <= $linecount; $ii++) {
