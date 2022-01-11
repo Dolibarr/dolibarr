@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
@@ -108,11 +108,20 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($projectstatic->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+// Load task
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+if ($object->fk_project > 0) {
+	restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+} else {
+	restrictedArea($user, 'projet', null, 'projet&project');
+	// We check user has permission to see all taks of all users
+	if (empty($projectid) && !$user->hasRight('projet', 'all', 'lire')) {
+		$search_user = $user->id;
+	}
+}
 
 
 
@@ -334,6 +343,10 @@ if (GETPOST('projectid', 'int') > 0) {
 } elseif ($id > 0) {
 	$object->fetch($id);
 	$result = $projectstatic->fetch($object->fk_project);
+}
+// If not task selected and no project selected
+if ($id <= 0 && $projectidforalltimes == 0) {
+	$allprojectforuser = $user->id;
 }
 
 if ($action == 'confirm_generateinvoice') {
@@ -678,7 +691,7 @@ $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 $userstatic = new User($db);
 
-if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
+if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser > 0) {
 	/*
 	 * Fiche projet en mode visu
 	 */
@@ -720,6 +733,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
 			$param = ((!empty($mode) && $mode == 'mine') ? '&mode=mine' : '');
+			if ($search_user) {
+				$param .= '&search_user='.((int) $search_user);
+			}
+			if ($search_month) {
+				$param .= '&search_month='.((int) $search_month);
+			}
+			if ($search_year) {
+				$param .= '&search_year='.((int) $search_year);
+			}
 
 			// Project card
 
@@ -740,7 +762,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}
 
-			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -804,7 +826,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			// Budget
 			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 			if (strcmp($projectstatic->budget_amount, '')) {
-				print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+				print '<span class="amount">'.price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
 
@@ -818,7 +840,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print '<div class="fichehalfright">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield center">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -888,7 +910,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	// Show section with information of task. If id of task is not defined and project id defined, then $projectidforalltimes is not empty.
-	if (empty($projectidforalltimes)) {
+	if (empty($projectidforalltimes) && empty($allprojectforuser)) {
 		$head = task_prepare_head($object);
 		print dol_get_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
@@ -990,7 +1012,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 	}
 
 
-	if ($projectstatic->id > 0) {
+	if ($projectstatic->id > 0 || $allprojectforuser > 0) {
 		if ($action == 'deleteline' && !empty($projectidforalltimes)) {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_delete", '', '', 1);
 		}
@@ -1216,7 +1238,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		$tasks = array();
 
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
-		$sql .= " pt.ref, pt.label,";
+		$sql .= " pt.ref, pt.label, pt.fk_projet,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -1225,11 +1247,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		$sql .= " ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 
-		if (empty($projectidforalltimes)) {
+		if (empty($projectidforalltimes) && empty($allprojectforuser)) {
+			// Limit on one task
 			$sql .= " AND t.fk_task =".((int) $object->id);
-		} else {
+		} elseif (!empty($projectidforalltimes)) {
+			// Limit on one project
 			$sql .= " AND pt.fk_projet IN (".$db->sanitize($projectidforalltimes).")";
+		} elseif (!empty($allprojectforuser)) {
+			// Limit on on user
+			if (empty($search_user)) {
+				$search_user = $user->id;
+			}
+			$sql .= " AND t.fk_user = ".((int) $search_user);
 		}
+
 		if ($search_note) {
 			$sql .= natural_search('t.note', $search_note);
 		}
@@ -1290,7 +1321,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'clock', 0, $linktocreatetime, '', $limit, 0, 0, 1);
 			} else {
-				print '<!-- List of time spent for project -->'."\n";
+				print '<!-- List of time spent -->'."\n";
 
 				$title = $langs->trans("ListTaskTimeForTask");
 
@@ -1322,6 +1353,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Date").'</td>';
+			if (!empty($allprojectforuser)) {
+				print '<td>'.$langs->trans("Project").'</td>';
+			}
 			if (empty($id)) {
 				print '<td>'.$langs->trans("Task").'</td>';
 			}
@@ -1342,6 +1376,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			$newdate = '';
 			print $form->selectDate($newdate, 'time', ($conf->browser->layout == 'phone' ? 2 : 1), 1, 2, "timespent_date", 1, 0);
 			print '</td>';
+
+			if (!empty($allprojectforuser)) {
+				print '<td>';
+				// Add project selector
+				print '</td>';
+			}
 
 			// Task
 			$nboftasks = 0;
@@ -1445,6 +1485,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			$formother->select_year($search_year, 'search_year', 1, 20, 5);
 			print '</td>';
 		}
+		if (!empty($allprojectforuser)) {
+			print '<td></td>';
+		}
+		// Task
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.task_ref']['checked'])) {
 				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
@@ -1492,6 +1536,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		print '<tr class="liste_titre">';
 		if (!empty($arrayfields['t.task_date']['checked'])) {
 			print_liste_field_titre($arrayfields['t.task_date']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
+		}
+		if (!empty($allprojectforuser)) {
+			print_liste_field_titre("Project", $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		}
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.task_ref']['checked'])) {
@@ -1559,6 +1606,23 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				} else {
 					print dol_print_date(($date2 ? $date2 : $date1), ($task_time->task_date_withhour ? 'dayhour' : 'day'));
 				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Project ref
+			if (!empty($allprojectforuser)) {
+				print '<td class="nowraponall">';
+				if (empty($conf->cache['project'][$task_time->fk_projet])) {
+					$tmpproject = new Project($db);
+					$tmpproject->fetch($task_time->fk_projet);
+					$conf->cache['project'][$task_time->fk_projet] = $tmpproject;
+				} else {
+					$tmpproject = $conf->cache['project'][$task_time->fk_projet];
+				}
+				print $tmpproject->getNomUrl(1);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1788,6 +1852,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 					print '</td>';
 				}
 
+				// Project ref
+				if (!empty($allprojectforuser)) {
+					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
+						print '<td class="nowrap">';
+						print '</td>';
+					}
+				}
+
 				// Task ref
 				if (!empty($arrayfields['t.task_ref']['checked'])) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
@@ -1914,6 +1986,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 						print dol_print_date(($date2 ? $date2 : $date1), ($task_time->task_date_withhour ? 'dayhour' : 'day'));
 					}
 					print '</td>';
+				}
+
+				// Project ref
+				if (!empty($allprojectforuser)) {
+					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
+						print '<td class="nowrap">';
+						print '</td>';
+					}
 				}
 
 				// Task ref

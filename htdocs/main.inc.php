@@ -272,10 +272,10 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	}
 }
 
-
 // Set the handler of session
-if (ini_get('session.save_handler') == 'user') {
-	require_once 'core/lib/phpsessionindb.lib.php';
+// if (ini_get('session.save_handler') == 'user')
+if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
+	require_once 'core/lib/phpsessionin'.$php_session_save_handler.'.lib.php';
 }
 
 // Init session. Name of session is specific to Dolibarr instance.
@@ -294,13 +294,13 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 if (!defined('NOSESSION')) {
 	session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	session_name($sessionname);
-	session_start();
+	session_start();	// This call the open and read of session handler
+	//exit;	// this exist generates a call to write and close
 }
 
 
 // Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
-
 
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
 if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
@@ -320,7 +320,7 @@ if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
 			print 'Sorry, your application is offline.'."\n";
 			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
-			$nexturl = DOL_URL_ROOT.'/user/logout.php';
+			$nexturl = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
 			print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
@@ -361,6 +361,12 @@ if (isset($_SERVER["HTTP_USER_AGENT"])) {
 	if ($conf->browser->layout == 'phone') {
 		$conf->dol_no_mouse_hover = 1;
 	}
+}
+
+// If theme is forced
+if (GETPOST('theme', 'aZ09')) {
+	$conf->theme = GETPOST('theme', 'aZ09');
+	$conf->css = "/theme/".$conf->theme."/style.css.php";
 }
 
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
@@ -1088,6 +1094,7 @@ if (!defined('NOLOGIN')) {
 	}
 }
 
+
 // Case forcing style from url
 if (GETPOST('theme', 'alpha')) {
 	$conf->theme = GETPOST('theme', 'alpha', 1);
@@ -1165,7 +1172,7 @@ if (!defined('NOLOGIN')) {
 	// Check if user is active
 	if ($user->statut < 1) {
 		// If not active, we refuse the user
-		$langs->load("other");
+		$langs->loadLangs(array("errors", "other"));
 		dol_syslog("Authentication KO as login is disabled", LOG_NOTICE);
 		accessforbidden($langs->trans("ErrorLoginDisabled"));
 		exit;
@@ -1847,7 +1854,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
 				$logouthtmltext .= $langs->trans("Logout").'<br>';
 
-				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
+				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
 				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin');
 				$logouttext .= '</a>';
 			} else {
@@ -1925,9 +1932,9 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			// Link to help pages
 			if ($helpbaseurl && $helppage) {
 				$text = '';
-				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage').'...';
+				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage').', ';
 				if ($mode == 'wiki') {
-					$title .= '<br>'.$langs->trans("PageWiki").' '.dol_escape_htmltag('"'.strtr($helppage, '_', ' ').'"');
+					$title .= '<br>'.img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans("PageWiki").' '.dol_escape_htmltag('"'.strtr($helppage, '_', ' ').'"');
 					if ($helppresent) {
 						$title .= ' <span class="opacitymedium">('.$langs->trans("DedicatedPageAvailable").')</span>';
 					} else {
@@ -1942,7 +1949,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				}
 				$text .= '">';
 				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
-				$text .= '<span class="fa fa-circle helppresentcircle'.($helppresent ? '' : ' unvisible').'"></span>';
+				$text .= '<span class="fa fa-long-arrow-alt-up helppresentcircle'.($helppresent ? '' : ' unvisible').'"></span>';
 				$text .= '</a>';
 				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
@@ -2013,7 +2020,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
  * Build the tooltip on user login
  *
  * @param	int			$hideloginname		Hide login name. Show only the image.
- * @param	string		$urllogout			URL for logout
+ * @param	string		$urllogout			URL for logout (Will use DOL_URL_ROOT.'/user/logout.php?token=...' if empty)
  * @return  string                  		HTML content
  */
 function top_menu_user($hideloginname = 0, $urllogout = '')
@@ -2129,7 +2136,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	}
 
 	if (empty($urllogout)) {
-		$urllogout = DOL_URL_ROOT.'/user/logout.php';
+		$urllogout = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
 	}
 	$logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
 	$profilLink = '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" ><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';

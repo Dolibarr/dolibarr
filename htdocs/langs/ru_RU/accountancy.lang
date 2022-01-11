@@ -48,7 +48,7 @@ CountriesNotInEEC=Страны, не входящие в ЕЭС
 CountriesInEECExceptMe=Страны ЕЭС, кроме %s
 CountriesExceptMe=Все страны кроме %s
 AccountantFiles=Экспорт исходных документов
-ExportAccountingSourceDocHelp=С помощью этого инструмента вы можете экспортировать исходные события (список в CSV и PDF), которые использовались для создания вашей бухгалтерской отчетности.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Чтобы экспортировать журналы, используйте пункт меню %s - %s.
 VueByAccountAccounting=Просмотр по учетной записи
 VueBySubAccountAccounting=Просмотр по субсчету бухгалтерского учета
@@ -286,7 +286,7 @@ ValidateMovements=Подтвердить движения
 DescValidateMovements=Любое изменение или удаление надписей, надписей и удалений будет запрещено. Все записи для упражнения должны быть подтверждены, иначе закрытие будет невозможно.
 
 ValidateHistory=Связывать автоматически
-AutomaticBindingDone=Автоматическая привязка выполнена
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Ошибка, вы не можете удалить эту учетную запись, потому что она используется
 MvtNotCorrectlyBalanced=Движение неправильно сбалансировано. Дебет = %s | Кредит = %s
@@ -387,7 +387,8 @@ SaleExport=Продажа на экспорт
 SaleEEC=Продажа в ЕЭС
 SaleEECWithVAT=Продажа в ЕЭС с ненулевым НДС, поэтому мы предполагаем, что это НЕ внутриобщинная продажа, а предлагаемая учетная запись является стандартной учетной записью продукта.
 SaleEECWithoutVATNumber=Продажа в ЕЭС без НДС, но идентификатор плательщика НДС третьей стороны не определен. Мы возвращаемся к учетной записи продукта для стандартных продаж. При необходимости вы можете исправить идентификатор плательщика НДС третьей стороны или учетную запись продукта.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Диапазон учетной записи
 Calculated=Рассчитано
@@ -404,6 +405,7 @@ NoJournalDefined=Журнал не определен
 Binded=Линии связаны
 ToBind=Линии для привязки
 UseMenuToSetBindindManualy=Строки еще не связаны, используйте меню <a href="%s">%s</a>, чтобы выполнить привязку вручную
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Бухгалтерские записи

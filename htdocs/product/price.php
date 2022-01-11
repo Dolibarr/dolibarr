@@ -127,7 +127,7 @@ if (empty($reshook)) {
 		$reg = array();
 		$vatratecode = '';
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
-			$vat_src_code = $reg[1];
+			$vatratecode = $reg[1];
 			$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx_txt); // Remove code into vatrate.
 		}
 
@@ -172,6 +172,8 @@ if (empty($reshook)) {
 		}
 
 		if ($error) {
+			// Force the update of the price of the product to 0 if error
+
 			//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
 			$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
 			$object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode);
@@ -733,9 +735,9 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		print '</td>';
 		print '<td colspan="2">';
 		if ($object->multiprices_base_type[$soc->price_level] == 'TTC') {
-			print price($object->multiprices_ttc[$soc->price_level]);
+			print '<span class="amount">'.price($object->multiprices_ttc[$soc->price_level]).'</span>';
 		} else {
-			print price($object->multiprices[$soc->price_level]);
+			print '<span class="amount">'.price($object->multiprices[$soc->price_level]).'</span>';
 		}
 		if ($object->multiprices_base_type[$soc->price_level]) {
 			print ' '.$langs->trans($object->multiprices_base_type[$soc->price_level]);
@@ -890,15 +892,15 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			print '</td>';
 
 			if ($object->multiprices_base_type [$i] == 'TTC') {
-				print '<td style="text-align: right">'.price($object->multiprices_ttc[$i]);
+				print '<td class="right"><span class="amount">'.price($object->multiprices_ttc[$i]);
 			} else {
-				print '<td style="text-align: right">'.price($object->multiprices[$i]);
+				print '<td class="right"><span class="amount">'.price($object->multiprices[$i]);
 			}
 
 			if ($object->multiprices_base_type[$i]) {
-				print ' '.$langs->trans($object->multiprices_base_type [$i]).'</td>';
+				print ' '.$langs->trans($object->multiprices_base_type [$i]).'</span></td>';
 			} else {
-				print ' '.$langs->trans($object->price_base_type).'</td>';
+				print ' '.$langs->trans($object->price_base_type).'</span></td>';
 			}
 
 			// Prix min

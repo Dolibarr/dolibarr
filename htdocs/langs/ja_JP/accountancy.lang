@@ -48,7 +48,7 @@ CountriesNotInEEC=EECにない国
 CountriesInEECExceptMe=%sを除くEECの国
 CountriesExceptMe=%sを除くすべての国
 AccountantFiles=ソースドキュメントのエクスポート
-ExportAccountingSourceDocHelp=このツールを使用すると、会計の生成に使用されたソースイベント(CSVおよびPDFのリスト)をエクスポートできる。
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=ジャーナルをエクスポートするには、メニューエントリ%s --%sを使用。
 VueByAccountAccounting=会計科目順に表示
 VueBySubAccountAccounting=アカウンティングサブアカウントで表示
@@ -286,7 +286,7 @@ ValidateMovements=動きを検証する
 DescValidateMovements=書き込み、レタリング、削除の変更または削除は禁止される。演習のすべてのエントリを検証する必要がある。検証しないと、閉じることができない。
 
 ValidateHistory=自動的に紐付け
-AutomaticBindingDone=自動紐付けが行われた
+AutomaticBindingDone=自動バインドが実行された（%s）-一部のレコードでは自動バインド不可（%s）
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=動きのバランスが正しくない。借方= %s |クレジット= %s
@@ -387,7 +387,8 @@ SaleExport=エクスポート販売
 SaleEEC=EECでの販売
 SaleEECWithVAT=VATがnullではないEECでの販売。したがって、これは共同体内販売ではなく、提案された科目は標準の製品科目であると想定する。
 SaleEECWithoutVATNumber=VATなしのEECでの販売 が、取引先のVATIDは定義されていない。標準販売の製品科目にフォールバックする。必要に応じて、取引先または製品科目のVATIDを修正できる。
-
+ForbiddenTransactionAlreadyExported=禁止：トランザクションが検証済 かつ/または エクスポート済。
+ForbiddenTransactionAlreadyValidated=禁止：トランザクションは検証済。
 ## Dictionary
 Range=会計科目の範囲
 Calculated=計算済
@@ -404,6 +405,7 @@ NoJournalDefined=仕訳帳が定義されていない
 Binded=境界線
 ToBind=紐付けする行
 UseMenuToSetBindindManualy=まだ紐付けされていない行。メニュー<a href="%s">%s </a>を使用して、手動で紐付けする。
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=御免、このモジュールはシチュエーションインボイスの実験的機能と互換性がない
 
 ## Import
 ImportAccountingEntries=会計仕訳

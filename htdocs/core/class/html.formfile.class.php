@@ -442,7 +442,8 @@ class FormFile
 		}
 
 		$printer = 0;
-		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {	// The direct print feature is implemented only for such elements
+		// The direct print feature is implemented only for such elements
+		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
 			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ?true:false;
 		}
 
@@ -760,7 +761,7 @@ class FormFile
 					$arraykeys = array_keys($modellist);
 					$modelselected = $arraykeys[0];
 				}
-				$morecss = 'maxwidth200';
+				$morecss = 'minwidth75 maxwidth200';
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
 				}
@@ -944,7 +945,7 @@ class FormFile
 							$out .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer) {
-							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+							$out .= '<a class="marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
 							$out .= ($param ? '&'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
@@ -1268,7 +1269,7 @@ class FormFile
 			}
 
 			print '<div class="div-table-responsive-no-min">';
-			print '<table width="100%" id="tablelines" class="liste noborder nobottom">'."\n";
+			print '<table id="tablelines" class="centpercent liste noborder nobottom">'."\n";
 
 			if (!empty($addfilterfields)) {
 				print '<tr class="liste_titre nodrag nodrop">';
@@ -1503,7 +1504,7 @@ class FormFile
 							if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 								$useajax = 0;
 							}
-							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="'.($useajax ? 'reposition ' : '').'deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
@@ -1645,6 +1646,7 @@ class FormFile
 		print '</tr>'."\n";
 
 		// To show ref or specific information according to view to show (defined by $module)
+		$object_instance = null;
 		if ($modulepart == 'company') {
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$object_instance = new Societe($this->db);
@@ -1675,6 +1677,12 @@ class FormFile
 		} elseif ($modulepart == 'tax') {
 			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 			$object_instance = new ChargeSociales($this->db);
+		} elseif ($modulepart == 'tax-vat') {
+			include_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+			$object_instance = new Tva($this->db);
+		} elseif ($modulepart == 'salaries') {
+			include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+			$object_instance = new Salary($this->db);
 		} elseif ($modulepart == 'project') {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$object_instance = new Project($this->db);
@@ -1722,6 +1730,7 @@ class FormFile
 		}
 
 		//var_dump($filearray);
+		//var_dump($object_instance);
 
 		// Get list of files stored into database for same relative directory
 		$relativepathfromroot = preg_replace('/'.preg_quote(DOL_DATA_ROOT.'/', '/').'/', '', $upload_dir);
@@ -1751,7 +1760,7 @@ class FormFile
 				// To show ref or specific information according to view to show (defined by $modulepart)
 				// $modulepart can be $object->table_name (that is 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 				$reg = array();
-				if ($modulepart == 'company' || $modulepart == 'tax') {
+				if ($modulepart == 'company' || $modulepart == 'tax' || $modulepart == 'tax-vat' || $modulepart == 'salaries') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
 					$id = (isset($reg[1]) ? $reg[1] : '');
 				} elseif ($modulepart == 'invoice_supplier') {
@@ -1805,21 +1814,26 @@ class FormFile
 				if (!$id && !$ref) {
 					continue;
 				}
+
 				$found = 0;
 				if (!empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
 					$found = 1;
 				} else {
 					//print 'Fetch '.$id." - ".$ref.' class='.get_class($object_instance).'<br>';
 
-					if ($id) {
-						$result = $object_instance->fetch($id);
-					} else {
-						//fetchOneLike looks for objects with wildcards in its reference.
-						//It is useful for those masks who get underscores instead of their actual symbols
-						//fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
-						//that's why we look only into fetchOneLike when fetch returns 0
-						if (!$result = $object_instance->fetch('', $ref)) {
-							$result = $object_instance->fetchOneLike($ref);
+					$result = 0;
+					if (is_object($object_instance)) {
+						if ($id) {
+							$result = $object_instance->fetch($id);
+						} else {
+							if (!($result = $object_instance->fetch('', $ref))) {
+								//fetchOneLike looks for objects with wildcards in its reference.
+								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced a forbiddn char)
+								//fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
+								//that's why we look only into fetchOneLike when fetch returns 0
+								// TODO Remove this part ?
+								$result = $object_instance->fetchOneLike($ref);
+							}
 						}
 					}
 

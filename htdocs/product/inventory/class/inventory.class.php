@@ -26,6 +26,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -110,7 +111,7 @@ class Inventory extends CommonObject
 		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>512, 'csslist'=>'tdoverflowmax200'),
 		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Recorded', 9=>'Canceled'))
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed', 9=>'Canceled'))
 	);
 
 	/**
@@ -625,7 +626,7 @@ class Inventory extends CommonObject
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_RECORDED) {
-			$statusType = 'status5';
+			$statusType = 'status6';
 		}
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);

@@ -274,6 +274,7 @@ function societe_prepare_head(Societe $object)
 
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
 		if (!empty($user->rights->partnership->read)) {
+			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
 			$head[$h][0] = DOL_URL_ROOT.'/societe/partnership.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("Partnership");
@@ -1729,7 +1730,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if ($donetodo) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
-				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&socid='.$filterobj->id.'&status=done">';
+				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
 			}
 			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
 			$tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
@@ -2103,7 +2104,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 		$langs->load("mails");
 
 		$sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
-		$sql2 .= ", '' as fk_element, '' as elementtype, '' as contact_id";
+		$sql2 .= ", null as fk_element, '' as elementtype, null as contact_id";
 		$sql2 .= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
 		$sql2 .= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {

@@ -598,7 +598,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		}
 
 		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			function init_trrunsql()
 			{

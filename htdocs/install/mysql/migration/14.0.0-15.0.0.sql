@@ -300,19 +300,10 @@ CREATE TABLE llx_hrm_job_user(
     fk_user_modif integer
 ) ENGINE=innodb;
 
+ALTER TABLE llx_hrm_job_user ADD COLUMN abort_comment varchar(255);
+
 ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_rowid (rowid);
 -- ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_ref (ref);
-
-
-create table llx_hrm_job_user_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_job_user_extrafields ADD INDEX idx_position_fk_object(fk_object);
 
 
 
@@ -358,19 +349,10 @@ CREATE TABLE llx_hrm_skilldet
     rankorder integer
 ) ENGINE=innodb;
 
+ALTER TABLE llx_hrm_skilldet ADD COLUMN rankorder integer NOT NULL DEFAULT '1';
+
 ALTER TABLE llx_hrm_skilldet ADD INDEX idx_hrm_skilldet_rowid (rowid);
 ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
-
-create table llx_hrm_skilldet_extrafields
-(
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_skilldet_extrafields ADD INDEX idx_skilldet_fk_object(fk_object);
-
 
 CREATE TABLE llx_hrm_skillrank
 (
@@ -493,3 +475,10 @@ ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
 
 ALTER TABLE llx_entrepot ADD COLUMN warehouse_usage integer DEFAULT 1;
 
+ALTER TABLE llx_session MODIFY COLUMN user_agent VARCHAR(255) NULL;
+
+ALTER TABLE llx_inventorydet ADD COLUMN fk_movement integer NULL;
+
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN origintype varchar(64);
+
+ALTER TABLE llx_intracommreport CHANGE COLUMN period periods varchar(32);

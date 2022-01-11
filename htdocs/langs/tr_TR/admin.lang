@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Dernek
 Version=Sürüm
 Publisher=Yayıncı
@@ -265,8 +267,8 @@ OtherResources=Diğer kaynaklar
 ExternalResources=Dış Kaynaklar
 SocialNetworks=Sosyal Ağlar
 SocialNetworkId=Sosyal Ağ Kimliği
-ForDocumentationSeeWiki=Kullanıcıların ve geliştiricilerin belgeleri (Doc, FAQs…), <br>Dolibarr Wiki ye bir göz atın:<br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=Herhangi bir başka soru/yardım için Dolibarr forumunu kullanabilirsiniz:<br><b><a href="%s" target="_blank">%s</a></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Burada Dolibar ile ilgili yardım ve destek almak için bazı kaynaklar bulabilirsiniz.
 HelpCenterDesc2=Bazı kaynaklar sadece <b>İngilizce</b> dilinde mevcuttur.
 CurrentMenuHandler=Geçerli menü işlemcisi
@@ -353,6 +355,7 @@ LastStableVersion=Son kararlı sürüm
 LastActivationDate=En son aktivasyon tarihi
 LastActivationAuthor=En son aktivasyon yazarı
 LastActivationIP=En son aktivasyon IP'si
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Güncelleme sunucusu çevrimdışı
 WithCounter=Bir sayacı yönet
 GenericMaskCodes=Herhangi bir numaralandırma maskesi girebilirsiniz. Bu maskede, aşağıdaki etiketler kullanılabilir:<br><b> {000000} </b>, her %s'de artırılacak bir sayıya karşılık gelir. Sayacın istenen uzunluğu kadar sıfır girin. Sayaç, maske kadar sıfıra sahip olmak için soldan sıfırlarla tamamlanacaktır.<br><b> {000000 + 000} </b> öncekiyle aynı, ancak + işaretinin sağındaki sayıya karşılık gelen ofset ilk %s'den başlayarak uygulandı.<br><b> {000000 @ x} </b> öncekiyle aynı ancak x ayına ulaşıldığında sayaç sıfırlanır (x 1 ile 12 arasında veya tanımlanan mali yılın ilk aylarını kullanmak için 0) yapılandırmanızda veya her ay sıfıra sıfırlamak için 99). Bu seçenek kullanılırsa ve x 2 veya daha yüksekse, {yy} {aa} veya {yyyy} {aa} dizisi de gereklidir.<br><b> {gg} </b> gün (01 - 31).<br><b> {aa} </b> ay (01 - 12).<br><b> {yy} </b>, <b> {yyyy} </b> veya <b> {y} </b> 2, 4 veya 1 sayıdan fazla. <br>
@@ -762,6 +765,7 @@ Permission121=Kullanıcıya bağlı üçüncü partileri oku
 Permission122=Kullanıcıya bağlı üçüncü parti oluştur/değiştir
 Permission125=Kullanıcıya bağlı üçüncü partileri sil
 Permission126=Üçüncü partileri dışa aktar
+Permission130=Create/modify third parties payment information
 Permission141=Tüm projeleri ve görevleri oku (ayrıca iletişim kurmadığım özel projeler)
 Permission142=Tüm projeleri ve görevleri oluştur/değiştir (ayrıca iletişim kurmadığım özel projeler)
 Permission144=Bütün proje ve görevleri sil (aynı zamanda ilgilisi olmadığım özel projeleri de)
@@ -1358,9 +1362,9 @@ BrowserIsOK=%s web tarayıcısını kullanıyorsunuz. Bu tarayıcı güvenlik ve
 BrowserIsKO=%s web tarayıcısını kullanıyorsunuz. Bu tarayıcının güvenlik, performans ve güvenilirlik açısından kötü bir seçim olduğu bilinmektedir. Firefox, Chrome, Opera veya Safari kullanmanızı öneririz.
 PHPModuleLoaded=%s PHP bileşeni yüklendi
 PreloadOPCode=Önceden yüklenmiş OPCode kullanılır
-AddRefInList=Müşteri/Satıcı referans bilgi listesi ve hiperlinklerin çoğu.<br>Cariler "Şirket adımız A.Ş." yerine "CC12345 - SC45678 - Şirket adımız A.Ş." şeklinde görünecektir.
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Müşteri/Satıcı adres bilgisi listesini görüntüleyin <br>Cariler, "Şirket adımız A.Ş." yerine "Şirket adımız A.Ş. - Esentepe Cad. Mecidiyeköy - İstanbul - Türkiye" şeklinde görünecektir.
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=İletişim e-postasını (veya tanımlanmamışsa telefonları) ve şehir bilgi listesini görüntüleyin <br>Kişiler "Ali Koç - ali.koc@email.com - Istanbul" veya "Ali Koç - ad biçiminde görünecektir.
 AskForPreferredShippingMethod=Cariler için tercih edilen gönderme yöntemini isteyin.
 FieldEdition=%s Alanının düzenlenmesi
@@ -1708,8 +1712,9 @@ MailingDelay=Sonraki mesajı göndermek için beklenecek saniyeler
 NotificationSetup=E-posta Bildirimi modülü kurulumu
 NotificationEMailFrom=Bildirimler modülü tarafından gönderilen e-postalar için gönderici e-posta (gönderen)
 FixedEmailTarget=Alıcı
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Sevkiyat modülü ayarları
 SendingsReceiptModel=Makbuz gönderme modeli
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Teslimat fişlerinde serbest metin
 ##### FCKeditor #####
 AdvancedEditor=Gelişmiş editör
 ActivateFCKeditor=Gelişmiş düzenleyiciyi şunun için etkinleştir:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=Tüm varlıklar (teklifler, siparişler, faturalar, vb.) İçin ürün ayrıntı satırlarının WYSIWIG oluşturulması/baskısı. <span class = "warning"> Uyarı: Bu durumda bu seçeneğin kullanılması, PDF dosyalarını oluştururken özel karakterler ve sayfa biçimlendirmeyle ilgili sorunlar yaratabileceğinden, kesinlikle önerilmez. </span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Gider Raporları modülü kurulumu - Kurallar
 ExpenseReportNumberingModules=Gider raporları numaralandırma modülü
 NoModueToManageStockIncrease=Otomatik stok arttırılması yapabilecek hiçbir modül etkinleştirilmemiş. Stok arttırılması yalnızca elle girişle yapılacaktır.
 YouMayFindNotificationsFeaturesIntoModuleNotification="Bildirim" modülünü etkinleştirip yapılandırarak e-posta bildirimleri için seçenekler bulabilirsiniz.
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Kullanıcı başına otomatik bildirimlerin listesi *
 ListOfNotificationsPerUserOrContact=Kullanıcı başına * veya kişi başına ** mevcut olan olası otomatik bildirimlerin listesi (iş etkinliğinde)
 ListOfFixedNotifications=Otomatik sabit bildirimlerin listesi
@@ -2209,3 +2215,7 @@ SkinAndColors=Skin and colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

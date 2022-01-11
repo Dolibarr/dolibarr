@@ -796,7 +796,7 @@ class BlockedLog
 	{
 
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".((int) $this->id));
-		if ($res === false) {
+		if (!$res) {
 			return false;
 		}
 

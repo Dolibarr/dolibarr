@@ -146,7 +146,7 @@ class HookManager
 	 *  @param		Object	$object			Object to use hooks on
 	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
 	 *  @return		mixed					For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
 	 *                                      $this->error or this->errors are also defined by class called by this function if error.
 	 */
@@ -242,6 +242,7 @@ class HookManager
 		$this->resArray = array();
 		$this->resNbOfHooks = 0;
 
+		// Here, the value for $method and $hooktype are given.
 		// Loop on each hook to qualify modules that have declared context
 		$modulealreadyexecuted = array();
 		$resaction = 0;
@@ -265,7 +266,7 @@ class HookManager
 
 					$this->resNbOfHooks++;
 
-					$modulealreadyexecuted[$module] = $module; // Use the $currentcontext in method to avoid running twice
+					$modulealreadyexecuted[$module] = $module;
 
 					// Clean class (an error may have been set from a previous call of another method for same module/hook)
 					$actionclassinstance->error = 0;
@@ -274,6 +275,7 @@ class HookManager
 					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
 
 					// Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
+					// Note: The hook can use the $currentcontext in its code to avoid to be ran twice or be ran for one given context only
 					$parameters['currentcontext'] = $context;
 					// Hooks that must return int (hooks with type 'addreplace')
 					if ($hooktype == 'addreplace') {
@@ -310,7 +312,8 @@ class HookManager
 						}
 
 						//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
-						$resaction = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+						$resaction += $resactiontmp;
 
 						if (!empty($actionclassinstance->results) && is_array($actionclassinstance->results)) {
 							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
@@ -318,23 +321,23 @@ class HookManager
 						if (!empty($actionclassinstance->resprints)) {
 							$this->resPrint .= $actionclassinstance->resprints;
 						}
-						if (is_numeric($resaction) && $resaction < 0) {
+						if (is_numeric($resactiontmp) && $resactiontmp < 0) {
 							$error++;
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
 							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".join(",", $this->errors)), LOG_ERR);
 						}
-						// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
-						if (!is_array($resaction) && !is_numeric($resaction)) {
+
+						// TODO dead code to remove (do not disable this, but fix your hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
+						if (!is_array($resactiontmp) && !is_numeric($resactiontmp)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {
-								$this->resPrint .= $resaction;
-								$resaction = 0;
+								$this->resPrint .= $resactiontmp;
 							}
 						}
 					}
 
-					//print "After hook  ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
+					//print "After hook context=".$context." ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 
 					unset($actionclassinstance->results);
 					unset($actionclassinstance->resprints);

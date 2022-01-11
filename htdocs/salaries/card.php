@@ -25,6 +25,7 @@
  *  \ingroup    salaries
  *  \brief      Page of salaries payments
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
@@ -263,7 +264,10 @@ if ($action == 'add' && empty($cancel)) {
 		$db->begin();
 
 		$ret = $object->create($user);
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			var_dump($ret);
+			$error++;
+		}
 		if (!empty($auto_create_paiement) && !$error) {
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
@@ -481,7 +485,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewSalary"), '', 'salary');
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print /** @lang JavaScript */'
 			$(document).ready(function () {
 				let onAutoCreatePaiementChange = function () {
@@ -552,7 +556,8 @@ if ($action == 'create') {
 		$formproject = new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -562,10 +567,12 @@ if ($action == 'create') {
 	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
 	print '</tr>';
 
+
 	print '<tr><td colspan="2"><hr></td></tr>';
 
+
 	// Auto create payment
-	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
+	print '<tr><td><label for="auto_create_paiement">'.$langs->trans('AutomaticCreationPayment').'</label></td>';
 	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_paiement) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";	// Date payment
 
 	// Bank
@@ -739,7 +746,7 @@ if ($id) {
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
 			if ($result > 0) {
-				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
 			}
 		} else {
 			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
@@ -748,7 +755,7 @@ if ($id) {
 				$userstatic = new User($db);
 				$result = $userstatic->fetch($object->fk_user);
 				if ($result > 0) {
-					$morehtmlref .= $userstatic->getNomUrl(1);
+					$morehtmlref .= $userstatic->getNomUrl(-1);
 				} else {
 					dol_print_error($db);
 					exit();
@@ -997,14 +1004,14 @@ if ($id) {
 
 	print '<div class="clearboth"></div>';
 
+	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
 		print $form->buttonsSaveCancel();
 		print "</form>";
 	}
 
-	print dol_get_fiche_end();
-
+	$resteapayer = price2num($resteapayer, 'MT');
 
 	/*
 	 * Action bar
@@ -1023,23 +1030,19 @@ if ($id) {
 		}
 
 		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->salaries->write) {
+		if ($object->paye == 0 && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $user->rights->salaries->write) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/paiement_salary.php?id=".$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment")."</a></div>";
 		}
 
 		// Classify 'paid'
-		if ($object->paye == 0
-			&& (
-				(round($resteapayer) <= 0 && $object->amount > 0)
-				|| (round($resteapayer) >= 0 && $object->amount < 0)
-			)
-			&& $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
+		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
+		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $user->rights->salaries->write) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
 		if ($user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 		}
 
 		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {

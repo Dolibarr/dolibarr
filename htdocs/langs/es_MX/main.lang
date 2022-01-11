@@ -299,6 +299,7 @@ SearchIntoSupplierOrders=Ordenes de compra
 SearchIntoCustomerProposals=Propuestas comerciales
 SearchIntoSupplierProposals=Presupuestos de Proveedor
 SearchIntoExpenseReports=Reporte de gastos
+SearchIntoMiscPayments=Varios pagos
 AssignedTo=Asignado a
 ToProcess=Procesar
 ContactDefault_agenda=Evento

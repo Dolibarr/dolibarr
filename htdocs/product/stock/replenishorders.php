@@ -144,7 +144,7 @@ if ($snom) {
 	$sql .= natural_search('s.nom', $snom);
 }
 if ($suser) {
-	$sql .= natural_search('u.login', $suser);
+	natural_search(array('u.lastname', 'u.firstname', 'u.login'), $suser);
 }
 if ($sttc) {
 	$sql .= natural_search('cf.total_ttc', $sttc, 1);

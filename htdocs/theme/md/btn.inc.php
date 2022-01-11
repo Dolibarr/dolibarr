@@ -44,10 +44,6 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 /* ============================================================================== */
 
 
-/*div.divButAction {
-	margin-bottom: 1.4em;
-}*/
-
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butAction,
@@ -82,6 +78,7 @@ span.butAction, span.butActionDelete {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
+	line-height: 1.8em;
 
 	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
@@ -323,7 +320,7 @@ div.pagination li:first-child a.btnTitle {
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
-	background-color: #fbfbfb;
+	/* background-color: #fbfbfb; */
 }
 
 a.btnTitle.btnTitleSelected {
@@ -373,6 +370,11 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	font-size: 20px;
 	display: block;
 }
+
+.paginationafterarrows a.btnTitlePlus, .titre_right a.btnTitlePlus {
+	border: 1px solid var(--colorbackbody);
+}
+
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */

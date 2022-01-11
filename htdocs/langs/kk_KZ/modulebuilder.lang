@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Бұл құралды тәжірибелі қолданушылар немесе әзірлеушілер ғана қолдануы керек. Ол жеке модульді құруға немесе өңдеуге арналған утилиталарды ұсынады. Балама <a href="%s" target="_blank"> қолмен әзірлеуге арналған құжаттар мұнда </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Бос орынсыз құру үшін модуль/қосымшаның атын енгізіңіз. Сөздерді ажырату үшін бас әріптерді қолданыңыз (Мысалы: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Бос орынсыз жасалатын нысан атауын енгізіңіз. Сөздерді ажырату үшін бас әріптерді қолданыңыз (Мысалы: MyObject, Student, Teacher ...). CRUD сынып файлы, сонымен қатар API файлы, объектілерді тізімдеу/қосу/өңдеу/жою үшін беттер және SQL файлдары жасалады.
 ModuleBuilderDesc2=Модульдер жасалатын/өңделетін жол (%s анықталған сыртқы модульдердің бірінші каталогы): <strong> %s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Сіздің модуль/қосымша ұсынған мә
 DictionariesDefDescTooltip=Модуль/қосымшамен қамтамасыз етілген сөздіктер <strong> $ this-> </strong> сөздіктер жиымында модуль дескрипторының файлында анықталған. Сіз бұл файлды қолмен өңдей аласыз немесе ендірілген редакторды пайдалана аласыз. <br> <br> Ескертпе: Анықталғаннан кейін (және модуль қайта белсендірілгеннен кейін), сөздіктер орнату аймағында %s әкімші пайдаланушыларына көрінеді.
 PermissionsDefDescTooltip=Модуль/қосымшамен берілген рұқсаттар <strong> $ this-> </strong> массивінде модуль дескриптор файлында анықталған. Сіз бұл файлды қолмен өңдей аласыз немесе ендірілген редакторды пайдалана аласыз. <br> <br> Ескертпе: Анықталғаннан кейін (және модуль қайта іске қосылады), рұқсаттар %s әдепкі рұқсаттарды орнатуда көрінеді.
 HooksDefDesc=<b> module_parts ['ілмектер'] </b> қасиетінде модуль дескрипторында басқарғыңыз келетін ілгектердің контекстін анықтаңыз (мәтінмәндер тізімін '<b> initHooks a09a19b4 a091742 кодында іздеу арқылы табуға болады) ілінетін функциялардың кодын қосатын ілмек файлы (ілінетін функцияларды негізгі кодтағы '<b> executeHooks </b>' бойынша іздеу арқылы табуға болады).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Орнату кезінде пайдаланылатын идентификаторларды қараңыз
 SeeReservedIDsRangeHere=Резервтелген идентификаторлар ауқымын қараңыз
 ToolkitForDevelopers=Dolibarr әзірлеушілеріне арналған құралдар жинағы

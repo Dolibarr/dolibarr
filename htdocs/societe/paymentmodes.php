@@ -1228,7 +1228,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if ($nbremote == 0 && $nblocal == 0) {
 			$colspan = (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD) ? 10 : 9);
-			print '<tr><td colspan="'.$colspan.'"<span class="opacitymedium">>'.$langs->trans("None").'</span></td></tr>';
+			print '<tr><td colspan="'.$colspan.'"<span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print "</table>";
 		print "</div>";

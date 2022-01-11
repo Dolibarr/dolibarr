@@ -366,7 +366,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript" language="javascript">';
+			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
@@ -1204,7 +1204,7 @@ class FormTicket
 		$send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 
 		// Example 1 : Adding jquery code
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			send_email=' . $send_email.';
 			if (send_email) {
@@ -1322,6 +1322,7 @@ class FormTicket
 
 				// Print recipient list
 				if (is_array($sendto) && count($sendto) > 0) {
+					print img_picto('', 'email', 'class="pictofixedwidth"');
 					print implode(', ', $sendto);
 				} else {
 					print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
@@ -1404,7 +1405,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript" language="javascript">';
+			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';

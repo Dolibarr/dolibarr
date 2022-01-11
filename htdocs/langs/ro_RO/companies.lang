@@ -45,7 +45,7 @@ ParentCompany=Societatea-mamă
 Subsidiaries=Filiale - sedii
 ReportByMonth=Raport pe lună
 ReportByCustomers=Raport pe client
-ReportByThirdparties=Raport pe terţ
+ReportByThirdparties=Raport pe terţi
 ReportByQuarter=Raport pe cotă
 CivilityCode=Mod adresare
 RegisteredOffice=Sediu social
@@ -369,7 +369,7 @@ VATIntraCheck=Verificare VIES
 VATIntraCheckDesc=Codul TVA trebuie să includă prefixul țării. Linkul <b>%s</b> utilizează serviciul european de verificare TVA (VIES), care necesită acces la internet de pe serverul sistemului.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Verificați codul TVA intracomunitar pe site-ul web al Comisiei Europene
-VATIntraManualCheck=De asemenea, puteți verifica manual pe site-ul web al UE <a href="%s" target="_blank">%s</a>
+VATIntraManualCheck=Poţi verifica şi manual pe site-ul Comisiei Europene <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Verificare imposibilă. Verificaţi dacă serviciul este furnizat de către statul membru (%s).
 NorProspectNorCustomer=Nici prospect, nici client
 JuridicalStatus=Tipul entității comerciale

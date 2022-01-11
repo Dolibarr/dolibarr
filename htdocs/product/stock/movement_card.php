@@ -489,7 +489,7 @@ if ($search_warehouse != '' && $search_warehouse != '-1') {
 	$sql .= natural_search('e.rowid', $search_warehouse, 2);
 }
 if (!empty($search_user)) {
-	$sql .= natural_search('u.login', $search_user);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 }
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);

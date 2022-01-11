@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=A PHP telepítése nem támogatja a Curl-t.
 ErrorPHPDoesNotSupportCalendar=A telepített PHP nem támogatja a php naptárkiterjesztéseket.
 ErrorPHPDoesNotSupportUTF8=A telepített PHP nem támogatja az UTF8 funkciókat. A Dolibarr nem működik megfelelően. A Dolibarr telepítése előtt oldja meg ezt.
 ErrorPHPDoesNotSupportIntl=A telepített PHP nem támogatja a többnyelvű funkciókat.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Your PHP installation does not support extend debug functions.
 ErrorPHPDoesNotSupport=A telepített PHP nem támogatja a(z) %s funkciókat.
 ErrorDirDoesNotExists=%s könyvtár nem létezik.

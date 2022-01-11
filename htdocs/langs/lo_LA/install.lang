@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=ການຕິດຕັ້ງ PHP ຂອງເຈົ
 ErrorPHPDoesNotSupportCalendar=ການຕິດຕັ້ງ PHP ຂອງເຈົ້າບໍ່ຮອງຮັບການຂະຫຍາຍປະຕິທິນ php.
 ErrorPHPDoesNotSupportUTF8=ການຕິດຕັ້ງ PHP ຂອງເຈົ້າບໍ່ຮອງຮັບຟັງຊັນ UTF8. Dolibarr ບໍ່ສາມາດເຮັດວຽກໄດ້ຢ່າງຖືກຕ້ອງ. ແກ້ໄຂບັນຫານີ້ກ່ອນທີ່ຈະຕິດຕັ້ງ Dolibarr.
 ErrorPHPDoesNotSupportIntl=ການຕິດຕັ້ງ PHP ຂອງເຈົ້າບໍ່ຮອງຮັບຟັງຊັນ Intl.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=ການຕິດຕັ້ງ PHP ຂອງເຈົ້າບໍ່ສະ ໜັບ ສະ ໜູນ ການຂະຫຍາຍ ໜ້າ ທີ່ແກ້ໄຂບັນຫາ.
 ErrorPHPDoesNotSupport=ການຕິດຕັ້ງ PHP ຂອງເຈົ້າບໍ່ຮອງຮັບຟັງຊັນ %s.
 ErrorDirDoesNotExists=ບັນຊີລາຍຊື່ %s ບໍ່ມີ.

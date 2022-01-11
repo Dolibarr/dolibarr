@@ -325,6 +325,10 @@ class CompanyPaymentMode extends CommonObject
 		}
 
 		$result = $this->fetchCommon($id, $ref, $morewhere);
+
+		// For backward compatibility
+		$this->iban = $this->iban_prefix;
+
 		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}

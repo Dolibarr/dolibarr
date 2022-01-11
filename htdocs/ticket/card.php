@@ -438,7 +438,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			// Log action in ticket logs table
 			$object->fetch_user($usertoassign);
-			$log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
+			//$log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
 
 			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
 
@@ -493,7 +493,7 @@ if (empty($reshook)) {
 			$object->close($user);
 
 			// Log action in ticket logs table
-			$log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
+			//$log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
 
 			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
@@ -579,7 +579,7 @@ if (empty($reshook)) {
 				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
 				if ($res) {
 					// Log action in ticket logs table
-					$log_action = $langs->trans('TicketLogReopen');
+					//$log_action = $langs->trans('TicketLogReopen');
 
 					$url = 'card.php?action=view&track_id='.$object->track_id;
 					header("Location: ".$url);
@@ -616,11 +616,11 @@ if (empty($reshook)) {
 			$object->message = $fieldtomodify;
 			$ret = $object->update($user);
 			if ($ret > 0) {
-				$log_action = $langs->trans('TicketInitialMessageModified')." \n";
+				//$log_action = $langs->trans('TicketInitialMessageModified')." \n";
 				// include the Diff class
 				include_once DOL_DOCUMENT_ROOT.'/core/class/utils_diff.class.php';
 				// output the result of comparing two files as plain text
-				$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
+				//$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
 				setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
 			} else {
@@ -684,7 +684,7 @@ if (empty($reshook)) {
 
 		$ret = $object->update($user);
 		if ($ret > 0) {
-			$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
+			//$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
 
 			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
 		} else {
@@ -854,6 +854,7 @@ if ($action == 'create' || $action == 'presend') {
 				//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 				$head = project_prepare_head($projectstat);
+
 				print dol_get_fiche_head($head, 'ticket', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
 
 				/*
@@ -902,7 +903,7 @@ if ($action == 'create' || $action == 'presend') {
 
 				print "</table>";
 
-				print '</div>';
+				print dol_get_fiche_end();
 			} else {
 				print "ErrorRecordNotFound";
 			}
@@ -1178,6 +1179,8 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			print '</table>';
+
+			print '</div>';
 		}
 
 
@@ -1217,7 +1220,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<td>';
 			print $langs->trans('TicketCategory');
 			print '</td><td>';
-			$formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2, 0, 0, 0, 'maxwidth500');
+			$formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2, 0, 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			print '</td>';
 			print '</tr>';
 			// Severity
