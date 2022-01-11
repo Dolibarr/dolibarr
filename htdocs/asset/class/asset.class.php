@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017       Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,89 +258,89 @@ class Asset extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-//		$object = new self($this->db);
-//
-//		$this->db->begin();
-//
-//		// Load source object
-//		$result = $object->fetchCommon($fromid);
-//		if ($result > 0 && !empty($object->table_element_line)) {
-//			$object->fetchLines();
-//		}
-//
-//		// get lines so they will be clone
-//		//foreach($this->lines as $line)
-//		//	$line->fetch_optionals();
-//
-//		// Reset some properties
-//		unset($object->id);
-//		unset($object->fk_user_creat);
-//		unset($object->import_key);
-//
-//		// Clear fields
-//		if (property_exists($object, 'ref')) {
-//			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-//		}
-//		if (property_exists($object, 'label')) {
-//			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-//		}
-//		if (property_exists($object, 'status')) {
-//			$object->status = self::STATUS_DRAFT;
-//		}
-//		if (property_exists($object, 'date_creation')) {
-//			$object->date_creation = dol_now();
-//		}
-//		if (property_exists($object, 'date_modification')) {
-//			$object->date_modification = null;
-//		}
-//		// ...
-//		// Clear extrafields that are unique
-//		if (is_array($object->array_options) && count($object->array_options) > 0) {
-//			$extrafields->fetch_name_optionals_label($this->table_element);
-//			foreach ($object->array_options as $key => $option) {
-//				$shortkey = preg_replace('/options_/', '', $key);
-//				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-//					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
-//					unset($object->array_options[$key]);
-//				}
-//			}
-//		}
-//
-//		// Create clone
-//		$object->context['createfromclone'] = 'createfromclone';
-//		$result = $object->createCommon($user);
-//		if ($result < 0) {
-//			$error++;
-//			$this->error = $object->error;
-//			$this->errors = $object->errors;
-//		}
-//
-//		if (!$error) {
-//			// copy internal contacts
-//			if ($this->copy_linked_contact($object, 'internal') < 0) {
-//				$error++;
-//			}
-//		}
-//
-//		if (!$error) {
-//			// copy external contacts if same company
-//			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-//				if ($this->copy_linked_contact($object, 'external') < 0) {
-//					$error++;
-//				}
-//			}
-//		}
-//
-//		unset($object->context['createfromclone']);
-//
-//		// End
-//		if (!$error) {
-//			$this->db->commit();
-//			return $object;
-//		} else {
-//			$this->db->rollback();
-//			return -1;
-//		}
+		//		$object = new self($this->db);
+		//
+		//		$this->db->begin();
+		//
+		//		// Load source object
+		//		$result = $object->fetchCommon($fromid);
+		//		if ($result > 0 && !empty($object->table_element_line)) {
+		//			$object->fetchLines();
+		//		}
+		//
+		//		// get lines so they will be clone
+		//		//foreach($this->lines as $line)
+		//		//	$line->fetch_optionals();
+		//
+		//		// Reset some properties
+		//		unset($object->id);
+		//		unset($object->fk_user_creat);
+		//		unset($object->import_key);
+		//
+		//		// Clear fields
+		//		if (property_exists($object, 'ref')) {
+		//			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
+		//		}
+		//		if (property_exists($object, 'label')) {
+		//			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		//		}
+		//		if (property_exists($object, 'status')) {
+		//			$object->status = self::STATUS_DRAFT;
+		//		}
+		//		if (property_exists($object, 'date_creation')) {
+		//			$object->date_creation = dol_now();
+		//		}
+		//		if (property_exists($object, 'date_modification')) {
+		//			$object->date_modification = null;
+		//		}
+		//		// ...
+		//		// Clear extrafields that are unique
+		//		if (is_array($object->array_options) && count($object->array_options) > 0) {
+		//			$extrafields->fetch_name_optionals_label($this->table_element);
+		//			foreach ($object->array_options as $key => $option) {
+		//				$shortkey = preg_replace('/options_/', '', $key);
+		//				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
+		//					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+		//					unset($object->array_options[$key]);
+		//				}
+		//			}
+		//		}
+		//
+		//		// Create clone
+		//		$object->context['createfromclone'] = 'createfromclone';
+		//		$result = $object->createCommon($user);
+		//		if ($result < 0) {
+		//			$error++;
+		//			$this->error = $object->error;
+		//			$this->errors = $object->errors;
+		//		}
+		//
+		//		if (!$error) {
+		//			// copy internal contacts
+		//			if ($this->copy_linked_contact($object, 'internal') < 0) {
+		//				$error++;
+		//			}
+		//		}
+		//
+		//		if (!$error) {
+		//			// copy external contacts if same company
+		//			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+		//				if ($this->copy_linked_contact($object, 'external') < 0) {
+		//					$error++;
+		//				}
+		//			}
+		//		}
+		//
+		//		unset($object->context['createfromclone']);
+		//
+		//		// End
+		//		if (!$error) {
+		//			$this->db->commit();
+		//			return $object;
+		//		} else {
+		//			$this->db->rollback();
+		//			return -1;
+		//		}
 		return -1;
 	}
 
@@ -766,12 +766,12 @@ class Asset extends CommonObject
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "asset_depreciation(fk_asset, depreciation_mode, ref, depreciation_date, depreciation_ht, cumulative_depreciation_ht, accountancy_code_debit, accountancy_code_credit)";
 		$sql .= " VALUES ( ";
-		$sql .= " " . (int)$this->id;
+		$sql .= " " . (int) $this->id;
 		$sql .= ", '" . $this->db->escape($mode) . "'";
 		$sql .= ", '" . $this->db->escape($ref) . "'";
 		$sql .= ", '" . $this->db->idate($depreciation_date) . "'";
-		$sql .= ", " . (double)$depreciation_ht;
-		$sql .= ", " . (double)$cumulative_depreciation_ht;
+		$sql .= ", " . (double) $depreciation_ht;
+		$sql .= ", " . (double) $cumulative_depreciation_ht;
 		$sql .= ", '" . $this->db->escape($accountancy_code_debit) . "'";
 		$sql .= ", '" . $this->db->escape($accountancy_code_credit) . "'";
 		$sql .= ")";
@@ -963,7 +963,7 @@ class Asset extends CommonObject
 				// futures depreciation lines
 				//-----------------------------------------------------
 				$nb_days_in_year = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 360;
-				$period_amount = (double)price2num($depreciation_period_amount * ($fields['duration_type'] == 1 ? 12 : ($fields['duration_type'] == 2 ? $nb_days_in_year : 1)) / $fields['duration'], 'MT');
+				$period_amount = (double) price2num($depreciation_period_amount * ($fields['duration_type'] == 1 ? 12 : ($fields['duration_type'] == 2 ? $nb_days_in_year : 1)) / $fields['duration'], 'MT');
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
 
@@ -993,9 +993,9 @@ class Asset extends CommonObject
 						$begin_date = $fiscal_period_start < $start_date && $start_date <= $fiscal_period_end ? $start_date : $fiscal_period_start;
 						$end_date = $fiscal_period_start < $finish_date && $finish_date <= $fiscal_period_end ? $finish_date : $fiscal_period_end;
 						$nb_days = min($nb_days_in_year, ($end_date - $begin_date) / 86400); // 86400s = 1d
-						$depreciation_ht = (double)price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+						$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
 						if ($fiscal_period_start <= $depreciation_date_end && $depreciation_date_end <= $fiscal_period_end) { // last period
-							$depreciation_ht = (double)price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
+							$depreciation_ht = (double) price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
 							$cumulative_depreciation_ht = $depreciation_amount;
 						} else {
 							$cumulative_depreciation_ht += $depreciation_ht;
@@ -1529,31 +1529,31 @@ class Asset extends CommonObject
 	 *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-//	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
-//	{
-//		global $conf, $langs;
-//
-//		$result = 0;
-//		$includedocgeneration = 1;
-//
-//		$langs->load("asset@asset");
-//
-//		if (!dol_strlen($modele)) {
-//			$modele = 'standard_asset';
-//
-//			if (!empty($this->model_pdf)) {
-//				$modele = $this->model_pdf;
-//			} elseif (!empty($conf->global->ASSET_ADDON_PDF)) {
-//				$modele = $conf->global->ASSET_ADDON_PDF;
-//			}
-//		}
-//
-//		$modelpath = "core/modules/asset/doc/";
-//
-//		if ($includedocgeneration && !empty($modele)) {
-//			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-//		}
-//
-//		return $result;
-//	}
+	//	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	//	{
+	//		global $conf, $langs;
+	//
+	//		$result = 0;
+	//		$includedocgeneration = 1;
+	//
+	//		$langs->load("asset@asset");
+	//
+	//		if (!dol_strlen($modele)) {
+	//			$modele = 'standard_asset';
+	//
+	//			if (!empty($this->model_pdf)) {
+	//				$modele = $this->model_pdf;
+	//			} elseif (!empty($conf->global->ASSET_ADDON_PDF)) {
+	//				$modele = $conf->global->ASSET_ADDON_PDF;
+	//			}
+	//		}
+	//
+	//		$modelpath = "core/modules/asset/doc/";
+	//
+	//		if ($includedocgeneration && !empty($modele)) {
+	//			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	//		}
+	//
+	//		return $result;
+	//	}
 }
