@@ -790,7 +790,7 @@ class BOM extends CommonObject
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 		if (!empty($this->fk_product) && $this->fk_product > 0) {
-			include_once DOL_DOCUMENT_ROO.'/product/class/product.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$product = new Product($db);
 			$resultFetch = $product->fetch($this->fk_product);
 			if ($resultFetch > 0) {
