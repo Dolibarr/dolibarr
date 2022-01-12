@@ -209,6 +209,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
             if ($nocommentremoval || !preg_match('/^\s*--/', $buf))
             {
             	if (empty($nocommentremoval)) $buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
+                if ($buffer) $buffer .= ' ';
                 $buffer .= trim($buf);
             }
 
