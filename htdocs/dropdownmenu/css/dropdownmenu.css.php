@@ -40,7 +40,7 @@ $res=0;
 if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
-while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
 if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
 if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/../main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/../main.inc.php";
 // Try main.inc.php using relative path
@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load user to have $user->conf loaded (not done by default here because of NOLOGIN constant defined) and load permission if we need to use them in CSS
 /*if (empty($user->id) && ! empty($_SESSION['dol_login']))
 {
-    $user->fetch('',$_SESSION['dol_login']);
+	$user->fetch('',$_SESSION['dol_login']);
 	$user->getrights();
 }*/
 
@@ -70,18 +70,17 @@ else header('Cache-Control: no-cache');
 
 $colorbackhmenu1     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
 
-if(empty($colorbackhmenu1))$colorbackhmenu1 = '55,61,90';
+if (empty($colorbackhmenu1))$colorbackhmenu1 = '55,61,90';
 
 
 $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackhmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbackhmenu = 'FFFFFF'; }
-else { $colortextbackhmenu = '000000'; }
+if ($tmpval <= 460) { $colortextbackhmenu = 'FFFFFF'; } else { $colortextbackhmenu = '000000'; }
 
 
-if($conf->standard_menu == 'dropdown_responsive_menu.php'){
-?>
+if ($conf->standard_menu == 'dropdown_responsive_menu.php') {
+	?>
 
 	.side-nav-vert{
 		position:static;
@@ -470,5 +469,5 @@ if($conf->standard_menu == 'dropdown_responsive_menu.php'){
 		transform: rotate(90deg);
 		}
 	}
-<?php
+	<?php
 }
