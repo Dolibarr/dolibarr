@@ -2164,4 +2164,9 @@ class BookKeepingLine
 	 * @var integer|string $date_validation;
 	 */
 	public $date_validation;
+
+	/**
+	 * @var integer|string $date_lim_reglement;
+	 */
+	public $date_lim_reglement;
 }
