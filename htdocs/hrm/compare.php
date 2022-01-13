@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm.lib.php';
 
-$permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare->read;
+$permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read;
 $permissiontoadd = 0;
 if (empty($conf->hrm->enabled)) accessforbidden();
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
