@@ -1734,6 +1734,8 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
+		$limit = 0;
+
 		$sql = "SELECT e.rowid, e.rowid as ref, e.label, e.address, e.zip, e.town, e.status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
 		$sql .= " WHERE e.entity IN (".getEntity('establishment').')';
