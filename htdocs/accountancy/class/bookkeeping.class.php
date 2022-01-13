@@ -2114,15 +2114,26 @@ class BookKeepingLine
 	public $montant;
 
 	/**
-	 * @var float Amount
+	 * @var float 	Amount
 	 */
 	public $amount;
+
+	/**
+	 * @var float 	Multicurrency amount
+	 */
+	public $multicurrency_amount;
+
+	/**
+	 * @var float 	Multicurrency code
+	 */
+	public $multicurrency_code;
 
 	/**
 	 * @var string Sens
 	 */
 	public $sens;
 	public $lettering_code;
+	public $date_lettering;
 
 	/**
 	 * @var int ID
