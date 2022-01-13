@@ -561,7 +561,7 @@ if ($search_user > 0) {
 	$sql .= " SELECT ec.rowid ";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "element_contact as ec";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_type_contact as tc ON tc.rowid = ec.fk_c_type_contact";
-	$sql .= " WHERE ec.element_id = cf.rowid AND ec.fk_socpeople = " . $db->escape($search_user);
+	$sql .= " WHERE ec.element_id = cf.rowid AND ec.fk_socpeople = " . ((int) $search_user);
 	$sql .= " AND tc.element = 'order_supplier' AND tc.source = 'internal'";
 	$sql .= ")";
 }
