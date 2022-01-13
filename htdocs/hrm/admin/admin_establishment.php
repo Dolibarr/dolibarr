@@ -60,8 +60,8 @@ $title = $langs->trans('Establishments');
 llxHeader('', $title, '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortorder     = GETPOST("sortorder", 'alpha');
-$sortfield     = GETPOST("sortfield", 'alpha');
+$sortorder     = GETPOST('sortorder', 'aZ09comma');
+$sortfield     = GETPOST('sortfield', 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "DESC";
 }

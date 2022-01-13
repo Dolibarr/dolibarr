@@ -48,7 +48,7 @@ $paymentnum	= GETPOST('num_paiement', 'alpha');
 $socid      = GETPOST('socid', 'int');
 
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
-$sortorder	= GETPOST('sortorder', 'alpha');
+$sortorder	= GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 $amounts = array();
