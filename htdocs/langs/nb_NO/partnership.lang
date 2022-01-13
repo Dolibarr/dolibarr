@@ -19,7 +19,7 @@
 ModulePartnershipName=Håndtering av partnerskap
 PartnershipDescription=Modul for Partnerskapshåndtering
 PartnershipDescriptionLong= Modul for Partnerskapshåndtering
-
+Partnership=Partnership
 AddPartnership=Add partnership
 CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
 PartnershipCheckBacklink=Partnership: Check referring backlink
@@ -58,6 +58,7 @@ ManagePartnership=Manage partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink ble ikke funnet på partnerens nettsted
 ConfirmClosePartnershipAsk=Er du sikker på at du vil avbryte dette partnerskapet?
 PartnershipType=Partnership type
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

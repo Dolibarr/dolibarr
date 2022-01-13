@@ -22,7 +22,6 @@ ExtraFieldsSupplierInvoices=Atributos adicionales (facturas)
 ExtraFieldsProject=Atributos adicionales (proyectos)
 ExtraFieldsProjectTask=Atributos adicionales (tareas)
 ExtraFieldHasWrongValue=El atributo %s tiene un valor no válido
-NotificationsDescGlobal=* or by setting global email addresses in this setup page.
 SupplierProposalSetup=Configuración del módulo Solicitudes a proveedor
 SupplierProposalNumberingModules=Modelos de numeración de solicitud de precios a proveedor
 SupplierProposalPDFModules=Modelos de documentos de solicitud de precios a proveedores

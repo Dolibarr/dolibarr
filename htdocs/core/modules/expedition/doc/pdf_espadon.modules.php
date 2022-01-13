@@ -29,7 +29,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 /**
  *	Class to build sending documents with model espadon
@@ -324,8 +324,8 @@ class pdf_espadon extends ModelePdfExpedition
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift: 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				$this->posxdesc = $this->marge_gauche + 1;
 
@@ -334,7 +334,7 @@ class pdf_espadon extends ModelePdfExpedition
 				if (!empty($conf->incoterm->enabled)) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
-						$tab_top = 88;
+						$tab_top -= 2;
 
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
@@ -648,6 +648,11 @@ class pdf_espadon extends ModelePdfExpedition
 
 					if ($this->getColumnStatus('qty_asked')) {
 						$this->printStdColumnContent($pdf, $curY, 'qty_asked', $object->lines[$i]->qty_asked);
+						$nexY = max($pdf->GetY(), $nexY);
+					}
+
+					if ($this->getColumnStatus('unit_order')) {
+						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString($object->lines[$i]->fk_unit));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -1121,7 +1126,7 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1305,6 +1310,20 @@ class pdf_espadon extends ModelePdfExpedition
 			'status' => empty($conf->global->SHIPPING_PDF_HIDE_ORDERED) ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
+			),
+			'border-left' => true, // add left line separator
+			'content' => array(
+				'align' => 'C',
+			),
+		);
+
+		$rank = $rank + 10;
+		$this->cols['unit_order'] = array(
+			'rank' => $rank,
+			'width' => 15, // in mm
+			'status' => empty($conf->global->PRODUCT_USE_UNITS) ? 0 : 1,
+			'title' => array(
+				'textkey' => 'Unit'
 			),
 			'border-left' => true, // add left line separator
 			'content' => array(

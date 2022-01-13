@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 Module310Name=Membres
-NotificationsDescGlobal=* or by setting global email addresses in this setup page.
 LDAPMembersSynchro=Membres
 LDAPMembersTypesSynchro=Types de membres
 MailToMember=Membres

@@ -274,7 +274,13 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
-print $langs->trans("OpenSurveyHowTo").'<br><br>';
+print $langs->trans("OpenSurveyHowTo").'<br>';
+if (empty($object->allow_spy)) {
+	print '<span class="opacitymedium">'.$langs->trans("YourVoteIsPrivate").'</span><br>';
+} else {
+	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("YourVoteIsPublic").'</span>', $langs->trans("CanSeeOthersVote")).'<br>';
+}
+print '<br>';
 
 print '<div class="corps"> '."\n";
 
@@ -292,7 +298,7 @@ print '</div>'."\n";
 
 //The survey has expired, users can't vote or do any action
 if (!$canbemodified) {
-	print '<div style="text-align: center"><p>'.$langs->trans('SurveyExpiredInfo').'</p></div>';
+	print '<br><center><div class="quatrevingtpercent center warning">'.$langs->trans('SurveyExpiredInfo').'</div></center>';
 	llxFooterSurvey();
 
 	$db->close();

@@ -168,6 +168,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
+
 		if ($result >= 0) {
 			return $result;
 		} else {
@@ -226,8 +227,8 @@ abstract class CommonInvoice extends CommonObject
 		$idarray = array();
 
 		$sql = 'SELECT rowid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' WHERE fk_facture_source = '.((int) $this->id);
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE fk_facture_source = ".((int) $this->id);
 		$sql .= ' AND type = 2';
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -253,8 +254,8 @@ abstract class CommonInvoice extends CommonObject
 	public function getIdReplacingInvoice($option = '')
 	{
 		$sql = 'SELECT rowid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' WHERE fk_facture_source = '.((int) $this->id);
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE fk_facture_source = ".((int) $this->id);
 		$sql .= ' AND type < 2';
 		if ($option == 'validated') {
 			$sql .= ' AND fk_statut = 1';
@@ -306,8 +307,8 @@ abstract class CommonInvoice extends CommonObject
 			$sharedentity = 'facture_fourn';
 		}
 
-		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code'.$field3;
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
+		$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$table." as pf, ".MAIN_DB_PREFIX.$table2." as p, ".MAIN_DB_PREFIX."c_paiement as t";
 		$sql .= " WHERE pf.".$field." = ".((int) $this->id);
 		$sql .= " AND pf.".$field2." = p.rowid";
 		$sql .= ' AND p.fk_paiement = t.id';
@@ -335,12 +336,12 @@ abstract class CommonInvoice extends CommonObject
 			//look for credit notes and discounts and deposits
 			$sql = '';
 			if ($this->element == 'facture' || $this->element == 'invoice') {
-				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql = "SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type";
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
 				$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.((int) $this->id);
 				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
 			} elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
-				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
+				$sql = "SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type";
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
 				$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.((int) $this->id);
 				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
@@ -734,7 +735,7 @@ abstract class CommonInvoice extends CommonObject
 							$sql .= 'fk_facture, ';
 						}
 						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, entity)';
-						$sql .= ' VALUES ('.((int) $this->id);
+						$sql .= " VALUES (".((int) $this->id);
 						$sql .= ", ".((float) price2num($amount));
 						$sql .= ", '".$this->db->idate($now)."'";
 						$sql .= ", ".((int) $fuser->id);
@@ -809,6 +810,64 @@ abstract class CommonInvoice extends CommonObject
 			dol_syslog(get_class($this).'::demande_prelevement_delete Error '.$this->error);
 			return -1;
 		}
+	}
+
+
+	/**
+	 * Build string for ZATCA QR Code (Arabi Saudia)
+	 *
+	 * @return	string			String for ZATCA QR Code
+	 */
+	public function buildZATCAQRString()
+	{
+		global $conf;
+
+		$tmplang = new Translate('', $conf);
+		$tmplang->setDefaultLang('en_US');
+		$tmplang->load("main");
+
+		$datestring = dol_print_date($this->date, 'dayhourrfc');
+		$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
+		$pricetaxstring = price($this->total_tva, 0, $tmplang, 0, -1, 2);
+
+		/*
+		$name = implode(unpack("H*", $this->thirdparty->name));
+		$vatnumber = implode(unpack("H*", $this->thirdparty->tva_intra));
+		$date = implode(unpack("H*", $datestring));
+		$pricewithtax = implode(unpack("H*", price2num($pricewithtaxstring, 2)));
+		$pricetax = implode(unpack("H*", $pricetaxstring));
+
+		var_dump(strlen($this->thirdparty->name));
+		var_dump(str_pad(dechex('9'), 2, '0', STR_PAD_LEFT));
+		var_dump($this->thirdparty->name);
+		var_dump(implode(unpack("H*", $this->thirdparty->name)));
+		var_dump(price($this->total_tva, 0, $tmplang, 0, -1, 2));
+
+		$s = '01'.str_pad(dechex(strlen($this->thirdparty->name)), 2, '0', STR_PAD_LEFT).$name;
+		$s .= '02'.str_pad(dechex(strlen($this->thirdparty->tva_intra)), 2, '0', STR_PAD_LEFT).$vatnumber;
+		$s .= '03'.str_pad(dechex(strlen($datestring)), 2, '0', STR_PAD_LEFT).$date;
+		$s .= '04'.str_pad(dechex(strlen($pricewithtaxstring)), 2, '0', STR_PAD_LEFT).$pricewithtax;
+		$s .= '05'.str_pad(dechex(strlen($pricetaxstring)), 2, '0', STR_PAD_LEFT).$pricetax;
+		$s .= '';					// Hash of xml invoice
+		$s .= '';					// ecda signature
+		$s .= '';					// ecda public key
+		$s .= '';					// ecda signature of public key stamp
+		*/
+
+		// Using TLV format
+		$s = pack('C1', 1).pack('C1', strlen($this->thirdparty->name)).$this->thirdparty->name;
+		$s .= pack('C1', 2).pack('C1', strlen($this->thirdparty->tva_intra)).$this->thirdparty->tva_intra;
+		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$date;
+		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
+		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
+		$s .= '';					// Hash of xml invoice
+		$s .= '';					// ecda signature
+		$s .= '';					// ecda public key
+		$s .= '';					// ecda signature of public key stamp
+
+		$s = base64_encode($s);
+
+		return $s;
 	}
 }
 
@@ -970,8 +1029,8 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $date_end_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
 
 	public $buy_price_ht;
-	public $buyprice;		// For backward compatibility
-	public $pa_ht;			// For backward compatibility
+	public $buyprice; // For backward compatibility
+	public $pa_ht; // For backward compatibility
 
 	public $marge_tx;
 	public $marque_tx;

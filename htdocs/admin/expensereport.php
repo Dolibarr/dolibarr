@@ -145,7 +145,18 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
+	$res3 = 0;
+	if (!empty($conf->projet->enabled) && GETPOSTISSET('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {  // Option may not be provided
+		$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int'), 'chaine', 0, '', $conf->entity);
+	}
+
+	$dates = GETPOST('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', 'int');
+	$res4 = dolibarr_set_const($db, 'EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', intval($dates), 'chaine', 0, '', $conf->entity);
+
+	$amounts = GETPOST('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', 'int');
+	$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
+
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 >0) || !($res5 >0)) {
 		$error++;
 	}
 
@@ -238,7 +249,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->EXPENSEREPORT_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -358,13 +369,13 @@ foreach ($dirmodels as $reldir) {
 							// Active
 							if (in_array($name, $def)) {
 								print '<td class="center">'."\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 								print img_picto($langs->trans("Enabled"), 'switch_on');
 								print '</a>';
 								print "</td>";
 							} else {
 								print '<td class="center">'."\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 								print "</td>";
 							}
 
@@ -373,7 +384,7 @@ foreach ($dirmodels as $reldir) {
 							if ($conf->global->EXPENSEREPORT_ADDON_PDF == "$name") {
 								print img_picto($langs->trans("Default"), 'on');
 							} else {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 							}
 							print '</td>';
 
@@ -457,6 +468,26 @@ print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '<input class="flat minwidth200" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
+
+if (!empty($conf->projet->enabled)) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans('ProjectIsRequiredOnExpenseReports');
+	print '</td><td class="right">';
+	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED) ? 0 : 1, 1);
+	print '</td></tr>';
+}
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH) ? 0 : 1, 1);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? 0 : 1, 1);
+print '</td></tr>';
 
 print '</table>';
 

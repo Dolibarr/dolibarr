@@ -150,8 +150,9 @@ class Tasks extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -454,7 +455,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(404, 'Task not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
@@ -488,7 +489,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(404, 'Task not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

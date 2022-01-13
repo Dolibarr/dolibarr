@@ -625,6 +625,7 @@ class Mo extends CommonObject
 	public function updateProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
+		$role = "";
 
 		if ($this->status != self::STATUS_DRAFT) {
 			$this->error = 'BadStatus';
@@ -1027,9 +1028,9 @@ class Mo extends CommonObject
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
-		$url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$this->id;
 		if ($option == 'production') {
-			$url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
+			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$this->id;
 		}
 
 		if ($option != 'nolink') {
@@ -1206,7 +1207,7 @@ class Mo extends CommonObject
 		$this->lines = array();
 
 		$objectline = new MoLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
@@ -1318,19 +1319,15 @@ class Mo extends CommonObject
 
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				/*if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
-				{
-					if (empty($line->fk_parent_line))
-					{
-						$parameters = array('line'=>$line, 'i'=>$i);
-						$action = '';
-						$result = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					}
+				$reshook = 0;
+				if (is_object($hookmanager)) {
+					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
+					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
-				else
-				{*/
+				if (empty($reshook)) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
-				//}
+				}
 
 				$i++;
 			}

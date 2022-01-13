@@ -40,7 +40,6 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -77,7 +76,6 @@ if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print $langs->trans('TicketPublicInterfaceForbidden');
 	exit;
 }
-
 $arrayofjs = array();
 $arrayofcss = array('/ticket/css/styles.css.php');
 
@@ -86,9 +84,9 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 print '<div class="ticketpublicarea">';
 print '<p style="text-align: center">'.($conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")).'</p>';
 print '<div class="ticketform">';
-print '<a href="create_ticket.php" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_create bigrounded"><span class="fa fa-15x fa-plus-circle valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';
-print '<a href="list.php" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded"><span class="fa fa-15x fa-list-alt valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("ViewMyTicketList")).'</div></a>';
-print '<a href="view.php" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket', 'class="fa-15x"').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
+print '<a href="create_ticket.php'.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_create bigrounded"><span class="fa fa-15x fa-plus-circle valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';
+print '<a href="list.php'.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded"><span class="fa fa-15x fa-list-alt valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("ViewMyTicketList")).'</div></a>';
+print '<a href="view.php'.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket', 'class="fa-15x"').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
 print '<div style="clear:both;"></div>';
 print '</div>';
 print '</div>';

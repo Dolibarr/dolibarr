@@ -888,9 +888,11 @@ class BookKeeping extends CommonObject
 		// Affichage par compte comptable
 		if (!empty($option)) {
 			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' ORDER BY t.subledger_account ASC';
+			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
-			$sql .= ' ORDER BY t.numero_compte ASC';
+			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -935,7 +937,6 @@ class BookKeeping extends CommonObject
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_export = $this->db->jdate($obj->date_export);
-				$line->date_validation = $this->db->jdate($obj->date_validated);
 				$line->date_validation = $this->db->jdate($obj->date_validation);
 
 				$this->lines[] = $line;
@@ -1012,7 +1013,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.'='.((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
@@ -1088,7 +1089,6 @@ class BookKeeping extends CommonObject
 				$line->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 				$line->date_export = $this->db->jdate($obj->date_export);
-				$line->date_validation = $this->db->jdate($obj->date_validated);
 				$line->date_validation = $this->db->jdate($obj->date_validation);
 
 				$this->lines[] = $line;
@@ -1750,7 +1750,6 @@ class BookKeeping extends CommonObject
 				$line->date_creation = $obj->date_creation;
 				$line->date_modification = $obj->date_modification;
 				$line->date_export = $obj->date_export;
-				$line->date_validation = $obj->date_validated;
 				$line->date_validation = $obj->date_validation;
 
 				$this->linesmvt[] = $line;
@@ -1815,7 +1814,6 @@ class BookKeeping extends CommonObject
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
-				$line->date_validation = $obj->date_validated;
 				$line->date_validation = $obj->date_validation;
 
 				$this->linesexport[] = $line;
@@ -2116,15 +2114,26 @@ class BookKeepingLine
 	public $montant;
 
 	/**
-	 * @var float Amount
+	 * @var float 	Amount
 	 */
 	public $amount;
+
+	/**
+	 * @var float 	Multicurrency amount
+	 */
+	public $multicurrency_amount;
+
+	/**
+	 * @var float 	Multicurrency code
+	 */
+	public $multicurrency_code;
 
 	/**
 	 * @var string Sens
 	 */
 	public $sens;
 	public $lettering_code;
+	public $date_lettering;
 
 	/**
 	 * @var int ID
@@ -2155,4 +2164,9 @@ class BookKeepingLine
 	 * @var integer|string $date_validation;
 	 */
 	public $date_validation;
+
+	/**
+	 * @var integer|string $date_lim_reglement;
+	 */
+	public $date_lim_reglement;
 }

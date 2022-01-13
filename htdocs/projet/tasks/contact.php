@@ -40,16 +40,17 @@ $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 
-// Security check
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-//$result = restrictedArea($user, 'projet', $id, 'projet_task');
-if (!$user->rights->projet->lire) {
-	accessforbidden();
-}
-
 $object = new Task($db);
 $projectstatic = new Project($db);
+
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+// Security check
+$socid = 0;
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 
 /*
@@ -58,9 +59,9 @@ $projectstatic = new Project($db);
 
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer) {
-	$source  = 'internal';
+	$source = 'internal';
 	if (GETPOST("addsourceexternal")) {
-		$source  ='external';
+		$source = 'external';
 	}
 
 	$result = $object->fetch($id, $ref);
@@ -195,7 +196,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}
@@ -276,10 +277,9 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -295,7 +295,6 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</table>';
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 

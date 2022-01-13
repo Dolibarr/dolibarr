@@ -119,15 +119,15 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
 
-$option = GETPOST('option');
+$option = GETPOST('search_option');
 if ($option == 'late') {
 	$search_status = '1';
 }
 $filter = GETPOST('filtre', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if ($page == -1 || $page == null || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
@@ -418,7 +418,7 @@ $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
-$sql .= " u.login";
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 if ($search_categ_sup && $search_categ_sup != '-1') {
 	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
@@ -441,7 +441,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_sup)) {
+if (!empty($search_categ_sup) && $search_categ_supplier != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
 }
 
@@ -461,7 +461,7 @@ if ($search_product_category > 0) {
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -474,7 +474,7 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_product_category > 0) {
@@ -564,7 +564,7 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_login) {
-	$sql .= natural_search('u.login', $search_login);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND f.fk_statut = ".((int) $search_status);
@@ -634,7 +634,7 @@ if (!$search_all) {
 	$sql .= " state.code_departement, state.nom,";
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
-	$sql .= " u.login";
+	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
 	if ($search_categ_sup && $search_categ_sup != '-1') {
 		$sql .= ", cs.fk_categorie, cs.fk_soc";
 	}
@@ -655,7 +655,7 @@ if (!$search_all) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= !empty($hookmanager->resPrint) ? (" HAVING 1=1 " . $hookmanager->resPrint) : "";
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -803,7 +803,7 @@ if ($resql) {
 		$param .= '&show_files='.urlencode($show_files);
 	}
 	if ($option) {
-		$param .= "&option=".urlencode($option);
+		$param .= "&search_option=".urlencode($option);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -936,7 +936,7 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
 
@@ -975,13 +975,13 @@ if ($resql) {
 	// Ref
 	if (!empty($arrayfields['f.ref']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.$search_ref.'">';
+		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	// Ref supplier
 	if (!empty($arrayfields['f.ref_supplier']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth50" type="text" name="search_refsupplier" value="'.$search_refsupplier.'">';
+		print '<input class="flat maxwidth75" type="text" name="search_refsupplier" value="'.dol_escape_htmltag($search_refsupplier).'">';
 		print '</td>';
 	}
 	// Type
@@ -1006,7 +1006,7 @@ if ($resql) {
 	// Label
 	if (!empty($arrayfields['f.label']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth75" type="text" name="search_label" value="'.$search_label.'">';
+		print '<input class="flat maxwidth75" type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
 		print '</td>';
 	}
 	// Date invoice
@@ -1037,11 +1037,11 @@ if ($resql) {
 	}
 	// Project
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 	}
 	// Thirpdarty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.$search_company.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1096,13 +1096,13 @@ if ($resql) {
 	if (!empty($arrayfields['f.total_localtax1']['checked'])) {
 		// Amount tax 1
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.dol_escape_htmltag($search_montant_localtax1).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_localtax2']['checked'])) {
 		// Amount tax 2
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.dol_escape_htmltag($search_montant_localtax2).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_ttc']['checked'])) {
@@ -1367,11 +1367,11 @@ if ($resql) {
 
 			print '<tr class="oddeven">';
 			if (!empty($arrayfields['f.ref']['checked'])) {
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				// Picto + Ref
-				print '<td class="nobordernopadding nowrap">';
+				print '<td class="nobordernopadding nowraponall">';
 				print $facturestatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 
 				$filename = dol_sanitizeFileName($obj->ref);
@@ -1428,9 +1428,9 @@ if ($resql) {
 
 			// Date limit
 			if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
-				print '<td class="center nowrap">'.dol_print_date($datelimit, 'day');
+				print '<td class="center nowraponall">'.dol_print_date($datelimit, 'day');
 				if ($facturestatic->hasDelay()) {
-					print img_warning($langs->trans('Late'));
+					print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
 				}
 				print '</td>';
 				if (!$i) {
@@ -1585,13 +1585,25 @@ if ($resql) {
 				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
 			}
 
+			$userstatic->id = $obj->fk_user_author;
+			$userstatic->login = $obj->login;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->email = $obj->user_email;
+			$userstatic->statut = $obj->user_statut;
+			$userstatic->entity = $obj->entity;
+			$userstatic->photo = $obj->photo;
+			$userstatic->office_phone = $obj->office_phone;
+			$userstatic->office_fax = $obj->office_fax;
+			$userstatic->user_mobile = $obj->user_mobile;
+			$userstatic->job = $obj->job;
+			$userstatic->gender = $obj->gender;
+
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				$userstatic->id = $obj->fk_user_author;
-				$userstatic->login = $obj->login;
-				print '<td align="center">';
+				print '<td class="tdoverflowmax200">';
 				if ($userstatic->id) {
-					print $userstatic->getLoginUrl(1);
+					print $userstatic->getLoginUrl(-1);
 				} else {
 					print '&nbsp;';
 				}

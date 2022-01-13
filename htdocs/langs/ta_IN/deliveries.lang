@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=டெலிவரி
+DeliveryRef=ரெஃப் டெலிவரி
+DeliveryCard=ரசீது அட்டை
+DeliveryOrder=விநியோக ரசீது
+DeliveryDate=டெலிவரி தேதி
+CreateDeliveryOrder=விநியோக ரசீதை உருவாக்கவும்
+DeliveryStateSaved=விநியோக நிலை சேமிக்கப்பட்டது
+SetDeliveryDate=ஷிப்பிங் தேதியை அமைக்கவும்
+ValidateDeliveryReceipt=டெலிவரி ரசீதை சரிபார்க்கவும்
+ValidateDeliveryReceiptConfirm=இந்த டெலிவரி ரசீதை நிச்சயமாக சரிபார்க்க விரும்புகிறீர்களா?
+DeleteDeliveryReceipt=டெலிவரி ரசீதை நீக்கு
+DeleteDeliveryReceiptConfirm=டெலிவரி ரசீதை <b> %s </b> நிச்சயமாக நீக்க விரும்புகிறீர்களா?
+DeliveryMethod=விநியோக முறை
+TrackingNumber=கண்காணிப்பு எண்
+DeliveryNotValidated=விநியோகம் சரிபார்க்கப்படவில்லை
+StatusDeliveryCanceled=ரத்து செய்யப்பட்டது
+StatusDeliveryDraft=வரைவு
+StatusDeliveryValidated=பெற்றது
+# merou PDF model
+NameAndSignature=பெயர் மற்றும் கையொப்பம்:
+ToAndDate=__________________________________________________________________
+GoodStatusDeclaration=மேலே உள்ள பொருட்கள் நல்ல நிலையில் கிடைத்துள்ளன,
+Deliverer=வழங்குபவர்:
+Sender=அனுப்புபவர்
+Recipient=பெறுபவர்
+ErrorStockIsNotEnough=போதிய கையிருப்பு இல்லை
+Shippable=அனுப்பக்கூடியது
+NonShippable=அனுப்ப முடியாது
+ShowShippableStatus=அனுப்பக்கூடிய நிலையைக் காட்டு
+ShowReceiving=டெலிவரி ரசீதைக் காட்டு
+NonExistentOrder=இல்லாத ஒழுங்கு
+StockQuantitiesAlreadyAllocatedOnPreviousLines = முந்தைய வரிகளில் ஏற்கனவே ஒதுக்கப்பட்ட பங்கு அளவுகள்

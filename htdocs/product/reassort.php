@@ -46,9 +46,10 @@ $toolowstock = GETPOST('toolowstock');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id", 'int');
+$sbarcode = GETPOST("sbarcode", 'int');
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) {
 	$page = 0;
@@ -189,7 +190,7 @@ if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";

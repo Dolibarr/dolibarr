@@ -19,7 +19,7 @@
 #
 ModuleEventOrganizationName = Event Organization
 EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (conferences, attendees, speakers, with public suggestion, vote or registration pages)
+EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
 #
 # Menu
 #
@@ -32,14 +32,9 @@ PaymentEvent=Payment of event
 # Admin page
 #
 NewRegistration=Registration
-<<<<<<< HEAD
-EventOrganizationSetup = Event Organization setup
-Settings = Settings
-=======
 EventOrganizationSetup=Event Organization setup
 EventOrganization=Event organization
 Settings=Settings
->>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
 EventOrganizationSetupPage = Event Organization setup page
 EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
@@ -47,8 +42,8 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties autom
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a subscription to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a subscription to an event has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter thirdpartie's select list in attendees creation card/form with category
@@ -62,7 +57,7 @@ ManageOrganizeEvent = Manage the organization of an event
 ConferenceOrBooth = Conference Or Booth
 ConferenceOrBoothTab = Conference Or Booth
 AmountPaid = Amount paid
-DateOfRegistration = Date of subscription
+DateOfRegistration = Date of registration
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
 
 #
@@ -72,18 +67,18 @@ YourOrganizationEventConfRequestWasReceived = Your request for conference was re
 YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
 EventOrganizationEmailAskConf = Request for conference
 EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailSubsBooth = Subscription for booth
-EventOrganizationEmailSubsEvent = Subscription for an event
+EventOrganizationEmailBoothPayment = Payment of your booth
+EventOrganizationEmailRegistrationPayment = Registration for an event
 EventOrganizationMassEmailAttendees = Communication to attendees
 EventOrganizationMassEmailSpeakers = Communication to speakers
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
+AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
+AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
 PriceOfRegistration=Price of registration
 PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Subscription price to stand a booth
@@ -111,9 +106,9 @@ EvntOrgCancelled = Cancelled
 #
 SuggestForm = Suggestion page
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or booth or suggest a new one for the event
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
-EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
+EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
 ListOfSuggestedConferences = List of suggested conferences
 ListOfSuggestedBooths = List of suggested booths
 ListOfConferencesOrBooths=List of conferences or booths of event project
@@ -134,6 +129,18 @@ ConferenceIsNotConfirmed=Registration not available, conference is not confirmed
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 
+NewSubscription=Registration
+OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
+OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
+OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
+OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
+OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
+OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+
+NewSuggestionOfBooth=Application for a booth
+NewSuggestionOfConference=Application for a conference
+
 #
 # Vote page
 #
@@ -145,17 +152,15 @@ VoteOk = Your vote has been accepted.
 AlreadyVoted = You have already voted for this event.
 VoteError = An error has occurred during the vote, please try again.
 
-#
-# SubscriptionOk page
-#
-SubscriptionOk = Your subscription has been validated
-#
-# Subscription validation mail
-#
+SubscriptionOk = Your registration has been validated
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-#
-# Payment page
-#
 Attendee = Attendee
 PaymentConferenceAttendee = Conference attendee payment
 PaymentBoothLocation = Booth location payment
+DeleteConferenceOrBoothAttendee=Remove attendee
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
+EmailAttendee=Attendee email
+EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event

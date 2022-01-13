@@ -19,7 +19,7 @@
 ModulePartnershipName=Parteneriate
 PartnershipDescription=Modul Management parteneriate
 PartnershipDescriptionLong= Modul Management parteneriate
-
+Partnership=Parteneriat
 AddPartnership=Adăugare parteneriat
 CancelPartnershipForExpiredMembers=Parteneriat: Anulează parteneriatul membrilor cu adeziuni expirate
 PartnershipCheckBacklink=Parteneriat: Verificare backlink de referinţă
@@ -58,6 +58,7 @@ ManagePartnership=Administrare parteneriat
 BacklinkNotFoundOnPartnerWebsite=Backlink-ul nu a fost găsit pe site-ul partenerului
 ConfirmClosePartnershipAsk=Sigur vrei să anulezi acest parteneriat?
 PartnershipType=Tip parteneriat
+PartnershipRefApproved=Parteneriatul %s a fost aprobat
 
 #
 # Template Mail

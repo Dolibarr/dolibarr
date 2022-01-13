@@ -79,8 +79,8 @@ if (!$allowed) {
 $diroutputmassaction = $conf->bank->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -506,6 +506,8 @@ print "</tr>\n";
 
 $totalarray = array();
 $totalarray['nbfield'] = 0;
+$totalarray['val'] = array('balance'=>0);
+$total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
@@ -714,7 +716,11 @@ foreach ($accounts as $key => $type) {
 
 	print '</tr>';
 
-	$total[$objecttmp->currency_code] += $solde;
+	if (empty($total[$objecttmp->currency_code])) {
+		$total[$objecttmp->currency_code] = $solde;
+	} else {
+		$total[$objecttmp->currency_code] += $solde;
+	}
 
 	$i++;
 }

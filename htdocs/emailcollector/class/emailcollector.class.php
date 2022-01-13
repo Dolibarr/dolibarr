@@ -515,7 +515,7 @@ class EmailCollector extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/admin/emailcollector_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -599,10 +599,10 @@ class EmailCollector extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status5';
@@ -761,6 +761,11 @@ class EmailCollector extends CommonObject
 		//$flags.='/debug';
 		if ($norsh || !empty($conf->global->IMAP_FORCE_NORSH)) {
 			$flags .= '/norsh';
+		}
+		//Used in shared mailbox from Office365
+		if (strpos($this->login, '/') != false) {
+			$partofauth = explode('/', $this->login);
+			$flags .= '/authuser='.$partofauth[0].'/user='.$partofauth[1];
 		}
 
 		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
@@ -966,7 +971,7 @@ class EmailCollector extends CommonObject
 
 		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id, LOG_DEBUG);
 
-		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda"));
+		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
 
 		$error = 0;
 		$this->output = '';
@@ -1897,6 +1902,164 @@ class EmailCollector extends CommonObject
 								}
 							}
 						}
+					} elseif ($operation['type'] == 'recordjoinpiece') {
+						$pj = getAttachments($imapemail, $connection);
+						foreach ($pj as $key => $val) {
+							$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+						}
+						if (count($pj) > 0) {
+							$sql = "SELECT rowid as id FROM " . MAIN_DB_PREFIX . "user WHERE email LIKE '%" . $from . "%'";
+							$resql = $this->db->query($sql);
+							if ($resql->num_rows == 0) {
+								$this->errors = 'User Not allowed to add documents';
+							}
+							$arrayobject = array(
+								'propale' => array('table' => 'propal',
+									'fields' => array('ref'),
+									'class' => 'comm/propal/class/propal.class.php',
+									'object' => 'Propal'),
+								'holiday' => array('table' => 'holiday',
+									'fields' => array('ref'),
+									'class' => 'holiday/class/holiday.class.php',
+									'object' => 'Holiday'),
+								'expensereport' => array('table' => 'expensereport',
+									'fields' => array('ref'),
+									'class' => 'expensereport/class/expensereport.class.php',
+									'object' => 'ExpenseReport'),
+								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentjobposition',
+									'fields' => array('ref'),
+									'class' => 'recruitment/class/recruitmentjobposition.class.php',
+									'object' => 'RecruitmentJobPosition'),
+								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentcandidature',
+									'fields' => array('ref'),
+									'class' => 'recruitment/class/recruitmentcandidature.class.php',
+									'object' => ' RecruitmentCandidature'),
+								'societe' => array('table' => 'societe',
+									'fields' => array('code_client', 'code_fournisseur'),
+									'class' => 'societe/class/societe.class.php',
+									'object' => 'Societe'),
+								'commande' => array('table' => 'commande',
+									'fields' => array('ref'),
+									'class' => 'commande/class/commande.class.php',
+									'object' => 'Commande'),
+								'expedition' => array('table' => 'expedition',
+									'fields' => array('ref'),
+									'class' => 'expedition/class/expedition.class.php',
+									'object' => 'Expedition'),
+								'contract' => array('table' => 'contrat',
+									'fields' => array('ref'),
+									'class' => 'contrat/class/contrat.class.php',
+									'object' => 'Contrat'),
+								'fichinter' => array('table' => 'fichinter',
+									'fields' => array('ref'),
+									'class' => 'fichinter/class/fichinter.class.php',
+									'object' => 'Fichinter'),
+								'ticket' => array('table' => 'ticket',
+									'fields' => array('ref'),
+									'class' => 'ticket/class/ticket.class.php',
+									'object' => ' Ticket'),
+								'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
+									'fields' => array('ref'),
+									'class' => 'knowledgemanagement/class/knowledgemanagement.class.php',
+									'object' => 'KnowledgeRecord'),
+								'supplier_proposal' => array('table' => 'supplier_proposal',
+									'fields' => array('ref'),
+									'class' => 'supplier_proposal/class/supplier_proposal.class.php',
+									'object' => 'SupplierProposal'),
+								'fournisseur/commande' => array('table' => 'commande_fournisseur',
+									'fields' => array('ref', 'ref_supplier'),
+									'class' => 'fourn/class/fournisseur.commande.class.php',
+									'object' => 'SupplierProposal'),
+								'facture' => array('table' => 'facture',
+									'fields' => array('ref'),
+									'class' => 'compta/facture/class/facture.class.php',
+									'object' => 'Facture'),
+								'fournisseur/facture' => array('table' => 'facture_fourn',
+									'fields' => array('ref', ref_client),
+									'class' => 'fourn/class/fournisseur.facture.class.php',
+									'object' => 'FactureFournisseur'),
+								'produit' => array('table' => 'product',
+									'fields' => array('ref'),
+									'class' => 'product/class/product.class.php',
+									'object' => 'Product'),
+								'productlot' => array('table' => 'product_lot',
+									'fields' => array('batch'),
+									'class' => 'product/stock/class/productlot.class.php',
+									'object' => 'Productlot'),
+								'projet' => array('table' => 'projet',
+									'fields' => array('ref'),
+									'class' => 'projet/class/projet.class.php',
+									'object' => 'Project'),
+								'projet_task' => array('table' => 'projet_task',
+									'fields' => array('ref'),
+									'class' => 'projet/class/task.class.php',
+									'object' => 'Task'),
+								'ressource' => array('table' => 'resource',
+									'fields' => array('ref'),
+									'class' => 'ressource/class/dolressource.class.php',
+									'object' => 'Dolresource'),
+								'bom' => array('table' => 'bom_bom',
+									'fields' => array('ref'),
+									'class' => 'bom/class/bom.class.php',
+									'object' => 'BOM'),
+								'mrp' => array('table' => 'mrp_mo',
+									'fields' => array('ref'),
+									'class' => 'mrp/class/mo.class.php',
+									'object' => 'Mo'),
+							);
+
+							$hookmanager->initHooks(array('emailcolector'));
+							$parameters = array('arrayobject' => $arrayobject);
+							$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
+							if ($reshook > 0) $arrayobject = $hookmanager->resArray;
+
+							$resultobj = array();
+
+							foreach ($arrayobject as $key => $objectdesc) {
+								$sql = 'SELECT DISTINCT t.rowid ';
+								$sql .= ' FROM ' . MAIN_DB_PREFIX . $objectdesc['table'] . ' AS t';
+								$sql .= ' WHERE ';
+								foreach ($objectdesc['fields'] as $field) {
+									$sql .= "'" .$this->db->escape($subject) . "'  LIKE CONCAT('%',  t." . $field . ", '%') OR ";
+								}
+								$sql = substr($sql, 0, -4);
+
+								$ressqlobj = $this->db->query($sql);
+								if ($ressqlobj) {
+									while ($obj = $this->db->fetch_object($ressqlobj)) {
+										$resultobj[$key][] = $obj->rowid;
+									}
+								}
+							}
+							$dirs = array();
+							foreach ($resultobj as $mod => $ids) {
+								$moddesc = $arrayobject[$mod];
+								$elementpath = $mod;
+								dol_include_once($moddesc['class']);
+								$objectmanaged = new $moddesc['object']($this->db);
+								foreach ($ids as $val) {
+									$res = $objectmanaged->fetch($val);
+									if ($res) {
+										$path = ($objectmanaged->entity > 1 ? "/" . $objectmanaged->entity : '');
+										$dirs[] = DOL_DATA_ROOT . $path . "/" . $elementpath . '/' . dol_sanitizeFileName($objectmanaged->ref) . '/';
+									} else {
+										$this->errors = 'object not found';
+									}
+								}
+							}
+							foreach ($dirs as $target) {
+								foreach ($data as $filename => $content) {
+									$prefix = $this->actions[$this->id]['actionparam'];
+
+									$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
+									if ($resr == -1) {
+										$this->errors = 'Doc not saved';
+									}
+								}
+							}
+						} else {
+							$this->errors = 'no joined piece';
+						}
 					} elseif ($operation['type'] == 'project') {
 						// Create project / lead
 						$projecttocreate = new Project($this->db);
@@ -2223,6 +2386,7 @@ class EmailCollector extends CommonObject
 							'messagetext'=>$messagetext,
 							'subject'=>$subject,
 							'header'=>$header,
+							'attachments'=>$attachments,
 						);
 						$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
 

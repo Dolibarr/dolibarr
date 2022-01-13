@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/compta/paiement_salary.php
+ *      \file       htdocs/salaries/paiement_salary.php
  *      \ingroup    salary
  *      \brief      Page to add payment of a salary
  */
@@ -163,7 +163,7 @@ if ($action == 'create') {
 
 	$total = $salary->amount;
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';

@@ -35,7 +35,7 @@ EnablePublicRecruitmentPages=Включить публичные страниц�
 #
 # About page
 #
-About = О
+About = О модуле
 RecruitmentAbout = О найме
 RecruitmentAboutPage = Рекрутинг о странице
 NbOfEmployeesExpected=Ожидаемое количество сотрудников
@@ -68,7 +68,7 @@ RecruitmentCandidatures=Приложения
 InterviewToDo=Интервью делать
 AnswerCandidature=Ответ приложения
 YourCandidature=Ваше приложение
-YourCandidatureAnswerMessage=Спасибо за заявку. <br> ...
+YourCandidatureAnswerMessage=Спасибо за заявку.<br> ...
 JobClosedTextCandidateFound=Вакансия закрыта. Вакансия заполнена.
 JobClosedTextCanceled=Вакансия закрыта.
 ExtrafieldsJobPosition=Дополнительные атрибуты (должности)

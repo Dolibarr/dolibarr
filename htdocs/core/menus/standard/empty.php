@@ -320,7 +320,7 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+					print '<span class="vsmenudisabled">'.$val['titre'].'</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";
@@ -407,7 +407,7 @@ class MenuManager
 						if ($menu_array[$i]['enabled']) {
 							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($menu_array[$i]['url'], 1).'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>'.$menu_array[$i]['titre'].'</a></div>'."\n";
 						} else {
-							print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
+							print '<div class="menu_titre">'.$tabstring.'<span class="vmenudisabled">'.$menu_array[$i]['titre'].'</span></div>'."\n";
 						}
 						print '<div class="menu_top"></div>'."\n";
 					}
@@ -433,7 +433,7 @@ class MenuManager
 								print '</span>';
 							}
 						} else {
-							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font>';
+							print $tabstring.'<span class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span>';
 						}
 
 						// If title is not pure text and contains a table, no carriage return added

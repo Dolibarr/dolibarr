@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Stampa diretta
-Module64000Desc=Abilita il sistema di stampa diretta
-PrintingSetup=Impostazioni del sistema di stampa diretta
-PrintingDesc=Questo modulo aggiunge un pulsante per la stampa diretta dei documenti (senza aprire il pdf) usando vari moduli.
-MenuDirectPrinting=Processi di stampa diretta
-DirectPrint=Stampa diretta
+Module64000Name=Stampa con un clic
+Module64000Desc=Abilita il sistema di stampa con un clic
+PrintingSetup=Configurazione del sistema di stampa con un clic
+PrintingDesc=Questo modulo aggiunge un pulsante Stampa a vari moduli per consentire la stampa dei documenti direttamente su una stampante senza la necessità di aprire il documento in un'altra applicazione.
+MenuDirectPrinting=job di stampa con un clic
+DirectPrint=Stampa con un clic
 PrintingDriverDesc=Credenziali per i driver di stampa
 ListDrivers=Lista dei driver
 PrintTestDesc=Lista delle stampanti

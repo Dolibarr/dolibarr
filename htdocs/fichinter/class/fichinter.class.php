@@ -204,7 +204,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT count(fi.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as fi";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON fi.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -430,9 +430,9 @@ class Fichinter extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) {
 			$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
-			$sql .= " AND f.ref='".$this->db->escape($ref)."'";
+			$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " WHERE f.rowid=".((int) $rowid);
+			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

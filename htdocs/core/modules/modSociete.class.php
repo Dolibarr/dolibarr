@@ -197,6 +197,13 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
 
+		$r++;
+		$this->rights[$r][0] = 130;
+		$this->rights[$r][1] = 'Modify thirdparty information payment';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'thirdparty_paymentinformation_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'write';
+
 		// 262 : Restrict access to sales representative
 		$r++;
 		$this->rights[$r][0] = 262;
@@ -281,6 +288,9 @@ class modSociete extends DolibarrModules
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			$this->export_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
+		}
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
@@ -317,7 +327,8 @@ class modSociete extends DolibarrModules
 			'payterm.libelle'=>'Text', 'paymode.libelle'=>'Text',
 			's.outstanding_limit'=>'Numeric', 'pbacc.ref'=>'Text', 'incoterm.code'=>'Text',
 			'u.login'=>'Text', 'u.firstname'=>'Text', 'u.lastname'=>'Text',
-			's.entity'=>'Numeric', 's.price_level'=>'Numeric'
+			's.entity'=>'Numeric', 's.price_level'=>'Numeric',
+			's.accountancy_code_sell'=>'Text', 's.accountancy_code_buy'=>'Text'
 		);
 
 		$this->export_entities_array[$r] = array('u.login'=>'user', 'u.firstname'=>'user', 'u.lastname'=>'user'); // We define here only fields that use another picto
@@ -488,8 +499,11 @@ class modSociete extends DolibarrModules
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
+		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
+		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -621,7 +635,9 @@ class modSociete extends DolibarrModules
 			's.canvas' => "empty / a custom canvas form layout url e.g. mycanvas@mymodule",
 			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
 			's.fk_multicurrency' => '0 (use system default currency) / 1 (use local currency)',
-			's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"'
+			's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"',
+			's.accountancy_code_sell' => '707',
+			's.accountancy_code_buy' => '607',
 		);
 		$this->import_updatekeys_array[$r] = array(
 			's.nom' => 'Name',
@@ -665,7 +681,7 @@ class modSociete extends DolibarrModules
 			's.note_public' => "NotePublic"
 		);
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on an old database (during a migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -748,7 +764,7 @@ class modSociete extends DolibarrModules
 			'sr.bank' => "Bank",
 			'sr.code_banque' => "BankCode",
 			'sr.code_guichet' => "DeskCode",
-			'sr.number' => "BankAccountNumber*",
+			'sr.number' => "BankAccountNumber",
 			'sr.cle_rib' => "BankAccountNumberKey",
 			'sr.bic' => "BIC",
 			'sr.iban_prefix' => "IBAN",
@@ -757,6 +773,7 @@ class modSociete extends DolibarrModules
 			'sr.owner_address' => "BankAccountOwnerAddress",
 			'sr.default_rib' => 'Default',
 			'sr.rum' => 'RUM',
+			'sr.frstrecur' => "WithdrawMode",
 			'sr.type' => "Type ban is defaut",
 		);
 
@@ -788,6 +805,7 @@ class modSociete extends DolibarrModules
 			'sr.owner_address' => 'address of account holder',
 			'sr.default_rib' => '1 (default account) / 0 (not default)',
 			'sr.rum' => 'RUM code',
+			'sr.frstrecur' => 'FRST',
 			'sr.type' => 'ban',
 		);
 

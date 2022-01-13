@@ -155,9 +155,9 @@ if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
 } else {
 	if (empty($conf->global->DISPLAY_MARGIN_RATES)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';
@@ -172,9 +172,9 @@ if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('DISPLAY_MARK_RATES');
 } else {
 	if (empty($conf->global->DISPLAY_MARK_RATES)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';
@@ -189,9 +189,9 @@ if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('ForceBuyingPriceIfNull');
 } else {
 	if (empty($conf->global->ForceBuyingPriceIfNull)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';
@@ -208,7 +208,7 @@ $methods = array(
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
+print '<input type="hidden" name="action" value="remises">';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td class="left">';
@@ -224,13 +224,13 @@ print '</form>';
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print "<input type=\"hidden\" name=\"action\" value=\"contact\">";
+print '<input type="hidden" name="action" value="contact">';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AgentContactType").'</td>';
 print '<td class="left">';
 $formcompany = new FormCompany($db);
 $facture = new Facture($db);
-print $formcompany->selectTypeContact($facture, $conf->global->AGENT_CONTACT_TYPE, "AGENT_CONTACT_TYPE", "internal", "code", 1);
+print $formcompany->selectTypeContact($facture, $conf->global->AGENT_CONTACT_TYPE, "AGENT_CONTACT_TYPE", "internal", "code", 1, "maxwidth250");
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';

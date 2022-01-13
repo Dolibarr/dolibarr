@@ -83,8 +83,8 @@ if ($search_status < -2) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -314,7 +314,7 @@ if (!empty($search_categ) || !empty($catid)) {
 }
 $sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
-$sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
+$sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
 $sql .= " d.note_private, d.note_public,";
 $sql .= " s.nom,";
@@ -962,7 +962,7 @@ while ($i < min($num, $limit)) {
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked'])) {
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">';
-		print $memberstatic->getNomUrl(0, 0, 'card', 'fistname');
+		print $memberstatic->getNomUrl(0, 0, 'card', 'firstname');
 		//print $obj->firstname;
 		print "</td>\n";
 		if (!$i) {

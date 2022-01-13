@@ -974,7 +974,7 @@ class Dolresource extends CommonObject
 		$linkstart = '<a href="'.$url.$get_params.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
-		/*$linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		/*$linkstart = '<a href="'.DOL_URL_ROOT.'/resource/card.php?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';*/
 
 		$result .= $linkstart;
@@ -1015,5 +1015,36 @@ class Dolresource extends CommonObject
 		global $langs;
 
 		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 if KO, >0 if OK
+	 */
+	public function load_state_board()
+	{
+		// phpcs:enable
+		global $conf;
+
+		$this->nb = array();
+
+		$sql = "SELECT count(r.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."resource as r";
+		$sql .= " WHERE r.entity IN (".getEntity('resource').")";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->nb["dolresource"] = $obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
 	}
 }

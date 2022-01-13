@@ -50,8 +50,8 @@ $option = '';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -133,7 +133,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		//Qauntity  to produce
-		$sql = "SELECT b.rowid as rowid, b.ref, b.status, b.date_valid,";
+		$sql = "SELECT b.rowid as rowid, b.ref, b.status, b.date_valid, b.fk_product,";
 		$sql .= " b.qty as qty_toproduce";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
 		$sql .= " WHERE ";
@@ -166,6 +166,7 @@ if ($id > 0 || !empty($ref)) {
 					$objp = $db->fetch_object($result);
 					$bomtmp->id = $objp->rowid;
 					$bomtmp->ref = $objp->ref;
+					$bomtmp->fk_product = $objp->fk_product;
 					$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
 					$bom_data_result[$objp->rowid]['qty_toproduce'] += ($objp->qty_toproduce > 0 ? $objp->qty_toproduce : 0);
 					$bom_data_result[$objp->rowid]['qty_toconsume'] = 0;
@@ -180,7 +181,7 @@ if ($id > 0 || !empty($ref)) {
 		$db->free($result);
 
 		//Qauntity  to consume
-		$sql = "SELECT b.rowid as rowid, b.ref, b.status, b.date_valid,";
+		$sql = "SELECT b.rowid as rowid, b.ref, b.status, b.date_valid, b.fk_product,";
 		$sql .= " SUM(bl.qty) as qty_toconsume";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
@@ -214,6 +215,7 @@ if ($id > 0 || !empty($ref)) {
 					$objp = $db->fetch_object($result);
 					$bomtmp->id = $objp->rowid;
 					$bomtmp->ref = $objp->ref;
+					$bomtmp->fk_product = $objp->fk_product;
 
 					if (!array_key_exists($objp->rowid, $bom_data_result)) {
 						$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
@@ -261,14 +263,14 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		print '<div class="div-table-responsive">';
-		print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+		print '<table class="tagtable liste listwithfilterbefore centpercent">';
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
 		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.date_valid", "", "&amp;id=".$product->id, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("RowMaterial", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre("Finished", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
-		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "b.status", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "b.status", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 
 		if (!empty($bom_data_result)) {
@@ -281,7 +283,7 @@ if ($id > 0 || !empty($ref)) {
 				print $data['date_valid']."</td>";
 				print '<td class="center">'.$data['qty_toconsume'].'</td>';
 				print '<td class="center">'.$data['qty_toproduce'].'</td>';
-				print '<td class="center">'.$data['status'].'</td>';
+				print '<td class="right">'.$data['status'].'</td>';
 				print "</tr>\n";
 			}
 			print '</table>';

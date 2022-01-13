@@ -284,7 +284,7 @@ if ($object->fetch($id) >= 0) {
 			}
 		}
 		if (empty($nbemail)) {
-			$nbemail .= ' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
+			$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($text) {
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
@@ -378,7 +378,7 @@ if ($object->fetch($id) >= 0) {
 					$var = !$var;
 
 					if ($allowaddtarget) {
-						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 					} else {
 						print '<div '.$bctag[$var].'>';
@@ -424,7 +424,7 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd right">';
 					if ($allowaddtarget) {
-						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="button button-add" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					} else {
 						print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");

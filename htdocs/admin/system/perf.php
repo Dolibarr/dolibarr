@@ -63,7 +63,7 @@ print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test = !function_exists('xdebug_is_enabled');
 if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
+	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").'  <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
@@ -165,7 +165,7 @@ if (ini_get('opcache.preload')) {
 print '<br>';
 
 // HTTPCacheStaticResources
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
   var getphpurl;
   var cachephpstring;

@@ -68,14 +68,13 @@ $search_date_limit_endyear = GETPOST('search_date_limit_endyear', 'int');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
-$search_project = GETPOST('search_project', 'alpha');
 $search_users = GETPOST('search_users');
 $search_type = GETPOST('search_type', 'int');
 $search_account				= GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortfield			= GETPOST('sortfield', 'aZ09comma');
+$sortorder			= GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -176,7 +175,6 @@ if (empty($reshook)) {
 		$search_date_limit_start = '';
 		$search_date_limit_end = '';
 		$search_project_ref = '';
-		$search_project = '';
 		$search_users = '';
 		$search_type = '';
 		$search_account = '';
@@ -200,11 +198,11 @@ if (!empty($conf->projet->enabled)) {
 llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
-$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
 if (!empty($conf->projet->enabled)) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
-$sql .= " c.libelle as type_label, cs.fk_account,";
+$sql .= " c.libelle as type_label, c.accountancy_code as type_accountancy_code,";
 $sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " SUM(pc.amount) as alreadypayed, pay.code as payment_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
@@ -231,7 +229,7 @@ if (!empty($conf->projet->enabled)) {
 	}
 }
 if (!empty($search_users)) {
-	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
+	$sql .= ' AND cs.fk_user IN ('.$db->sanitize(implode(', ', $search_users)).')';
 }
 if (!empty($search_type) && $search_type > 0) {
 	$sql .= ' AND cs.fk_mode_reglement='.((int) $search_type);
@@ -260,7 +258,7 @@ if ($search_date_limit_end) {
 if ($search_typeid > 0) {
 	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
-$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle, cs.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code, u.lastname";
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code, u.lastname";
 if (!empty($conf->projet->enabled)) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }
@@ -455,7 +453,7 @@ if (!empty($arrayfields['cs.periode']['checked'])) {
 // Filter: Project ref
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'">';
+	print '<input type="text" class="flat" size="6" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'">';
 	print '</td>';
 }
 
@@ -561,6 +559,7 @@ while ($i < min($num, $limit)) {
 	$chargesociale_static->ref = $obj->rowid;
 	$chargesociale_static->label = $obj->label;
 	$chargesociale_static->type_label = $obj->type_label;
+
 	if (!empty($conf->projet->enabled)) {
 		$projectstatic->id = $obj->project_id;
 		$projectstatic->ref = $obj->project_ref;
@@ -595,7 +594,12 @@ while ($i < min($num, $limit)) {
 
 	// Type
 	if (!empty($arrayfields['cs.fk_type']['checked'])) {
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->type_label).'">'.dol_escape_htmltag($obj->type_label).'</td>';
+		$typelabeltoshow = $obj->type_label;
+		$typelabelpopup = $obj->type_label;
+		if (!empty($conf->accounting->enabled)) {
+			$typelabelpopup .= ' - '.$langs->trans("AccountancyCode").': '.$obj->type_accountancy_code;
+		}
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($typelabelpopup).'">'.dol_escape_htmltag($typelabeltoshow).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -651,7 +655,9 @@ while ($i < min($num, $limit)) {
 	// Type
 	if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
 		print '<td>';
-		if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+		if (!empty($obj->payment_code)) {
+			print $langs->trans("PaymentTypeShort".$obj->payment_code);
+		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

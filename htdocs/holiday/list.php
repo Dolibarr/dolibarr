@@ -631,6 +631,12 @@ if ($resql) {
 		print '</td>';
 	}
 
+	// End date
+	if (!empty($arrayfields['cp.date_valid']['checked'])) {
+		print '<td class="liste_titre center nowraponall">';
+		print '</td>';
+	}
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -691,6 +697,9 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_fin']['checked'])) {
 		print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], "cp.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
+	if (!empty($arrayfields['cp.date_valid']['checked'])) {
+		print_liste_field_titre($arrayfields['cp.date_valid']['label'], $_SERVER["PHP_SELF"], "cp.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -727,6 +736,7 @@ if ($resql) {
 		$i = 0;
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
+		$totalduration = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -796,6 +806,7 @@ if ($resql) {
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
 				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
+				$totalduration += $nbopenedday;
 				print $nbopenedday.' '.$langs->trans('DurationDays');
 				print '</td>';
 				if (!$i) {
@@ -820,6 +831,18 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			if (!empty($arrayfields['cp.date_valid']['checked'])) {		// date_valid is both date_valid but also date_approval
+				print '<td class="center">';
+				print dol_print_date($db->jdate($obj->date_valid), 'day');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			/*if (!empty($arrayfields['cp.date_approve']['checked'])) {
+				 print '<td class="center">';
+				 print dol_print_date($db->jdate($obj->date_approve), 'day');
+				 print '</td>';
+				 if (!$i) $totalarray['nbfield']++;
+			 }*/
 
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -865,6 +888,21 @@ if ($resql) {
 			print '</tr>'."\n";
 
 			$i++;
+		}
+
+		// Add a line for total if there is a total to show
+		if (!empty($arrayfields['duration']['checked'])) {
+			print '<tr class="total">';
+			foreach ($arrayfields as $key => $val) {
+				if (!empty($val['checked'])) {
+					if ($key == 'duration') {
+						print '<td class="right">'.$totalduration.' '.$langs->trans('DurationDays').'</td>';
+					} else {
+						print '<td></td>';
+					}
+				}
+			}
+			print '</tr>';
 		}
 	}
 

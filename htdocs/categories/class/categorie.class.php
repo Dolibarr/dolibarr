@@ -58,6 +58,7 @@ class Categorie extends CommonObject
 	const TYPE_ACTIONCOMM = 'actioncomm';
 	const TYPE_WEBSITE_PAGE = 'website_page';
 	const TYPE_TICKET = 'ticket';
+	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -81,7 +82,8 @@ class Categorie extends CommonObject
 		'warehouse'    => 9,
 		'actioncomm'   => 10,
 		'website_page' => 11,
-		'ticket'       => 12
+		'ticket'       => 12,
+		'knowledgemanagement' => 13
 	);
 
 	/**
@@ -102,7 +104,8 @@ class Categorie extends CommonObject
 		9 => 'warehouse',
 		10 => 'actioncomm',
 		11 => 'website_page',
-		12 => 'ticket'
+		12 => 'ticket',
+		13 => 'knowledgemanagement'
 	);
 
 	/**
@@ -146,7 +149,8 @@ class Categorie extends CommonObject
 		'warehouse'=> 'Entrepot',
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
-		'ticket' => 'Ticket'
+		'ticket' => 'Ticket',
+		'knowledgemanagement' => 'KnowledgeRecord'
 	);
 
 	/**
@@ -240,7 +244,6 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
-
 	 */
 	public $type;
 
@@ -381,8 +384,8 @@ class Categorie extends CommonObject
 			}
 		} else {
 			dol_print_error($this->db);
-			$this->error=$this->db->lasterror;
-			$this->errors[]=$this->db->lasterror;
+			$this->error = $this->db->lasterror;
+			$this->errors[] = $this->db->lasterror;
 			return -1;
 		}
 	}
@@ -622,12 +625,18 @@ class Categorie extends CommonObject
 		}
 
 		$arraydelete = array(
-			'categorie_societe' => 'fk_categorie',
-			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
+			'categorie_fournisseur' => 'fk_categorie',
+			'categorie_societe' => 'fk_categorie',
 			'categorie_member' => 'fk_categorie',
 			'categorie_contact' => 'fk_categorie',
+			'categorie_user' => 'fk_categorie',
+			'categorie_project' => 'fk_categorie',
 			'categorie_account' => 'fk_categorie',
+			'categorie_website_page' => 'fk_categorie',
+			'categorie_warehouse' => 'fk_categorie',
+			'categorie_actioncomm' => 'fk_categorie',
+			'categorie_ticket' => 'fk_categorie',
 			'bank_class' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
@@ -723,8 +732,6 @@ class Categorie extends CommonObject
 					return -1;
 				}
 			}
-
-
 
 			// Call trigger
 			$this->context = array('linkto'=>$obj); // Save object we want to link category to into category instance to provide information to trigger
@@ -1348,7 +1355,7 @@ class Categorie extends CommonObject
 	 * @param	string	$addpicto	 Add picto into link
 	 * @return	array
 	 */
-	public function print_all_ways($sep = ' &gt;&gt; ', $url = '', $nocolor = 0, $addpicto = 0)
+	public function print_all_ways($sep = '&gt;&gt;', $url = '', $nocolor = 0, $addpicto = 0)
 	{
 		// phpcs:enable
 		$ways = array();
@@ -1362,8 +1369,8 @@ class Categorie extends CommonObject
 				$i++;
 
 				if (empty($nocolor)) {
-					$forced_color = 'toreplace';
-					if ($i == count($way)) {
+					$forced_color = 'colortoreplace';
+					if ($i == count($way)) {	// Last category in hierarchy
 						// Check contrast with background and correct text color
 						$forced_color = 'categtextwhite';
 						if ($cat->color) {
@@ -1377,16 +1384,16 @@ class Categorie extends CommonObject
 				if ($url == '') {
 					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.$forced_color.'">';
 					$linkend = '</a>';
-					$w[] = $link.($addpicto ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} elseif ($url == 'none') {
 					$link = '<span class="'.$forced_color.'">';
 					$linkend = '</span>';
-					$w[] = $link.($addpicto ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} else {
 					$w[] = '<a class="'.$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.$cat->id.'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
-			$newcategwithpath = preg_replace('/toreplace/', $forced_color, implode($sep, $w));
+			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));
 
 			$ways[] = $newcategwithpath;
 		}
@@ -1968,6 +1975,12 @@ class Categorie extends CommonObject
 	{
 		if ($type == 'bank_account') {
 			$type = 'account';
+		}
+		if ($type == 'customer') {
+			$type = 'societe';
+		}
+		if ($type == 'supplier') {
+			$type = 'fournisseur';
 		}
 
 		if (empty($searchList) && !is_array($searchList)) {

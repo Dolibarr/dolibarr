@@ -90,7 +90,7 @@ class AdherentType extends CommonObject
 	public $subscription;
 
 	/**
-	 * @var float amount for subscription
+	 * @var float|string 	Amount for subscription (null or '' means not defined)
 	 */
 	public $amount;
 
@@ -543,14 +543,13 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Return list of amount by type id
+	 *  Return the array of all amounts per membership type id
 	 *
 	 *  @param	int		$status			Filter on status of type
-	 *  @return array					List of types of members
+	 *  @return array					Array of membership type
 	 */
 	public function amountByType($status = null)
 	{
-
 		global $conf, $langs;
 
 		$amountbytype = array();
@@ -578,6 +577,7 @@ class AdherentType extends CommonObject
 		} else {
 			print $this->db->error();
 		}
+
 		return $amountbytype;
 	}
 
@@ -737,10 +737,10 @@ class AdherentType extends CommonObject
 		}
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			$this->labelStatus[0] = $langs->trans("ActivityCeased");
-			$this->labelStatus[1] = $langs->trans("InActivity");
-			$this->labelStatusShort[0] = $langs->trans("ActivityCeased");
-			$this->labelStatusShort[1] = $langs->trans("InActivity");
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv("ActivityCeased");
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv("InActivity");
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("ActivityCeased");
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("InActivity");
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
