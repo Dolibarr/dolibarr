@@ -62,7 +62,7 @@ function mymoduleAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mymodule@mymodule', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule', 'remove');
 
 	return $head;
 }
