@@ -29,6 +29,7 @@
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
 /**
  * Class to manage accounting accounts
  */
@@ -566,7 +567,7 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Information on record
 	 *
-	 * @param int $id of record
+	 * @param int 	$id 	ID of record
 	 * @return void
 	 */
 	public function info($id)
