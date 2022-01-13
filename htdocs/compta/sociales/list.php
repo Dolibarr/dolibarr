@@ -74,7 +74,7 @@ $search_type = GETPOST('search_type', 'int');
 $search_account				= GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST("sortfield", 'alpha');
+$sortfield			= GETPOST('sortfield', 'aZ09comma');
 $sortorder			= GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
