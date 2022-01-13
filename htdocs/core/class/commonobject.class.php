@@ -3402,9 +3402,9 @@ abstract class CommonObject
 			$fieldtva = 'tva';
 			$fieldup = 'pu_ht';
 		}
-        if ($this->element == 'invoice_supplier_rec') {
-            $fieldup = 'pu_ht';
-		}
+		if ($this->element == 'invoice_supplier_rec') {
+			$fieldup = 'pu_ht';
+        }
 		if ($this->element == 'expensereport') {
 			$fieldup = 'value_unit';
 		}
@@ -8018,9 +8018,9 @@ abstract class CommonObject
 		$element = $this->element;
 		if ($element == 'facturerec') {
 			$element = 'facture';
-		} elseif ($element == 'invoice_supplier_rec'){
-            return $user->rights->fournisseur->facture;
-        }
+        } elseif ($element == 'invoice_supplier_rec'){
+			return $user->rights->fournisseur->facture;
+		}
 
 		return $user->rights->{$element};
 	}

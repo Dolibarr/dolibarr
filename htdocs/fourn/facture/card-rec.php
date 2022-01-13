@@ -1121,7 +1121,7 @@ if ($action == 'create') {
         $author = new User($db);
         $author->fetch($object->user_author);
 
-        $head = invoice_rec_prepare_head($object);
+        $head = supplier_invoice_rec_prepare_head($object);
 
         print dol_get_fiche_head($head, 'card', $langs->trans('RepeatableInvoice'), -1, 'bill'); // Add a div
 
