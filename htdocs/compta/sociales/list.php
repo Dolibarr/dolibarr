@@ -206,7 +206,7 @@ if (!empty($conf->projet->enabled)) {
 	}
 }
 if (!empty($search_users)) {
-	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
+	$sql .= ' AND cs.fk_user IN ('.$db->sanitize(implode(', ', $search_users)).')';
 }
 if (!empty($search_type) && $search_type > 0) {
 	$sql .= ' AND cs.fk_mode_reglement='.$search_type;

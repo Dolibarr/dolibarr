@@ -328,9 +328,14 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].': '.$val[0].' - Bad.');
 			//exit;
 
-			// Check string 'IN (".xxx' or 'IN (\'.xxx'  with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forget a db->sanitize when forging sql request.
-			preg_match_all('/ IN \([\'"]\s*\.\s*(.........)/i', $filecontent, $matches, PREG_SET_ORDER);
+			// Checks with IN
+
+			// Check string ' IN (".xxx' or ' IN (\'.xxx'  with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forget a db->sanitize when forging sql request.
+			$ok=true;
+			$matches=array();
+			preg_match_all('/\s+IN\s*\([\'"]\s*\.\s*(.........)/i', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
+				//var_dump($val);
 				if (!in_array($val[1], array('$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
 					$ok=false;
 					break;
@@ -341,9 +346,12 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found non sanitized string in building of a IN or NOT IN sql request '.$file['relativename'].' - Bad.');
 			//exit;
 
-			// Check string 'IN (\'".xxx'   with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forget a db->sanitize when forging sql request.
-			preg_match_all('/ IN \(\'"\s*\.\s*(.........)/i', $filecontent, $matches, PREG_SET_ORDER);
+			// Check string ' IN (\'".xxx'   with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forget a db->sanitize when forging sql request.
+			$ok=true;
+			$matches=array();
+			preg_match_all('/\s+IN\s*\(\'"\s*\.\s*(.........)/i', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
+				//var_dump($val);
 				if (!in_array($val[1], array('$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
 					$ok=false;
 					break;
