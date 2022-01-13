@@ -851,8 +851,8 @@ class AccountingAccount extends CommonObject
 
 			// Level 3 (define $code_t): Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				if (!empty($buyer->code_compta)) {
-					$code_t = $buyer->code_compta;
+				if (!empty($buyer->code_compta_product)) {
+					$code_t = $buyer->code_compta_product;
 					$suggestedid = $accountingAccount['thirdparty'];
 					$suggestedaccountingaccountfor = 'thridparty';
 				}
