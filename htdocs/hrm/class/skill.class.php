@@ -978,7 +978,7 @@ class Skill extends CommonObject
 		$this->lines = array();
 
 		$objectline = new SkillLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_skill = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'rankorder', 0, 0, array('customsql'=>'fk_skill = '.$this->id));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

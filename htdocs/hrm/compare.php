@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm.lib.php';
 
-$permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare->read;
+$permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read;
 $permissiontoadd = 0;
 if (empty($conf->hrm->enabled)) accessforbidden();
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
@@ -372,7 +372,7 @@ function mergeSkills($TSkill1, $TSkill2)
 	foreach ($TSkill1 as &$sk) {
 			if (empty($Tab[$sk->fk_skill])) $Tab[$sk->fk_skill] = new stdClass;
 
-			$Tab[$sk->fk_skill]->rate1 = $sk->rank;
+			$Tab[$sk->fk_skill]->rate1 = $sk->rankorder;
 			$Tab[$sk->fk_skill]->how_many_max1 = $sk->how_many_max;
 			$Tab[$sk->fk_skill]->label = $sk->label;
 			$Tab[$sk->fk_skill]->description = $sk->description;
@@ -380,7 +380,7 @@ function mergeSkills($TSkill1, $TSkill2)
 
 	foreach ($TSkill2 as &$sk) {
 			if (empty($Tab[$sk->fk_skill])) $Tab[$sk->fk_skill] = new stdClass;
-			$Tab[$sk->fk_skill]->rate2 = $sk->rank;
+			$Tab[$sk->fk_skill]->rate2 = $sk->rankorder;
 			$Tab[$sk->fk_skill]->label = $sk->label;
 			$Tab[$sk->fk_skill]->description = $sk->description;
 			$Tab[$sk->fk_skill]->how_many_max2 = $sk->how_many_max;
@@ -481,7 +481,7 @@ function getSkillForUsers($TUser)
 	if (empty($TUser)) return array();
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill, ';
-	$sql.= ' MAX(sr.rank) as "rank"';
+	$sql.= ' MAX(sr.rankorder) as "rankorder"';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
 	$sql.= " WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_USER."'";
@@ -496,7 +496,7 @@ function getSkillForUsers($TUser)
 		$num = 0;
 		while ($obj = $db->fetch_object($resql) ) {
 			$sql1 = "SELECT count(*) as how_many_max FROM ".MAIN_DB_PREFIX."hrm_skillrank sr";
-			$sql1.=" WHERE sr.rank = ".((int) $obj->rank);
+			$sql1.=" WHERE sr.rankorder = ".((int) $obj->rankorder);
 			$sql1.=" AND sr.objecttype = '".Skillrank::SKILLRANK_TYPE_USER."'";
 			$sql1.=" AND sr.fk_skill = ".((int) $obj->fk_skill);
 			$sql1.=" AND sr.fk_object IN (".$db->sanitize(implode(',', $TUser)).")";
@@ -511,7 +511,7 @@ function getSkillForUsers($TUser)
 			$Tab[$num]->skill_type = $obj->skill_type;
 			$Tab[$num]->fk_object = $obj->fk_object;
 			$Tab[$num]->objectType = SkillRank::SKILLRANK_TYPE_USER;
-			$Tab[$num]->rank = $obj->rank;
+			$Tab[$num]->rankorder = $obj->rankorder;
 			$Tab[$num]->how_many_max = $objMax->how_many_max;
 
 			$num++;
@@ -536,7 +536,7 @@ function getSkillForJob($fk_job)
 	if (empty($fk_job)) return array();
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill, ';
-	$sql.= ' MAX(sr.rank) as "rank"';
+	$sql.= ' MAX(sr.rankorder) as "rankorder"';
 	$sql.=' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
 	$sql.='	LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
 	$sql.="	WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_JOB."'";
@@ -559,7 +559,7 @@ function getSkillForJob($fk_job)
 			//$Tab[$num]->date_end = ''; //  du poste
 			$Tab[$num]->fk_object = $obj->fk_object;
 			$Tab[$num]->objectType = SkillRank::SKILLRANK_TYPE_JOB;
-			$Tab[$num]->rank = $obj->rank;
+			$Tab[$num]->rankorder = $obj->rankorder;
 			$Tab[$num]->how_many_max = $obj->how_many_max;
 
 			$num++;
