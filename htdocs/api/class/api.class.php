@@ -133,7 +133,6 @@ class DolibarrApi
 
 		unset($object->mode_reglement);		// We use mode_reglement_id now
 		unset($object->cond_reglement);		// We use cond_reglement_id now
-		unset($object->note);				// We use note_public or note_private now
 		unset($object->contact);			// We use contact_id now
 		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
