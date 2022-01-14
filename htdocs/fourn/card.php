@@ -531,6 +531,7 @@ if ($object->id > 0) {
 
 		$num = $db->num_rows($query);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent lastrecordtable">';
 		print '<tr class="liste_titre'.(($num == 0) ? ' nobottom' : '').'">';
 		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td class="right">';
@@ -577,6 +578,7 @@ if ($object->id > 0) {
 		}
 
 		print '</table>';
+		print '</div>';
 	}
 
 
@@ -601,6 +603,7 @@ if ($object->id > 0) {
 			$num = $db->num_rows($resql);
 
 			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
@@ -638,7 +641,7 @@ if ($object->id > 0) {
 			$db->free($resql);
 
 			if ($num > 0) {
-				print "</table>";
+				print "</table></div>";
 			}
 		} else {
 			dol_print_error($db);
@@ -702,6 +705,7 @@ if ($object->id > 0) {
 			$i = 0;
 
 			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
@@ -739,7 +743,7 @@ if ($object->id > 0) {
 			$db->free($resql);
 
 			if ($num > 0) {
-				print "</table>";
+				print "</table></div>";
 			}
 		} else {
 			dol_print_error($db);
@@ -768,6 +772,7 @@ if ($object->id > 0) {
 			$i = 0;
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
@@ -806,7 +811,7 @@ if ($object->id > 0) {
 			}
 			$db->free($resql);
 			if ($num > 0) {
-				print '</table>';
+				print '</table></div>';
 			}
 		} else {
 			dol_print_error($db);
