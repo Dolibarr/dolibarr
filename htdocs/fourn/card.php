@@ -788,7 +788,6 @@ if ($object->id > 0) {
 
 				print '<tr class="oddeven">';
 				print '<td>';
-				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
 				$facturestatic->id = $obj->rowid;
 				$facturestatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 				$facturestatic->ref_supplier = $obj->ref_supplier;
@@ -797,7 +796,7 @@ if ($object->id > 0) {
 				$facturestatic->total_ht = $obj->total_ht;
 				$facturestatic->total_tva = $obj->total_tva;
 				$facturestatic->total_ttc = $obj->total_ttc;
-				print $facturestatic->getNomUrl(1);
+				print '<span class="nowraponall">'.$facturestatic->getNomUrl(1).'</span>';
 				print $obj->ref_supplier ? ' - '.$obj->ref_supplier : '';
 				print ($obj->label ? ' - ' : '').dol_trunc($obj->label, 14);
 				print '</td>';
