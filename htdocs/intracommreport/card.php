@@ -24,12 +24,12 @@
 
 
 /** Terms
- *	
+ *
  *	DEB = Declaration d'Exchanges de Biens (FR)   =  Declaration of Exchange of Goods (EN)
  *  DES = Déclaration Européenne de Services (FR) =  European Declaration of Services (EN)
  *
  *  INTRACOMM: Douanes françaises (FR) = french customs (EN)  -  https://www.douane.gouv.fr/professionnels/commerce-international/import-export
- *	
+ *
  */
 
 
@@ -50,7 +50,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $declaration = array(
 	"deb" => $langs->trans("DEB"),
 	"des" => $langs->trans("DES"),
-);        
+);
 $typeOfDeclaration = array(
 	"introduction" => $langs->trans("Introduction"),
 	"expedition" => $langs->trans("Expedition"),
