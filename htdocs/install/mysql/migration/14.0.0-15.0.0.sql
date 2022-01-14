@@ -482,3 +482,5 @@ ALTER TABLE llx_inventorydet ADD COLUMN fk_movement integer NULL;
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN origintype varchar(64);
 
 ALTER TABLE llx_intracommreport CHANGE COLUMN period periods varchar(32);
+
+UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
