@@ -1947,7 +1947,7 @@ class ExtraFields
 				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) {
 					continue;
 				}
-				
+
 				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
 					continue;
 				}
