@@ -1241,7 +1241,7 @@ class FactureFournisseurRec extends CommonInvoice
         $sql .= ' AND suspended = 0';
         $sql .= ' AND entity = '.$conf->entity; // MUST STAY = $conf->entity here
         if ($restrictioninvoiceid > 0) {
-            $sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
+            $sql .= ' AND rowid = '. (int) $restrictioninvoiceid;
         }
         $sql .= $this->db->order('entity', 'ASC');
         //print $sql;exit;
@@ -1752,7 +1752,7 @@ class FactureFournisseurRec extends CommonInvoice
         if (!empty($unit)) {
             $sql .= ', unit_frequency = \''.$this->db->escape($unit).'\'';
         }
-        $sql .= ' WHERE rowid = ' .((int) $this->id);
+        $sql .= ' WHERE rowid = ' . (int) $this->id;
 
         dol_syslog(get_class($this). '::setFrequencyAndUnit', LOG_DEBUG);
         if ($this->db->query($sql)) {
@@ -1785,7 +1785,7 @@ class FactureFournisseurRec extends CommonInvoice
         if ($increment_nb_gen_done > 0) {
             $sql .= ', nb_gen_done = nb_gen_done + 1';
         }
-        $sql .= ' WHERE rowid = ' .((int) $this->id);
+        $sql .= ' WHERE rowid = ' . (int) $this->id;
 
         dol_syslog(get_class($this). '::setNextDate', LOG_DEBUG);
         if ($this->db->query($sql)) {
@@ -1819,7 +1819,7 @@ class FactureFournisseurRec extends CommonInvoice
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql .= ' SET nb_gen_max = '. (int) $nb;
-        $sql .= ' WHERE rowid = ' . $this->id;
+        $sql .= ' WHERE rowid = ' . (int) $this->id;
 
         dol_syslog(get_class($this). '::setMaxPeriod', LOG_DEBUG);
         if ($this->db->query($sql)) {
@@ -1846,7 +1846,7 @@ class FactureFournisseurRec extends CommonInvoice
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql .= ' SET auto_validate = '.((int) $validate);
-        $sql .= ' WHERE rowid = ' .((int) $this->id);
+        $sql .= ' WHERE rowid = ' . (int) $this->id;
 
         dol_syslog(get_class($this). '::setAutoValidate', LOG_DEBUG);
         if ($this->db->query($sql)) {
@@ -1873,7 +1873,7 @@ class FactureFournisseurRec extends CommonInvoice
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql .= ' SET generate_pdf = '. (int) $validate;
-        $sql .= ' WHERE rowid = ' . $this->id;
+        $sql .= ' WHERE rowid = ' . (int) $this->id;
 
         dol_syslog(get_class($this). '::setGeneratePdf', LOG_DEBUG);
         if ($this->db->query($sql)) {
@@ -1900,7 +1900,7 @@ class FactureFournisseurRec extends CommonInvoice
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql .= " SET modelpdf = '".$this->db->escape($model)."'";
-        $sql .= ' WHERE rowid = ' . $this->id;
+        $sql .= ' WHERE rowid = ' . (int) $this->id;
 
         dol_syslog(get_class($this). '::setModelPdf', LOG_DEBUG);
         if ($this->db->query($sql)) {
@@ -2121,9 +2121,9 @@ class FactureFournisseurLigneRec extends CommonObjectLine
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         $sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec SET';
-        $sql .= ' fk_facture_fourn = ' . $this->fk_facture_fourn;
-        $sql .= ', fk_parent_line = ' . $this->fk_parent;
-        $sql .= ', fk_product = ' . $this->fk_product;
+        $sql .= ' fk_facture_fourn = ' . (int) $this->fk_facture_fourn;
+        $sql .= ', fk_parent_line = ' . (int) $this->fk_parent;
+        $sql .= ', fk_product = ' . (int) $this->fk_product;
         $sql .= ', ref = ' . (! empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'null') . "'";
         $sql .= ", label ='" . (! empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'null') . "'";
         $sql .= ", description ='" . $this->db->escape($this->description) . "'";
@@ -2154,7 +2154,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
         $sql .= ', fk_unit =' .($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : 'null');
         $sql .= ', fk_user_modif =' . (int) $user;
 
-        $sql .= ' WHERE rowid = ' . $this->id;
+        $sql .= ' WHERE rowid = ' . (int) $this->id;
 
         $this->db->begin();
 
