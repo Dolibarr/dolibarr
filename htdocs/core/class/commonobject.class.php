@@ -3404,7 +3404,7 @@ abstract class CommonObject
 		}
 		if ($this->element == 'invoice_supplier_rec') {
 			$fieldup = 'pu_ht';
-        }
+		}
 		if ($this->element == 'expensereport') {
 			$fieldup = 'value_unit';
 		}
@@ -8018,7 +8018,7 @@ abstract class CommonObject
 		$element = $this->element;
 		if ($element == 'facturerec') {
 			$element = 'facture';
-        } elseif ($element == 'invoice_supplier_rec'){
+        } elseif ($element == 'invoice_supplier_rec') {
 			return $user->rights->fournisseur->facture;
 		}
 

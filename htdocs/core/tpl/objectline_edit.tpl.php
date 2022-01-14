@@ -171,7 +171,7 @@ $coldisplay++;
 
 	// Show autofill date for recuring invoices
 	if (!empty($conf->service->enabled) && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
-        if ($line->element == 'invoice_supplier_det_rec'){
+        if ($line->element == 'invoice_supplier_det_rec') {
             $line->date_start_fill = $line->date_start;
             $line->date_end_fill = $line->date_end;
         }

@@ -163,7 +163,7 @@ if (($line->info_bits & 2) == 2) {
 
 	// Show date range
 	if ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec') {
-        if ($line->element == 'invoice_supplier_det_rec' && $line->product_type != Product::TYPE_PRODUCT){
+        if ($line->element == 'invoice_supplier_det_rec' && $line->product_type != Product::TYPE_PRODUCT) {
             $line->date_start_fill = $line->date_start;
             $line->date_end_fill = $line->date_end;
         }
