@@ -171,10 +171,10 @@ $coldisplay++;
 
 	// Show autofill date for recuring invoices
 	if (!empty($conf->service->enabled) && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
-        if ($line->element == 'invoice_supplier_det_rec') {
-            $line->date_start_fill = $line->date_start;
-            $line->date_end_fill = $line->date_end;
-        }
+		if($line->element == 'invoice_supplier_det_rec') {
+			$line->date_start_fill = $line->date_start;
+			$line->date_end_fill = $line->date_end;
+		}
 		echo '<br>';
 		echo $langs->trans('AutoFillDateFrom').' ';
 		echo $form->selectyesno('date_start_fill', GETPOSTISSET('date_start_fill') ? GETPOST('date_start_fill', 'int') : $line->date_start_fill, 1);
