@@ -795,11 +795,11 @@ class FactureFournisseurRec extends CommonInvoice
         $main = MAIN_DB_PREFIX.'facture_fourn_det_rec';
         $ef = $main."_extrafields";
 
-        $sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture_fourn = ". $rowid .")";
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det_rec WHERE fk_facture_fourn = ". $rowid;
+        $sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture_fourn = ". (int) $rowid .")";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det_rec WHERE fk_facture_fourn = ". (int) $rowid;
 
         if ($this->db->query($sqlef) && $this->db->query($sql)) {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_rec WHERE rowid = ". $rowid;
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_rec WHERE rowid = ". (int) $rowid;
             dol_syslog($sql);
             if ($this->db->query($sql)) {
                 // Delete linked object
@@ -2008,7 +2008,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
         }
 
         if (! $error) {
-            $sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element . ' WHERE rowid=' . $this->id;
+            $sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element . ' WHERE rowid=' . (int) $this->id;
 
             $res = $this->db->query($sql);
             if ($res === false) {
