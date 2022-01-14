@@ -229,7 +229,7 @@ class Validate
 	}
 
 	/**
-	 * Check Duration validity
+	 * Check numeric validity
 	 *
 	 * @param mixed $string to validate
 	 * @return boolean Validity is ok or not
