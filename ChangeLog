@@ -138,6 +138,8 @@ NEW: Hidden option API_DISABLE_COMPRESSION is now visible in API setup page.
 NEW: Add hook printUnderHeaderPDFline on invoice PDF templates (can be used for example to add a barcode or more information on header of invoices).
  
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* ALL EXTERNAL MODULES THAT WERE NOT CORRECTLY DEVELOPPED WILL NOT WORK ON V15 (All modules that forgot to manage the security token field 
+  into forms will be broken. The security token field is expected since Dolibarr v9 but a lot of external modules did not implement it).
 * Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
 * Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
 * The method static ActionComm::getActions($db, ...) is no more static. Use $actioncomm->getActions(...) instead (without $db param). 

@@ -461,9 +461,11 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
 	}
 
+	print '<!-- htmlPrintOnlinePaymentFooter -->'."\n";
+
 	print '<br>';
 
-	print '<div class="center">'."\n";
+	print '<div class="center paddingleft paddingright">'."\n";
 	if ($addformmessage) {
 		print '<!-- object = '.$object->element.' -->';
 		print '<br>';

@@ -193,7 +193,7 @@ CREATE TABLE llx_hrm_evaluation
     note_public text,
     note_private text,
     date_creation datetime NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
     import_key varchar(14),
@@ -211,7 +211,7 @@ ALTER TABLE llx_hrm_evaluation ADD INDEX idx_hrm_evaluation_status (status);
 create table llx_hrm_evaluation_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -224,7 +224,7 @@ CREATE TABLE llx_hrm_evaluationdet
     -- BEGIN MODULEBUILDER FIELDS
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     date_creation datetime NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
     fk_skill integer NOT NULL,
@@ -243,7 +243,7 @@ ALTER TABLE llx_hrm_evaluationdet ADD INDEX idx_hrm_evaluationdet_fk_evaluation 
 create table llx_hrm_evaluationdet_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -258,7 +258,7 @@ CREATE TABLE llx_hrm_job
     label varchar(255) NOT NULL,
     description text,
     date_creation datetime NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deplacement varchar(255),
     note_public text,
     note_private text,
@@ -273,7 +273,7 @@ ALTER TABLE llx_hrm_job ADD INDEX idx_hrm_job_label (label);
 create table llx_hrm_job_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -287,7 +287,7 @@ CREATE TABLE llx_hrm_job_user(
     -- ref varchar(128) NOT NULL,
     description text,
     date_creation datetime NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_contrat integer,
     fk_user integer NOT NULL,
     fk_job integer NOT NULL,
@@ -313,7 +313,7 @@ CREATE TABLE llx_hrm_skill
     label varchar(255),
     description text,
     date_creation datetime NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
     required_level integer NOT NULL,
@@ -331,7 +331,7 @@ ALTER TABLE llx_hrm_skill ADD INDEX idx_hrm_skill_skill_type (skill_type);
 create table llx_hrm_skill_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -480,3 +480,7 @@ ALTER TABLE llx_session MODIFY COLUMN user_agent VARCHAR(255) NULL;
 ALTER TABLE llx_inventorydet ADD COLUMN fk_movement integer NULL;
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN origintype varchar(64);
+
+ALTER TABLE llx_intracommreport CHANGE COLUMN period periods varchar(32);
+
+UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';

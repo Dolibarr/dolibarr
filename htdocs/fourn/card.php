@@ -531,10 +531,11 @@ if ($object->id > 0) {
 
 		$num = $db->num_rows($query);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent lastrecordtable">';
 		print '<tr class="liste_titre'.(($num == 0) ? ' nobottom' : '').'">';
 		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td class="right">';
-		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductReferencesOfSupplier").'<span class="badge marginleftonlyshort">'.$object->nbOfProductRefs().'</span>';
+		print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllProductReferencesOfSupplier").'</span><span class="badge marginleftonlyshort">'.$object->nbOfProductRefs().'</span>';
 		print '</a></td></tr>';
 
 		$return = array();
@@ -556,7 +557,7 @@ if ($object->id > 0) {
 				print $productstatic->getNomUrl(1);
 				print '</td>';
 				print '<td>';
-				print $objp->supplier_ref;
+				print dol_escape_htmltag($objp->supplier_ref);
 				print '</td>';
 				print '<td class="maxwidthonsmartphone">';
 				print dol_trunc(dol_htmlentities($objp->label), 30);
@@ -565,7 +566,7 @@ if ($object->id > 0) {
 				print '<td class="right">';
 				//print (isset($objp->unitprice) ? price($objp->unitprice) : '');
 				if (isset($objp->price)) {
-					print price($objp->price);
+					print '<span class="amount">'.price($objp->price).'</span>';
 					if ($objp->quantity > 1) {
 						print ' / ';
 						print $objp->quantity;
@@ -577,6 +578,7 @@ if ($object->id > 0) {
 		}
 
 		print '</table>';
+		print '</div>';
 	}
 
 
@@ -601,12 +603,13 @@ if ($object->id > 0) {
 			$num = $db->num_rows($resql);
 
 			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="3">';
 				print '<table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastSupplierProposals", ($num < $MAXLIST ? "" : $MAXLIST)).'</td>';
-				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id.'">'.$langs->trans("AllPriceRequests").'<span class="badge marginleftonlyshort">'.$num.'</span></td>';
+				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllPriceRequests").'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table>';
 				print '</td></tr>';
@@ -638,7 +641,7 @@ if ($object->id > 0) {
 			$db->free($resql);
 
 			if ($num > 0) {
-				print "</table>";
+				print "</table></div>";
 			}
 		} else {
 			dol_print_error($db);
@@ -690,7 +693,7 @@ if ($object->id > 0) {
 			$num = $object_count->total;
 		}
 
-		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.total_tva, p.total_ttc";
+		$sql  = "SELECT p.rowid,p.ref, p.date_commande as date, p.fk_statut, p.total_ht, p.total_tva, p.total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p";
 		$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 		$sql .= " AND p.entity IN (".getEntity('commande_fournisseur').")";
@@ -702,12 +705,13 @@ if ($object->id > 0) {
 			$i = 0;
 
 			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="3">';
+				print '<td colspan="4">';
 				print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders", ($num < $MAXLIST ? "" : $MAXLIST)).'</td>';
-				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").'<span class="badge marginleftonlyshort">'.$num.'</span></td>';
+				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllOrders").'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table>';
 				print '</td></tr>';
@@ -716,22 +720,23 @@ if ($object->id > 0) {
 			while ($i < $num && $i < $MAXLIST) {
 				$obj = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
 				$orderstatic->id = $obj->rowid;
 				$orderstatic->ref = $obj->ref;
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
+				$orderstatic->date = $db->jdate($obj->date);
+
+				print '<tr class="oddeven">';
+				print '<td class="nowraponall">';
 				print $orderstatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="center" width="80">';
-				if ($obj->dc) {
-					print dol_print_date($db->jdate($obj->dc), 'day');
-				} else {
-					print "-";
+				if ($obj->date) {
+					print dol_print_date($orderstatic->date, 'day');
 				}
 				print '</td>';
+				print '<td class="right nowrap"><span class="amount">'.price($orderstatic->total_ttc).'</span></td>';
 				print '<td class="right" class="nowrap">'.$orderstatic->LibStatut($obj->fk_statut, 5).'</td>';
 				print '</tr>';
 				$i++;
@@ -739,7 +744,7 @@ if ($object->id > 0) {
 			$db->free($resql);
 
 			if ($num > 0) {
-				print "</table>";
+				print "</table></div>";
 			}
 		} else {
 			dol_print_error($db);
@@ -755,7 +760,7 @@ if ($object->id > 0) {
 
 	if ($user->rights->fournisseur->facture->lire) {
 		// TODO move to DAO class
-		$sql = 'SELECT f.rowid, f.libelle as label, f.ref, f.ref_supplier, f.fk_statut, f.datef as df, f.total_ht, f.total_tva, f.total_ttc as amount,f.paye,';
+		$sql = 'SELECT f.rowid, f.libelle as label, f.ref, f.ref_supplier, f.fk_statut, f.datef as df, f.total_ht, f.total_tva, f.total_ttc, f.paye,';
 		$sql .= ' SUM(pf.amount) as am';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
@@ -768,11 +773,13 @@ if ($object->id > 0) {
 			$i = 0;
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="4">';
-				print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills', ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id.'">'.$langs->trans('AllBills').'<span class="badge marginleftonlyshort">'.$num.'</span></td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills', ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans('AllBills').'</span><span class="badge marginleftonlyshort">'.$num.'</span></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table>';
 				print '</td></tr>';
@@ -781,9 +788,6 @@ if ($object->id > 0) {
 			while ($i < min($num, $MAXLIST)) {
 				$obj = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				print '<td>';
-				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
 				$facturestatic->id = $obj->rowid;
 				$facturestatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 				$facturestatic->ref_supplier = $obj->ref_supplier;
@@ -792,12 +796,16 @@ if ($object->id > 0) {
 				$facturestatic->total_ht = $obj->total_ht;
 				$facturestatic->total_tva = $obj->total_tva;
 				$facturestatic->total_ttc = $obj->total_ttc;
-				print $facturestatic->getNomUrl(1);
+				$facturestatic->date = $db->jdate($obj->df);
+
+				print '<tr class="oddeven">';
+				print '<td class="tdoverflowmax200">';
+				print '<span class="nowraponall">'.$facturestatic->getNomUrl(1).'</span>';
 				print $obj->ref_supplier ? ' - '.$obj->ref_supplier : '';
 				print ($obj->label ? ' - ' : '').dol_trunc($obj->label, 14);
 				print '</td>';
-				print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->df), 'day').'</td>';
-				print '<td class="right nowrap">'.price($obj->amount).'</td>';
+				print '<td class="center nowrap">'.dol_print_date($facturestatic->date, 'day').'</td>';
+				print '<td class="right nowrap"><span class="amount">'.price($facturestatic->total_ttc).'</span></td>';
 				print '<td class="right nowrap">';
 				print $facturestatic->LibStatut($obj->paye, $obj->fk_statut, 5, $obj->am);
 				print '</td>';
@@ -806,7 +814,7 @@ if ($object->id > 0) {
 			}
 			$db->free($resql);
 			if ($num > 0) {
-				print '</table>';
+				print '</table></div>';
 			}
 		} else {
 			dol_print_error($db);
