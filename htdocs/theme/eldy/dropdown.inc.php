@@ -115,7 +115,7 @@ button.dropdown-item.global-search-item {
 
 .dropdown-toggle::after {
 	/* font part */
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', 'Font Awesome 5 Free'); ?>";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-size: 0.7em;
 	font-weight: 900;
 	font-style: normal;
@@ -351,7 +351,7 @@ a.top-menu-dropdown-link {
 
 .dropdown-item::before {
 	/* font part */
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', 'Font Awesome 5 Free'); ?>";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
