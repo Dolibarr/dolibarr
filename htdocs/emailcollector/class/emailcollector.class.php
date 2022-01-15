@@ -2365,7 +2365,7 @@ class EmailCollector extends CommonObject
 						// this code action is hook..... for support this call
 						global $hookmanager;
 
-						if ( ! in_array('emailcollectorcard',$hookmanager->hooks)) {
+						if ( ! in_array('emailcollectorcard', $hookmanager->hooks)) {
 							$hookmanager->initHooks(array('emailcollectorcard'));
 						}
 
