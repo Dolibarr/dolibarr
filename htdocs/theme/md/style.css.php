@@ -1079,7 +1079,7 @@ if ($conf->browser->layout == 'phone') {
 	/* Code annulé */
 	/* font-family: "Font Awesome 5 Free"; */
 	/* Code remplacé */
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', 'Font Awesome 5 Free'); ?>";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	/* Easya 2022 - PR19649 - Fin */
 	font-weight: 600;
 	padding-right: 5px;
@@ -6658,7 +6658,7 @@ a.phpdebugbar-tab.phpdebugbar-active {
 	/* Code annulé */
 	/* font-family: "Font Awesome 5 Free"; */
 	/* Code remplacé */
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', 'Font Awesome 5 Free'); ?>";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	/* Easya 2022 - PR19649 - Fin */
 	font-weight: 600;
 }
@@ -6681,7 +6681,7 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	/* Code annulé */
 	/* font-family: "Font Awesome 5 Free" !important; */
 	/* Code remplacé */
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', 'Font Awesome 5 Free'); ?> !important";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?> !important";
 	/* Easya 2022 - PR19649 - Fin */
 }
 

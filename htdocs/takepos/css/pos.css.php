@@ -224,7 +224,7 @@ div[aria-describedby="dialog-info"] button:before {
 	/* Code annulé */
 	/* font-family: "Font Awesome 5 Free"; */
 	/* Code remplacé */
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', 'Font Awesome 5 Free'); ?>";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	/* Easya 2022 - PR19649 - Fin */
 	font-weight: 900;
 	padding-right: 5px;
