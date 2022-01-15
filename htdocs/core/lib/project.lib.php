@@ -822,28 +822,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
-				// Contacts of tasks. Disabled, because available by default just after
-				/*
-				if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-					print '<td>';
-					foreach (array('internal', 'external') as $source) {
-						$tab = $lines[$i]->liste_contact(-1, $source);
-						$num = count($tab);
-						if (!empty($num)) {
-							foreach ($tab as $contacttask) {
-								//var_dump($contacttask);
-								if ($source == 'internal') {
-									$c = new User($db);
-								} else {
-									$c = new Contact($db);
-								}
-								$c->fetch($contacttask['id']);
-								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
-							}
-						}
-					}
-					print '</td>';
-				}*/
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.budget_amount']['checked'])) {
 					print '<td class="center">';
 					print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
@@ -854,6 +832,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Contacts of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 					print '<td class="center">';
+					$ifisrt = 1;
 					foreach (array('internal', 'external') as $source) {
 						$tab = $lines[$i]->liste_contact(-1, $source);
 						$numcontact = count($tab);
@@ -867,14 +846,19 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								}
 								$c->fetch($contacttask['id']);
 								if (!empty($c->photo)) {
-									print $c->getNomUrl(-2).'&nbsp;';
+									if (get_class($c) == 'User') {
+										print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+									} else {
+										print $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+									}
 								} else {
 									if (get_class($c) == 'User') {
-										print $c->getNomUrl(2, '', 0, 0, 24, 1);//.'&nbsp;';
+										print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
 									} else {
-										print $c->getNomUrl(2);//.'&nbsp;';
+										print $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
 									}
 								}
+								$ifisrt = 0;
 							}
 						}
 					}

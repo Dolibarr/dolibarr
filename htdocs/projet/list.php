@@ -1323,6 +1323,7 @@ while ($i < min($num, $limit)) {
 		// Contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
 			print '<td class="center">';
+			$ifisrt = 1;
 			foreach (array('internal', 'external') as $source) {
 				$tab = $object->liste_contact(-1, $source);
 				$numcontact = count($tab);
@@ -1336,14 +1337,19 @@ while ($i < min($num, $limit)) {
 						}
 						$c->fetch($contactproject['id']);
 						if (!empty($c->photo)) {
-							print $c->getNomUrl(-2).'&nbsp;';
+							if (get_class($c) == 'User') {
+								print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+							} else {
+								print $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+							}
 						} else {
 							if (get_class($c) == 'User') {
-								print $c->getNomUrl(2, '', 0, 0, 24, 1);//.'&nbsp;';
+								print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
 							} else {
-								print $c->getNomUrl(2);//.'&nbsp;';
+								print $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
 							}
 						}
+						$ifisrt = 0;
 					}
 				}
 			}
