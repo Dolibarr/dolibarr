@@ -679,22 +679,23 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Title of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
-					print '<td>';
+					$labeltoshow = '';
 					if ($showlineingray) {
-						print '<i>';
+						$labeltoshow .= '<i>';
 					}
 					//else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'&withproject=1">';
 					for ($k = 0; $k < $level; $k++) {
-						print '<div class="marginleftonly">';
+						$labeltoshow .= '<div class="marginleftonly">';
 					}
-					print $lines[$i]->label;
+					$labeltoshow .= dol_escape_htmltag($lines[$i]->label);
 					for ($k = 0; $k < $level; $k++) {
-						print '</div>';
+						$labeltoshow .= '</div>';
 					}
 					if ($showlineingray) {
-						print '</i>';
+						$labeltoshow .= '</i>';
 					}
-					//else print '</a>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($labeltoshow).'">';
+					print $labeltoshow;
 					print "</td>\n";
 				}
 
