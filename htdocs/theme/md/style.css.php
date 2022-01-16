@@ -4286,11 +4286,7 @@ span.dashboardlineko {
 	border-radius: .25em;
 }
 .boxtable {
-	margin-bottom: 8px !important;
-	border-bottom-width: 1px;
-}
-.boxtable {
-	margin-bottom: 8px !important;
+	margin-bottom: 20px !important;
 	border-bottom-width: 1px;
 }
 .boxtablenotop {
