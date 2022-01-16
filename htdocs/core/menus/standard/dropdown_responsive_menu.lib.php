@@ -460,7 +460,6 @@ function print_end_menu_array()
 }
 
 
-
 /**
  * Core function to output left menu eldy
  * Fill &$menu (example with $forcemainmenu='home' $forceleftmenu='all', return left menu tree of Home)
