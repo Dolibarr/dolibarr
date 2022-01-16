@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param	Menu	$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			1=Disable output (Initialise &$menu only).
  * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
+ * @param	array	$moredata		An array with more data to output
  * @return	int						0
  */
 function print_ace_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '', $moredata = null)
@@ -307,13 +308,8 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 /**
  * Output sub menu entry
  *
- * @param	string	$text		Text
- * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
- * @param	string	$url		Url
- * @param	string	$id			Id
- * @param	string	$idsel		Id sel
- * @param	string	$classname	Class name
  * @param	string	$atarget	Target
+ * @param	array	$menu_array	Target
  * @return	void
  */
 function print_sub_menu_entry($menu_array)
@@ -478,6 +474,8 @@ function print_end_menu_array()
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not defined in session.
  * @param	array		$moredata			An array with more data to output
+ * @param	array		$mainmenu			Main menu native
+ * @param	array		$leftmenu			Lest menu native
  * @return	int								Nb of menu entries
  */
 function get_sub_menu($db, $mainmenu, $leftmenu, $tabMenu)
