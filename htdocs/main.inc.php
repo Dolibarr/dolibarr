@@ -2929,7 +2929,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
  */
 function main_area($title = '')
 {
-	global $conf, $langs;
+	global $conf, $langs, $hookmanager;
 
 	if (empty($conf->dol_hide_leftmenu)) {
 		print '<div id="id-right">';
@@ -2939,14 +2939,17 @@ function main_area($title = '')
 
 	print '<!-- Begin div class="fiche" -->'."\n".'<div class="fiche">'."\n";
 
+	$hookmanager->initHooks(array('main'));
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printMainArea', $parameters); // Note that $action and $object may have been modified by some hooks
+	print $hookmanager->resPrint;
+
 	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED), 0, 0, 1, 'warning maintenancemode');
 	}
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
 	if (!empty($conf->global->SHOW_SOCINFO_ON_PRINT) && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09'))) {
-		global $hookmanager;
-		$hookmanager->initHooks(array('main'));
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
 		if (empty($reshook)) {
