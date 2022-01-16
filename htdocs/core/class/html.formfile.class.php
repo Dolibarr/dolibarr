@@ -761,7 +761,7 @@ class FormFile
 					$arraykeys = array_keys($modellist);
 					$modelselected = $arraykeys[0];
 				}
-				$morecss = 'maxwidth200';
+				$morecss = 'minwidth75 maxwidth200';
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
 				}
@@ -1646,6 +1646,7 @@ class FormFile
 		print '</tr>'."\n";
 
 		// To show ref or specific information according to view to show (defined by $module)
+		$object_instance = null;
 		if ($modulepart == 'company') {
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$object_instance = new Societe($this->db);
@@ -1813,21 +1814,26 @@ class FormFile
 				if (!$id && !$ref) {
 					continue;
 				}
+
 				$found = 0;
 				if (!empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
 					$found = 1;
 				} else {
 					//print 'Fetch '.$id." - ".$ref.' class='.get_class($object_instance).'<br>';
 
-					if ($id) {
-						$result = $object_instance->fetch($id);
-					} else {
-						//fetchOneLike looks for objects with wildcards in its reference.
-						//It is useful for those masks who get underscores instead of their actual symbols
-						//fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
-						//that's why we look only into fetchOneLike when fetch returns 0
-						if (!$result = $object_instance->fetch('', $ref)) {
-							$result = $object_instance->fetchOneLike($ref);
+					$result = 0;
+					if (is_object($object_instance)) {
+						if ($id) {
+							$result = $object_instance->fetch($id);
+						} else {
+							if (!($result = $object_instance->fetch('', $ref))) {
+								//fetchOneLike looks for objects with wildcards in its reference.
+								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced a forbiddn char)
+								//fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
+								//that's why we look only into fetchOneLike when fetch returns 0
+								// TODO Remove this part ?
+								$result = $object_instance->fetchOneLike($ref);
+							}
 						}
 					}
 

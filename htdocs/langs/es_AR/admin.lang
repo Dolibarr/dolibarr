@@ -181,8 +181,6 @@ OfficialDemo=Demo online Dolibarr
 OfficialMarketPlace=Mercado oficial de módulos externos/complementos
 OfficialWebHostingService=Servicios de alojamiento web referenciados (alojamiento en la nube)
 ReferencedPreferredPartners=Socios preferidos
-ForDocumentationSeeWiki=Para la documentación del usuario o desarrollador (Doc, preguntas frecuentes ...), <br> consulte la Wiki de Dolibarr: <br><b> <a href="%s" target="_blank"> %s </a> </b>
-ForAnswersSeeForum=Para cualquier otra pregunta o ayuda, puede utilizar el foro de Dolibarr: <br> <b> <a href="%s" target="_blank"> %s </a> </b>
 HelpCenterDesc1=Aquí hay algunos recursos para obtener ayuda y apoyo con Dolibarr.
 HelpCenterDesc2=Algunos de estos recursos solo están disponibles en <b> inglés </b>.
 CurrentMenuHandler=Controlador de menú actual
@@ -399,8 +397,6 @@ YouDoNotUseBestDriver=Utiliza el controlador %s pero se recomienda el controlado
 SearchOptim=Optimización de búsqueda
 BrowserIsOK=Está utilizando el navegador web %s. Este navegador está bien para la seguridad y el rendimiento.
 BrowserIsKO=Está utilizando el navegador web %s. Se sabe que este navegador es una mala elección para la seguridad, el rendimiento y la confiabilidad. Recomendamos utilizar Firefox, Chrome, Opera o Safari.
-AddRefInList=Mostrar la lista de referencia cliente / vendedor (lista de selección o cuadro combinado) y la mayoría del hipervínculo. <br> Los terceros aparecerán con un formato de nombre de "CC12345 - SC45678 - The Big Company corp". en lugar de "The Big Company corp".
-AddAdressInList=Mostrar la lista de información de la dirección del cliente / proveedor (seleccionar lista o combobox) <br> Los terceros aparecerán con un formato de nombre de "The Big Company corp. - 21 jump street 123456 Big town - USA" en lugar de "The Big Company corp".
 AskForPreferredShippingMethod=Pregunte por el método de envío preferido para terceros.
 FillThisOnlyIfRequired=Ejemplo: +2 (rellenar solo si se experimentan problemas de compensación de zona horaria)
 PasswordGenerationNone=No sugiera una contraseña generada. La contraseña debe escribirse manualmente.

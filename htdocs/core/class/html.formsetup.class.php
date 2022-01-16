@@ -105,8 +105,9 @@ class FormSetup
 
 	/**
 	 * Generate an attributes string form an input array
-	 * @param array $attributes an array of attributes keys and values,
-	 * @return string
+	 *
+	 * @param 	array 	$attributes 	an array of attributes keys and values,
+	 * @return 	string					attribute string
 	 */
 	static public function generateAttributesStringFromArray($attributes)
 	{
@@ -125,8 +126,10 @@ class FormSetup
 
 
 	/**
-	 * @param bool $editMode true will display output on edit mod
-	 * @return string
+	 * generateOutput
+	 *
+	 * @param 	bool 	$editMode 	true will display output on edit mod
+	 * @return 	string				html output
 	 */
 	public function generateOutput($editMode = false)
 	{
@@ -188,8 +191,10 @@ class FormSetup
 	}
 
 	/**
-	 * @param bool $editMode true will display output on edit mod
-	 * @return string
+	 * generateTableOutput
+	 *
+	 * @param 	bool 	$editMode 	true will display output on edit mod
+	 * @return 	string				html output
 	 */
 	public function generateTableOutput($editMode = false)
 	{
@@ -210,7 +215,7 @@ class FormSetup
 			$out = '<table class="noborder centpercent">';
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
-			$out .= '	<td class="titlefield">' . $this->langs->trans("Parameter") . '</td>';
+			$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
 			$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
 			$out .= '</tr>';
 			$out .= '</thead>';
@@ -230,12 +235,13 @@ class FormSetup
 	}
 
 	/**
-	 * @param bool $noMessageInUpdate display event message on errors and success
-	 * @return void|null
+	 * saveConfFromPost
+	 *
+	 * @param 	bool 		$noMessageInUpdate display event message on errors and success
+	 * @return 	void|null
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
-
 		if (empty($this->items)) {
 			return null;
 		}
@@ -266,9 +272,11 @@ class FormSetup
 	}
 
 	/**
-	 * @param FormSetupItem $item the setup item
-	 * @param bool $editMode Display as edit mod
-	 * @return string the html output for an setup item
+	 * generateLineOutput
+	 *
+	 * @param 	FormSetupItem 	$item 		the setup item
+	 * @param 	bool 			$editMode 	Display as edit mod
+	 * @return 	string 						the html output for an setup item
 	 */
 	public function generateLineOutput($item, $editMode = false)
 	{
@@ -306,8 +314,9 @@ class FormSetup
 
 
 	/**
-	 * @param array $params an array of arrays of params from old modulBuilder params
-	 * @deprecated was used to test  module builder convertion to this form usage
+	 * Method used to test  module builder convertion to this form usage
+	 *
+	 * @param array 	$params 	an array of arrays of params from old modulBuilder params
 	 * @return null
 	 */
 	public function addItemsFromParamsArray($params)
@@ -321,10 +330,11 @@ class FormSetup
 
 	/**
 	 * From old
-	 * @param string $confKey the conf name to store
-	 * @param array $params an array of params from old modulBuilder params
-	 * @deprecated was used to test  module builder convertion to this form usage
-	 * @return bool
+	 * Method was used to test  module builder convertion to this form usage.
+	 *
+	 * @param 	string 	$confKey 	the conf name to store
+	 * @param 	array 	$params 	an array of params from old modulBuilder params
+	 * @return 	bool
 	 */
 	public function addItemFromParams($confKey, $params)
 	{
@@ -343,7 +353,8 @@ class FormSetup
 		 */
 
 		$item = new FormSetupItem($confKey);
-		$item->setTypeFromTypeString($params['type']);
+		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developper to use object oriented usage
+		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
 			$item->enabled = $params['enabled'];
@@ -359,9 +370,10 @@ class FormSetup
 	}
 
 	/**
-	 * used to export param array for /core/actions_setmoduleoptions.inc.php template
+	 * Used to export param array for /core/actions_setmoduleoptions.inc.php template
+	 * Method exists only for manage setup convertion
+	 *
 	 * @return array $arrayofparameters for /core/actions_setmoduleoptions.inc.php
-	 * @deprecated yes this method came deprecated because it exists only for manage setup convertion
 	 */
 	public function exportItemsAsParamsArray()
 	{
@@ -379,6 +391,7 @@ class FormSetup
 	/**
 	 * Reload for each item default conf
 	 * note: this will override custom configuration
+	 *
 	 * @return bool
 	 */
 	public function reloadConfs()
@@ -396,9 +409,10 @@ class FormSetup
 	/**
 	 * Create a new item
 	 * the tagret is useful with hooks : that allow externals modules to add setup items on good place
-	 * @param $confKey the conf key used in database
-	 * @param string		$targetItemKey    	target item used to place the new item beside
-	 * @param bool		$insertAfterTarget    	insert before or after target item ?
+	 *
+	 * @param string	$confKey 				the conf key used in database
+	 * @param string	$targetItemKey    		target item used to place the new item beside
+	 * @param bool		$insertAfterTarget		insert before or after target item ?
 	 * @return FormSetupItem the new setup item created
 	 */
 	public function newItem($confKey, $targetItemKey = false, $insertAfterTarget = false)
@@ -436,6 +450,7 @@ class FormSetup
 
 	/**
 	 * Sort items according to rank
+	 *
 	 * @return bool
 	 */
 	public function sortingItems()
@@ -445,6 +460,8 @@ class FormSetup
 	}
 
 	/**
+	 * getCurentItemMaxRank
+	 *
 	 * @param bool $cache To use cache or not
 	 * @return int
 	 */
@@ -469,8 +486,9 @@ class FormSetup
 
 	/**
 	 * set new max rank if needed
-	 * @param int $rank the item rank
-	 * @return int|void
+	 *
+	 * @param 	int 		$rank 	the item rank
+	 * @return 	int|void			new max rank
 	 */
 	public function setItemMaxRank($rank)
 	{
@@ -479,10 +497,10 @@ class FormSetup
 
 
 	/**
-	 *   	get item position rank from item key
+	 * get item position rank from item key
 	 *
-	 *   	@param	string		$itemKey    		the item key
-	 *      @return	int         rank on success and -1 on error
+	 * @param	string		$itemKey    	the item key
+	 * @return	int         				rank on success and -1 on error
 	 */
 	public function getLineRank($itemKey)
 	{
@@ -498,7 +516,7 @@ class FormSetup
 	 *
 	 *  @param	FormSetupItem	$a  formSetup item
 	 *  @param	FormSetupItem	$b  formSetup item
-	 *  @return	int				Return compare result
+	 *  @return	int					Return compare result
 	 */
 	public function itemSort(FormSetupItem $a, FormSetupItem $b)
 	{
@@ -543,13 +561,16 @@ class FormSetupItem
 	/** @var string $helpText  */
 	public $helpText = '';
 
-	/** @var string $value  */
+	/** @var string $fieldValue  */
 	public $fieldValue;
+
+	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
+	public $fieldAttr;
 
 	/** @var bool|string set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too */
 	public $fieldOverride = false;
 
-	/** @var bool|string set this var to override field output */
+	/** @var bool|string set this var to override field input */
 	public $fieldInputOverride = false;
 
 	/** @var bool|string set this var to override field output */
@@ -566,6 +587,7 @@ class FormSetupItem
 	/**
 	 * TODO each type must have setAs{type} method to help configuration
 	 *   And set var as protected when its done configuration must be done by method
+	 *   this is important for retrocompatibility of futures versions
 	 * @var string $type  'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 */
 	protected $type = 'string';
@@ -577,13 +599,19 @@ class FormSetupItem
 	/**
 	 * Constructor
 	 *
-	 * @param $confKey the conf key used in database
+	 * @param string $confKey the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
-		global $langs, $db, $conf;
+		global $langs, $db, $conf, $form;
 		$this->db = $db;
-		$this->form = new Form($this->db);
+
+		if (!empty($form) && is_object($form) && get_class($form) == 'Form') { // the form class has a cache inside so I am using it to optimize
+			$this->form = $form;
+		} else {
+			$this->form = new Form($this->db);
+		}
+
 		$this->langs = $langs;
 		$this->entity = $conf->entity;
 
@@ -683,6 +711,10 @@ class FormSetupItem
 			return $this->fieldInputOverride;
 		}
 
+		$this->fieldAttr['name'] = $this->confKey;
+		$this->fieldAttr['id'] = 'setup-'.$this->confKey;
+		$this->fieldAttr['value'] = $this->fieldValue;
+
 		$out = '';
 
 		if ($this->type == 'title') {
@@ -709,7 +741,9 @@ class FormSetupItem
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} else {
-			$out.= '<input name="'.$this->confKey.'"  class="flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass).'" value="'.$this->fieldValue.'">';
+			if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
+
+			$out.= '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 		}
 
 		return $out;

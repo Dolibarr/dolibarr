@@ -99,7 +99,6 @@ OfficialWiki=Dolibarr-documentatie / Wiki
 OtherResources=Andere bronnen
 ExternalResources=Externe Bronnen
 SocialNetworks=Sociale Netwerken
-ForDocumentationSeeWiki=Documentatie voor gebruikers of ontwikkelaars kunt u inzien door <br>te kijken op de Dolibarr Wiki-pagina's:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Hier zijn enkele bronnen voor hulp en ondersteuning bij Dolibarr.
 HelpCenterDesc2=Sommige van deze bronnen zijn alleen beschikbaar in het <b>Engels</b> .
 MeasuringUnit=Maateenheid

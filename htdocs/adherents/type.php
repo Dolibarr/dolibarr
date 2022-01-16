@@ -53,8 +53,8 @@ $status = GETPOST('status', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -292,7 +292,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->amount = $objp->amount;
 
 			print '<tr class="oddeven">';
-			print '<td>';
+			print '<td class="nowraponall">';
 			print $membertype->getNomUrl(1);
 			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 			print '</td>';
@@ -340,12 +340,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 	}
 }
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Creation mode                                                              */
-/*                                                                            */
-/* ************************************************************************** */
+// Creation
 if ($action == 'create') {
 	$object = new AdherentType($db);
 
@@ -416,11 +411,7 @@ if ($action == 'create') {
 	print "</form>\n";
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* View mode                                                                  */
-/*                                                                            */
-/* ************************************************************************** */
+// View
 if ($rowid > 0) {
 	if ($action != 'edit') {
 		$object = new AdherentType($db);
@@ -455,8 +446,9 @@ if ($rowid > 0) {
 		print yn($object->subscription);
 		print '</tr>';
 
+		// Amount
 		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
-		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print ((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
 		print '</tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';

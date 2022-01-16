@@ -61,8 +61,8 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 
 $newparam = '';
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -459,7 +459,7 @@ if ($mode == 'show_day') {
 
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 //$nav .= ' <input type="submit" class="button button-save" name="submitdateselect" value="'.$langs->trans("Refresh").'">';
-$nav .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+$nav .= '<button type="submit" class="liste_titre button_search valignmiddle" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 
 // Must be after the nav definition
 $paramnodate = $param;
@@ -581,7 +581,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
 
 	// Holiday calendar
-	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_holiday" name="check_holiday" class="check_holiday"><label for="check_holiday"> <span class="check_holiday_text">'.$langs->trans("Holidays").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" class="check_holiday"><label for="check_holiday"> <span class="check_holiday_text">'.$langs->trans("Holidays").'</span></label> &nbsp; </div>';
 
 	// External calendars
 	if (is_array($showextcals) && count($showextcals) > 0) {
@@ -612,12 +612,12 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" '.$default.'> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" '.$default.'> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
 		}
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Calendars from hooks
 	$parameters = array(); $object = null;
@@ -629,8 +629,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	}
 
 	$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
-} else // If javascript off
-{
+} else { // If javascript off
 	$newparam = $param; // newparam is for birthday links
 	$newparam = preg_replace('/showbirthday=[0-1]/i', 'showbirthday='.(empty($showbirthday) ? 1 : 0), $newparam);
 	if (!preg_match('/showbirthday=/i', $newparam)) {
@@ -722,7 +721,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
-	$sql .= ' AND a.fk_soc = '.$socid;
+	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) {

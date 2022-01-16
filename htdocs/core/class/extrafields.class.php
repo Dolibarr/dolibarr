@@ -925,6 +925,7 @@ class ExtraFields
 			// Old usage
 			$label = $this->attribute_label[$key];
 			$type = $this->attribute_type[$key];
+			$list = $this->attribute_list[$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
@@ -1946,8 +1947,8 @@ class ExtraFields
 				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) {
 					continue;
 				}
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && $this->attributes[$object->table_element]['type'][$key] != 'boolean') {
-					//when unticking boolean field, it's not set in POST
+
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
 					continue;
 				}
 

@@ -198,6 +198,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add non object fields to fields for list
 $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
+$arrayfields['c.assigned'] = array('label'=>$langs->trans("AssignedTo"), 'checked'=>-1, 'position'=>120);
 $arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'position'=> 116, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
 // Force some fields according to search_usage filter...
 if (GETPOST('search_usage_opportunity')) {
@@ -911,7 +912,7 @@ if (!empty($arrayfields['p.public']['checked'])) {
 // Opp status
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100');
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.opp_amount']['checked'])) {
@@ -931,6 +932,10 @@ if (!empty($arrayfields['opp_weighted_amount']['checked'])) {
 if (!empty($arrayfields['p.budget_amount']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
 	print '<input type="text" class="flat" name="search_budget_amount" size="4" value="'.$search_budget_amount.'">';
+	print '</td>';
+}
+if (!empty($arrayfields['c.assigned']['checked'])) {
+	print '<td class="liste_titre right">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
@@ -1003,7 +1008,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 		$arrayofstatus[$key] = $langs->trans($val);
 	}
 	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth150 selectarrowonleft');
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth125 selectarrowonleft');
 	print ajax_combobox('search_status');
 	print '</td>';
 }
@@ -1051,6 +1056,9 @@ if (!empty($arrayfields['opp_weighted_amount']['checked'])) {
 }
 if (!empty($arrayfields['p.budget_amount']['checked'])) {
 	print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['c.assigned']['checked'])) {
+	print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 }
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
 	print_liste_field_titre($arrayfields['p.usage_opportunity']['label'], $_SERVER["PHP_SELF"], 'p.usage_opportunity', "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1311,6 +1319,41 @@ while ($i < min($num, $limit)) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.budget_amount';
 			}
+		}
+		// Contacts of project
+		if (!empty($arrayfields['c.assigned']['checked'])) {
+			print '<td class="center">';
+			$ifisrt = 1;
+			foreach (array('internal', 'external') as $source) {
+				$tab = $object->liste_contact(-1, $source);
+				$numcontact = count($tab);
+				if (!empty($numcontact)) {
+					foreach ($tab as $contactproject) {
+						//var_dump($contacttask);
+						if ($source == 'internal') {
+							$c = new User($db);
+						} else {
+							$c = new Contact($db);
+						}
+						$c->fetch($contactproject['id']);
+						if (!empty($c->photo)) {
+							if (get_class($c) == 'User') {
+								print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+							} else {
+								print $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+							}
+						} else {
+							if (get_class($c) == 'User') {
+								print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+							} else {
+								print $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+							}
+						}
+						$ifisrt = 0;
+					}
+				}
+			}
+			print '</td>';
 		}
 		// Usage opportunity
 		if (!empty($arrayfields['p.usage_opportunity']['checked'])) {

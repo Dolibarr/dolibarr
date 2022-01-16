@@ -156,7 +156,7 @@ class DolEditor
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
-				$pluginstodisable = 'flash';
+				$pluginstodisable = 'elementspath,save,flash';
 				if (!empty($conf->dol_optimize_smallscreen)) {
 					$pluginstodisable .= ',scayt,wsc,find,undo';
 				}

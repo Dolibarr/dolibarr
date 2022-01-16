@@ -349,10 +349,11 @@ class CompanyBankAccount extends Account
 	/**
 	 * Set a BAN as Default
 	 *
-	 * @param   int     $rib    RIB id
-	 * @return  int             0 if KO, 1 if OK
+	 * @param   int     $rib    			RIB id
+	 * @param	string	$resetolddefaultfor	Reset if we have already a default value for type = 'ban'
+	 * @return  int             			0 if KO, 1 if OK
 	 */
-	public function setAsDefault($rib = 0)
+	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
 	{
 		$sql1 = "SELECT rowid as id, fk_soc FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
@@ -368,7 +369,10 @@ class CompanyBankAccount extends Account
 				$this->db->begin();
 
 				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
-				$sql2 .= " WHERE type = 'ban' AND fk_soc = ".((int) $obj->fk_soc);
+				$sql2 .= " WHERE fk_soc = ".((int) $obj->fk_soc);
+				if ($resetolddefaultfor) {
+					$sql2 .= " AND type = '".$this->db->escape($resetolddefaultfor)."'";
+				}
 				$result2 = $this->db->query($sql2);
 
 				$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1";
@@ -420,6 +424,6 @@ class CompanyBankAccount extends Account
 		$this->date_rum        = dol_now() - 10000;
 		$this->frstrecur       = 'FRST';
 
-		$this->socid = 0;
+		$this->socid           = 1;
 	}
 }

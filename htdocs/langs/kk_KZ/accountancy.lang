@@ -48,7 +48,7 @@ CountriesNotInEEC=ЕЭК -ке кірмейтін елдер
 CountriesInEECExceptMe=%s қоспағанда, ЕЭК елдері
 CountriesExceptMe=%s қоспағанда, барлық елдер
 AccountantFiles=Бастапқы құжаттарды экспорттау
-ExportAccountingSourceDocHelp=Бұл құралдың көмегімен сіз бухгалтерлік есепті құру үшін пайдаланылған бастапқы оқиғаларды (CSV және PDF форматындағы тізім) экспорттауға болады.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Журналдарды экспорттау үшін %s - %s мәзір жазбасын пайдаланыңыз.
 VueByAccountAccounting=Бухгалтерлік шот бойынша қарау
 VueBySubAccountAccounting=Бухгалтерлік қосалқы шот бойынша қарау
@@ -286,7 +286,7 @@ ValidateMovements=Қозғалыстарды растау
 DescValidateMovements=Жазуды, жазуды және жоюды кез келген өзгертуге немесе жоюға тыйым салынады. Жаттығуға арналған барлық жазбалар тексерілуі керек, әйтпесе жабу мүмкін болмайды
 
 ValidateHistory=Автоматты түрде байлау
-AutomaticBindingDone=Автоматты байланыстыру орындалды
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Қате, сіз бұл есептік жазбаны жоя алмайсыз, себебі ол пайдаланылады
 MvtNotCorrectlyBalanced=Қозғалыс дұрыс теңгерілмеген. Дебет = %s | Несие = %s
@@ -387,7 +387,8 @@ SaleExport=Экспорттық сату
 SaleEEC=ЕЭК -те сату
 SaleEECWithVAT=ЕЭК -те ҚҚС -мен сату нөлге тең емес, сондықтан біздің ойымызша бұл сатылымнан тыс сату емес және ұсынылған шот - бұл өнімнің стандартты шоты.
 SaleEECWithoutVATNumber=ЕЭК -те ҚҚС жоқ сату, бірақ үшінші тараптың ҚҚС идентификаторы анықталмаған. Біз стандартты сату бойынша өнім шотынан бас тартамыз. Қажет болса, үшінші тараптың ҚҚС идентификаторын немесе өнім шотын түзетуге болады.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Бухгалтерлік есептің диапазоны
 Calculated=Есептелген
@@ -404,6 +405,7 @@ NoJournalDefined=Журнал анықталмаған
 Binded=Жолдар байланған
 ToBind=Байланыстыратын жолдар
 UseMenuToSetBindindManualy=Сызықтар әлі байланыстырылмаған, <a href="%s"> %s </a> мәзірін қолданып байланыстыруды жасаңыз
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Бухгалтерлік жазбалар

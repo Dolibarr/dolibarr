@@ -359,11 +359,7 @@ class AssetType extends CommonObject
 				if (!array_key_exists($obj->rowid, $ret)) {
 					if ($mode < 2) {
 						$assetstatic = new Asset($this->db);
-						if ($mode == 1) {
-							$assetstatic->fetch($obj->rowid, '', '', '', false, false);
-						} else {
-							$assetstatic->fetch($obj->rowid);
-						}
+						$assetstatic->fetch($obj->rowid);
 						$ret[$obj->rowid] = $assetstatic;
 					} else {
 						$ret[$obj->rowid] = $obj->rowid;

@@ -165,7 +165,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
-			$morehtmlref .= $fuser->getNomUrl(0);
+			$morehtmlref .= $fuser->getNomUrl(-1);
 		}
 		if (!empty($object->origin_email)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';

@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Bold reference and period in PDF
+BoldLabelOnPDF=Bold label in PDF
 Foundation=Tổ chức
 Version=Phiên bản
 Publisher=Người xuất bản
@@ -265,8 +267,8 @@ OtherResources=Các tài nguyên khác
 ExternalResources=Tài nguyên bên ngoài
 SocialNetworks=Mạng xã hội
 SocialNetworkId=Social Network ID
-ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Dưới đây là một số tài nguyên để nhận trợ giúp và hỗ trợ với Dolibarr.
 HelpCenterDesc2=Một số tài nguyên này chỉ có sẵn bằng <b>tiếng Anh</b> .
 CurrentMenuHandler=Điều khiển menu hiện tại
@@ -353,6 +355,7 @@ LastStableVersion=Phiên bản ổn định mới nhất
 LastActivationDate=Ngày kích hoạt mới nhất
 LastActivationAuthor=Tác giả kích hoạt mới nhất
 LastActivationIP=IP kích hoạt mới nhất
+LastActivationVersion=Latest activation version
 UpdateServerOffline=Cập nhật server offline
 WithCounter=Quản lý bộ đếm
 GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
@@ -762,6 +765,7 @@ Permission121=Xem bên thứ ba liên quan đến người dùng
 Permission122=Tạo/chỉnh sửa bên thứ ba liên quan đến người dùng
 Permission125=Xóa bên thứ ba liên quan đến người dùng
 Permission126=Xuất dữ liệu bên thứ ba
+Permission130=Create/modify third parties payment information
 Permission141=Xem tất cả các dự án và nhiệm vụ (cũng là các dự án riêng mà tôi không phải là người liên lạc)
 Permission142=Tạo / sửa đổi tất cả các dự án và nhiệm vụ (cũng là các dự án riêng mà tôi không phải là người liên lạc)
 Permission144=Xóa tất cả các dự án và nhiệm vụ (cũng là các dự án riêng mà tôi không liên lạc)
@@ -1358,9 +1362,9 @@ BrowserIsOK=Bạn đang sử dụng trình duyệt web %s. Trình duyệt này l
 BrowserIsKO=Bạn đang sử dụng trình duyệt web %s. Trình duyệt này được biết đến là một lựa chọn xấu cho bảo mật, hiệu suất và độ tin cậy. Chúng tôi khuyên bạn nên sử dụng Firefox, Chrome, Opera hoặc Safari.
 PHPModuleLoaded=Thành phần PHP %s được tải
 PreloadOPCode=Tải sẵn OPCode được sử dụng
-AddRefInList=Hiển thị danh sách thông tin tham chiếu khách hàng/nhà cung cấp (chọn danh sách hoặc combobox) và hầu hết các siêu liên kết. <br> Các bên thứ ba sẽ xuất hiện với định dạng tên là "CC12345 - SC45678 - Công ty lớn." thay vì "Công ty lớn".
-AddVatInList=Display Customer/Vendor VAT number. info list (select list or combobox).
-AddAdressInList=Hiển thị danh sách thông tin địa chỉ khách hàng/nhà cung cấp (chọn danh sách hoặc hộp tổ hợp) <br> Các bên thứ ba sẽ xuất hiện với định dạng tên là "The Big Company corp. - 21 jump street 123456 Big town - USA" thay vì "The Big Company corp".
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@email.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=Yêu cầu phương thức vận chuyển ưa thích cho bên thứ ba.
 FieldEdition=Biên soạn của trường %s
@@ -1708,8 +1712,9 @@ MailingDelay=Số giây để chờ đợi sau khi gửi tin nhắn tiếp theo
 NotificationSetup=Thiết lập mô-đun thông báo email
 NotificationEMailFrom=Email người gửi (Từ) cho các email được gửi bởi mô-đun Thông báo
 FixedEmailTarget=Người nhận
-NotificationDisableConfirmMessageFix=Disable notification info in confirm message for fix notification
-NotificationDisableConfirmMessageUser=Disable notification info in confirm message for user notification
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=Thiết lập mô-đun vận chuyển
 SendingsReceiptModel=Mô hình biên nhận Gửi
@@ -1725,8 +1730,8 @@ FreeLegalTextOnDeliveryReceipts=Free text trên phiếu giao nhận
 ##### FCKeditor #####
 AdvancedEditor=Trình soạn thảo nâng cao
 ActivateFCKeditor=Kích hoạt trình soạn thảo nâng cao cho:
-FCKeditorForNotePublic=WYSIWIG creation/edition of the field public notes of elements
-FCKeditorForNotePrivate=WYSIWIG creation/edition of the field private notes of elements
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
 FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
@@ -1901,6 +1906,7 @@ ExpenseReportsRulesSetup=Thiết lập mô đun Báo cáo chi phí - Quy tắc
 ExpenseReportNumberingModules=Mô đun đánh số báo cáo chi phí
 NoModueToManageStockIncrease=Không có module có thể quản lý tăng tồn kho được kích hoạt. Tăng tồn kho sẽ chỉ được thực hiện thủ công.
 YouMayFindNotificationsFeaturesIntoModuleNotification=Bạn có thể tìm thấy các tùy chọn cho thông báo qua email bằng cách bật và định cấu hình mô-đun "Thông báo".
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=Danh sách thông báo tự động cho mỗi người dùng *
 ListOfNotificationsPerUserOrContact=Danh sách các thông báo tự động có thể có (về sự kiện kinh doanh) có sẵn cho mỗi người dùng * hoặc mỗi liên lạc **
 ListOfFixedNotifications=Danh sách thông báo cố định tự động
@@ -2209,3 +2215,7 @@ SkinAndColors=Skin and colors
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
 PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses

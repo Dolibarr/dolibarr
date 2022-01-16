@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Этот инструмент должен использоваться только опытными пользователями или разработчиками. Он предоставляет утилиты для создания или редактирования вашего собственного модуля. Документация по ручной разработке альтернативы <a href="%s" target="_blank">находится здесь</a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Введите имя модуля/приложения, которое нужно создать, без пробелов. Используйте прописные буквы для разделения слов (например: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Введите имя создаваемого объекта без пробелов. Используйте прописные буквы для разделения слов (например: MyObject, Student, Teacher ...). Будет сгенерирован файл класса CRUD, а также файл API, страницы для списка/добавления/редактирования/удаления объекта и файлы SQL.
 ModuleBuilderDesc2=Путь, по которому модули создаются/редактируются (первый каталог для внешних модулей, определенных в %s): <strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Меню, предоставляемые вашим моду
 DictionariesDefDescTooltip=Словари, предоставляемые вашим модулем / приложением, определены в массиве <strong> $ this-> dictionaries </strong> в файле дескриптора модуля. Вы можете редактировать этот файл вручную или использовать встроенный редактор. <br> <br> Примечание. После определения (и повторной активации модуля) словари также отображаются в области настройки для пользователей-администраторов на %s.
 PermissionsDefDescTooltip=Разрешения, предоставляемые вашим модулем / приложением, определены в массиве <strong> $ this-> rights </strong> в файле дескриптора модуля. Вы можете редактировать этот файл вручную или использовать встроенный редактор. <br> <br> Примечание. После определения (и повторной активации модуля) разрешения отображаются в настройках разрешений по умолчанию %s.
 HooksDefDesc=Определите в свойстве <b> module_parts ['hooks'] </b> в дескрипторе модуля контекст хуков, которыми вы хотите управлять (список контекстов можно найти, выполнив поиск в '<b> initHooks' файл перехвата для добавления кода ваших перехваченных функций (подключаемые функции можно найти, выполнив поиск по '<b> executeHooks </b>' в основном коде).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=См. Идентификаторы, используемые в вашей установке
 SeeReservedIDsRangeHere=См. Диапазон зарезервированных идентификаторов
 ToolkitForDevelopers=Инструментарий для разработчиков Dolibarr

@@ -40,6 +40,9 @@ class ActionsTicket
 	 */
 	public $db;
 
+	/**
+	 * @var Ticket Ticket
+	 */
 	public $dao;
 
 	public $mesg;

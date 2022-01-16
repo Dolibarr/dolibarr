@@ -111,8 +111,8 @@ class Workstation extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>512, 'notnull'=>-1, 'visible'=>-2,),
 		'nb_operators_required' => array('type'=>'integer', 'label'=>'NbOperatorsRequired', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
-		'thm_operator_estimated' => array('type'=>'double', 'help'=>'THMOperatorEstimatedHelp','label'=>'THMOperatorEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
-		'thm_machine_estimated' => array('type'=>'double', 'help'=>'THMMachineEstimatedHelp', 'label'=>'THMMachineEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'thm_operator_estimated' => array('type'=>'double', 'help'=>'THMOperatorEstimatedHelp','label'=>'THMOperatorEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right'),
+		'thm_machine_estimated' => array('type'=>'double', 'help'=>'THMMachineEstimatedHelp', 'label'=>'THMMachineEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right'),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Enabled'),),
 	);
 	public $rowid;
@@ -855,8 +855,8 @@ class Workstation extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		//if ($status == self::STATUS_CANCELED) $statusType = 'status6';
+		//if ($status == self::STATUS_DISABLED) $statusType = 'status6';
+		if ($status == self::STATUS_ENABLED) $statusType = 'status4';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}

@@ -165,6 +165,11 @@ class Task extends CommonObject
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 
+		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
+			$this->errors[] = $langs->trans('StartDateCannotBeAfterEndDate');
+			return -1;
+		}
+
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -382,6 +387,11 @@ class Task extends CommonObject
 		}
 		if (isset($this->budget_amount)) {
 			$this->budget_amount = trim($this->budget_amount);
+		}
+
+		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
+			$this->errors[] = $langs->trans('StartDateCannotBeAfterEndDate');
+			return -1;
 		}
 
 		// Check parameters

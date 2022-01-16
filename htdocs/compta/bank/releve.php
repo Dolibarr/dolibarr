@@ -78,8 +78,8 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && !empty($dvid)) 
 
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $pageplusone = GETPOST("pageplusone", 'int');
 if ($pageplusone) {
@@ -331,8 +331,8 @@ if (empty($numref)) {
 				} else {
 					print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';
-					print '<input type="submit" class="button" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
-					print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button small" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
+					print '<input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 				}
 				print '</td>';
 
@@ -347,7 +347,7 @@ if (empty($numref)) {
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, $conf->currency).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, empty($object->currency_code)?$conf->currency:$object->currency_code).'</span></td>';
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -360,11 +360,11 @@ if (empty($numref)) {
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, $conf->currency).'</span></td>';
+				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, empty($object->currency_code)?$conf->currency:$object->currency_code).'</span></td>';
 
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&token='.newToken().'&brref='.urlencode($objp->numr).'">'.img_edit().'</a>';
+					print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&token='.newToken().'&brref='.urlencode($objp->numr).'">'.img_edit().'</a>';
 				}
 				print '</td>';
 
@@ -669,6 +669,7 @@ if (empty($numref)) {
     		var current = $(this);
     		current.click(function()
     		{
+				console.log("We click on ajaxforbankoperationchange");
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
     			$.get(url, function(data)
     			{

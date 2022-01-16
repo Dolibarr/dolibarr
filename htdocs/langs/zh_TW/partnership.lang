@@ -19,7 +19,7 @@
 ModulePartnershipName=合作夥伴關係管理
 PartnershipDescription=合作夥伴管理模組
 PartnershipDescriptionLong= 合作夥伴管理模組
-
+Partnership=合夥
 AddPartnership=增加合作夥伴
 CancelPartnershipForExpiredMembers=合作夥伴：取消訂閱過期會員的合作關係
 PartnershipCheckBacklink=合作夥伴：檢查參考反向連結

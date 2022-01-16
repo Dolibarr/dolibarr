@@ -7,6 +7,5 @@ ShowVatPayment=Show GST payment
 CheckReceipt=Cheque deposit
 CheckReceiptShort=Cheque deposit
 NewCheckDeposit=New cheque deposit
-RulesResultInOut=- It includes the real payments made on invoices, expenses, GST and salaries. <br>- It is based on the payment dates of the invoices, expenses, GST and salaries. The donation date for donation.
 VATReportByCustomersInInputOutputMode=Report by the customer GST collected and paid
 CalculationRuleDesc=To calculate total GST, there is two methods:<br>Method 1 is rounding GST on each line, then summing them.<br>Method 2 is summing all GST on each line, then rounding result.<br>Final result may differs from few cents. Default mode is mode <b>%s</b>.

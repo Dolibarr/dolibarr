@@ -789,6 +789,15 @@ class BOM extends CommonObject
 		if (isset($this->label)) {
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$product = new Product($db);
+			$resultFetch = $product->fetch($this->fk_product);
+			if ($resultFetch > 0) {
+				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
+			}
+		}
+
 
 		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
 
