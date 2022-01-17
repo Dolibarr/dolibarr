@@ -4,7 +4,7 @@ DIRECTION=ltr
 # msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-FONTFORPDF=freemono
+FONTFORPDF=freeserif
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
@@ -212,6 +212,8 @@ User=பயனர்
 Users=பயனர்கள்
 Group=குழு
 Groups=குழுக்கள்
+UserGroup=User group
+UserGroups=User groups
 NoUserGroupDefined=பயனர் குழு வரையறுக்கப்படவில்லை
 Password=கடவுச்சொல்
 PasswordRetype=உங்கள் கடவுச்சொல்லை மீண்டும் தட்டச்சு செய்யவும்

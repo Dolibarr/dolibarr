@@ -275,7 +275,7 @@ dol_htmloutput_errors($mesg);
 
 print '<br>';
 
-print img_picto('', 'puce').' '.$langs->trans("DocForAllMembersCards", (!empty($conf->global->ADHERENT_CARD_TYPE) ? $conf->global->ADHERENT_CARD_TYPE : $langs->transnoentitiesnoconv("None"))).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForAllMembersCards", (!empty($conf->global->ADHERENT_CARD_TYPE) ? $conf->global->ADHERENT_CARD_TYPE : $langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="foruserid" value="all">';
@@ -289,12 +289,12 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 }
 asort($arrayoflabels);
 print $form->selectarray('modelcard', $arrayoflabels, (GETPOST('modelcard') ? GETPOST('modelcard') : (empty($conf->global->ADHERENT_CARD_TYPE) ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
-print '<br><input type="submit" class="button" value="'.$langs->trans("BuildDoc").'">';
+print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 print '<br><br>';
 
-print img_picto('', 'puce').' '.$langs->trans("DocForOneMemberCards", (!empty($conf->global->ADHERENT_CARD_TYPE) ? $conf->global->ADHERENT_CARD_TYPE : $langs->transnoentitiesnoconv("None"))).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForOneMemberCards", (!empty($conf->global->ADHERENT_CARD_TYPE) ? $conf->global->ADHERENT_CARD_TYPE : $langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="cardlogin">';
@@ -308,12 +308,12 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 asort($arrayoflabels);
 print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ?GETPOST('model') : (empty($conf->global->ADHERENT_CARD_TYPE) ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br>'.$langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
-print '<br><input type="submit" class="button" value="'.$langs->trans("BuildDoc").'">';
+print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 print '<br><br>';
 
-print img_picto('', 'puce').' '.$langs->trans("DocForLabels", (empty($conf->global->ADHERENT_ETIQUETTE_TYPE) ? '' : $conf->global->ADHERENT_ETIQUETTE_TYPE)).' ';
+print img_picto('', 'card').' '.$langs->trans("DocForLabels", (empty($conf->global->ADHERENT_ETIQUETTE_TYPE) ? '' : $conf->global->ADHERENT_ETIQUETTE_TYPE)).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="label">';
@@ -326,7 +326,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 }
 asort($arrayoflabels);
 print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : (empty($conf->global->ADHERENT_ETIQUETTE_TYPE) ? '' : $conf->global->ADHERENT_ETIQUETTE_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
-print '<br><input type="submit" class="button" value="'.$langs->trans("BuildDoc").'">';
+print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 
 // End of page

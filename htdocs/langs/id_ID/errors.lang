@@ -273,6 +273,7 @@ ErrorWrongFileName=Nama file tidak boleh memiliki __SOMETHING__ di dalamnya
 ErrorNotInDictionaryPaymentConditions=Tidak ada dalam Kamus Istilah Pembayaran, harap ubah.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parameter PHP Anda upload_max_filesize (%s) lebih tinggi dari parameter PHP post_max_size (%s). Ini bukan pengaturan yang konsisten.

@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Notă: proiectele existente cu 
 SelectLinesOfTimeSpentToInvoice=Selectează linii de timp consumat care nu sunt facturate, apoi iniţiază acțiunea în bloc "Generare factură" pentru a le factura
 ProjectTasksWithoutTimeSpent=Task-uri proiect fără timp consumat
 FormForNewLeadDesc=Vă mulțumim că aţi completat formularul pentru a ne contacta. De asemenea, ne puteți trimite un email direct la <b>%s</b>.
+StartDateCannotBeAfterEndDate=Data de sfârşit nu poate fi înaintea datei de început

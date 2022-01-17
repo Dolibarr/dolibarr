@@ -1441,7 +1441,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 		print 'class="';
 		print ($style1 ? $style1.' ' : '');
-		print 'onclickopenref'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
+		print 'onclickopenref center'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
 		print $string1;
 		print '</td><td ';
 		if ($style2 == 'peruser_notbusy') {
@@ -1451,7 +1451,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 		print 'class="';
 		print ($style2 ? $style2.' ' : '');
-		print 'onclickopenref'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
+		print 'onclickopenref center'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';

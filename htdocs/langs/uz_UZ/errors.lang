@@ -273,6 +273,7 @@ ErrorWrongFileName=Fayl nomida __SOMETHING__ bo'lishi mumkin emas
 ErrorNotInDictionaryPaymentConditions=To'lov shartlari lug'atida yo'q, iltimos o'zgartiring.
 ErrorIsNotADraft=%s qoralama emas
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP parametringiz upload_max_filesize (%s) PHP post_max_size (%s) parametridan yuqori. Bu izchil o'rnatish emas.
