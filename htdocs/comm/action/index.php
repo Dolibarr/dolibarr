@@ -570,7 +570,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		$s .= 'console.log("found parent div.dayevent with id = "+newval);'."\n";
 		$s .= 'var frm=jQuery("#searchFormList");'."\n";
 		$s .= 'var newurl = ui.item.find("a.cal_event").attr("href");'."\n";
-		$s .= 'console.log(newurl);'."\n";
+		$s .= 'console.log("Found url on href of a.cal_event"+newurl+", we submit form with actionmove=mupdate");'."\n";
 		$s .= 'frm.attr("action", newurl).children("#newdate").val(newval);frm.submit();}'."\n";
 		$s .= '});'."\n";
 	}
@@ -1393,7 +1393,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
-	print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
+	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
 	print ' <tr class="liste_titre">';
 	// Column title of weeks numbers
 	echo '  <td class="center">#</td>';
@@ -1482,7 +1482,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<input type="hidden" name="actionmove" value="mupdate">';
-	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
+	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?mode=show_month&'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 	print '<input type="hidden" name="newdate" id="newdate">';
 } elseif ($mode == 'show_week') {
 	// View by week
@@ -1502,7 +1502,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div></div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
-	print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
+	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
 	print ' <tr class="liste_titre">';
 	$i = 0;
 	while ($i < 7) {
@@ -1544,10 +1544,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	echo '<input type="hidden" name="actionmove" value="mupdate">';
-	echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
+	echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?mode=show_week&'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 	echo '<input type="hidden" name="newdate" id="newdate">';
-} else // View by day
-{
+} else { // View by day
 	$newparam = $param; // newparam is for birthday links
 	$newparam = preg_replace('/mode=show_month&?/i', '', $newparam);
 	$newparam = preg_replace('/mode=show_week&?/i', '', $newparam);
