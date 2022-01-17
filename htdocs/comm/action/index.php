@@ -107,10 +107,10 @@ $year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
 $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
 $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 $day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
-$pid = GETPOST("search_projectid", "int", 3) ?GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
-$status = GETPOST("search_status", 'aZ09') ?GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
-$type = GETPOST("search_type", 'aZ09') ?GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
-$maxprint = (isset($_GET["maxprint"]) ?GETPOST("maxprint") : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$pid = GETPOST("search_projectid", "int", 3) ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
+$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
+$type = GETPOSTISSET("search_type", 'aZ09') ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
+$maxprint = GETPOSTISSET("maxprint") ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
