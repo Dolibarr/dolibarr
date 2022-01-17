@@ -1000,7 +1000,7 @@ if ($action == 'create') {
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Full day
-	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
+	print '<tr><td><label for="fullday">'.$langs->trans("EventOnFullDay").'</label></td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
 	if (GETPOST('datep', 'int', 1)) {
@@ -1311,7 +1311,7 @@ if ($action == 'create') {
 	print '</table>';
 
 
-	if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER) {
+	if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
@@ -1336,10 +1336,11 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		//Mail Model
-		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
-		print '</td></tr>';
-
+		if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+			print '</td></tr>';
+		}
 
 		print '</table>';
 		print '</div>';
