@@ -94,7 +94,9 @@ function testSqlAndScriptInject($val, $type)
 	do {
 		$oldval = $val;
 		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
-		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+)/i', 'realCharForNumericEntities', $val); // Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
+		//$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $val); // Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
+		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
+			return realCharForNumericEntities($m); }, $val);
 	} while ($oldval != $val);
 	//print "after  decoding $val\n";
 
