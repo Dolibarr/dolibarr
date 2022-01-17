@@ -937,7 +937,7 @@ if ($action == 'create') {
                     $("#selectcomplete").change(function() {
                         if ($("#selectcomplete").val() == 100)
                         {
-                            if ($("#doneby").val() <= 0) $("#doneby").val(\''.$user->id.'\');
+                            if ($("#doneby").val() <= 0) $("#doneby").val(\''.((int) $user->id).'\');
                         }
                         if ($("#selectcomplete").val() == 0)
                         {
@@ -992,7 +992,8 @@ if ($action == 'create') {
 	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 		$default = (empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT) ? 'AC_RDV' : $conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
-		$formactions->select_type_actions(GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", 0, -1);
+		print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
+		print $formactions->select_type_actions(GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", -1, -1, 0, 1);
 		print '</td></tr>';
 	}
 
