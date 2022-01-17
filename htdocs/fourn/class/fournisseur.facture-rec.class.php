@@ -707,7 +707,7 @@ class FactureFournisseurRec extends CommonInvoice
         $sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det_rec as l';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-        $sql .= ' WHERE l.fk_facture_fourn = '. $this->id;
+        $sql .= ' WHERE l.fk_facture_fourn = '. (int) $this->id;
         $sql .= ' ORDER BY l.rang';
 
         dol_syslog('FactureFournisseurRec::fetch_lines', LOG_DEBUG);
