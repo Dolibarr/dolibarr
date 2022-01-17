@@ -236,7 +236,8 @@ if (empty($reshook)) {
 		}
 		if (!$error) {
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
-				if (!in_array($object->fk_user_author, $childids)) {
+				if (!in_array($object->fk_user_author, $childids)
+					&& !(!empty($user->rights->expensereport->readall) && !empty($user->rights->expensereport->approve) && !empty($user->admin))) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 				}
@@ -1364,7 +1365,8 @@ if ($action == 'create') {
 		$defaultselectuser = GETPOST('fk_user_author', 'int');
 	}
 	$include_users = 'hierarchyme';
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expensereport->writeall_advance)) {
+	if ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expensereport->writeall_advance))
+	|| (!empty($user->rights->expensereport->readall) && !empty($user->rights->expensereport->approve) && !empty($user->admin))) {
 		$include_users = array();
 	}
 	$s = $form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users, '', '0,'.$conf->entity);
