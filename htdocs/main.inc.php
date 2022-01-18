@@ -1585,7 +1585,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					}
 					// cssfile is a relative path
 					$urlforcss = dol_buildpath($cssfile, 1);
-					if ($urlforcss) {
+					if ($urlforcss && $urlforcss != '/') {
 						print '<!-- Includes CSS added by module '.$modcss.' -->'."\n".'<link rel="stylesheet" type="text/css" href="'.$urlforcss;
 						// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
 						if (!preg_match('/\.css$/i', $cssfile)) {
@@ -1734,7 +1734,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					foreach ($filesjs as $jsfile) {
 						// jsfile is a relative path
 						$urlforjs = dol_buildpath($jsfile, 1);
-						if ($urlforjs) {
+						if ($urlforjs && $urlforjs != '/') {
 							print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.$urlforjs.((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
 						} else {
 							dol_syslog("Warning: module ".$modjs." declared a js path file for a file we can't find.", LOG_WARNING);
