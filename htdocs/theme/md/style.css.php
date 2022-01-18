@@ -4464,7 +4464,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-td.widthpictotitle, .table-fiche-title .widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
+td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
