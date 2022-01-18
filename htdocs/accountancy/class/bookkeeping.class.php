@@ -1228,7 +1228,7 @@ class BookKeeping extends CommonObject
 				$obfilter['t.doc_date<'] = $filter['t.doc_date'];
 				unset($obfilter['t.doc_date']);
 			}
-			$num = $this->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $obfilter, $filtermode);
+			$this->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $obfilter, $filtermode);
 		}
 
 		$obarray = array();
