@@ -1217,14 +1217,14 @@ class BookKeeping extends CommonObject
 		// get opening balance using fetchAllBalance() using modified doc_date filter
 		if (count($filter) > 0) {
 			$obfilter = (new ArrayObject($filter))->getArrayCopy();
-			if(array_key_exists('t.doc_date<=', $filter)) {
+			if (array_key_exists('t.doc_date<=', $filter)) {
 				unset($obfilter['t.doc_date<=']);
 			}
-			if(array_key_exists('t.doc_date>=', $filter)) {
+			if (array_key_exists('t.doc_date>=', $filter)) {
 				$obfilter['t.doc_date<'] = $filter['t.doc_date>='];
 				unset($obfilter['t.doc_date>=']);
 			}
-			if(array_key_exists('t.doc_date', $filter)) {
+			if (array_key_exists('t.doc_date', $filter)) {
 				$obfilter['t.doc_date<'] = $filter['t.doc_date'];
 				unset($obfilter['t.doc_date']);
 			}
@@ -1232,7 +1232,7 @@ class BookKeeping extends CommonObject
 		}
 
 		$obarray = array();
-		foreach($this->lines as $line) {
+		foreach ($this->lines as $line) {
 			$obarray[$line->numero_compte] = $line->debit - $line->credit;
 		}
 

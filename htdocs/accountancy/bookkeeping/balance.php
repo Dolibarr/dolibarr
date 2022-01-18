@@ -186,7 +186,7 @@ if ($action == 'export_csv') {
 	$type_export = 'balance';
 	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
-	if(empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter);
 	} else {
 		$result = $object->fetchAllBalanceWithOpeningBalance($sortorder, $sortfield, $limit, 0, $filter);
@@ -198,7 +198,7 @@ if ($action == 'export_csv') {
 	foreach ($object->lines as $line) {
 		print '"'.length_accountg($line->numero_compte).'"'.$sep;
 		print '"'.$object->get_compte_desc($line->numero_compte).'"'.$sep;
-		if(!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '"'.price($line->opening_balance).'"'.$sep;
 		}
 		print '"'.price($line->debit).'"'.$sep;
@@ -220,7 +220,7 @@ if ($action != 'export_csv') {
 	// List
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-		if(empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
 		} else {
 			$nbtotalofrecords = $object->fetchAllBalanceWithOpeningBalance($sortorder, $sortfield, 0, 0, $filter);
@@ -230,7 +230,7 @@ if ($action != 'export_csv') {
 		}
 	}
 
-	if(empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter);
 	} else {
 		$result = $object->fetchAllBalanceWithOpeningBalance($sortorder, $sortfield, $limit, $offset, $filter);
