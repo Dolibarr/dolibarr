@@ -848,10 +848,6 @@ if ($resql) {
 		} else {
 			$event->date_end_in_calendar = $event->datep;
 		}
-		// Define ponctual property
-		if ($event->date_start_in_calendar == $event->date_end_in_calendar) {
-			$event->ponctuel = 1;
-		}
 
 		// Check values
 		if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar >= $lastdaytoshow)	{
@@ -945,7 +941,6 @@ if ($showbirthday) {
 
 			$event->date_start_in_calendar = $db->jdate($event->datep);
 			$event->date_end_in_calendar = $db->jdate($event->datef);
-			$event->ponctuel = 0;
 
 			// Add an entry in eventarray for each day
 			$daycursor = $event->datep;
@@ -1286,12 +1281,6 @@ if (count($listofextcals)) {
 						$event->date_end_in_calendar = $event->datef;
 					} else {
 						$event->date_end_in_calendar = $event->datep;
-					}
-
-					// Define ponctual property
-					if ($event->date_start_in_calendar == $event->date_end_in_calendar) {
-						$event->ponctuel = 1;
-						//print 'x'.$datestart.'-'.$dateend;exit;
 					}
 
 					// Add event into $eventarray if date range are ok.

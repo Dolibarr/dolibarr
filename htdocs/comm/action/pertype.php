@@ -683,10 +683,6 @@ if ($resql) {
 				$event->date_end_in_calendar = $datep;
 			}
 		}
-		// Define ponctual property
-		if ($event->date_start_in_calendar == $event->date_end_in_calendar) {
-			$event->ponctuel = 1;
-		}
 
 		// Check values
 		if ($event->date_end_in_calendar < $firstdaytoshow ||
