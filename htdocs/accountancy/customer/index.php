@@ -153,9 +153,9 @@ if ($action == 'validatehistory') {
 	$sql .= " co.code as country_code, co.label as country_label,";
 	$sql .= " s.tva_intra,";
 	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-		$sql .= " spe.accountancy_code_sell as company_code_sell";
+		$sql .= " spe.accountancy_code_sell as company_code_sell";	// accounting code for product but stored on thirdparty
 	} else {
-		$sql .= " s.accountancy_code_sell as company_code_sell";
+		$sql .= " s.accountancy_code_sell as company_code_sell";	// accounting code for product but stored on thirdparty
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
@@ -215,7 +215,7 @@ if ($action == 'validatehistory') {
 			$thirdpartystatic->email = $objp->email;
 			$thirdpartystatic->country_code = $objp->country_code;
 			$thirdpartystatic->tva_intra = $objp->tva_intra;
-			$thirdpartystatic->code_compta = $objp->company_code_sell;
+			$thirdpartystatic->code_compta_product = $objp->company_code_sell;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 			$product_static->ref = $objp->product_ref;
 			$product_static->id = $objp->product_id;

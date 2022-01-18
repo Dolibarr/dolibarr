@@ -475,6 +475,8 @@ print $hookmanager->resPrint;
 
 print "</tr>\n";
 
+$totalbuyingprice = 0;
+
 $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
@@ -567,6 +569,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			} else {
 				print '';
 			}
+			$totalbuyingprice += $objp->estimatedvalue;
 			print '</td>';
 
 			// Selling value
@@ -607,11 +610,15 @@ $parameters = array('sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
+$colspan = 8;
+if ($mode == 'future') {
+	$colspan++;
+}
+
+print '<tr class="liste_total"><td>'.$langs->trans("Totalforthispage").'</td>';
+print '<td></td><td></td><td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td><td></td><td></td><td></td><td></td></tr>';
+
 if (empty($date) || !$dateIsValid) {
-	$colspan = 8;
-	if ($mode == 'future') {
-		$colspan++;
-	}
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
 }
 

@@ -177,6 +177,9 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	outline: none;
 	margin: 0px 0px 0px 0px;
 	background-color: var(--inputbackgroundcolor);
+	<?php if (empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
+		border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	<?php } ?>
 }
 
 .liste_titre input, .liste_titre select {
@@ -189,7 +192,6 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 {
 	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	<?php
-	//$conf->global->THEME_ADD_BACKGROUND_ON_INPUT = 1;
 	if (!empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
@@ -377,6 +379,10 @@ a.butStatus {
 	color: var(--colortext) !important;
 	border: 2px solid var( --butactionbg) !important;
 	margin: 0 0.45em !important;
+}
+
+span.userimg.notfirst {
+	margin-left: -5px;
 }
 
 /* Used by timesheets */
@@ -1656,6 +1662,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
+	}
+
+	div.tabs div.tab a.tab  {
+		max-width: 200px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.quatrevingtpercent, .inputsearch {
@@ -3267,7 +3280,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 }
 
 .tabactive, a.tab#active {
-	color: var(--colortextbacktab); !important;
+	color: var(--colortextbacktab) !important;
 	background: var(--colorbacktabcard1) !important;
 	margin: 0 0.2em 0 0.2em !important;
 
@@ -3279,7 +3292,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid transparent;
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
-	border-bottom: 0px !important;*/
+	border-bottom: 0px !important;
 }
 a.tab:hover
 {

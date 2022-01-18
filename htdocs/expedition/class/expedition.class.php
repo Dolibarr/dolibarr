@@ -225,10 +225,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return next contract ref
+	 *	Return next expedition ref
 	 *
 	 *	@param	Societe		$soc	Thirdparty object
-	 *	@return string				Free reference for contract
+	 *	@return string				Free reference for expedition
 	 */
 	public function getNextNumRef($soc)
 	{
@@ -1460,6 +1460,7 @@ class Expedition extends CommonObject
 
 		// delete batch expedition line
 		if (!$error) {
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}

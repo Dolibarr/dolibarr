@@ -1013,7 +1013,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		jQuery("#prod_entry_mode_free").prop('checked',true).change();
 		jQuery("#prod_entry_mode_predef").prop('checked',false).change();
 		jQuery("#search_idprod, #idprod, #search_idprodfournprice, #buying_price").val('');
-		jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_fourn_ref, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
+		jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #multicurrency_price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_fourn_ref, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 		jQuery("#fournprice_predef").hide();
 	}
@@ -1032,7 +1032,17 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ht").val('').hide();
 			jQuery("#title_up_ht, #title_up_ht_currency").hide();
 		<?php } ?>
-		jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_fourn_ref, #title_vat, #title_up_ttc, #title_up_ttc_currency").hide();
+		<?php if (empty($conf->global->MAIN_ENABLE_EDIT_PREDEF_PRICETTC)) { ?>
+			jQuery("#price_ttc").val('').hide();
+			jQuery("#multicurrency_price_ttc").val('').hide();
+			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
+		<?php } else { /* this option work great with supplier invoices */ ?>
+			jQuery("#price_ttc").val('').show();
+			jQuery("#multicurrency_price_ttc").val('').show();
+			jQuery("#title_up_ttc, #title_up_ttc_currency").show();
+		<?php } ?>
+		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
+		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();

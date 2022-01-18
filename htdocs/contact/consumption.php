@@ -47,8 +47,8 @@ $socid = $object->thirdparty->id;
 
 // Sort & Order fields
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -122,7 +122,11 @@ print dol_get_fiche_head($head, 'consumption', $langs->trans("ContactsAddresses"
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref = '<div class="refidno">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= '</a>';
+
+$morehtmlref .= '<div class="refidno">';
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$objsoc->fetch($socid);
 	// Thirdparty

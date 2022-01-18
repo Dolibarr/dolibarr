@@ -168,6 +168,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;

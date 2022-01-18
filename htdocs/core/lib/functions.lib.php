@@ -1169,23 +1169,34 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
  */
 function dol_string_unaccent($str)
 {
+	global $conf;
+
 	if (utf8_check($str)) {
+		if (extension_loaded('intl') && !empty($conf->global->MAIN_UNACCENT_USE_TRANSLITERATOR)) {
+			$transliterator = \Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;', \Transliterator::FORWARD);
+			return $transliterator->transliterate($str);
+		}
 		// See http://www.utf8-chartable.de/
 		$string = rawurlencode($str);
 		$replacements = array(
 		'%C3%80' => 'A', '%C3%81' => 'A', '%C3%82' => 'A', '%C3%83' => 'A', '%C3%84' => 'A', '%C3%85' => 'A',
+		'%C3%87' => 'C',
 		'%C3%88' => 'E', '%C3%89' => 'E', '%C3%8A' => 'E', '%C3%8B' => 'E',
 		'%C3%8C' => 'I', '%C3%8D' => 'I', '%C3%8E' => 'I', '%C3%8F' => 'I',
+		'%C3%91' => 'N',
 		'%C3%92' => 'O', '%C3%93' => 'O', '%C3%94' => 'O', '%C3%95' => 'O', '%C3%96' => 'O',
+		'%C5%A0' => 'S',
 		'%C3%99' => 'U', '%C3%9A' => 'U', '%C3%9B' => 'U', '%C3%9C' => 'U',
+		'%C3%9D' => 'Y', '%C5%B8' => 'y',
 		'%C3%A0' => 'a', '%C3%A1' => 'a', '%C3%A2' => 'a', '%C3%A3' => 'a', '%C3%A4' => 'a', '%C3%A5' => 'a',
 		'%C3%A7' => 'c',
 		'%C3%A8' => 'e', '%C3%A9' => 'e', '%C3%AA' => 'e', '%C3%AB' => 'e',
 		'%C3%AC' => 'i', '%C3%AD' => 'i', '%C3%AE' => 'i', '%C3%AF' => 'i',
 		'%C3%B1' => 'n',
 		'%C3%B2' => 'o', '%C3%B3' => 'o', '%C3%B4' => 'o', '%C3%B5' => 'o', '%C3%B6' => 'o',
+		'%C5%A1' => 's',
 		'%C3%B9' => 'u', '%C3%BA' => 'u', '%C3%BB' => 'u', '%C3%BC' => 'u',
-		'%C3%BF' => 'y'
+		'%C3%BD' => 'y', '%C3%BF' => 'y'
 		);
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
@@ -1612,7 +1623,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
 /**
  *  Show tabs of a record
  *
- *	@param	array	$links				Array of tabs
+ *	@param	array	$links				Array of tabs. Note that label into $links[$i][1] must be already HTML escaped.
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
@@ -1697,8 +1708,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 
 		if ($i < $limittoshow || $isactive) {
-			// Add a new entry
-			$out .= '<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((!$isactive && !empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT)) ? ' hideonprint' : '').'"><!-- id tab = '.(empty($links[$i][2]) ? '' : $links[$i][2]).' -->';
+			// Output entry with a visible tab
+			$out .= '<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((!$isactive && !empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT)) ? ' hideonprint' : '').'"><!-- id tab = '.(empty($links[$i][2]) ? '' : dol_escape_htmltag($links[$i][2])).' -->';
 
 			if (isset($links[$i][2]) && $links[$i][2] == 'image') {
 				if (!empty($links[$i][0])) {
@@ -1710,7 +1721,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				//print "x $i $active ".$links[$i][2]." z";
 				$out .= '<div class="tab tab'.($isactive?'active':'unactive').'" style="margin: 0 !important">';
 				if (!empty($links[$i][0])) {
-					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
+					$titletoshow = preg_replace('/<.*$/', '', $links[$i][1]);
+					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
 				}
 				$out .= $links[$i][1];
 				if (!empty($links[$i][0])) {
@@ -1722,7 +1734,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 
 			$out .= '</div>';
 		} else {
-			// The popup with the other tabs
+			// Add entry into the combo popup with the other tabs
 			if (!$popuptab) {
 				$popuptab = 1;
 				$outmore .= '<div class="popuptabset wordwrap">'; // The css used to hide/show popup
@@ -1759,7 +1771,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 			$tabsname = str_replace("@", "", $picto);
 		}
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out .= '<a href="#" class="tab moretab inline-block tabunactive"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a>'; // Do not use "reposition" class in the "More".
+		$out .= '<div class="tab"><a href="#" class="tab moretab inline-block tabunactive"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
@@ -5317,7 +5329,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *      		                            'CT'=Round to Max for totals with Tax of foreign currency accuracy
  *											Numeric = Nb of digits for rounding (For example 2 for a percentage)
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
- * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
+ * 											Put 2 if you know that number is a user input (so we know we have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
  *											If conversion fails to return a numeric, it returns:
  *											- text unchanged or partial if ($rounding = ''): price2num('W9ç', '', 0)   => '9ç', price2num('W9ç', '', 1)   => 'W9ç', price2num('W9ç', '', 2)   => '9ç'

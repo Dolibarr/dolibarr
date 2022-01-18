@@ -568,6 +568,10 @@ a.butStatus {
 	margin: 0 0.45em !important;
 }
 
+span.userimg.notfirst {
+	margin-left: -5px;
+}
+
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
 	border: none;
@@ -1704,6 +1708,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.quatrevingtpercent, .inputsearch {
 		width: 95%;
+	}
+
+	div.tabs div.tab a.tab  {
+		max-width: 200px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	select {
@@ -4450,7 +4461,7 @@ table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
-.dolgraphchart canvas { 
+.dolgraphchart canvas {
 	/* width: calc(100% - 20px) !important; */
 }
 .legendColorBox, .legendLabel { border: none !important; }

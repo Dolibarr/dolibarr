@@ -95,7 +95,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_status = GETPOST('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 

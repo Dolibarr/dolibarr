@@ -187,6 +187,7 @@ class pdf_sponge extends ModelePDFFactures
 		//  Use new system for position of columns, view  $this->defineColumnField()
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -455,7 +456,7 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 				$tab_top += $extra_under_address_shift;
-				$tab_top_new_page += $extra_under_address_shift;
+				$tab_top_newpage += $extra_under_address_shift;
 
 
 				// Define heigth of table for lines (for first page)
@@ -881,10 +882,14 @@ class pdf_sponge extends ModelePDFFactures
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
+
+					// Fill $this->tva and $this->tva_array
 					if (!isset($this->tva[$vatrate])) {
 						$this->tva[$vatrate] = 0;
 					}
 					$this->tva[$vatrate] += $tvaligne;
+					$vatcode = $object->lines[$i]->vat_src_code;
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=>$tvaligne);
 
 					$nexY = max($nexY, $posYAfterImage);
 
@@ -1593,9 +1598,8 @@ class pdf_sponge extends ModelePDFFactures
 				}
 				//}
 
-				// VAT
-				// Situations totals migth be wrong on huge amounts
-				if ($object->situation_cycle_ref && $object->situation_counter > 1) {
+				// Situations totals migth be wrong on huge amounts with old mode 1
+				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1 && $object->situation_cycle_ref && $object->situation_counter > 1) {
 					$sum_pdf_tva = 0;
 					foreach ($this->tva as $tvakey => $tvaval) {
 						$sum_pdf_tva += $tvaval; // sum VAT amounts to compare to object
@@ -1612,10 +1616,14 @@ class pdf_sponge extends ModelePDFFactures
 						foreach ($this->tva as $tvakey => $tvaval) {
 							$this->tva[$tvakey] = $tvaval * $coef_fix_tva;
 						}
+						foreach ($this->tva_array as $tvakey => $tvaval) {
+							$this->tva_array[$tvakey]['amount'] = $tvaval['amount'] * $coef_fix_tva;
+						}
 					}
 				}
 
-				foreach ($this->tva as $tvakey => $tvaval) {
+				// VAT
+				foreach ($this->tva_array as $tvakey => $tvaval) {
 					if ($tvakey != 0) {    // On affiche pas taux 0
 						$this->atleastoneratenotnull++;
 
@@ -1629,11 +1637,17 @@ class pdf_sponge extends ModelePDFFactures
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
 						$totalvat .= ' ';
-						$totalvat .= vatrate($tvakey, 1).$tvacompl;
+						if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
+							$totalvat .= vatrate($tvaval['vatrate'], 1).$tvacompl;
+						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
+							$totalvat .= ($tvaval['vatcode'] ? $tvaval['vatcode'] : vatrate($tvaval['vatrate'], 1)).$tvacompl;
+						} else {
+							$totalvat .= vatrate($tvaval['vatrate'], 1).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
+						}
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($tvaval['amount'], 'MT'), 0, $outputlangs), 0, 'R', 1);
 					}
 				}
 

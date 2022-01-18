@@ -735,9 +735,9 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		print '</td>';
 		print '<td colspan="2">';
 		if ($object->multiprices_base_type[$soc->price_level] == 'TTC') {
-			print price($object->multiprices_ttc[$soc->price_level]);
+			print '<span class="amount">'.price($object->multiprices_ttc[$soc->price_level]).'</span>';
 		} else {
-			print price($object->multiprices[$soc->price_level]);
+			print '<span class="amount">'.price($object->multiprices[$soc->price_level]).'</span>';
 		}
 		if ($object->multiprices_base_type[$soc->price_level]) {
 			print ' '.$langs->trans($object->multiprices_base_type[$soc->price_level]);
@@ -892,15 +892,15 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			print '</td>';
 
 			if ($object->multiprices_base_type [$i] == 'TTC') {
-				print '<td style="text-align: right">'.price($object->multiprices_ttc[$i]);
+				print '<td class="right"><span class="amount">'.price($object->multiprices_ttc[$i]);
 			} else {
-				print '<td style="text-align: right">'.price($object->multiprices[$i]);
+				print '<td class="right"><span class="amount">'.price($object->multiprices[$i]);
 			}
 
 			if ($object->multiprices_base_type[$i]) {
-				print ' '.$langs->trans($object->multiprices_base_type [$i]).'</td>';
+				print ' '.$langs->trans($object->multiprices_base_type [$i]).'</span></td>';
 			} else {
-				print ' '.$langs->trans($object->price_base_type).'</td>';
+				print ' '.$langs->trans($object->price_base_type).'</span></td>';
 			}
 
 			// Prix min
@@ -1671,8 +1671,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-	$sortfield = GETPOST("sortfield", 'alpha');
-	$sortorder = GETPOST("sortorder", 'alpha');
+	$sortfield = GETPOST('sortfield', 'aZ09comma');
+	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 	if (empty($page) || $page == -1) {
 		$page = 0;

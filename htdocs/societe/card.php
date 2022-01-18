@@ -1771,10 +1771,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (GETPOSTISSET('name')) {
 				// We overwrite with values if posted
 				$object->name = GETPOST('name', 'alphanohtml');
-				$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
+				$object->name_alias = GETPOST('name_alias', 'alphanohtml');
+				$object->prefix_comm = GETPOST('prefix_comm', 'alphanohtml');
 				$object->client = GETPOST('client', 'int');
-				$object->code_client			= GETPOST('customer_code', 'alpha');
-				$object->fournisseur			= GETPOST('fournisseur', 'int');
+				$object->code_client = GETPOST('customer_code', 'alpha');
+				$object->fournisseur = GETPOST('fournisseur', 'int');
 				$object->code_fournisseur = GETPOST('supplier_code', 'alpha');
 				$object->address = GETPOST('address', 'alphanohtml');
 				$object->zip = GETPOST('zipcode', 'alphanohtml');

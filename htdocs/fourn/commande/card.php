@@ -8,7 +8,8 @@
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022      Charlene Benke        <charlene@patas-monkey.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -852,6 +853,8 @@ if (empty($reshook)) {
 
 		$result = $object->deleteline($lineid);
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -1211,13 +1214,17 @@ if (empty($reshook)) {
 			if (!$error) {
 				// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (!empty($origin) && !empty($originid)) {
+					$element = $subelement = $origin;
+					$classname = ucfirst($subelement);
 					if ($origin == 'propal' || $origin == 'proposal') {
-						$classname = 'Propal';
 						$element = 'comm/propal'; $subelement = 'propal';
-					} elseif ($origin == 'order' || $origin == 'commande') {
-						$classname = 'Commande';
+						$classname = 'Propal';
+					}
+					if ($origin == 'order' || $origin == 'commande') {
 						$element = $subelement = 'commande';
-					} else {
+						$classname = 'Commande';
+					}
+					if ($origin == 'supplier_proposal') {
 						$classname = 'SupplierProposal';
 						$element = 'supplier_proposal';
 						$subelement = 'supplier_proposal';
@@ -1529,6 +1536,7 @@ if ($action == 'create') {
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$classname = ucfirst($subelement);
 		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 			$element = $regs[1];
@@ -1538,14 +1546,18 @@ if ($action == 'create') {
 		if ($origin == 'propal' || $origin == 'proposal') {
 			$classname = 'Propal';
 			$element = 'comm/propal'; $subelement = 'propal';
-		} elseif ($origin == 'order' || $origin == 'commande') {
+		}
+		if ($origin == 'order' || $origin == 'commande') {
 			$classname = 'Commande';
 			$element = $subelement = 'commande';
-		} else {
+		}
+		if ($origin == 'supplier_proposal') {
 			$classname = 'SupplierProposal';
 			$element = 'supplier_proposal';
 			$subelement = 'supplier_proposal';
 		}
+
+
 
 		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 

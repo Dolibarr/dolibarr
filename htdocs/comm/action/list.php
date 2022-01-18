@@ -105,8 +105,8 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
@@ -876,6 +876,8 @@ while ($i < min($num, $limit)) {
 	$actionstatic->label = $obj->label;
 	$actionstatic->location = $obj->location;
 	$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
+	$actionstatic->datep = $db->jdate($obj->dp);
+	$actionstatic->percentage = $obj->percent;
 
 	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
 	// but only if we need it
@@ -948,16 +950,7 @@ while ($i < min($num, $limit)) {
 		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
 		$late = 0;
-		if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) {
-			$late = 1;
-		}
-		if ($obj->percent == 0 && !$obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) {
-			$late = 1;
-		}
-		if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && $db->jdate($obj->dp2) < ($now - $delay_warning)) {
-			$late = 1;
-		}
-		if ($obj->percent > 0 && $obj->percent < 100 && !$obj->dp2 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) {
+		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
 			$late = 1;
 		}
 		if ($late) {

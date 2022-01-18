@@ -1793,14 +1793,14 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param		array	$array_options		extrafields array
 	 * 	@param 		string	$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @param      int     $origin_id          id origin document
-	 *  @param		double	$pu_ht_devise		Amount in currency
+	 *  @param		double	$pu_devise			Amount in currency
 	 *  @param		string	$ref_supplier		Supplier ref
 	 *  @param      string  $special_code       Special code
 	 *  @param		int		$fk_parent_line		Parent line id
 	 *  @param    	int		$fk_remise_except	Id discount used
 	 *	@return    	int             			>0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = false, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_ht_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = false, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
 	{
 		global $langs, $mysoc, $conf;
 
@@ -1906,7 +1906,7 @@ class FactureFournisseur extends CommonInvoice
 				$product_type = $type;
 			}
 
-			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
+			if (!empty($conf->multicurrency->enabled) && $pu_devise > 0) {
 				$pu = 0;
 			}
 
@@ -1925,7 +1925,7 @@ class FactureFournisseur extends CommonInvoice
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -2052,21 +2052,21 @@ class FactureFournisseur extends CommonInvoice
 	 * @param      	integer     $date_end       	Date end of service
 	 * @param		array		$array_options		extrafields array
 	 * @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * @param		double		$pu_ht_devise		Amount in currency
+	 * @param		double		$pu_devise			Amount in currency
 	 * @param		string		$ref_supplier		Supplier ref
 	 * @return    	int           					<0 if KO, >0 if OK
 	 */
-	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
+	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_devise = 0, $ref_supplier = '')
 	{
 		global $mysoc, $langs;
 
-		dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$notrigger,$date_start,$date_end,$fk_unit,$pu_ht_devise,$ref_supplier", LOG_DEBUG);
+		dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$notrigger,$date_start,$date_end,$fk_unit,$pu_devise,$ref_supplier", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		$pu = price2num($pu);
 		$qty = price2num($qty);
 		$remise_percent = price2num($remise_percent);
-		$pu_ht_devise = price2num($pu_ht_devise);
+		$pu_devise = price2num($pu_devise);
 
 		// Check parameters
 		//if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
@@ -2110,7 +2110,7 @@ class FactureFournisseur extends CommonInvoice
 			$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
 		}
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -2414,19 +2414,20 @@ class FactureFournisseur extends CommonInvoice
 		// phpcs:enable
 		global $conf, $langs;
 
-		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
+		$clause = " WHERE";
+
+		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut, ff.total_ht';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc";
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
+			$clause = " AND";
 		}
-		$sql .= ' WHERE ff.paye=0';
+		$sql .= $clause.' ff.paye=0';
 		$sql .= ' AND ff.fk_statut = '.self::STATUS_VALIDATED;
 		$sql .= " AND ff.entity = ".$conf->entity;
 		if ($user->socid) {
 			$sql .= ' AND ff.fk_soc = '.((int) $user->socid);
-		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -2445,16 +2446,18 @@ class FactureFournisseur extends CommonInvoice
 			$facturestatic = new FactureFournisseur($this->db);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
 				$facturestatic->date_echeance = $this->db->jdate($obj->datefin);
 				$facturestatic->statut = $obj->fk_statut;
+
+				$response->nbtodo++;
+				$response->total += $obj->total_ht;
 
 				if ($facturestatic->hasDelay()) {
 					$response->nbtodolate++;
 					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?search_option=late&mainmenu=billing&leftmenu=suppliers_bills';
 				}
 			}
+
 			$this->db->free($resql);
 			return $response;
 		} else {

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,14 +91,19 @@ $search_fk_projet=GETPOST("search_fk_projet", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
 
+// Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 if (!$sortfield) {
 	$sortfield = "m.datem";
 }
@@ -110,8 +115,10 @@ $pdluoid = GETPOST('pdluoid', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new MouvementStock($db);
-$hookmanager->initHooks(array('movementlist'));
 $extrafields = new ExtraFields($db);
+$diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('movementlist'));
+
 $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
@@ -151,6 +158,8 @@ if (!$user->rights->stock->mouvement->lire) {
 	accessforbidden();
 }
 
+$uploaddir = $conf->stock->dir_output.'/movements';
+
 $permissiontoread = $user->rights->stock->mouvement->lire;
 $permissiontoadd = $user->rights->stock->mouvement->creer;
 $permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we shoul dnever delete
@@ -167,7 +176,8 @@ $error = 0;
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -180,9 +190,10 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	// Do we click on purge search criteria ?
+	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 		$search_date_startday = '';
 		$search_date_startmonth = '';
@@ -207,11 +218,92 @@ if (empty($reshook)) {
 		$toselect = '';
 		$search_array_options = array();
 	}
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
+		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
+		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+	}
 
 	// Mass actions
 	$objectclass = 'MouvementStock';
 	$objectlabel = 'MouvementStock';
-	$uploaddir = $conf->stock->dir_output;
+
+	if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('button_search')) {
+		if (empty($diroutputmassaction)) {
+			dol_print_error(null, 'include of actions_massactions.inc.php is done but var $diroutputmassaction was not defined');
+			exit;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		$objecttmp = new $objectclass($db);
+		$listofobjectid = array();
+		foreach ($toselect as $toselectid) {
+			$objecttmp = new $objectclass($db); // must create new instance because instance is saved into $listofobjectref array for future use
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$listofobjectid[$toselectid] = $toselectid;
+			}
+		}
+
+		$arrayofinclusion = array();
+		foreach ($listofobjectref as $tmppdf) {
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
+		}
+		foreach ($listofobjectref as $tmppdf) {
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9-_]+\.pdf$'; // To include PDF generated from ODX files
+		}
+		$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
+
+		// Define output language (Here it is not used because we do only merging existing PDF)
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		//elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
+		//	$newlang = $objecttmp->thirdparty->default_lang;
+		//}
+		if (!empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+
+		// Create output dir if not exists
+		dol_mkdir($diroutputmassaction);
+
+		// Defined name of merged file
+		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename = preg_replace('/\s/', '_', $filename);
+
+		// Save merged file
+		/*
+		 if ($year) {
+		 $filename .= '_'.$year;
+		 }
+		 if ($month) {
+		 $filename .= '_'.$month;
+		 }
+		 */
+		$now = dol_now();
+		$file = $diroutputmassaction.'/'.$filename.'_'.dol_print_date($now, 'dayhourlog').'.pdf';
+
+
+		// Create PDF
+		// TODO Create the pdf including list of movement ids found into $listofobjectid
+		// ...
+
+
+		if (!$error) {
+			$langs->load("exports");
+			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
+		}
+
+		$massaction = '';
+		$action = '';
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -480,6 +572,8 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tosell, p.tobuy, p.tobatch, p.fk_product_type as type, p.entity,";
 $sql .= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
 $sql .= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
@@ -497,7 +591,8 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
+$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql .= " ".MAIN_DB_PREFIX."product as p,";
 $sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
@@ -570,6 +665,31 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+/* If a group by is required
+ $sql .= " GROUP BY ";
+ foreach($object->fields as $key => $val) {
+ $sql .= "t.".$key.", ";
+ }
+ // Add fields from extrafields
+ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+ foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+ $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
+ }
+ }
+ // Add where from hooks
+ $parameters = array();
+ $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
+ $sql .= $hookmanager->resPrint;
+ $sql = preg_replace('/,\s*$/', '', $sql);
+ */
+
+// Add HAVING from hooks
+/*
+ $parameters = array();
+ $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+ */
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -587,19 +707,18 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 	$db->free($resql);
 }
 
+// Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
-
-//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -622,20 +741,24 @@ if ($id > 0 || $ref) {
 
 $num = $db->num_rows($resql);
 
-$arrayofselected = is_array($toselect) ? $toselect : array();
 
+// Output page
+// --------------------------------------------------------------------
 
 $i = 0;
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 if ($msid) {
-	$texte = $langs->trans('StockMovementForId', $msid);
+	$title = $langs->trans('StockMovementForId', $msid);
 } else {
-	$texte = $langs->trans("ListOfStockMovements");
+	$title = $langs->trans("ListOfStockMovements");
 	if ($id) {
-		$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
+		$title .= ' ('.$langs->trans("ForThisWarehouse").')';
 	}
 }
-llxHeader("", $texte, $help_url);
+
+llxHeader('', $title, $help_url);
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 /*
  * Show tab only if we ask a particular warehouse
@@ -772,26 +895,20 @@ if ($object->id > 0) {
 }
 
 
-/*
- * Correct stock
- */
+// Correct stock
 if ($action == "correction") {
 	include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
 	print '<br>';
 }
 
-/*
- * Transfer of units
- */
+// Transfer of units
 if ($action == "transfert") {
 	include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 	print '<br>';
 }
 
 
-/*
- * Action bar
- */
+// Action bar
 if ((empty($action) || $action == 'list') && $id > 0) {
 	print "<div class=\"tabsAction\">\n";
 
@@ -865,12 +982,11 @@ if ($idproduct > 0) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
-$arrayofmassactions = array(
-	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-//    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-);
-// By default, we should never accept deletion of stock movement.
+$arrayofmassactions = array();
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	$arrayofmassactions['builddoc'] = img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("GeneratePDF");
+}
+// By default, we should never accept deletion of stock movement
 if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
@@ -879,7 +995,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -889,15 +1005,16 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 if ($id > 0) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 }
 
 if ($id > 0) {
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
 } else {
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
 }
 
 // Add code for pre mass action (confirmation or email presend form)
@@ -917,7 +1034,7 @@ if ($sall) {
 $moreforfilter = '';
 
 $parameters = array('arrayfields'=>&$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -932,12 +1049,14 @@ if (!empty($moreforfilter)) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
-print '<tr class="liste_titre_filter">';
+// --------------------------------------------------------------------
+print '<tr class="liste_titre">';
 if (!empty($arrayfields['m.rowid']['checked'])) {
 	// Ref
 	print '<td class="liste_titre left">';
@@ -1050,7 +1169,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['m.datec']['checked'])) {
@@ -1062,13 +1181,16 @@ if (!empty($arrayfields['m.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-// Actions
+// Action column
 print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
+$searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
-print "</tr>\n";
+print '</tr>'."\n";
 
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['m.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['m.rowid']['label'], $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
@@ -1125,7 +1247,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['m.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -1133,52 +1255,77 @@ if (!empty($arrayfields['m.datec']['checked'])) {
 if (!empty($arrayfields['m.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
+// Action column
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-print "</tr>\n";
+print '</tr>'."\n";
 
 
 $arrayofuniqueproduct = array();
 
+
+// Loop on record
+// --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < min($num, $limit)) {
-	$objp = $db->fetch_object($resql);
+while ($i < ($limit ? min($num, $limit) : $num)) {
+	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
 
-	$userstatic->id = $objp->fk_user_author;
-	$userstatic->login = $objp->login;
-	$userstatic->lastname = $objp->lastname;
-	$userstatic->firstname = $objp->firstname;
-	$userstatic->photo = $objp->photo;
-	$userstatic->email = $objp->user_email;
-	$userstatic->statut = $objp->user_status;
+	$userstatic->id = $obj->fk_user_author;
+	$userstatic->login = $obj->login;
+	$userstatic->lastname = $obj->lastname;
+	$userstatic->firstname = $obj->firstname;
+	$userstatic->photo = $obj->photo;
+	$userstatic->email = $obj->user_email;
+	$userstatic->statut = $obj->user_status;
 
-	$productstatic->id = $objp->rowid;
-	$productstatic->ref = $objp->product_ref;
-	$productstatic->label = $objp->produit;
-	$productstatic->type = $objp->type;
-	$productstatic->entity = $objp->entity;
-	$productstatic->status = $objp->tosell;
-	$productstatic->status_buy = $objp->tobuy;
-	$productstatic->status_batch = $objp->tobatch;
+	// Multilangs
+	if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+		// TODO Use a cache
+		$sql = "SELECT label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+		$sql .= " WHERE fk_product = ".((int) $obj->rowid);
+		$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
+		$sql .= " LIMIT 1";
 
-	$productlot->id = $objp->lotid;
-	$productlot->batch = $objp->batch;
-	$productlot->eatby = $objp->eatby;
-	$productlot->sellby = $objp->sellby;
+		$result = $db->query($sql);
+		if ($result) {
+			$objtp = $db->fetch_object($result);
+			if (!empty($objtp->label)) {
+				$obj->produit = $objtp->label;
+			}
+		}
+	}
 
-	$warehousestatic->id = $objp->entrepot_id;
-	$warehousestatic->ref = $objp->warehouse_ref;
-	$warehousestatic->label = $objp->warehouse_ref;
-	$warehousestatic->lieu = $objp->lieu;
-	$warehousestatic->fk_parent = $objp->fk_parent;
-	$warehousestatic->statut = $objp->statut;
+	$productstatic->id = $obj->rowid;
+	$productstatic->ref = $obj->product_ref;
+	$productstatic->label = $obj->produit;
+	$productstatic->type = $obj->type;
+	$productstatic->entity = $obj->entity;
+	$productstatic->status = $obj->tosell;
+	$productstatic->status_buy = $obj->tobuy;
+	$productstatic->status_batch = $obj->tobatch;
 
-	$movement->type = $objp->type_mouvement;
+	$productlot->id = $obj->lotid;
+	$productlot->batch = $obj->batch;
+	$productlot->eatby = $obj->eatby;
+	$productlot->sellby = $obj->sellby;
 
-	$arrayofuniqueproduct[$objp->rowid] = $objp->produit;
-	if (!empty($objp->fk_origin)) {
-		$origin = $movement->get_origin($objp->fk_origin, $objp->origintype);
+	$warehousestatic->id = $obj->entrepot_id;
+	$warehousestatic->ref = $obj->warehouse_ref;
+	$warehousestatic->label = $obj->warehouse_ref;
+	$warehousestatic->lieu = $obj->lieu;
+	$warehousestatic->fk_parent = $obj->fk_parent;
+	$warehousestatic->statut = $obj->statut;
+
+	$movement->type = $obj->type_mouvement;
+
+	$arrayofuniqueproduct[$obj->rowid] = $obj->produit;
+	if (!empty($obj->fk_origin)) {
+		$origin = $movement->get_origin($obj->fk_origin, $obj->origintype);
 	} else {
 		$origin = '';
 	}
@@ -1188,12 +1335,12 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['m.rowid']['checked'])) {
 		print '<td>';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
-		print $objp->mid;
+		print $obj->mid;
 		print '</td>'; // This is primary not movement id
 	}
 	if (!empty($arrayfields['m.datem']['checked'])) {
 		// Date
-		print '<td class="nowraponall center">'.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel').'</td>';
+		print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datem), 'dayhour', 'tzuserrel').'</td>';
 	}
 	if (!empty($arrayfields['p.ref']['checked'])) {
 		// Product ref
@@ -1217,10 +1364,10 @@ while ($i < min($num, $limit)) {
 		print '</td>';
 	}
 	if (!empty($arrayfields['pl.eatby']['checked'])) {
-		print '<td class="center">'.dol_print_date($objp->eatby, 'day').'</td>';
+		print '<td class="center">'.dol_print_date($obj->eatby, 'day').'</td>';
 	}
 	if (!empty($arrayfields['pl.sellby']['checked'])) {
-		print '<td class="center">'.dol_print_date($objp->sellby, 'day').'</td>';
+		print '<td class="center">'.dol_print_date($obj->sellby, 'day').'</td>';
 	}
 	// Warehouse
 	if (!empty($arrayfields['e.ref']['checked'])) {
@@ -1236,11 +1383,11 @@ while ($i < min($num, $limit)) {
 	}
 	if (!empty($arrayfields['m.inventorycode']['checked'])) {
 		// Inventory code
-		print '<td><a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$objp->inventorycode.'$').'&search_type_mouvement='.urlencode($objp->type_mouvement).'">'.$objp->inventorycode.'</a></td>';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'&search_type_mouvement='.urlencode($obj->type_mouvement).'">'.$obj->inventorycode.'</a></td>';
 	}
 	if (!empty($arrayfields['m.label']['checked'])) {
 		// Label of movement
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.$objp->label.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.$obj->label.'</td>';
 	}
 	if (!empty($arrayfields['origin']['checked'])) {
 		// Origin of movement
@@ -1249,8 +1396,8 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['m.fk_projet']['checked'])) {
 		// fk_project
 		print '<td>';
-		if ($objp->fk_project != 0) {
-			print $movement->get_origin($objp->fk_project, 'project');
+		if ($obj->fk_project != 0) {
+			print $movement->get_origin($obj->fk_project, 'project');
 		}
 		print '</td>';
 	}
@@ -1263,14 +1410,14 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['m.value']['checked'])) {
 		// Qty
 		print '<td class="right">';
-		if ($objp->qty > 0) {
+		if ($obj->qty > 0) {
 			print '<span class="stockmovemententry">';
 			print '+';
-			print $objp->qty;
+			print $obj->qty;
 			print '</span>';
 		} else {
 			print '<span class="stockmovementexit">';
-			print $objp->qty;
+			print $obj->qty;
 			print '</span>';
 		}
 		print '</td>';
@@ -1278,8 +1425,8 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['m.price']['checked'])) {
 		// Price
 		print '<td class="right">';
-		if ($objp->price != 0) {
-			print price($objp->price);
+		if ($obj->price != 0) {
+			print price($obj->price);
 		}
 		print '</td>';
 	}
@@ -1287,25 +1434,26 @@ while ($i < min($num, $limit)) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'objp'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
-	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	// Action column
 	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
-		if (in_array($objp->mid, $arrayofselected)) {
+		if (in_array($obj->mid, $arrayofselected)) {
 			$selected = 1;
 		}
-		print '<input id="cb'.$objp->mid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$objp->mid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '<input id="cb'.$obj->mid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->mid.'"'.($selected ? ' checked="checked"' : '').'>';
 	}
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
-	print "</tr>\n";
+	print '</tr>'."\n";
+
 	$i++;
 }
 
@@ -1343,6 +1491,26 @@ if (count($arrayofuniqueproduct) == 1 && is_numeric($year)) {
 	print ': '.$balanceafter;
 	print "<br>\n";
 	//print '</td></tr>';
+}
+
+if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	$hidegeneratedfilelistifempty = 1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+		$hidegeneratedfilelistifempty = 0;
+	}
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+	$formfile = new FormFile($db);
+
+	// Show list of available documents
+	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource .= str_replace('&amp;', '&', $param);
+
+	$filedir = $diroutputmassaction;
+	$genallowed = $permissiontoread;
+	$delallowed = $permissiontoadd;
+
+	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page
