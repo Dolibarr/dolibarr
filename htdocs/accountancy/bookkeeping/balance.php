@@ -186,7 +186,11 @@ if ($action == 'export_csv') {
 	$type_export = 'balance';
 	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
-	$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter);
+	if(empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter);
+	} else {
+		$result = $object->fetchAllBalanceWithOpeningBalance($sortorder, $sortfield, $limit, 0, $filter);
+	}
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -194,6 +198,9 @@ if ($action == 'export_csv') {
 	foreach ($object->lines as $line) {
 		print '"'.length_accountg($line->numero_compte).'"'.$sep;
 		print '"'.$object->get_compte_desc($line->numero_compte).'"'.$sep;
+		if(!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+			print '"'.price($line->opening_balance).'"'.$sep;
+		}
 		print '"'.price($line->debit).'"'.$sep;
 		print '"'.price($line->credit).'"'.$sep;
 		print '"'.price($line->debit - $line->credit).'"'.$sep;
@@ -213,13 +220,21 @@ if ($action != 'export_csv') {
 	// List
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-		$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
+		if(empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+			$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
+		} else {
+			$nbtotalofrecords = $object->fetchAllBalanceWithOpeningBalance($sortorder, $sortfield, 0, 0, $filter);
+		}
 		if ($nbtotalofrecords < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter);
+	if(empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter);
+	} else {
+		$result = $object->fetchAllBalanceWithOpeningBalance($sortorder, $sortfield, $limit, $offset, $filter);
+	}
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -338,24 +353,6 @@ if ($action != 'export_csv') {
 
 	$accountingaccountstatic = new AccountingAccount($db);
 
-	// TODO Debug - This feature is dangerous, it takes all the entries and adds all the accounts
-	// without time and class limits (Class 6 and 7 accounts ???) and does not take into account the "a-nouveau" journal.
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-		$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
-		$sql .= " WHERE t.entity = " . $conf->entity;        // Never do sharing into accounting features
-		$sql .= " AND t.doc_date < '" . $db->idate($search_date_start) . "'";
-		$sql .= " GROUP BY t.numero_compte";
-
-		$resql = $db->query($sql);
-		$nrows = $resql->num_rows;
-		$opening_balances = array();
-		for ($i = 0; $i < $nrows; $i++) {
-			$arr = $resql->fetch_array();
-			$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
-		}
-	}
-
 	foreach ($object->lines as $line) {
 		// reset before the fetch (in case of the fetch fails)
 		$accountingaccountstatic->id = 0;
@@ -371,7 +368,7 @@ if ($action != 'export_csv') {
 		$link = '';
 		$total_debit += $line->debit;
 		$total_credit += $line->credit;
-		$opening_balance = isset($opening_balances["'".$line->numero_compte."'"]) ? $opening_balances["'".$line->numero_compte."'"] : 0;
+		$opening_balance = empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 0 : $line->opening_balance;
 		$total_opening_balance += $opening_balance;
 
 		$tmparrayforrootaccount = $object->getRootAccount($line->numero_compte);

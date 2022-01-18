@@ -1138,6 +1138,8 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.'=\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.doc_date<' && !empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
@@ -1196,6 +1198,40 @@ class BookKeeping extends CommonObject
 
 			return -1;
 		}
+	}
+
+	public function fetchAllBalanceWithOpeningBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		// get opening balance using fetchAllBalance() using modified doc_date filter
+		if (count($filter) > 0) {
+			$obfilter = (new ArrayObject($filter))->getArrayCopy();
+			if(array_key_exists('t.doc_date<=', $filter)) {
+				unset($obfilter['t.doc_date<=']);
+			}
+			if(array_key_exists('t.doc_date>=', $filter)) {
+				$obfilter['t.doc_date<'] = $filter['t.doc_date>='];
+				unset($obfilter['t.doc_date>=']);
+			}
+			if(array_key_exists('t.doc_date', $filter)) {
+				$obfilter['t.doc_date<'] = $filter['t.doc_date'];
+				unset($obfilter['t.doc_date']);
+			}
+			$num = $this->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $obfilter, $filtermode);
+		}
+
+		$obarray = array();
+		foreach($this->lines as $line) {
+			$obarray[$line->numero_compte] = $line->debit - $line->credit;
+		}
+
+		$num = $this->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter, $filtermode);
+
+		// fill lines with opening balance values
+		for($i = 0; $i < count($this->lines); $i++) {
+			$this->lines[$i]->opening_balance = $obarray[$this->lines[$i]->numero_compte];
+		}
+
+		return $num;
 	}
 
 	/**
