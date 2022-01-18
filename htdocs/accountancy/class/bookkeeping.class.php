@@ -1240,7 +1240,7 @@ class BookKeeping extends CommonObject
 
 		// fill lines with opening balance values
 		$num_lines = count($this->lines);
-		for($i = 0; $i < $num_lines; $i++) {
+		for ($i = 0; $i < $num_lines; $i++) {
 			$this->lines[$i]->opening_balance = $obarray[$this->lines[$i]->numero_compte];
 		}
 
