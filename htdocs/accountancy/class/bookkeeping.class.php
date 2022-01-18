@@ -1200,6 +1200,18 @@ class BookKeeping extends CommonObject
 		}
 	}
 
+	/**
+	 * A wrapper around fetchAllBalance() that includes opening balance
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
 	public function fetchAllBalanceWithOpeningBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		// get opening balance using fetchAllBalance() using modified doc_date filter
@@ -1227,7 +1239,8 @@ class BookKeeping extends CommonObject
 		$num = $this->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter, $filtermode);
 
 		// fill lines with opening balance values
-		for($i = 0; $i < count($this->lines); $i++) {
+		$num_lines = count($this->lines);
+		for($i = 0; $i < $num_lines; $i++) {
 			$this->lines[$i]->opening_balance = $obarray[$this->lines[$i]->numero_compte];
 		}
 
