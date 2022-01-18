@@ -57,7 +57,7 @@ jobs:
       php: nightly 
       env: DB=mysql
     - stage: PHP Dev
-      if: type = push AND branch = 14.0
+      if: type = push AND branch = 15.0
       php: nightly 
       env: DB=mysql
 
@@ -411,6 +411,12 @@ script:
   php upgrade.php 13.0.0 14.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade13001400.log
   php upgrade2.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-2.log
   php step5.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-3.log
+  php upgrade.php 14.0.0 15.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade14001500.log
+  php upgrade2.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-2.log
+  php step5.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-3.log
+  php upgrade.php 15.0.0 16.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade15001600.log
+  php upgrade2.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-2.log
+  php step5.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-3.log
   ls -alrt $TRAVIS_BUILD_DIR/
 
 - |
