@@ -85,13 +85,6 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($con
 
 $datelivraison = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), GETPOST('liv_sec', 'int'), GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ordersuppliercard', 'globalcard'));
 
@@ -100,6 +93,10 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 // Load object
 if ($id > 0 || !empty($ref)) {
@@ -123,6 +120,10 @@ if ($id > 0 || !empty($ref)) {
 		dol_print_error($db, $object->error);
 	}
 }
+
+// Security check
+$isdraft = (isset($object->statut) && ($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande', 'fk_soc', 'rowid', $isdraft);
 
 // Common permissions
 $usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
