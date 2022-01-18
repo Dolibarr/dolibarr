@@ -124,6 +124,12 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
+	 * @var string Agenda event label
+	 * @deprecated Use $label
+	 */
+	public $libelle;
+
+	/**
 	 * @var integer Date creation record (datec)
 	 */
 	public $datec;
@@ -1439,9 +1445,9 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *  Return label of status
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
 	 *  @return string          		String with status
 	 */
@@ -1628,36 +1634,34 @@ class ActionComm extends CommonObject
 		}
 
 		if ($withpicto == 2) {
-			$libelle = $label;
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-				$libelle = $labeltype;
+				$label = $labeltype;
 			}
-			$libelleshort = '';
+			$labelshort = '';
 		} else {
-			$libelle = (empty($this->libelle) ? $label : $this->libelle.(($label && $label != $this->libelle) ? ' '.$label : ''));
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) {
-				$libelle = $labeltype;
+			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($label)) {
+				$label = $labeltype;
 			}
 			if ($maxlength < 0) {
-				$libelleshort = $this->ref;
+				$labelshort = $this->ref;
 			} else {
-				$libelleshort = dol_trunc($libelle, $maxlength);
+				$labelshort = dol_trunc($label, $maxlength);
 			}
 		}
 
 		if ($withpicto) {
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {	// Add code into ()
 				if ($labeltype) {
-					$libelle .= (preg_match('/'.preg_quote($labeltype, '/').'/', $libelle) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
+					$label .= (preg_match('/'.preg_quote($labeltype, '/').'/', $label) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
 				}
 			}
 		}
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		$result .= $libelleshort;
+		$result .= $labelshort;
 		$result .= $linkend;
 
 		global $action;

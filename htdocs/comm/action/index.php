@@ -837,7 +837,7 @@ if ($resql) {
 
 		$event->fk_project = $obj->fk_project;
 
-		$event->thirdparty_id = $obj->fk_soc;
+		$event->socid = $obj->fk_soc;
 		$event->contact_id = $obj->fk_contact;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -1964,7 +1964,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						if ($event->type_code != 'ICALEVENT') {
 							$savlabel = $event->label ? $event->label : $event->libelle;
 							$event->label = $titletoshow;
-							$event->libelle = $titletoshow;
+							$event->libelle = $titletoshow;		// deprecatd
 							// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
 							$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
 							$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title', '', 0, 0);
@@ -1996,7 +1996,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
 						}
 
-						$thirdparty_id = ($event->thirdparty_id > 0 ? $event->thirdparty_id : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
+						$thirdparty_id = ($event->socid > 0 ? $event->socid : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
 						$contact_id = ($event->contact_id > 0 ? $event->contact_id : ((is_object($event->contact) && $event->contact->id > 0) ? $event->contact->id : 0));
 
 						// If action related to company / contact
