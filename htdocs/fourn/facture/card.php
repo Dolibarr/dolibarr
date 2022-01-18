@@ -250,6 +250,8 @@ if (empty($reshook)) {
 		// Remove a product line
 		$result = $object->deleteline($lineid);
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			/*$outputlangs = $langs;
 			$newlang = '';
