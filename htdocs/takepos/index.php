@@ -1203,11 +1203,15 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					} ?>">
 
 		<!--  Show categories -->
-		<div class="div4">
-	<?php
-	$count = 0;
-	while ($count < $MAXCATEG) {
-		?>
+		<?php
+		if ($conf->global->TAKEPOS_HIDE_CATEGORIES == 1) {
+			print '<div class="div4" style= "display: none;">';
+		} else {
+			print '<div class="div4">';
+		}
+			$count = 0;
+		while ($count < $MAXCATEG) {
+			?>
 			<div class="wrapper" <?php if ($count == ($MAXCATEG - 2)) {
 				echo 'onclick="MoreCategories(\'less\');"';
 								 } elseif ($count == ($MAXCATEG - 1)) {
@@ -1235,25 +1239,28 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 				<?php } ?>
 				<div class="catwatermark" id='catwatermark<?php echo $count; ?>'>...</div>
 			</div>
-		<?php
-		$count++;
-	}
-	?>
+			<?php
+			$count++;
+		}
+		?>
 		</div>
 
 		<!--  Show product -->
-		<div class="div5">
+		<div class="div5"<?php if ($conf->global->TAKEPOS_HIDE_CATEGORIES == 1) {
+			print ' style="width:100%;"';
+						 } ?>>
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
+			print '<div class="wrapper2" id="prodiv'.$count.'"  ';
 		?>
-				<div class="wrapper2" id='prodiv<?php echo $count; ?>' <?php if ($count == ($MAXPRODUCT - 2)) {
+				<?php if ($count == ($MAXPRODUCT - 2)) {
 					?> onclick="MoreProducts('less');" <?php
-												} if ($count == ($MAXPRODUCT - 1)) {
-													?> onclick="MoreProducts('more');" <?php
-												} else {
-													echo 'onclick="ClickProduct('.$count.');"';
-												} ?>>
+				} if ($count == ($MAXPRODUCT - 1)) {
+					?> onclick="MoreProducts('more');" <?php
+				} else {
+					echo 'onclick="ClickProduct('.$count.');"';
+				} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
