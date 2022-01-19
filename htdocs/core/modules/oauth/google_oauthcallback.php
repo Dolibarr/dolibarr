@@ -136,7 +136,32 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 		// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
 		$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 
-		// Note: The token contains a lot of information about the user.
+		// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
+		$extraparams = $token->getExtraParams();
+		$jwt = explode('.', $extraparams['id_token']);
+
+		// Extract the middle part, base64 decode, then json_decode it
+		if (!empty($jwt[1])) {
+			$userinfo = json_decode(base64_decode($jwt[1]), true);
+
+			// TODO
+			// We should make the 5 steps of validation of id_token
+			// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
+			// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
+			// Verify that the value of the aud claim in the ID token is equal to your app's client ID.
+			// Verify that the expiry time (exp claim) of the ID token has not passed.
+			// If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
+
+			/*
+			$useremailuniq = $userinfo['sub'];
+			$useremail = $userinfo['email'];
+			$useremailverified = $userinfo['email_verified'];
+			$username = $userinfo['name'];
+			$userfamilyname = $userinfo['family_name'];
+			$usergivenname = $userinfo['given_name'];
+			$hd = $userinfo['hd'];
+			*/
+		}
 
 		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
 
