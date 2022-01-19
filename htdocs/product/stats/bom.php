@@ -129,8 +129,8 @@ if ($id > 0 || !empty($ref)) {
 		//Calcul total qty and amount for global if full scan list
 		$total_qty_toconsume = 0;
 		$total_qty_toproduce = 0;
+		$product_cache=array();
 		$bom_data_result = array();
-
 
 		//Qauntity  to produce
 		$sql = "SELECT b.rowid as rowid, b.ref, b.status, b.date_valid, b.fk_product,";
@@ -166,8 +166,20 @@ if ($id > 0 || !empty($ref)) {
 					$objp = $db->fetch_object($result);
 					$bomtmp->id = $objp->rowid;
 					$bomtmp->ref = $objp->ref;
+					$product = new Product($db);
+					if (!empty($objp->fk_product)) {
+						if (!array_key_exists($product->id, $product_cache)) {
+							$resultFetch = $product->fetch($objp->fk_product);
+							if ($resultFetch < 0) {
+								setEventMessages($product->error, $product->errors, 'errors');
+							} else {
+								$product_cache[$product->id] = $product;
+							}
+						}
+					}
 					$bomtmp->fk_product = $objp->fk_product;
 					$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
+					$bom_data_result[$objp->rowid]['product'] = (array_key_exists($objp->fk_product, $product_cache)? $product_cache[$objp->fk_product]->getNomUrl(1): '');
 					$bom_data_result[$objp->rowid]['qty_toproduce'] += ($objp->qty_toproduce > 0 ? $objp->qty_toproduce : 0);
 					$bom_data_result[$objp->rowid]['qty_toconsume'] = 0;
 					$bom_data_result[$objp->rowid]['date_valid'] = dol_print_date($db->jdate($objp->date_valid), 'dayhour');
@@ -215,10 +227,22 @@ if ($id > 0 || !empty($ref)) {
 					$objp = $db->fetch_object($result);
 					$bomtmp->id = $objp->rowid;
 					$bomtmp->ref = $objp->ref;
+					$product = new Product($db);
+					if (!empty($objp->fk_product)) {
+						if (!array_key_exists($product->id, $product_cache)) {
+							$resultFetch = $product->fetch($objp->fk_product);
+							if ($resultFetch < 0) {
+								setEventMessages($product->error, $product->errors, 'errors');
+							} else {
+								$product_cache[$product->id] = $product;
+							}
+						}
+					}
 					$bomtmp->fk_product = $objp->fk_product;
 
 					if (!array_key_exists($objp->rowid, $bom_data_result)) {
 						$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
+						$bom_data_result[$objp->rowid]['product'] = (array_key_exists($objp->fk_product, $product_cache)? $product_cache[$objp->fk_product]->getNomUrl(1): '');
 						$bom_data_result[$objp->rowid]['qty_toproduce'] = 0;
 						$bom_data_result[$objp->rowid]['qty_toconsume'] += ($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
 						$bom_data_result[$objp->rowid]['date_valid'] = dol_print_date($db->jdate($objp->date_valid), 'dayhour');
@@ -233,7 +257,6 @@ if ($id > 0 || !empty($ref)) {
 			dol_print_error($db);
 		}
 		$db->free($result);
-
 
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$option .= '&limit='.urlencode($limit);
@@ -267,6 +290,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
+		print_liste_field_titre("Product", $_SERVER["PHP_SELF"], "b.fk_product", "", "&amp;id=".$product->id, '', $sortfield, $sortorder);
 		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.date_valid", "", "&amp;id=".$product->id, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("RowMaterial", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre("Finished", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
@@ -278,6 +302,9 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="oddeven">';
 				print '<td>';
 				print $data['link'];
+				print "</td>\n";
+				print '<td>';
+				print $data['product'];
 				print "</td>\n";
 				print "<td align=\"center\">";
 				print $data['date_valid']."</td>";
