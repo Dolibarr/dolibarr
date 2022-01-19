@@ -554,13 +554,14 @@ class Societe extends CommonObject
 	 * Accounting code for client
 	 * @var string
 	 */
-	public $code_compta;
+	public $code_compta_client;
 
 	/**
-	 * Accounting code for client
+	 * Duplicate of code_compta_client (for backward compatibility)
 	 * @var string
 	 */
-	public $code_compta_client;
+	public $code_compta;
+
 
 	/**
 	 * Accounting code for customer
@@ -579,6 +580,14 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $accountancy_code_supplier;
+
+
+	/**
+	 * Accounting code for product (for level 3 of suggestion of prouct accounting account)
+	 * @var string
+	 */
+	public $code_compta_product;
+
 
 	/**
 	 * @var string
@@ -1822,7 +1831,8 @@ class Societe extends CommonObject
 				$this->code_client = $obj->code_client;
 				$this->code_fournisseur = $obj->code_fournisseur;
 
-				$this->code_compta = $obj->code_compta;
+				$this->code_compta = $obj->code_compta;			// For backward compatibility
+				$this->code_compta_client = $obj->code_compta;
 				$this->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				$this->barcode = $obj->barcode;

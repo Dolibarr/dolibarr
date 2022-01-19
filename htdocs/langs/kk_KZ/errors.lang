@@ -273,6 +273,7 @@ ErrorWrongFileName=Файл атауында __SOMETHING__ болмайды
 ErrorNotInDictionaryPaymentConditions=Төлем шарттары сөздігінде жоқ, өзгертіңіз.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Сіздің PHP параметрі upload_max_filesize (%s) PHP параметрі post_max_size (%s) қарағанда жоғары. Бұл дәйекті орнату емес.

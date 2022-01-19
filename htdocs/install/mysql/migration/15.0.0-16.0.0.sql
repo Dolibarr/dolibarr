@@ -30,5 +30,14 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- Missing in v15 or lower
+
+UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
+
+
+
+-- v16
+
+
 -- Missing in v14 or lower
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;

@@ -1671,8 +1671,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-	$sortfield = GETPOST("sortfield", 'alpha');
-	$sortorder = GETPOST("sortorder", 'alpha');
+	$sortfield = GETPOST('sortfield', 'aZ09comma');
+	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 	if (empty($page) || $page == -1) {
 		$page = 0;

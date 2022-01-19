@@ -62,6 +62,9 @@ abstract class DoliDB implements Database
 	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
+	/** @var string If we need to set a prefix specific to the database so it can be reused (when defined instead of MAIN_DB_PREFIX) to forge requests */
+	public $prefix_db;
+
 	/** @var bool Status */
 	public $ok;
 	/** @var string */

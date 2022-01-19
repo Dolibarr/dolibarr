@@ -273,6 +273,7 @@ ErrorWrongFileName=Numele fișierului nu poate să conțină _SOMETHING_ în el
 ErrorNotInDictionaryPaymentConditions=Nu se află în dicționarul Condiții de plată, vă rugăm să modificați.
 ErrorIsNotADraft=%s nu este o schiţă
 ErrorExecIdFailed=Nu se poate executa comanda "id"
+ErrorBadCharIntoLoginName=Caracter nepermis în numele de utilizator
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.

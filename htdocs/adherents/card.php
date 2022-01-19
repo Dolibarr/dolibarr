@@ -949,7 +949,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print load_fiche_titre($langs->trans("NewMember"), '', $object->picto);
 
 		if ($conf->use_javascript_ajax) {
-			print "\n".'<script type="text/javascript">';
+			print "\n".'<script type="text/javascript">'."\n";
 			print 'jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="create";

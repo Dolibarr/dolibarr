@@ -264,6 +264,8 @@ if (empty($reshook)) {
 
 		$result = $object->deleteline(GETPOST('lineid', 'int'));
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -2889,6 +2891,7 @@ if ($action == 'create') {
 	}
 
 	$currency_code = $conf->currency;
+	$fk_account = 0;
 
 	// Load objectsrc
 	$remise_absolue = 0;
@@ -3619,7 +3622,7 @@ if ($action == 'create') {
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$fk_account = GETPOST('fk_account', 'int');
+		$fk_account = GETPOSTISSET('fk_account') ? GETPOST('fk_account', 'int') : $fk_account;
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}

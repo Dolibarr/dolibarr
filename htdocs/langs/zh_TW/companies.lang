@@ -157,6 +157,18 @@ ProfId3CL=-
 ProfId4CL=-
 ProfId5CL=-
 ProfId6CL=-
+ProfId1CM=Id. prof. 1（商業登記）
+ProfId2CM=Id. prof. 2（納稅人編號）
+ProfId3CM=Id. prof. 3（建立法令）
+ProfId4CM=-
+ProfId5CM=-
+ProfId6CM=-
+ProfId1ShortCM=商業登記
+ProfId2ShortCM=納稅人編號
+ProfId3ShortCM=建立法令
+ProfId4ShortCM=-
+ProfId5ShortCM=-
+ProfId6ShortCM=-
 ProfId1CO=Prof Id 1 (R.U.T.)
 ProfId2CO=-
 ProfId3CO=-
@@ -369,7 +381,7 @@ VATIntraCheck=確認
 VATIntraCheckDesc=營業稅ID必須包含國家/地區前綴。連結<b>%s</b>使用歐洲增值稅檢查器服務（VIES），該服務需要Dolibarr伺服器連上網路。
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=檢查在歐盟區網站內的區內營業稅
-VATIntraManualCheck=您也可在歐盟網站以人工方式確認<a href="%s" target="_blank">%s</a>
+VATIntraManualCheck=您也可以自行在歐盟委員會網站<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>進行確認
 ErrorVATCheckMS_UNAVAILABLE=無法檢查。無法使用會員國家（%s）進行檢查服務。
 NorProspectNorCustomer=非潛在方或客戶
 JuridicalStatus=法人類型

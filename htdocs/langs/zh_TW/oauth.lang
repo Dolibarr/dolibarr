@@ -23,10 +23,10 @@ TOKEN_DELETE=刪除已儲存的許可證
 OAUTH_GOOGLE_NAME=OAuth Google服務
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=前往<a class="notasortlink" href="https://console.developers.google.com/" target="_blank">此頁面</a>然後點擊“憑證”以建立OAuth憑證
+OAUTH_GOOGLE_DESC=前往<a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external">此頁面</a>然後點擊“憑證”以建立OAuth憑證
 OAUTH_GITHUB_NAME=OAuth GitHub服務
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=前往<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">此頁面</a>然後“註冊新應用程式”以建立OAuth憑證
+OAUTH_GITHUB_DESC=前往此<a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external">頁面</a>然後“註冊新應用程式”以建立OAuth憑證
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe測試
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
