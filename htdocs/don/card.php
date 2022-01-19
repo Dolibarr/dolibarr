@@ -140,6 +140,7 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
 		}
 	}
 
@@ -172,7 +173,7 @@ if (empty($reshook)) {
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
 			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'));
+			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->country_id = (int) GETPOST('country_id', 'int');
@@ -193,6 +194,9 @@ if (empty($reshook)) {
 			if ($object->update($user) > 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = "create";
 			}
 		}
 	}
@@ -230,7 +234,7 @@ if (empty($reshook)) {
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
 			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'));
+			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->country_id = (int) GETPOST('country_id', 'int');
@@ -254,6 +258,7 @@ if (empty($reshook)) {
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
+				$action = "create";
 			}
 		}
 	}

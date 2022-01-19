@@ -754,7 +754,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Return label of status of emailing (draft, validated, ...)
 	 *
-	 *  @param	int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @return string        			Label
 	 */
 	public function getLibStatut($mode = 0)
@@ -764,10 +764,10 @@ class Mailing extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
 	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0)
@@ -792,11 +792,11 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status  of a recipient
 	 *  TODO Add class mailin_target.class.php
 	 *
 	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param	string	$desc			Desc error
 	 *  @return string        			Label
 	 */

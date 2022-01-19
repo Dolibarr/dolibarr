@@ -28,8 +28,15 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 -- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
---
---
+
+-- Missing in v15 or lower
+
+UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
+
+
+
+-- v16
+
 -- Facture fourn rec
 CREATE TABLE llx_facture_fourn_rec
 (

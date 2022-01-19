@@ -273,6 +273,7 @@ ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Tham số PHP của bạn upload_max_filesize (%s) cao hơn tham số PHP post_max_size (%s). Đây không phải là một thiết lập phù hợp.

@@ -157,6 +157,18 @@ ProfId3CL=-
 ProfId4CL=-
 ProfId5CL=-
 ProfId6CL=-
+ProfId1CM=Id. prof. 1 (Trade Register)
+ProfId2CM=Id. prof. 2 (Taxpayer No.)
+ProfId3CM=Id. prof. 3 (Decree of creation)
+ProfId4CM=-
+ProfId5CM=-
+ProfId6CM=-
+ProfId1ShortCM=Trade Register
+ProfId2ShortCM=Taxpayer No.
+ProfId3ShortCM=Decree of creation
+ProfId4ShortCM=-
+ProfId5ShortCM=-
+ProfId6ShortCM=-
 ProfId1CO=Prof Id 1 (R.U.T.)
 ProfId2CO=-
 ProfId3CO=-
@@ -369,7 +381,7 @@ VATIntraCheck=Kontrola
 VATIntraCheckDesc=Kód DPH ID musí obsahovat předčíslí země. Odkaz <b> %s </b> používá službu European VAT Checker (VIES), která vyžaduje přístup na internet z Dolibarr serveru.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Zkontrolujte ID DPH uvnitř Společenství na webových stránkách Evropské komise
-VATIntraManualCheck=Můžete také zkontrolovat ručně na evropských stránkách <a href="%s" target="_blank">%s</a>
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Kontrola není možná. Služba není členským státem poskytována (%s).
 NorProspectNorCustomer=Ani cíl, ani zákazník
 JuridicalStatus=Business entity type

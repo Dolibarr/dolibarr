@@ -1080,11 +1080,12 @@ class User extends CommonObject
 		$sql .= " ".MAIN_DB_PREFIX."rights_def as r";
 		$sql .= " WHERE r.id = ur.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-			// on old version, we use entity defined into table r
+			// on old version, we use entity defined into table r only
 			$sql .= " AND r.entity IN (0,".(!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
 		} else {
-			// we must now use entity into table ur
-			$sql .= " AND ur.entity = ".((int) $conf->entity);
+			// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
+			// So we must include the filter on entity on both table r. and ur.
+			$sql .= " AND r.entity = ".((int) $conf->entity)." AND ur.entity = ".((int) $conf->entity);
 		}
 		$sql .= " AND ur.fk_user= ".((int) $this->id);
 		$sql .= " AND r.perms IS NOT NULL";

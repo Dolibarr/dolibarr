@@ -174,7 +174,7 @@ ErrorPriceExpression24=変数 '%s'は存在するが、値がない
 ErrorPriceExpressionInternal=内部エラー '%s'
 ErrorPriceExpressionUnknown=不明なエラー '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=ソースウェアハウスとターゲットウェアハウスは異なる必要がある
-ErrorTryToMakeMoveOnProductRequiringBatchData=ロット/シリアル情報を必要とする製品 '%s'で、ロット/シリアル情報なしで在庫移動を行おうとするとエラーが発生した
+ErrorTryToMakeMoveOnProductRequiringBatchData=ロット/シリアル情報を必要とする製品 '%s'で、ロット/シリアル情報なしで在庫推移を行おうとするとエラーが発生した
 ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=記録されたすべての受付は、このアクションを実行する前に、まず確認(承認または拒否)する必要がある
 ErrorCantSetReceptionToTotalDoneWithReceptionDenied=このアクションを実行する前に、記録されたすべての受付を最初に確認(承認)する必要がある
 ErrorGlobalVariableUpdater0=HTTPリクエストがエラー "%s" で失敗した
@@ -273,6 +273,7 @@ ErrorWrongFileName=ファイル名に__SOMETHING__を含めることはできな
 ErrorNotInDictionaryPaymentConditions=支払条件辞書にないので、変更すること。
 ErrorIsNotADraft=%sはドラフトではない
 ErrorExecIdFailed=コマンド「id」を実行できない
+ErrorBadCharIntoLoginName=ログイン名に含まれる不正な文字
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。

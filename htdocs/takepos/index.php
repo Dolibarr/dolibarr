@@ -335,7 +335,11 @@ function LoadProducts(position, issubcat) {
 				var titlestring = <?php echo $titlestring; ?>;
 				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
 					echo '$("#prodivdesc"+ishow).show();';
-					echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
+					if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) {
+						echo '$("#prodesc"+ishow).html(data[parseInt(idata)][\'ref\'].bold() + \' - \' + data[parseInt(idata)][\'label\']);';
+					} else {
+						echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
+					}
 					echo '$("#proimg"+ishow).attr("title", titlestring);';
 					echo '$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata][\'id\']);';
 				} else {
@@ -401,7 +405,12 @@ function MoreProducts(moreorless) {
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
 				$("#prodivdesc"+ishow).show();
-				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				<?php
+				if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) { ?>
+					$("#prodesc"+ishow).html(data[parseInt(idata)]['ref'].bold() + ' - ' + data[parseInt(idata)]['label']);
+				<?php } else { ?>
+					$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				<?php } ?>
 				$("#probutton"+ishow).text(data[parseInt(idata)]['label']);
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
@@ -579,7 +588,12 @@ function Search2(keyCodeForEnter) {
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[i]['barcode']";
 					?>
 					var titlestring = <?php echo $titlestring; ?>;
-					$("#prodesc" + i).text(data[i]['label']);
+					<?php
+					if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) { ?>
+					$("#prodesc" + i).html(data[i]['ref'].bold() + ' - ' + data[i]['label']);
+					<?php } else { ?>
+						$("#prodesc" + i).text(data[i]['label']);
+					<?php } ?>
 					$("#prodivdesc" + i).show();
 					$("#probutton" + i).text(data[i]['label']);
 					$("#probutton" + i).show();
@@ -1203,11 +1217,15 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					} ?>">
 
 		<!--  Show categories -->
-		<div class="div4">
-	<?php
-	$count = 0;
-	while ($count < $MAXCATEG) {
-		?>
+		<?php
+		if ($conf->global->TAKEPOS_HIDE_CATEGORIES == 1) {
+			print '<div class="div4" style= "display: none;">';
+		} else {
+			print '<div class="div4">';
+		}
+			$count = 0;
+		while ($count < $MAXCATEG) {
+			?>
 			<div class="wrapper" <?php if ($count == ($MAXCATEG - 2)) {
 				echo 'onclick="MoreCategories(\'less\');"';
 								 } elseif ($count == ($MAXCATEG - 1)) {
@@ -1235,25 +1253,28 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 				<?php } ?>
 				<div class="catwatermark" id='catwatermark<?php echo $count; ?>'>...</div>
 			</div>
-		<?php
-		$count++;
-	}
-	?>
+			<?php
+			$count++;
+		}
+		?>
 		</div>
 
 		<!--  Show product -->
-		<div class="div5">
+		<div class="div5"<?php if ($conf->global->TAKEPOS_HIDE_CATEGORIES == 1) {
+			print ' style="width:100%;"';
+						 } ?>>
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
+			print '<div class="wrapper2" id="prodiv'.$count.'"  ';
 		?>
-				<div class="wrapper2" id='prodiv<?php echo $count; ?>' <?php if ($count == ($MAXPRODUCT - 2)) {
+				<?php if ($count == ($MAXPRODUCT - 2)) {
 					?> onclick="MoreProducts('less');" <?php
-												} if ($count == ($MAXPRODUCT - 1)) {
-													?> onclick="MoreProducts('more');" <?php
-												} else {
-													echo 'onclick="ClickProduct('.$count.');"';
-												} ?>>
+				} if ($count == ($MAXPRODUCT - 1)) {
+					?> onclick="MoreProducts('more');" <?php
+				} else {
+					echo 'onclick="ClickProduct('.$count.');"';
+				} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';

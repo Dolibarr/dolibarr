@@ -828,7 +828,10 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
 				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 				// using a non coventionnel way to be encoded, to not have them sanitized just after)
-				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+				//$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
+					return realCharForNumericEntities($m); }, $out);
+
 
 				// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
@@ -1169,23 +1172,34 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
  */
 function dol_string_unaccent($str)
 {
+	global $conf;
+
 	if (utf8_check($str)) {
+		if (extension_loaded('intl') && !empty($conf->global->MAIN_UNACCENT_USE_TRANSLITERATOR)) {
+			$transliterator = \Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;', \Transliterator::FORWARD);
+			return $transliterator->transliterate($str);
+		}
 		// See http://www.utf8-chartable.de/
 		$string = rawurlencode($str);
 		$replacements = array(
 		'%C3%80' => 'A', '%C3%81' => 'A', '%C3%82' => 'A', '%C3%83' => 'A', '%C3%84' => 'A', '%C3%85' => 'A',
+		'%C3%87' => 'C',
 		'%C3%88' => 'E', '%C3%89' => 'E', '%C3%8A' => 'E', '%C3%8B' => 'E',
 		'%C3%8C' => 'I', '%C3%8D' => 'I', '%C3%8E' => 'I', '%C3%8F' => 'I',
+		'%C3%91' => 'N',
 		'%C3%92' => 'O', '%C3%93' => 'O', '%C3%94' => 'O', '%C3%95' => 'O', '%C3%96' => 'O',
+		'%C5%A0' => 'S',
 		'%C3%99' => 'U', '%C3%9A' => 'U', '%C3%9B' => 'U', '%C3%9C' => 'U',
+		'%C3%9D' => 'Y', '%C5%B8' => 'y',
 		'%C3%A0' => 'a', '%C3%A1' => 'a', '%C3%A2' => 'a', '%C3%A3' => 'a', '%C3%A4' => 'a', '%C3%A5' => 'a',
 		'%C3%A7' => 'c',
 		'%C3%A8' => 'e', '%C3%A9' => 'e', '%C3%AA' => 'e', '%C3%AB' => 'e',
 		'%C3%AC' => 'i', '%C3%AD' => 'i', '%C3%AE' => 'i', '%C3%AF' => 'i',
 		'%C3%B1' => 'n',
 		'%C3%B2' => 'o', '%C3%B3' => 'o', '%C3%B4' => 'o', '%C3%B5' => 'o', '%C3%B6' => 'o',
+		'%C5%A1' => 's',
 		'%C3%B9' => 'u', '%C3%BA' => 'u', '%C3%BB' => 'u', '%C3%BC' => 'u',
-		'%C3%BF' => 'y'
+		'%C3%BD' => 'y', '%C3%BF' => 'y'
 		);
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
@@ -1985,7 +1999,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						}
 					}
 				} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo'
-					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
+					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photowithmargin photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
 				if ($phototoshow) {
@@ -3629,7 +3643,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
-				'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
+				'card', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
 				'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
@@ -3641,7 +3655,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'label', 'language', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
-				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'puce',
+				'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
@@ -3660,7 +3675,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$facolor = '';
 			$fasize = '';
 			$fa = 'fas';
-			if (in_array($pictowithouttext, array('bell', 'clock', 'establishment', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
+			if (in_array($pictowithouttext, array('card', 'bell', 'clock', 'establishment', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
 			if (in_array($pictowithouttext, array('black-tie', 'github', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
@@ -3673,7 +3688,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'billd'=>'file-medical',
 				'supplier_invoice'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'supplier_invoicer'=>'file-invoice-dollar', 'supplier_invoiced'=>'file-medical',
 				'bom'=>'shapes',
-				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time',
+				'card'=>'address-card', 'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time',
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'search-dollar', 'category'=>'tag', 'dollyrevert'=>'dolly',
@@ -3693,10 +3708,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
 				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature',
-				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'puce'=>'angle-right',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house', 'recurring'=>'history',
+				'service'=>'concierge-bell',
 				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'technic'=>'cogs',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
