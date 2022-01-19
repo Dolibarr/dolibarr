@@ -396,7 +396,7 @@ Formula=Formül
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Kurulumun bazı zorunlu adımları tamamlanmadı, lütfen onları tamamlayın.
-ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
+ErrorNoAccountingCategoryForThisCountry=%s ülkesi için muhasebe hesap grubu yok (Giriş - Ayarlar - Sözlükler kısmına bakın)
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=Ayarlanan dışa aktarım biçimi bu sayfada desteklenmiyor

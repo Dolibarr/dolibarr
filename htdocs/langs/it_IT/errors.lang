@@ -273,6 +273,7 @@ ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -285,7 +286,7 @@ WarningPassIsEmpty=Attenzione, il database è accessibile senza password. Questa
 WarningConfFileMustBeReadOnly=Attenzione, il file di configurazione <b>htdocs/conf/conf.php</b> è scrivibile dal server web. Questa è una grave falla di sicurezza! Impostare il file in sola lettura per l'utente utilizzato dal server web. Se si utilizza Windows e il formato FAT per il disco, dovete sapere che tale filesystem non consente la gestione delle autorizzazioni sui file, quindi non può essere completamente sicuro.
 WarningsOnXLines=Warning su <b>%s</b> righe del sorgente
 WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be chosen by default until you check your module setup.
-WarningLockFileDoesNotExists=Attenzione, una volta terminato il setup, devi disabilitare gli strumenti di installazione/migrazione aggiungendo il file <b>install.lock</b> nella directory <b>%s</b>. Omettendo la creazione di questo file è un grave riscuio per la sicurezza.
+WarningLockFileDoesNotExists=Attenzione, una volta terminato il setup, devi disabilitare gli strumenti di installazione/migrazione aggiungendo il file <b>install.lock</b> nella directory <b>%s</b>. Omettendo la creazione di questo file è un grave rischio per la sicurezza.
 WarningUntilDirRemoved=Tutti gli avvisi di sicurezza (visibili solo dagli amministratori) rimarranno attivi fintanto che la vulnerabilità è presente (o la costante MAIN_REMOVE_INSTALL_WARNING viene aggiunta in Impostazioni->Altre impostazioni).
 WarningCloseAlways=Attenzione, la chiusura è effettiva anche se il numero degli elementi non coincide fra inizio e fine. Abilitare questa opzione con cautela.
 WarningUsingThisBoxSlowDown=Attenzione: l'uso di questo box rallenterà pesantemente tutte le pagine che lo visualizzano

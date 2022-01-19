@@ -273,6 +273,7 @@ ErrorWrongFileName=Der Dateiname darf nicht __SOMETHING__ enthalten
 ErrorNotInDictionaryPaymentConditions=Nicht im Dictionary der Zahlungsbedingungen, bitte ändern.
 ErrorIsNotADraft=%s ist kein Entwurf
 ErrorExecIdFailed=Befehl "id" kann nicht ausgeführt werden
+ErrorBadCharIntoLoginName=Unzulässiges Zeichen im Login-Namen
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.

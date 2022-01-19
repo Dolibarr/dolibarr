@@ -94,7 +94,9 @@ function testSqlAndScriptInject($val, $type)
 	do {
 		$oldval = $val;
 		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
-		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+)/i', 'realCharForNumericEntities', $val); // Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
+		//$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $val); // Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
+		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
+			return realCharForNumericEntities($m); }, $val);
 	} while ($oldval != $val);
 	//print "after  decoding $val\n";
 
@@ -1603,12 +1605,17 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 						dol_syslog("Warning: module ".$modcss." declared a css path file into its descriptor that is empty.", LOG_WARNING);
 					}
 					// cssfile is a relative path
-					print '<!-- Includes CSS added by module '.$modcss.' -->'."\n".'<link rel="stylesheet" type="text/css" href="'.dol_buildpath($cssfile, 1);
-					// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
-					if (!preg_match('/\.css$/i', $cssfile)) {
-						print $themeparam;
+					$urlforcss = dol_buildpath($cssfile, 1);
+					if ($urlforcss && $urlforcss != '/') {
+						print '<!-- Includes CSS added by module '.$modcss.' -->'."\n".'<link rel="stylesheet" type="text/css" href="'.$urlforcss;
+						// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
+						if (!preg_match('/\.css$/i', $cssfile)) {
+							print $themeparam;
+						}
+						print '">'."\n";
+					} else {
+						dol_syslog("Warning: module ".$modcss." declared a css path file for a file we can't find.", LOG_WARNING);
 					}
-					print '">'."\n";
 				}
 			}
 		}
@@ -1742,7 +1749,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					$filesjs = (array) $filesjs; // To be sure filejs is an array
 					foreach ($filesjs as $jsfile) {
 						// jsfile is a relative path
-						print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.dol_buildpath($jsfile, 1).((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
+						$urlforjs = dol_buildpath($jsfile, 1);
+						if ($urlforjs && $urlforjs != '/') {
+							print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.$urlforjs.((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
+						} else {
+							dol_syslog("Warning: module ".$modjs." declared a js path file for a file we can't find.", LOG_WARNING);
+						}
 					}
 				}
 			}
@@ -2933,7 +2945,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
  */
 function main_area($title = '')
 {
-	global $conf, $langs;
+	global $conf, $langs, $hookmanager;
 
 	if (empty($conf->dol_hide_leftmenu)) {
 		print '<div id="id-right">';
@@ -2943,14 +2955,17 @@ function main_area($title = '')
 
 	print '<!-- Begin div class="fiche" -->'."\n".'<div class="fiche">'."\n";
 
+	$hookmanager->initHooks(array('main'));
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printMainArea', $parameters); // Note that $action and $object may have been modified by some hooks
+	print $hookmanager->resPrint;
+
 	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 		print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED), 0, 0, 1, 'warning maintenancemode');
 	}
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
 	if (!empty($conf->global->SHOW_SOCINFO_ON_PRINT) && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09'))) {
-		global $hookmanager;
-		$hookmanager->initHooks(array('main'));
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
 		if (empty($reshook)) {

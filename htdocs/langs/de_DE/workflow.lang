@@ -6,17 +6,21 @@ ThereIsNoWorkflowToModify=Es sind keine Workflow-Änderungen möglich mit den ak
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstelle automatisch einen Kundenauftrag, nachdem ein Angebot auf "unterzeichnet" gesetzt wurde. Die neue Bestellung hat dann den selben Wert wie das Angebot.
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem ein Angebot als "unterzeichnet" markiert wurde. Diese neue Kundenrechnung lautet über den selben Betrag wie das Angebot.
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem der Vertrag bestätigt wurde.
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem eine Bestellung geschlossen wurde. Die neue Kundenrechnung lautet über den selben Betrag wie die Bestellung.
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem ein Kundenauftrag geschlossen wurde. Die erstellte Rechnung lautet über denselben Betrag wie der Auftrag.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Setzt das  entsprechende Angebot auf "abgerechnet", sofern der Kundenauftrag auf "abgerechnet" gesetzt wurde und sofern der Gesamtbetrag im Kundenauftrag gleich dem im Angebot ist.
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Setzt das verknüpfte Angebot auf "abgerechnet", sofern die Kundenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist.
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kennzeichne die verknüpfte Kundenbestellung(en) als fakturiert ( = in Rechnung gestellt) sofern die Kundenrechnung als geprüft markiert wurde und die Beträge übereinstimmen.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kennzeichne den verknüpften Kundenauftrag als fakturiert ( = in Rechnung gestellt) sofern die Kundenrechnung als geprüft markiert wurde und die Beträge übereinstimmen.
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kennzeichne verknüpfte Kundenaufträge als fakturiert ( = in Rechnung gestellt), sofern die Kundenrechnung als bezahlt markiert wurde und die Beträge übereinstimmen.
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kennzeichne die verknüpften Aufträge als geliefert wenn die Lieferung erfolgt ist (und die Liefermenge der Bestellmenge entspricht).
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Den zugrundeliegenden Kundenauftrag als versendet kennzeichnen, wenn eine Sendung geschlossen wird (sofern die Gesamtmengen aller zugehörigen Sendungen mit denen des Kundenauftrags übereinstimmen)
-# Autoclassify purchase order
+# Autoclassify purchase proposal
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Setzt das verknüpfte Lieferantenangebot auf "abgerechnet", sofern die Lieferanrenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist. 
+# Autoclassify purchase order
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kennzeichne die verknüpfte Lieferantenbestellung als abgerechnet, wenn die Lieferantenrechnung erstellt wurde und die Gesamtbeträge übereinstimmen.
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang validiert wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Lieferantenbestellung übereinstimmt)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang geschlossen wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Bestellung übereinstimmt)
+# Autoclassify purchase invoice
 descWORKFLOW_BILL_ON_RECEPTION=Klassifizieren Sie Empfänge als "in Rechnung gestellt", wenn eine verknüpfte Lieferantenbestellung validiert wird
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Schließen Sie alle mit dem Ticket verknüpften Interaktionen, wenn ein Ticket geschlossen wird
