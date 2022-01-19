@@ -98,9 +98,6 @@ $apiService = $serviceFactory->createService('Google', $credentials, $storage, $
 // also note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');
 
-$apiService->setApprouvalPrompt('force');
-
-//$apiService->setLoginHint(email); // If we know the email of Google account, we can set it to have it correctly selected on login prompt on multiaccount
 
 $langs->load("oauth");
 
@@ -178,13 +175,21 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 	// to the OAuth provider login page
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 
+	if (!preg_match('/^forlogin/', $state)) {
+		$apiService->setApprouvalPrompt('force');
+	}
+
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
-	if (GETPOST('state')) {
-		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+	if ($state) {
+		$url = $apiService->getAuthorizationUri(array('state' => $state));
 	} else {
 		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
 	}
+
+	// Add more param
+	$url .= '&nonce='.bin2hex(random_bytes(64/8));
+	// TODO Add param hd and/or login_hint
 
 	// we go on oauth provider authorization page
 	header('Location: '.$url);

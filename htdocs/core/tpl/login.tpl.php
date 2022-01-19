@@ -331,21 +331,16 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 4px;">';
 
-	$shortscope = 'userinfo_email,userinfo_profile';
-	$shortscope .= ',openid,email,profile';	// For openid connect
+	//$shortscope = 'userinfo_email,userinfo_profile';
+	$shortscope = 'openid,email,profile';	// For openid connect
 
 	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
 	$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
-	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.$oauthstateanticsrf.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
 
 	$url = $urltorenew;
 
-	//if (!empty($url)) {
-		print img_picto('', 'google', 'class="pictofixedwidth"').'<a class="alogin" href="'.$url.'">'.$langs->trans("LoginWith", "Google").'</a>';
-	/*} else {
-		$langs->load("errors");
-		print '<span class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</span>';
-	}*/
+	print img_picto('', 'google', 'class="pictofixedwidth"').'<a class="alogin" href="'.$url.'">'.$langs->trans("LoginWith", "Google").'</a>';
 
 	echo '</div>';
 }
