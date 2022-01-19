@@ -119,56 +119,57 @@ if ($action == 'delete') {
 if (GETPOST('code')) {     // We are coming from oauth provider page.
 	dol_syslog("We are coming from the oauth provider page");
 
-	// TODO
-	// We should validate that the $sate is same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
+	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
+	if (isset($_SESSION['oauthstateanticsrf']) && $state == $_SESSION['oauthstateanticsrf']) {
+		print 'Value for state = '.dol_escape_htmltag($state).' differs from value in $_SESSION["oauthstateanticsrf"]. Code is refused.';
+	} else {
+		// This was a callback request from service, get the token
+		try {
+			//var_dump($_GET['code']);
+			//var_dump($state);
+			//var_dump($apiService);      // OAuth\OAuth2\Service\Google
 
+			// This request the token
+			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
+			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 
-	// This was a callback request from service, get the token
-	try {
-		//var_dump($_GET['code']);
-		//var_dump($state);
-		//var_dump($apiService);      // OAuth\OAuth2\Service\Google
+			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
+			$extraparams = $token->getExtraParams();
+			$jwt = explode('.', $extraparams['id_token']);
 
-		// This request the token
-		// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
-		$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+			// Extract the middle part, base64 decode, then json_decode it
+			if (!empty($jwt[1])) {
+				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
-		// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
-		$extraparams = $token->getExtraParams();
-		$jwt = explode('.', $extraparams['id_token']);
+				// TODO
+				// We should make the 5 steps of validation of id_token
+				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
+				// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
+				// Verify that the value of the aud claim in the ID token is equal to your app's client ID.
+				// Verify that the expiry time (exp claim) of the ID token has not passed.
+				// If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
 
-		// Extract the middle part, base64 decode, then json_decode it
-		if (!empty($jwt[1])) {
-			$userinfo = json_decode(base64_decode($jwt[1]), true);
+				/*
+				$useremailuniq = $userinfo['sub'];
+				$useremail = $userinfo['email'];
+				$useremailverified = $userinfo['email_verified'];
+				$username = $userinfo['name'];
+				$userfamilyname = $userinfo['family_name'];
+				$usergivenname = $userinfo['given_name'];
+				$hd = $userinfo['hd'];
+				*/
+			}
 
-			// TODO
-			// We should make the 5 steps of validation of id_token
-			// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
-			// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
-			// Verify that the value of the aud claim in the ID token is equal to your app's client ID.
-			// Verify that the expiry time (exp claim) of the ID token has not passed.
-			// If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
+			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
 
-			/*
-			$useremailuniq = $userinfo['sub'];
-			$useremail = $userinfo['email'];
-			$useremailverified = $userinfo['email_verified'];
-			$username = $userinfo['name'];
-			$userfamilyname = $userinfo['family_name'];
-			$usergivenname = $userinfo['given_name'];
-			$hd = $userinfo['hd'];
-			*/
+			$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
+			unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+
+			header('Location: '.$backtourl);
+			exit();
+		} catch (Exception $e) {
+			print $e->getMessage();
 		}
-
-		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
-
-		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
-		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
-
-		header('Location: '.$backtourl);
-		exit();
-	} catch (Exception $e) {
-		print $e->getMessage();
 	}
 } else {
 	// If we enter this page without 'code' parameter, we arrive here. this is the case when we want to get the redirect
@@ -190,6 +191,9 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 	// Add more param
 	$url .= '&nonce='.bin2hex(random_bytes(64/8));
 	// TODO Add param hd and/or login_hint
+	if (!preg_match('/^forlogin/', $state)) {
+		//$url .= 'hd=xxx';
+	}
 
 	// we go on oauth provider authorization page
 	header('Location: '.$url);
@@ -201,6 +205,6 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
  * View
  */
 
-// No view at all, just actions, so we never reach this line, except on error.
+// No view at all, just actions, so we never reach this line.
 
 $db->close();
