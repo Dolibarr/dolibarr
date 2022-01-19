@@ -16,6 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// This page should make the process to login and get token as described here:
+// https://developers.google.com/identity/protocols/oauth2/openid-connect#server-flow
+
 /**
  *      \file       htdocs/core/modules/oauth/google_oauthcallback.php
  *      \ingroup    oauth
@@ -70,15 +73,21 @@ $credentials = new Credentials(
 	$currentUri->getAbsoluteUri()
 );
 
+$state = GETPOST('state');
+
 $requestedpermissionsarray = array();
-if (GETPOST('state')) {
-	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
+if ($state) {
+	// 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
+	$statewithscopeonly = preg_replace('/\-.*$/', '', $state);
+	$requestedpermissionsarray = explode(',', $statewithscopeonly); // Example: 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print'.
 }
 if ($action != 'delete' && empty($requestedpermissionsarray)) {
 	print 'Error, parameter state is not defined';
 	exit;
 }
 //var_dump($requestedpermissionsarray);exit;
+
+
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 // $requestedpermissionsarray contains list of scopes.
@@ -90,6 +99,8 @@ $apiService = $serviceFactory->createService('Google', $credentials, $storage, $
 $apiService->setAccessType('offline');
 
 $apiService->setApprouvalPrompt('force');
+
+//$apiService->setLoginHint(email); // If we know the email of Google account, we can set it to have it correctly selected on login prompt on multiaccount
 
 $langs->load("oauth");
 
@@ -108,17 +119,12 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (!empty($_GET['code'])) {     // We are coming from oauth provider page
+if (GETPOST('code')) {     // We are coming from oauth provider page.
 	dol_syslog("We are coming from the oauth provider page");
-	//llxHeader('',$langs->trans("OAuthSetup"));
 
-	//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-	//print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
+	// TODO
+	// We should validate that the $sate is same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 
-	//print dol_get_fiche_head();
-	// retrieve the CSRF state parameter
-	$state = isset($_GET['state']) ? $_GET['state'] : null;
-	//print '<table>';
 
 	// This was a callback request from service, get the token
 	try {
@@ -126,9 +132,13 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 		//var_dump($state);
 		//var_dump($apiService);      // OAuth\OAuth2\Service\Google
 
-		$token = $apiService->requestAccessToken($_GET['code'], $state);
+		// This request the token
+		// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
+		$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 
-		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
+		// Note: The token contains a lot of information about the user.
+
+		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
 
 		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
 		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
@@ -138,8 +148,9 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 	} catch (Exception $e) {
 		print $e->getMessage();
 	}
-} else // If entry on page with no parameter, we arrive here
-{
+} else {
+	// If we enter this page without 'code' parameter, we arrive here. this is the case when we want to get the redirect
+	// to the OAuth provider login page
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 
 	// This may create record into oauth_state before the header redirect.
@@ -160,6 +171,6 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
  * View
  */
 
-// No view at all, just actions
+// No view at all, just actions, so we never reach this line, except on error.
 
 $db->close();

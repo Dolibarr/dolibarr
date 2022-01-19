@@ -33,6 +33,8 @@ if (empty($conf) || !is_object($conf)) {
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+
+
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -316,6 +318,37 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 	echo '</div>';
 }
 
+if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication)) {
+	$langs->load("users");
+
+	global $dolibarr_main_url_root;
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	echo '<br>';
+	echo '<div class="center" style="margin-top: 4px;">';
+
+	$shortscope = 'userinfo_email,userinfo_profile';
+	$shortscope .= ',openid,email,profile';	// For openid connect
+
+	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+	$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
+	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.$oauthstateanticsrf.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+
+	$url = $urltorenew;
+
+	//if (!empty($url)) {
+		print img_picto('', 'google', 'class="pictofixedwidth"').'<a class="alogin" href="'.$url.'">'.$langs->trans("LoginWith", "Google").'</a>';
+	/*} else {
+		$langs->load("errors");
+		print '<span class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</span>';
+	}*/
+
+	echo '</div>';
+}
 
 ?>
 

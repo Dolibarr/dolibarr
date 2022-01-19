@@ -122,7 +122,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("PrintingSetup"));
+llxHeader('', $langs->trans("TokenManager"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
@@ -163,13 +163,24 @@ if ($mode == 'setup' && $user->admin) {
 			$urltocheckperms = 'https://github.com/settings/applications/';
 		} elseif ($keyforsupportedoauth2array == 'OAUTH_GOOGLE_NAME') {
 			// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
-			// We pass this param list in to 'state' because we need it before and after the redirect.
-			$shortscope = 'userinfo_email,userinfo_profile,cloud_print';
-			if (!empty($conf->global->OAUTH_GSUITE)) {
+			// List of scopes for Google are here: https://developers.google.com/identity/protocols/oauth2/scopes
+			// We pass this key list into the param 'state' because we need it before and after the redirect.
+			$shortscope = 'userinfo_email,userinfo_profile';
+			$shortscope .= ',openid,email,profile';	// For openid connect
+			if (!empty($conf->printing->enabled)) {
+				$shortscope .= ',cloud_print';
+			}
+			if (!empty($conf->global->OAUTH_GOOGLE_GSUITE)) {
 				$shortscope .= ',admin_directory_user';
 			}
-			//$scope.=',gmail_full';
-			$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+			if (!empty($conf->global->OAUTH_GOOGLE_GMAIL)) {
+				$shortscope.=',gmail_full';
+			}
+
+			$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+			$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
+
+			$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.$oauthstateanticsrf.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://security.google.com/settings/security/permissions';
 		} elseif ($keyforsupportedoauth2array == 'OAUTH_STRIPE_TEST_NAME') {
