@@ -25,16 +25,12 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // This define $list
+require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // This define $list and $supportedoauth2array
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 use OAuth\Common\Storage\DoliStorage;
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
@@ -48,6 +44,10 @@ if (!empty($driver)) {
 
 if (!$mode) {
 	$mode = 'setup';
+}
+
+if (!$user->admin) {
+	accessforbidden();
 }
 
 
@@ -140,7 +140,9 @@ if ($mode == 'setup' && $user->admin) {
 
 	foreach ($list as $key) {
 		$supported = 0;
-		if (in_array($key[0], array_keys($supportedoauth2array))) {
+		$keyforsupportedoauth2array = $key[0];
+
+		if (in_array($keyforsupportedoauth2array, array_keys($supportedoauth2array))) {
 			$supported = 1;
 		}
 		if (!$supported) {
@@ -148,17 +150,18 @@ if ($mode == 'setup' && $user->admin) {
 		}
 
 
-		$OAUTH_SERVICENAME = 'Unknown';
-		if ($key[0] == 'OAUTH_GITHUB_NAME') {
-			$OAUTH_SERVICENAME = 'GitHub';
+		$OAUTH_SERVICENAME = empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'];
+
+		// Define $shortscope, $urltorenew, $urltodelete, $urltocheckperms
+		// TODO Use array $supportedoauth2array
+		if ($keyforsupportedoauth2array == 'OAUTH_GITHUB_NAME') {
 			// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
 			// We pass this param list in to 'state' because we need it before and after the redirect.
 			$shortscope = 'user,public_repo';
 			$urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://github.com/settings/applications/';
-		} elseif ($key[0] == 'OAUTH_GOOGLE_NAME') {
-			$OAUTH_SERVICENAME = 'Google';
+		} elseif ($keyforsupportedoauth2array == 'OAUTH_GOOGLE_NAME') {
 			// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
 			// We pass this param list in to 'state' because we need it before and after the redirect.
 			$shortscope = 'userinfo_email,userinfo_profile,cloud_print';
@@ -169,13 +172,11 @@ if ($mode == 'setup' && $user->admin) {
 			$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://security.google.com/settings/security/permissions';
-		} elseif ($key[0] == 'OAUTH_STRIPE_TEST_NAME') {
-			$OAUTH_SERVICENAME = 'StripeTest';
+		} elseif ($keyforsupportedoauth2array == 'OAUTH_STRIPE_TEST_NAME') {
 			$urltorenew = $urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = '';
 			$urltocheckperms = '';
-		} elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME') {
-			$OAUTH_SERVICENAME = 'StripeLive';
+		} elseif ($keyforsupportedoauth2array == 'OAUTH_STRIPE_LIVE_NAME') {
 			$urltorenew = $urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = '';
 			$urltocheckperms = '';
@@ -230,11 +231,14 @@ if ($mode == 'setup' && $user->admin) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setconst">';
 
-		print '<div class="div-table-responsive">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre">';
-		print '<th class="titlefieldcreate">'.$langs->trans($key[0]).'</th>';
+		print '<th class="titlefieldcreate">';
+		print img_picto('', $supportedoauth2array[$keyforsupportedoauth2array]['picto'], 'class="pictofixedwidth"');
+		print $langs->trans($keyforsupportedoauth2array);
+		print '</th>';
 		print '<th></th>';
 		print '<th></th>';
 		print "</tr>\n";
@@ -244,7 +248,7 @@ if ($mode == 'setup' && $user->admin) {
 		//var_dump($key);
 		print $langs->trans("OAuthIDSecret").'</td>';
 		print '<td>';
-		print $langs->trans("SeePreviousTab");
+		print '<span class="opacitymedium">'.$langs->trans("SeePreviousTab").'</span>';
 		print '</td>';
 		print '<td>';
 		print '</td>';
@@ -259,7 +263,7 @@ if ($mode == 'setup' && $user->admin) {
 		if (is_object($tokenobj)) {
 			print $langs->trans("HasAccessToken");
 		} else {
-			print $langs->trans("NoAccessToken");
+			print '<span class="opacitymedium">'.$langs->trans("NoAccessToken").'</span>';
 		}
 		print '</td>';
 		print '<td width="50%">';
@@ -346,7 +350,7 @@ if ($mode == 'setup' && $user->admin) {
 if ($mode == 'test' && $user->admin) {
 	print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
-	print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	if (!empty($driver)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
