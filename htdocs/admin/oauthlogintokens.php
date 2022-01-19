@@ -180,7 +180,7 @@ if ($mode == 'setup' && $user->admin) {
 			$oauthstateanticsrf = bin2hex(random_bytes(128/8));
 			$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
 
-			$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.$oauthstateanticsrf.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+			$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'-'.$oauthstateanticsrf.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://security.google.com/settings/security/permissions';
 		} elseif ($keyforsupportedoauth2array == 'OAUTH_STRIPE_TEST_NAME') {
