@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 
 /**
- * Core function to output top menu eldy test
+ * Core function to output top menu eldy
  *
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target (Example: '' or '_top')
