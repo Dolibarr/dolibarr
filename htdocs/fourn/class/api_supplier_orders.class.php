@@ -368,7 +368,7 @@ class SupplierOrders extends DolibarrApi
 			)
 		);
 	}
-        
+
 	/**
 	 * Approve an order
 	 *
@@ -416,8 +416,8 @@ class SupplierOrders extends DolibarrApi
 			)
 		);
 	}
-        
-        
+
+
 	/**
 	 * Sends an order to the vendor
 	 *
@@ -438,7 +438,7 @@ class SupplierOrders extends DolibarrApi
 	 *   "comment": ""
 	 * }
 	 */
-	public function makeOrder($id, $date, $method, $comment='')
+	public function makeOrder($id, $date, $method, $comment = '')
 	{
 		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
 			throw new RestException(401);
@@ -467,28 +467,28 @@ class SupplierOrders extends DolibarrApi
 			)
 		);
 	}
-        
-        /**
+
+		/**
 	 * Receives the order, dispatches products.
-         * 
-	 * Example: 
+		 *
+	 * Example:
 	 * <code> {
 	 *   "closeopenorder": 1,
 	 *   "comment": "",
-         *   "lines": [{
-         *      "id": 14, 
-         *      "fk_product": 112, 
-         *      "qty": 18, 
-         *      "warehouse": 1, 
-         *      "price": 114, 
-         *      "comment": "", 
-         *      "eatby": 0, 
-         *      "sellby": 0, 
-         *      "batch": 0, 
-         *      "notrigger": 0
-         *   }]
+		 *   "lines": [{
+		 *      "id": 14,
+		 *      "fk_product": 112,
+		 *      "qty": 18,
+		 *      "warehouse": 1,
+		 *      "price": 114,
+		 *      "comment": "",
+		 *      "eatby": 0,
+		 *      "sellby": 0,
+		 *      "batch": 0,
+		 *      "notrigger": 0
+		 *   }]
 	 * }</code>
-         * 
+		 *
 	 * @param   int		$id             Order ID
 	 * @param   integer	$closeopenorder	Close order if everything is received
 	 * @param   string	$comment	Comment {@required false}
@@ -499,7 +499,7 @@ class SupplierOrders extends DolibarrApi
 	 * @return  array
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
-	 * 
+	 *
 	 */
 	public function receiveOrder($id, $closeopenorder = 1, $comment = null, $lines)
 	{
@@ -515,29 +515,29 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-                foreach ($lines as $line) {
-                  $lineObj =(object) $line;
-                  
-                  $result=$this->order->dispatchProduct(DolibarrApiAccess::$user, 
-                          $lineObj->fk_product, 
-                          $lineObj->qty, 
-                          $lineObj->warehouse, 
-                          $lineObj->price, 
-                          $lineObj->comment, 
-                          $lineObj->eatby, 
-                          $lineObj->sellby, 
-                          $lineObj->batch, 
-                          $lineObj->id, 
-                          $lineObj->notrigger);
-                  
-                  if ($result < 0) {
-                    throw new RestException(500, 'Error dispatch order line '.$line->id.': '.$this->order->error);
-                  }
-                }
-                
+		foreach ($lines as $line) {
+			$lineObj =(object) $line;
+
+			$result=$this->order->dispatchProduct(DolibarrApiAccess::$user,
+				  $lineObj->fk_product,
+				  $lineObj->qty,
+				  $lineObj->warehouse,
+				  $lineObj->price,
+				  $lineObj->comment,
+				  $lineObj->eatby,
+				  $lineObj->sellby,
+				  $lineObj->batch,
+				  $lineObj->id,
+				  $lineObj->notrigger);
+
+			if ($result < 0) {
+				throw new RestException(500, 'Error dispatch order line '.$line->id.': '.$this->order->error);
+			}
+		}
+
 		$result = $this->order->calcAndSetStatusDispatch(DolibarrApiAccess::$user, $closeopenorder, $comment);
-		
-                if ($result == 0) {
+
+		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already dispatched');
 		}
 		if ($result < 0) {
