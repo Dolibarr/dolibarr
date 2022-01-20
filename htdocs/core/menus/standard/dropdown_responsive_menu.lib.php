@@ -308,7 +308,6 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 /**
  * Output sub menu entry
  *
- * @param	string	$atarget	Target
  * @param	array	$menu_array	Target
  * @return	void
  */
@@ -465,16 +464,9 @@ function print_end_menu_array()
  * Fill &$menu (example with $forcemainmenu='home' $forceleftmenu='all', return left menu tree of Home)
  *
  * @param	DoliDB		$db                 Database handler
- * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
- * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
- * @param	array		$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
- * @param	Menu		$menu				Object Menu to return back list of menu entries
- * @param	int			$noout				Disable output (Initialise &$menu only).
- * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
- * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not defined in session.
- * @param	array		$moredata			An array with more data to output
  * @param	array		$mainmenu			Main menu native
  * @param	array		$leftmenu			Lest menu native
+ * @param	array		$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @return	int								Nb of menu entries
  */
 function get_sub_menu($db, $mainmenu, $leftmenu, $tabMenu)
