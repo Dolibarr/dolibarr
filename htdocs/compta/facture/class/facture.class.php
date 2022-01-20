@@ -1191,6 +1191,7 @@ class Facture extends CommonInvoice
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
+        $this->entity = $conf->entity;
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
 			$object->note_private = '';
 			$object->note_public = '';
@@ -3931,10 +3932,17 @@ class Facture extends CommonInvoice
 
 
 			$file = $addon.'.php';
-			$classname = $addon;
+
+            $constant = 'FACTURE_ADDON_'.$this->entity;
+
+            if (! empty($conf->global->$constant)) {
+                $classname = $conf->global->$constant; // for multicompany proposal sharing
+            } else {
+                $classname = $conf->global->FACTURE_ADDON;
+            }
 
 
-			// Include file with class
+            // Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
 				$dir = dol_buildpath($reldir.'core/modules/'.$moduleName.'/');

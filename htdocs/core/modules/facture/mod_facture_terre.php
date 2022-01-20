@@ -186,7 +186,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
-		global $db;
+		global $db, $conf;
 
 		dol_syslog(get_class($this)."::getNextValue mode=".$mode, LOG_DEBUG);
 
@@ -196,13 +196,15 @@ class mod_facture_terre extends ModeleNumRefFactures
 		} elseif ($invoice->type == 3) {
 			$prefix = $this->prefixdeposit;
 		}
+        // Use object entity ID
+        $entity = ((isset($facture->entity) && is_numeric($facture->entity)) ? $facture->entity : $conf->entity);
 
 		// First we get the max value
 		$posindice = strlen($prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-%'";
-		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
+		$sql .= " AND entity = $entity";
 
 		$resql = $db->query($sql);
 		if ($resql) {
