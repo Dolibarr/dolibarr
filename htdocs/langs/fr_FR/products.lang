@@ -405,7 +405,6 @@ mandatoryperiod=Plage de date obligatoire
 mandatoryPeriodNeedTobeSet=Note: Les date de début et de fin doivent être définies
 mandatoryPeriodNeedTobeSetMsgValidate=Un service requiert une date de début et une date de fin
 mandatoryHelper= Cochez cette case si vous souhaitez un message à l'utilisateur lors de la création/validation d'une facture, proposition commerciale, commande client sans saisir de date de début et de fin sur les lignes avec ce service.<br>Notez que le message est un avertissement et non une erreur bloquante.
-Check this if you want a message to the user when creating / validating an invoice, commercial proposal, sales order without entering a start and end date on lines with this service.<br>Note that the message is a warning and not a blocking error.
 DefaultBOM=Nomenclature par défaut
 DefaultBOMDesc=La nomenclature par défaut qu'il est recommandé d'utiliser pour fabriquer ce produit. Ce champ ne peut être défini que si la nature du produit est '%s'.
 Rank=Classement
