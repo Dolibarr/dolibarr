@@ -215,7 +215,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			}
 
 			// Common check on ip (local and external)
-			$arrayofmetadataserver = array('100.100.100.200' => 'Alibaba', '192.0.0.192'=> 'Oracle');
+			$arrayofmetadataserver = array('100.100.100.200' => 'Alibaba', '192.0.0.192'=> 'Oracle', '192.80.8.124'=>'Packet');
 			foreach ($arrayofmetadataserver as $ipofmetadataserver => $nameofmetadataserver) {
 				if ($iptocheck == $ipofmetadataserver) {
 					$info['http_code'] = 400;
