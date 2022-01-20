@@ -1357,17 +1357,17 @@ class CommandeFournisseur extends CommonOrder
 
 			if ($this->id) {
 				$num = count($this->lines);
-                                
+
 				// insert products details into database
 				for ($i = 0; $i < $num; $i++) {
-                                        $line = $this->lines[$i];
-                                        if (!is_object($line)) {
+										$line = $this->lines[$i];
+					if (!is_object($line)) {
 						$line = (object) $line;
 					}
 
-                                  
+
 					$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
-                                        
+
 					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 					$result = $this->addline(
 						$line->desc,
