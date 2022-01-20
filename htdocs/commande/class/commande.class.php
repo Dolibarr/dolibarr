@@ -490,11 +490,7 @@ class Commande extends CommonOrder
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
-<<<<<<< Updated upstream
-		$sql .= " fk_user_valid = ".((int) $user->id)."',";
-=======
 		$sql .= " fk_user_valid = ".((int) $user->id).",";
->>>>>>> Stashed changes
 		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
