@@ -633,7 +633,7 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
 			} elseif ($modulepart == 'fichinter'){
-			        require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php'
+			        require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 				$object = new Fichinter($this->db);	
 			} else {
 				// TODO Implement additional moduleparts
