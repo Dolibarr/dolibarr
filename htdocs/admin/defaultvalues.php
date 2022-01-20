@@ -64,7 +64,7 @@ if (!$sortorder) {
 
 $defaulturl = GETPOST('defaulturl', 'alphanohtml');
 $defaultkey = GETPOST('defaultkey', 'alphanohtml');
-$defaultvalue = GETPOST('defaultvalue', 'none');
+$defaultvalue = GETPOST('defaultvalue', 'restricthtml');
 
 $defaulturl = preg_replace('/^\//', '', $defaulturl);
 

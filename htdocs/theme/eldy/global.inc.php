@@ -1888,7 +1888,7 @@ div.blockvmenulogo
 	margin-left: 11px;
 	margin-right: 9px;
 	padding: 0;
-	height: <?php echo $disableimages ? '20' : '35'; ?>px;
+	height: <?php echo $disableimages ? '18' : '35'; ?>px;
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
@@ -4558,7 +4558,7 @@ label.radioprivate {
 /*	margin-bottom: 2px;
 	margin-top: 2px; */
 }
-div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
 }
 .photowithborder {
@@ -4936,6 +4936,11 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.websiteformtoolbar {
+	position: sticky;
+	top: <?php echo $disableimages ? '32px' : '52px'; ?>;
+}
+
 .exampleapachesetup {
 	overflow-y: auto;
 	height: 100px;
@@ -4988,7 +4993,13 @@ span[phptag] {
 	/* display: inline-block; */
 	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
-	/* line-height: 28px; */
+	line-height: 28px;
+}
+.websiteselectionsection {
+	font-size: 0.85em;
+}
+.websiteselection span {
+	vertical-align: middle;
 }
 .websitetools {
 	float: right;
@@ -5000,7 +5011,7 @@ span[phptag] {
 }
 .websiteinputurl {
 	display: inline-block;
-	vertical-align: top;
+	vertical-align: middle;
 	line-height: 28px;
 }
 .websiteiframenoborder {
@@ -5033,6 +5044,10 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 }
 .websitebar input#previewpageurl {
 	line-height: 1em;
+}
+
+.websitebar input.bordertransp {
+	line-height: normal !important;
 }
 
 #divbodywebsite section p {
@@ -7340,7 +7355,7 @@ div.clipboardCPValue.hidewithsize {
 
 	.websiteselectionsection {
 		border-left: unset;
-		boerder-right: unset;
+		border-right: unset;
 		padding-left: 5px;
 	}
 
