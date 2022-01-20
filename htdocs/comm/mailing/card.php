@@ -493,9 +493,9 @@ if (empty($reshook)) {
 	if ($action == 'add') {
 		$mesgs = array();
 
-		$object->email_from     = (string) GETPOST("from", "none"); // Must allow 'name <email>'
-		$object->email_replyto  = (string) GETPOST("replyto", "none"); // Must allow 'name <email>'
-		$object->email_errorsto = (string) GETPOST("errorsto", "none"); // Must allow 'name <email>'
+		$object->email_from     = (string) GETPOST("from", 'alphawithlgt'); // Must allow 'name <email>'
+		$object->email_replyto  = (string) GETPOST("replyto", 'alphawithlgt'); // Must allow 'name <email>'
+		$object->email_errorsto = (string) GETPOST("errorsto", 'alphawithlgt'); // Must allow 'name <email>'
 		$object->title          = (string) GETPOST("title");
 		$object->sujet          = (string) GETPOST("sujet");
 		$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
@@ -531,11 +531,11 @@ if (empty($reshook)) {
 		if ($action == 'settitle') {
 			$object->title = trim(GETPOST('title', 'alpha'));
 		} elseif ($action == 'setemail_from') {
-			$object->email_from = trim(GETPOST('email_from', 'none')); // Must allow 'name <email>'
+			$object->email_from = trim(GETPOST('email_from', 'alphawithlgt')); // Must allow 'name <email>'
 		} elseif ($action == 'setemail_replyto') {
-			$object->email_replyto = trim(GETPOST('email_replyto', 'none')); // Must allow 'name <email>'
+			$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
 		} elseif ($action == 'setemail_errorsto') {
-			$object->email_errorsto = trim(GETPOST('email_errorsto', 'none')); // Must allow 'name <email>'
+			$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
 		} elseif ($action == 'settitle' && empty($object->title)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {

@@ -214,11 +214,14 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				}
 			}
 
-			// Common check (local and external)
-			if (in_array($iptocheck, array('100.100.100.200'))) {
-				$info['http_code'] = 400;
-				$info['content'] = 'Error bad hostname IP (Used by Alibaba metadata). Must be an external URL.';
-				break;
+			// Common check on ip (local and external)
+			$arrayofmetadataserver = array('100.100.100.200' => 'Alibaba', '192.0.0.192'=> 'Oracle');
+			foreach ($arrayofmetadataserver as $ipofmetadataserver => $nameofmetadataserver) {
+				if ($iptocheck == $ipofmetadataserver) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname IP (Used by '.$nameofmetadataserver.' metadata server). This IP is forbidden.';
+					break 2;	// exit the foreach and the do...
+				}
 			}
 
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+

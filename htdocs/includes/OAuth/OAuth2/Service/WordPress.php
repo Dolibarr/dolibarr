@@ -13,85 +13,85 @@ use OAuth\Common\Http\Uri\Uri;
 
 class WordPress extends AbstractService
 {
-    protected $accessType = 'online';
+	protected $accessType = 'online';
 
-    public function __construct(
-        CredentialsInterface $credentials,
-        ClientInterface $httpClient,
-        TokenStorageInterface $storage,
-        $scopes = array(),
-        UriInterface $baseApiUri = null
-    ) {
-        parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri, true);
+	public function __construct(
+		CredentialsInterface $credentials,
+		ClientInterface $httpClient,
+		TokenStorageInterface $storage,
+		$scopes = array(),
+		UriInterface $baseApiUri = null
+	) {
+		parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri, true);
 
-        if (null === $baseApiUri) {
-            $this->baseApiUri = new Uri('https://addresse_de_votre_site_wordpress');
-        }
-    }
-/*
-    // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
-    public $approvalPrompt='auto';
-    public function setApprouvalPrompt($prompt)
-    {
-        if (!in_array($prompt, array('auto', 'force'), true)) {
-            // @todo Maybe could we rename this exception
-            throw new InvalidAccessTypeException('Invalid approuvalPrompt, expected either auto or force.');
-        }
-        $this->approvalPrompt = $prompt;
-    }*/
-    
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthorizationEndpoint()
-    {
-        return new Uri(sprintf('%s/oauth/authorize', $this->baseApiUri));
-    }
+		if (null === $baseApiUri) {
+			$this->baseApiUri = new Uri('https://addresse_de_votre_site_wordpress');
+		}
+	}
+	/*
+	// LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+	public $approvalPrompt='auto';
+	public function setApprouvalPrompt($prompt)
+	{
+		if (!in_array($prompt, array('auto', 'force'), true)) {
+			// @todo Maybe could we rename this exception
+			throw new InvalidAccessTypeException('Invalid approuvalPrompt, expected either auto or force.');
+		}
+		$this->approvalPrompt = $prompt;
+	}*/
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAccessTokenEndpoint()
-    {
-        return new Uri(sprintf('%s/oauth/token', $this->baseApiUri));
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getAuthorizationEndpoint()
+	{
+		return new Uri(sprintf('%s/oauth/authorize', $this->baseApiUri));
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAuthorizationMethod()
-    {
-        global $conf;
-        return empty($conf->global->OAUTH_WORDPRESS_AUTHORIZATION_METHOD_QUERY_STRING) ? static::AUTHORIZATION_METHOD_HEADER_BEARER : static::AUTHORIZATION_METHOD_QUERY_STRING;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getAccessTokenEndpoint()
+	{
+		return new Uri(sprintf('%s/oauth/token', $this->baseApiUri));
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function parseAccessTokenResponse($responseBody)
-    {
-        $data = json_decode($responseBody, true);
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function getAuthorizationMethod()
+	{
+		global $conf;
+		return empty($conf->global->OAUTH_WORDPRESS_AUTHORIZATION_METHOD_QUERY_STRING) ? static::AUTHORIZATION_METHOD_HEADER_BEARER : static::AUTHORIZATION_METHOD_QUERY_STRING;
+	}
 
-        if (null === $data || !is_array($data)) {
-            throw new TokenResponseException('Unable to parse response: "'.(isset($responseBody)?$responseBody:'NULL').'"');
-        } elseif (isset($data['error'])) {
-            throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '" : "'.$data['error_description'].'"');
-        }
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function parseAccessTokenResponse($responseBody)
+	{
+		$data = json_decode($responseBody, true);
 
-        $token = new StdOAuth2Token();
-        $token->setAccessToken($data['access_token']);
-        $token->setLifetime($data['expires_in']);
+		if (null === $data || !is_array($data)) {
+			throw new TokenResponseException('Unable to parse response: "'.(isset($responseBody)?$responseBody:'NULL').'"');
+		} elseif (isset($data['error'])) {
+			throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '" : "'.$data['error_description'].'"');
+		}
 
-        if (isset($data['refresh_token'])) {
-            $token->setRefreshToken($data['refresh_token']);
-            unset($data['refresh_token']);
-        }
+		$token = new StdOAuth2Token();
+		$token->setAccessToken($data['access_token']);
+		$token->setLifetime($data['expires_in']);
 
-        unset($data['access_token']);
-        unset($data['expires_in']);
+		if (isset($data['refresh_token'])) {
+			$token->setRefreshToken($data['refresh_token']);
+			unset($data['refresh_token']);
+		}
 
-        $token->setExtraParams($data);
+		unset($data['access_token']);
+		unset($data['expires_in']);
 
-        return $token;
-    }
+		$token->setExtraParams($data);
+
+		return $token;
+	}
 }
