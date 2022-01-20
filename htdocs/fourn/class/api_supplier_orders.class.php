@@ -490,7 +490,7 @@ class SupplierOrders extends DolibarrApi
 	 * }</code>
 		 *
 	 * @param   int		$id             Order ID
-	 * @param   integer	$closeopenorder	Close order if everything is received
+	 * @param   integer	$closeopenorder	Close order if everything is received {@required false}
 	 * @param   string	$comment	Comment {@required false}
 	 * @param   array	$lines		Array of product dispatches
 	 *
@@ -501,7 +501,7 @@ class SupplierOrders extends DolibarrApi
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 *
 	 */
-	public function receiveOrder($id, $closeopenorder = 1, $comment = null, $lines)
+	public function receiveOrder($id, $closeopenorder, $comment, $lines)
 	{
 		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
 			throw new RestException(401);
