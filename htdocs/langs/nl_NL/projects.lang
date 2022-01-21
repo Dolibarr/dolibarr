@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Opmerking: de voortgang van bes
 SelectLinesOfTimeSpentToInvoice=Selecteer tijdsregels die niet zijn gefactureerd en vervolgens de bulkactie "Factuur genereren" om ze te factureren
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
+StartDateCannotBeAfterEndDate=Einddatum kan niet vóór startdatum liggen

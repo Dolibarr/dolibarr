@@ -249,7 +249,7 @@ class Link extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			dol_syslog(get_class($this)."::fetchAll ".$num."records", LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetchAll num=".((int) $num), LOG_DEBUG);
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$link = new Link($this->db);

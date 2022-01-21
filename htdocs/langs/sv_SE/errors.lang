@@ -273,6 +273,7 @@ ErrorWrongFileName=Filens namn kan inte innehålla __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Inte i ordningen för betalningsvillkor, ändra.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) är högre än PHP-parameter post_max_size (%s). Detta är inte en konsekvent installation.

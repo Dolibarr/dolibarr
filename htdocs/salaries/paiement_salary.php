@@ -110,8 +110,8 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			$paiement->amounts      = $amounts; // Tableau de montant
 			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note         = GETPOST("note", 'none');
-			$paiement->note_private = GETPOST("note", 'none');
+			$paiement->note         = GETPOST("note", 'restricthtml');
+			$paiement->note_private = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (GETPOST('closepaidsalary') == 'on' ? 1 : 0));

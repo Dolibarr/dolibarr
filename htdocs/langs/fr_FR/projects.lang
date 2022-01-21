@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Remarque : les projets existant
 SelectLinesOfTimeSpentToInvoice=Sélectionnez les lignes de temps passé non facturées, puis l'action groupée "Générer la facture" pour les facturer
 ProjectTasksWithoutTimeSpent=Tâches de projet sans temps consommé
 FormForNewLeadDesc=Veuillez remplir ce formulaire de contact ou écrivez un e-mail à <b>%s</b>.
+StartDateCannotBeAfterEndDate=La date de fin ne peux être avant la date de début
