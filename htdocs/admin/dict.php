@@ -2412,26 +2412,24 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			// Labels Length
 			$maxlength = '';
 			if (in_array($fieldlist[$field], array('libelle', 'label'))) {
-				if ($fieldlist[$field] == 'label' || $fieldlist[$field] == 'libelle') {
-					switch ($tabname) {
-						case MAIN_DB_PREFIX . 'c_accounting_category':
-						case MAIN_DB_PREFIX . 'c_ecotaxe':
-						case MAIN_DB_PREFIX . 'c_email_senderprofile':
-						case MAIN_DB_PREFIX . 'c_forme_juridique':
-						case MAIN_DB_PREFIX . 'c_holiday_types':
-						case MAIN_DB_PREFIX . 'c_payment_term':
-						case MAIN_DB_PREFIX . 'c_transport_mode':
-							$maxlength = ' maxlength="255"';
-							break;
-						case MAIN_DB_PREFIX . 'c_email_templates':
-							$maxlength = ' maxlength="180"';
-							break;
-						case MAIN_DB_PREFIX . 'c_socialnetworks':
-							$maxlength = ' maxlength="150"';
-							break;
-						default:
-							$maxlength = ' maxlength="128"';
-					}
+				switch ($tabname) {
+					case MAIN_DB_PREFIX . 'c_accounting_category':
+					case MAIN_DB_PREFIX . 'c_ecotaxe':
+					case MAIN_DB_PREFIX . 'c_email_senderprofile':
+					case MAIN_DB_PREFIX . 'c_forme_juridique':
+					case MAIN_DB_PREFIX . 'c_holiday_types':
+					case MAIN_DB_PREFIX . 'c_payment_term':
+					case MAIN_DB_PREFIX . 'c_transport_mode':
+						$maxlength = ' maxlength="255"';
+						break;
+					case MAIN_DB_PREFIX . 'c_email_templates':
+						$maxlength = ' maxlength="180"';
+						break;
+					case MAIN_DB_PREFIX . 'c_socialnetworks':
+						$maxlength = ' maxlength="150"';
+						break;
+					default:
+						$maxlength = ' maxlength="128"';
 				}
 			}
 
