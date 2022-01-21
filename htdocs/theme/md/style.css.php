@@ -3041,11 +3041,11 @@ div.blockvmenulogo
 	border-bottom: 0 !important;
 }
 .menulogocontainer {
-	margin: <?php echo $disableimages ? '0' : '6'; ?>px;
+	margin: <?php echo $disableimages ? '-1' : '6'; ?>px;
 	margin-left: 12px;
 	margin-right: 6px;
 	padding: 0;
-	height: <?php echo $disableimages ? '20' : '32'; ?>px;
+	height: <?php echo $disableimages ? '18' : '32'; ?>px;
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
@@ -4492,7 +4492,7 @@ label.radioprivate {
 /*	margin-bottom: 2px;
 	margin-top: 2px; */
 }
-div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
 }
 .photowithborder {
@@ -4862,6 +4862,11 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.websiteformtoolbar {
+	position: sticky;
+	top: <?php echo $disableimages ? '36px' : '50px'; ?>;
+}
+
 .exampleapachesetup {
 	overflow-y: auto;
 	max-height: 100px;
@@ -4891,7 +4896,10 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
 	display: inline-block;
-	padding: 4px 0 4px 0;
+	padding: 5px 5px 5px 5px;
+}
+.centpercent.websitebar {
+	width: calc(100% - 10px);
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -4908,7 +4916,7 @@ span[phptag] {
 }
 .websiteselection {
 	/* display: inline-block; */
-	padding-left: 10px;
+	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
 }
 .websitetools {
@@ -7126,7 +7134,7 @@ div.clipboardCPValue.hidewithsize {
 
 	.websiteselectionsection {
 		border-left: unset;
-		boerder-right: unset;
+		border-right: unset;
 		padding-left: 5px;
 	}
 
