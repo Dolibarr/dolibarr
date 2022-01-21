@@ -2264,6 +2264,9 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  */
 function top_menu_quickadd()
 {
+	// Easya 2022 - PR17966 - Review quickadd menu
+	// Code annulé
+	/*
 	global $langs, $conf, $db, $hookmanager, $user;
 	global $menumanager;
 
@@ -2433,6 +2436,10 @@ function top_menu_quickadd()
 
 	$dropDownQuickAddHtml .= '</div>';
 	$dropDownQuickAddHtml .= '</div>';
+	*/
+	// Code remplacé
+	global $langs;
+	// Easya 2022 - PR17966 - Fin
 
 	$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
@@ -2440,9 +2447,14 @@ function top_menu_quickadd()
             <i class="fa fa-plus-circle" ></i>
         </a>
 
-        <div class="dropdown-menu">
-            '.$dropDownQuickAddHtml.'
+		<!-- Easya 2022 - PR17966 - Review quickadd menu
+		// Code annulé
+		// <div class="dropdown-menu">
+        //    '.$dropDownQuickAddHtml.'
         </div>
+        // Code remplacé -->
+        <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
+    	<!-- Easya 2022 - PR17966 - Fin -->
     </div>';
 	$html .= '
         <!-- Code to show/hide the user drop-down -->
@@ -2476,6 +2488,155 @@ function top_menu_quickadd()
         ';
 	return $html;
 }
+
+// Easya 2022 - PR17966 - Review quickadd menu
+// Code ajouté
+/**
+ * Generate list of quickadd items
+ *
+ * @return string HTML output
+ */
+function printDropdownQuickadd()
+{
+	global $conf, $user, $langs, $hookmanager;
+
+	$items = array(
+		'items' => array(
+			array(
+				"url" => "/societe/card.php?action=create",
+				"title" => "MenuNewThirdParty@companies",
+				"name" => "ThirdParty@companies",
+				"picto" => "object_company",
+				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->creer, // vs hooking
+				"position" => 10,
+			),
+			array(
+				"url" => "/contact/card.php?action=create",
+				"title" => "NewContactAddress@companies",
+				"name" => "Contact@companies",
+				"picto" => "object_contact",
+				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->contact->creer, // vs hooking
+				"position" => 20,
+			),
+			array(
+				"url" => "/comm/propal/card.php?action=create",
+				"title" => "NewPropal@propal",
+				"name" => "Proposal@propal",
+				"picto" => "object_propal",
+				"activation" => !empty($conf->propal->enabled) && $user->rights->propale->creer, // vs hooking
+				"position" => 30,
+			),
+
+			array(
+				"url" => "/commande/card.php?action=create",
+				"title" => "NewOrder@orders",
+				"name" => "Order@orders",
+				"picto" => "object_order",
+				"activation" => !empty($conf->commande->enabled) && $user->rights->commande->creer, // vs hooking
+				"position" => 40,
+			),
+			array(
+				"url" => "/compta/facture/card.php?action=create",
+				"title" => "NewBill@bills",
+				"name" => "Bill@bills",
+				"picto" => "object_bill",
+				"activation" => !empty($conf->facture->enabled) && $user->rights->facture->creer, // vs hooking
+				"position" => 50,
+			),
+			array(
+				"url" => "/compta/facture/card.php?action=create",
+				"title" => "NewContractSubscription@contracts",
+				"name" => "Contract@contracts",
+				"picto" => "object_contract",
+				"activation" => !empty($conf->contrat->enabled) && $user->rights->contrat->creer, // vs hooking
+				"position" => 60,
+			),
+			array(
+				"url" => "/supplier_proposal/card.php?action=create",
+				"title" => "SupplierProposalNew@supplier_proposal",
+				"name" => "SupplierProposal@supplier_proposal",
+				"picto" => "object_propal",
+				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
+				"position" => 70,
+			),
+			array(
+				"url" => "/fourn/commande/card.php?action=create",
+				"title" => "NewSupplierOrderShort@orders",
+				"name" => "SupplierOrder@orders",
+				"picto" => "object_order",
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
+				"position" => 80,
+			),
+			array(
+				"url" => "/fourn/facture/card.php?action=create",
+				"title" => "NewBill@bills",
+				"name" => "SupplierBill@bills",
+				"picto" => "object_bill",
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
+				"position" => 90,
+			),
+			array(
+				"url" => "/product/card.php?action=create&amp;type=0",
+				"title" => "NewProduct@products",
+				"name" => "Product@products",
+				"picto" => "object_product",
+				"activation" => !empty($conf->product->enabled) && $user->rights->produit->creer, // vs hooking
+				"position" => 100,
+			),
+			array(
+				"url" => "/product/card.php?action=create&amp;type=1",
+				"title" => "NewService@products",
+				"name" => "Service@products",
+				"picto" => "object_service",
+				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
+				"position" => 110,
+			),
+		),
+	);
+
+	$dropDownQuickAddHtml = '';
+
+	// Define $dropDownQuickAddHtml
+	$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
+	$dropDownQuickAddHtml .= '<div class="dropdown-quickadd-list">';
+
+	// Allow the $items of the menu to be manipulated by modules
+	$parameters = array();
+	$hook_items = $items;
+	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+	if (is_numeric($reshook) && is_array($hookmanager->results)) {
+		if ($reshook == 0) {
+			$items['items'] = array_merge($items['items'], $hookmanager->results); // add
+		} else {
+			$items = $hookmanager->results; // replace
+		}
+
+		// Sort menu items by 'position' value
+		$position = array();
+		foreach ($items['items'] as $key => $row) {
+			$position[$key] = $row['position'];
+		}
+		array_multisort($position, SORT_ASC, $items['items']);
+	}
+
+	foreach ($items['items'] as $item) {
+		if (!$item['activation']) {
+			continue;
+		}
+		$langs->load(explode('@', $item['title'])[1]);
+		$langs->load(explode('@', $item['name'])[1]);
+		$dropDownQuickAddHtml .= '
+			<a class="dropdown-item quickadd-item" href="'.DOL_URL_ROOT.$item['url'].'" title="'.$langs->trans(explode('@', $item['title'])[0]).'">
+			'. img_picto('', $item['picto'], 'style="width:18px;"') . ' ' . $langs->trans(explode('@', $item['name'])[0]) . '</a>
+		';
+	}
+
+	$dropDownQuickAddHtml .= '</div>';
+	$dropDownQuickAddHtml .= '</div>';
+
+	return $dropDownQuickAddHtml;
+}
+// Easya 2022 - PR17966 - Fin
 
 /**
  * Build the tooltip on top menu bookmark
