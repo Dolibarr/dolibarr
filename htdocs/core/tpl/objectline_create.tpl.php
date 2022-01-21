@@ -996,7 +996,9 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		<?php } else { ?>
 <!--			jQuery("#price_ht").val('').hide();-->
 			jQuery("#multicurrency_price_ht").val('').hide();
-			jQuery("#title_up_ht, #title_up_ht_currency").hide();
+<!--            jQuery("#title_up_ht").hide();-->
+
+        jQuery("#title_up_ht_currency").hide();
 		<?php } ?>
 		jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_fourn_ref, #title_vat, #title_up_ttc, #title_up_ttc_currency").hide();
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
