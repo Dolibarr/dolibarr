@@ -994,7 +994,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ht").val('').show();
 			jQuery("#title_up_ht, #title_up_ht_currency").show();
 		<?php } else { ?>
-			jQuery("#price_ht").val('').hide();
+<!--			jQuery("#price_ht").val('').hide();-->
 			jQuery("#multicurrency_price_ht").val('').hide();
 			jQuery("#title_up_ht, #title_up_ht_currency").hide();
 		<?php } ?>
