@@ -3930,9 +3930,6 @@ class Facture extends CommonInvoice
 
 			$mybool = false;
 
-
-			$file = $addon.'.php';
-
             $constant = 'FACTURE_ADDON_'.$this->entity;
 
             if (! empty($conf->global->$constant)) {
@@ -3941,6 +3938,7 @@ class Facture extends CommonInvoice
                 $classname = $conf->global->FACTURE_ADDON;
             }
 
+            $file = $classname.".php";
 
             // Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

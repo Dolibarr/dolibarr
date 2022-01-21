@@ -103,7 +103,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 	$sqls = array();
 
 	// Customer invoices
-	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.ref as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
+    $sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr, f.entity,";
 	$sql .= " s.rowid as socid, s.nom as name, s.fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
@@ -210,7 +210,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 
 	// Current balance
 	print '<tr class="liste_total">';
-	print '<td class="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
+	print '<td class="left" colspan="'.$colspan.'">'.$langs->trans("CurrentBalance").'</td>';
 	print '<td class="nowrap right">'.price($solde).'</td>';
 	print '</tr>';
 

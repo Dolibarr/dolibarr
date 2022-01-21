@@ -99,7 +99,7 @@ class Lettering extends BookKeeping
 					$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
 					$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON (bk.fk_doc = payf.fk_bank AND bk.code_journal='".$this->db->escape($obj->code_journal)."')";
 					$sql .= " WHERE payfacf.fk_paiementfourn = '".$this->db->escape($obj->url_id)."' ";
-					$sql .= " AND facf.entity = ".$conf->entity;
+					$sql .= " AND facf.entity IN (".getEntity('facture').")";;
 					$sql .= " AND code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
 					$sql .= " AND ( ";
 					if ($object->code_compta != "") {
@@ -128,7 +128,7 @@ class Lettering extends BookKeeping
 						$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn facf ";
 						$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON(  bk.fk_doc = facf.rowid AND facf.rowid IN (".$this->db->sanitize(implode(',', $ids_fact))."))";
 						$sql .= " WHERE bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=3 AND entity=".$conf->entity.") ";
-						$sql .= " AND facf.entity = ".$conf->entity;
+						$sql .= " AND facf.entity IN (".getEntity('facture').")";;
 						$sql .= " AND ( ";
 						if ($object->code_compta != "") {
 							$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
