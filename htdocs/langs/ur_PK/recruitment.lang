@@ -18,59 +18,59 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = بھرتی
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = نئی ملازمت کے عہدوں کے لیے بھرتی مہم کا نظم کریں اور ان کی پیروی کریں۔
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = بھرتی سیٹ اپ
+Settings = ترتیبات
+RecruitmentSetupPage = ریکروٹمنٹ ماڈیول کے لیے مین آپشنز کا سیٹ اپ یہاں درج کریں۔
+RecruitmentArea=بھرتی کا علاقہ
+PublicInterfaceRecruitmentDesc=نوکریوں کے عوامی صفحات عوامی یو آر ایل ہیں جو نوکریوں کو دکھانے اور جواب دینے کے لیے ہیں۔ ہر اوپن جاب کے لیے ایک مختلف لنک ہوتا ہے، جو ہر جاب ریکارڈ پر پایا جاتا ہے۔
+EnablePublicRecruitmentPages=کھلی ملازمتوں کے عوامی صفحات کو فعال کریں۔
 
 #
 # About page
 #
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+About = کے بارے میں
+RecruitmentAbout = بھرتی کے بارے میں
+RecruitmentAboutPage = صفحہ کے بارے میں بھرتی
+NbOfEmployeesExpected=ملازمین کی متوقع تعداد
+JobLabel=ملازمت کی پوزیشن کا لیبل
+WorkPlace=کام کی جگہ
+DateExpected=متوقع تاریخ
+FutureManager=مستقبل کے مینیجر
+ResponsibleOfRecruitement=بھرتی کے ذمہ دار
+IfJobIsLocatedAtAPartner=اگر ملازمت کسی ساتھی کی جگہ پر ہے۔
+PositionToBeFilled=عہدہ
+PositionsToBeFilled=ملازمت کے عہدے
+ListOfPositionsToBeFilled=ملازمت کے عہدوں کی فہرست
+NewPositionToBeFilled=نوکری کی نئی پوزیشنیں
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+JobOfferToBeFilled=ملازمت کی پوزیشن کو پُر کرنا ہے۔
+ThisIsInformationOnJobPosition=پُر کی جانے والی ملازمت کی پوزیشن کی معلومات
+ContactForRecruitment=بھرتی کے لیے رابطہ کریں۔
+EmailRecruiter=ای میل بھرتی کرنے والا
+ToUseAGenericEmail=ایک عام ای میل استعمال کرنے کے لیے۔ اگر وضاحت نہیں کی گئی ہے تو، بھرتی کے ذمہ دار کا ای میل استعمال کیا جائے گا۔
+NewCandidature=نئی درخواست
+ListOfCandidatures=درخواستوں کی فہرست
+RequestedRemuneration=معاوضے کی درخواست کی۔
+ProposedRemuneration=مجوزہ معاوضہ
+ContractProposed=معاہدہ تجویز کیا گیا۔
+ContractSigned=معاہدے پر دستخط کیے گئے۔
+ContractRefused=معاہدہ کرنے سے انکار کر دیا۔
+RecruitmentCandidature=درخواست
+JobPositions=ملازمت کے عہدے
+RecruitmentCandidatures=ایپلی کیشنز
+InterviewToDo=انٹرویو کرنا ہے۔
+AnswerCandidature=درخواست کا جواب
+YourCandidature=آپ کی درخواست
+YourCandidatureAnswerMessage=آپ کی درخواست کے لیے آپ کا شکریہ۔ <br>...
+JobClosedTextCandidateFound=ملازمت کی پوزیشن بند ہے۔ عہدہ پُر ہو چکا ہے۔
+JobClosedTextCanceled=ملازمت کی پوزیشن بند ہے۔
+ExtrafieldsJobPosition=تکمیلی صفات (ملازمت کی پوزیشنیں)
+ExtrafieldsApplication=تکمیلی صفات (نوکری کی درخواستیں)
+MakeOffer=ایک پیشکش کریں۔

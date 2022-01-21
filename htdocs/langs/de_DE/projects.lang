@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Hinweis: Bestehende Projekte mi
 SelectLinesOfTimeSpentToInvoice=Wählen Sie Positionen mit Zeiten aus, die noch nicht in Rechnung gestellt wurden, und führen Sie dann die Massenaktion "Rechnung erstellen" aus, um sie zu berechnen
 ProjectTasksWithoutTimeSpent=Projektaufgaben ohne Zeitaufwand
 FormForNewLeadDesc=Vielen Dank für das Ausfüllen des Formulars, um uns zu kontaktieren. Sie können uns auch direkt eine E-Mail an <b> %s </b> senden.
+StartDateCannotBeAfterEndDate=Enddatum kann nicht vor dem Startdatum liegen

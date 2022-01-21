@@ -38,7 +38,7 @@ $element        = GETPOST('element', 'alpha');
 $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
-$sortorder      = GETPOST('sortorder', 'alpha');
+$sortorder      = GETPOST('sortorder', 'aZ09comma');
 $sortfield      = GETPOST('sortfield', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
 

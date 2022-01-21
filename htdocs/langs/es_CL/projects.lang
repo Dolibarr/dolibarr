@@ -155,6 +155,7 @@ RecordsClosed=%s proyecto (s) cerrado
 SendProjectRef=Proyecto de información %s
 ModuleSalaryToDefineHourlyRateMustBeEnabled=El módulo &#39;Salarios&#39; debe estar habilitado para definir la tarifa por hora de los empleados para que el tiempo empleado se valore
 NewTaskRefSuggested=Referencia de tarea ya utilizada, se requiere una nueva referencia de tarea
+TimeSpentForIntervention=Tiempo dedicado
 TimeSpentForInvoice=Tiempo dedicado
 InvoiceGeneratedFromTimeSpent=La factura %s se ha generado desde el tiempo invertido en el proyecto
 UsageBillTimeShort=Uso: Bill time

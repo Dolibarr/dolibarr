@@ -65,3 +65,8 @@ ALTER TABLE llx_c_stcommcontact MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_type_contact MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(128);
 
+UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
+
+
+
+-- v16

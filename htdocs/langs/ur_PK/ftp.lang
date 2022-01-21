@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP or SFTP Client module setup
-NewFTPClient=New FTP/FTPS connection setup
-FTPArea=FTP/FTPS Area
-FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
-SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
-FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to server with defined login/password
-FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty.
-FTPPassiveMode=Passive mode
-ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
-FailedToGetFile=Failed to get files %s
+FTPClientSetup=FTP یا SFTP کلائنٹ ماڈیول سیٹ اپ
+NewFTPClient=نیا FTP/FTPS کنکشن سیٹ اپ
+FTPArea=FTP/FTPS ایریا
+FTPAreaDesc=یہ اسکرین FTP اور SFTP سرور کا منظر دکھاتی ہے۔
+SetupOfFTPClientModuleNotComplete=FTP یا SFTP کلائنٹ ماڈیول کا سیٹ اپ نامکمل لگتا ہے۔
+FTPFeatureNotSupportedByYourPHP=آپ کا پی ایچ پی FTP یا SFTP فنکشنز کو سپورٹ نہیں کرتا ہے۔
+FailedToConnectToFTPServer=سرور سے منسلک ہونے میں ناکام (سرور %s، پورٹ %s)
+FailedToConnectToFTPServerWithCredentials=متعین لاگ ان/پاس ورڈ کے ساتھ سرور میں لاگ ان کرنے میں ناکام
+FTPFailedToRemoveFile=فائل کو ہٹانے میں ناکام <b> %s </b> ۔
+FTPFailedToRemoveDir=ڈائرکٹری کو ہٹانے میں ناکام <b> %s </b> : اجازتیں چیک کریں اور یہ کہ ڈائرکٹری خالی ہے۔
+FTPPassiveMode=غیر فعال موڈ
+ChooseAFTPEntryIntoMenu=مینو سے ایک FTP/SFTP سائٹ منتخب کریں...
+FailedToGetFile=فائلیں %s حاصل کرنے میں ناکام

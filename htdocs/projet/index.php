@@ -56,8 +56,8 @@ if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 

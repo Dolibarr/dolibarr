@@ -273,6 +273,7 @@ ErrorWrongFileName=De naam van het bestand mag niet __SOMETHING__ bevatten
 ErrorNotInDictionaryPaymentConditions=Niet bekend in de gedefinieerde betaalregelingen, graag wijzigen
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Uw PHP-parameter upload_max_filesize (%s) is hoger dan PHP-parameter post_max_size (%s). Dit is geen consistente opstelling.
