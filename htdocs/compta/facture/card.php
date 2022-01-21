@@ -5538,6 +5538,10 @@ if ($action == 'create') {
 
 		// Generated documents
 		$filename = dol_sanitizeFileName($object->ref);
+
+        if($object->entity == 1)$upload_dir= str_replace('invoice','facture',$upload_dir);
+        else $upload_dir= str_replace('facture','invoice',$upload_dir);
+
 		$filedir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER['PHP_SELF'].'?facid='.$object->id;
 		$genallowed = $usercanread;
