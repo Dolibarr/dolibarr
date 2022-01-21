@@ -1261,7 +1261,7 @@ class FormTicket
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
 				print '<tr class="email_line"><td></td><td colspan="2"><div style="padding: 3px 0 3px 0">'."\n";
-				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1);
+				 print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1,0,"","",0,0,0,'','minwidth200');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
@@ -1375,7 +1375,7 @@ class FormTicket
 
 		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
 		if ($user->rights->ticket->write && !$user->socid) {
-			print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
+			//print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
 		}
 		print '</label></td><td>';
 		//$toolbarname = 'dolibarr_details';
