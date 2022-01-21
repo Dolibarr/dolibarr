@@ -260,7 +260,11 @@ class Paiement extends CommonObject
 			}
 		}
 
-		$totalamount = price2num($totalamount);
+        // Spé Arcoop : on fetch une facture pour savoir à quelle entité rattacher le règlement
+        $invoice=new Facture($this->db);
+        $invoice->fetch($key);
+
+        $totalamount = price2num($totalamount);
 		$totalamount_converted = price2num($totalamount_converted);
 
 		// Check parameters
