@@ -105,7 +105,11 @@ function facture_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
+
+    $upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    if($object->entity == 1)$upload_dir= str_replace('invoice','facture',$upload_dir);
+    else $upload_dir= str_replace('facture','invoice',$upload_dir);
+
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id;
