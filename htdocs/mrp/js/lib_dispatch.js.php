@@ -70,10 +70,12 @@ function addDispatchLine(index, type, mode)
 	mode = mode || 'qtymissing'
 
 	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
+    if(mode == 'qtymissingconsume') var inputId = 'qtytoconsume';
+    else var inputId = 'qtytoproduce';
 	var nbrTrs = $("tr[name^='"+type+"_"+index+"']").length; 				// position of line for batch
 	var $row = $("tr[name='"+type+'_'+index+"_1']").clone(true); 				// clone last batch line to jQuery object
 	var	qtyOrdered = parseFloat($("#qty_ordered_"+index).val()); 	// Qty ordered is same for all rows
-	var	qty = parseFloat($("#qtytoproduce-"+index+"-"+nbrTrs).val());
+	var	qty = parseFloat($("#"+inputId+"-"+index+"-"+nbrTrs).val());
 	var	qtyDispatched;
 
 	if (mode === 'lessone')
@@ -83,7 +85,7 @@ function addDispatchLine(index, type, mode)
 	else
 	{
 		qtyDispatched = parseFloat($("#qty_dispatched_"+index).val()) + qty;
-		console.log(qty);
+		console.log($("#qty_dispatched_"+index).val());
 		// If user did not reduced the qty to dispatch on old line, we keep only 1 on old line and the rest on new line
 		if (qtyDispatched == qtyOrdered && qtyDispatched > 1) {
 			qtyDispatched = parseFloat($("#qty_dispatched_"+index).val()) + 1;
