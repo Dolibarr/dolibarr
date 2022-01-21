@@ -626,13 +626,13 @@ class FormProduct
 	{
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot,$objectLines", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot,$objectLines", LOG_DEBUG);
 
 		$out = '';
 		$productIdArray = array();
 		if (!is_array($objectLines) || !count($objectLines)) {
 			if (!empty($fk_product) && $fk_product > 0) {
-				$productIdArray[] = (int) $fk_product;
+				$productIdArray[] = (int)$fk_product;
 			}
 		} else {
 			foreach ($objectLines as $line) {
@@ -644,26 +644,44 @@ class FormProduct
 
 		$nboflot = $this->loadLotStock($productIdArray);
 
-		$out .= '<datalist id="'.$htmlname.'" >';
+		$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled' : '') . ' id="' . $htmlname . '" name="' . ($htmlname . ($disabled ? '_disabled' : '')) . '">';
 
 		if (!empty($fk_product) && $fk_product > 0) {
-			$productIdArray = array((int) $fk_product); // only show lot stock for product
+			$productIdArray = array((int)$fk_product); // only show lot stock for product
 		} else {
 			foreach ($this->cache_lot as $key => $value) {
 				$productIdArray[] = $key;
 			}
 		}
 
+		$TBatchQuantity = array();
 		foreach ($productIdArray as $productId) {
 			foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
-				if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
-					$label = $arraytypes['entrepot_label'].' - ';
-					$label .= $arraytypes['batch'];
-					$out .= '<option>'.$arraytypes['batch'].'</option>';
-				}
+				$TBatchQuantity[$arraytypes['batch']][$arraytypes['entrepot_id']] = $arraytypes['qty'];
 			}
 		}
-		$out .= '</datalist>';
+
+
+		foreach ($TBatchQuantity as $batch => $TQtyByWarehouse) {
+
+			$label = '';
+
+			//si pas d'entrepôt, on affiche le stock total du lot, tout entrepôt compris
+			if (empty($fk_entrepot)) $label .= " (" . $langs->trans('Stock total') . " : " . array_sum($TQtyByWarehouse) . ")";
+			//sinon on affiche seulement le stock de l'entrepôt en question
+			else $label .= " (" . $langs->trans('Stock') . " : " . $TQtyByWarehouse[$fk_entrepot] . ")";
+
+			$out .= '<option value="' . $batch . '"';
+			$out .= ' data-html="' . dol_escape_htmltag($label) . '"';
+			$out .= '>';
+			$out .= $label;
+			$out .= '</option>';
+
+//			$out .= '<option>'.$arraytypes['batch'].'</option>';
+		}
+
+
+		$out .= '</select>';
 
 		return $out;
 	}
