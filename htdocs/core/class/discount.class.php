@@ -505,8 +505,10 @@ class DiscountAbsolute
 
 		$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-		$sql .= " WHERE rc.entity = ".$conf->entity;
-		$sql .= " AND rc.discount_type=".((int) $discount_type);
+		// $sql .= " WHERE rc.entity = ".$conf->entity;
+        $sql.= " WHERE rc.entity IN (" . getEntity('invoice').")";
+
+        $sql .= " AND rc.discount_type=".((int) $discount_type);
 		if (!empty($discount_type)) {
 			$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
 		} else {

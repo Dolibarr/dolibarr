@@ -1514,10 +1514,11 @@ class Form
 		$sql .= " re.description, re.fk_facture_source";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
 		$sql .= " WHERE re.fk_soc = ".(int) $socid;
-		$sql .= " AND re.entity = ".$conf->entity;
-		if ($filter) {
-			$sql .= " AND ".$filter;
-		}
+
+        //$sql.= " AND re.entity = " . $conf->entity;
+        $sql.= " AND re.entity IN (" . getEntity('invoice').")";
+        if ($filter) $sql.= " AND ".$filter;
+
 		$sql .= " ORDER BY re.description ASC";
 
 		dol_syslog(get_class($this)."::select_remises", LOG_DEBUG);
