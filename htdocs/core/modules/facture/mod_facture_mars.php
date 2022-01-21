@@ -172,7 +172,8 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-%'";
-		$sql .= " AND entity = $entity";
+        if(!empty($conf->global->MULTICOMPANY_INVOICENUMBER_SHARING_ENABLED))  $sql.= " AND entity IN (".getEntity('invoicenumber').")";
+        else $sql.= " AND entity = $entity";
 
 		$resql = $db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
@@ -198,8 +199,9 @@ class mod_facture_mars extends ModeleNumRefFactures
 			$sql = "SELECT ref as ref";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 			$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-".$num."'";
-			$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-			$sql .= " ORDER BY ref DESC";
+            if(!empty($conf->global->MULTICOMPANY_INVOICENUMBER_SHARING_ENABLED))  $sql.= " AND entity IN (".getEntity('invoicenumber').")";
+            else $sql.= " AND entity = $entity";
+            $sql .= " ORDER BY ref DESC";
 
 			dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 			$resql = $db->query($sql);
