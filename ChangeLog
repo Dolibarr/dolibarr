@@ -109,6 +109,13 @@ NEW: External backups can be downloaded from the "About info page".
 NEW: Add massaction to switch status on sale / on purchase of a product.
 
 
+ Modules
+NEW: Stable module Knowledge Management
+NEW: Experimental module Event Organization Management
+NEW: Experimental module Workstations Management
+NEW: Development of module Partnership Management
+
+
 For developers:
 ---------------
 
