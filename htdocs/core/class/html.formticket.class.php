@@ -1375,7 +1375,7 @@ class FormTicket
 
 		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
 		if ($user->rights->ticket->write && !$user->socid) {
-			//print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
+			print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
 		}
 		print '</label></td><td>';
 		//$toolbarname = 'dolibarr_details';
