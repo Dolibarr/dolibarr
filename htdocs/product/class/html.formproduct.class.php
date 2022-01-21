@@ -622,7 +622,7 @@ class FormProduct
 	 *  @param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
 	 *  @return	string					HTML datalist
 	 */
-	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
+	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(),  $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $disabled = 0, $selected = '', $empty_label = '')
 	{
 		global $conf, $langs;
 
@@ -644,7 +644,16 @@ class FormProduct
 
 		$nboflot = $this->loadLotStock($productIdArray);
 
+		if ($conf->use_javascript_ajax && !$forcecombo) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$comboenhancement = ajax_combobox($htmlname, $events);
+			$out .= $comboenhancement;
+		}
+
 		$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled' : '') . ' id="' . $htmlname . '" name="' . ($htmlname . ($disabled ? '_disabled' : '')) . '">';
+		if ($empty) {
+			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+		}
 
 		if (!empty($fk_product) && $fk_product > 0) {
 			$productIdArray = array((int)$fk_product); // only show lot stock for product
@@ -654,30 +663,35 @@ class FormProduct
 			}
 		}
 
+
 		$TBatchQuantity = array();
 		foreach ($productIdArray as $productId) {
 			foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
-				$TBatchQuantity[$arraytypes['batch']][$arraytypes['entrepot_id']] = $arraytypes['qty'];
+				$TBatchQuantity[$productId][$arraytypes['batch']][$arraytypes['entrepot_id']] = $arraytypes['qty'];
 			}
 		}
 
+		foreach($TBatchQuantity as $id_product => $TBatchs){
 
-		foreach ($TBatchQuantity as $batch => $TQtyByWarehouse) {
+			foreach ($TBatchs as $batch => $TQtyByWarehouse) {
+				$label = $batch;
 
-			$label = '';
+				//si pas d'entrepôt, on affiche le stock total du lot, tout entrepôt compris
+				if (empty($fk_entrepot)) $label .= " (" . $langs->trans('Stock total') . " : " . array_sum($TQtyByWarehouse) . ")";
+				//sinon on affiche seulement le stock de l'entrepôt en question
+				else $label .= " (" . $langs->trans('Stock') . " : " . $TQtyByWarehouse[$fk_entrepot] . ")";
 
-			//si pas d'entrepôt, on affiche le stock total du lot, tout entrepôt compris
-			if (empty($fk_entrepot)) $label .= " (" . $langs->trans('Stock total') . " : " . array_sum($TQtyByWarehouse) . ")";
-			//sinon on affiche seulement le stock de l'entrepôt en question
-			else $label .= " (" . $langs->trans('Stock') . " : " . $TQtyByWarehouse[$fk_entrepot] . ")";
+				$out .= '<option value="' . $batch . '"';
 
-			$out .= '<option value="' . $batch . '"';
-			$out .= ' data-html="' . dol_escape_htmltag($label) . '"';
-			$out .= '>';
-			$out .= $label;
-			$out .= '</option>';
+				if ($selected == $batch) {
+					$out .= ' selected';
+				}
 
-//			$out .= '<option>'.$arraytypes['batch'].'</option>';
+				$out .= ' data-html="' . dol_escape_htmltag($label) . '"';
+				$out .= '>';
+				$out .= $label;
+				$out .= '</option>';
+			}
 		}
 
 
