@@ -1282,11 +1282,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
-	if ($bentityon) { // only if entity enable
-		$sql .= " AND entity IN (".getEntity($sharetable).")";
-	} elseif (!empty($forceentity)) {
-		$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
-	}
+//	if ($bentityon) { // only if entity enable
+//		$sql .= " AND entity IN (".getEntity($sharetable).")";
+//	} elseif (!empty($forceentity)) {
+//		$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
+//	}
 	if ($where) {
 		$sql .= $where;
 	}
