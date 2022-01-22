@@ -157,6 +157,7 @@ class FormMail extends Form
 
 	public $lines_model;
 
+	// -1 suggest the checkbox 'one email per recipient' not checked, 0 = no suggestion, 1 = suggest and checked
 	public $withoptiononeemailperrecipient;
 
 
@@ -357,7 +358,7 @@ class FormMail extends Form
 		// phpcs:enable
 		global $conf, $langs, $user, $hookmanager, $form;
 
-		// Required to show preview of mail attachments
+		// Required to show preview wof mail attachments
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 		$formfile = new Formfile($this->db);
 
@@ -366,7 +367,7 @@ class FormMail extends Form
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('other', 'mails'));
+		$langs->loadLangs(array('other', 'mails', 'members'));
 
 		// Clear temp files. Must be done before call of triggers, at beginning (mode = init), or when we select a new template
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
@@ -464,11 +465,10 @@ class FormMail extends Form
 			$modelmail_array = array();
 			if ($this->param['models'] != 'none') {
 				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
-
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 				}
-				$langs->trans("members");
+
 				foreach ($this->lines_model as $line) {
 					$reg = array();
 					if (preg_match('/\((.*)\)/', $line->label, $reg)) {
@@ -503,7 +503,7 @@ class FormMail extends Form
 				}
 
 				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				$out .= '<input type="submit" class="button reposition" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
@@ -526,7 +526,7 @@ class FormMail extends Form
 			}
 
 
-			$out .= '<table class="tableforemailform boxtablenotop" width="100%">'."\n";
+			$out .= '<table class="tableforemailform boxtablenotop centpercent">'."\n";
 
 			// Substitution array/string
 			$helpforsubstitution = '';
@@ -688,16 +688,20 @@ class FormMail extends Form
 
 			// With option one email per recipient
 			if (!empty($this->withoptiononeemailperrecipient)) {
-				$out .= '<tr><td class="minwidth200">';
-				$out .= $langs->trans("GroupEmails");
-				$out .= '</td><td>';
-				$out .= ' <input type="checkbox" id="oneemailperrecipient" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
-				$out .= '<label for="oneemailperrecipient">'.$langs->trans("OneEmailPerRecipient").'</label>';
-				$out .= '<span class="hideonsmartphone opacitymedium">';
-				$out .= ' - ';
-				$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
-				$out .= '</span>';
-				$out .= '</td></tr>';
+				if (abs($this->withoptiononeemailperrecipient) == 1) {
+					$out .= '<tr><td class="minwidth200">';
+					$out .= $langs->trans("GroupEmails");
+					$out .= '</td><td>';
+					$out .= ' <input type="checkbox" id="oneemailperrecipient" value="1" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
+					$out .= '<label for="oneemailperrecipient">'.$langs->trans("OneEmailPerRecipient").'</label>';
+					$out .= '<span class="hideonsmartphone opacitymedium">';
+					$out .= ' - ';
+					$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+					$out .= '</span>';
+					$out .= '</td></tr>';
+				} else {
+					$out .= '<tr><td><input type="hidden" name="oneemailperrecipient" value="1"></td><td></td></tr>';
+				}
 			}
 
 			// CC
@@ -813,8 +817,7 @@ class FormMail extends Form
 							$out .= '<br></div>';
 						}
 					} elseif (empty($this->withmaindocfile)) {
-						// Do not show message if we asked to show the checkbox
-						$out .= $langs->trans("NoAttachedFiles").'<br>';
+						$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 					}
 					if ($this->withfile == 2) {
 						// Can add other files
@@ -1217,6 +1220,7 @@ class FormMail extends Form
 		global $conf, $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
+
 		if (!GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1') {
 			if ($arraydefaultmessage && $arraydefaultmessage->topic) {
 				$defaulttopic = $arraydefaultmessage->topic;

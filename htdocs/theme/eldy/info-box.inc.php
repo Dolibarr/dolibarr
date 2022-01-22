@@ -101,10 +101,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	font-size: 25px;
 	line-height: 92px;
 }
-.opened-dash-board-wrap .info-box-sm .info-box-icon {
-	border-radius: 0 0 0 20px;
+.opened-dash-board-wrap .info-box .info-box-icon {
+	font-size: 2em;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
+	border-radius: 0 0 0 20px;
 	line-height: 80px;
 }
 .info-box-module .info-box-icon {

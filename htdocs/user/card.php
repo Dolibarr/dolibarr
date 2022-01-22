@@ -505,6 +505,7 @@ if (empty($reshook)) {
 							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
 						} else {
 							setEventMessages($object->error, $object->errors, 'errors');
+							$action = 'edit';
 						}
 					}
 				}
