@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
- * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
@@ -366,50 +366,40 @@ class Expedition extends CommonObject
 			{
 				// Insert of lines
 				$num = count($this->lines);
-				for ($i = 0; $i < $num; $i++)
-				{
-					if (!isset($this->lines[$i]->detail_batch))
-					{	// no batch management
-						if (!$this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) > 0)
-						{
+				for ($i = 0; $i < $num; $i++) {
+					if (!isset($this->lines[$i]->detail_batch)) {	// no batch management
+						if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0) {
 							$error++;
 						}
 					} else {	// with batch management
-						if (!$this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) > 0)
-						{
+						if ($this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) <= 0) {
 							$error++;
 						}
 					}
 				}
 
-				if (!$error && $this->id && $this->origin_id)
-				{
+				if (!$error && $this->id && $this->origin_id) {
 					$ret = $this->add_object_linked();
-					if (!$ret)
-					{
+					if (!$ret) {
 						$error++;
 					}
 				}
 
 				// Actions on extra fields
-				if (!$error)
-				{
+				if (!$error) {
 					$result = $this->insertExtraFields();
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$error++;
 					}
 				}
 
-				if (!$error && !$notrigger)
-				{
+				if (!$error && !$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('SHIPPING_CREATE', $user);
 					if ($result < 0) { $error++; }
 					// End call triggers
 
-					if (!$error)
-					{
+					if (!$error) {
 						$this->db->commit();
 						return $this->id;
 					} else {
@@ -423,7 +413,6 @@ class Expedition extends CommonObject
 					}
 				} else {
 					$error++;
-					$this->error = $this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -3;
 				}
@@ -499,8 +488,8 @@ class Expedition extends CommonObject
 		// create shipment lines
 		foreach ($stockLocationQty as $stockLocation => $qty)
 		{
-			if (($line_id = $this->create_line($stockLocation, $line_ext->origin_line_id, $qty, $line_ext->rang, $array_options)) < 0)
-			{
+			$line_id = $this->create_line($stockLocation, $line_ext->origin_line_id, $qty, $line_ext->rang, $array_options);
+			if ($line_id < 0) {
 				$error++;
 			} else {
 				// create shipment batch lines for stockLocation
@@ -629,7 +618,7 @@ class Expedition extends CommonObject
 				if (!empty($conf->multicurrency->enabled))
 				{
 					if (!empty($this->multicurrency_code)) $this->multicurrency_code = $this->thirdparty->multicurrency_code;
-					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($this->thirdparty->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
 				}
 
 				/*
@@ -1081,8 +1070,8 @@ class Expedition extends CommonObject
 		if (isset($this->size_units)) $this->size_units = trim($this->size_units);
 		if (isset($this->weight_units)) $this->weight_units = trim($this->weight_units);
 		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
-		if (isset($this->note_private)) $this->note = trim($this->note_private);
-		if (isset($this->note_public)) $this->note = trim($this->note_public);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
+		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 
 
@@ -1093,7 +1082,6 @@ class Expedition extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
@@ -1456,11 +1444,9 @@ class Expedition extends CommonObject
 			}
 		}
 
-		// delete batch expedition line
-		if (!$error && $conf->productbatch->enabled)
-		{
-			if (ExpeditionLineBatch::deletefromexp($this->db, $this->id) < 0)
-			{
+		// delete batch expedition line (we try deletion even if module not enabled in case of the module were enabled and disabled previously)
+		if (!$error) {
+			if (ExpeditionLineBatch::deletefromexp($this->db, $this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
@@ -2751,7 +2737,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$ranktouse = $this->rang;
 		if ($ranktouse == -1)
 		{
-			$rangmax = $this->line_max($fk_expedition);
+			$rangmax = $this->line_max($this->fk_expedition);
 			$ranktouse = $rangmax + 1;
 		}
 

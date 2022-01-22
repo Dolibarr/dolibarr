@@ -168,7 +168,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$tmpkeyextra.' wordbreak"'.($cols ? ' colspan="'.$cols.'"' : '').'>';
 
 			// Convert date into timestamp format
-			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date', 'datetime')))
+			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date')))
 			{
 				$datenotinstring = $object->array_options['options_'.$tmpkeyextra];
 				// print 'X'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.'x';
@@ -177,7 +177,18 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOST("options_".$tmpkeyextra."hour", 'int'), GETPOST("options_".$tmpkeyextra."min", 'int'), 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
+			}
+			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime')))
+			{
+				$datenotinstring = $object->array_options['options_'.$tmpkeyextra];
+				// print 'X'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.'x';
+				if (!is_numeric($object->array_options['options_'.$tmpkeyextra]))	// For backward compatibility
+				{
+					$datenotinstring = $db->jdate($datenotinstring);
+				}
+				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOST("options_".$tmpkeyextra."hour", 'int'), GETPOST("options_".$tmpkeyextra."min", 'int'), GETPOST("options_".$tmpkeyextra."sec", 'int'), GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int'), 'tzuserrel') : $datenotinstring;
 			}
 
 			//TODO Improve element and rights detection

@@ -198,8 +198,8 @@ class MenuManager
 					$submenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"), 1);
 					$submenu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"), 1);
 
-					$submenu->add("/admin/boxes.php", $langs->trans("Boxes"), 1);
-					$submenu->add("/admin/delais.php", $langs->trans("Alerts"), 1);
+					$submenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"), 1);
+					$submenu->add("/admin/delais.php?mainmenu=home", $langs->trans("Alerts"), 1);
 					$submenu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"), 1);
 					$submenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"), 1);
 					$submenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
@@ -340,8 +340,8 @@ class MenuManager
 			$this->menu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"), 1);
 			$this->menu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"), 1);
 
-			$this->menu->add("/admin/boxes.php", $langs->trans("Boxes"), 1);
-			$this->menu->add("/admin/delais.php", $langs->trans("Alerts"), 1);
+			$this->menu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"), 1);
+			$this->menu->add("/admin/delais.php?mainmenu=home", $langs->trans("Alerts"), 1);
 			$this->menu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"), 1);
 			$this->menu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"), 1);
 			$this->menu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);

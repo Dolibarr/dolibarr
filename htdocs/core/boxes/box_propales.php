@@ -88,7 +88,7 @@ class box_propales extends ModeleBoxes
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
-			$sql .= ", p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
+			$sql .= ", p.rowid, p.ref, p.fk_statut as status, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."propal as p";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -121,6 +121,8 @@ class box_propales extends ModeleBoxes
 					$propalstatic->total_ht = $objp->total_ht;
 					$propalstatic->total_tva = $objp->total_tva;
 					$propalstatic->total_ttc = $objp->total_ttc;
+					$propalstatic->statut = $objp->status;
+					$propalstatic->status = $objp->status;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
@@ -133,7 +135,7 @@ class box_propales extends ModeleBoxes
 					$societestatic->entity = $objp->entity;
 
 					$late = '';
-					if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) {
+					if ($objp->status == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) {
 						$late = img_warning($langs->trans("Late"));
 					}
 
@@ -162,7 +164,7 @@ class box_propales extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $propalstatic->LibStatut($objp->fk_statut, 3),
+						'text' => $propalstatic->LibStatut($objp->status, 3),
 					);
 
 					$line++;

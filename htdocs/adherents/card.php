@@ -302,8 +302,10 @@ if (empty($reshook)) {
 			$object->public      = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
-			if ($ret < 0) $error++;
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+			if ($ret < 0) {
+			    $error++;
+			}
 
 			// Check if we need to also synchronize user information
 			$nosyncuser = 0;
@@ -317,62 +319,66 @@ if (empty($reshook)) {
 				if ($user->id != $object->user_id && empty($user->rights->user->user->password)) $nosyncuserpass = 1; // Disable synchronizing
 			}
 
-			$result = $object->update($user, 0, $nosyncuser, $nosyncuserpass);
+			if (!$error) {
+			    $result = $object->update($user, 0, $nosyncuser, $nosyncuserpass);
 
-			if ($result >= 0 && !count($object->errors)) {
-				$categories = GETPOST('memcats', 'array');
-				$object->setCategories($categories);
+			    if ($result >= 0 && !count($object->errors)) {
+			        $categories = GETPOST('memcats', 'array');
+			        $object->setCategories($categories);
 
-				// Logo/Photo save
-				$dir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
-				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-				if ($file_OK) {
-					if (GETPOST('deletephoto')) {
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						$fileimg = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
-						$dirthumbs = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
-						dol_delete_file($fileimg);
-						dol_delete_dir_recursive($dirthumbs);
-					}
+			        // Logo/Photo save
+			        $dir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
+			        $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+			        if ($file_OK) {
+			            if (GETPOST('deletephoto')) {
+			                require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			                $fileimg = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
+			                $dirthumbs = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
+			                dol_delete_file($fileimg);
+			                dol_delete_dir_recursive($dirthumbs);
+			            }
 
-					if (image_format_supported($_FILES['photo']['name']) > 0) {
-						dol_mkdir($dir);
+			            if (image_format_supported($_FILES['photo']['name']) > 0) {
+			                dol_mkdir($dir);
 
-						if (@is_dir($dir)) {
-							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-							if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
-								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-							} else {
-								// Create thumbs
-								$object->addThumbs($newfile);
-							}
-						}
-					} else {
-						setEventMessages("ErrorBadImageFormat", null, 'errors');
-					}
-				} else {
-					switch ($_FILES['photo']['error']) {
-						case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
-						case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-							$errors[] = "ErrorFileSizeTooLarge";
-							break;
-						case 3: //uploaded file was only partially uploaded
-							$errors[] = "ErrorFilePartiallyUploaded";
-							break;
-					}
-				}
+			                if (@is_dir($dir)) {
+			                    $newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+			                    if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
+			                        setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+			                    } else {
+			                        // Create thumbs
+			                        $object->addThumbs($newfile);
+			                    }
+			                }
+			            } else {
+			                setEventMessages("ErrorBadImageFormat", null, 'errors');
+			            }
+			        } else {
+			            switch ($_FILES['photo']['error']) {
+			                case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+			                case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+			                    $errors[] = "ErrorFileSizeTooLarge";
+			                    break;
+			                case 3: //uploaded file was only partially uploaded
+			                    $errors[] = "ErrorFilePartiallyUploaded";
+			                    break;
+			            }
+			        }
 
-				$rowid = $object->id;
-				$id = $object->id;
-				$action = '';
+			        $rowid = $object->id;
+			        $id = $object->id;
+			        $action = '';
 
-				if (!empty($backtopage)) {
-					header("Location: ".$backtopage);
-					exit;
-				}
+			        if (!empty($backtopage)) {
+			            header("Location: ".$backtopage);
+			            exit;
+			        }
+			    } else {
+			        setEventMessages($object->error, $object->errors, 'errors');
+			        $action = '';
+			    }
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = '';
+			    $action = 'edit';
 			}
 		} else {
 			$action = 'edit';
@@ -784,10 +790,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		if (!empty($socid)) {
-			$object = new Societe($db);
-			if ($socid > 0) $object->fetch($socid);
+			$soc = new Societe($db);
+			if ($socid > 0) $soc->fetch($socid);
 
-			if (!($object->id > 0)) {
+			if (!($soc->id > 0)) {
 				$langs->load("errors");
 				print($langs->trans('ErrorRecordNotFound'));
 				exit;
@@ -871,7 +877,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $object->company).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -895,32 +901,32 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED ? '<span class="fieldrequired">' : '').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED ? '</span>' : '').'</td>';
-		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $object->email).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ?GETPOST('address', 'alphanohtml') : $object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ?GETPOST('address', 'alphanohtml') : $soc->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alphanohtml') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+		print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alphanohtml') : $soc->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 		print ' ';
-		print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town', 'alphanohtml') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+		print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town', 'alphanohtml') : $soc->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 		print '</td></tr>';
 
 		// Country
 		$object->country_id = $object->country_id ? $object->country_id : $mysoc->country_id;
 		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
-		print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'alpha') : $object->country_id, 'country_id');
+		print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'alpha') : $soc->country_id, 'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '</td></tr>';
 
 		// State
 		if (empty($conf->global->MEMBER_DISABLE_STATE)) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			if ($object->country_id) {
-				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : $object->state_id, $object->country_code);
+			if ($soc->country_id) {
+				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : $soc->state_id, $soc->country_code);
 			} else {
 				print $countrynotdefined;
 			}
@@ -929,7 +935,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $soc->phone).'"></td></tr>';
 
 		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
@@ -1490,10 +1496,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
-			if ($object->pass) print preg_replace('/./i', '*', $object->pass);
-			else {
-				if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-				else print $langs->trans("Hidden");
+			if ($object->pass) {
+				print preg_replace('/./i', '*', $object->pass);
+			} else {
+				if ($user->admin) {
+					print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+				} else {
+					print $langs->trans("Hidden");
+				}
 			}
 			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
 				$langs->load("errors");
@@ -1522,6 +1532,32 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 		print '</td></tr>';
+
+		print '</table>';
+
+		print '</div>';
+
+		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield tableforfield" width="100%">';
+
+		// Birth Date
+		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+		// Public
+		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+
+		// Categories
+		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			print '<tr><td>'.$langs->trans("Categories").'</td>';
+			print '<td colspan="2">';
+			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
+			print '</td></tr>';
+		}
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Third party Dolibarr
 		if (!empty($conf->societe->enabled)) {
@@ -1571,29 +1607,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		print '</td></tr>';
 
-		print '</table>';
-
-		print '</div>';
-
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
-		print '<div class="underbanner clearboth"></div>';
-
-		print '<table class="border tableforfield tableforfield" width="100%">';
-
-		// Birth Date
-		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
-
-		// Public
-		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
-
-		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
-			print '<tr><td>'.$langs->trans("Categories").'</td>';
-			print '<td colspan="2">';
-			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
-			print '</td></tr>';
-		}
-
 		//VCard
 		print '<tr><td>';
 		print $langs->trans("VCard").'</td><td colspan="3">';
@@ -1602,9 +1615,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print $langs->trans("Download");
 		print '</a>';
 		print '</td></tr>';
-
-		// Other attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print "</table>\n";
 

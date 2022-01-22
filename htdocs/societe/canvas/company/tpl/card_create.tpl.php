@@ -74,7 +74,7 @@ if (empty($conf) || !is_object($conf))
     <td width="25%">
 		<table class="nobordernopadding">
 			<tr>
-				<td><input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="15"></td>
+				<td><input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="24"></td>
 				<td><?php echo $this->control->tpl['help_customercode']; ?></td>
 			</tr>
 		</table>
@@ -89,7 +89,7 @@ if (empty($conf) || !is_object($conf))
     <td>
     	<table class="nobordernopadding">
     		<tr>
-    			<td><input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="15"></td>
+    			<td><input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="24"></td>
     			<td><?php echo $this->control->tpl['help_suppliercode']; ?></td>
     		</tr>
     	</table>

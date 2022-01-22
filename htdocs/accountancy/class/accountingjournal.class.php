@@ -126,7 +126,7 @@ class AccountingJournal extends CommonObject
 					$this->rowid		= $obj->rowid;
 
 					$this->code			= $obj->code;
-					$this->ref = $obj->code;
+					$this->ref			= $obj->code;
 					$this->label		= $obj->label;
 					$this->nature		= $obj->nature;
 					$this->active		= $obj->active;

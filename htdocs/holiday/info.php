@@ -1,0 +1,106 @@
+<?php
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
+ */
+
+/**
+ * 	\file       htdocs/holiday/info.php
+ * 	\ingroup    holiday
+ * 	\brief      Page to show a leave information
+ */
+
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+// Load translation files required by the page
+$langs->load("holiday");
+
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+
+$childids = $user->getAllChildIds(1);
+
+// Security check
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'holiday', $id, 'holiday');
+
+$object = new Holiday($db);
+if (!$object->fetch($id, $ref) > 0)
+{
+	dol_print_error($db);
+}
+
+if ($object->id > 0)
+{
+	// Check current user can read this expense report
+	$canread = 0;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
+	if (!empty($user->rights->holiday->lire) && in_array($object->fk_user_author, $childids)) $canread = 1;
+	if (!$canread)
+	{
+		accessforbidden();
+	}
+}
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+$title = $langs->trans("Holiday")." - ".$langs->trans("Info");
+$helpurl = "";
+llxHeader("", $title, $helpurl);
+
+if ($id > 0 || !empty($ref))
+{
+	$object = new Holiday($db);
+	$object->fetch($id, $ref);
+	$object->info($object->id);
+
+	$head = holiday_prepare_head($object);
+
+	print dol_get_fiche_head($head, 'info', $langs->trans("Holiday"), -1, 'holiday');
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= '</div>';
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<br>';
+
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($object);
+	print '</td></tr></table>';
+
+	print '</div>';
+
+	print dol_get_fiche_end();
+}
+
+// End of page
+llxFooter();
+$db->close();

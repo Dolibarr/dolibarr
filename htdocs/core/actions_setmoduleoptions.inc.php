@@ -21,7 +21,7 @@
  *  \brief			Code for actions on setting notes of object page
  */
 
-
+// $error must have been initialized to 0
 // $action must be defined
 // $arrayofparameters must be set for action 'update'
 // $nomessageinupdate can be set to 1
@@ -31,7 +31,6 @@ if ($action == 'update' && is_array($arrayofparameters))
 {
 	$db->begin();
 
-	$ok = true;
 	foreach ($arrayofparameters as $key => $val)
 	{
 		// Modify constant only if key was posted (avoid resetting key to the null value)
@@ -40,7 +39,7 @@ if ($action == 'update' && is_array($arrayofparameters))
 			$result = dolibarr_set_const($db, $key, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
 			if ($result < 0)
 			{
-				$ok = false;
+				$error++;
 				break;
 			}
 		}
@@ -74,7 +73,7 @@ if ($action == 'setModuleOptions')
 				if ($param)
 				{
 					$res = dolibarr_set_const($db, $param, $value, 'chaine', 0, '', $conf->entity);
-					if (!$res > 0) $error++;
+					if (!($res > 0)) $error++;
 				}
 			}
 		}
@@ -93,7 +92,11 @@ if ($action == 'setModuleOptions')
 			if (!$tmpdir) {
 				unset($listofdir[$key]); continue;
 			}
-			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
+			if (!is_dir($tmpdir)) {
+				if (empty($nomessageinsetmoduleoptions)) {
+					setEventMessages($langs->trans("ErrorDirNotFound", $tmpdir), null, 'warnings');
+				}
+			}
 			else {
 				$upload_dir = $tmpdir;
 			}

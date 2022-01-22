@@ -295,6 +295,7 @@ if (empty($reshook))
 		$search_town = "";
 		$search_zip = "";
 		$search_state = "";
+		$search_region = "";
 		$search_country = '';
 		$search_email = '';
 		$search_phone = '';
@@ -421,7 +422,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
 if (!empty($search_categ_cus)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 if (!empty($search_categ_sup)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
@@ -429,6 +430,10 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale == -2) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 elseif ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if ($search_sale && $search_sale != -2)    $sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -478,7 +483,7 @@ if ($search_type_thirdparty && $search_type_thirdparty != '-1') $sql .= natural_
 if (!empty($search_staff) && $search_staff != '-1')            $sql .= natural_search("s.fk_effectif", $search_staff, 2);
 if ($search_level)  $sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
 if ($search_parent_name)   $sql .= natural_search("s2.nom", $search_parent_name);
-if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("s.fk_stcomm", $search_stcomm, 2);
+if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("s.fk_stcomm", $search_stcomm, 1);
 if ($search_import_key)    $sql .= natural_search("s.import_key", $search_import_key);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -488,6 +493,11 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 if (empty($reshook)) {
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 }
+$sql .= $hookmanager->resPrint;
+
+// Add GroupBy from hooks
+$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -557,6 +567,7 @@ if ($search_fax != '')     $param .= "&search_fax=".urlencode($search_fax);
 if ($search_email != '')   $param .= "&search_email=".urlencode($search_email);
 if ($search_url != '')     $param .= "&search_url=".urlencode($search_url);
 if ($search_state != '')   $param .= "&search_state=".urlencode($search_state);
+if ($search_region != '')   $param .= "&search_region=".urlencode($search_region);
 if ($search_country != '') $param .= "&search_country=".urlencode($search_country);
 if ($search_customer_code != '') $param .= "&search_customer_code=".urlencode($search_customer_code);
 if ($search_supplier_code != '') $param .= "&search_supplier_code=".urlencode($search_supplier_code);
@@ -676,7 +687,7 @@ if (empty($type) || $type == 'c' || $type == 'p')
 }
 if (empty($type) || $type == 'f')
 {
-	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
+	if (!empty($conf->fournisseur->enabled) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -816,7 +827,7 @@ if (!empty($arrayfields['country.code_iso']['checked']))
 if (!empty($arrayfields['typent.code']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'maxwidth75', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'maxwidth75', 1);
 	print '</td>';
 }
 // Staff
@@ -1005,7 +1016,9 @@ if (!empty($arrayfields['s.idprof4']['checked']))        print_liste_field_titre
 if (!empty($arrayfields['s.idprof5']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof5", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 if (!empty($arrayfields['s.idprof6']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof6", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 if (!empty($arrayfields['s.tva_intra']['checked']))      print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder, 'nowrap ');
-if (!empty($arrayfields['customerorsupplier']['checked']))        print_liste_field_titre(''); // type of customer
+if (!empty($arrayfields['customerorsupplier']['checked'])) {
+	print_liste_field_titre($arrayfields['customerorsupplier']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center '); // type of customer
+}
 if (!empty($arrayfields['s.fk_prospectlevel']['checked']))        print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_field_titre($arrayfields['s.fk_stcomm']['label'], $_SERVER["PHP_SELF"], "s.fk_stcomm", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['s2.nom']['checked']))           print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER["PHP_SELF"], "s2.nom", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1283,7 +1296,7 @@ while ($i < min($num, $limit))
 	// Parent company
 	if (!empty($arrayfields['s2.nom']['checked']))
 	{
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax100">';
 		if ($companystatic->fk_parent > 0)
 		{
 			$companyparent->fetch($companystatic->fk_parent);
@@ -1341,6 +1354,14 @@ while ($i < min($num, $limit))
 
 	print '</tr>'."\n";
 	$i++;
+}
+
+// If no record found
+if ($num == 0)
+{
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 $db->free($resql);

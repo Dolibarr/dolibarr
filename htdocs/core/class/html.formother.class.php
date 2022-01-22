@@ -474,7 +474,7 @@ class FormOther
 			//Add hook to filter on user (for exemple on usergroup define in custom modules)
 			if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[1];
 		}
-		$sql_usr .= " ORDER BY statut DESC, lastname ASC"; // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+		$sql_usr .= " ORDER BY status DESC, lastname ASC"; // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
 		//print $sql_usr;exit;
 
 		$resql_usr = $this->db->query($sql_usr);

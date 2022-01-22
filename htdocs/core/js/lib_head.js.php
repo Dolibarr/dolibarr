@@ -183,17 +183,18 @@ function getObjectFromID(id){
 }
 
 // Called after selection of a date to save details into detailed fields
-function dpChangeDay(dateFieldID,format)
+function dpChangeDay(dateFieldID, format)
 {
 	//showDP.datefieldID=dateFieldID;
-	console.log("Call dpChangeDay, we save date into detailed fields.");
+	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
 
 	var thefield=getObjectFromID(dateFieldID);
 	var thefieldday=getObjectFromID(dateFieldID+"day");
 	var thefieldmonth=getObjectFromID(dateFieldID+"month");
 	var thefieldyear=getObjectFromID(dateFieldID+"year");
 
-	var date=getDateFromFormat(thefield.value,format);
+	var date=getDateFromFormat(thefield.value, format);
+	//console.log(date);
 	if (date)
 	{
 		thefieldday.value=date.getDate();
@@ -519,9 +520,9 @@ function hideMessage(fieldId,message) {
  * Used by button to set on/off.
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	string	url			Url
+ * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Input
+ * @param	string	intput		Array of complementary actions to do if success
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
@@ -529,13 +530,14 @@ function hideMessage(fieldId,message) {
  * @param   string  token       Token
  */
 function setConstant(url, code, input, entity, strict, forcereload, userid, token) {
+	var saved_url = url; /* avoid undefined url */
 	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
 		token: token
 	},
-	function() {
+	function() {	/* handler for success of post */
 		console.log("url request success forcereload="+forcereload);
 		$("#set_" + code).hide();
 		$("#del_" + code).show();
@@ -573,11 +575,12 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#set_" + key).hide();
 					$("#del_" + key).show();
-					$.get( url, {
+					$.post( saved_url, {
 						action: "set",
 						name: key,
 						value: value,
-						entity: entity
+						entity: entity,
+						token: token
 					});
 				});
 			}
@@ -592,9 +595,9 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  * Used by button to set on/off
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	string	url			Url
+ * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Input
+ * @param	string	intput		Array of complementary actions to do if success
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
@@ -602,6 +605,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param   string  token       Token
  */
 function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
+	var saved_url = url; /* avoid undefined url */
 	$.post( url, {
 		action: "del",
 		name: code,
@@ -643,10 +647,11 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#del_" + value).hide();
 					$("#set_" + value).show();
-					$.get( url, {
+					$.post( saved_url, {
 						action: "del",
 						name: value,
-						entity: entity
+						entity: entity,
+						token: token
 					});
 				});
 			}
@@ -658,12 +663,13 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 }
 
 /*
- * Used by button to set on/off
+ * Call the setConstant or delConstant but with a confirmation before.
+ * Used by button to set on/off.
  *
  * @param	string	action		Action
  * @param	string	url			Url
  * @param	string	code		Code
- * @param	string	intput		Input
+ * @param	string	intput		Array of complementary actions to do if success
  * @param	string	box			Box
  * @param	int		entity		Entity
  * @param	int		yesButton	yesButton

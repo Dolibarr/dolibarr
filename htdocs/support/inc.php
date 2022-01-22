@@ -133,9 +133,9 @@ define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)
 
 if (empty($character_set_client)) $character_set_client = "UTF-8";
 $conf->file->character_set_client = strtoupper($character_set_client);
-if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set = ($conf->db->type == 'mysql' ? 'latin1' : ''); // Old installation
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set = ($conf->db->type == 'mysqli' ? 'utf8' : ''); // Old installation
 $conf->db->character_set = $dolibarr_main_db_character_set;
-if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation = ($conf->db->type == 'mysql' ? 'latin1_swedish_ci' : ''); // Old installation
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation = ($conf->db->type == 'mysqli' ? 'utf8_unicode_ci' : ''); // Old installation
 $conf->db->dolibarr_main_db_collation = $dolibarr_main_db_collation;
 if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption = 0;
 $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;

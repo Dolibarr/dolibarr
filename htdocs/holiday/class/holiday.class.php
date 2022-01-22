@@ -1630,6 +1630,7 @@ class Holiday extends CommonObject
 					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 				$sql .= " AND u.statut > 0";
+				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
 				if ($filters) $sql .= $filters;
 
 				$resql = $this->db->query($sql);
@@ -1720,6 +1721,7 @@ class Holiday extends CommonObject
 				}
 
 				$sql .= " AND u.statut > 0";
+				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
 				if ($filters) $sql .= $filters;
 
 				$resql = $this->db->query($sql);
@@ -2048,7 +2050,7 @@ class Holiday extends CommonObject
 	{
 		global $mysoc;
 
-		$sql = "SELECT rowid, code, label, affect, delay, newByMonth";
+		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".$mysoc->country_id.')';
 		if ($active >= 0) $sql .= " AND active = ".((int) $active);
@@ -2062,7 +2064,7 @@ class Holiday extends CommonObject
 			{
 				while ($obj = $this->db->fetch_object($result))
 				{
-					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newByMonth);
+					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newbymonth);
 				}
 
 				return $types;
@@ -2070,6 +2072,81 @@ class Holiday extends CommonObject
 		} else dol_print_error($this->db);
 
 		return array();
+	}
+
+
+	/**
+	 *  Load information on object
+	 *
+	 *  @param  int     $id      Id of object
+	 *  @return void
+	 */
+	public function info($id)
+	{
+		global $conf;
+
+		$sql = "SELECT f.rowid,";
+		$sql .= " f.date_create as datec,";
+		$sql .= " f.tms as date_modification,";
+		$sql .= " f.date_valid as datev,";
+		//$sql .= " f.date_approve as datea,";
+		$sql .= " f.date_refuse as dater,";
+		$sql .= " f.fk_user_create as fk_user_creation,";
+		$sql .= " f.fk_user_modif as fk_user_modification,";
+		$sql .= " f.fk_user_valid,";
+		$sql .= " f.fk_validator as fk_user_approve,";
+		$sql .= " f.fk_user_refuse as fk_user_refuse";
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
+		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " AND f.entity = ".$conf->entity;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id = $obj->rowid;
+
+				$this->date_creation = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->date_validation = $this->db->jdate($obj->datev);
+				$this->date_approbation = $this->db->jdate($obj->datea);
+
+				$cuser = new User($this->db);
+				$cuser->fetch($obj->fk_user_author);
+				$this->user_creation = $cuser;
+
+				if ($obj->fk_user_creation)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_creation);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation = $vuser;
+				}
+				if ($obj->fk_user_modification)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modification);
+					$this->user_modification = $muser;
+				}
+				if ($obj->fk_user_approve)
+				{
+					$auser = new User($this->db);
+					$auser->fetch($obj->fk_user_approve);
+					$this->user_approve = $auser;
+				}
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
 	}
 
 
@@ -2173,7 +2250,7 @@ class Holiday extends CommonObject
 			$response->warning_delay = $conf->holiday->approve->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("HolidaysToApprove");
 			$response->labelShort = $langs->trans("ToApprove");
-			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_statut=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
+			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_status=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
 			$response->img = img_object('', "holiday");
 
 			while ($obj = $this->db->fetch_object($resql))

@@ -7,3 +7,4 @@ BankToPay=Betalingsaccount
 ShowCompany=Toon bedrijf
 ShowStock=Toon magazijn
 DolibarrReceiptPrinter=Dolibarr Ontvangsten Printer
+Receipt=Ontvangst

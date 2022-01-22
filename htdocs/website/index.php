@@ -551,6 +551,8 @@ if ($action == 'addsite')
 	{
 		$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 		foreach ($arrayotherlang as $key => $val) {
+			// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+			if (empty(trim($val))) continue;
 			$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 		}
 
@@ -1327,6 +1329,8 @@ if ($action == 'updatecss')
 			{
 				$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 				foreach ($arrayotherlang as $key => $val) {
+					// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+					if (empty(trim($val))) continue;
 					$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 				}
 
@@ -1576,7 +1580,7 @@ if ($action == 'setashome')
 
 	$object->fk_default_home = $pageid;
 	$res = $object->update($user);
-	if (!$res > 0)
+	if (! ($res > 0))
 	{
 		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -1752,7 +1756,6 @@ if ($action == 'updatemeta')
 
 		dol_mkdir($pathofwebsite);
 
-
 		// Now generate the master.inc.php page
 		$result = dolSaveMasterFile($filemaster);
 		if (!$result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
@@ -1762,6 +1765,21 @@ if ($action == 'updatemeta')
 		{
 			dol_syslog("We delete old alias page name=".$fileoldalias." to build a new alias page=".$filealias);
 			dol_delete_file($fileoldalias);
+
+			// Delete also pages into language subdirectories
+			if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+				$dirname = dirname($fileoldalias);
+				$filename = basename($fileoldalias);
+				$sublangs = explode(',', $object->otherlang);
+				foreach ($sublangs as $sublang) {
+					// Under certain conditions $sublang can be an empty string
+					// ($object->otherlang with empty string or with string like this 'en,,sv')
+					// if is the case we try to re-delete the main alias file. Avoid it.
+					if (empty(trim($sublang))) continue;
+					$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+					dol_delete_file($fileoldaliassub);
+				}
+			}
 		}
 		// Now delete the alternative alias.php pages
 		if (!empty($objectpage->old_object->aliasalt))
@@ -1773,11 +1791,26 @@ if ($action == 'updatemeta')
 				{
 					dol_syslog("We delete old alt alias pages name=".trim($tmpaliasalt));
 					dol_delete_file($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+
+					// Delete also pages into language subdirectories
+					if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+						$dirname = dirname($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+						$filename = basename($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+						$sublangs = explode(',', $object->otherlang);
+						foreach ($sublangs as $sublang) {
+							// Under certain conditions $ sublang can be an empty string
+							// ($object->otherlang with empty string or with string like this 'en,,sv')
+							// if is the case we try to re-delete the main alias file. Avoid it.
+							if (empty(trim($sublang))) continue;
+							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+							dol_delete_file($fileoldaliassub);
+						}
+					}
 				}
 			}
 		}
 
-		// Save page alias
+		// Save page main alias
 		$result = dolSavePageAlias($filealias, $object, $objectpage);
 		if (!$result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 		// Save alt aliases
@@ -2025,19 +2058,28 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 				dol_mkdir($pathofwebsite);
 
-
 				// Now generate the master.inc.php page
 				$result = dolSaveMasterFile($filemaster);
 
 				if (!$result) setEventMessages('Failed to write the master file file '.$filemaster, null, 'errors');
 
-
-				// Now generate the alias.php page
-				if (!empty($fileoldalias))
+				// Now delete the old alias.php page if we removed one
+				/*if (!empty($fileoldalias))
 				{
 					dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
 					dol_delete_file($fileoldalias);
-				}
+
+					// Delete also pages into language subdirectories
+					if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+						$dirname = dirname($fileoldalias);
+						$filename = basename($fileoldalias);
+						$sublangs = explode(',', $object->otherlang);
+						foreach ($sublangs as $sublang) {
+							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+							dol_delete_file($fileoldaliassub);
+						}
+					}
+				}*/
 
 				// Save page alias
 				$result = dolSavePageAlias($filealias, $object, $objectpage);
@@ -2429,15 +2471,17 @@ if (!GETPOST('hide_websitemenu'))
 
 			//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
+
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
 			print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
 
+			// Regenerate all pages
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
+
 			print ' &nbsp; ';
 
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
-
-			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
 		}
 
 		print '</span>';
@@ -2678,6 +2722,7 @@ if (!GETPOST('hide_websitemenu'))
 							$onlylang[$website->lang] = $website->lang.' ('.$langs->trans("Default").')';
 						}
 						foreach (explode(',', $website->otherlang) as $langkey) {
+							if (empty(trim($langkey))) continue;
 							$onlylang[$langkey] = $langkey;
 						}
 						$textifempty = $langs->trans("Default");
@@ -3628,11 +3673,11 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 
 		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
 		print img_picto('', 'category', 'class="paddingright"');
-		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'quatrevingtpercent widthcentpercentminusx');
+		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'minwidth200 widthcentpercentminusxx');
 		print "</td></tr>";
 	}
 
-	if (!empty($conf->global->WEBSITE_PAGE_SHOW_INTERNAL_LINKS_TO_OBJECT)) {
+	if (!empty($conf->global->WEBSITE_PAGE_SHOW_INTERNAL_LINKS_TO_OBJECT)) {	// TODO Replace this with link into element_element ?
 		print '<tr><td class="titlefieldcreate">';
 		print 'ObjectClass';
 		print '</td><td>';

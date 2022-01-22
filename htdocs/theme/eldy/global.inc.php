@@ -43,6 +43,7 @@
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008800;
 	--amountremaintopaybackcolor:none;
+	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
 
 <?php
@@ -87,6 +88,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
+				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 	      }\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
 		print "}\n";
@@ -670,6 +672,15 @@ textarea.centpercent {
 .nounderline {
     text-decoration: none;
 }
+.nopadding {
+	padding: 0;
+}
+.nopaddingleft {
+	padding-left: 0;
+}
+.nopaddingright {
+	padding-right: 0;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
@@ -792,7 +803,15 @@ span.fa.fa-plus-circle.paddingleft {
 }
 #formuserfile input[type='file'] {
     font-size: 1em;
+    /* opacity: 0.5em; */
 }
+/*#formuserfile input[type='file']:valid {
+	color: #a00;
+}
+#formuserfile input[type='file']:empty {
+	color: #0a0;
+}*/
+
 #formuserfile_link {
 	margin-left: 1px;
 }
@@ -1304,11 +1323,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-select.widthcentpercentminusx, input.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-select.widthcentpercentminusxx, input.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -1564,7 +1583,7 @@ td.showDragHandle {
 	float: left;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width:calc(100% - 210px);
+	width: calc(100% - 210px);
 	display: inline-block;
 }
 
@@ -1668,8 +1687,15 @@ div.vmenu, td.vmenu {
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
+	/* no side-nav */
 	body.sidebar-collapse .side-nav {
 		display: none;
+	}
+
+	/* if no side-nav, we don't need to have width forced */
+	.classforhorizontalscrolloftabs #id-right {
+		width: unset;
+		display: unset;
 	}
 
 	body.sidebar-collapse .login_block {
@@ -3388,13 +3414,13 @@ div.pagination li:first-child span {
   border-bottom-left-radius: 4px;*/
 }
 
-div.pagination li a:hover,
-div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
+/*div.pagination li a:hover,
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
-div.pagination li:not(.paginationafterarrows,.title-button) span:focus {
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:focus {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}
+}*/
 div.pagination li .active a,
 div.pagination li .active span,
 div.pagination li .active a:hover,
@@ -4301,6 +4327,9 @@ div#card-errors {
 .ui-dialog-content {
 }
 
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
+}
 
 /* ============================================================================== */
 /* For content of image preview                                                   */

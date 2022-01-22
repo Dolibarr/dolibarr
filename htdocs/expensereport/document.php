@@ -149,7 +149,7 @@ if ($object->id)
 	$permission = $user->rights->expensereport->creer;
 	$permtoedit = $user->rights->expensereport->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

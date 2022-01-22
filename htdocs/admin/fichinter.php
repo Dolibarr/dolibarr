@@ -58,7 +58,7 @@ if ($action == 'updateMask')
 	$maskvalue = GETPOST('maskvalue', 'alpha');
 	if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -147,7 +147,7 @@ elseif ($action == 'setdoc')
 	$freetext = GETPOST('FICHINTER_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -160,7 +160,7 @@ elseif ($action == 'setdoc')
 	$draft = GETPOST('FICHINTER_DRAFT_WATERMARK', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -173,7 +173,7 @@ elseif ($action == 'setdoc')
 	$val = GETPOST('FICHINTER_PRINT_PRODUCTS', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -185,7 +185,7 @@ elseif ($action == 'setdoc')
 	$val = GETPOST('FICHINTER_USE_SERVICE_DURATION', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -198,7 +198,7 @@ elseif ($action == 'setdoc')
 	$val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -211,7 +211,7 @@ elseif ($action == 'setdoc')
 	$val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 

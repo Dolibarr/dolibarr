@@ -415,7 +415,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (function_exists('imap_open'))
 	{
-		$connectstringserver = $object->getConnectStringIMAP();
+		// Note: $object->host has been loaded by the fetch
+		$usessl = 1;
+
+		$connectstringserver = $object->getConnectStringIMAP($usessl);
 
 		try {
 			if ($sourcedir) {

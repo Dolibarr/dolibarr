@@ -530,7 +530,9 @@ if ($action == "freezone") {
 
 	$tva_tx = GETPOST('tva_tx', 'alpha');
 	if ($tva_tx != '') {
-		$tva_tx = price2num($tva_tx);
+		if (!preg_match('/\((.*)\)/', $tva_tx)) {
+			$tva_tx = price2num($tva_tx);
+		}
 	} else {
 		$tva_tx = get_default_tva($mysoc, $customer);
 	}

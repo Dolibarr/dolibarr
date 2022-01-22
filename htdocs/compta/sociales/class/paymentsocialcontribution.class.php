@@ -110,7 +110,7 @@ class PaymentSocialContribution extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User	$user   				User making payment
-	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
+	 *	@param		int		$closepaidcontrib   	1=Also close paid contributions to paid, 0=Do nothing more
 	 *  @return     int     						<0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
@@ -178,7 +178,7 @@ class PaymentSocialContribution extends CommonObject
 					{
 						$amount = price2num($amount);
 
-						// If we want to closed payed invoices
+						// If we want to closed paid invoices
 						if ($closepaidcontrib)
 						{
 							$contrib = new ChargeSociales($this->db);

@@ -305,6 +305,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			{
 				$this->error = $result;
 				return -6;
+			} else {
+				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
+				if ($is_dispo <> 0) {
+					$result = -3;
+				}
 			}
 		}
 
@@ -330,6 +335,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
 		else $sql .= " WHERE code_client = '".$db->escape($code)."'";
 		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
+		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		$resql = $db->query($sql);
 		if ($resql)

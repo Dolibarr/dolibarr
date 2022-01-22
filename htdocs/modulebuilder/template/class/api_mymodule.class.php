@@ -69,7 +69,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->read) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
 			throw new RestException(401);
 		}
 
@@ -194,7 +194,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->write) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
@@ -203,7 +203,7 @@ class MyModuleApi extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->myobject->$field = $value;
 		}
-		if (!$this->myobject->create(DolibarrApiAccess::$user)) {
+		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
 		}
 		return $this->myobject->id;
@@ -222,7 +222,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->write) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
 			throw new RestException(401);
 		}
 
@@ -260,7 +260,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->delete) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->delete) {
 			throw new RestException(401);
 		}
 		$result = $this->myobject->fetch($id);

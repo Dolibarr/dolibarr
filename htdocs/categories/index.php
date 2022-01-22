@@ -44,6 +44,8 @@ $nosearch = GETPOST('nosearch', 'int');
 $categstatic = new Categorie($db);
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categoryindex'));
 
 /*
  * View

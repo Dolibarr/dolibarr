@@ -99,31 +99,23 @@ $titre = $langs->trans("Margins");
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 
-if ($id > 0) {
-	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-	print '<td class="maxwidthonsmartpone" colspan="4">';
-	$form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-	print '</td></tr>';
-
-	if (!$sortorder) $sortorder = "DESC";
-	if (!$sortfield) $sortfield = "f.datef";
-} else {
-	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-	print '<td class="maxwidthonsmartphone" colspan="4">';
-	$form->select_produits('', 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-	print '</td></tr>';
-}
+// Product
+print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
+print '<td class="maxwidthonsmartphone" colspan="4">';
+print img_picto('', 'product').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All', 0, '', 0, '', null, 1);
+print '</td></tr>';
 
 // Categories
 $TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
 
 print '<tr>';
-print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
+print '<td class="titlefield">'.$langs->trans('Category').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
 print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
@@ -205,8 +197,11 @@ if (!empty($startdate))
 if (!empty($enddate))
   $sql .= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
+// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
+// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
+}
 if ($id > 0) $sql .= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, p.entity, d.fk_product, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut";
 else $sql .= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, p.entity";
 $sql .= $db->order($sortfield, $sortorder);
@@ -350,15 +345,10 @@ $db->free($result);
 print '
 <script type="text/javascript">
 $(document).ready(function() {
-
-  $("#id").change(function() {
-     $("div.fiche form").submit();
-  });
-
+  console.log("Init some values");
   $("#totalMargin").html("'.price(price2num($totalMargin, 'MT')).'");
   $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
   $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
-
 });
 </script>
 ';

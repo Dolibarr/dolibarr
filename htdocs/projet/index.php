@@ -322,7 +322,7 @@ $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) $sql .= " AND p.rowid IN (".$projectsListId.")"; // If we have this test true, it also means projectset is not 2
 if ($socid)	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-$sql .= " GROUP BY s.rowid, s.nom, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status";
+$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.canvas, s.status";
 $sql .= $db->order($sortfield, $sortorder);
 //$sql .= $db->plimit($max + 1, 0);
 

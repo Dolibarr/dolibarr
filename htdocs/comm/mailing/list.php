@@ -119,9 +119,8 @@ llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES
 
 $form = new Form($db);
 
-if ($filteremail)
-{
-	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi,";
+if ($filteremail) {
+	$sql = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi,";
 	$sql .= " mc.statut as sendstatut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
@@ -131,7 +130,7 @@ if ($filteremail)
 	if (!$sortorder) $sortorder = "ASC";
 	if (!$sortfield) $sortfield = "m.rowid";
 } else {
-	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
+	$sql = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 	$sql .= " WHERE m.entity = ".$conf->entity;
 	if ($search_ref) $sql .= " AND m.rowid = '".$db->escape($search_ref)."'";
@@ -238,9 +237,10 @@ if ($resql)
 		print $email->getNomUrl(1);
 		print '</td>';
 
+		// Title
 		print '<td>'.$obj->title.'</td>';
-		// Date creation
 
+		// Date creation
 		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->datec), 'day');
 		print '</td>';

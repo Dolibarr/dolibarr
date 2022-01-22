@@ -191,7 +191,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             		'multicurrency.class.php',
             		'productbatch.class.php',
             		'reception.class.php',
-            		'societe.class.php'
+            		'societe.class.php',
+            		'account.class.php'
             	))) {
 	            	// Must must not found $db->
 	            	$ok=true;
@@ -364,6 +365,18 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                 break;
             }
             $this->assertTrue($ok, 'Found a declaration @var array() instead of @var array in file '.$file['relativename'].'.');
+
+
+            // Test we don't have CURDATE()
+            $ok=true;
+            $matches=array();
+            preg_match_all('/CURDATE\(\)/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach ($matches as $key => $val)
+            {
+            	$ok=false;
+            	break;
+            }
+            $this->assertTrue($ok, 'Found a CURDATE\(\) into code. Do not use this SQL method in file '.$file['relativename'].'. You must use the PHP function dol_now() instead.');
         }
 
         return;

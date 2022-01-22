@@ -17,6 +17,7 @@ KeepToShip=Permaneça para enviar
 KeepToShipShort=Permanecer
 SendingsAndReceivingForSameOrder=Envios e recibos para esse pedido
 SendingsToValidate=Envios a Confirmar
+StatusSendingCanceledShort=Cancelada
 StatusSendingValidated=Validado (produtos a enviar o enviados)
 SendingSheet=Folha de embarque
 ConfirmDeleteSending=Tem certeza que quer remover este envio?

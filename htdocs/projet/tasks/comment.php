@@ -149,32 +149,34 @@ if ($id > 0 || !empty($ref))
 			print '<table class="border centpercent">';
 
 			// Usage
-			print '<tr><td class="tdtop">';
-			print $langs->trans("Usage");
-			print '</td>';
-			print '<td>';
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-			{
-				print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectFollowOpportunity");
-				print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-				print '<br>';
-			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS))
-			{
-				print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectFollowTasks");
-				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-				print '<br>';
-			}
-			if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-			{
-				print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectBillTimeDescription");
-				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-				print '<br>';
-			}
-			print '</td></tr>';
+            if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS)) {
+				print '<tr><td class="tdtop">';
+				print $langs->trans("Usage");
+				print '</td>';
+				print '<td>';
+				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+				{
+					print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectFollowOpportunity");
+					print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+					print '<br>';
+				}
+				if (empty($conf->global->PROJECT_HIDE_TASKS))
+				{
+					print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectFollowTasks");
+					print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+					print '<br>';
+				}
+				if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
+				{
+					print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectBillTimeDescription");
+					print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+					print '<br>';
+				}
+				print '</td></tr>';
+            }
 
 			// Visibility
 			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -182,9 +184,8 @@ if ($id > 0 || !empty($ref))
 			else print $langs->trans('PrivateProject');
 			print '</td></tr>';
 
-			// Usage
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && !empty($object->usage_opportunity))
-			{
+			// Opportunities
+			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && !empty($object->usage_opportunity)) {
 				// Opportunity status
 				print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
 				$code = dol_getIdFromCode($db, $projectstatic->opp_status, 'c_lead_status', 'rowid', 'code');

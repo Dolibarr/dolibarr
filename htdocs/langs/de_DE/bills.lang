@@ -520,7 +520,7 @@ EarlyClosingReason=Grund für die vorzeitige Schließung
 EarlyClosingComment=Notiz zur vorzeitigen Schließung
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Repräsentative Follow-up Kundenrechnung
-TypeContact_facture_external_BILLING=Kundenrechnung Kontakt
+TypeContact_facture_external_BILLING=Kontakt für Kundenrechnungen
 TypeContact_facture_external_SHIPPING=Kundenversand Kontakt
 TypeContact_facture_external_SERVICE=Kundenservice Kontakt
 TypeContact_invoice_supplier_internal_SALESREPFOLL=Repräsentative Folgerechnung eines Lieferanten
@@ -577,6 +577,6 @@ UnitPriceXQtyLessDiscount=Stückpreis x Anzahl - Rabatt
 CustomersInvoicesArea=Abrechnungsbereich Kunden
 SupplierInvoicesArea=Abrechnungsbereich Lieferanten
 FacParentLine=Übergeordnete Rechnungszeile
-SituationTotalRayToRest=Remainder to pay without taxe
+SituationTotalRayToRest=Restbetrag zu zahlen ohne Steuern
 PDFSituationTitle=Situation Nr. %d
-SituationTotalProgress=Total progress %d %%
+SituationTotalProgress=Gesamtfortschritt %d %%

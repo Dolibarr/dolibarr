@@ -31,7 +31,7 @@ if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined
 if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 // For MultiCompany module.
-// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Do not use GETPOST here, function is not defined and this test must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
@@ -240,6 +240,11 @@ if ($urllogo)
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
+	print '</div>';
+}
+if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
+	print '<div class="backimagepublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
 	print '</div>';
 }
 

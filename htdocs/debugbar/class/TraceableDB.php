@@ -80,12 +80,13 @@ class TraceableDB extends DoliDB
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 * @param   int		$param 		Date TMS to convert
-	 * @return  string            	Date in a string YYYYMMDDHHMMSS
+	 *   @param	    int		$param      Date TMS to convert
+	 *	 @param		mixed	$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
+	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-	public function idate($param)
+	public function idate($param, $gm = 'tzserver')
 	{
-		return $this->db->idate($param);
+		return $this->db->idate($param, $gm);
 	}
 
 	/**

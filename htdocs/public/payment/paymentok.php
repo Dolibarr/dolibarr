@@ -182,6 +182,11 @@ if ($urllogo)
 	}
 	print '</div>';
 }
+if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
+	print '<div class="backimagepublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
+	print '</div>';
+}
 
 
 print '<br><br><br>';
@@ -409,7 +414,7 @@ if ($ispaymentok)
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
 					} else {
-						$postactionmessages[] = 'Subscription created';
+						$postactionmessages[] = 'Subscription created (id='.$crowid.')';
 						$ispostactionok = 1;
 					}
 				}
@@ -614,7 +619,7 @@ if ($ispaymentok)
 				$ispostactionok = -1;
 			}
 		} else {
-			$postactionmessages[] = 'Member '.$tmptag['MEM'].' for subscription payed was not found';
+			$postactionmessages[] = 'Member '.$tmptag['MEM'].' for subscription paid was not found';
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('INV', $tmptag) && $tmptag['INV'] > 0)
@@ -718,7 +723,7 @@ if ($ispaymentok)
 				$ispostactionok = -1;
 			}
 		} else {
-			$postactionmessages[] = 'Invoice payed '.$tmptag['INV'].' was not found';
+			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
 			$ispostactionok = -1;
 		}
 	} else {
@@ -741,6 +746,12 @@ if ($ispaymentok)
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
 		if ($result < 0) $error++;
 		// End call triggers
+	} elseif (get_class($object)=='stdClass') {
+		//In some case $object is not instanciate (for paiement on custom object) We need to deal with payment
+		include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+		$paiement = new Paiement($db);
+		$result = $paiement->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
+		if ($result < 0) $error++;
 	}
 
 	print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";

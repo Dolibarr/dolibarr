@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -121,11 +121,11 @@ $arrayfields = array(
 		//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
-if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-	unset($arrayfields['pl.eatby']);
-}
 if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	unset($arrayfields['pl.sellby']);
+}
+if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	unset($arrayfields['pl.eatby']);
 }
 
 // Security check
@@ -490,7 +490,7 @@ if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $se
 if (!empty($search_product_ref))   $sql .= natural_search('p.ref', $search_product_ref);
 if (!empty($search_product))       $sql .= natural_search('p.label', $search_product);
 if ($search_warehouse != '' && $search_warehouse != '-1')          $sql .= natural_search('e.rowid', $search_warehouse, 2);
-if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
+if (!empty($search_user))          $sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
 if (!empty($product_id))           $sql .= natural_search('p.rowid', $product_id);
 if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
@@ -1013,6 +1013,23 @@ if ($resql)
 		$userstatic->lastname = $objp->lastname;
 		$userstatic->firstname = $objp->firstname;
 		$userstatic->photo = $objp->photo;
+
+		// Multilangs
+		if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+			// TODO Use a cache
+			$sql = "SELECT label";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+			$sql .= " WHERE fk_product=".$objp->rowid;
+			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " LIMIT 1";
+
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$objtp = $db->fetch_object($result);
+				if (!empty($objtp->label)) $objp->produit = $objtp->label;
+			}
+		}
 
 		$productstatic->id = $objp->rowid;
 		$productstatic->ref = $objp->product_ref;

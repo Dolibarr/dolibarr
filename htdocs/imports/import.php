@@ -1255,6 +1255,14 @@ if ($step == 4 && $datatoimport)
 // STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport)
 {
+	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_time = @ini_get("max_execution_time");
+	if ($max_time && $max_time < $max_execution_time_for_importexport)
+	{
+		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
+		@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
+	}
+
 	$model = $format;
 	$liste = $objmodelimport->liste_modeles($db);
 
@@ -1595,8 +1603,10 @@ if ($step == 5 && $datatoimport)
 		// Show OK
 		if (!count($arrayoferrors) && !count($arrayofwarnings)) {
 			print '<div class="center">'.img_picto($langs->trans("OK"), 'tick').' <b>'.$langs->trans("NoError").'</b></div><br><br>';
-			print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
-			print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
+			print '<div class="ok">';
+			print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br><br>';
+			print '</div>';
 		} else print $langs->trans("NbOfLinesOK", $nbok).'<br><br>';
 
 		// Show Errors
@@ -1684,9 +1694,17 @@ if ($step == 5 && $datatoimport)
 // STEP 6: Real import
 if ($step == 6 && $datatoimport)
 {
+	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_time = @ini_get("max_execution_time");
+	if ($max_time && $max_time < $max_execution_time_for_importexport)
+	{
+		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
+		@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
+	}
+
 	$model = $format;
 	$liste = $objmodelimport->liste_modeles($db);
-	$importid = $_REQUEST["importid"];
+	$importid = GETPOST("importid", 'alphanohtml');
 
 
 	// Create classe to use for import
@@ -1962,12 +1980,14 @@ if ($step == 6 && $datatoimport)
 
 	// Show result
 	print '<br>';
-	print '<div class="center">';
+	print '<div class="ok">';
 	print $langs->trans("NbOfLinesImported", $nbok).'</b><br>';
-	print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
-	print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
+	print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+	print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br><br>';
+	print '</div>';
+	print '<div class="center">';
 	print $langs->trans("FileWasImported", $importid).'<br>';
-	print $langs->trans("YouCanUseImportIdToFindRecord", $importid).'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("YouCanUseImportIdToFindRecord", $importid).'</span><br>';
 	print '</div>';
 }
 

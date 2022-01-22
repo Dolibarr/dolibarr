@@ -59,7 +59,7 @@ if ($action == 'updateMask') {
 		$res = dolibarr_set_const($db, $maskconstticket, $maskticket, 'chaine', 0, '', $conf->entity);
 	}
 
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -113,7 +113,7 @@ elseif ($action == 'setmod') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', '', 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -124,7 +124,7 @@ elseif ($action == 'setmod') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -134,7 +134,7 @@ elseif ($action == 'setmod') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'), 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -144,7 +144,7 @@ elseif ($action == 'setmod') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailSignatureText'), 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 }
@@ -152,13 +152,13 @@ elseif ($action == 'setmod') {
 if ($action == 'setvarother') {
 	$param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
 	$param_disable_email = GETPOST('TICKET_DISABLE_NOTIFICATION_MAILS', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_DISABLE_NOTIFICATION_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -166,7 +166,7 @@ if ($action == 'setvarother') {
 	{
 		$param_show_module_logo = GETPOST('TICKET_SHOW_MODULE_LOGO', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) {
+		if (!($res > 0)) {
 			$error++;
 		}
 	}
@@ -175,20 +175,20 @@ if ($action == 'setvarother') {
 	{
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) {
+		if (!($res > 0)) {
 			$error++;
 		}
 	}
 
 	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
 	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 }

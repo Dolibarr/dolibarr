@@ -452,6 +452,9 @@ abstract class CommonDocGenerator
 
 		$array_key.'_bank_iban'=>$bank_account->iban,
 		$array_key.'_bank_bic'=>$bank_account->bic,
+		$array_key.'_bank_label'=>$bank_account->label,
+		$array_key.'_bank_number'=>$bank_account->number,
+		$array_key.'_bank_proprio'=>$bank_account->proprio,
 
 		$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
 		$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
@@ -465,7 +468,7 @@ abstract class CommonDocGenerator
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
 
-		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
+		$array_key.'_multicurrency_code' => $object->multicurrency_code,
 		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
 		$array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
 		$array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
@@ -797,6 +800,15 @@ abstract class CommonDocGenerator
 		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+
+		// Load product data optional fields to the line -> enables to use "line_product_options_{extrafield}"
+		if (isset($line->fk_product) && $line->fk_product > 0)
+		{
+			$tmpproduct = new Product($this->db);
+			$result = $tmpproduct->fetch($line->fk_product);
+			foreach ($tmpproduct->array_options as $key=>$label)
+				$resarray["line_product_".$key] = $label;
+		}
 
 		return $resarray;
 	}

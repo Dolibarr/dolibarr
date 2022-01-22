@@ -213,7 +213,7 @@ ProfId1MA=Prof ID 1  (R.C.)
 ProfId2MA=Prof ID 2
 ProfId3MA=Prof ID 3
 ProfId4MA=Prof ID 4
-ProfId5MA=Id prof. 5 (I.C.E.)
+ProfId5MA=Id prof. 5 (Identifiant Commun Entreprise)
 ProfId6MA=-
 ProfId1MX=Prof Id 1 (R.F.C).
 ProfId2MX=Prof Id 2 (R..P. IMSS)
@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Überprüfungsergebnis des MwSt-Informationsaustauschs
 VATIntraManualCheck=Sie können die Überprüfung auch manuell auf der Internetseite der Europäische Kommission durchführen: <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Anfrage nicht möglich. Überprüfungsdienst wird vom Mitgliedsland nicht angeboten (%s).
 NorProspectNorCustomer=kein Interessent / kein Kunde
-JuridicalStatus=Rechtsform
+JuridicalStatus=Geschäftsentitätstyp
 Workforce=Mitarbeiter/innen
 Staff=Mitarbeiter
 ProspectLevelShort=Potenzial

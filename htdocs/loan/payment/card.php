@@ -149,7 +149,7 @@ print '</div>';
 
 
 /*
- * List of loans payed
+ * List of loans paid
  */
 
 $disable_delete = 0;
@@ -194,7 +194,7 @@ if ($resql)
 			// print '<td class="right">'.price($objp->capital).'</td>';
 			// Status
 			print '<td class="center">'.$loan->getLibStatut(4, $objp->amount_capital).'</td>';
-			// Amount payed
+			// Amount paid
 			$amount_payed = $objp->amount_capital + $objp->amount_insurance + $objp->amount_interest;
 
 			print '<td class="right">'.price($amount_payed).'</td>';

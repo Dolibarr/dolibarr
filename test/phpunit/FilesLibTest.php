@@ -1,6 +1,4 @@
 <?php
-use Sabre\VObject\Property\Boolean;
-
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  *
@@ -427,6 +425,13 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
         $result=dol_uncompress($fileout, $dirout);
         print __METHOD__." result=".join(',', $result)."\n";
         $this->assertEquals(0, count($result), "Pb with dol_uncompress_file of file ".$fileout);
+
+        $excludefiles = '/(\.back|\.old|\.log|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+        if (preg_match($excludefiles, 'a/temp/b')) { echo '----- Regex OK -----'."\n"; }
+        $result=dol_compress_dir($dirout, $conf->admin->dir_temp.'/testdir.zip', 'zip', $excludefiles);
+        print __METHOD__." result=".$result."\n";
+        print join(', ', $conf->logbuffer);
+        $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_dir of ".$dirout." into ".$conf->admin->dir_temp.'/testdir.zip');
     }
 
     /**

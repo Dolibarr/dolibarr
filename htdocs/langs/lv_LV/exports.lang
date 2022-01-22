@@ -133,3 +133,4 @@ KeysToUseForUpdates=Atslēga (sleja), ko izmantot esošo datu <b> atjaunināšan
 NbInsert=Ievietoto līniju skaits: %s
 NbUpdate=Atjaunināto līniju skaits: %s
 MultipleRecordFoundWithTheseFilters=Ar šiem filtriem tika atrasti vairāki ieraksti: %s
+StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number

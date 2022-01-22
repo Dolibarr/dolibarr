@@ -67,7 +67,7 @@ if ($action == 'update' || $action == 'add')
 
 			$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-			if (!$res > 0) $error++;
+			if (!($res > 0)) $error++;
 		}
 
 	 	if (!$error)

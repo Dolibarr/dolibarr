@@ -812,7 +812,7 @@ while ($i < min($num, $limit)) {
 			print '</td>';
 		} else {
 			print '<td class="nowrap left">';
-			if ($obj->subscription == 'yes') {
+			if (!empty($obj->subscription)) {
 				print $langs->trans("SubscriptionNotReceived");
 				if ($obj->statut > 0) print " ".img_warning();
 			} else {

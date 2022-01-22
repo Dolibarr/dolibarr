@@ -102,7 +102,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer)
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -255,32 +255,34 @@ if ($id > 0 || !empty($ref))
 			print '<table class="border tableforfield centpercent">';
 
 			// Usage
-			print '<tr><td class="tdtop">';
-			print $langs->trans("Usage");
-			print '</td>';
-			print '<td>';
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-			{
-				print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectFollowOpportunity");
-				print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-				print '<br>';
+            if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS)) {
+				print '<tr><td class="tdtop">';
+				print $langs->trans("Usage");
+				print '</td>';
+				print '<td>';
+				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+				{
+					print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectFollowOpportunity");
+					print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+					print '<br>';
+				}
+				if (empty($conf->global->PROJECT_HIDE_TASKS))
+				{
+					print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectFollowTasks");
+					print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+					print '<br>';
+				}
+				if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
+				{
+					print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectBillTimeDescription");
+					print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+					print '<br>';
+				}
+				print '</td></tr>';
 			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS))
-			{
-				print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectFollowTasks");
-				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-				print '<br>';
-			}
-			if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-			{
-				print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectBillTimeDescription");
-				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-				print '<br>';
-			}
-			print '</td></tr>';
 
 			// Visibility
 			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -634,7 +636,8 @@ if ($id > 0 || !empty($ref))
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'task', $socid, 1, '', 10, 'withproject='.$withproject);
+			$defaultthirdpartyid = $socid > 0 ? $socid : $object->project->socid;
+			$formactions->showactions($object, 'task', $defaultthirdpartyid, 1, '', 10, 'withproject='.$withproject);
 
 			print '</div></div></div>';
 		}

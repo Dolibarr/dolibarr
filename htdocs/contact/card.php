@@ -54,6 +54,8 @@ $mesg = ''; $error = 0; $errors = array();
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
@@ -296,9 +298,9 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact->creer)
+	if ($action == 'update' && empty($cancel) && $user->rights->societe->contact->creer)
 	{
-		if (empty($_POST["lastname"]))
+		if (!GETPOST("lastname", 'alpha'))
 		{
 			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
 			$action = 'edit';
@@ -308,6 +310,7 @@ if (empty($reshook))
 		{
 			$contactid = GETPOST("contactid", 'int');
 			$object->fetch($contactid);
+			$object->fetchRoles($contactid);
 
 			// Photo save
 			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
@@ -396,10 +399,11 @@ if (empty($reshook))
 			$object->priv = (string) GETPOST("priv", 'int');
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
-			$object->roles = GETPOST("roles", 'array');
+
+			$object->roles = GETPOST("roles", 'array');		// Note GETPOSTISSET("role") is null when combo is empty
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) $error++;
 
 			if (!$error)
@@ -755,7 +759,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 				print '<tr>';
 				print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
+				print '<td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'alpha') : $noemail), 1);
+				print '</td>';
 				print '</tr>';
 			}
 			print '</tr>';
@@ -827,7 +833,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<tr><td>'.$langs->trans("ContactByDefaultFor").'</td>';
 				print '<td colspan="3">';
 				$contactType = $object->listeTypeContacts('external', '', 1);
-				print $form->multiselectarray('roles', $contactType);
+				print $form->multiselectarray('roles', $contactType, array(), 0, 0, 'minwidth500');
 				print '</td></tr>';
 			}
 
@@ -1067,7 +1073,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 
 				print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ?GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
+				print '<td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ?GETPOST("no_email", 'alpha') : $noemail), 1);
+				print '</td>';
 			} else {
 				print '<td colspan="2"></td>';
 			}
@@ -1313,7 +1321,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					$noemail = $obj->nb;
 				}
 			}
-			print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($noemail).'</td></tr>';
+			print '<tr><td>'.$langs->trans("No_Email").'</td><td>';
+			if ($object->email) {
+				print yn($noemail);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
+			}
+			print '</td></tr>';
 		}
 
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';

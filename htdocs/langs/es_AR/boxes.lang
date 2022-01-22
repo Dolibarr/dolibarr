@@ -62,7 +62,6 @@ ForCustomersOrders=Órdenes de Clientes
 LastXMonthRolling=Los últimos %s meses consecutivo s
 ChooseBoxToAdd=Agregar widget a su dashboard
 BoxAdded=El widget fue agregado a su tablero
-BoxLastManualEntries=Últimas entradas contables
 NoRecordedManualEntries=No hay registros contables manuales
 BoxSuspenseAccount=Operación de cuenta contable con cuenta temporal
 BoxTitleSuspenseAccount=Número de líneas no sin asignar

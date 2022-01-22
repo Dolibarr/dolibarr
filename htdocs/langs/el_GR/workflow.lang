@@ -21,3 +21,5 @@ descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked sup
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Αυτόματη δημιουργία
 AutomaticClassification=Αυτόματη ταξινόμηση
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

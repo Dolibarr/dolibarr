@@ -31,7 +31,6 @@
  */
 function opensurvey_prepare_head(Opensurveysondage $object)
 {
-
 	global $langs, $conf;
 
 	$h = 0;

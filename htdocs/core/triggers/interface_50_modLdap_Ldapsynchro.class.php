@@ -119,6 +119,52 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$newparent = $object->_load_ldap_dn($info, 1);
 
 					$result = $ldap->update($dn, $info, $user, $olddn, $newrdn, $newparent);
+
+					if ($result > 0 && !empty($object->context['newgroupid'])) {      // We are in context of adding a new group to user
+						$usergroup = new Usergroup($this->db);
+
+						$usergroup->fetch($object->context['newgroupid']);
+
+						$oldinfo = $usergroup->_load_ldap_info();
+						$olddn = $usergroup->_load_ldap_dn($oldinfo);
+
+						// Verify if entry exist
+						$container = $usergroup->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$usergroup->_load_ldap_dn($oldinfo, 2).")";
+						$records = $ldap->search($container, $search);
+						if (count($records) && $records['count'] == 0)
+						{
+							$olddn = '';
+						}
+
+						$info = $usergroup->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
+						$dn = $usergroup->_load_ldap_dn($info);
+
+						$result = $ldap->update($dn, $info, $user, $olddn);
+					}
+
+					if ($result > 0 && !empty($object->context['oldgroupid'])) {      // We are in context of removing a group from user
+						$usergroup = new Usergroup($this->db);
+
+						$usergroup->fetch($object->context['oldgroupid']);
+
+						$oldinfo = $usergroup->_load_ldap_info();
+						$olddn = $usergroup->_load_ldap_dn($oldinfo);
+
+						// Verify if entry exist
+						$container = $usergroup->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$usergroup->_load_ldap_dn($oldinfo, 2).")";
+						$records = $ldap->search($container, $search);
+						if (count($records) && $records['count'] == 0)
+						{
+							$olddn = '';
+						}
+
+						$info = $usergroup->_load_ldap_info(); // Contains all members, except the old one (remove already done before trigger call)
+						$dn = $usergroup->_load_ldap_dn($info);
+
+						$result = $ldap->update($dn, $info, $user, $olddn);
+					}
 				}
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
@@ -248,8 +294,8 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info = $object->_load_ldap_info();
 					$dn = $object->_load_ldap_dn($info);
 
-					// Get a gid number for objectclass PosixGroup
-					if (in_array('posixGroup', $info['objectclass'])) {
+					// Get a gid number for objectclass PosixGroup if none was provided
+					if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 

@@ -413,7 +413,7 @@ class Tva extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	VAT payed
+	 * 	Total of VAT paid into invoice
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	double				Amount
@@ -451,7 +451,7 @@ class Tva extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Total of the VAT payed
+	 * 	Total of the VAT paid
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	double				Amount

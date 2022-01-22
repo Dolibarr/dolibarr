@@ -16,7 +16,7 @@
 
 CREATE TABLE llx_mrp_production(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	fk_mo integer NOT NULL, 
+	fk_mo integer NOT NULL,
 	position integer NOT NULL DEFAULT 0,
 	fk_product integer NOT NULL, 
 	fk_warehouse integer,

@@ -6,7 +6,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
@@ -31,11 +31,6 @@
  */
 
 require '../../main.inc.php';
-
-// Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'facture', $facid, '');
-
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -57,6 +52,10 @@ $userid = GETPOST('userid', 'int');
 $day = GETPOST('day', 'int');
 $month				= GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
+
+// Security check
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'facture', $facid, '');
 
 $search_ref = GETPOST("search_ref", "alpha");
 $search_company		= GETPOST("search_company", 'alpha');
@@ -148,7 +147,7 @@ llxHeader('', $langs->trans('ListPayment'));
 
 if (GETPOST("orphelins", "alpha")) {
 	// Payments not linked to an invoice. Should not happend. For debug only.
-	$sql = "SELECT p.ref, p.datep, p.amount, p.statut, p.num_paiement";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
 
 	// Add fields from hooks
@@ -166,7 +165,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= $hookmanager->resPrint;
 } else {
 	// DISTINCT is to avoid duplicate when there is a link to sales representatives
-	$sql = "SELECT DISTINCT p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
+	$sql = "SELECT DISTINCT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
@@ -390,7 +389,7 @@ while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 
 	$object->id = $objp->rowid;
-	$object->ref = $objp->ref;
+	$object->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
@@ -496,6 +495,14 @@ while ($i < min($num, $limit)) {
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+// If no record found
+if ($num == 0)
+{
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+}
 
 print "</table>";
 print "</div>";

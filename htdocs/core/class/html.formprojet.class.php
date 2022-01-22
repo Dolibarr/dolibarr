@@ -352,7 +352,7 @@ class FormProjets
 			if (empty($option_only) && !empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			   	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
 				$out .= $comboenhancement;
 				$morecss = 'minwidth200 maxwidth500';
 			}
@@ -388,7 +388,7 @@ class FormProjets
 							continue;
 						}
 
-						$labeltoshow = '';
+						$labeltoshow = ''; $titletoshow = '';
 
 						$disabled = 0;
 						if ($obj->fk_statut == Project::STATUS_DRAFT)
@@ -408,32 +408,39 @@ class FormProjets
 							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 							//else $labeltoshow.=' ('.$langs->trans("Private").')';
 							$labeltoshow .= ' '.dol_trunc($obj->title, $maxlength);
+							$titletoshow = $labeltoshow;
 
-							if ($obj->name) $labeltoshow .= ' ('.$obj->name.')';
+							if ($obj->name) {
+								$labeltoshow .= ' ('.$obj->name.')';
+								$titletoshow .= ' <span class="opacitymedium">('.$obj->name.')</span>';
+							}
 
 							$disabled = 0;
-							if ($obj->fk_statut == Project::STATUS_DRAFT)
-							{
+							if ($obj->fk_statut == Project::STATUS_DRAFT) {
 								$disabled = 1;
 								$labeltoshow .= ' - '.$langs->trans("Draft");
-							} elseif ($obj->fk_statut == Project::STATUS_CLOSED)
-							{
+								$titletoshow .= ' -  <span class="opacitymedium">'.$langs->trans("Draft").'</span>';
+							} elseif ($obj->fk_statut == Project::STATUS_CLOSED) {
 								if ($discard_closed == 2) $disabled = 1;
 								$labeltoshow .= ' - '.$langs->trans("Closed");
-							} elseif ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid))
-							{
+								$titletoshow .= ' - <span class="opacitymedium">'.$langs->trans("Closed").'</span>';
+							} elseif ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
 								$disabled = 1;
 								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
+								$titletoshow .= ' - <span class="opacitymedium">'.$langs->trans("LinkedToAnotherCompany").'</span>';
 							}
 							$labeltoshow .= ' - ';
+							$titletoshow .= ' - ';
 						}
 
 						// Label for task
 						$labeltoshow .= $obj->tref.' '.dol_trunc($obj->tlabel, $maxlength);
+						$titletoshow .= $obj->tref.' '.dol_trunc($obj->tlabel, $maxlength);
 
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected';
+							$out .= ' data-html="'.dol_escape_htmltag($titletoshow).'"';
 							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
 							$out .= '>'.$labeltoshow.'</option>';
 						} else {
@@ -445,6 +452,7 @@ class FormProjets
 								if ($disabled) $resultat .= ' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
+								$resultat .= ' data-html="'.dol_escape_htmltag($titletoshow).'"';
 								$resultat .= '>';
 								$resultat .= $labeltoshow;
 								$resultat .= '</option>';

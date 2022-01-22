@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,6 +70,8 @@ class PaymentVarious extends CommonObject
 	public $amount;
 	public $type_payment;
 	public $num_payment;
+	public $chqemetteur;
+	public $chqbank;
 	public $category_transaction;
 
 	/**
@@ -424,7 +426,7 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
+		if (!empty($conf->banque->enabled) && (empty($this->type_payment)))
 		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
@@ -499,8 +501,8 @@ class PaymentVarious extends CommonObject
 						$this->num_payment,
 						($this->category_transaction > 0 ? $this->category_transaction : 0),
 						$user,
-						'',
-						'',
+						$this->chqemetteur,
+						$this->chqbank,
 						'',
 						$this->datev
 					);

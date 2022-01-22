@@ -31,10 +31,8 @@ TicketDictType=Vstupenka - Typy
 TicketDictCategory=Vstupenka - skupiny
 TicketDictSeverity=Vstupenka - závažnosti
 TicketDictResolution=Vstupenka - rozlišení
-TicketTypeShortBUGSOFT=Logika Dysfonctionnement
-TicketTypeShortBUGHARD=Dysfonctionnement matériel -nějaký mišmaš ???
-TicketTypeShortCOM=Obchodní otázka
 
+TicketTypeShortCOM=Obchodní otázka
 TicketTypeShortHELP=Žádost o funkční pomoc
 TicketTypeShortISSUE=Problém, chyba nebo problém
 TicketTypeShortREQUEST=Žádost o změnu nebo vylepšení
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Jiný
 TicketSeverityShortLOW=Nízký
 TicketSeverityShortNORMAL=Normální
 TicketSeverityShortHIGH=Vysoký
-TicketSeverityShortBLOCKING=Kritické / Blokování
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=Pole '%s' nesprávné
 MenuTicketMyAssign=Moje jízdenky
@@ -60,7 +58,6 @@ OriginEmail=Zdroj e-mailu
 Notify_TICKET_SENTBYMAIL=Odeslat e-mailem zprávu o lince
 
 # Status
-NotRead=Nepřečetl
 Read=Číst
 Assigned=Přidělené
 InProgress=probíhá
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Veřejné rozhraní umožňuje všem návšt�
 TicketsAutoAssignTicket=Automaticky přiřadit uživateli, který vytvořil lístek
 TicketsAutoAssignTicketHelp=Při tvorbě vstupenky může být uživateli automaticky přiřazen lístek.
 TicketNumberingModules=Modul číslování vstupenek
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Upozornit subjekt na vytvoření
 TicketsDisableCustomerEmail=Pokud je lístek vytvořen z veřejného rozhraní, vždy zakažte e-maily
 TicketsPublicNotificationNewMessage=Po přidání nové zprávy odešlete e-mail(y)
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Stav změněn: %s až %s
 TicketNotNotifyTiersAtCreate=Neinformovat společnost na vytvoření
 Unread=Nepřečtený
 TicketNotCreatedFromPublicInterface=Není dostupný. Vstupenka nebyla vytvořena z veřejného rozhraní.
-PublicInterfaceNotEnabled=Veřejné rozhraní nebylo povoleno
 ErrorTicketRefRequired=Je vyžadován referenční název vstupenky
 
 #

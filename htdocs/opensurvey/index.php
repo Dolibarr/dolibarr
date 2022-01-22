@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 $langs->load("opensurvey");
 
 // Security check
-if (!$user->rights->opensurvey->read) accessforbidden();
+if (empty($user->rights->opensurvey->read)) {
+	accessforbidden();
+}
 
 $hookmanager = new HookManager($db);
 

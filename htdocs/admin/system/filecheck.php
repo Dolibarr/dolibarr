@@ -264,7 +264,7 @@ if (!$error && $xml)
 				$out .= "</tr>\n";
 			}
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -317,7 +317,7 @@ if (!$error && $xml)
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
@@ -370,19 +370,10 @@ if (!$error && $xml)
 			$out .= '<td class="right"></td>'."\n";
 			$out .= "</tr>\n";
 		} else {
-			$out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			$out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		$out .= '</table>';
 		$out .= '</div>';
-
-
-		// Show warning
-		if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
-		{
-			setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
-		}
 	} else {
 		print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
 		$error++;
@@ -408,6 +399,8 @@ if (!$error && $xml)
     var_dump($checksumtoget);
     var_dump($checksumget == $checksumtoget);*/
 
+	$resultcomment = '';
+
 	$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
 	if ($checksumget == $checksumtoget)
 	{
@@ -415,7 +408,7 @@ if (!$error && $xml)
 		{
 			$resultcode = 'warning';
 			$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
-			$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
+			$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';
 		} else {
 			$resultcode = 'ok';
 			$resultcomment = 'Success';
@@ -427,7 +420,18 @@ if (!$error && $xml)
 		$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
 	}
 
-	print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+	// Show warning
+	if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3) && $resultcode == 'ok') {
+		setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
+	} else {
+		if ($resultcode == 'warning') {
+			setEventMessages($langs->trans($resultcomment), null, 'warnings');
+		} else {
+			setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'errors');
+		}
+	}
+
+	print load_fiche_titre($langs->trans("GlobalChecksum"));
 	print $langs->trans("ExpectedChecksum").' = '.$outexpectedchecksum.'<br>';
 	print $langs->trans("CurrentChecksum").' = '.$outcurrentchecksum;
 

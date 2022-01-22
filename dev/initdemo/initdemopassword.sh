@@ -32,12 +32,14 @@ base=$2;
 port=$3;
 demologin=$4;
 demopass=$5;
+demopasshash=$6;
 
 # ----------------------------- check params
 if [ "x$confirm" != "xconfirm" ]
 then
 	echo "----- $0 -----"
-	echo "Usage: initdemopassword.sh confirm [base port login pass]"
+	echo "Usage: initdemopassword.sh confirm [base port login pass password_hash_algo]"
+	echo "password_hash_algo can be md5 of password_hash"
 	exit
 fi
 
@@ -148,7 +150,15 @@ fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 echo "echo \"UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';\" | mysql -P$port $base"
-echo "UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';" | mysql -P$port $base
+
+if [ "x$demopasshash" != "xpassword_hash" ]
+then
+	newpass=`echo '<?php echo md5("$demopass"); ?>' | php`
+else
+	newpass=`echo '<?php echo password_hash("$demopass", PASSWORD_DEFAULT); ?>' | php`
+fi
+
+echo "UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';" | mysql -P$port $base
 export res=$?
 
 if [ $res -ne 0 ]; then

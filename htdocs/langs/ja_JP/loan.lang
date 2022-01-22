@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - loan
 Loan=ローン
 Loans=ローン
-NewLoan=新しいローン
+NewLoan=新規ローン
 ShowLoan=ローンを表示
 PaymentLoan=ローンの支払
 LoanPayment=ローンの支払

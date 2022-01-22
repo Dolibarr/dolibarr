@@ -280,13 +280,10 @@ class ProductFournisseur extends Product
 		}
 
 		// Multicurrency
-		$multicurrency_buyprice = null;
 		$multicurrency_unitBuyPrice = null;
 		$fk_multicurrency = null;
 		if (!empty($conf->multicurrency->enabled)) {
 			if (empty($multicurrency_tx)) $multicurrency_tx = 1;
-			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
-
 			if (empty($multicurrency_buyprice)) $multicurrency_buyprice = 0;
 			if ($multicurrency_price_base_type == 'TTC')
 			{
@@ -1075,10 +1072,82 @@ class ProductFournisseur extends Product
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("SupplierRef").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Product').':</b> '.$this->product_ref;
+		if (!empty($this->entity)) {
+			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
+			if ($this->nbphoto > 0) {
+				$label .= '<div class="photointooltip">';
+				$label .= $tmpphoto;
+				$label .= '</div><div style="clear: both;"></div>';
+			}
+		}
+
+		if ($this->type == Product::TYPE_PRODUCT) {
+			$label .= img_picto('', 'product').' <u class="paddingrightonly">'.$langs->trans("Product").'</u>';
+		} elseif ($this->type == Product::TYPE_SERVICE) {
+			$label .= img_picto('', 'service').' <u class="paddingrightonly">'.$langs->trans("Service").'</u>';
+		}
+		if (isset($this->status) && isset($this->status_buy)) {
+			$label .= ' '.$this->getLibStatut(5, 0);
+			$label .= ' '.$this->getLibStatut(5, 1);
+		}
+
+		if (!empty($this->ref)) {
+			$label .= '<br><b>'.$langs->trans('ProductRef').':</b> '.($this->ref ? $this->ref : $this->product_ref);
+		}
+		if (!empty($this->label)) {
+			$label .= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
+		}
 		$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+
+		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (!empty($conf->productbatch->enabled)) {
+				$langs->load("productbatch");
+				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
+			}
+		}
+		if (!empty($conf->barcode->enabled)) {
+			$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
+		}
+
+		if ($this->type == Product::TYPE_PRODUCT)
+		{
+			if ($this->weight) {
+				$label .= "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
+			}
+			$labelsize = "";
+			if ($this->length) {
+				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
+			}
+			if ($this->width) {
+				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
+			}
+			if ($this->height) {
+				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
+			}
+			if ($labelsize) $label .= "<br>".$labelsize;
+
+			$labelsurfacevolume = "";
+			if ($this->surface) {
+				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
+			}
+			if ($this->volume) {
+				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
+			}
+			if ($labelsurfacevolume) $label .= "<br>".$labelsurfacevolume;
+		}
+
+		if (!empty($conf->accounting->enabled) && $this->status) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
+			$label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
+			$label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
+		}
+		if (!empty($conf->accounting->enabled) && $this->status_buy) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
+			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
+			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
+		}
 
 		$logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
 		if (is_array($logPrices) && count($logPrices) > 0) {

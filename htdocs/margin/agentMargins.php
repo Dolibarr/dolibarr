@@ -106,6 +106,7 @@ $titre = $langs->trans("Margins");
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 
@@ -113,7 +114,7 @@ print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print $form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date
@@ -169,7 +170,11 @@ if (!empty($startdate))
 if (!empty($enddate))
   $sql .= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
+// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
+// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+	$sql .= " AND d.buy_price_ht <> 0";
+}
 //if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
 //else $sql.= " GROUP BY u.rowid, u.login, u.lastname, u.firstname";
 $sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
@@ -307,14 +312,6 @@ if ($result)
 	dol_print_error($db);
 }
 $db->free($result);
-
-print "\n".'<script type="text/javascript">
-$(document).ready(function() {
-  $("#agentid").change(function() {
-     $("div.fiche form").submit();
-  });
-});
-</script>'."\n";
 
 // End of page
 llxFooter();

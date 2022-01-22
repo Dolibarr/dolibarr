@@ -66,6 +66,8 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 $result = $object->fetch($id);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 /*
  * Actions
@@ -453,6 +455,10 @@ if ($object->fetch($id) >= 0)
 			}
 		}	// End foreach dir
 
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		print '</div>';
 
 		print '<br><br>';
@@ -689,6 +695,7 @@ if ($object->fetch($id) >= 0)
 
 				// Search Icon
 				print '<td class="right">';
+				print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {

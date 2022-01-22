@@ -22,6 +22,11 @@
  *	\ingroup	member
  *	\brief		Page to print sheets with barcodes using the document templates into core/modules/printsheets
  */
+
+if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must ne renew the token.
+	if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+}
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -237,16 +242,22 @@ if ($action == 'builddoc')
 
 			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(), 'dayhourlog').'.pdf';
 
-			if (!$mesg) $result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+			if (!$mesg) {
+				$outputlangs = $langs;
+
+				// This generates and send PDF to output
+				// TODO Move
+				$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+			}
 		}
 
-		if ($result <= 0)
-		{
-			dol_print_error('', $result);
-		}
+		if ($result <= 0 || $mesg) {
+			if (empty($mesg)) {
+				$mesg = 'Error '.$result;
+			}
 
-		if (!$mesg)
-		{
+			setEventMessages($mesg, null, 'errors');
+		} else {
 			$db->close();
 			exit;
 		}
@@ -275,10 +286,10 @@ dol_htmloutput_errors($mesg);
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';		// The target is for brothers that open the file instead of downloading it
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
-print '<input type="hidden" name="token" value="'.newtoken().'">';
+print '<input type="hidden" name="token" value="'.currentToken().'">';	// The page will not renew the token but force download of a file, so we must use here currentToken
 
 print '<div class="tagtable">';
 

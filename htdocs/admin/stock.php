@@ -96,7 +96,7 @@ if ($action == 'warehouse')
 	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
 	}
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 
 if ($action == 'specimen')

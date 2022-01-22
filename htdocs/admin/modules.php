@@ -28,7 +28,7 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (!defined('CSRFCHECK_WITH_TOKEN')) {
+if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action'] != 'reset')) {	// We do not force security to disable modules so we can do it if problem
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
@@ -1059,9 +1059,9 @@ if ($mode == 'deploy') {
 		} else {
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
-			print $langs->trans("FindPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("FindPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 2).'</b>: ';
-			print $langs->trans("DownloadPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("DownloadPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 3).'</b>: ';
 		}
 

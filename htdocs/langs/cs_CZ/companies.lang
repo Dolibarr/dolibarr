@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Zkontrolujte ID DPH uvnitř Společenství na webovýc
 VATIntraManualCheck=Můžete také zkontrolovat ručně na evropských stránkách <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Kontrola není možná. Služba není členským státem poskytována (%s).
 NorProspectNorCustomer=Ani cíl, ani zákazník
-JuridicalStatus=Typ právnické osoby
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=Zaměstnanci
 ProspectLevelShort=Potenciální

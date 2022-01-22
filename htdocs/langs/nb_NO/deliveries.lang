@@ -2,7 +2,7 @@
 Delivery=Levering
 DeliveryRef=Leveranse ref.
 DeliveryCard=Kvitteringskort
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Leveringsbekreftelse
 DeliveryDate=Leveringsdato
 CreateDeliveryOrder=Generer leveringskvittering
 DeliveryStateSaved=Leveringsstatus lagret
@@ -27,5 +27,6 @@ Recipient=Mottaker
 ErrorStockIsNotEnough=Ikke nok på lager
 Shippable=Kan sendes
 NonShippable=Kan ikke sendes
+ShowShippableStatus=Vis status sendingsklar
 ShowReceiving=Vis leveringskvittering
 NonExistentOrder=Ikkeeksisterende ordre

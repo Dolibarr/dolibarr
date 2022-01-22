@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Další zásilky pro tuto objednávku
 SendingsAndReceivingForSameOrder=Zásilky a potvrzení o této objednávce
 SendingsToValidate=Zásilky se ověřují
 StatusSendingCanceled=Zrušený
+StatusSendingCanceledShort=Zrušený
 StatusSendingDraft=Návrh
 StatusSendingValidated=Ověřené (výrobky pro dodávku nebo již dodány)
 StatusSendingProcessed=Zpracované
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Nejprve musíte potvrdit objednávku před tím
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Více kompletních modelů dokumentů pro potvrzení o doručení (logo. ..)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstanta EXPEDITION_ADDON_NUMBER není definována
 SumOfProductVolumes=Součet objemu produktů
 SumOfProductWeights=Součet hmotnosti produktů

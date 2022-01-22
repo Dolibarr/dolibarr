@@ -5,8 +5,10 @@ NoErrorCommitIsDone=خطائی نیست، حرکت می‌کنیم
 # Errors
 ErrorButCommitIsDone=علیرغم وجود خطا، تائید می‌شود
 ErrorBadEMail=رایانامۀ %s غلط است
+ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
 ErrorBadUrl=نشانی‌اینترنتی %s اشتباه است
 ErrorBadValueForParamNotAString=برای مؤلفۀ موردنظر مقدار خطائی وارد شده است. عموما در هنگام فقدان ترجمه، الحاق می‌شود.
+ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=نام‌کاربری %s قبلا وجود داشته است.
 ErrorGroupAlreadyExists=گروه %s قبلا وجود داشته است.
 ErrorRecordNotFound=ردیف موجود نیست.
@@ -48,6 +50,7 @@ ErrorFieldsRequired=برخی از بخش‌های الزامی، پر نشده�
 ErrorSubjectIsRequired=موضوع رایانامه الزامی است.
 ErrorFailedToCreateDir=ایجاد یک پوشه با شکست مواجه شد. بررسی کنید، کاربر سرور وب، دارای مجوزهای نوشتاری بر روی پوشۀ documents مربوط به Dolibarr باشد در صورتی که مؤلفۀ <b>safe_mode</b> روی این نسخه از PHP فعال باشد، بررسی کنید فایل‌های PHP مربوط به Dolibarr متعلق به کاربر سرور وب (یا گروه مربوطه) باشد.
 ErrorNoMailDefinedForThisUser=نشانی رایانامه برای این کاربر تعریف نشده است
+ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
 ErrorFeatureNeedJavascript=این قابلیت برای کار کردن نیاز به فعال بودن جاوااسکریپت دارد. این گزینه را در بخش برپاسازی-نمایش فعال کنید.
 ErrorTopMenuMustHaveAParentWithId0=فهرست‌هائی از نوع "بالا" می‌توانند دارای فهرست مادر باشند. برای این‌که فهرست "کنار" داشته باشید، عدد 0 را وارد کنید.
 ErrorLeftMenuMustHaveAParentId=فهرست‌های "کنار" باید یک شناسۀ مادر داشته باشند
@@ -75,7 +78,7 @@ ErrorExportDuplicateProfil=این نام نمایه برای این مجموعۀ
 ErrorLDAPSetupNotComplete=تطبیق Dolibarr-LDAP کامل نیست.
 ErrorLDAPMakeManualTest=یک فایل .ldif در پوشۀ  %s تولید شد. تلاش کنید آن را از خط فرمان به شکل دستی اجرا کنید تا اطلاعات بیشتری در مورد خطاها داشته باشید.
 ErrorCantSaveADoneUserWithZeroPercentage=در صورتی که بخش "انجام شده توسط" هم پر شده باشد، امکان ذخیرۀ یک کنش با "وضعیت شروع نشده" نیست.
-ErrorRefAlreadyExists=ارجاعی که برای مورد ساخته شده استفاده شده قبلا وجود داشته است.
+ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorPleaseTypeBankTransactionReportName=لطفا نام اطلاعیۀ بانک را در خصوص چگونگی گزارش ورودی وارد کنید (حالت YYYYMM  یا YYYYMMDD)
 ErrorRecordHasChildren=هنگامی که یک ردیف دارای زیرمجموعه است، امکان حذف آن وجود ندارد.
 ErrorRecordHasAtLeastOneChildOfType=این شیء حداقل یک فرزند از نوع %s دارد
@@ -216,7 +219,7 @@ ErrorChooseBetweenFreeEntryOrPredefinedProduct=شما باید تعیین کنی
 ErrorDiscountLargerThanRemainToPaySplitItBefore=تخفیفی که می‌دهید بزرگتر از مقدار قابل پرداخت است. قبل از این کار تخفیف را به 2 تخفیف کوچکتر تقسیم کنید.
 ErrorFileNotFoundWithSharedLink=فایل پیدا نشد. ممکن است کلید به‌اشتراک‌گذاری ویرایش شده یا فایل حذف شده باشد
 ErrorProductBarCodeAlreadyExists=بارکد محصول %s در یک ارجاع محصول دیگر قبلا وجود داشته است
-ErrorNoteAlsoThatSubProductCantBeFollowedByLot=همچنین توجه داشته باشید در هنگامی که حداقل یک زیرمحصول (یا زیرمحصولی از زیرمحصول) به یک شمارۀ سری‌ساخت/شماره سریال احتیاج داشته باشد، استفاده از محصول مجازی برای افزایش/کاهش خودکار زیرمحصولات ممکن نیست.
+ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using kits to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=برای سطوری که محصول مجانی دارند، توضیحات الزامی است
 ErrorAPageWithThisNameOrAliasAlreadyExists=صفحه/دربردارندۀ <strong>%s</strong> نام مشابه یا نام‌مستعار جایگزین مشابه ورودی مورد استفادۀ شما دارد
 ErrorDuringChartLoad=خطا در هنگام بارگذاری نمودار حساب‌ها. در صورتی برخی حساب‌ها بارگذاری نشوند، همچنان می‌توانید به طور دستی آن‌ها را وارد کنید
@@ -243,6 +246,16 @@ ErrorReplaceStringEmpty=Error, the string to replace into is empty
 ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
 ErrorProductDoesNotNeedBatchNumber=Error, product '<b>%s</b>' does not accept a lot/serial number
 ErrorFailedToReadObject=Error, failed to read object of type <b>%s</b>
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<b> to allow use of Command Line Interface by the internal job scheduler
+ErrorLoginDateValidity=Error, this login is outside the validity date range
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
+ErrorReservedKeyword=The word '<b>%s</b>' is a reserved keyword
+ErrorNotAvailableWithThisDistribution=Not available with this distribution
+ErrorPublicInterfaceNotEnabled=Public interface was not enabled
+ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page
+ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother=The language of new page must not be the source language if it is set as a translation of another page
+ErrorAParameterIsRequiredForThisOperation=A parameter is mandatory for this operation
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=یک گذرواژه برای این عضو تنظیم شده است. با این‌حال هیچ حساب کاربری‌ای ساخته نشده است. بنابراین این گذرواژه برای ورود به Dolibarr قابل استفاده نیست. ممکن است برای یک رابط/واحد بیرونی قابل استفاده باشد، اما اگر شما نخواهید هیچ نام کاربری ورود و گذرواژه‌ای برای یک عضو استفاده کنید، شما می‌توانید گزینۀ "ایجاد یک نام‌ورد برای هر عضو" را از برپاسازی واحد اعضاء غیرفعال کنید. در صورتی که نیاز دارید که نام‌ورود داشته باشید اما گذرواژه نداشته باشید، می‌توانید این بخش را خالی گذاشته تا از این هشدار بر حذر باشید. نکته: همچنین نشانی رایانامه می‌تواند در صورتی که عضو به یک‌کاربر متصل باشد، می‌‌تواند مورد استفاده قرار گیرد
@@ -267,6 +280,10 @@ WarningYourLoginWasModifiedPleaseLogin=نام‌ورود شما تغییر پی�
 WarningAnEntryAlreadyExistForTransKey=یک ورودی برای این کلید ترجمه برای این زبان قبلا وجود داشته است
 WarningNumberOfRecipientIsRestrictedInMassAction=هشدار، در هنگام انجام عملیات انبوده روی فهرست‌ها، تعداد دریافت‌کنندگان مختلف به <b>%s</b> محدود است.
 WarningDateOfLineMustBeInExpenseReportRange=هشدار، تاریخ مربوط به سطر در بازۀ گزارش هزینه‌ها نیست
+WarningProjectDraft=Project is still in draft mode. Don't forget to validate it if you plan to use tasks.
 WarningProjectClosed=طرح بسته است. ابتدا باید آن را باز کنید
 WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.
-WarningFailedToAddFileIntoDatabaseIndex=Warnin, failed to add file entry into ECM database index table
+WarningFailedToAddFileIntoDatabaseIndex=Warning, failed to add file entry into ECM database index table
+WarningTheHiddenOptionIsOn=Warning, the hidden option <b>%s</b> is on.
+WarningCreateSubAccounts=Warning, you can't create directly a sub account, you must create a third party or an user and assign them an accounting code to find them in this list
+WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.

@@ -160,7 +160,7 @@ $morehtmlcenter = '';
 if (!empty($conf->agenda->enabled))
 {
 	$addActionBtnRight = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
+    $morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 }
 
 //print '</div>';

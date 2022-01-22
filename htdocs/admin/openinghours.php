@@ -57,6 +57,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	if ($action != 'updateedit' && !$error)
 	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}

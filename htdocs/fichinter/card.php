@@ -217,8 +217,9 @@ if (empty($reshook))
 			if (!empty($origin) && !empty($originid))
 			{
 				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $_POST['origin'];
-				if (preg_match('/^([^_]+)_([^_]+)/i', $_POST['origin'], $regs))
+				$regs = array();
+				$element = $subelement = GETPOST('origin', 'alphanohtml');
+				if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs))
 				{
 					$element = $regs[1];
 					$subelement = $regs[2];
@@ -246,7 +247,13 @@ if (empty($reshook))
 				}
 
 				// Extrafields
-				$extrafields = new ExtraFields($db);
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
+				if ($ret < 0) {
+					$error++;
+					$action = 'create';
+				}
 				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 				$object->array_options = $array_options;
@@ -472,8 +479,7 @@ if (empty($reshook))
 
 			$desc = GETPOST('np_desc', 'restricthtml');
 			$date_intervention = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ?convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
-
+			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
 
 			// Extrafields
 			$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -570,14 +576,12 @@ if (empty($reshook))
 	 */
 	elseif ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save', 'alpha') == $langs->trans("Save")) {
 		$objectline = new FichinterLigne($db);
-		if ($objectline->fetch($lineid) <= 0)
-		{
+		if ($objectline->fetch($lineid) <= 0) {
 			dol_print_error($db);
 			exit;
 		}
 
-		if ($object->fetch($objectline->fk_fichinter) <= 0)
-		{
+		if ($object->fetch($objectline->fk_fichinter) <= 0) {
 			dol_print_error($db);
 			exit;
 		}
@@ -597,8 +601,7 @@ if (empty($reshook))
 		$objectline->array_options = $array_options;
 
 		$result = $objectline->update($user);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			dol_print_error($db);
 			exit;
 		}
@@ -608,8 +611,7 @@ if (empty($reshook))
 		$newlang = '';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
-		if (!empty($newlang))
-		{
+		if (!empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
@@ -1329,8 +1331,7 @@ if ($action == 'create')
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-		if ($action == 'editline')
-		{
+		if ($action == 'editline') {
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="line_id" value="'.GETPOST('line_id', 'int').'">';
 		} else {
@@ -1342,8 +1343,9 @@ if ($action == 'create')
 		$sql .= ' ft.date as date_intervention';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.fk_fichinter = '.$object->id;
-		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION))
+		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION)) {
 			$sql .= ' AND ft.duree <> 0';
+		}
 		$sql .= ' ORDER BY ft.rang ASC, ft.date ASC, ft.rowid';
 
 		$resql = $db->query($sql);
@@ -1370,13 +1372,11 @@ if ($action == 'create')
 				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
 				// Ligne en mode visu
-				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid)
-				{
+				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid) {
 					print '<tr class="oddeven">';
 
 					// No.
@@ -1396,8 +1396,7 @@ if ($action == 'create')
 
 					print "</td>\n";
 
-
-					// Econ to edit and delete
+					// Icon to edit and delete
 					if ($object->statut == 0 && $user->rights->ficheinter->creer)
 					{
 						print '<td class="center">';
@@ -1607,8 +1606,9 @@ if ($action == 'create')
 				// Validate
 				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || !empty($conf->global->FICHINTER_DISABLE_DETAILS))) {
 					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->validate)) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate"';
-						print '>'.$langs->trans("Validate").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
+					} else {
+						print '<div class="inline-block divButActionRefused"><span class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</span></div>';
 					}
 				}
 
@@ -1641,7 +1641,7 @@ if ($action == 'create')
 					}
 				}
 
-				// create intervention model
+				// Create intervention model
 				if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';

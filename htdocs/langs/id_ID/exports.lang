@@ -133,3 +133,4 @@ KeysToUseForUpdates=Kunci (kolom) untuk digunakan untuk memperbarui data yang ad
 NbInsert=Jumlah baris yang dimasukkan: %s
 NbUpdate=Jumlah baris yang diperbarui: %s
 MultipleRecordFoundWithTheseFilters=Beberapa catatan telah ditemukan dengan filter ini: %s
+StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number

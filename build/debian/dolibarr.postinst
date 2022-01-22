@@ -23,7 +23,7 @@ setup_empty_conf() {
     mkdir -p /etc/dolibarr
     touch /etc/dolibarr/conf.php
     chown root:www-data /etc/dolibarr/conf.php
-    chmod 664 /etc/dolibarr/conf.php
+    chmod 660 /etc/dolibarr/conf.php
 }
 
 is_new_upstream_version() {

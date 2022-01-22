@@ -335,7 +335,11 @@ class FactureRec extends CommonInvoice
 						$facsrc->lines[$i]->special_code,
 						$facsrc->lines[$i]->label,
 						$facsrc->lines[$i]->fk_unit,
-						$facsrc->lines[$i]->multicurrency_subprice
+						$facsrc->lines[$i]->multicurrency_subprice,
+						0,
+						0,
+						null,
+						$facsrc->lines[$i]->pa_ht
 					);
 
 					if ($result_insert < 0)
@@ -343,8 +347,8 @@ class FactureRec extends CommonInvoice
 						$error++;
 					} else {
 						$objectline = new FactureLigneRec($this->db);
-						if ($objectline->fetch($result_insert))
-						{
+						$result2 = $objectline->fetch($result_insert);
+						if ($result2 > 0) {
 							// Extrafields
 							if (method_exists($facsrc->lines[$i], 'fetch_optionals')) {
 								$facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
@@ -356,6 +360,9 @@ class FactureRec extends CommonInvoice
 							{
 								$error++;
 							}
+						} elseif ($result2 < 0) {
+							$this->errors[] = $objectline->error;
+							$error++;
 						}
 					}
 				}
@@ -417,6 +424,7 @@ class FactureRec extends CommonInvoice
 				if ($error)
 				{
 					$this->db->rollback();
+					return -3;
 				} else {
 					$this->db->commit();
 					return $this->id;
@@ -512,12 +520,15 @@ class FactureRec extends CommonInvoice
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 		$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')';
-		if ($rowid) $sql .= ' AND f.rowid='.$rowid;
-		elseif ($ref) $sql .= " AND f.titre='".$this->db->escape($ref)."'";
-		/* This field are not used for template invoice
-		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
-		if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
-		*/
+		if ($rowid) {
+			$sql .= ' AND f.rowid='.((int) $rowid);
+		} elseif ($ref) {
+			$sql .= " AND f.titre='".$this->db->escape($ref)."'";
+			// This field are not used for template invoice
+			//} elseif ($ref_ext) { $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'"; }
+		} else {
+			$sql .= ' AND f.rowid = 0';
+		}
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -531,11 +542,7 @@ class FactureRec extends CommonInvoice
 				$this->titre                  = $obj->title; // deprecated
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
-				$this->ref_client             = $obj->ref_client;
 				$this->suspended              = $obj->suspended;
-				$this->type                   = $obj->type;
-				$this->datep                  = $obj->dp;
-				$this->date                   = $obj->df;
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
 				$this->remise                 = $obj->remise;
@@ -544,9 +551,6 @@ class FactureRec extends CommonInvoice
 				$this->total_localtax1        = $obj->localtax1;
 				$this->total_localtax2        = $obj->localtax2;
 				$this->total_ttc              = $obj->total_ttc;
-				$this->paye                   = $obj->paye;
-				$this->close_code             = $obj->close_code;
-				$this->close_note             = $obj->close_note;
 				$this->socid                  = $obj->fk_soc;
 				$this->date_lim_reglement     = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;
@@ -558,14 +562,12 @@ class FactureRec extends CommonInvoice
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->fk_project             = $obj->fk_project;
 				$this->fk_account             = $obj->fk_account;
-				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
 				$this->modelpdf               = $obj->model_pdf; // deprecatd
 				$this->model_pdf              = $obj->model_pdf;
-				$this->rang = $obj->rang;
-				$this->special_code = $obj->special_code;
+				//$this->special_code = $obj->special_code;
 				$this->frequency			  = $obj->frequency;
 				$this->unit_frequency = $obj->unit_frequency;
 				$this->date_when			  = $this->db->jdate($obj->date_when);
@@ -584,7 +586,9 @@ class FactureRec extends CommonInvoice
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
-				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
+				if ($this->statut == self::STATUS_DRAFT) {
+					$this->brouillon = 1;
+				}
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -594,14 +598,13 @@ class FactureRec extends CommonInvoice
 				 * Lines
 				 */
 				$result = $this->fetch_lines();
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$this->error = $this->db->lasterror();
 					return -3;
 				}
 				return 1;
 			} else {
-				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
+				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found';
 				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
@@ -647,11 +650,11 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
-		$sql .= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
+		$sql .= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price, l.buy_price_ht as pa_ht,';
 		//$sql.= ' l.situation_percent, l.fk_prev_id,';
 		//$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql .= ' l.rang, l.special_code,';
-		//$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
+		//$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price, l.buy_price_ht as pa_ht,';
 		$sql .= ' l.fk_unit, l.fk_contract_line,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
@@ -702,10 +705,16 @@ class FactureRec extends CommonInvoice
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
 				$line->total_ttc        = $objp->total_ttc;
+
 				//$line->code_ventilation = $objp->fk_code_ventilation;
-				$line->fk_fournprice = $objp->fk_fournprice;
-				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
-				$line->pa_ht = $marginInfos[0];
+
+				$line->fk_product_fournisseur_price = $objp->fk_product_fournisseur_price;
+				$line->fk_fournprice = $objp->fk_product_fournisseur_price;	// For backward compatibility
+
+				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $objp->fk_product_fournisseur_price, $objp->pa_ht);
+
+				$line->buyprice = $marginInfos[0];
+				$line->pa_ht = $marginInfos[0];			// For backward compatibility
 				$line->marge_tx			= $marginInfos[1];
 				$line->marque_tx		= $marginInfos[2];
 				$line->rang = $objp->rang;
@@ -1967,6 +1976,10 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ' l.date_start_fill, l.date_end_fill, l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
 		$sql .= ' l.rang, l.special_code,';
 		$sql .= ' l.fk_unit, l.fk_contract_line,';
+		$sql .= ' l.import_key, l.fk_multicurrency,';
+		$sql .= ' l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
+		$sql .= ' l.buy_price_ht, l.fk_product_fournisseur_price,';
+		$sql .= ' l.fk_user_author, l.fk_user_modif,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -2014,7 +2027,17 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->special_code = $objp->special_code;
 			$this->fk_unit          = $objp->fk_unit;
 			$this->fk_contract_line = $objp->fk_contract_line;
-
+			$this->import_key = $objp->import_key;
+			$this->fk_multicurrency = $objp->fk_multicurrency;
+			$this->multicurrency_code = $objp->multicurrency_code;
+			$this->multicurrency_subprice = $objp->multicurrency_subprice;
+			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
+			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
+			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
+			$this->buy_price_ht = $objp->buy_price_ht;
+			$this->fk_product_fournisseur_price = $objp->fk_product_fournisseur_price;
+			$this->fk_user_author = $objp->fk_user_author;
+			$this->fk_user_modif = $objp->fk_user_modif;
 
 			$this->db->free($result);
 			return 1;
@@ -2072,6 +2095,8 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", fk_contract_line=".($this->fk_contract_line ? $this->fk_contract_line : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2091,13 +2116,18 @@ class FactureLigneRec extends CommonInvoiceLine
 				$result = $this->call_trigger('LINEBILLREC_UPDATE', $user);
 				if ($result < 0)
 				{
-					$this->db->rollback();
-					return -2;
+					$error++;
 				}
 				// End call triggers
 			}
-			$this->db->commit();
-			return 1;
+
+			if ($error) {
+				$this->db->rollback();
+				return -2;
+			} else {
+				$this->db->commit();
+				return 1;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();

@@ -1068,7 +1068,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Return list of invoices qualified to be corrected by a credit note.
 	 * Invoices matching the following rules are returned
-	 * (validated + payment on process) or classified (payed completely or payed partialy) + not already replaced + not already a credit note
+	 * (validated + payment on process) or classified (paid completely or paid partialy) + not already replaced + not already a credit note
 	 *
 	 * @param int   $id             Id of thirdparty
 	 *
@@ -1793,7 +1793,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param    int	$rowid      Id of third party to load
+	 * @param    int	$rowid      Id of third party to load (Use 0 to get a specimen record, use null to use other search criterias)
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
 	 * @param    string	$barcode    Barcode of third party to load
@@ -1815,7 +1815,7 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
-		if ($rowid == 0) {
+		if ($rowid === 0) {
 			$result = $this->company->initAsSpecimen();
 		} else {
 			$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);

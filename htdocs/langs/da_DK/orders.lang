@@ -55,7 +55,7 @@ StatusOrderRefused=Afvist
 StatusOrderReceivedPartially=Delvist modtaget
 StatusOrderReceivedAll=Alle varer modtaget
 ShippingExist=En forsendelse findes
-QtyOrdered=Qty bestilt
+QtyOrdered=Antal bestilt
 ProductQtyInDraft=Produkt mængde i udkast ordrer
 ProductQtyInDraftOrWaitingApproved=Produkt mængde i udkast eller godkendte ordrer, endnu ikke bestilt
 MenuOrdersToBill=Ordrer leveret
@@ -137,7 +137,7 @@ Error_OrderNotChecked=Ingen ordrer til faktura valgt
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Mail
 OrderByFax=Fax
-OrderByEMail=EMail
+OrderByEMail=E-mail
 OrderByWWW=Online
 OrderByPhone=Telefon
 # Documents models

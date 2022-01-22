@@ -390,7 +390,7 @@ class Don extends CommonObject
 		$sql .= ", phone";
 		$sql .= ", phone_mobile";
 		$sql .= ") VALUES (";
-		$sql .= "'".$this->db->idate($now)."'";
+		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".price2num($this->amount);
 		$sql .= ", ".($this->modepaymentid ? $this->modepaymentid : "null");
@@ -1089,5 +1089,22 @@ class Don extends CommonObject
 			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 			return 0;
 		}
+	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param  DoliDB  $db             Database handler
+	 * @param  int     $origin_id      Old third-party id
+	 * @param  int     $dest_id        New third-party id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'don'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 }

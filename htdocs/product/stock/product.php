@@ -636,13 +636,13 @@ if ($id > 0 || $ref)
 			// Real stock
 			$text_stock_options = $langs->trans("RealStockDesc").'<br>';
 			$text_stock_options .= $langs->trans("RealStockWillAutomaticallyWhen").'<br>';
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE) ? $langs->trans("DeStockOnShipment").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) ? $langs->trans("DeStockOnValidateOrder").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_BILL) ? $langs->trans("DeStockOnBill").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) ? $langs->trans("ReStockOnBill").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? $langs->trans("ReStockOnValidateOrder").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? $langs->trans("ReStockOnDispatchOrder").'<br>' : '');
-	   		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? $langs->trans("StockOnReception").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE) ? '- '.$langs->trans("DeStockOnShipment").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) ? '- '.$langs->trans("DeStockOnValidateOrder").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_BILL) ? '- '.$langs->trans("DeStockOnBill").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) ? '- '.$langs->trans("ReStockOnBill").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
 
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);
@@ -830,13 +830,13 @@ if (!$variants) {
 		$colspan = 3;
 		print '<tr class="liste_titre"><td width="10%"></td>';
 		print '<td class="right" width="10%">'.$langs->trans("batch_number").'</td>';
-		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-			$colspan--;
-			print '<td class="center" width="10%">'.$langs->trans("EatByDate").'</td>';
-		}
 		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			$colspan--;
 			print '<td class="center" width="10%">'.$langs->trans("SellByDate").'</td>';
+		}
+		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+			$colspan--;
+			print '<td class="center" width="10%">'.$langs->trans("EatByDate").'</td>';
 		}
 		print '<td colspan="'.$colspan.'"></td>';
 		print '<td></td>';
@@ -917,14 +917,14 @@ if (!$variants) {
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder centpercent"><tr><td width="10%"></td>';
 						print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
-						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-							print '<td class="center" width="10%">';
-							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
-							print '</td>';
-						}
 						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 							print '<td class="center" width="10%">';
 							print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
+							print '</td>';
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							print '<td class="center" width="10%">';
+							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
 							print '</td>';
 						}
 						print '<td class="right" colspan="3">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
@@ -945,13 +945,13 @@ if (!$variants) {
 						print $product_lot_static->getNomUrl(1);
 						print '</td>';
 						$colspan = 3;
-						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-							$colspan--;
-							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
-						}
 						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 							$colspan--;
 							print '<td class="center">'.dol_print_date($pdluo->sellby, 'day').'</td>';
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							$colspan--;
+							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
 						}
 						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
 						print '<td colspan="4"></td>';

@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
- * Copyright (C) 2015-2019	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2015-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
@@ -176,8 +176,11 @@ class FactureFournisseur extends CommonInvoice
 	public $note_private;
 	public $note_public;
 	public $propalid;
+
 	public $cond_reglement_id;
 	public $cond_reglement_code;
+	public $cond_reglement_label;
+	public $cond_reglement_doc;
 
 	/**
 	 * @var int ID
@@ -497,7 +500,8 @@ class FactureFournisseur extends CommonInvoice
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
 							$this->lines[$i]->fk_unit,
-							$this->lines[$i]->multicurrency_subprice
+							$this->lines[$i]->multicurrency_subprice,
+							$this->lines[$i]->ref_supplier
 						);
 					} else {
 						$this->error = $this->db->lasterror();
@@ -535,8 +539,16 @@ class FactureFournisseur extends CommonInvoice
 							$line->fk_product,
 							'HT',
 							(!empty($line->info_bits) ? $line->info_bits : ''),
-							$line->product_type
-							);
+							$line->product_type,
+							$line->remise_percent,
+							0,
+							$line->date_start,
+							$line->date_end,
+							$line->array_options,
+							$line->fk_unit,
+							$line->multicurrency_subprice,
+							$line->ref_supplier
+						);
 					} else {
 						$this->error = $this->db->lasterror();
 						$this->db->rollback();
@@ -641,8 +653,8 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.model_pdf,";
 		$sql .= " t.import_key,";
 		$sql .= " t.extraparams,";
-		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
-		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
+		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
+		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_label,";
 		$sql .= ' s.nom as socnom, s.rowid as socid,';
 		$sql .= ' t.fk_incoterms, t.location_incoterms,';
 		$sql .= " i.libelle as label_incoterms,";
@@ -697,12 +709,13 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_project = $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code = $obj->cond_reglement_code;
-				$this->cond_reglement = $obj->cond_reglement_libelle;
-				$this->cond_reglement_doc = $obj->cond_reglement_libelle;
+				$this->cond_reglement = $obj->cond_reglement_label;			// deprecated
+				$this->cond_reglement_label = $obj->cond_reglement_label;
+				$this->cond_reglement_doc = $obj->cond_reglement_doc;
 				$this->fk_account = $obj->fk_account;
 				$this->mode_reglement_id = $obj->fk_mode_reglement;
 				$this->mode_reglement_code = $obj->mode_reglement_code;
-				$this->mode_reglement = $obj->mode_reglement_libelle;
+				$this->mode_reglement = $obj->mode_reglement_label;
 				$this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private			= $obj->note_private;
@@ -1199,7 +1212,7 @@ class FactureFournisseur extends CommonInvoice
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				$ref = dol_sanitizeFileName($this->ref);
-				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoive_supplier').$ref;
+				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$ref;
 				$file = $dir."/".$ref.".pdf";
 				if (file_exists($file))
 				{
@@ -1248,7 +1261,7 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag invoice as a payed invoice
+	 *  Tag invoice as a paid invoice
 	 *
 	 *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
@@ -2065,6 +2078,7 @@ class FactureFournisseur extends CommonInvoice
 			if ($this->db->num_rows($result))
 			{
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 				if ($obj->fk_user_author)
 				{
@@ -2084,8 +2098,8 @@ class FactureFournisseur extends CommonInvoice
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
-				$this->date_creation     = $this->db->idate($obj->datec);
-				$this->date_modification = $this->db->idate($obj->datem);
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
 				//$this->date_validation   = $obj->datev; // This field is not available. Should be store into log table and using this function should be replaced with showing content of log (like for supplier orders)
 			}
 			$this->db->free($result);
@@ -2295,6 +2309,10 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
 		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
 		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+		if (isset($this->status)) {
+			$alreadypaid = -1;
+			$label .= ' '.$this->getLibStatut(5, $alreadypaid);
+		}
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_supplier))

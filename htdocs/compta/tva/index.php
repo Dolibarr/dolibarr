@@ -543,7 +543,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Payed
+ * Paid
  */
 
 print load_fiche_titre($langs->trans("VATPaid"), '', '');

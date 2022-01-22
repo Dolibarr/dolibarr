@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - mrp
+BillOfMaterials=Bill of Material
+NewBOM=New bill of material
+ConfirmCloneBillOfMaterials=Are you sure you want to clone the bill of material %s ?
+ConfirmDeleteBillOfMaterials=Are you sure you want to delete this Bill Of Material?
+ConfirmDeleteMo=Are you sure you want to delete this Bill Of Material?

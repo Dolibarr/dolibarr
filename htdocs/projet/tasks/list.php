@@ -511,7 +511,7 @@ if (!empty($arrayfields['t.label']['checked']))
 	print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" size="8">';
 	print '</td>';
 }
-//Task Description
+// Task Description
 if (!empty($arrayfields['t.description']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -728,7 +728,7 @@ while ($i < min($num, $limit))
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked']))
 		{
-			print '<td class="nowrap">';
+			print '<td class="nowraponall tdoverflowmax150">';
 			print $projectstatic->getNomUrl(1, 'task');
 			if ($projectstatic->hasDelay()) print img_warning("Late");
 			print '</td>';

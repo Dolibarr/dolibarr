@@ -38,6 +38,11 @@ $langs->loadLangs(array('companies', 'bills'));
 $id = GETPOST("facid", "int");
 $ref = GETPOST("ref", 'alpha');
 
+$object = new Facture($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
+
 
 /*
  * View
@@ -49,10 +54,14 @@ $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
 
-$object = new Facture($db);
-$object->fetch($id, $ref);
-$object->fetch_thirdparty();
+if (empty($object->id)) {
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
 
+$object->fetch_thirdparty();
 $object->info($object->id);
 
 $head = facture_prepare_head($object);

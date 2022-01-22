@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Andere verzendingen voor deze opdracht
 SendingsAndReceivingForSameOrder=Verzendingen en ontvangsten voor deze bestelling
 SendingsToValidate=Te valideren verzendingen
 StatusSendingCanceled=Geannuleerd
+StatusSendingCanceledShort=Geannuleerd
 StatusSendingDraft=Concept
 StatusSendingValidated=Gevalideerd (producten te verzenden of reeds verzonden)
 StatusSendingProcessed=Verwerkt
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=U moet eerst de bestelling valideren voordat u 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Completer leveringsbewijs documentmodel (logo, etc)
+DocumentModelStorm=Compleet documentmodel voor ontvangstbewijzen en compatibiliteit met extrafields (logo ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER niet gedefinieerd
 SumOfProductVolumes=Som van alle productvolumes
 SumOfProductWeights=Som van product-gewichten

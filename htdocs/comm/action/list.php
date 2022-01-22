@@ -67,9 +67,9 @@ $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 
-$dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
-$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
-$dateend = dol_mktime(0, 0, 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
+$dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
+$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'), 'tzuserrel');
+$dateend = dol_mktime(0, 0, 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) $search_status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 if (empty($action) && !GETPOSTISSET('action')) $action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 
@@ -136,9 +136,9 @@ $arrayfields = array(
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
 	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>0),
 	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>1, 'enabled'=>(!empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
-	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	'a.datec'=>array('label'=>'DateCreation', 'checked'=>0),
-	'a.tms'=>array('label'=>'DateModification', 'checked'=>0)
+	'a.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>510),
+	'a.tms'=>array('label'=>'DateModification', 'checked'=>0, 'position'=>520),
+	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -472,11 +472,9 @@ if ($resql)
 	// Calendars from hooks
 	$parameters = array(); $object = null;
 	$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
-	if (empty($reshook))
-	{
+	if (empty($reshook)) {
 		$s .= $hookmanager->resPrint;
-	} elseif ($reshook > 1)
-	{
+	} elseif ($reshook > 1) {
 		$s = $hookmanager->resPrint;
 	}
 
@@ -512,6 +510,15 @@ if ($resql)
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
 
 	$viewmode .= '<span class="marginrightonly"></span>';
+
+	// Add more views from hooks
+	$parameters = array(); $object = null;
+	$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+	if (empty($reshook)) {
+		$viewmode .= $hookmanager->resPrint;
+	} elseif ($reshook > 1) {
+		$viewmode = $hookmanager->resPrint;
+	}
 
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
@@ -556,12 +563,12 @@ if ($resql)
 	if (!empty($arrayfields['a.note']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
 	if (!empty($arrayfields['a.datep']['checked'])) {
 		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0);
+		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 		print '</td>';
 	}
 	if (!empty($arrayfields['a.datep2']['checked'])) {
 		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0);
+		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 		print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
@@ -650,6 +657,8 @@ if ($resql)
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
 		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
+		$actionstatic->datep = $db->jdate($obj->dp);
+		$actionstatic->percentage = $obj->percent;
 
 		$actionstatic->fetchResources();
 
@@ -729,12 +738,9 @@ if ($resql)
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->dp), $formatToUse);
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
 			$late = 0;
-			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late = 1;
-			if ($obj->percent == 0 && !$obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late = 1;
-			if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && $db->jdate($obj->dp2) < ($now - $delay_warning)) $late = 1;
-			if ($obj->percent > 0 && $obj->percent < 100 && !$obj->dp2 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late = 1;
+			if ($actioncomm->hasDelay() && $actioncomm->percentage >= 0 && $actioncomm->percentage < 100 ) $late = 1;
 			if ($late) print img_warning($langs->trans("Late")).' ';
 			print '</td>';
 		}
@@ -742,7 +748,7 @@ if ($resql)
 		// End date
 		if (!empty($arrayfields['a.datep2']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuser');
 			print '</td>';
 		}
 
@@ -827,11 +833,11 @@ if ($resql)
 		// Date creation
 		if (!empty($arrayfields['a.datec']['checked'])) {
 			// Status/Percent
-			print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+			print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour', 'tzuser').'</td>';
 		}
 		// Date update
 		if (!empty($arrayfields['a.tms']['checked'])) {
-			print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
+			print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datem), 'dayhour', 'tzuser').'</td>';
 		}
 		if (!empty($arrayfields['a.percent']['checked'])) {
 			// Status/Percent

@@ -53,7 +53,7 @@ if ($action == 'updateMask')
 
 	if ($maskconstmrp) $res = dolibarr_set_const($db, $maskconstmrp, $maskmrp, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -142,7 +142,7 @@ elseif ($action == 'setdoc')
 	$draft = GETPOST("MRP_MO_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "MRP_MO_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -156,7 +156,7 @@ elseif ($action == 'setdoc')
 
 	$res = dolibarr_set_const($db, "MRP_MO_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{

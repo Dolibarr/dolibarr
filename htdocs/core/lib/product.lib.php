@@ -365,7 +365,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
 		print '<tr><td>';
-		print '<a href="propal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("Proposals").'</a>';
+		print '<a href="propal.php?id='.$product->id.'">'.img_object('', 'propal', 'class="paddingright"').$langs->trans("Proposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_propale['customers'];
 		print '</td><td class="right">';
@@ -381,9 +381,9 @@ function show_stats_for_company($product, $socid)
 		$nblines++;
 		$ret = $product->load_stats_proposal_supplier($socid);
 		if ($ret < 0) dol_print_error($db);
-		$langs->load("propal");
+		$langs->load("supplier_proposal");
 		print '<tr><td>';
-		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'supplier_proposal').' '.$langs->trans("SupplierProposals").'</a>';
+		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'supplier_proposal', 'class="paddingright"').$langs->trans("SupplierProposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['suppliers'];
 		print '</td><td class="right">';
@@ -401,7 +401,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="commande.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("CustomersOrders").'</a>';
+		print '<a href="commande.php?id='.$product->id.'">'.img_object('', 'order', 'class="paddingright"').$langs->trans("CustomersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande['customers'];
 		print '</td><td class="right">';
@@ -419,7 +419,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_order').' '.$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_order', 'class="paddingright"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
 		print '</td><td class="right">';
@@ -455,7 +455,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_invoice').' '.$langs->trans("SuppliersInvoices").'</a>';
+		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_invoice', 'class="paddingright"').$langs->trans("SuppliersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
 		print '</td><td class="right">';
@@ -474,7 +474,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("contracts");
 		print '<tr><td>';
-		print '<a href="contrat.php?id='.$product->id.'">'.img_object('', 'contract').' '.$langs->trans("Contracts").'</a>';
+		print '<a href="contrat.php?id='.$product->id.'">'.img_object('', 'contract', 'class="paddingright"').$langs->trans("Contracts").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_contrat['customers'];
 		print '</td><td class="right">';
@@ -496,15 +496,15 @@ function show_stats_for_company($product, $socid)
 		$langs->load("mrp");
 
 		print '<tr><td>';
-		print '<a href="bom.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("BOM").'</a>';
+		print '<a href="bom.php?id='.$product->id.'">'.img_object('', 'bom', 'class="paddingright"').$langs->trans("BOM").'</a>';
 		print '</td><td class="right">';
 
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_bom['nb_toproduce'], $langs->trans("QtyToProduce"));
-		print $form->textwithpicto($product->stats_bom['nb_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_bom['nb_toconsume'], $langs->trans("RowMaterial"));
+		print $form->textwithpicto($product->stats_bom['nb_toproduce'], $langs->trans("Finished"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_bom['qty_toproduce'], $langs->trans("QtyToProduce"));
-		print $form->textwithpicto($product->stats_bom['qty_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_bom['qty_toconsume'], $langs->trans("RowMaterial"));
+		print $form->textwithpicto($product->stats_bom['qty_toproduce'], $langs->trans("Finished"));
 		print '</td>';
 		print '</tr>';
 	}
@@ -519,7 +519,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
+		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp', 'class="paddingright"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		print $form->textwithpicto($product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
 		print $form->textwithpicto($product->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));

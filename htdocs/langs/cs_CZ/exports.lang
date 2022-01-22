@@ -133,3 +133,4 @@ KeysToUseForUpdates=Klíč (sloupec), který chcete použít pro <b> aktualizaci
 NbInsert=Počet vložených řádků: %s
 NbUpdate=Počet aktualizovaných řádků: %s
 MultipleRecordFoundWithTheseFilters=Bylo nalezeno více záznamů s těmito filtry: %s
+StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number

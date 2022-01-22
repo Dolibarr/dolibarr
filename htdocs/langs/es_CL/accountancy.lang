@@ -92,7 +92,7 @@ VentilatedinAccount=Vinculado exitosamente a la cuenta de contabilidad
 NotVentilatedinAccount=No vinculado a la cuenta de contabilidad
 XLineSuccessfullyBinded=%s productos / servicios vinculados con éxito a una cuenta de contabilidad
 XLineFailedToBeBinded=%s productos / servicios no estaban vinculados a ninguna cuenta de contabilidad
-ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a enlazar mostrados por página (máximo recomendado: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comience la clasificación de la página "Encuadernación para hacer" por los elementos más recientes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comience la clasificación de la página "Encuadernación realizada" por los elementos más recientes
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar descripción de productos y servicios en listados después de x caracteres (Mejor = 50)
@@ -122,7 +122,6 @@ ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Cuenta contable por defecto para los servi
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Cuenta contable por defecto para los servicios vendidos y exportados fuera de la EEC (usado si no está definido en la hoja de servicios)
 LabelAccount=Cuenta
 LabelOperation=Operación de etiqueta
-Sens=Significado
 LetteringCode=Codigo de letras
 JournalLabel=Etiqueta de revista
 NumPiece=Pieza número

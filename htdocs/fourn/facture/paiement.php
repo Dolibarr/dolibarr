@@ -511,7 +511,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			if (empty($reshook))
 			{
 				/*
-	             * All unpayed supplier invoices
+	             * All unpaid supplier invoices
 	             */
 				$sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.type, f.total_ht, f.total_ttc,';
 				$sql .= ' f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';

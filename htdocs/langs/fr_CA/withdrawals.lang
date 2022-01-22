@@ -56,6 +56,7 @@ SEPAFormYourBAN=Votre nom de compte bancaire (IBAN)
 SEPAFormYourBIC=Votre code d'identification de banque (BIC)
 ModeFRST=Paiement unique
 PleaseCheckOne=Veuillez cocher un seul
+ICS=Creditor Identifier CI for direct debit
 InfoCreditSubject=Paiement de l'ordre de paiement de débit direct %s par la banque
 InfoCreditMessage=La ligne de paiement de débit direct %s a été payée par la banque <br> Données de paiement: %s
 InfoTransSubject=Transmission de l'ordre de paiement de débit direct %s à la banque

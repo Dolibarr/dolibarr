@@ -418,7 +418,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['d.ref']['checked'])) {
-		print '<td>'.$subscription->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$subscription->getNomUrl(1).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Type

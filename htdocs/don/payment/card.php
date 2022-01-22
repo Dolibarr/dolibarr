@@ -184,7 +184,7 @@ if ($resql)
 			print '<td class="right">'.price($objp->d_amount).'</td>';
 			// Status
 			print '<td class="center">'.$don->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paid == 1) {

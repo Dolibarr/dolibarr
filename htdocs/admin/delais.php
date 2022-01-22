@@ -33,7 +33,9 @@ $langs->load("admin");
 if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
+if (empty($action)) $action = 'edit';
 
+// Define list of managed delays
 $modules = array(
 		'agenda' => array(
 				array(
@@ -190,6 +192,10 @@ if ($action == 'update')
 	for ($i = 0; $i < 4; $i++) {
 		if (GETPOSTISSET('MAIN_METEO'.$plus.'_LEVEL'.$i)) dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'), 'chaine', 0, '', $conf->entity);
 	}
+
+	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+
+	$action = 'edit';
 }
 
 

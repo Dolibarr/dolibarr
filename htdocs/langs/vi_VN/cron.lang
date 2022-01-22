@@ -7,13 +7,14 @@ Permission23103 = Xóa công việc theo lịch trình
 Permission23104 = Thực hiện công việc theo lịch trình
 # Admin
 CronSetup=Thiết lập quản lý công việc theo lịch trình
-URLToLaunchCronJobs=URL để kiểm tra và khởi chạy các công việc định kỳ đủ điều kiện
-OrToLaunchASpecificJob=Hoặc để kiểm tra và khởi động một công việc cụ thể
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Khóa bảo mật cho URL để khởi chạy các công việc định kỳ
 FileToLaunchCronJobs=Dòng lệnh để kiểm tra và khởi chạy các công việc định kỳ đủ điều kiện
 CronExplainHowToRunUnix=Trên môi trường Unix, bạn nên sử dụng mục crontab sau để chạy dòng lệnh mỗi 5 phút
 CronExplainHowToRunWin=Trên môi trường Microsoft (tm) Windows, bạn có thể sử dụng các công cụ Tác vụ theo lịch để chạy dòng lệnh mỗi 5 phút
 CronMethodDoesNotExists=Lớp %s không chứa bất kỳ phương thức nào %s
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=Hồ sơ công việc theo định kỳ được xác định vào tập tin mô tả mô-đun. Khi mô-đun được kích hoạt, chúng được tải và có sẵn để bạn có thể quản lý các công việc từ menu công cụ quản trị %s.
 CronJobProfiles=Danh sách hồ sơ công việc định kỳ được xác định trước
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Số lần khởi chạy
 CronMaxRun=Số lần khởi chạy tối đa
 CronEach=Mỗi
 JobFinished=Công việc khởi chạy và kết thúc
+Scheduled=Scheduled
 #Page card
 CronAdd= Thêm công việc
 CronEvery=Thực hiện mỗi công việc
@@ -56,7 +58,7 @@ CronNote=Nhận xét
 CronFieldMandatory=Các trường %s là bắt buộc
 CronErrEndDateStartDt=Ngày kết thúc không thể trước ngày bắt đầu
 StatusAtInstall=Trạng thái khi cài đặt mô-đun
-CronStatusActiveBtn=Kích hoạt
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Vô hiệu hoá
 CronTaskInactive=Công việc này bị vô hiệu hóa
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Sao lưu cơ sở dữ liệu cục bộ
 MakeLocalDatabaseDump=Tạo một kết xuất cơ sở dữ liệu cục bộ. Các tham số là:  nén('gz' hoặc 'bz' hoặc 'none'), loại sao lưu ('mysql', 'pssql', 'auto'), 1, 'auto' hoặc tên tệp để tạo, số lượng tệp sao lưu cần giữ
 WarningCronDelayed=Chú ý, vì mục đích hiệu suất, bất kể ngày nào là ngày thực hiện các công việc được kích hoạt, công việc của bạn có thể bị trì hoãn tối đa là %s giờ trước khi được chạy.
 DATAPOLICYJob=Trình dọn dẹp dữ liệu và ẩn danh
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

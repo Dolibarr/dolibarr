@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTPまたはSFTPクライアントモジュールの設定
-NewFTPClient=新しいFTP / FTPS接続の設定
+NewFTPClient=新規FTP / FTPS接続の設定
 FTPArea=FTP / FTPSエリア
 FTPAreaDesc=この画面には、FTPおよびSFTPサーバのビューが表示される。
 SetupOfFTPClientModuleNotComplete=FTPまたはSFTPクライアントモジュールの設定が不完全なようです
 FTPFeatureNotSupportedByYourPHP=お使いのPHPはFTPまたはSFTP機能をサポートしていない
-FailedToConnectToFTPServer=サーバ（サーバ%s、ポート%s）への接続に失敗した
+FailedToConnectToFTPServer=サーバ(サーバ%s、ポート%s)への接続に失敗した
 FailedToConnectToFTPServerWithCredentials=定義されたログイン/パスワードでサーバにログインできなかった
 FTPFailedToRemoveFile=ファイルの<b>%s</b>を削除できなかった。
 FTPFailedToRemoveDir=ディレクトリ<b>%s </b>の削除に失敗した：権限を確認し、ディレクトリが空であることを確認すること。

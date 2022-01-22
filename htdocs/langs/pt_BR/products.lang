@@ -115,7 +115,6 @@ AlwaysUseNewPrice=Usar sempre preço atual do produto/serviço
 AlwaysUseFixedPrice=Usar preço fixo
 PriceByQuantity=Diferentes preços por quantidade
 PriceByQuantityRange=Intervalo de quantidade
-MultipriceRules=Regras de preços por segmento
 PercentVariationOver=%% variação sobre %s
 PercentDiscountOver=%% disconto sobre %s
 VariantRefExample=Exemplos: COR, TAMANHO

@@ -7,13 +7,14 @@ Permission23103 = Obriši planirani posao
 Permission23104 = Pokreni planirani posao
 # Admin
 CronSetup=Postavljanje upravljanja planiranih poslova
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs
-OrToLaunchASpecificJob=Ili za provjeru i pokretanje specifičnog posla
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Sigurnosni ključ za URL za pokretanje cron zadataka
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=U Unix okolini potrebno je korisititi sljedeći crontab unos za pokretanje komande svakih 5 minuta
 CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Klasa %s ne sadrži niti jednu %s metodu
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=List of predefined cron job profiles
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Number of launches
 CronMaxRun=Maximum number of launches
 CronEach=Svakih
 JobFinished=Posao pokrenut i završen
+Scheduled=Scheduled
 #Page card
 CronAdd= Dodaj poslove
 CronEvery=Izvrši posao svaki
@@ -56,7 +58,7 @@ CronNote=Napomena
 CronFieldMandatory=Polja %s su obavezna
 CronErrEndDateStartDt=Datum kraja ne može biti prije datuma početka
 StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Omogući
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Onemogući
 CronTaskInactive=Ovaj posao je onemogućen
 CronId=ID
@@ -76,8 +78,14 @@ CronType_method=Call method of a PHP Class
 CronType_command=Shell command
 CronCannotLoadClass=Cannot load class file %s (to use class %s)
 CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Idite na izbornik "Home - Admin tools - Scheduled jobs" za prikaz i uređivanje planiranih poslova.
+UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Posao onemogućen
 MakeLocalDatabaseDumpShort=Lakalni backup baze
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
+DATAPOLICYJob=Data cleaner and anonymizer
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

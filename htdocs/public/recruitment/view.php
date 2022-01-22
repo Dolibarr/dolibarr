@@ -216,6 +216,11 @@ if ($urllogo)
 	}
 	print '</div>';
 }
+if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_PAYMENT)) {
+	print '<div class="backimagepublicrecruitment">';
+	print '<img id="dolpaymentlogo" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_PAYMENT.'">';
+	print '</div>';
+}
 
 // Output introduction text
 $text = '';

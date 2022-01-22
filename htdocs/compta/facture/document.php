@@ -86,6 +86,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
+if (empty($object->id)) {
+	llxHeader();
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
+
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Documents');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
@@ -180,7 +188,7 @@ if ($id > 0 || !empty($ref))
 		$permission = $user->rights->facture->creer;
 		$permtoedit = $user->rights->facture->creer;
 		$param = '&id='.$object->id;
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}

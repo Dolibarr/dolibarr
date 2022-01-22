@@ -133,4 +133,4 @@ KeysToUseForUpdates=Clé à utiliser pour mettre à jour les données
 NbInsert=Nombre de lignes insérées: %s
 NbUpdate=Nombre de lignes mises à jour: %s
 MultipleRecordFoundWithTheseFilters=Plusieurs enregistrements ont été trouvés avec ces filtres: %s
-StocksWithBatch=Stocks et emplacements (entrepôts) des produits avec numéros de lots/séries
+StocksWithBatch=Stocks et entrepôts des produits avec numéro de lot/série

@@ -866,9 +866,9 @@ if (!empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 				if ($obj->pcg_type == 'INCOME') {
 					if (!isset($encaiss[$obj->dm])) $encaiss[$obj->dm] = 0;	// To avoid warning of var not defined
 					$encaiss[$obj->dm] += $obj->credit;
-					$encaiss[$obj->dm] -= $obj->credit;
+					$encaiss[$obj->dm] -= $obj->debit;
 				}
-				if ($obj->pcg_type == 'INCOME') {
+				if ($obj->pcg_type == 'EXPENSE') {
 					if (!isset($decaiss[$obj->dm])) $decaiss[$obj->dm] = 0;	// To avoid warning of var not defined
 					$decaiss[$obj->dm] += $obj->debit;
 					$decaiss[$obj->dm] -= $obj->credit;

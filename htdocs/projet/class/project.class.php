@@ -206,6 +206,7 @@ class Project extends CommonObject
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>210),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>0, 'position'=>215),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>220),
+		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>250, 'help'=>'EmailMsgIDWhenSourceisEmail'),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500)
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -241,7 +242,7 @@ class Project extends CommonObject
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			$this->fields['fk_opp_status']['enabled'] = 0;
 			$this->fields['opp_percent']['enabled'] = 0;
 			$this->fields['opp_amount']['enabled'] = 0;
@@ -525,7 +526,9 @@ class Project extends CommonObject
 	{
 		global $conf;
 
-		if (empty($id) && empty($ref)) return -1;
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+			return -1;
+		}
 
 		$sql = "SELECT rowid, entity, ref, title, description, public, datec, opp_amount, budget_amount,";
 		$sql .= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
@@ -1445,7 +1448,7 @@ class Project extends CommonObject
 			}
 		}
 
-		$clone_project->datec = $now;
+		$clone_project->date_c = $now;
 
 		if (!$clone_note)
 		{

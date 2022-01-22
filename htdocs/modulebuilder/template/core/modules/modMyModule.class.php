@@ -65,7 +65,7 @@ class modMyModule extends DolibarrModules
 		// Module description, used if translation string 'ModuleMyModuleDesc' not found (MyModule is name of module).
 		$this->description = "MyModuleDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "MyModule description (Long)";
+		$this->descriptionlong = "MyModuleDescription";
 
 		// Author
 		$this->editor_name = 'Editor name';

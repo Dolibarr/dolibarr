@@ -64,3 +64,5 @@ InterLineDuration=Line duration intervention
 InterLineDesc=Line description intervention
 RepeatableIntervention=Modello di intervento
 ToCreateAPredefinedIntervention=Per creare un intervento predefinito o ricorrente, creare un intervento comune e convertirlo in modello di intervento
+Reopen=Riapri
+ConfirmReopenIntervention=Sei sicuro di voler riaprire l'intervento <b> %s </b>?

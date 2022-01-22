@@ -329,7 +329,6 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
  * @param	array		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
- *
  */
 function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 {

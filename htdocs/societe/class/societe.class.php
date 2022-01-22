@@ -88,7 +88,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               if name like with @ClassNAme:FilePathClass;ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
+	 *               if name like with @ClassName:FilePathClass:ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
 		"societe_prices",
@@ -1518,7 +1518,7 @@ class Societe extends CommonObject
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid) {
-			$sql .= ' AND s.rowid = '.$rowid;
+			$sql .= ' AND s.rowid = '.((int) $rowid);
 		}
 		if ($ref) {
 			$sql .= " AND s.nom = '".$this->db->escape($ref)."'";
@@ -3111,18 +3111,64 @@ class Societe extends CommonObject
 	public function set_parent($id)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
+
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET parent = ".($id > 0 ? $id : "null");
-			$sql .= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
-			$resql = $this->db->query($sql);
+			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
+			if ($id > 0) {
+				$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
+				if ($sameparent < 0) {
+					return -1;
+				}
+				if ($sameparent == 1) {
+					setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
+					return -1;
+				}
+			}
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
+
+			$resql	= $this->db->query($sql);
 			if ($resql) {
 				$this->parent = $id;
 				return 1;
 			} else {
 				return -1;
 			}
+		} else {
+			return -1;
+		}
+	}
+
+	/**
+	 *    Check if a thirdparty $idchild is or not inside the parents (or grand parents) of another thirdparty id $idparent.
+	 *
+	 *    @param	int		$idparent	Id of thirdparty to check
+	 *    @param	int		$idchild	Id of thirdparty to compare to
+	 *    @param    int     $counter    Counter to protect against infinite loops
+	 *    @return	int     			<0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
+	 */
+    public function validateFamilyTree($idparent, $idchild, $counter = 0)
+	{
+		if ($counter > 100) {
+			dol_syslog("Too high level of parent - child for company. May be an infinite loop ?", LOG_WARNING);
+		}
+
+		$sql	= 'SELECT s.parent';
+		$sql	.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql	.= ' WHERE rowid = '.$idparent;
+		$resql	= $this->db->query($sql);
+		if ($resql) {
+			$obj	= $this->db->fetch_object($resql);
+
+			if ($obj->parent == '')	{
+				return 0;
+			} elseif ($obj->parent == $idchild)	{
+				return 1;
+			} else {
+				$sameparent	= $this->validateFamilyTree($obj->parent, $idchild, ($counter + 1));
+			}
+			return $sameparent;
 		} else {
 			return -1;
 		}
@@ -3750,9 +3796,8 @@ class Societe extends CommonObject
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
-			} else // For backward compatibility
-			{
-				dol_syslog("Your state setup use an old syntax. Reedit it using setup area.", LOG_ERR);
+			} else { // For backward compatibility
+				dol_syslog("Your state setup use an old syntax (entity=".$conf->entity."). Reedit it using setup area.", LOG_ERR);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$state_code = getState($state_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 				$state_label = getState($state_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore

@@ -259,7 +259,7 @@ class FormAccounting extends Form
 	 * @param string   $usecache           Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @return string                      String with HTML select
 	 */
-	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '')
+	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '')
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -299,38 +299,45 @@ class FormAccounting extends Form
 				return -1;
 			}
 
-			$selected = $selectid; // selectid can be -1, 0, 123
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				if (empty($obj->labelshort))
-				{
-					$labeltoshow = $obj->label;
-				} else {
-					$labeltoshow = $obj->labelshort;
-				}
+			$num_rows = $this->db->num_rows($resql);
 
-				$label = length_accountg($obj->account_number).' - '.$labeltoshow;
-				$label = dol_trunc($label, $trunclength);
+			if ($num_rows == 0) {
+				$langs->load("errors");
+				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
+			} else {
+				$selected = $selectid; // selectid can be -1, 0, 123
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (empty($obj->labelshort))
+					{
+						$labeltoshow = $obj->label;
+					} else {
+						$labeltoshow = $obj->labelshort;
+					}
 
-				$select_value_in = $obj->rowid;
-				$select_value_out = $obj->rowid;
+					$label = length_accountg($obj->account_number).' - '.$labeltoshow;
+					$label = dol_trunc($label, $trunclength);
 
-				// Try to guess if we have found default value
-				if ($select_in == 1) {
-					$select_value_in = $obj->account_number;
-				}
-				if ($select_out == 1) {
-					$select_value_out = $obj->account_number;
-				}
-				// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
-				// Because same account_number can be share between different accounting_system and do have the same meaning
-				if ($selectid != '' && $selectid == $select_value_in) {
-					//var_dump("Found ".$selectid." ".$select_value_in);
-					$selected = $select_value_out;
-				}
+					$select_value_in = $obj->rowid;
+					$select_value_out = $obj->rowid;
 
-				$options[$select_value_out] = $label;
+					// Try to guess if we have found default value
+					if ($select_in == 1) {
+						$select_value_in = $obj->account_number;
+					}
+					if ($select_out == 1) {
+						$select_value_out = $obj->account_number;
+					}
+					// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
+					// Because same account_number can be share between different accounting_system and do have the same meaning
+					if ($selectid != '' && $selectid == $select_value_in) {
+						//var_dump("Found ".$selectid." ".$select_value_in);
+						$selected = $select_value_out;
+					}
+
+					$options[$select_value_out] = $label;
+				}
 			}
+
 			$this->db->free($resql);
 
 			if ($usecache)
@@ -340,14 +347,14 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty > 0 ? 1 : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of auxilary thirdparty accounts
+	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
 	 *
 	 * @param string   $selectid       Preselected pcg_type
 	 * @param string   $htmlname       Name of field in html form
@@ -365,6 +372,7 @@ class FormAccounting extends Form
 		$sql = "SELECT DISTINCT code_compta, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('societe').")";
+		$sql .= " AND client IN (1 ,3)";	// only type customer or type customer/prospect
 		$sql .= " ORDER BY code_compta";
 
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
@@ -372,7 +380,7 @@ class FormAccounting extends Form
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->code_compta)) {
-					$aux_account[$obj->code_compta] = $obj->code_compta.' ('.$obj->nom.')';
+					$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->nom.')</span>';
 				}
 			}
 		} else {
@@ -386,13 +394,14 @@ class FormAccounting extends Form
 		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('societe').")";
+		$sql .= " AND fournisseur = 1";	// only type supplier
 		$sql .= " ORDER BY code_compta_fournisseur";
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if ($obj->code_compta_fournisseur != "") {
-					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' ('.$obj->nom.')';
+					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->nom.')</span>';
 				}
 			}
 		} else {
@@ -412,7 +421,7 @@ class FormAccounting extends Form
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->accountancy_code)) {
-					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' ('.dolGetFirstLastname($obj->firstname, $obj->lastname).')';
+					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
 				}
 			}
 		} else {

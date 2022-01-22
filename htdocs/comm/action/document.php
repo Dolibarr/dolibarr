@@ -260,7 +260,7 @@ if ($object->id > 0)
 	$modulepart = 'actions';
 	$permission = $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

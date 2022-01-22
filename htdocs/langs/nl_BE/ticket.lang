@@ -8,7 +8,6 @@ TicketDictSeverity=Ticket - Gradaties
 TicketTypeShortISSUE=Probleem, bug of probleem
 TicketTypeShortREQUEST=Verander- of verbeteringsverzoek
 TicketTypeShortOTHER=Ander
-TicketSeverityShortBLOCKING=Kritisch / Blokkerend
 ErrorBadEmailAddress=Veld '%s' onjuist
 MenuTicketMyAssignNonClosed=Mijn open tickets
 TypeContact_ticket_external_SUPPORTCLI=Klantcontact / incident volgen

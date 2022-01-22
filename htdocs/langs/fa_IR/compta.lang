@@ -111,7 +111,7 @@ Refund=بازپس‌گیری
 SocialContributionsPayments=پرداخت‌های مالیات اجتماعی/ساختاری
 ShowVatPayment=نمایش پرداخت م.ب.ا.ا
 TotalToPay=مجموع قابل پرداخت
-BalanceVisibilityDependsOnSortAndFilters=موجودی در این فهرست تنها در صورتی قابل مشاهده خواهد بود که جدول به صورت صعودی برای %s انجام شده باشد و صافی برای 1 حساب بانکی تنظیم شده باشد
+BalanceVisibilityDependsOnSortAndFilters=Balance is visible in this list only if table is sorted on %s and filtered on 1 bank account (with no other filters)
 CustomerAccountancyCode=کد حسابداری مشتری
 SupplierAccountancyCode=Vendor accounting code
 CustomerAccountancyCodeShort=کد حساب‌داری مشتری
@@ -140,7 +140,7 @@ ConfirmDeleteSocialContribution=آیا مطمئن هستید می‌خواهید
 ExportDataset_tax_1=مالیات‌های اجتماعی و ساختاری و پرداخت‌ها
 CalcModeVATDebt=حالت <b>%sحساب‌داری مالیات‌بر‌ارزش افزوده تعهدی%s</b>.
 CalcModeVATEngagement=حالت <b>%sمالیات بر ارزش افزوده در ازای درآمد-هزینه%s</b>.
-CalcModeDebt=تحلیل صورت‌حساب‌های معلوم و ثبت شده حتی در صورتی که هنوز در دفترکل حساب نشده باشند.
+CalcModeDebt=Analysis of known recorded documents even if they are not yet accounted in ledger.
 CalcModeEngagement=تحلیل پرداخت‌های معلوم و ثبت شده حتی در صورتی که هنوز در دفترکل حساب نشده باشند.
 CalcModeBookkeeping=تحلیل داده‌های ثبت شده در دفتر روزنامه در جدول دفترداری دفترکل
 CalcModeLT1= حالت <b>%sRE بر حسب صورت‌حساب مشتری - صورت‌حساب تامین کننده%s</b>
@@ -154,9 +154,9 @@ AnnualSummaryInputOutputMode=ماندۀ درآمدها و هزینه‌ها، ج
 AnnualByCompanies=ماندۀ درآمدها و هزینه‌ها، بر حسب حساب‌های از گروه‌بندی شده
 AnnualByCompaniesDueDebtMode=ماندۀ درآمدها و هزینه‌ها، جزئیات بر حسب گروه‌های از قبل تعیین شده، حالت <b>%s طلب‌ها-بدهی‌ها%s</b> یا <b>حساب‌داری تعهدی</b>
 AnnualByCompaniesInputOutputMode=ماندۀ درآمدها و هزینه‌ها، جزئیات بر حسب گروه‌های از قبل تعیین شده، حالت <b>%sدرآمدها-هزینه‌ها%s</b> یا <b>حساب‌داری نقدی</b>.
-SeeReportInInputOutputMode=برای محاسبۀ پرداخت‌های حقیقی که حتی هنوز در دفترکل حساب نشده‌اند به %sتحلیل پرداخت‌ها%s نگاه کنید.
-SeeReportInDueDebtMode=برای محاسبۀ صورت‌حساب‌های ثبت شده که حتی هنوز در دفترکل حساب نشده‌اند به %sتحلیل صورت‌حساب‌ها %s نگاه کنید.
-SeeReportInBookkeepingMode=برای محاسبه‌ای بر روی <b>جدول حساب‌داری دفترکل</b> به <b>%sگزارش حساب‌داری%s</b> مراجعه کنید.
+SeeReportInInputOutputMode=See <b>%sanalysis of payments%s</b> for a calculation based on <b>recorded payments</b> made even if they are not yet accounted in Ledger
+SeeReportInDueDebtMode=See <b>%sanalysis of recorded documents%s</b> for a calculation based on known <b>recorded documents</b> even if they are not yet accounted in Ledger
+SeeReportInBookkeepingMode=See <b>%sanalysis of bookeeping ledger table%s</b> for a report based on <b>Bookkeeping Ledger table</b>
 RulesAmountWithTaxIncluded=- تمام مالیات‌ها در مقادیر نمایش داده شده، گنجانده شده‌اند
 RulesResultDue=- It includes outstanding invoices, expenses, VAT, donations whether they are paid or not. Is also includes paid salaries.<br>- It is based on the billing date of invoices and on the due date for expenses or tax payments. For salaries defined with Salary module, the value date of payment is used.
 RulesResultInOut=- این شامل همۀ پرداخت‌های واقعی صورت‌حساب‌ها، هزینه‌ها، مالیات بر ارزش افزوده و حقوق‌ها است. <br>- بر حسب تاریخ پرداخت صورت‌حساب‌ها، هزینه‌ها، مالیات بر ارزش افزوده و حقوق‌ها می‌باشد. تاریخ کمک‌مالی برای کمک‌های مالی
@@ -169,12 +169,15 @@ RulesResultBookkeepingPersonalized=نمایش دهندۀ ردیف دفترکل �
 SeePageForSetup=برای برپاسازی فهرست <a href="%s">%s</a> را ببینید
 DepositsAreNotIncluded=- صورت‌حساب‌های پیش‌پرداخت شامل نشده‌اند
 DepositsAreIncluded=- صورت‌حساب‌های پیش‌پرداخت شامل شده‌اند
+LT1ReportByMonth=Tax 2 report by month
+LT2ReportByMonth=Tax 3 report by month
 LT1ReportByCustomers=گزارش مالیات 2 توسط شخص سوم
 LT2ReportByCustomers=گزارش مالیات 3 توسط شخص سوم
 LT1ReportByCustomersES=گزارش توسط شخص سوم RE
 LT2ReportByCustomersES=گزارش توسط شخص سوم IRPF
 VATReport=گزارش مالیات‌برفروش
 VATReportByPeriods=گزارش مالیات‌برفروش بر حسب دورۀ زمانی
+VATReportByMonth=Sale tax report by month
 VATReportByRates=گزارش مالیات‌برفروش بر حسب نرخ‌ها
 VATReportByThirdParties=گزارش مالیات‌برفروش بر حسب شخص‌سوم‌ها
 VATReportByCustomers=گزارش مالیات‌برفروش بر حسب مشتری

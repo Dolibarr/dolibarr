@@ -473,7 +473,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 $resql = $db->query($sql);
 if ($resql)
 {
-	$limitforoptim = 10000;
+	$limitforoptim = 100000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;

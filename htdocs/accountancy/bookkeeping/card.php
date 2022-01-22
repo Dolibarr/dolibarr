@@ -63,9 +63,11 @@ $accountingjournal->fetch(null, $journal_code);
 $journal_label = $accountingjournal->label;
 
 $subledger_account = GETPOST('subledger_account', 'alphanohtml');
-if ($subledger_account == - 1) {
+if ($subledger_account == -1) {
 	$subledger_account = null;
 }
+$subledger_label = GETPOST('subledger_label', 'alphanohtml');
+
 $label_operation = GETPOST('label_operation', 'alphanohtml');
 $debit = price2num(GETPOST('debit', 'alpha'));
 $credit = price2num(GETPOST('credit', 'alpha'));
@@ -108,6 +110,7 @@ if ($action == "confirm_update") {
 		} else {
 			$object->numero_compte = $accountingaccount_number;
 			$object->subledger_account = $subledger_account;
+			$object->subledger_label = $subledger_label;
 			$object->label_compte = $accountingaccount_label;
 			$object->label_operation = $label_operation;
 			$object->debit = $debit;
@@ -160,6 +163,7 @@ if ($action == "confirm_update") {
 
 		$object->numero_compte = $accountingaccount_number;
 		$object->subledger_account = $subledger_account;
+		$object->subledger_label = $subledger_label;
 		$object->label_compte = $accountingaccount_label;
 		$object->label_operation = $label_operation;
 		$object->debit = $debit;
@@ -224,9 +228,10 @@ if ($action == "confirm_update") {
 		$action = 'create';
 		$error++;
 	}
-	if (!GETPOST('next_num_mvt', 'alpha'))
+	if (!GETPOST('doc_ref', 'alpha'))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Piece")), null, 'errors');
+		$action = 'create';
 		$error++;
 	}
 
@@ -371,7 +376,7 @@ if ($action == 'create')
 	print '</tr>';
 
 	print '<tr>';
-	print '<td>'.$langs->trans("Piece").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("Piece").'</td>';
 	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.GETPOST('doc_ref', 'alpha').'"></td>';
 	print '</tr>';
 
@@ -577,7 +582,7 @@ if ($action == 'create')
 
 		print '<br>';
 
-		$result = $object->fetchAllPerMvt($piece_num, $mode);
+		$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -594,7 +599,8 @@ if ($action == 'create')
 			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
 			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
 
-			print "<table class=\"noborder\" width=\"100%\">";
+			print '<table class="noborder centpercent">';
+
 			if (count($object->linesmvt) > 0) {
 				$total_debit = 0;
 				$total_credit = 0;
@@ -616,18 +622,22 @@ if ($action == 'create')
 					$total_credit += $line->credit;
 
 					if ($action == 'update' && $line->id == $id) {
+						print '<!-- td columns in edit mode -->';
 						print '<td>';
 						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, '');
 						print '</td>';
 						print '<td>';
-						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-						// use setup of keypress to select thirdparty and this hang browser on large database.
-						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
-						{
+						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+						// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+						// Also, it is not possible to use a value that is not in the list.
+						// Also, the label is not automatically filled when a value is selected.
+						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
 						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
+							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 						}
+						// Add also input for subledger label
+						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
 						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
@@ -639,20 +649,24 @@ if ($action == 'create')
 					} else {
 						$accountingaccount->fetch(null, $line->numero_compte, true);
 						print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 0).'</td>';
-						print '<td>'.length_accounta($line->subledger_account).'</td>';
+						print '<td>'.length_accounta($line->subledger_account);
+						if ($line->subledger_label) {
+							print ' - <span class="opacitymedium">'.$line->subledger_label.'</span>';
+						}
+						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
 						print '<td class="nowrap right">'.price($line->debit).'</td>';
 						print '<td class="nowrap right">'.price($line->credit).'</td>';
 
 						print '<td class="center">';
-						print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$line->id.'&piece_num='.$line->piece_num.'&mode='.$mode.'">';
+						print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$line->id.'&piece_num='.urlencode($line->piece_num).'&mode='.urlencode($mode).'&token='.urlencode(newToken()).'">';
 						print img_edit('', 0, 'class="marginrightonly"');
 						print '</a> &nbsp;';
 
 						$actiontodelete = 'delete';
 						if ($mode == '_tmp' || $action != 'delmouv') $actiontodelete = 'confirm_delete';
 
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action='.$actiontodelete.'&id='.$line->id.'&piece_num='.$line->piece_num.'&mode='.$mode.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action='.$actiontodelete.'&id='.$line->id.'&piece_num='.urlencode($line->piece_num).'&mode='.urlencode($mode).'&token='.urlencode(newToken()).'">';
 						print img_delete();
 
 						print '</a>';
@@ -671,18 +685,21 @@ if ($action == 'create')
 
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
+					print '<!-- td columns in add mode -->';
 					print '<td>';
 					print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-					// use setup of keypress to select thirdparty and this hang browser on large database.
-					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
-					{
+					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+					// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+					// Also, it is not possible to use a value that is not in the list.
+					// Also, the label is not automatically filled when a value is selected.
+					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
 					} else {
-						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
+						print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 					}
+					print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 					print '</td>';
 					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';
 					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';

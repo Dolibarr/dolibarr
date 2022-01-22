@@ -204,14 +204,18 @@ class modHoliday extends DolibarrModules
 		$this->export_permission[$r] = array(array("holiday", "readall"));
 		$this->export_fields_array[$r] = array(
 			'd.rowid'=>"LeaveId", 'd.fk_type'=>'TypeOfLeaveId', 't.code'=>'TypeOfLeaveCode', 't.label'=>'TypeOfLeaveLabel', 'd.fk_user'=>'UserID',
-			'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>"Login", 'd.date_debut'=>'DateStart', 'd.date_fin'=>'DateEnd', 'd.halfday'=>'HalfDay', 'none.num_open_days'=>'NbUseDaysCP',
-			'd.date_valid'=>'DateApprove', 'd.fk_validator'=>"UserForApprovalID", 'ua.lastname'=>"UserForApprovalLastname", 'ua.firstname'=>"UserForApprovalFirstname",
+			'd.date_debut'=>'DateStart', 'd.date_fin'=>'DateEnd', 'd.halfday'=>'HalfDay', 'none.num_open_days'=>'NbUseDaysCP',
+			'd.date_valid'=>'DateApprove', 'd.fk_validator'=>"UserForApprovalID",
+			'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>"Login",
+			'ua.lastname'=>"UserForApprovalLastname", 'ua.firstname'=>"UserForApprovalFirstname",
 			'ua.login'=>"UserForApprovalLogin", 'd.description'=>'Description', 'd.statut'=>'Status'
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'd.rowid'=>"Numeric", 't.code'=>'Text', 't.label'=>'Text', 'd.fk_user'=>'Numeric',
-			'u.lastname'=>'Text', 'u.firstname'=>'Text', 'u.login'=>"Text", 'd.date_debut'=>'Date', 'd.date_fin'=>'Date', 'none.num_open_days'=>'NumericCompute',
-			'd.date_valid'=>'Date', 'd.fk_validator'=>"Numeric", 'ua.lastname'=>"Text", 'ua.firstname'=>"Text",
+			'd.date_debut'=>'Date', 'd.date_fin'=>'Date', 'none.num_open_days'=>'NumericCompute',
+			'd.date_valid'=>'Date', 'd.fk_validator'=>"Numeric",
+			'u.lastname'=>'Text', 'u.firstname'=>'Text', 'u.login'=>"Text",
+			'ua.lastname'=>"Text", 'ua.firstname'=>"Text",
 			'ua.login'=>"Text", 'd.description'=>'Text', 'd.statut'=>'Numeric'
 		);
 		$this->export_entities_array[$r] = array(
@@ -223,6 +227,8 @@ class modHoliday extends DolibarrModules
 
 		$keyforselect = 'holiday'; $keyforelement = 'holiday'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extrau';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'holiday as d';
@@ -230,6 +236,7 @@ class modHoliday extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'user as u';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extrau ON u.rowid = extrau.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE d.fk_user = u.rowid';
 		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('holiday').')';
 

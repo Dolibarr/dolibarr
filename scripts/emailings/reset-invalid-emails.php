@@ -62,7 +62,7 @@ $user = new User($db);
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
-if (!in_array($type, array('thirdparties', 'contacts', 'users', 'members'))) {
+if (!in_array($type, array('all', 'thirdparties', 'contacts', 'users', 'members'))) {
 	print "Bad value for parameter type.\n";
 	exit(-1);
 }

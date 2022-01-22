@@ -7,13 +7,14 @@ Permission23103 = Verwijder geplande taak
 Permission23104 = Voer geplande taak uit
 # Admin
 CronSetup=Beheer taakplanning
-URLToLaunchCronJobs=URL om gekwalificeerde cron-taken te controleren en te starten
-OrToLaunchASpecificJob=Of om een specifieke taak te controleren en te starten
+URLToLaunchCronJobs=URL om gekwalificeerde cron-taken vanuit een browser te controleren en te starten
+OrToLaunchASpecificJob=Of om een specifieke taak vanuit een browser te controleren en te starten
 KeyForCronAccess=Beveiligingssleutel voor URL om cron-taken te starten
 FileToLaunchCronJobs=Opdrachtregel om gekwalificeerde cron-taken te controleren en te starten
 CronExplainHowToRunUnix=In een Unix-omgeving moet u het volgende crontab-item gebruiken om de opdrachtregel elke 5 minuten uit te voeren
 CronExplainHowToRunWin=In een Microsoft (tm) Windows-omgeving kunt u de geplande taakhulpmiddelen gebruiken om de opdrachtregel elke 5 minuten uit te voeren
 CronMethodDoesNotExists=Class%sbevat geen methode%s
+CronMethodNotAllowed=Methode %s van class %s staat op de zwarte lijst met verboden methoden
 CronJobDefDesc=Cron-taakprofielen worden gedefinieerd in het modulebeschrijvingsbestand. Wanneer de module is geactiveerd, zijn ze geladen en beschikbaar, zodat u de taken kunt beheren vanuit het menu admin tools %s.
 CronJobProfiles=Lijst met vooraf gedefinieerde cron-functieprofielen
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Aantal lanceringen
 CronMaxRun=Maximaal aantal lanceringen
 CronEach=Elke
 JobFinished=Taak gestart en be-eindigd
+Scheduled=Gepland
 #Page card
 CronAdd= Taak toevoegen
 CronEvery=Alle taken uitvoeren
@@ -56,7 +58,7 @@ CronNote=Reactie
 CronFieldMandatory=Velden %s zijn verplicht
 CronErrEndDateStartDt=Einddatum kan niet vóór startdatum liggen
 StatusAtInstall=Status bij module-installatie
-CronStatusActiveBtn=Activeren
+CronStatusActiveBtn=Schema
 CronStatusInactiveBtn=Deactiveren
 CronTaskInactive=Deze taak is uitgeschakeld
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Back-up van lokale database
 MakeLocalDatabaseDump=Maak een lokale database dump. Parameters zijn: compressie ('gz' of 'bz' of 'none'), back-uptype ('mysql', 'pgsql', 'auto'), 1, 'auto' of te creëren bestandsnaam, aantal te bewaren back-upbestanden
 WarningCronDelayed=Opgelet, voor prestatiedoeleinden, ongeacht de volgende datum van uitvoering van ingeschakelde taken, kunnen uw taken worden vertraagd tot maximaal %s uur voordat ze worden uitgevoerd.
 DATAPOLICYJob=Gegevens opschonen en anonimiseren
+JobXMustBeEnabled=Taak %s moet zijn ingeschakeld
+# Cron Boxes
+LastExecutedScheduledJob=Laatst uitgevoerde geplande taak
+NextScheduledJobExecute=Volgende geplande taak om uit te voeren
+NumberScheduledJobError=Aantal foutieve geplande taken

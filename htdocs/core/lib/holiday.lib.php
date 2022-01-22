@@ -51,6 +51,11 @@ function holiday_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/holiday/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

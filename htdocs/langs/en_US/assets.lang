@@ -61,5 +61,7 @@ MenuListTypeAssets = List
 #
 # Module
 #
+Asset=Asset
 NewAssetType=New asset type
 NewAsset=New asset
+ConfirmDeleteAsset=Are you sure you want to delete this asset ?

@@ -128,7 +128,9 @@ if ($action == 'add')
 
 			if (!$error)
 			{
-				$mesgs = $langs->trans("TransferFromToDone", '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label."</a>", '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label."</a>", $amount, $langs->transnoentities("Currency".$conf->currency));
+				$mesgs = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount, $langs->transnoentitiesnoconv("Currency".$conf->currency));
+				$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label.'</a>', $mesgs);
+				$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label.'</a>', $mesgs);
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			} else {

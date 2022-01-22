@@ -179,18 +179,27 @@ class Interfaces
 			$objMod = new $modName($this->db);
 			if ($objMod)
 			{
+				$dblevelbefore = $this->db->transaction_opened;
+
 				$result = 0;
 
-				if (method_exists($objMod, 'runTrigger'))	// New method to implement
-				{
+				if (method_exists($objMod, 'runTrigger')) {	// New method to implement
 					//dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_DEBUG);
 					$result = $objMod->runTrigger($action, $object, $user, $langs, $conf);
-				} elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
-				{
+				} elseif (method_exists($objMod, 'run_trigger')) {	// Deprecated method
 					dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
 					$result = $objMod->run_trigger($action, $object, $user, $langs, $conf);
 				} else {
 					dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
+				}
+
+				$dblevelafter = $this->db->transaction_opened;
+
+				if ($dblevelbefore != $dblevelafter) {
+					$errormessage = "Error, the balance begin/close of db transactions has been broken into trigger ".$modName." with action=".$action." before=".$dblevelbefore." after=".$dblevelafter;
+					$this->errors[] = $errormessage;
+					dol_syslog($errormessage, LOG_ERR);
+					$result = -1;
 				}
 
 				if ($result > 0)

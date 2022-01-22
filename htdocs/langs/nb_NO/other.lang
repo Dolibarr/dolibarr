@@ -78,6 +78,7 @@ Notify_EXPENSE_REPORT_VALIDATE=Utgiftsrapport validert(godkjenning kreves)
 Notify_EXPENSE_REPORT_APPROVE=Utgiftsrapport godkjent
 Notify_HOLIDAY_VALIDATE=Permisjonsforespørselen er validert (godkjenning kreves)
 Notify_HOLIDAY_APPROVE=Permisjonsforespørsel godkjent
+Notify_ACTION_CREATE=Lagt til handling i Agenda
 SeeModuleSetup=Se oppsett av modul %s
 NbOfAttachedFiles=Antall vedlagte filer/dokumenter
 TotalSizeOfAttachedFiles=Total størrelse på vedlagte filer/dokumenter
@@ -215,6 +216,7 @@ EMailTextExpenseReportValidated=Utgiftsrapport %s er validert.
 EMailTextExpenseReportApproved=Utgiftsrapport %s er godkjent.
 EMailTextHolidayValidated=Permisjonsforespørsel %s er validert.
 EMailTextHolidayApproved=Permisjonsforespørsel %s er godkjent.
+EMailTextActionAdded=Handlingen %s er lagt til i agendaen.
 ImportedWithSet=Datasett for import
 DolibarrNotification=Automatisk varsling
 ResizeDesc=Skriv inn ny bredde <b>eller</b> ny høyde. BxH forhold vil bli beholdt .
@@ -259,6 +261,7 @@ ContactCreatedByEmailCollector=Kontakt/adresse opprettet av e-post samler fra e-
 ProjectCreatedByEmailCollector=Prosjekt opprettet av e-post samler fra e-post MSGID %s
 TicketCreatedByEmailCollector=Supportseddel opprettet av e-post samler fra e-post MSGID %s
 OpeningHoursFormatDesc=Bruk en bindestrek for å skille åpning og stengetid. <br> Bruk et mellomrom for å angi forskjellige områder. <br> Eksempel: 8-12 14-18
+PrefixSession=Prefiks for økt-ID
 
 ##### Export #####
 ExportsArea=Eksportområde

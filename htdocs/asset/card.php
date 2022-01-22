@@ -125,37 +125,17 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
-
-
-
 /*
  * View
  *
- * Put here all code to build page
  */
 
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-$title = $langs->trans("Assets").' - '.$langs->trans("Card");
+$title = $langs->trans("Asset").' - '.$langs->trans("Card");
 $help_url = '';
 llxHeader('', $title, $help_url);
-
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
 
 // Part to create
 if ($action == 'create')
@@ -240,14 +220,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation to delete
 	if ($action == 'delete')
 	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteAssets'), $langs->trans('ConfirmDeleteAssets'), 'confirm_delete', '', 0, 1);
-	}
-
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
-	{
-		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteAssets'), $langs->trans('ConfirmDeleteAsset'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Call Hook formConfirm
@@ -292,28 +265,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</table>';
 	print '</div>';
-	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
 
-	// Buttons for actions
-	if ($action != 'presend' && $action != 'editline') {
-		print '<div class="tabsAction">'."\n";
+	/*
+	 * Buttons
+	 */
+	if ($user->socid == 0)
+	{
+		print '<div class="tabsAction">';
+
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		if (empty($reshook))
 		{
-			// Send
-			if (empty($user->socid)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
-			}
-
 			if ($user->rights->asset->write)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
@@ -328,13 +297,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
 			}
 		}
-		print '</div>'."\n";
-	}
-
-
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
+		print "</div>";
 	}
 
 	if ($action != 'presend')
@@ -343,27 +306,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<a name="builddoc"></a>'; // ancre
 
 		// Documents
-		/*$objref = dol_sanitizeFileName($object->ref);
-		$relativepath = $comref . '/' . $comref . '.pdf';
-		$filedir = $conf->asset->dir_output . '/' . $objref;
-		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+		$filename = dol_sanitizeFileName($object->ref);
+		$filedir = $conf->contrat->dir_output."/".dol_sanitizeFileName($object->ref);
+		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->rights->asset->read;	// If you can read, you can build the PDF to read content
-		$delallowed = $user->rights->asset->create;	// If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('asset', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-		*/
+		$delallowed = $user->rights->asset->write;	// If you can create/edit, you can remove a file on card
+
+		print $formfile->showdocuments('asset', $filename, $filedir, $urlsource, 0, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('asset'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.dol_buildpath('/asset/asset_info.php', 1).'?id='.$object->id.'">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/asset/info.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -372,19 +331,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</div></div></div>';
 	}
-
-	//Select mail models is same action as presend
-	 if (GETPOST('modelselected')) $action = 'presend';
-
-	 // Presend form
-	 /*
-	 $modelmail='asset';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->asset->dir_output.'/asset';
-	 $trackid = 'asset'.$object->id;
-
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
 }
 
 

@@ -43,8 +43,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 	$login = '';
 
 	// Get identity from user and redirect browser to OpenID Server
-	if (GETPOSISSET('username'))
-	{
+	if (GETPOSTISSET('username')) {
 		$openid = new SimpleOpenID();
 		$openid->SetIdentity($_POST['username']);
 		$protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
@@ -61,10 +60,8 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 			return false;
 		}
 		return false;
-	}
-	// Perform HTTP Request to OpenID server to validate key
-	elseif ($_GET['openid_mode'] == 'id_res')
-	{
+	} elseif ($_GET['openid_mode'] == 'id_res') {
+		// Perform HTTP Request to OpenID server to validate key
 		$openid = new SimpleOpenID();
 		$openid->SetIdentity($_GET['openid_identity']);
 		$openid_validation_result = $openid->ValidateWithServer();

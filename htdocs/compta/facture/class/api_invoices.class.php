@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
-/* Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
+ * Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1051,7 +1051,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if ($this->invoice->paye) {
-			throw new RestException(500, 'Alreay payed');
+			throw new RestException(500, 'Alreay paid');
 		}
 
 		$this->invoice->fetch($id);

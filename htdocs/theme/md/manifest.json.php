@@ -35,6 +35,7 @@ if (!defined('NOLOGIN'))         define('NOLOGIN', '1');
 if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOSESSION'))       define('NOSESSION', '1');
 
 require_once __DIR__.'/../../main.inc.php';
 
@@ -42,6 +43,15 @@ $appli = constant('DOL_APPLICATION_TITLE');
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli = $conf->global->MAIN_APPLICATION_TITLE;
 
 top_httphead('text/json');
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=10800, public, must-revalidate');
+	// For a text/json, we must set an Expires to avoid to have it forced to an expired value by the web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + 10800) . ' GMT');
+}
+else {
+	header('Cache-Control: no-cache');
+}
 
 ?>
 {

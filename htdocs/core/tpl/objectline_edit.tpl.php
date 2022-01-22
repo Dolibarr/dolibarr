@@ -109,9 +109,16 @@ $coldisplay++;
 		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
+	$situationinvoicelinewithparent = 0;
+	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
+			// Set constant to disallow editing during a situation cycle
+			$situationinvoicelinewithparent = 1;
+		}
+	}
+
 	// Do not allow editing during a situation cycle
-	if ($line->fk_prev_id == null)
-	{
+	if (!$situationinvoicelinewithparent) {
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
@@ -149,7 +156,7 @@ $coldisplay++;
 	}
 
 	$coldisplay++;
-	if ($line->fk_prev_id == null) {
+	if (!$situationinvoicelinewithparent) {
 		print '<td class="right">'.$form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : ''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1).'</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
@@ -157,7 +164,9 @@ $coldisplay++;
 
 	$coldisplay++;
 	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="'.(isset($line->pu_ht) ?price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0)).'"';
-	if ($line->fk_prev_id != null) print ' readonly';
+	if ($situationinvoicelinewithparent) {
+		print ' readonly';
+	}
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
@@ -176,12 +185,14 @@ $coldisplay++;
 	<td class="right">
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		// I comment this because it shows info even when not required
+		// I comment warning of stock because it shows the info even when it should not.
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
 		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'"';
-		if ($line->fk_prev_id != null) print ' readonly';
+		if ($situationinvoicelinewithparent) {	// Do not allow editing during a situation cycle
+			print ' readonly';
+		}
 		print '>';
 	} else { ?>
 		&nbsp;
@@ -202,7 +213,9 @@ $coldisplay++;
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.$line->remise_percent.'"';
-		if ($line->fk_prev_id != null) print ' readonly';
+		if ($situationinvoicelinewithparent) {
+			print ' readonly';
+		}
 		print '>%';
 	} else { ?>
 		&nbsp;

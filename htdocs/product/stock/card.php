@@ -97,7 +97,7 @@ if (empty($reshook))
 		$object->fk_parent = (int) GETPOST("fk_parent", "int");
 		$object->label = (string) GETPOST("libelle", "alpha");
 		$object->description = (string) GETPOST("desc", "alpha");
-		$object->statut      = GETPOST("statut");
+		$object->statut = GETPOST("statut", "int");
 		$object->lieu = (string) GETPOST("lieu", "alpha");
 		$object->address = (string) GETPOST("address", "alpha");
 		$object->zip = (string) GETPOST("zipcode", "alpha");
@@ -160,7 +160,7 @@ if (empty($reshook))
 	{
 		if ($object->fetch($id))
 		{
-			$object->label = GETPOST("libelle");
+			$object->label 		 = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->description = GETPOST("desc");
 			$object->statut      = GETPOST("statut");
@@ -169,12 +169,12 @@ if (empty($reshook))
 			$object->zip         = GETPOST("zipcode");
 			$object->town        = GETPOST("town");
 			$object->country_id  = GETPOST("country_id");
-			$object->phone = GETPOST("phone");
-			$object->fax = GETPOST("fax");
+			$object->phone 		 = GETPOST("phone");
+			$object->fax 		 = GETPOST("fax");
 
-			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
-			if ($ret < 0)   $error++;
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	        if ($ret < 0)   $error++;
 
 			if (!$error) {
 				$ret = $object->update($id, $user);

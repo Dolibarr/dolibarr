@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Kontroller moms nummer på EU webside
 VATIntraManualCheck=Du kan også tjekke manuelt på Europa-Kommissionens websted <a href="%s" target="_blank"> %s </a>
 ErrorVATCheckMS_UNAVAILABLE=Kontrol er ikke muligt. Denne service leveres ikke af medlemsstaten (%s).
 NorProspectNorCustomer=Ikke mulighedder eller kunde
-JuridicalStatus=Juridisk enhedstype
+JuridicalStatus=Forretningsenhedstype
 Workforce=Arbejdskraft
 Staff=Medarbejdere
 ProspectLevelShort=Potentiale

@@ -401,6 +401,7 @@ class Paiement extends CommonObject
 									if ($result < 0)
 									{
 										$this->error = $invoice->error;
+										$this->errors = $invoice->errors;
 										$error++;
 									}
 								}
@@ -422,8 +423,13 @@ class Paiement extends CommonObject
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
 							}
+
+                            $hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+                            $hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+                            $hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+
 							$ret = $invoice->fetch($facid); // Reload to get new records
-							$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+                            $result = $invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 							if ($result < 0) {
 								setEventMessages($invoice->error, $invoice->errors, 'errors');
 								$error++;
@@ -578,9 +584,10 @@ class Paiement extends CommonObject
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @param	int		$notrigger			No trigger
+	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
 	 *      @return int                 		<0 if KO, bank_line_id if OK
 	 */
-	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '')
 	{
 		global $conf, $langs, $user;
 
@@ -625,7 +632,8 @@ class Paiement extends CommonObject
 				'',
 				$user,
 				$emetteur_nom,
-				$emetteur_banque
+				$emetteur_banque,
+				$accountancycode
 			);
 
 			// Mise a jour fk_bank dans llx_paiement
@@ -1290,7 +1298,8 @@ class Paiement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Load the third party of object, from id into this->thirdparty
+	 *  Load the third party of object, from id into this->thirdparty.
+	 *  For payments, take the thirdparty linked to the first invoice found. This is enough because payments are done on invoices of the same thirdparty.
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
 	 *	@return		int								<0 if KO, >0 if OK
@@ -1308,7 +1317,7 @@ class Paiement extends CommonObject
 				$invoice = new Facture($this->db);
 				if ($invoice->fetch($billsarray[0]) > 0)
 				{
-					$force_thirdparty_id = $invoice->fk_soc;
+					$force_thirdparty_id = $invoice->socid;
 				}
 			}
 		}

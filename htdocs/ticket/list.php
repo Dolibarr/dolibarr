@@ -339,6 +339,7 @@ foreach ($search as $key => $val)
 		}
 		if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) {
 			$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
+			$newarrayofstatus[] = Ticket::STATUS_READ;
 			$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
 			$newarrayofstatus[] = Ticket::STATUS_IN_PROGRESS;
 			$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
@@ -351,7 +352,7 @@ foreach ($search as $key => $val)
 		if (count($newarrayofstatus)) $sql .= natural_search($key, join(',', $newarrayofstatus), 2);
 		continue;
 	}
-	if ($key == 'fk_user_assign' || $key == 'fk_user_create')
+	if ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project')
 	{
 		if ($search[$key] > 0) $sql .= natural_search($key, $search[$key], 2);
 		continue;
@@ -361,7 +362,7 @@ foreach ($search as $key => $val)
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
-if ($search_fk_project) $sql .= natural_search('fk_project', $search_fk_project, 2);
+if ($search_fk_project > 0) $sql .= natural_search('fk_project', $search_fk_project, 2);
 if ($search_date_start)			$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)			$sql .= " AND t.datec <= '".$db->idate($search_date_end)."'";
 if ($search_dateread_start)		$sql .= " AND t.date_read >= '".$db->idate($search_dateread_start)."'";
@@ -427,7 +428,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
 
 
 if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
@@ -666,7 +667,7 @@ foreach ($object->fields as $key => $val)
 			print '</td>';
 		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth150'));
+			print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth125'));
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
@@ -680,7 +681,7 @@ foreach ($object->fields as $key => $val)
 			//var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
 			$selectedarray = null;
 			if ($search[$key]) $selectedarray = array_values($search[$key]);
-			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth150', 1, 0, '', '', '');
+			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth100 maxwidth150', 1, 0, '', '', '');
 			print '</td>';
 		} elseif ($key == "fk_soc") {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
@@ -810,6 +811,12 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
+			elseif ($key == 'subject') {
+				$s = $obj->subject;
+				print '<span title="'.$s.'">';
+				print $s;
+				print '</span>';
+			}
 			elseif ($key == 'type_code') {
 				$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
 				print '<span title="'.$s.'">';

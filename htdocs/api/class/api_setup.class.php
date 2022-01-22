@@ -643,7 +643,7 @@ class Setup extends DolibarrApi
 	public function getListOfShipmentMethods($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
 	{
 		$list = array();
-		$sql = "SELECT t.rowid, t.code, t.libelle, t.description, t.tracking";
+		$sql = "SELECT t.rowid, t.code, t.libelle as label, t.description, t.tracking";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
 		$sql .= " WHERE t.active = ".$active;
 		// Add sql filters

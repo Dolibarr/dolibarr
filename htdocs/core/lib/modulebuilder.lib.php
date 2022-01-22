@@ -51,7 +51,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 	}
 
 	// Check parameters
-	if (count($addfieldentry) > 0)
+	if (is_array($addfieldentry) && count($addfieldentry) > 0)
 	{
 		if (empty($addfieldentry['name']))
 		{

@@ -189,7 +189,7 @@ function invoice_rec_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/card-rec.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("CardBill");
+	$head[$h][1] = $langs->trans("RepeatableInvoice");
 	$head[$h][2] = 'card';
 	$h++;
 

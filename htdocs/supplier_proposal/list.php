@@ -249,7 +249,7 @@ $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 //llxHeader('',$langs->trans('CommRequest'),$help_url);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -297,7 +297,7 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_ref)     $sql .= natural_search('sp.ref', $search_ref);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-if ($search_login)  $sql .= natural_search('u.login', $search_login);
+if ($search_login)  $sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 if ($search_montant_ht) $sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search("sp.tva", $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql .= natural_search("sp.total", $search_montant_ttc, 1);

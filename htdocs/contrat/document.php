@@ -74,7 +74,7 @@ if ($object->id > 0)
 	$object->fetch_thirdparty();
 }
 
-$upload_dir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contract';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -192,7 +192,7 @@ if ($object->id)
 	$permission = $user->rights->contrat->creer;
 	$permtoedit = $user->rights->contrat->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

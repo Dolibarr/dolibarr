@@ -31,10 +31,8 @@ TicketDictType=Тикет - Видове
 TicketDictCategory=Тикет - Групи
 TicketDictSeverity=Тикет - Приоритети
 TicketDictResolution=Тикет - Решения
-TicketTypeShortBUGSOFT=Софтуерна неизправност
-TicketTypeShortBUGHARD=Хардуерна неизправност
-TicketTypeShortCOM=Търговски въпрос
 
+TicketTypeShortCOM=Търговски въпрос
 TicketTypeShortHELP=Молба за асистенция
 TicketTypeShortISSUE=Въпрос, грешка или проблем
 TicketTypeShortREQUEST=Заявка за подобрение
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Друго
 TicketSeverityShortLOW=Нисък
 TicketSeverityShortNORMAL=Нормален
 TicketSeverityShortHIGH=Висок
-TicketSeverityShortBLOCKING=Критичен
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=Полето "%s" е неправилно
 MenuTicketMyAssign=Мои тикети
@@ -60,7 +58,6 @@ OriginEmail=Имейл източник
 Notify_TICKET_SENTBYMAIL=Изпращане на тикет съобщението по имейл
 
 # Status
-NotRead=Непрочетен
 Read=Прочетен
 Assigned=Възложен
 InProgress=В изпълнение
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Публичният интерфейс по�
 TicketsAutoAssignTicket=Автоматично възлагане на тикета на потребителя, който го е създал
 TicketsAutoAssignTicketHelp=При създаване на тикет, той може автоматично да бъде възложен на потребителя, който го е създал.
 TicketNumberingModules=Модул за номериране на тикети
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Уведомяване на контрагента при създаване
 TicketsDisableCustomerEmail=Деактивиране на имейлите, когато тикетът е създаден от публичния интерфейс
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Статусът е променен: от %s на %s
 TicketNotNotifyTiersAtCreate=Да не се уведомява фирмата при създаване на тикета
 Unread=Непрочетен
 TicketNotCreatedFromPublicInterface=Не е налично. Тикетът не беше създаден от публичният интерфейс.
-PublicInterfaceNotEnabled=Публичният интерфейс не е активиран
 ErrorTicketRefRequired=Изисква се референтен номер на тикета
 
 #

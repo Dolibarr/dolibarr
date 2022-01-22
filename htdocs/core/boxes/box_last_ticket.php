@@ -134,7 +134,7 @@ class box_last_ticket extends ModeleBoxes
 						$thirdparty->name = $objp->company_name;
 						$link = $thirdparty->getNomUrl(1);
 					} else {
-						$link = dol_print_email($objp->origin_email);
+						$link = '<span title="'.$objp->origin_email.'">'.dol_print_email($objp->origin_email).'</span>';
 					}
 
 					$r = 0;
@@ -149,15 +149,15 @@ class box_last_ticket extends ModeleBoxes
 
 					// Subject
 					$this->info_box_contents[$i][$r] = array(
-						'td' => '',
-						'text' => $objp->subject, // Some event have no ref
+						'td' => 'class="tdoverflowmax200"',
+						'text' => '<span title="'.$objp->subject.'">'.$objp->subject.'</span>', // Some event have no ref
 						'url' => DOL_URL_ROOT."/ticket/card.php?track_id=".$objp->track_id,
 					);
 					$r++;
 
 					// Customer
 					$this->info_box_contents[$i][$r] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax100"',
 						'text' => $link,
 						'asis' => 1,
 					);

@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Andre leveringer på denne ordren
 SendingsAndReceivingForSameOrder=Forsendelser og kvitteringer for denne ordren
 SendingsToValidate=Leveringer til validering
 StatusSendingCanceled=Kansellert
+StatusSendingCanceledShort=Kansellert
 StatusSendingDraft=Kladd
 StatusSendingValidated=Validert (klar til levering eller allerede levert)
 StatusSendingProcessed=Behandlet
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Du må validere ordren før du kan utføre fors
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Mer fullstendig dokumentmodell for leveringskvitteringer (logo. ..)
+DocumentModelStorm=Mer komplett dokumentmodell for leveringskvitteringer og ekstrafeltkompatibilitet (logo ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER ikke definert
 SumOfProductVolumes=Sum varevolum
 SumOfProductWeights=Sum varevekt

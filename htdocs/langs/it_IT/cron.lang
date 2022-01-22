@@ -7,13 +7,14 @@ Permission23103 = Elimina processo pianificato
 Permission23104 = Esegui processo pianificato
 # Admin
 CronSetup=Impostazione delle azioni pianificate
-URLToLaunchCronJobs=URL per controllare ed eseguire i processi in cron
-OrToLaunchASpecificJob=O per lanciare un processo specifico
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Chiave di sicurezza per l'URL che lancia i processi pianificati
 FileToLaunchCronJobs=Riga di comando per controllare e lanciare i processi pianificati in cron
 CronExplainHowToRunUnix=In ambienti Unix per lanciare il comando ogni 5 minuti dovresti usare la seguente riga di crontab
 CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows per lanciare il comando ogni 5 minuti dovresti usare le operazioni pianificate
 CronMethodDoesNotExists=La classe %s non contiene alcune metodo %s
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=I profili cron sono definiti nel file di descrizione del modulo. Quando il modulo viene attivao, vengono caricati e resi disponivbili permettendoti di amministrare i processi dal menu strumenti amministrazione %s.
 CronJobProfiles=Lista dei profili cron predefiniti
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Num. lancio
 CronMaxRun=Numero massimo di lanci
 CronEach=Ogni
 JobFinished=Processo eseguito e completato
+Scheduled=Scheduled
 #Page card
 CronAdd= Aggiungi processo
 CronEvery=Esegui ogni processo
@@ -56,7 +58,7 @@ CronNote=Commento
 CronFieldMandatory=Il campo %s è obbligatorio
 CronErrEndDateStartDt=La data di fine non può essere precedente a quella di inizio
 StatusAtInstall=Stato all'installazione del modulo
-CronStatusActiveBtn=Abilita
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Disattiva
 CronTaskInactive=Questo processo è disabilitato
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Backup del database locale
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Attenzione, per motivi di performance, qualunque sia la data della prossima esecuzione dei processi attivi, i tuoi processi possono essere ritardati di un massimo di %s ore prima di essere eseguiti
 DATAPOLICYJob=Pulizia dei dati e anonimizzatore
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

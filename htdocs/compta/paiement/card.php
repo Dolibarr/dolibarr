@@ -43,12 +43,20 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+$object = new Paiement($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+$result = restrictedArea($user, $object->element, $object->id, 'paiement', '');
+
 // Security check
 if ($user->socid) $socid = $user->socid;
-// TODO ajouter regle pour restreindre acces paiement
-//$result = restrictedArea($user, 'facture', $id,'');
-
-$object = new Paiement($db);
+// Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
+// It should be enough because all payments are done on invoices of the same thirdparty.
+if ($socid && $socid != $object->thirdparty->id) {
+	accessforbidden();
+}
 
 
 /*
@@ -59,7 +67,6 @@ if ($action == 'setnote' && $user->rights->facture->paiement)
 {
 	$db->begin();
 
-	$object->fetch($id);
 	$result = $object->update_note(GETPOST('note', 'restricthtml'));
 	if ($result > 0)
 	{
@@ -75,7 +82,6 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 {
 	$db->begin();
 
-	$object->fetch($id);
 	$result = $object->delete();
 	if ($result > 0)
 	{
@@ -100,41 +106,79 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 {
 	$db->begin();
 
-	$object->fetch($id);
 	if ($object->validate($user) > 0)
 	{
 		$db->commit();
 
 		// Loop on each invoice linked to this payment to rebuild PDF
-		$factures = array();
-		foreach ($factures as $id)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($id);
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+            $outputlangs = $langs;
+            if (GETPOST('lang_id', 'aZ09')) {
+                $outputlangs = new Translate("", $conf);
+                $outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
+            }
 
-			$outputlangs = $langs;
-			if (!empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
-			}
+            $hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+            $hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+            $hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+
+            $sql = 'SELECT f.rowid as facid';
+            $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
+            $sql .= ' WHERE pf.fk_facture = f.rowid';
+            $sql .= ' AND f.fk_soc = s.rowid';
+            $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
+            $sql .= ' AND pf.fk_paiement = '.$object->id;
+            $resql = $db->query($sql);
+            if ($resql)
+            {
+                $i = 0;
+                $num = $db->num_rows($resql);
+
+                if ($num > 0)
+                {
+                    while ($i < $num)
+                    {
+                        $objp = $db->fetch_object($resql);
+
+                        $invoice = new Facture($db);
+
+                        if ($invoice->fetch($objp->facid) <= 0) {
+                            $errors++;
+                            setEventMessages($invoice->error, $invoice->errors, 'errors');
+                            break;
+                        }
+
+                        if ($invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
+                            $errors++;
+                            setEventMessages($invoice->error, $invoice->errors, 'errors');
+                            break;
+                        }
+
+                        $i++;
+                    }
+                }
+
+                $db->free($resql);
+            } else {
+                $errors++;
+                setEventMessages($db->error, $db->errors, 'errors');
+            }
 		}
 
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
-		exit;
+        if (! $errors) {
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+			exit;
+		}
 	} else {
+		$db->rollback();
+
 		$langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
 	}
 }
 
 if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 {
-	$object->fetch($id);
 	$res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
@@ -146,7 +190,6 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 
 if ($action == 'setdatep' && !empty($_POST['datepday']))
 {
-	$object->fetch($id);
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
@@ -265,10 +308,8 @@ print '</td></tr>';
 // Bank account
 if (!empty($conf->banque->enabled))
 {
-	if ($object->fk_account > 0)
-	{
-		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0)
-		{
+	if ($object->fk_account > 0) {
+		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
 			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
 			$bordereau = new RemiseCheque($db);
 			$bordereau->fetch($bankline->fk_bordereau);
@@ -285,7 +326,12 @@ if (!empty($conf->banque->enabled))
 	print '<tr>';
 	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 	print '<td>';
-	print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
+	if ($object->fk_account > 0) {
+		print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
+	} else {
+		$langs->load("admin");
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFoundIBankcAccount", $langs->transnoentitiesnoconv("Module85Name")).'</span>';
+	}
 	print '</td>';
 	print '</tr>';
 }
@@ -386,11 +432,13 @@ if ($resql)
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
 
 			print "</tr>\n";
-			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
-			{
+
+			// If at least one invoice is paid, disable delete. INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED Can be use for maintenance purpose. Never use this in production
+			if ($objp->paye == 1 && empty($conf->global->INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED)) {
 				$disable_delete = 1;
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 			}
+
 			$total = $total + $objp->amount;
 			$i++;
 		}

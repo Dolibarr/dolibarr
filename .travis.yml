@@ -1,6 +1,6 @@
 # This script is used by Travis CI to run automatically Continuous test integration
 # from Dolibarr GitHub repository.
-# For syntax, see http://about.travis-ci.org/docs/user/languages/php/
+# For syntax, see https://docs.travis-ci.com/user/languages/php/
 
 # We use dist: xenial to have php 5.6+ available
 os: linux
@@ -8,6 +8,9 @@ dist: xenial
 #dist: bionic
 
 language: php
+
+git:
+  depth: 1
 
 # Start on every boot
 services:
@@ -38,8 +41,8 @@ env:
 
 jobs:
   fast_finish: true
-  allow_failures:
-  - php: nightly
+  #allow_failures:
+  #- php: nightly
   include:
     - if: type = push
       php: '5.6'
@@ -50,7 +53,7 @@ jobs:
     - if: type = push AND branch = develop
       php: nightly 
       env: DB=mysql
-    - if: type = push AND branch = 13.0
+    - if: type = push AND branch = 14.0
       php: nightly 
       env: DB=mysql
 
@@ -72,13 +75,6 @@ before_install:
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
   phpenv config-rm xdebug.ini
   echo
-
-- |
-  if [ "$DB" = 'postgresql' ]; then
-    echo "Check pgloader version"
-    pgloader --version
-    echo
-  fi
 
 install:
 - |
@@ -178,6 +174,10 @@ before_script:
     mysql --version | head -
     mysql -e "SELECT VERSION();"  | head -
     psql --version
+    if [ "$DB" = 'postgresql' ]; then
+      echo "Check pgloader version"
+      pgloader --version
+    fi
     echo
 
   - |
@@ -267,24 +267,27 @@ script:
   echo
 
 - |
-  echo "Checking PHP syntax errors"
+  echo "Checking PHP syntax errors (only 1 version to not overload travis and avoid duplicate tests)"
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
-  	--exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
-  	--exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
-  	--exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
-  	--exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --blame .
+  # Exclusions are defined in the ruleset.xml file
+  if [ "$TRAVIS_PHP_VERSION" = "7.4" ]; then
+    parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+      --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+      --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+      --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+      --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --blame .
+  fi
   set +e
   echo
 
 - |
-  echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also some jobs to avoid duplicate tests)"
+  echo "Checking coding style (only for Pull Requests builds and 1 version to not overload travis and avoid duplicate tests)"
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4" ] && [ "$DB" = "mysql" ]; then
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4" ]; then
     phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
   fi
   set +e
@@ -401,8 +404,12 @@ script:
   php upgrade.php 12.0.0 13.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade12001300.log
   php upgrade2.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-2.log
   php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
+  ls -alrt $TRAVIS_BUILD_DIR/
 
+- |
+  echo "Enabling new modules"
   # Enable modules not enabled into original dump
+  cd htdocs/install
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_STRIPE > $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log

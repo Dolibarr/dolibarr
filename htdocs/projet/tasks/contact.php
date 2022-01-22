@@ -57,11 +57,22 @@ $projectstatic = new Project($db);
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer)
 {
+	$source  = 'internal';
+	if (GETPOST("addsourceexternal")) {
+		$source  ='external';
+	}
+
 	$result = $object->fetch($id, $ref);
 
 	if ($result > 0 && $id > 0)
 	{
-		$idfortaskuser = (GETPOST("contactid") != 0) ?GETPOST("contactid") : GETPOST("userid"); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+		if ($source == 'internal') {
+			$idfortaskuser = ((GETPOST("userid") != 0 && GETPOST('userid') != -1) ? GETPOST("userid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+			$typeid = GETPOST('type');
+		} else {
+			$idfortaskuser = ((GETPOST("contactid") > 0) ? GETPOST("contactid", 'int') : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+			$typeid = GETPOST('typecontact');
+		}
 		if ($idfortaskuser == -2)
 		{
 			$result = $projectstatic->fetch($object->fk_project);
@@ -72,13 +83,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 				$contactsofproject = $projectstatic->getListContactId('internal');
 				foreach ($contactsofproject as $key => $val)
 				{
-					$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-					$result = $object->add_contact($val, $type, GETPOST("source", 'aZ09'));
+					$result = $object->add_contact($val, $typeid, $source);
 				}
 			}
 		} else {
-			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-			$result = $object->add_contact($idfortaskuser, $typeid, GETPOST("source", 'aZ09'));
+			$result = $object->add_contact($idfortaskuser, $typeid, $source);
 		}
 	}
 
@@ -207,33 +216,35 @@ if ($id > 0 || !empty($ref))
 
 			print '<table class="border tableforfield centpercent">';
 
-			// Usage
-			print '<tr><td class="tdtop">';
-			print $langs->trans("Usage");
-			print '</td>';
-			print '<td>';
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-			{
-				print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectFollowOpportunity");
-				print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-				print '<br>';
+            // Usage
+            if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS)) {
+				print '<tr><td class="tdtop">';
+				print $langs->trans("Usage");
+				print '</td>';
+				print '<td>';
+				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+				{
+					print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectFollowOpportunity");
+					print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+					print '<br>';
+				}
+				if (empty($conf->global->PROJECT_HIDE_TASKS))
+				{
+					print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectFollowTasks");
+					print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+					print '<br>';
+				}
+				if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
+				{
+					print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+					$htmltext = $langs->trans("ProjectBillTimeDescription");
+					print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+					print '<br>';
+				}
+				print '</td></tr>';
 			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS))
-			{
-				print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectFollowTasks");
-				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-				print '<br>';
-			}
-			if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-			{
-				print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-				$htmltext = $langs->trans("ProjectBillTimeDescription");
-				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-				print '<br>';
-			}
-			print '</td></tr>';
 
 			// Visibility
 			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -353,6 +364,12 @@ if ($id > 0 || !empty($ref))
 		/*
 		 * Add a new contact line
 		 */
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="addcontact">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+
 		print '<table class="noborder centpercent">';
 
 		if ($action != 'editline' && $user->rights->projet->creer)
@@ -364,13 +381,6 @@ if ($id > 0 || !empty($ref))
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
-
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="addcontact">';
-			print '<input type="hidden" name="source" value="internal">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
 			print '<tr class="oddeven nohover">';
@@ -387,26 +397,17 @@ if ($id > 0 || !empty($ref))
 			// On recupere les id des users deja selectionnes
 			if ($object->project->public) $contactsofproject = ''; // Everybody
 			else $contactsofproject = $projectstatic->getListContactId('internal');
-			print $form->select_dolusers((GETPOST('contactid') ?GETPOST('contactid') : $user->id), 'contactid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
+			print $form->select_dolusers((GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
 			print '</td>';
-			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
 			print '</tr>';
-
-			print '</form>';
 
 			// Line to add an external contact. Only if project linked to a third party.
 			if ($projectstatic->socid)
 			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="addcontact">';
-				print '<input type="hidden" name="source" value="external">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
-				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-
 				print '<tr class="oddeven">';
 
 				print '<td class="nowrap">';
@@ -421,18 +422,16 @@ if ($id > 0 || !empty($ref))
 
 				print '<td>';
 				$contactofproject = $projectstatic->getListContactId('external');
-				print $form->selectcontacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
+				print $form->selectcontacts($selectedCompany, '', 'contactid', 0, '', $contactofproject, 0, '', false, 0, 0);
 				$nbofcontacts = $form->num;
 				print '</td>';
 				print '<td>';
-				$formcompany->selectTypeContact($object, '', 'type', 'external', 'rowid');
+				$formcompany->selectTypeContact($object, '', 'typecontact', 'external', 'rowid');
 				print '</td>';
-				print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
+				print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" name="addsourceexternal" value="'.$langs->trans("Add").'"';
 				if (!$nbofcontacts) print ' disabled';
 				print '></td>';
 				print '</tr>';
-
-				print "</form>";
 			}
 		}
 
@@ -535,6 +534,8 @@ if ($id > 0 || !empty($ref))
 			}
 		}
 		print "</table>";
+
+		print "</form>";
 	} else {
 		print "ErrorRecordNotFound";
 	}

@@ -32,7 +32,9 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 
 // Security check
-if (!$user->rights->opensurvey->read) accessforbidden();
+if (empty($user->rights->opensurvey->read)) {
+	accessforbidden();
+}
 
 // Initialisation des variables
 $action = GETPOST('action', 'aZ09');

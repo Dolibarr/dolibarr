@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ $accountid = GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
 $label = GETPOST("label", "alpha");
 $sens = GETPOST("sens", "int");
 $amount = price2num(GETPOST("amount", "alpha"));
-$paymenttype = GETPOST("paymenttype", "int");
+$paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 if (!empty($conf->accounting->enabled) && !empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
@@ -113,8 +113,10 @@ if (empty($reshook))
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
 		$object->label = GETPOST("label", 'restricthtml');
 		$object->note = GETPOST("note", 'restricthtml');
-		$object->type_payment = GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
+		$object->type_payment = dol_getIdFromCode($db, GETPOST('paymenttype'), 'c_paiement', 'code', 'id', 1);
 		$object->num_payment = GETPOST("num_payment", 'alpha');
+		$object->chqemetteur = GETPOST("chqemetteur", 'alpha');
+		$object->chqbank = GETPOST("chqbank", 'alpha');
 		$object->fk_user_author = $user->id;
 		$object->category_transaction = GETPOST("category_transaction", 'alpha');
 
@@ -266,6 +268,18 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 			$object->datev = $newdatepayment;
 		}
 
+        if (GETPOSTISSET("clone_sens")) {
+            $object->sens = GETPOST("clone_sens", 'int');
+        } else {
+            $object->sens = $object->sens;
+        }
+
+        if (GETPOST("clone_amount", "alpha")) {
+            $object->amount = price2num(GETPOST("clone_amount", "alpha"));
+        } else {
+            $object->amount = price2num($object->amount);
+        }
+
 		if ($object->check())
 		{
 			$id = $object->create($user);
@@ -333,6 +347,43 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 /* ************************************************************************** */
 if ($action == 'create')
 {
+	// Update fields properties in realtime
+	if (!empty($conf->use_javascript_ajax))
+	{
+		print "\n".'<script type="text/javascript" language="javascript">';
+		print '$(document).ready(function () {
+            			setPaymentType();
+            			$("#selectpaymenttype").change(function() {
+            				setPaymentType();
+            			});
+            			function setPaymentType()
+            			{
+            				var code = $("#selectpaymenttype option:selected").val();
+                            if (code == \'CHQ\' || code == \'VIR\')
+            				{
+            					if (code == \'CHQ\')
+			                    {
+			                        $(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
+			                    }
+            					if ($(\'#fieldchqemetteur\').val() == \'\')
+            					{
+            						var emetteur = jQuery(\'#thirdpartylabel\').val();
+            						$(\'#fieldchqemetteur\').val(emetteur);
+            					}
+            				}
+            				else
+            				{
+            					$(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
+            					$(\'#fieldchqemetteur\').val(\'\');
+            				}
+            			}
+			';
+
+		print '	});'."\n";
+
+		print '	</script>'."\n";
+	}
+
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -378,20 +429,28 @@ if ($action == 'create')
 	}
 
 	// Type payment
-	print '<tr><td>';
-	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
-	$form->select_types_paiements($paymenttype, "paymenttype");
-	print '</td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
+	$form->select_types_paiements($paymenttype, 'paymenttype', '', 2);
+	print "</td>\n";
+	print '</tr>';
 
 	// Number
-	if (!empty($conf->banque->enabled))
-	{
-		// Number
-		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-		print '</label></td>';
-		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
-	}
+	print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
+	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	print '</label></td>';
+	print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+
+	// Check transmitter
+	print '<tr><td class="'.(GETPOST('paymenttype') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn"><label for="fieldchqemetteur">'.$langs->trans('CheckTransmitter');
+	print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+	print '</label></td>';
+	print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
+
+	// Bank name
+	print '<tr><td><label for="chqbank">'.$langs->trans('Bank');
+	print ' <em>('.$langs->trans("ChequeBank").')</em>';
+	print '</label></td>';
+	print '<td><input id="chqbank" name="chqbank" size="30" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 
 	// Accountancy account
 	if (!empty($conf->accounting->enabled)) {
@@ -486,14 +545,19 @@ if ($id)
 	// Clone confirmation
 	if ($action === 'clone')
 	{
+        $set_value_help = $form->textwithpicto('', $langs->trans($langs->trans("AccountingDirectionHelp")));
+        $sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+
 		$formquestion = array(
 			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
-		);
-		$formquestion[] = array('type' => 'date', 'tdclass'=>'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1);
-		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1);
-		$formquestion[] = array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($accountid, "accountid", 0, '', 1, '', 0, 'minwidth200', 1));
+            array('type' => 'date', 'tdclass'=>'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1),
+		    array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1),
+		    array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'clone_accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($object->fk_account, "accountid", 0, '', 1, '', 0, 'minwidth200', 1)),
+		    array('type' => 'text', 'name' => 'clone_amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount)),
+            array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens") . ' ' . $set_value_help, 'values' => $sensarray, 'default' => $object->sens),
+        );
 
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
 	}
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);

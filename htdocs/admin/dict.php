@@ -236,7 +236,7 @@ $tabsqlsort[3] = "country ASC, code ASC";
 $tabsqlsort[4] = "code ASC";
 $tabsqlsort[5] = "label ASC";
 $tabsqlsort[6] = "a.type ASC, a.module ASC, a.position ASC, a.code ASC";
-$tabsqlsort[7] = "country ASC, code ASC, a.libelle ASC";
+$tabsqlsort[7] = "c.label ASC, a.code ASC, a.libelle ASC";
 $tabsqlsort[8] = "country DESC,".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ' t.position ASC,' : '')." libelle ASC";
 $tabsqlsort[9] = "label ASC";
 $tabsqlsort[10] = "country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
@@ -799,35 +799,39 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$keycode = $listfieldvalue[$i];
 			if (empty($keycode)) $keycode = $value;
 
-			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
-				$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
-			} elseif ($value == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($value == 'price' || preg_match('/^amount/i', $value)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            }
+            elseif ($value == 'taux' || $value == 'localtax1') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
+            }
+            elseif ($value == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) $sql .= ",";
 
-			if ($keycode == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
-			{
-				$sql .= "'".(int) GETPOST('position', 'int')."'";
-			} elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
-			elseif ($keycode == 'content') {
-				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-			} elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
-				$sql .= (int) GETPOST($keycode, 'int');
-			} else {
-				$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
-			}
+            if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
+            	$sql .= "'".(int) GETPOST('position', 'int')."'";
+            } elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) {
+				$sql .= "null"; // For vat, we want/accept code = ''
+			} elseif ($keycode == 'content') {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+            } elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+            	$sql .= (int) GETPOST($keycode, 'int');
+            } else {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+            }
 
 			$i++;
 		}
 		$sql .= ",1)";
 
-		dol_syslog("actionadd", LOG_DEBUG);
-		$result = $db->query($sql);
-		if ($result)	// Add is ok
-		{
-			setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
+        dol_syslog("actionadd", LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)	// Add is ok
+        {
+            setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
 			// Clean $_POST array, we keep only id of dictionary
 			if ($id == 10 && GETPOST('country', 'int') > 0) {
@@ -862,25 +866,29 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$keycode = $listfieldvalue[$i];
 			if (empty($keycode)) $keycode = $field;
 
-			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
-				$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
-			} elseif ($field == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($field == 'price' || preg_match('/^amount/i', $field)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            }
+            elseif ($field == 'taux' || $field == 'localtax1') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
+            }
+            elseif ($field == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
-			if ($i) $sql .= ",";
-			$sql .= $field."=";
-			if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
-			{
-				$sql .= (int) GETPOST('position', 'int');
-			} elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
-			elseif ($keycode == 'content') {
-				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-			} elseif (in_array($keycode, array('private', 'position', 'scale'))) {
-				$sql .= (int) GETPOST($keycode, 'int');
-			} else {
-				$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
-			}
+            if ($i) $sql .= ",";
+            $sql .= $field."=";
+            if ($listfieldvalue[$i] == 'sortorder')	{	// For column name 'sortorder', we use the field name 'position'
+            	$sql .= (int) GETPOST('position', 'int');
+            } elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) {
+				$sql .= "null"; // For vat, we want/accept code = ''
+			} elseif ($keycode == 'content') {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+            } elseif (in_array($keycode, array('private', 'position', 'scale'))) {
+            	$sql .= (int) GETPOST($keycode, 'int');
+            } else {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+            }
 
 			$i++;
 		}
@@ -1064,11 +1072,13 @@ if ($id)
 	$sql = $tabsql[$id];
 
 	if (!preg_match('/ WHERE /', $sql)) $sql .= " WHERE 1 = 1";
-	if ($search_country_id > 0) $sql .= " AND c.rowid = ".$search_country_id;
+	if ($search_country_id > 0) $sql .= " AND c.rowid = ".((int) $search_country_id);
 	if ($search_code != '' && $id == 9)     $sql .= natural_search("code_iso", $search_code);
 	elseif ($search_code != '' && $id == 28)    $sql .= natural_search("h.code", $search_code);
 	elseif ($search_code != '' && $id == 32)    $sql .= natural_search("a.code", $search_code);
 	elseif ($search_code != '' && $id == 3)     $sql .= natural_search("r.code_region", $search_code);
+	elseif ($search_code != '' && $id == 7)     $sql .= natural_search("a.code", $search_code);
+    elseif ($search_code != '' && $id == 10)    $sql .= natural_search("t.code", $search_code);
 	elseif ($search_code != '' && $id != 9)     $sql .= natural_search("code", $search_code);
 
 	if ($sortfield)
@@ -1107,7 +1117,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
 		$withentity = null;
 
 		$fieldlist = explode(',', $tabfield[$id]);
@@ -1138,9 +1147,9 @@ if ($id)
 				$class = 'center';
 			}
 			if ($fieldlist[$field] == 'localtax1_type') { $valuetoshow = $langs->trans("UseLocalTax")." 2"; $class = "center"; $sortable = 0; }
-			if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("Rate")." 2"; $class = "center"; }
+			if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("RateOfTaxN", '2'); $class = "center"; }
 			if ($fieldlist[$field] == 'localtax2_type') { $valuetoshow = $langs->trans("UseLocalTax")." 3"; $class = "center"; $sortable = 0; }
-			if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("Rate")." 3"; $class = "center"; }
+			if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("RateOfTaxN", '3'); $class = "center"; }
 			if ($fieldlist[$field] == 'organization') { $valuetoshow = $langs->trans("Organization"); }
 			if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
 			if ($fieldlist[$field] == 'type') {
@@ -1214,7 +1223,6 @@ if ($id)
 				else $tdsoffields .= $valuetoshow;
 				$tdsoffields .= '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		if ($id == 4) $tdsoffields .= '<td></td>';
@@ -1229,6 +1237,10 @@ if ($id)
 
 		print $tdsoffields;
 
+
+		// Line to enter new values
+		print '<!-- line to add new entry -->';
+		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
@@ -1248,9 +1260,6 @@ if ($id)
 
 		if ($id == 3) unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 
-		// Line to enter new values
-		print '<!-- line to add new entry -->';
-		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		if (empty($reshook))
 		{
@@ -1369,9 +1378,9 @@ if ($id)
 				$cssprefix = 'center ';
 			}
 			if ($fieldlist[$field] == 'localtax1_type') { $valuetoshow = $langs->trans("UseLocalTax")." 2"; $cssprefix = "center "; $sortable = 0; }
-			if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("Rate")." 2"; $cssprefix = "center "; $sortable = 0; }
+			if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("RateOfTaxN", '2'); $cssprefix = "center "; $sortable = 0; }
 			if ($fieldlist[$field] == 'localtax2_type') { $valuetoshow = $langs->trans("UseLocalTax")." 3"; $cssprefix = "center "; $sortable = 0; }
-			if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("Rate")." 3"; $cssprefix = "center "; $sortable = 0; }
+			if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("RateOfTaxN", '3'); $cssprefix = "center "; $sortable = 0; }
 			if ($fieldlist[$field] == 'organization') { $valuetoshow = $langs->trans("Organization"); }
 			if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
 			if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
@@ -2011,10 +2020,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if (in_array($fieldlist[$field], array('label', 'libelle')))		// For label
 			{
 				// Special case for labels
-				if ($tabname == MAIN_DB_PREFIX.'c_civility') {
+				if ($tabname == MAIN_DB_PREFIX.'c_civility' && !empty($obj->code)) {
 					$transkey = "Civility".strtoupper($obj->code);
 				}
-				if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+				if ($tabname == MAIN_DB_PREFIX.'c_payment_term' && !empty($obj->code)) {
 					$langs->load("bills");
 					$transkey = "PaymentConditionShort".strtoupper($obj->code);
 				}

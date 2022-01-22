@@ -833,12 +833,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		//E-mail
 		't.email',
 	);
-	//Social media
-	foreach ($socialnetworks as $key => $value) {
-		if ($value['active']) {
-			$searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
-		}
-	}
+    //Social media
+	//    foreach ($socialnetworks as $key => $value) {
+	//        if ($value['active']) {
+	//            $searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
+	//        }
+	//    }
 
 	if (!$sortorder) $sortorder = "ASC";
 	if (!$sortfield) $sortfield = "t.lastname";
@@ -1206,24 +1206,23 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	global $form;
 
 	global $param, $massactionbutton;
-	$start_year = GETPOST('dateevent_startyear');
-	$start_month = GETPOST('dateevent_startmonth');
-	$start_day = GETPOST('dateevent_startday');
-	$end_year = GETPOST('dateevent_endyear');
-	$end_month = GETPOST('dateevent_endmonth');
-	$end_day = GETPOST('dateevent_endday');
+	$start_year = GETPOST('dateevent_startyear', 'int');
+	$start_month = GETPOST('dateevent_startmonth', 'int');
+	$start_day = GETPOST('dateevent_startday', 'int');
+	$end_year = GETPOST('dateevent_endyear', 'int');
+	$end_month = GETPOST('dateevent_endmonth', 'int');
+	$end_day = GETPOST('dateevent_endday', 'int');
+	$tms_start = '';
+	$tms_end = '';
+
 	if (!empty($start_year) && !empty($start_month) && !empty($start_day)) {
-		$search_start = $start_year.'-'.$start_month.'-'.$start_day;
-		$tms_start = strtotime($search_start);
+		$tms_start = dol_mktime(0, 0, 0, $start_month, $start_day, $start_year, 'tzuserrel');
 	}
 	if (!empty($end_year) && !empty($end_month) && !empty($end_day)) {
-		$search_end = $end_year.'-'.$end_month.'-'.$end_day.' 23:59:59';
-		$tms_end = strtotime($search_end);
+		$tms_end = dol_mktime(23, 59, 59, $end_month, $end_day, $end_year, 'tzuserrel');
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
-		$search_start = '';
 		$tms_start = '';
-		$search_end = '';
 		$tms_end = '';
 	}
 	dol_include_once('/comm/action/class/actioncomm.class.php');
@@ -1325,14 +1324,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 		}
 
-		if (!empty($search_start) && !empty($search_end)) {
-			$sql .= " AND ((a.datep BETWEEN '$search_start' AND '$search_end') OR (a.datep2 BETWEEN '$search_start' AND '$search_end'))";
+		if (!empty($tms_start) && !empty($tms_end)) {
+			$sql .= " AND ((a.datep BETWEEN '".$db->idate($tms_start)."' AND '".$db->idate($tms_end)."') OR (a.datep2 BETWEEN '".$db->idate($tms_start)."' AND '".$db->idate($tms_end)."'))";
 		}
-		elseif (empty($search_start) && !empty($search_end)) {
-			$sql .= " AND ((a.datep <= '$search_end') OR (a.datep2 <= '$search_end'))";
+		elseif (empty($tms_start) && !empty($tms_end)) {
+			$sql .= " AND ((a.datep <= '".$db->idate($tms_end)."') OR (a.datep2 <= '".$db->idate($tms_end)."'))";
 		}
-		elseif (!empty($search_start) && empty($search_end)) {
-			$sql .= " AND ((a.datep >= '$search_start') OR (a.datep2 >= '$search_start'))";
+		elseif (!empty($tms_start) && empty($tms_end)) {
+			$sql .= " AND ((a.datep >= '".$db->idate($tms_start)."') OR (a.datep2 >= '".$db->idate($tms_start)."'))";
 		}
 
 		if (is_array($actioncode) && !empty($actioncode)) {
@@ -1488,7 +1487,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1);
 		$out .= '</td>';
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-		$out .= '<td class="liste_titre center">'.$form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1).'</td>';
+		$out .= '<td class="liste_titre center">';
+		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);
+		$out .= '</td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
@@ -1835,7 +1836,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 		$langs->load("mails");
 
 		$sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
-		$sql2 .= ", '' as fk_element, '' as elementtype, '' as contact_id";
+		$sql2 .= ", null as fk_element, '' as elementtype, null as contact_id";
 		$sql2 .= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
 		$sql2 .= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') $sql2 .= ", '' as lastname, '' as firstname";

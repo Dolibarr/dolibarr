@@ -73,7 +73,8 @@ $tables=array(
     'commande_fournisseur'=>array(0=>'date_commande', 1=>'date_valid', 3=>'date_creation', 4=>'date_approve', 5=>'date_approve2', 6=>'date_livraison'),
     'supplier_proposal'=>array(0=>'datec', 1=>'date_valid', 2=>'date_cloture'),
 	'expensereport'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 4=>'date_approve', 5=>'date_refuse', 6=>'date_cancel'),
-	'holiday'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 5=>'date_refuse', 6=>'date_cancel')
+	'holiday'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 5=>'date_refuse', 6=>'date_cancel'),
+	'ticket'=>array(0=>'datec', 1=>'date_read', 2=>'date_close')
 );
 
 $year=2010;

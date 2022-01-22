@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commi
 VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=확인할 수 없습니다. 수표 서비스는 회원 국가에서 제공하지 않습니다 (%s).
 NorProspectNorCustomer=Not prospect, nor customer
-JuridicalStatus=Legal Entity Type
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=Employees
 ProspectLevelShort=가능성

@@ -31,10 +31,8 @@ TicketDictType=Vé - Các loại
 TicketDictCategory=Vé - Nhóm
 TicketDictSeverity=Vé - Mức độ nghiêm trọng
 TicketDictResolution=Ticket - Resolution
-TicketTypeShortBUGSOFT=Sự cố phần mềm
-TicketTypeShortBUGHARD=Sự cố phần cứng
-TicketTypeShortCOM=Câu hỏi thương mại
 
+TicketTypeShortCOM=Câu hỏi thương mại
 TicketTypeShortHELP=Yêu cầu trợ giúp chức năng
 TicketTypeShortISSUE=Sự cố, lỗi hoặc vấn đề
 TicketTypeShortREQUEST=Yêu cầu thay đổi hoặc nâng cao
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Khác
 TicketSeverityShortLOW=Thấp
 TicketSeverityShortNORMAL=Bình thường
 TicketSeverityShortHIGH=Cao
-TicketSeverityShortBLOCKING=Quan trọng / Chặn
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=Trường '%s' không chính xác
 MenuTicketMyAssign=Vé của tôi
@@ -60,7 +58,6 @@ OriginEmail=Nguồn email
 Notify_TICKET_SENTBYMAIL=Gửi tin nhắn vé qua email
 
 # Status
-NotRead=Chưa đọc
 Read=Đọc
 Assigned=Phân công
 InProgress=Trong tiến trình xử lý
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Giao diện công cộng cho phép bất kỳ
 TicketsAutoAssignTicket=Tự động chỉ định người dùng đã tạo vé
 TicketsAutoAssignTicketHelp=Khi tạo vé, người dùng có thể được tự động chỉ định cho vé.
 TicketNumberingModules=Mô-đun đánh số vé
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Thông báo cho bên thứ ba khi tạo
 TicketsDisableCustomerEmail=Luôn vô hiệu hóa email khi vé được tạo từ giao diện công cộng
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Trạng thái đã thay đổi: %s thành %s
 TicketNotNotifyTiersAtCreate=Không thông báo cho công ty khi tạo
 Unread=Chưa đọc
 TicketNotCreatedFromPublicInterface=Không có sẵn. Vé không được tạo từ giao diện công cộng.
-PublicInterfaceNotEnabled=Giao diện công cộng không được kích hoạt
 ErrorTicketRefRequired=Tên tham chiếu vé là bắt buộc
 
 #

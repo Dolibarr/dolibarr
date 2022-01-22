@@ -161,8 +161,9 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
-	$sql .= " s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
+	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 	$sql .= " cc.rowid, cc.code";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user";
 
 	// Add Group from hooks
 	$parameters = array();
@@ -1089,7 +1090,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 /*
- * Unpayed supplier invoices
+ * Unpaid supplier invoices
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {

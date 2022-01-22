@@ -152,7 +152,7 @@ if ($id > 0) {
 		$permission = $user->rights->adherent->creer;
 		$permtoedit = $user->rights->adherent->creer;
 		$param = '&id='.$object->id;
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";
 	} else {
 		dol_print_error($db);

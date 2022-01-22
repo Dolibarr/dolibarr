@@ -99,7 +99,7 @@ $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 if ($user->id <> $id && !$canreaduser) accessforbidden();
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -444,7 +444,7 @@ if (empty($reshook)) {
 				}
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost(null, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 				if ($ret < 0) {
 					$error++;
 				}
@@ -768,7 +768,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	   	print '<input type="hidden" name="action" value="adduserldap">';
 		if (is_array($liste) && count($liste))
 		{
-			print $form->selectarray('users', $liste, '', 1);
+			print $form->selectarray('users', $liste, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth500');
 			print ajax_combobox('users');
 		}
 	   	print '</td><td class="center">';
@@ -1167,7 +1167,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	// Signature
 	print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
-	print '<td>';
+	print '<td class="wordbreak">';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('signature', GETPOST('signature', 'restricthtml'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);

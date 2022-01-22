@@ -80,7 +80,7 @@ function asset_prepare_head(Asset $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/asset/card.php';
+	$head[$h][0] = DOL_URL_ROOT.'/asset/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;

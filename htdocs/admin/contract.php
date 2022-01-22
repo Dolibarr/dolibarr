@@ -57,7 +57,7 @@ if ($action == 'updateMask')
 	$maskvalue = GETPOST('maskcontract', 'alpha');
 	if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{

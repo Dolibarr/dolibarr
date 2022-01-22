@@ -43,7 +43,11 @@ function import_prepare_head($param, $maxstep = 0)
 	$i = 1;
 	while ($i <= $maxstep)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step='.$i.$param;
+		if ($i < 6) {
+			$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step='.$i.$param;
+		} else {
+			$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5'.$param;	// For step6, link is to step 5
+		}
 		$head[$h][1] = $langs->trans("Step")." ".$i;
 		$head[$h][2] = 'step'.$i;
 		$h++;

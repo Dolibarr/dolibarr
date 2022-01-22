@@ -323,7 +323,7 @@ if (!empty($arrayfields['cpl.fk_type']['checked'])) {
 
 // Filter: Previous balance
 if (!empty($arrayfields['cpl.prev_solde']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
 	print '<input type="text" class="maxwidth50" name="search_prev_solde" value="'.$search_prev_solde.'">';
 	print '</td>';
 }
@@ -335,7 +335,7 @@ if (!empty($arrayfields['variation']['checked'])) {
 
 // Filter: New Balance
 if (!empty($arrayfields['cpl.new_solde']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
 	print '<input type="text" class="maxwidth50" name="search_new_solde" value="'.$search_new_solde.'">';
 	print '</td>';
 }
@@ -360,13 +360,20 @@ if (!empty($arrayfields['cpl.new_solde']['checked'])) print_liste_field_titre($a
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print '</tr>';
 
-// TODO: $i = 0;
-$i = 1;
 
-while ($i < min($num, $limit))
-{
-	//TODO: $obj = $db->fetch_object($resql);
+$j = 0;
+while ($j < ($page * $limit)) {
 	$obj = next($object->logs);
+	$j++;
+}
+
+$i = 0;
+while ($i < min($num, $limit)) {
+	//TODO: $obj = $db->fetch_object($resql);
+	$obj = current($object->logs);
+	if (empty($obj)) {
+		break;
+	}
 
 	$holidaylogstatic->id = $obj['rowid'];
 	$holidaylogstatic->date = $obj['date_action'];
@@ -444,6 +451,7 @@ while ($i < min($num, $limit))
 	print '</tr>';
 
 	$i++;
+	next($object->logs);
 }
 
 if ($log_holiday == '2') {

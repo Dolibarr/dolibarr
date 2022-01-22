@@ -621,8 +621,8 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 {
 	global $conf;
 
-	// Add a background image on document
-	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
+	// Add a background image on document only if good setup of const
+	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF) && ($conf->global->MAIN_USE_BACKGROUND_ON_PDF != '-1'))		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
 	{
 		$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
 		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
@@ -1250,7 +1250,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// ($textwasmodified is replaced with $textwasmodifiedorcompleted and we add completion).
 
 			// Set label
-			// If we want another language, and if label is same than default language (we did force it to a specific value), we can use translation.
+			// If we want another language, and if label is same than default language (we did not force it to a specific value), we can use translation.
 			//var_dump($outputlangs->defaultlang.' - '.$langs->defaultlang.' - '.$label.' - '.$prodser->label);exit;
 			$textwasmodified = ($label == $prodser->label);
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasmodified || $translatealsoifmodified)) {
@@ -1272,9 +1272,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasmodified || $translatealsoifmodified))  $note = $prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	} elseif ($object->element == 'facture' || $object->element == 'facturefourn') {
-		if ($object->type == $object::TYPE_DEPOSIT) {
-			$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
-		}
+		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
 	// Description short of product line
@@ -1929,7 +1927,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			if ($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)
 			{
 				$prev_progress = 0;
-				if (method_exists($object, 'get_prev_progress'))
+				if (method_exists($object->lines[$i], 'get_prev_progress'))
 				{
 			 		$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}

@@ -144,10 +144,10 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
-    						console.log("Call change on input '.$htmlname.' because of select definition of autocomplete select call on input#search_'.$htmlname.'");
+    						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							//console.log(ui.item);
+							console.log("Propagate before some properties retrieved into data-xxx properties");
 							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
 							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
 							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
@@ -155,6 +155,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
 
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+
     						// Disable an element
     						if (options.option_disabled) {
     							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)
@@ -170,6 +171,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     								$("#" + options.option_disabled).removeAttr("disabled");
     							}
     						}
+
     						if (options.disabled) {
     							console.log("Make action disabled on each "+options.option_disabled)
     							$.each(options.disabled, function(key, value) {
@@ -182,11 +184,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     								$("#" + value).show().trigger("show");
     							});
     						}
+
     						// Update an input
     						if (ui.item.update) {
     							console.log("Make action update on each ui.item.update")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
+									console.log("Set value "+value+" into #"+key);
     								$("#" + key).val(value).trigger("change");
     							});
     						}
@@ -202,7 +206,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 									}
     							});
     						}
-    						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
+    						console.log("ajax_autocompleter new value selected, we trigger change also on original component so on field #search_'.$htmlname.'");
 
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
@@ -227,7 +231,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
  *  This use the jQuery "autocomplete" function.
  *
  *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$fields				Other fields to autocomplete
+ *	@param	array	$fields				Array of key of fields to autocomplete
  *	@param	string	$url                URL for ajax request : /chemin/fichier.php
  *	@param	string	$option				More parameters on URL request
  *	@param	int		$minLength			Minimum number of chars to trigger that Ajax search
@@ -487,13 +491,13 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  * 	On/off button for constant
  *
  * 	@param	string	$code					Name of constant
- * 	@param	array	$input					Array of options. ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
- * 	@param	int		$entity					Entity to set. Use current entity if null.
+ * 	@param	array	$input					Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param	int		$entity					Entity. Current entity is used if null.
  *  @param	int		$revertonoff			Revert on/off
  *  @param	int		$strict					Use only "disabled" with delConstant and "enabled" with setConstant
  *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
  *  @param	string	$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin. Works for fontawesome picto only.
- *  @param	int		$forcenoajax			1=Force to use a ahref link instead of ajax code.
+ *  @param	int		$forcenoajax			1 = Force to use a ahref link instead of ajax code.
  * 	@return	string
  */
 function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0)
