@@ -1907,8 +1907,8 @@ class User extends CommonObject
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
 					// Si mot de passe saisi et different de celui en base
 					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass);
-					if (!$nbrowsaffected) {
-						$nbrowsaffected++;
+					if ($result < 0) {
+						return -5;
 					}
 				}
 			}
@@ -2147,6 +2147,7 @@ class User extends CommonObject
 					}
 				}
 			}
+
 
 			// Now, we encrypt the new password
 			$password_crypted = dol_hash($password);
