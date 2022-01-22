@@ -304,6 +304,9 @@ if (!defined('NOSESSION')) {
 // Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
 
+include_once 'AutoloaderByDav.php';
+\Symfony\Component\VarDumper\VarDumper::setHandler();
+
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
 if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 	$ok = 0;
