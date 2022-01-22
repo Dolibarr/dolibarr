@@ -34,6 +34,7 @@ $langs->loadLangs(array("admin", "companies", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');
 
 if (!$user->admin) {
 	accessforbidden();
