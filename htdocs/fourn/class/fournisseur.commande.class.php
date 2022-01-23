@@ -1360,29 +1360,35 @@ class CommandeFournisseur extends CommonOrder
 
 				// insert products details into database
 				for ($i = 0; $i < $num; $i++) {
-					$this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
+										$line = $this->lines[$i];
+					if (!is_object($line)) {
+						$line = (object) $line;
+					}
+
+
+					$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
 					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 					$result = $this->addline(
-						$this->lines[$i]->desc,
-						$this->lines[$i]->subprice,
-						$this->lines[$i]->qty,
-						$this->lines[$i]->tva_tx,
-						$this->lines[$i]->localtax1_tx,
-						$this->lines[$i]->localtax2_tx,
-						$this->lines[$i]->fk_product,
+						$line->desc,
+						$line->subprice,
+						$line->qty,
+						$line->tva_tx,
+						$line->localtax1_tx,
+						$line->localtax2_tx,
+						$line->fk_product,
 						0,
-						$this->lines[$i]->ref_fourn, // $this->lines[$i]->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
-						$this->lines[$i]->remise_percent,
+						$line->ref_fourn, // $line->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
+						$line->remise_percent,
 						'HT',
 						0,
-						$this->lines[$i]->product_type,
-						$this->lines[$i]->info_bits,
+						$line->product_type,
+						$line->info_bits,
 						false,
-						$this->lines[$i]->date_start,
-						$this->lines[$i]->date_end,
-						$this->lines[$i]->array_options,
-						$this->lines[$i]->fk_unit
+						$line->date_start,
+						$line->date_end,
+						$line->array_options,
+						$line->fk_unit
 						);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functionnal error
