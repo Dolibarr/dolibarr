@@ -40,8 +40,11 @@ RUN chmod +x /usr/local/bin/docker-run.sh
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 RUN echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so"' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.mode=debug' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.start_with_request=yes' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.client_host=host.docker.internal' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.client_port=9003' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.discover_client_host=true' >> ${PHP_INI_DIR}/php.ini
+#RUN echo 'xdebug.log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.idekey="netbeans-xdebug"' >> ${PHP_INI_DIR}/php.ini
 
 # set up sendmail config, to use maildev
