@@ -101,7 +101,7 @@ if ($idprod > 0) {
 			$prods_arbo=$producttmp->get_arbo_each_prod();
 			if (!empty($prods_arbo)) {
 				$price = 0;
-				foreach($prods_arbo as $child) {
+				foreach ($prods_arbo as $child) {
 					$sousprod = new Product($db);
 					$sousprod->fetch($child['id']);
 					$price += $sousprod->pmp;
@@ -114,15 +114,13 @@ if ($idprod > 0) {
 
 	// Add price for costprice (at end)
 	$price = $producttmp->cost_price;
- 	if (empty($price) && ! empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {
+	if (empty($price) && ! empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {
 		// get costprice for subproducts if any
 		$producttmp->get_sousproduits_arbo();
 		$prods_arbo=$producttmp->get_arbo_each_prod();
-		if (!empty($prods_arbo))
-		{
+		if (!empty($prods_arbo)) {
 			$price = 0;
-			foreach($prods_arbo as $child)
-			{
+			foreach ($prods_arbo as $child) {
 				$sousprod = new Product($db);
 				$sousprod->fetch($child['id']);
 				$price += $sousprod->cost_price;
