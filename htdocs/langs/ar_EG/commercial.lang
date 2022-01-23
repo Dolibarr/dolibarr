@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - commercial
+Customers=عملاء
+Prospects=فرص
+DeleteAction=حذف الحدث
+AddAction=عمل حدث
+AddAnAction=عمل حدث
+AddActionRendezVous=تحديد مقابلة
+ConfirmDeleteAction=هل انت واثق من حذف هذا الحدث؟
+CardAction=كارتة حدث
+TaskRDVWith=مقابلة مع %s
+ShowTask=إفتح المهمة
+ShowAction=إفتح الحدث
+ActionsReport=تقرير الاحداث
+ThirdPartiesOfSaleRepresentative=الجهات الخارجية و ممثلي المبيعات
+SaleRepresentativesOfThirdParty=ممثلي المبيعات عن الجهة الخارجية
+SalesRepresentative=ممثل المبيعات
+SalesRepresentatives=ممثلي المبيعات
+SalesRepresentativeFollowUp=ممثل المبيعات (متبعة)
+SalesRepresentativeSignature=ممثلي المبيعات (الامضاء)
+NoSalesRepresentativeAffected=لا يوجد ممثل مبيعات محدد
+ShowCustomer=إفتح العميل
+ShowProspect=إفتح الفرصة
+ListOfProspects=قائمة الفرص
+LastDoneTasks=أحدث %s خطوات مكتملة
+LastActionsToDo=أقدم %s خطوات غير مكتملة
+DraftPropals=مسودة العروض التجارية

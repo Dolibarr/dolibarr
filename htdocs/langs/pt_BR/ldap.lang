@@ -8,6 +8,6 @@ LDAPUsers=Usuário na base de dados LDAP
 LDAPFieldFirstSubscriptionAmount=Valor da Primeira Adesão
 LDAPFieldLastSubscriptionDate=Data da última adesão
 LDAPFieldLastSubscriptionAmount=Valor da última adesão
-LDAPFieldSkypeExample=Exemplo : nomeskype
 UserSynchronized=Usuário Sincronizado
 ErrorFailedToReadLDAP=Erro na leitura do anuário LDAP. Verificar a configuração do módulo LDAP e a acessibilidade do anuário.
+PasswordOfUserInLDAP=Senha do usuário no LDAP

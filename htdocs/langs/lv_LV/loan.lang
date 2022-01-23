@@ -23,6 +23,9 @@ AddLoan=Izveidot aizdevumu
 FinancialCommitment=Finanšu saistības
 InterestAmount=Interese
 CapitalRemain=Kapitāls paliek
+TermPaidAllreadyPaid = Šis termiņš jau ir samaksāts
+CantUseScheduleWithLoanStartedToPaid = Nevar izmantot plānotāju aizdevumam ar sāktu maksājumu
+CantModifyInterestIfScheduleIsUsed = Jūs nevarat mainīt interesi, ja izmantojat grafiku
 # Admin
 ConfigLoan=Configuration of the module loan
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Grāmatvedības konta kapitāls pēc noklusējuma

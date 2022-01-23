@@ -4,6 +4,8 @@ REM ---------------
 
 REM If no lock file, we call install process
 IF NOT EXIST dolibarr_documents\install.lock start "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/install/
+REM FOR EDGE IF NOT EXIST dolibarr_documents\install.lock start microsoft-edge:"http://localhost:WAMPAPACHEPORT/dolibarr/install/"
 
 REM If lock file exists, we call home page
 IF EXIST dolibarr_documents\install.lock start "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/
+REM FOR EDGE IF EXIST dolibarr_documents\install.lock start microsoft-edge:"http://localhost:WAMPAPACHEPORT/dolibarr/"

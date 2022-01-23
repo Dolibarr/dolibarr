@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 CREATE TABLE llx_pos_cash_fence(
@@ -33,6 +33,6 @@ CREATE TABLE llx_pos_cash_fence(
 	posnumber VARCHAR(30),
 	fk_user_creat integer,
 	fk_user_valid integer,
-	tms TIMESTAMP NOT NULL,
+	tms TIMESTAMP,
 	import_key VARCHAR(14)
 ) ENGINE=innodb;

@@ -1,0 +1,67 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = ຊັບສິນ
+NewAsset = ຊັບສິນໃ່
+AccountancyCodeAsset = ລະຫັດບັນຊີ (ຊັບສິນ)
+AccountancyCodeDepreciationAsset = ລະຫັດບັນຊີ (ບັນຊີຊັບສິນເສື່ອມລາຄາ)
+AccountancyCodeDepreciationExpense = ລະຫັດບັນຊີ (ບັນຊີລາຍຈ່າຍຄ່າເສື່ອມລາຄາ)
+NewAssetType=ປະເພດຊັບສິນໃ່
+AssetsTypeSetup=ການຕັ້ງຄ່າປະເພດຂອງຊັບສິນ
+AssetTypeModified=ປະເພດຊັບສິນຖືກແກ້ໄຂແລ້ວ
+AssetType=ປະເພດຊັບສິນ
+AssetsLines=ຊັບສິນ
+DeleteType=ລຶບ
+DeleteAnAssetType=ລຶບປະເພດຊັບສິນ
+ConfirmDeleteAssetType=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການລຶບປະເພດເນື້ອຫານີ້?
+ShowTypeCard=ສະແດງປະເພດ '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = ຊັບສິນ
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = ລາຍລະອຽດຊັບສິນ
+
+#
+# Admin page
+#
+AssetsSetup = ການຕັ້ງຄ່າຊັບສິນ
+Settings = ການຕັ້ງຄ່າ
+AssetsSetupPage = ໜ້າ ການຕັ້ງຄ່າຊັບສິນ
+ExtraFieldsAssetsType = ຄຸນສົມບັດເພີ່ມເຕີມ (ປະເພດເນື້ອຫາ)
+AssetsType=ປະເພດຊັບສິນ
+AssetsTypeId=id ປະເພດເນື້ອຫາ
+AssetsTypeLabel=ປ້າຍ ກຳ ກັບປະເພດຊັບສິນ
+AssetsTypes=ປະເພດຊັບສິນ
+
+#
+# Menu
+#
+MenuAssets = ຊັບສິນ
+MenuNewAsset = ຊັບສິນໃ່
+MenuTypeAssets = ປະເພດຊັບສິນ
+MenuListAssets = ລາຍການ
+MenuNewTypeAssets = ໃຫມ່
+MenuListTypeAssets = ລາຍການ
+
+#
+# Module
+#
+Asset=ຊັບສິນ
+NewAssetType=ປະເພດຊັບສິນໃ່
+NewAsset=ຊັບສິນໃ່
+ConfirmDeleteAsset=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບເນື້ອຫານີ້ອອກ?

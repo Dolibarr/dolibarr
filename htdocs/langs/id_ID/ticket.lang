@@ -1,0 +1,324 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Tiket
+Module56000Desc=Sistem tiket untuk masalah atau manajemen permintaan
+
+Permission56001=Lihat tiket
+Permission56002=Ubah tiket
+Permission56003=Hapus tiket
+Permission56004=Kelola tiket
+Permission56005=Lihat tiket dari semua pihak ketiga (tidak berlaku untuk pengguna eksternal, selalu terbatas pada pihak ketiga yang mereka andalkan)
+
+TicketDictType=Tiket - Jenis
+TicketDictCategory=Tiket - Grup
+TicketDictSeverity=Tiket - Tingkat Permasalahan
+TicketDictResolution=Tiket - Resolusi
+
+TicketTypeShortCOM=Pertanyaan komersial
+TicketTypeShortHELP=Permintaan bantuan fungsional
+TicketTypeShortISSUE=Masalah atau bug
+TicketTypeShortPROBLEM=Masalah
+TicketTypeShortREQUEST=Ubah atau tingkatkan permintaan
+TicketTypeShortPROJET=Proyek
+TicketTypeShortOTHER=Lainnya
+
+TicketSeverityShortLOW=Rendah
+TicketSeverityShortNORMAL=Normal
+TicketSeverityShortHIGH=Tinggi
+TicketSeverityShortBLOCKING=Kritis, Memblokir
+
+TicketCategoryShortOTHER=Lainnya
+
+ErrorBadEmailAddress=Bidang '%s' salah
+MenuTicketMyAssign=Tiket saya
+MenuTicketMyAssignNonClosed=Tiket terbuka saya
+MenuListNonClosed=Buka tiket
+
+TypeContact_ticket_internal_CONTRIBUTOR=Penyumbang
+TypeContact_ticket_internal_SUPPORTTEC=Pengguna yang ditugaskan
+TypeContact_ticket_external_SUPPORTCLI=Kontak pelanggan/pelacakan kejadian
+TypeContact_ticket_external_CONTRIBUTOR=Kontributor eksternal
+
+OriginEmail=Email Reporter
+Notify_TICKET_SENTBYMAIL=Kirim pesan tiket melalui email
+
+# Status
+Read=Baca
+Assigned=Ditugaskan
+InProgress=Sedang berlangsung
+NeedMoreInformation=Menunggu tanggapan reporter
+NeedMoreInformationShort=Menunggu balasan
+Answered=Dijawab
+Waiting=Menunggu
+SolvedClosed=Terpecahkan
+Deleted=Dihapus
+
+# Dict
+Type=Tipe
+Severity=Kerasnya
+TicketGroupIsPublic=Grup bersifat publik
+TicketGroupIsPublicDesc=Jika grup tiket bersifat publik, grup tersebut akan terlihat dalam formulir saat membuat tiket dari antarmuka publik
+
+# Email templates
+MailToSendTicketMessage=Untuk mengirim email dari pesan tiket
+
+#
+# Admin page
+#
+TicketSetup=Pengaturan modul tiket
+TicketSettings=Pengaturan
+TicketSetupPage=
+TicketPublicAccess=Antarmuka publik yang tidak memerlukan identifikasi tersedia di url berikut
+TicketSetupDictionaries=Jenis tiket, keparahan dan kode analitik dapat dikonfigurasi dari kamus
+TicketParamModule=Pengaturan variabel modul
+TicketParamMail=Penyiapan email
+TicketEmailNotificationFrom=Email pemberitahuan dari
+TicketEmailNotificationFromHelp=Digunakan untuk menjawab pesan tiket dengan contoh
+TicketEmailNotificationTo=Email pemberitahuan ke
+TicketEmailNotificationToHelp=Kirim pemberitahuan email ke alamat ini.
+TicketNewEmailBodyLabel=Pesan teks dikirim setelah membuat tiket
+TicketNewEmailBodyHelp=Teks yang ditentukan di sini akan dimasukkan ke dalam email yang mengkonfirmasikan pembuatan tiket baru dari antarmuka publik. Informasi tentang konsultasi tiket ditambahkan secara otomatis.
+TicketParamPublicInterface=Penyiapan antarmuka publik
+TicketsEmailMustExist=Membutuhkan alamat email yang ada untuk membuat tiket
+TicketsEmailMustExistHelp=Di antarmuka publik, alamat email harus sudah diisi dalam database untuk membuat tiket baru.
+PublicInterface=Antarmuka publik
+TicketUrlPublicInterfaceLabelAdmin=URL alternatif untuk antarmuka publik
+TicketUrlPublicInterfaceHelpAdmin=Dimungkinkan untuk mendefinisikan alias ke server web dan dengan demikian menyediakan antarmuka publik dengan URL lain (server harus bertindak sebagai proxy pada URL baru ini)
+TicketPublicInterfaceTextHomeLabelAdmin=Teks sambutan dari antarmuka publik
+TicketPublicInterfaceTextHome=Anda dapat membuat tiket dukungan atau melihat yang ada dari tiket pelacakan pengenalnya.
+TicketPublicInterfaceTextHomeHelpAdmin=Teks yang ditentukan di sini akan muncul di halaman muka antarmuka publik.
+TicketPublicInterfaceTopicLabelAdmin=Judul antarmuka
+TicketPublicInterfaceTopicHelp=Teks ini akan muncul sebagai judul antarmuka publik.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Bantu teks ke entri pesan
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Teks ini akan muncul di atas area input pesan pengguna.
+ExtraFieldsTicket=Atribut ekstra
+TicketCkEditorEmailNotActivated=Editor HTML tidak diaktifkan. Silakan masukkan FCKEDITOR_ENABLE_MAIL konten ke 1 untuk mendapatkannya.
+TicketsDisableEmail=Jangan mengirim email untuk pembuatan tiket atau merekam pesan
+TicketsDisableEmailHelp=Secara default, email dikirim ketika tiket atau pesan baru dibuat. Aktifkan opsi ini untuk menonaktifkan * semua * pemberitahuan email
+TicketsLogEnableEmail=Aktifkan log melalui email
+TicketsLogEnableEmailHelp=Pada setiap perubahan, email akan dikirim ** ke setiap kontak ** yang terkait dengan tiket.
+TicketParams=Params
+TicketsShowModuleLogo=Tampilkan logo modul di antarmuka publik
+TicketsShowModuleLogoHelp=Aktifkan opsi ini untuk menyembunyikan modul logo di halaman-halaman antarmuka publik
+TicketsShowCompanyLogo=Tampilkan logo perusahaan di antarmuka publik
+TicketsShowCompanyLogoHelp=Aktifkan opsi ini untuk menyembunyikan logo perusahaan utama di halaman-halaman antarmuka publik
+TicketsEmailAlsoSendToMainAddress=Kirim juga pemberitahuan ke alamat email utama
+TicketsEmailAlsoSendToMainAddressHelp=Aktifkan opsi ini untuk juga mengirim email ke alamat yang ditentukan dalam pengaturan "%s" (lihat tab "%s")
+TicketsLimitViewAssignedOnly=Batasi tampilan untuk tiket yang ditetapkan untuk pengguna saat ini (tidak berlaku untuk pengguna eksternal, selalu terbatas pada pihak ketiga tempat mereka bergantung)
+TicketsLimitViewAssignedOnlyHelp=Hanya tiket yang ditetapkan untuk pengguna saat ini yang akan terlihat. Tidak berlaku untuk pengguna dengan hak pengelolaan tiket.
+TicketsActivatePublicInterface=Aktifkan antarmuka publik
+TicketsActivatePublicInterfaceHelp=Antarmuka publik memungkinkan setiap pengunjung untuk membuat tiket.
+TicketsAutoAssignTicket=Secara otomatis menetapkan pengguna yang membuat tiket
+TicketsAutoAssignTicketHelp=Saat membuat tiket, pengguna dapat secara otomatis ditugaskan ke tiket.
+TicketNumberingModules=Modul penomoran tiket
+TicketsModelModule=Templat dokumen untuk tiket
+TicketNotifyTiersAtCreation=Beri tahu pihak ketiga saat membuat
+TicketsDisableCustomerEmail=Selalu nonaktifkan email saat tiket dibuat dari antarmuka publik
+TicketsPublicNotificationNewMessage=Kirim email ketika pesan/komentar baru ditambahkan ke tiket
+TicketsPublicNotificationNewMessageHelp=Kirim email ketika pesan baru ditambahkan dari antarmuka publik (ke pengguna yang ditetapkan atau email notifikasi ke (pembaruan) dan/atau email notifikasi ke)
+TicketPublicNotificationNewMessageDefaultEmail=Email pemberitahuan ke (perbarui)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Kirim email ke alamat ini untuk setiap pemberitahuan pesan baru jika tiket tidak memiliki pengguna yang ditetapkan atau jika pengguna tidak memiliki email yang dikenal.
+#
+# Index & list page
+#
+TicketsIndex=Area tiket
+TicketList=Daftar tiket
+TicketAssignedToMeInfos=Halaman ini menampilkan daftar tiket yang dibuat oleh atau ditugaskan untuk pengguna saat ini
+NoTicketsFound=Tidak ada tiket yang ditemukan
+NoUnreadTicketsFound=Tidak ditemukan tiket yang belum dibaca
+TicketViewAllTickets=Lihat semua tiket
+TicketViewNonClosedOnly=Lihat hanya tiket terbuka
+TicketStatByStatus=Tiket berdasarkan status
+OrderByDateAsc=Urutkan berdasarkan tanggal kenaikan
+OrderByDateDesc=Urutkan berdasarkan tanggal turun
+ShowAsConversation=Tampilkan sebagai daftar percakapan
+MessageListViewType=Tampilkan sebagai daftar tabel
+
+#
+# Ticket card
+#
+Ticket=Tiket
+TicketCard=Kartu tiket
+CreateTicket=Buat tiket
+EditTicket=Edit tiket
+TicketsManagement=Manajemen Tiket
+CreatedBy=Dibuat oleh
+NewTicket=Tiket Baru
+SubjectAnswerToTicket=Jawaban tiket
+TicketTypeRequest=Jenis permintaan
+TicketCategory=Kategorisasi tiket
+SeeTicket=Lihat tiket
+TicketMarkedAsRead=Tiket telah ditandai sebagai sudah dibaca
+TicketReadOn=Baca terus
+TicketCloseOn=Tanggal Penutupan
+MarkAsRead=Tandai tiket sebagai sudah dibaca
+TicketHistory=Sejarah tiket
+AssignUser=Tetapkan ke pengguna
+TicketAssigned=Tiket sekarang ditugaskan
+TicketChangeType=Ubah tipe
+TicketChangeCategory=Ubah kode analitik
+TicketChangeSeverity=Ubah keparahan
+TicketAddMessage=Tambahkan pesan
+AddMessage=Tambahkan pesan
+MessageSuccessfullyAdded=Tiket ditambahkan
+TicketMessageSuccessfullyAdded=Pesan berhasil ditambahkan
+TicketMessagesList=Daftar pesan
+NoMsgForThisTicket=Tidak ada pesan untuk tiket ini
+TicketProperties=Klasifikasi
+LatestNewTickets=Tiket terbaru %s terbaru (tidak dibaca)
+TicketSeverity=Kerasnya
+ShowTicket=Lihat tiket
+RelatedTickets=Tiket terkait
+TicketAddIntervention=Buat intervensi
+CloseTicket=Tutup|Pecahkan tiket
+AbandonTicket=Abaikan tiket
+CloseATicket=Tutup|Pecahkan tiket
+ConfirmCloseAticket=Konfirmasikan penutupan tiket
+ConfirmAbandonTicket=Apakah Anda mengkonfirmasi penutupan tiket dengan status 'Abandonned'
+ConfirmDeleteTicket=Harap konfirmasi penghapusan tiket
+TicketDeletedSuccess=Tiket dihapus dengan sukses
+TicketMarkedAsClosed=Tiket ditandai sebagai ditutup
+TicketDurationAuto=Durasi yang dihitung
+TicketDurationAutoInfos=Durasi dihitung secara otomatis dari intervensi terkait
+TicketUpdated=Tiket diperbarui
+SendMessageByEmail=Kirim pesan melalui email
+TicketNewMessage=Pesan baru
+ErrorMailRecipientIsEmptyForSendTicketMessage=Penerima kosong. Tidak ada email yang dikirim
+TicketGoIntoContactTab=Buka tab "Kontak" untuk memilihnya
+TicketMessageMailIntro=pengantar
+TicketMessageMailIntroHelp=Teks ini hanya ditambahkan di awal email dan tidak akan disimpan.
+TicketMessageMailIntroLabelAdmin=Pengantar pesan saat mengirim email
+TicketMessageMailIntroText=Halo,<br>Respons baru terkirim pada tiket yang Anda hubungi. Ini pesannya:<br>
+TicketMessageMailIntroHelpAdmin=Teks ini akan dimasukkan sebelum teks respons terhadap tiket.
+TicketMessageMailSignature=Tanda tangan
+TicketMessageMailSignatureHelp=Teks ini hanya ditambahkan di akhir email dan tidak akan disimpan.
+TicketMessageMailSignatureText= <p> Hormat kami, </p> <p> - </p>
+TicketMessageMailSignatureLabelAdmin=Tanda tangan email respons
+TicketMessageMailSignatureHelpAdmin=Teks ini akan dimasukkan setelah pesan respons.
+TicketMessageHelp=Hanya teks ini yang akan disimpan dalam daftar pesan di kartu tiket.
+TicketMessageSubstitutionReplacedByGenericValues=Variabel substitusi digantikan oleh nilai generik.
+TimeElapsedSince=Waktu berlalu sejak itu
+TicketTimeToRead=Waktu berlalu sebelum membaca
+TicketTimeElapsedBeforeSince=Waktu berlalu sebelum / sejak
+TicketContacts=Tiket kontak
+TicketDocumentsLinked=Dokumen terkait dengan tiket
+ConfirmReOpenTicket=Konfirmasikan kembali tiket ini?
+TicketMessageMailIntroAutoNewPublicMessage=Pesan baru telah diposting di tiket dengan subjek %s:
+TicketAssignedToYou=Tiket ditugaskan
+TicketAssignedEmailBody=Anda telah diberi tiket # %s oleh %s
+MarkMessageAsPrivate=Tandai pesan sebagai pribadi
+TicketMessagePrivateHelp=Pesan ini tidak akan ditampilkan kepada pengguna eksternal
+TicketEmailOriginIssuer=Penerbit asal tiket
+InitialMessage=Pesan Awal
+LinkToAContract=Tautan ke sebuah kontrak
+TicketPleaseSelectAContract=Pilih satu kontrak
+UnableToCreateInterIfNoSocid=Tidak dapat membuat intervensi saat tidak ada pihak ketiga yang ditentukan
+TicketMailExchanges=Pertukaran Surat
+TicketInitialMessageModified=Pesan awal diubah
+TicketMessageSuccesfullyUpdated=Pesan berhasil diperbarui
+TicketChangeStatus=Merubah status
+TicketConfirmChangeStatus=Konfirmasikan perubahan status: %s?
+TicketLogStatusChanged=Status berubah: %s menjadi %s
+TicketNotNotifyTiersAtCreate=Tidak memberi tahu perusahaan saat membuat
+Unread=Belum dibaca
+TicketNotCreatedFromPublicInterface=Tidak tersedia. Tiket tidak dibuat dari antarmuka publik.
+ErrorTicketRefRequired=Diperlukan nama referensi tiket
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Tiket %s dibaca oleh %s
+NoLogForThisTicket=Belum ada log untuk tiket ini
+TicketLogAssignedTo=Tiket %s ditugaskan untuk %s
+TicketLogPropertyChanged=Tiket %s dimodifikasi: klasifikasi dari %s ke %s
+TicketLogClosedBy=Tiket %s ditutup oleh %s
+TicketLogReopen=Tiket %s dibuka kembali
+
+#
+# Public pages
+#
+TicketSystem=Sistem tiket
+ShowListTicketWithTrackId=Tampilkan daftar tiket dari ID trek
+ShowTicketWithTrackId=Tampilkan tiket dari track ID
+TicketPublicDesc=Anda dapat membuat tiket dukungan atau memeriksa dari ID yang ada.
+YourTicketSuccessfullySaved=Tiket telah berhasil disimpan!
+MesgInfosPublicTicketCreatedWithTrackId=Tiket baru telah dibuat dengan ID %s dan Ref %s.
+PleaseRememberThisId=Harap simpan nomor pelacakan yang mungkin kami tanyakan nanti.
+TicketNewEmailSubject=Konfirmasi pembuatan tiket - Ref %s (ID tiket publik %s)
+TicketNewEmailSubjectCustomer=Tiket dukungan baru
+TicketNewEmailBody=Ini adalah email otomatis untuk mengonfirmasi bahwa Anda telah mendaftarkan tiket baru.
+TicketNewEmailBodyCustomer=Ini adalah email otomatis untuk mengonfirmasi bahwa tiket baru baru saja dibuat ke akun Anda.
+TicketNewEmailBodyInfosTicket=Informasi untuk memantau tiket
+TicketNewEmailBodyInfosTrackId=Nomor pelacakan tiket: %s
+TicketNewEmailBodyInfosTrackUrl=Anda dapat melihat progres tiket dengan mengklik tautan di atas.
+TicketNewEmailBodyInfosTrackUrlCustomer=Anda dapat melihat kemajuan tiket di antarmuka spesifik dengan mengklik tautan berikut
+TicketEmailPleaseDoNotReplyToThisEmail=Tolong jangan balas langsung ke email ini! Gunakan tautan untuk membalas ke antarmuka.
+TicketPublicInfoCreateTicket=Formulir ini memungkinkan Anda untuk merekam tiket dukungan dalam sistem manajemen kami.
+TicketPublicPleaseBeAccuratelyDescribe=Tolong jelaskan masalahnya secara akurat. Berikan sebanyak mungkin informasi untuk memungkinkan kami mengidentifikasi permintaan Anda dengan benar.
+TicketPublicMsgViewLogIn=Silakan masukkan ID pelacakan tiket
+TicketTrackId=ID Pelacakan Publik
+OneOfTicketTrackId=Salah satu ID pelacakan Anda
+ErrorTicketNotFound=Tiket dengan ID pelacakan %s tidak ditemukan!
+Subject=Subyek
+ViewTicket=Lihat tiket
+ViewMyTicketList=Lihat daftar tiket saya
+ErrorEmailMustExistToCreateTicket=Kesalahan: alamat email tidak ditemukan di basis data kami
+TicketNewEmailSubjectAdmin=Tiket baru dibuat - Ref %s (ID tiket publik %s)
+TicketNewEmailBodyAdmin= <p> Tiket baru saja dibuat dengan ID # %s, lihat informasi: a0679c9a6a6a6d43z0
+SeeThisTicketIntomanagementInterface=Lihat tiket di antarmuka manajemen
+TicketPublicInterfaceForbidden=Antarmuka publik untuk tiket tidak diaktifkan
+ErrorEmailOrTrackingInvalid=Nilai buruk untuk ID pelacakan atau email
+OldUser=Pengguna lama
+NewUser=Pengguna Baru
+NumberOfTicketsByMonth=Jumlah tiket per bulan
+NbOfTickets=Jumlah tiket
+# notifications
+TicketNotificationEmailSubject=Tiket %s diperbarui
+TicketNotificationEmailBody=Ini adalah pesan otomatis untuk memberi tahu Anda bahwa tiket %s baru saja diperbarui
+TicketNotificationRecipient=Penerima pemberitahuan
+TicketNotificationLogMessage=Pesan log
+TicketNotificationEmailBodyInfosTrackUrlinternal=Lihat tiket ke antarmuka
+TicketNotificationNumberEmailSent=Email pemberitahuan terkirim: %s
+
+ActionsOnTicket=Perihal di tiket
+
+#
+# Boxes
+#
+BoxLastTicket=Tiket terbaru dibuat
+BoxLastTicketDescription=Tiket dibuat %s terbaru
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Tidak ada tiket yang belum dibaca baru-baru ini
+BoxLastModifiedTicket=Tiket modifikasi terbaru
+BoxLastModifiedTicketDescription=Tiket termodifikasi %s terbaru
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Tidak ada tiket yang dimodifikasi baru-baru ini
+BoxTicketType=Distribusi tiket terbuka berdasarkan jenis
+BoxTicketSeverity=Jumlah tiket terbuka berdasarkan tingkat keparahan
+BoxNoTicketSeverity=Tidak ada tiket yang dibuka
+BoxTicketLastXDays=Jumlah tiket baru menurut hari terakhir %s hari
+BoxTicketLastXDayswidget = Jumlah tiket baru menurut hari X hari terakhir
+BoxNoTicketLastXDays=Tidak ada tiket baru dalam %s hari terakhir
+BoxNumberOfTicketByDay=Jumlah tiket baru per hari
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Tiket dibuat hari ini
+TicketClosedToday=Tiket ditutup hari ini
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

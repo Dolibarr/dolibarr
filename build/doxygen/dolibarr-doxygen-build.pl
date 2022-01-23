@@ -36,7 +36,7 @@ $SOURCE="../..";
 $result = open( IN, "< " . $SOURCE . "/htdocs/filefunc.inc.php" );
 if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
 while (<IN>) {
-	if ( $_ =~ /define\('DOL_VERSION','([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
+	if ( $_ =~ /define\('DOL_VERSION', '([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
 }
 close IN;
 ($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);

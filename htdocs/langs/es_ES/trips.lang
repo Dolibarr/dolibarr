@@ -33,7 +33,7 @@ ExpenseReportCanceledMessage=El gasto %s ha sido cancelado.<br>- Usuario: %s<br>
 ExpenseReportPaid=Un gasto ha sido pagado
 ExpenseReportPaidMessage=El gasto %s ha sido pagado.<br>- Usuario: %s<br>- Pagado por: %s<br>Haga clic aquí ver el gasto: %s
 TripId=Id de gasto
-AnyOtherInThisListCanValidate=Persona a informar para la validación
+AnyOtherInThisListCanValidate=Persona a informar para validar la solicitud.
 TripSociete=Información de la empresa
 TripNDF=Información del gasto
 PDFStandardExpenseReports=Plantilla estandard para generar un documento de gasto
@@ -73,28 +73,23 @@ EX_PAR_VP=Estacionamiento
 EX_CAM_VP=Mantenimiento y reparaciones
 DefaultCategoryCar=Modo de transporte predeterminado
 DefaultRangeNumber=Número de rango predeterminado
-
+UploadANewFileNow=Subir un nuevo documento ahora
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, no se ha definido regla de numeración del informe de gastos en la configuración del módulo 'Informe de gastos'
 ErrorDoubleDeclaration=Ha declarado otro gasto en un rango similar de fechas.
 AucuneLigne=No hay gastos declarados
-
 ModePaiement=Modo de pago
-
 VALIDATOR=Usuario responsable para aprobación
 VALIDOR=Aprobado por
 AUTHOR=Registrado por
 AUTHORPAIEMENT=Pagado por
 REFUSEUR=Denegado por
 CANCEL_USER=Eliminado por
-
 MOTIF_REFUS=Razón
 MOTIF_CANCEL=Razón
-
 DATE_REFUS=Fecha denegación
 DATE_SAVE=Fecha de validación
 DATE_CANCEL=Fecha cancelación
 DATE_PAIEMENT=Fecha de pago
-BROUILLONNER=Reabrir
 ExpenseReportRef=Ref. informe de gasto
 ValidateAndSubmit=Validar y enviar para aprobar
 ValidatedWaitingApproval=Validado (en espera de aprobación)
@@ -113,12 +108,11 @@ NoTripsToExportCSV=Sin gastos a exportar para este periodo.
 ExpenseReportPayment=Informe de pagos de gastos
 ExpenseReportsToApprove=Informe de gastos a aprobar
 ExpenseReportsToPay=Informe de gastos a pagar
-CloneExpenseReport=Copiar informe de gastos
 ConfirmCloneExpenseReport=¿Está seguro de querer eliminar este informe de gastos?
-ExpenseReportsIk=Índice de kilometraje de informes de gastos
+ExpenseReportsIk=Configuración de cargos por kilometraje
 ExpenseReportsRules=Reglas del informe de gastos
 ExpenseReportIkDesc=Se puede modificar el cálculo de los kilómetros de gasto por categoría y por rango que se definen previamente. <b>d</b> es la distancia en kilómetros
-ExpenseReportRulesDesc=Puede crear o actualizar cualquier regla de cálculo. Esta parte se utilizará cuando el usuario cree un nuevo informe de gastos
+ExpenseReportRulesDesc=You can define max amount rules for expense reports. These rules will be applied when a new expense is added to an expense report
 expenseReportOffset=Decálogo
 expenseReportCoef=Coeficiente
 expenseReportTotalForFive=Ejemplo con <u>d</u>= 5
@@ -133,25 +127,24 @@ ExpenseReportDomain=Dominio a aplicar
 ExpenseReportLimitOn=Límite en
 ExpenseReportDateStart=Fecha inicio
 ExpenseReportDateEnd=Fecha fin
-ExpenseReportLimitAmount=Importe límite
-ExpenseReportRestrictive=Restrictivo
+ExpenseReportLimitAmount=Max amount
+ExpenseReportRestrictive=Exceeding forbidden
 AllExpenseReport=Todo tipo de informe de gastos
 OnExpense=Línea de gastos
 ExpenseReportRuleSave=Se ha guardado la regla de informe de gastos
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Rango %d
-
-ExpenseReportConstraintViolationError=Id de infracción [%s]: %s es superior a %s %s
+ExpenseReportConstraintViolationError=Max amount exceeded (rule %s): %s is higher than %s (Exceeding forbidden)
 byEX_DAY=por día (limitación a %s)
 byEX_MON=por mes (limitación a %s)
 byEX_YEA=por año (limitación a %s)
 byEX_EXP=por línea (limitación a %s)
-ExpenseReportConstraintViolationWarning=Id de infracción [%s]: %s es superior a %s %s
+ExpenseReportConstraintViolationWarning=Max amount exceeded (rule %s): %s is higher than %s (Exceeding authorized)
 nolimitbyEX_DAY=por día (sin limitación)
 nolimitbyEX_MON=por mes (sin limitación)
 nolimitbyEX_YEA=por año (sin limitación)
 nolimitbyEX_EXP=por línea (sin limitación)
-
-CarCategory=Categoría del coche
+CarCategory=Categoría de vehículo
 ExpenseRangeOffset=Importe compensado: %s
 RangeIk=Rango de kilometraje
+AttachTheNewLineToTheDocument=Adjuntar la línea a un documento subido

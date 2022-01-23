@@ -12,8 +12,8 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+* or see https://www.gnu.org/
 */
 
 /**
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class TicketTest extends PHPUnit_Framework_TestCase
+class TicketTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -74,7 +74,11 @@ class TicketTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
 	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
@@ -83,7 +87,11 @@ class TicketTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
 	}
 
-	// tear down after class
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
 	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
@@ -298,7 +306,7 @@ class TicketTest extends PHPUnit_Framework_TestCase
 		$user_id_to_assign = 1;
 
 		$result=$localobject->assignUser($user, $user_id_to_assign);
-        ;
+		;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);
@@ -349,7 +357,7 @@ class TicketTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=$localobject->close();
+		$result=$localobject->close($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);

@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ============================================================================
 
 CREATE TABLE llx_opensurvey_sondage (
@@ -29,6 +29,6 @@ CREATE TABLE llx_opensurvey_sondage (
 	mailsonde tinyint NOT NULL DEFAULT 0,
 	allow_comments tinyint NOT NULL DEFAULT 1,
 	allow_spy tinyint NOT NULL DEFAULT 1,
-	tms TIMESTAMP,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	sujet TEXT									-- Not filled if format = 'F'. Question are into table llx_opensurvey_formquestions
-) ENGINE=InnoDB;
+) ENGINE=innodb;

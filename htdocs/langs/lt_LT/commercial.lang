@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Komercinis
-CommercialArea=Komercinė sritis
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Klientas
 Customers=Klientai
 Prospect=Planas
@@ -59,7 +59,7 @@ ActionAC_FAC=Siųsti kliento sąskaitą-faktūrą paštu
 ActionAC_REL=Siųsti kliento sąskaitą-faktūrą paštu (priminimas)
 ActionAC_CLO=Uždaryti
 ActionAC_EMAILING=Siųsti masinį e-laišką
-ActionAC_COM=Siųsti kliento užsakymą paštu
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Siųsti pakrovimo dokumentus paštu
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

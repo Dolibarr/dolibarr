@@ -5,3 +5,4 @@ REM ---------------------------
 REM Go to help center page
 echo Please wait...
 start "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/support/
+REM FOR EDGE start microsoft-edge:"http://localhost:WAMPAPACHEPORT/dolibarr/support/"

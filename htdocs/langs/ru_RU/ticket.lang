@@ -1,0 +1,324 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Тикеты
+Module56000Desc=Система тикетов для создания или управления запросами
+
+Permission56001=Смотреть тикеты
+Permission56002=Изменить тикеты
+Permission56003=Удалить тикеты
+Permission56004=Управлять тикетами
+Permission56005=Просмотр тикетов всех третьих лиц (не действует для внешних пользователей, всегда ограничивается третьей стороной, от которой они зависят)
+
+TicketDictType=Тикет - Типы
+TicketDictCategory=Тикет - Группы
+TicketDictSeverity=Тикет - Степени серьезности
+TicketDictResolution=Тикет - Решение
+
+TicketTypeShortCOM=Коммерческий вопрос
+TicketTypeShortHELP=Запрос на функциональную помощь
+TicketTypeShortISSUE=Ошибка
+TicketTypeShortPROBLEM=Проблема
+TicketTypeShortREQUEST=Запрос на изменение или расширение
+TicketTypeShortPROJET=Проект
+TicketTypeShortOTHER=Другое
+
+TicketSeverityShortLOW=Низкий
+TicketSeverityShortNORMAL=Обычный
+TicketSeverityShortHIGH=Высокий
+TicketSeverityShortBLOCKING=Критический, Блокирующий
+
+TicketCategoryShortOTHER=Другое
+
+ErrorBadEmailAddress=Поле '%s' неверно
+MenuTicketMyAssign=Мои тикеты
+MenuTicketMyAssignNonClosed=Мои открытые тикеты
+MenuListNonClosed=Открытые тикеты
+
+TypeContact_ticket_internal_CONTRIBUTOR=Автор
+TypeContact_ticket_internal_SUPPORTTEC=Ответственный
+TypeContact_ticket_external_SUPPORTCLI=Контакты с клиентами / отслеживание инцидентов
+TypeContact_ticket_external_CONTRIBUTOR=Внешний участник
+
+OriginEmail=Электронная почта репортера
+Notify_TICKET_SENTBYMAIL=Отправить сообщение тикета по электронной почте
+
+# Status
+Read=Читать
+Assigned=Ответственный
+InProgress=В процессе
+NeedMoreInformation=Жду отзывов репортера
+NeedMoreInformationShort=Жду отзывов
+Answered=Ответил
+Waiting=Ожидание
+SolvedClosed=Решено
+Deleted=Удалено
+
+# Dict
+Type=Тип
+Severity=Строгость
+TicketGroupIsPublic=Группа публичная
+TicketGroupIsPublicDesc=Если группа тикетов является общедоступной, она будет видна в форме при создании заявки из общедоступного интерфейса.
+
+# Email templates
+MailToSendTicketMessage=Чтобы отправить электронное письмо из сообщения тикета
+
+#
+# Admin page
+#
+TicketSetup=Настройка модуля тикетов
+TicketSettings=Настройки
+TicketSetupPage=
+TicketPublicAccess=Публичный интерфейс, не требующий идентификации, доступен по следующему URL-адресу
+TicketSetupDictionaries=Тип тикета, серьезность и аналитические коды настраиваются из словарей.
+TicketParamModule=Настройка переменных модуля
+TicketParamMail=Настройка электронной почты
+TicketEmailNotificationFrom=Уведомление по электронной почте от
+TicketEmailNotificationFromHelp=Используется в ответе на тикет-сообщение на примере
+TicketEmailNotificationTo=Уведомления по электронной почте на адрес
+TicketEmailNotificationToHelp=Отправлять уведомления по электронной почте на этот адрес.
+TicketNewEmailBodyLabel=Текстовое сообщение, отправленное после создания тикета
+TicketNewEmailBodyHelp=Указанный здесь текст будет вставлен в электронное письмо, подтверждающее создание нового тикета из общедоступного интерфейса. Информация о просмотре тикета добавляется автоматически.
+TicketParamPublicInterface=Настройка публичного интерфейса
+TicketsEmailMustExist=Требовать существующий адрес электронной почты для создания тикета
+TicketsEmailMustExistHelp=В публичном интерфейсе адрес электронной почты уже должен быть заполнен в базе данных для создания нового тикета.
+PublicInterface=Публичный интерфейс
+TicketUrlPublicInterfaceLabelAdmin=Альтернативный URL для публичного интерфейса
+TicketUrlPublicInterfaceHelpAdmin=Можно определить псевдоним для веб-сервера и, таким образом, сделать доступным публичный интерфейс с другим URL-адресом (сервер должен действовать как прокси для этого нового URL-адреса)
+TicketPublicInterfaceTextHomeLabelAdmin=Приветственный текст публичного интерфейса
+TicketPublicInterfaceTextHome=Вы можете создать тикет в службу поддержки или просмотреть существующие по его идентификатору, отслеживающему тикет.
+TicketPublicInterfaceTextHomeHelpAdmin=Определенный здесь текст появится на домашней странице общедоступного интерфейса.
+TicketPublicInterfaceTopicLabelAdmin=Название интерфейса
+TicketPublicInterfaceTopicHelp=Этот текст появится как заголовок общедоступного интерфейса.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Текст справки к записи сообщения
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Этот текст появится над областью ввода сообщения пользователя.
+ExtraFieldsTicket=Дополнительные атрибуты
+TicketCkEditorEmailNotActivated=Редактор HTML не активирован. Чтобы получить его, установите для содержимого FCKEDITOR_ENABLE_MAIL значение 1.
+TicketsDisableEmail=Не отправлять электронные письма для создания тикетов или записи сообщений.
+TicketsDisableEmailHelp=По умолчанию электронные письма отправляются при создании новых тикетов или сообщений. Включите эту опцию, чтобы отключить *все* уведомления по электронной почте
+TicketsLogEnableEmail=Включить журнал по электронной почте
+TicketsLogEnableEmailHelp=При каждом изменении **каждому контакту**, связанному с тикетом, будет отправляться электронное письмо.
+TicketParams=Параметры
+TicketsShowModuleLogo=Отображение логотипа модуля в публичном интерфейсе
+TicketsShowModuleLogoHelp=Включите эту опцию, чтобы скрыть модуль логотипа на страницах публичного интерфейса.
+TicketsShowCompanyLogo=Отображение логотипа компании в публичном интерфейсе
+TicketsShowCompanyLogoHelp=Включите эту опцию, чтобы скрыть логотип основной компании на страницах публичного интерфейса.
+TicketsEmailAlsoSendToMainAddress=Также отправьте уведомление на основной адрес электронной почты
+TicketsEmailAlsoSendToMainAddressHelp=Включите эту опцию, чтобы также отправлять электронную почту на адрес, указанный в настройках "%s" (см. Вкладку "%s")
+TicketsLimitViewAssignedOnly=Ограничить отображение тикетов, назначенных текущему пользователю (не действует для внешних пользователей, всегда ограничивается третьей стороной, от которой они зависят)
+TicketsLimitViewAssignedOnlyHelp=Будут видны только тикеты, назначенные текущему пользователю. Не распространяется на пользователя с правами управления тикетами.
+TicketsActivatePublicInterface=Активировать публичный интерфейс
+TicketsActivatePublicInterfaceHelp=Публичный интерфейс позволяет любому посетителю создавать тикеты.
+TicketsAutoAssignTicket=Автоматически назначить пользователя, создавшего тикет
+TicketsAutoAssignTicketHelp=При создании тикета, пользователю может быть автоматически закреплен за ним
+TicketNumberingModules=Модуль нумерации тикетов
+TicketsModelModule=Шаблоны документов для тикетов
+TicketNotifyTiersAtCreation=Уведомить третью сторону при создании
+TicketsDisableCustomerEmail=Всегда отключайте электронную почту, когда тикет создается из публичного интерфейса.
+TicketsPublicNotificationNewMessage=Отправлять электронное письмо(а), когда в тикет добавляется новое сообщение/комментарий
+TicketsPublicNotificationNewMessageHelp=Отправлять электронное письмо(а), когда новое сообщение добавляется из публичного интерфейса (назначенному пользователю или электронное письмо с уведомлениями для (обновить) и/или электронное письмо с уведомлениями для)
+TicketPublicNotificationNewMessageDefaultEmail=Уведомления по электронной почте на (обновить)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Отправляйте электронное письмо на этот адрес для каждого уведомления о новом сообщении, если для тикета не назначен пользователь или если у пользователя нет известного адреса электронной почты.
+#
+# Index & list page
+#
+TicketsIndex=Тикеты
+TicketList=Список тикетов
+TicketAssignedToMeInfos=На этой странице отображается список тикетов, созданный или назначенный текущему пользователю.
+NoTicketsFound=Тикетов не найдено
+NoUnreadTicketsFound=Непрочитанных тикетов не найдено
+TicketViewAllTickets=Посмотреть все тикеты
+TicketViewNonClosedOnly=Просмотреть только открытые тикеты
+TicketStatByStatus=Тикеты по статусу
+OrderByDateAsc=Сортировать по дате по возрастанию
+OrderByDateDesc=Сортировать по дате по убыванию
+ShowAsConversation=Показать как список бесед
+MessageListViewType=Показать как список таблиц
+
+#
+# Ticket card
+#
+Ticket=Тикет
+TicketCard=Тикет
+CreateTicket=Создать тикет
+EditTicket=Изменить тикет
+TicketsManagement=Управление тикетами
+CreatedBy=Создано
+NewTicket=Новый тикет
+SubjectAnswerToTicket=Ответ на тикет
+TicketTypeRequest=Тип запроса
+TicketCategory=Категоризация тикетов
+SeeTicket=Посмотреть тикет
+TicketMarkedAsRead=Тикет отмечен как прочитанный
+TicketReadOn=Читать дальше
+TicketCloseOn=Дата закрытия
+MarkAsRead=Отметить тикет как прочитанный
+TicketHistory=История тикетов
+AssignUser=Назначить пользователю
+TicketAssigned=Тикет назначен
+TicketChangeType=Изменить тип
+TicketChangeCategory=Изменить аналитический код
+TicketChangeSeverity=Изменить серьезность
+TicketAddMessage=Добавить сообщение
+AddMessage=Добавить сообщение
+MessageSuccessfullyAdded=Тикет добавлен
+TicketMessageSuccessfullyAdded=Сообщение успешно добавлено
+TicketMessagesList=Список сообщений
+NoMsgForThisTicket=Нет сообщения для этого тикета
+TicketProperties=Классификация
+LatestNewTickets=Последние самые новые тикеты %s (не прочитаны)
+TicketSeverity=Строгость
+ShowTicket=Посмотреть тикет
+RelatedTickets=Связанные тикеты
+TicketAddIntervention=СОздать посредничество
+CloseTicket=Закрыть|Решить тикет
+AbandonTicket=Отказаться от тикета
+CloseATicket=Закрыть|Решить тикет
+ConfirmCloseAticket=Подтвердить закрытие тикета
+ConfirmAbandonTicket=Подтверждаете ли вы закрытие тикета до статуса "Заброшенный"
+ConfirmDeleteTicket=Подтвердите удаление тикета
+TicketDeletedSuccess=Тикет успешно удален
+TicketMarkedAsClosed=Тикет отмечен как закрытый
+TicketDurationAuto=Расчетная продолжительность
+TicketDurationAutoInfos=Продолжительность рассчитывается автоматически на основе связанного посредничества
+TicketUpdated=Тикет обновлен
+SendMessageByEmail=Отправить сообщение по электронной почте
+TicketNewMessage=Новое сообщение
+ErrorMailRecipientIsEmptyForSendTicketMessage=Получатель пуст. Электронная почта не отправляется
+TicketGoIntoContactTab=Пожалуйста, перейдите на вкладку «Контакты», чтобы выбрать их.
+TicketMessageMailIntro=Вступление
+TicketMessageMailIntroHelp=Этот текст добавляется только в начале письма и не сохраняется.
+TicketMessageMailIntroLabelAdmin=Знакомство с сообщением при отправке электронной почты
+TicketMessageMailIntroText=Привет,<br>На тикет, с которым вы связаны, был отправлен новый ответ. Вот сообщение:<br>
+TicketMessageMailIntroHelpAdmin=Этот текст будет вставлен перед текстом ответа на тикет.
+TicketMessageMailSignature=Подпись
+TicketMessageMailSignatureHelp=Этот текст добавляется только в конце письма и не сохраняется.
+TicketMessageMailSignatureText=<p>С уважением,</p><p>--</p>
+TicketMessageMailSignatureLabelAdmin=Подпись ответного электронного письма
+TicketMessageMailSignatureHelpAdmin=Этот текст будет вставлен после ответного сообщения.
+TicketMessageHelp=Только этот текст будет сохранен в списке сообщений в карточке тикета.
+TicketMessageSubstitutionReplacedByGenericValues=Подстановки переменных заменяются общими значениями.
+TimeElapsedSince=Прошло время с
+TicketTimeToRead=Время, прошедшее до прочтения
+TicketTimeElapsedBeforeSince=Время, прошедшее до / с
+TicketContacts=Контакты тикета
+TicketDocumentsLinked=Документы, привязанные к тикету
+ConfirmReOpenTicket=Подтвердить повторное открытие этого тикета?
+TicketMessageMailIntroAutoNewPublicMessage=В тикете появилось новое сообщение с темой %s:
+TicketAssignedToYou=Тикет назначен
+TicketAssignedEmailBody=Вам был присвоен тикет #%s пользователем %s
+MarkMessageAsPrivate=Отметить сообщение как личное
+TicketMessagePrivateHelp=Это сообщение не будет отображаться для внешних пользователей
+TicketEmailOriginIssuer=Издатель при оформлении тикетов
+InitialMessage=Начальное сообщение
+LinkToAContract=Ссылка на договор
+TicketPleaseSelectAContract=Выберите договор
+UnableToCreateInterIfNoSocid=Невозможно создать посредничество, если третья сторона не определена
+TicketMailExchanges=Почтовый обмен
+TicketInitialMessageModified=Первоначальное сообщение изменено
+TicketMessageSuccesfullyUpdated=Сообщение успешно обновлено
+TicketChangeStatus=Изменить статус
+TicketConfirmChangeStatus=Подтвердите изменение статуса: %s?
+TicketLogStatusChanged=Статус изменен: с %s на %s
+TicketNotNotifyTiersAtCreate=Не уведомлять компанию при создании
+Unread=Непрочитанный
+TicketNotCreatedFromPublicInterface=Недоступен. Тикет не был создан из публичного интерфейса.
+ErrorTicketRefRequired=Требуется справочное название тикета.
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Тикет %s, прочитан пользователем %s
+NoLogForThisTicket=Для этого тикета еще нет журнала
+TicketLogAssignedTo=Тикет %s назначен на %s
+TicketLogPropertyChanged=Тикет %s изменен: классификация с %s на %s
+TicketLogClosedBy=Тикет %s закрыт пользователем %s
+TicketLogReopen=Тикет %s открывается повторно
+
+#
+# Public pages
+#
+TicketSystem=Система тикетов
+ShowListTicketWithTrackId=Показать список тикетов из ID трека
+ShowTicketWithTrackId=Показать тикет по ID
+TicketPublicDesc=Вы можете создать тикет в службу поддержки или проверить имеющийся по ID.
+YourTicketSuccessfullySaved=Тикет успешно сохранен!
+MesgInfosPublicTicketCreatedWithTrackId=Был создан новый тикет с ID %s и ссылкой %s.
+PleaseRememberThisId=Пожалуйста, сохраните трек-номер для отслеживания, который мы можем спросить у вас позже.
+TicketNewEmailSubject=Подтверждение создания тикета - ссылка %s (публичный ID тикета %s)
+TicketNewEmailSubjectCustomer=Новый тикет в службу поддержки
+TicketNewEmailBody=Это автоматическое электронное письмо, подтверждающее, что вы зарегистрировали новый тикет.
+TicketNewEmailBodyCustomer=Это автоматическое электронное письмо, подтверждающее, что в вашу учетную запись только что был добавлен новый тикет.
+TicketNewEmailBodyInfosTicket=Информация для наблюдения за тикетом
+TicketNewEmailBodyInfosTrackId=Номер отслеживания тикетов: %s
+TicketNewEmailBodyInfosTrackUrl=Вы можете просмотреть ход выполнения тикета, щелкнув ссылку выше.
+TicketNewEmailBodyInfosTrackUrlCustomer=Вы можете просмотреть ход выполнения тикета в определенном интерфейсе, щелкнув следующую ссылку
+TicketEmailPleaseDoNotReplyToThisEmail=Пожалуйста, не отвечайте на это письмо напрямую! Используйте ссылку, чтобы ответить в интерфейсе.
+TicketPublicInfoCreateTicket=Эта форма позволяет вам записать тикет в службу поддержки в нашей системе управления.
+TicketPublicPleaseBeAccuratelyDescribe=Пожалуйста, подробно опишите проблему. Предоставьте как можно больше информации, чтобы мы могли правильно идентифицировать ваш запрос.
+TicketPublicMsgViewLogIn=Пожалуйста, введите ID отслеживания тикетов
+TicketTrackId=Публичный ID отслеживания
+OneOfTicketTrackId=Один из ваших ID отслеживания
+ErrorTicketNotFound=Тикет с ID отслеживания %s не найден!
+Subject=Тема
+ViewTicket=Посмотреть тикет
+ViewMyTicketList=Посмотреть мой список
+ErrorEmailMustExistToCreateTicket=Ошибка: адрес электронной почты не найден в нашей базе данных
+TicketNewEmailSubjectAdmin=Создан новый тикет - ссылка %s (публичный идентификатор тикета %s)
+TicketNewEmailBodyAdmin=<p>Тикет только что был создан с ID # %s, см. информацию:</p>
+SeeThisTicketIntomanagementInterface=См. Тикет в интерфейсе управления
+TicketPublicInterfaceForbidden=Публичный интерфейс для тикетов не был включен
+ErrorEmailOrTrackingInvalid=Неверное значение ID отслеживания или электронной почты
+OldUser=Старый пользователь
+NewUser=Новый пользователь
+NumberOfTicketsByMonth=Количество тикетов в месяц
+NbOfTickets=Количество тикетов
+# notifications
+TicketNotificationEmailSubject=Тикет %s обновлен
+TicketNotificationEmailBody=Это автоматическое сообщение, уведомляющее вас о том, что тикет %s только что был обновлен.
+TicketNotificationRecipient=Получатель уведомления
+TicketNotificationLogMessage=Журнал сообщений
+TicketNotificationEmailBodyInfosTrackUrlinternal=Просмотр тикета в интерфейсе
+TicketNotificationNumberEmailSent=Уведомление отправлено по электронной почте: %s
+
+ActionsOnTicket=События в тикете
+
+#
+# Boxes
+#
+BoxLastTicket=Последние созданные тикеты
+BoxLastTicketDescription=Последние созданные тикеты %s
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Нет недавних непрочитанных тикетов
+BoxLastModifiedTicket=Последние измененные тикеты
+BoxLastModifiedTicketDescription=Последние измененные тикеты %s
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Нет недавно измененных тикетов
+BoxTicketType=Распределение открытых тикетов по типам
+BoxTicketSeverity=Количество открытых тикетов по серьезности
+BoxNoTicketSeverity=Тикеты не открыты
+BoxTicketLastXDays=Количество новых тикетов по дням последние %s дней
+BoxTicketLastXDayswidget = Количество новых тикетов по дням за последние X дней
+BoxNoTicketLastXDays=Нет новых тикетов за последние %s дней
+BoxNumberOfTicketByDay=Количество новых тикетов по дням
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Тикет создан сегодня
+TicketClosedToday=Тикет закрыт сегодня
+KMFoundForTicketGroup=Мы нашли темы и ответы на часто задаваемые вопросы, которые могут ответить на ваш вопрос, спасибо, что проверили их перед отправкой тикета.

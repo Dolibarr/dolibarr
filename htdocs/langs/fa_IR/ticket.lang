@@ -1,0 +1,324 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=برگه‌های پشتیبانی
+Module56000Desc=سامانۀ برگه‌های پشتیبانی برای مدیریت مشکلات و درخواست‌ها
+
+Permission56001=نمایش برگه‌ها
+Permission56002=ویرایش برگه‌ه
+Permission56003=حذف برگه‌ها
+Permission56004=مدیریت برگه‌ها
+Permission56005=نمایش همۀ برگه‌های مربوط به اشخاص سوم (برای کاربران خارجی مؤثر نیست و همواره به شخص‌سومی که به‌آن وصل است وابسته است)
+
+TicketDictType=برگه‌ها - انواع
+TicketDictCategory=برگه‌ها - دسته‌بندی‌ها
+TicketDictSeverity=برگه‌ها - سطح اهمیت
+TicketDictResolution=Ticket - Resolution
+
+TicketTypeShortCOM=سوال تجاری
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
+TicketTypeShortREQUEST=Change or enhancement request
+TicketTypeShortPROJET=طرح
+TicketTypeShortOTHER=سایر
+
+TicketSeverityShortLOW=کم
+TicketSeverityShortNORMAL=عادی
+TicketSeverityShortHIGH=زیاد
+TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=سایر
+
+ErrorBadEmailAddress=بخش '%s' نادرست است
+MenuTicketMyAssign=برگه‌ها من
+MenuTicketMyAssignNonClosed=برگه‌های باز من
+MenuListNonClosed=برگه‌های باز
+
+TypeContact_ticket_internal_CONTRIBUTOR=مشارکت‌کننده
+TypeContact_ticket_internal_SUPPORTTEC=کاربر نسبت داده شده
+TypeContact_ticket_external_SUPPORTCLI=طرف‌تماس‌مشتری / ره‌گیری حادثه
+TypeContact_ticket_external_CONTRIBUTOR=مشارکت‌کنندۀ بیرونی
+
+OriginEmail=Reporter Email
+Notify_TICKET_SENTBYMAIL=ارسال پیام برگه با رایانامه
+
+# Status
+Read=خوانده‌شده
+Assigned=نسبت‌داده شده
+InProgress=در حال انجام
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
+Answered=پاسخ داده شده
+Waiting=در انتظار
+SolvedClosed=Solved
+Deleted=حذف شده
+
+# Dict
+Type=نوع
+Severity=حساسیت
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
+
+# Email templates
+MailToSendTicketMessage=برای ارسال رایانامه از برگۀ پیا
+
+#
+# Admin page
+#
+TicketSetup=برپاسازی واحد برگه‌های پشتیبانی
+TicketSettings=تنظیمات
+TicketSetupPage=
+TicketPublicAccess=یک رابط عمومی که بدون نیاز به تائید اعتبار شناسه است در نشانی زیر فعال است
+TicketSetupDictionaries=نوع برگه، حساسیت آن و کدهای تحلیلی از طریق واژه‌نامه‌ها قابل پیگربندی است
+TicketParamModule=برپاسازی متغیرهای واحد
+TicketParamMail=برپاسازی رایانامه
+TicketEmailNotificationFrom=رایانامۀ اطلاع‌رسانی از
+TicketEmailNotificationFromHelp=برای مثال استفاده شده برای پاسخ به برگه
+TicketEmailNotificationTo=رایانامۀ اطلاع‌رسانی به
+TicketEmailNotificationToHelp=ارسال رایانامۀ اطلاع‌رسانی به این نشانی.
+TicketNewEmailBodyLabel=پیام متنی ارسال شده پس از ساخت یک برگه
+TicketNewEmailBodyHelp=نوشته‌ای که اینجا وارد می‌شود، در رایانامه درج می‌شود تا تائید کنندۀ ساخت یک برگه از رابط عمومی باشد. اطلاعات مربوط به مشاوره‌های برگه به طور خودکار اضافه می‌شود.
+TicketParamPublicInterface=برپاسازی رابط عمومی
+TicketsEmailMustExist=نیاز به یک نشانی رایانامه برای ساخت برگۀ پشتیبانی
+TicketsEmailMustExistHelp=در رابط عمومی، نشانی رایانامه باید در بانک داده پر شود تا امکان ساخت برگۀ پشتیبانی وجود داشته باشد
+PublicInterface=رابط عمومی
+TicketUrlPublicInterfaceLabelAdmin=نشانی جایگزین برای رابط عمومی
+TicketUrlPublicInterfaceHelpAdmin=امکان تعریف یک نشانی جایگزین برای سرور وب و دسترسی به رابط عمومی با یک نشانی دیگر وجود دارد (سرور باید به عنوان یک پراکسی روی این نشانی جدید کار کند)
+TicketPublicInterfaceTextHomeLabelAdmin=نوشتۀ خوش‌آمدگوئی رابط عمومی
+TicketPublicInterfaceTextHome=شما می‌توانید یک برگۀ‌پشتیبانی ساخته یا یک برگۀ‌پشتیبانی موجود را با استفاده از شناسۀ‌رهگیری آن مشاهده کنید
+TicketPublicInterfaceTextHomeHelpAdmin=نوشتۀ تعریف شده در این قسمت در بخش رابط عمومی نمایش داده خواهد شد
+TicketPublicInterfaceTopicLabelAdmin=عنوان صفحه
+TicketPublicInterfaceTopicHelp=این نوشته به عنوان عنوان رابط عمومی استفاده خواهد شد
+TicketPublicInterfaceTextHelpMessageLabelAdmin=نوشتۀ راهنما برای ورود پیا
+TicketPublicInterfaceTextHelpMessageHelpAdmin=این متن در بالای پیام بخش ورود پیام کاربر نمایش داده خواهد شد
+ExtraFieldsTicket=ویژگی‌های دیگر
+TicketCkEditorEmailNotActivated=ویرایش‌گر HTML فعال نشده است. لطفا FCKEDITOR_ENABLE_MAIL را به 1 تغییر دهید.
+TicketsDisableEmail=برای ساخت برگۀ‌پشتیبانی یا ثبت پیام، رایانامه ارسال نشود
+TicketsDisableEmailHelp=به‌طور پیش‌فرض، رایانامه‌ها وقتی ارسال می‌شوند که برگه‌های پشتیبانی یا پیام‌ها ساخته شوند. این گزینه را فعال کنید که *تمام* آگاهی‌رسانی رایانامه‌‌ای غیرفعال شود
+TicketsLogEnableEmail=فعال‌کردن گزارش توسط رایانامه
+TicketsLogEnableEmailHelp=در هر تغییری، یک رایانامه به **هر طرف‌تماسی** که در برگۀ‌پشتیبانی وجود دارد ارسال می‌شود.
+TicketParams=مؤلفه‌ها
+TicketsShowModuleLogo=نمایش نماد واحد، در رابط عمومی
+TicketsShowModuleLogoHelp=این گزینه را برای پنهان کردن نماد واحد در صفحات رابط عمومی استفاده کنید
+TicketsShowCompanyLogo=نمایش نماد شرکت در رابط عمومی
+TicketsShowCompanyLogoHelp=این گزینه را برای پنعان کردن نماد شرکت اصلی در صفحات رابط عمومی استفاده کنید
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
+TicketsLimitViewAssignedOnly=محدود کردن نمایش برگۀ‌پشتیبانی به کاربر فعلی (برای کاربران خارجی مؤثر نیست، همواره محدود به شخص‌سومی که بدان مربوطند دارد)
+TicketsLimitViewAssignedOnlyHelp=تنها برگه‌هائی که به کاربر فعلی نسبت داده شده است قابل رؤیت است. این شامل کاربرانی که مجوزهای مدیریت برگه‌های پشتیبانی را دارند نمی‌شود.
+TicketsActivatePublicInterface=فعال کردن رابط عمومی
+TicketsActivatePublicInterfaceHelp=رابط عمومی به کاربران امکان ساخت برگۀ پشتیبانی را به هر بیننده‌ای می‌دهد.
+TicketsAutoAssignTicket=نسبت دادن خودکار کاربری که برگۀ‌پشتیبانی را ساخته است
+TicketsAutoAssignTicketHelp=در هنگام ساخت برگۀ‌پشتیبانی، کاربر می‌تواند به شکل خودکار به برگه نسبت داده شود
+TicketNumberingModules=واحد شماره‌دهی برگه‌های پشتیبانی
+TicketsModelModule=Document templates for tickets
+TicketNotifyTiersAtCreation=اطلاع‌رسانی به شخص‌سوم در هنگام ساخت
+TicketsDisableCustomerEmail=همواره در هنگامی که یک برگۀ‌پشتیبانی از طریق رابط عمومی ساخته می‌شود، قابلیت رایانامه غیرفعال شود
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+#
+# Index & list page
+#
+TicketsIndex=Tickets area
+TicketList=فهرست برگه‌ها
+TicketAssignedToMeInfos=این برگه نمایش دهندۀ برگه‌های پشتیبانی است که به کاربر جاری نسبت داشته شده یا توسط وی ساخته شده است
+NoTicketsFound=برگه‌ای پیدا نشد
+NoUnreadTicketsFound=No unread ticket found
+TicketViewAllTickets=نمایش همۀ برگه‌ها
+TicketViewNonClosedOnly=نمایش محدود به برگه‌های پشتیبانی باز
+TicketStatByStatus=برگه‌ها بر حسب وضعیت
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
+
+#
+# Ticket card
+#
+Ticket=برگۀ پشتیبانی
+TicketCard=کارت برگۀ‌پشتیبانی
+CreateTicket=ساخت برگه
+EditTicket=ویرایش برگه
+TicketsManagement=مدیریت برگه‌ه
+CreatedBy=ساخته‌شده توسط
+NewTicket=برگۀ جدید
+SubjectAnswerToTicket=پاسخ برگه
+TicketTypeRequest=نوع درخواست
+TicketCategory=Ticket categorization
+SeeTicket=نمایش برگه
+TicketMarkedAsRead=برگه به صورت خوانده شده علامت‌گذاری شد
+TicketReadOn=خواندن
+TicketCloseOn=تاریخ بسته شدن
+MarkAsRead=علامت‌زدن برگه به‌شکل خوانده‌شده
+TicketHistory=سابقۀ برگه
+AssignUser=نسبت دادن به کاربر
+TicketAssigned=اکنون برگه نسبت داده‌شد
+TicketChangeType=تغییر نوع
+TicketChangeCategory=تغییر کد تحلیلی-آنالیتیک
+TicketChangeSeverity=تغییر درجۀ اهمیت
+TicketAddMessage=افزودن یک پیام
+AddMessage=افزودن یک پیام
+MessageSuccessfullyAdded=برگه اضافه شد
+TicketMessageSuccessfullyAdded=پیام با موفقیت افزوده شد
+TicketMessagesList=فهرست پیام‌ها
+NoMsgForThisTicket=پیامی برای این برگه وجود ندارد
+TicketProperties=طبقه‌بندی
+LatestNewTickets=آخرین %s برگۀ‌پشتیبانی جدید (خوانده نشده)
+TicketSeverity=درجۀ اهمیت
+ShowTicket=نمایش برگه
+RelatedTickets=برگه‌های مرتبط
+TicketAddIntervention=ایجاد پادرمیانی
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
+ConfirmCloseAticket=توقف پشتیبانی را تائید کنید
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
+ConfirmDeleteTicket=لطفا حذف برگۀ‌پشتیبانی را تائید کنید
+TicketDeletedSuccess=حذف برگه با موفقیت انجام شد
+TicketMarkedAsClosed=برگۀ‌پشتیبانی به حالت بسته درآمد
+TicketDurationAuto=طول محاسبه‌شده
+TicketDurationAutoInfos=طول‌مدت محاسبه شدۀ خودکار از پادرمیانی‌های مربوطه
+TicketUpdated=برگۀ‌پشتیبانی به‌هنگام شد
+SendMessageByEmail=ارسال پیام توسط رایانامه
+TicketNewMessage=پیام جدید
+ErrorMailRecipientIsEmptyForSendTicketMessage=گیرنده خالی است. رایانامه‌ای ارسال نشد.
+TicketGoIntoContactTab=به زبانۀ "طرف‌های تماس" رفته تا آنان را انتخاب کنید
+TicketMessageMailIntro=مقدمه
+TicketMessageMailIntroHelp=این نوشته تنها در ابتدای رایانامه اضافه خواهد شد و قابل ذخیره نیست
+TicketMessageMailIntroLabelAdmin=مقدمۀ پیام در هنگام ارسال رایانامه
+TicketMessageMailIntroText=سلام، <br> یک پاسخ جدید به برگۀ‌پشتیبانی مربوط به شما ارسال شده است. پیام به شرح زیر است:<br>
+TicketMessageMailIntroHelpAdmin=نوشته قبل از متن پاسخ به یک برگۀ‌پشتیبانی اضافه خواهد شد
+TicketMessageMailSignature=امضا
+TicketMessageMailSignatureHelp=این نوشته در انتهای متن رایانامه آمده و ذخیره نخواهد شد.
+TicketMessageMailSignatureText=<p>با احترام،</p><p>--</p>
+TicketMessageMailSignatureLabelAdmin=امضای نامۀ پاسخ
+TicketMessageMailSignatureHelpAdmin=این نوشته پس از پیام پاسخ درج خواهد شد
+TicketMessageHelp=تنها این نوشته در فهرست پیام در کارت برگۀ‌پشتیبانی ذخیره خواهد شد
+TicketMessageSubstitutionReplacedByGenericValues=متغیرهای جایگزین با مقادیر عمومی جایگزین خواهند شد
+TimeElapsedSince=زمان سپری شده از
+TicketTimeToRead=زمان سپری شد قبل از خوانده‌شدن
+TicketTimeElapsedBeforeSince=Time elapsed before / since
+TicketContacts=برگۀ طرف‌های تماس
+TicketDocumentsLinked=مستندات پیوند شده با برگۀ‌تماس
+ConfirmReOpenTicket=تائید بازگشائی این برگه؟
+TicketMessageMailIntroAutoNewPublicMessage=یک پیام جدید بر روی برگه با عنوان %s ارسال شده است:
+TicketAssignedToYou=برگه نسبت داده شد
+TicketAssignedEmailBody=شما به برگۀ #%s نسبت داده شده‌اید، توسط %s
+MarkMessageAsPrivate=علامت‌زدن پیام به عنوان خصوصی
+TicketMessagePrivateHelp=این پیام به کاربران خارجی نمایش داده نخواهد شد
+TicketEmailOriginIssuer=صادر کننده در اصل برگه‌ها
+InitialMessage=پیام ابتدائی
+LinkToAContract=پیوند به یک قرارداد
+TicketPleaseSelectAContract=انتخاب یک قرارداد
+UnableToCreateInterIfNoSocid=وقتی که هیچ شخص‌سومی تعریف نشده امکان ساخت پادرمیانی وجود ندارد
+TicketMailExchanges=تبادل نامه
+TicketInitialMessageModified=پیام ابتدائی تغییر یافت
+TicketMessageSuccesfullyUpdated=پیام با موفقیت روزآمد شد
+TicketChangeStatus=تغییر وضعیت
+TicketConfirmChangeStatus=تائید تغییر وضعیت به: %s ؟
+TicketLogStatusChanged=وضعیت تغییر پیدا کرد: %s به %s
+TicketNotNotifyTiersAtCreate=عدم اطلاع‌رسانی به شرکت در هنگام ساخت
+Unread=خوانده نشده
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+ErrorTicketRefRequired=Ticket reference name is required
+
+#
+# Logs
+#
+TicketLogMesgReadBy=برگۀ %s توسط %s خوانده شد
+NoLogForThisTicket=هنوز گزارشی برای این برگه وجود ندارد
+TicketLogAssignedTo=برگۀ %s به %s نسبت داده شد
+TicketLogPropertyChanged=برگۀ %s ویرایش شد: طبقه‌بندی از %s به %s
+TicketLogClosedBy=برگۀ %s توسط %s بسته شد
+TicketLogReopen=Ticket %s re-open
+
+#
+# Public pages
+#
+TicketSystem=سامانۀ برگۀ‌پشتیبانی
+ShowListTicketWithTrackId=نمایش فهرست برگه‌ها از شناسۀ رهگیری
+ShowTicketWithTrackId=نمایش برگۀ پشتیبانی از شناسۀ رهگیری
+TicketPublicDesc=شما می‌توانید یک برگۀ پشتیبانی ساخته یا یک برگۀ موجود را بررسی کنید
+YourTicketSuccessfullySaved=برگه با موفقیت ذخیره شد!
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
+PleaseRememberThisId=لطفا شناسۀ رهگیری را حفظ کنید. ممکن است بعدا از شما این شماره را درخواست کنیم.
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
+TicketNewEmailSubjectCustomer=برگۀ‌پشتیبانی جدید
+TicketNewEmailBody=این یک رایانامۀ خودکار است که به شما تاکید می‌کند شما یک برگۀ‌پشتیبانی ثبت کرده و ساخته‌اید
+TicketNewEmailBodyCustomer=این یک رایانامۀ خودکار است که تاکید می‌کند که یک برگۀ‌پشتیبانی در حساب‌کاربری شما ساخته شده است. 
+TicketNewEmailBodyInfosTicket=اطلاعات برای زیرنظرگرفتن برگۀ‌پشتیبانی
+TicketNewEmailBodyInfosTrackId=شمارۀ رهگیری برگه: %s
+TicketNewEmailBodyInfosTrackUrl=شما می‌توانید میزان پیش‌رفت برگه را با کلیک بر روی پیوند فوق ببینید.
+TicketNewEmailBodyInfosTrackUrlCustomer=شما می‌توانید میزان پیش‌رفت برگه را در یک رابط اختصاصی با کلیک بر روی پیوند خود مشاهده کنید
+TicketEmailPleaseDoNotReplyToThisEmail=لطفا این رایانامه را مستقیما جواب ندهید! برای پاسخ دادن در رابط اختصاصی، روی پیوند کلیک نمائید
+TicketPublicInfoCreateTicket=این برگه به شما امکان ثبت یک برگۀ پشتیبانی در سامانۀ مدیریت ما را می‌دهد.
+TicketPublicPleaseBeAccuratelyDescribe=لطفا مشکل را با دقت توضیح دهید. حداکثر اطلاعاتی که ممکن است درج کنید تا ما بتوانیم درخواست شما را به‌درستی تشخیص دهیم.
+TicketPublicMsgViewLogIn=لطفا شناسۀ رهگیری برگه را وارد نمائید
+TicketTrackId=شناسۀ رهگیری عمومی
+OneOfTicketTrackId=یکی از شناسه‌های رهگیری شما
+ErrorTicketNotFound=برگه‌ای با شناسۀ رهگیری %s پیدا نشد
+Subject=موضوع
+ViewTicket=نمایش برگه
+ViewMyTicketList=نمایش فهرست برگه‌های پشتیبانی من
+ErrorEmailMustExistToCreateTicket=خطا: چنین رایانامه‌ای در پایگاه دادۀ ما پیدا نشد
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
+TicketNewEmailBodyAdmin=<p> برگۀ پشتیبانی اکنون با شناسۀ #%s ساخته شد، اطلاعات آن را مشاهده کنید:</p>
+SeeThisTicketIntomanagementInterface=برگه را در رابط‌کاربری مدیریت ببینید
+TicketPublicInterfaceForbidden=رابط عمومی برای برگه‌های پشتیبانی فعال نشده است
+ErrorEmailOrTrackingInvalid=مقدار نادرست شناسۀ رهگیری یا رایانامه
+OldUser=کاربر قدیمی
+NewUser=کاربر جدید
+NumberOfTicketsByMonth=تعداد برگه‌های پشتیبانی در ماه
+NbOfTickets=تعداد برگه‌های پشتیبانی
+# notifications
+TicketNotificationEmailSubject=برگۀ‌پشتیبانی %s روزآمد شد
+TicketNotificationEmailBody=این پیام خودکار جهت اطلاع شما در خصوص روزآمد شدن برگۀ %s است
+TicketNotificationRecipient=گیرندۀ آگاهی‌رسانی
+TicketNotificationLogMessage=پیام گزارش
+TicketNotificationEmailBodyInfosTrackUrlinternal=نمایش برگۀ پشتیبانی در رابط
+TicketNotificationNumberEmailSent=رایانامۀ اطلاع‌رسانی ارسال شد: %s
+
+ActionsOnTicket=روی‌دادهای مربوط به برگه
+
+#
+# Boxes
+#
+BoxLastTicket=آخرین برگه‌های ساخته شده
+BoxLastTicketDescription=آخرین %s برگۀ ساخته شده
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=هیچ برگۀ خوانده‌نشده‌ای وجود ندارد
+BoxLastModifiedTicket=آخرین برگه‌های ویرایش شده
+BoxLastModifiedTicketDescription=آخرین %s برگۀ‌پشتیبانی ویرایش شده
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=هیچ برگۀپشتیبانی ویرایش نشده شد
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

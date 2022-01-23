@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,27 +33,27 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_goodcustomers extends ModeleBoxes
 {
-    public $boxcode="goodcustomers";
-    public $boximg="object_company";
-    public $boxlabel="BoxGoodCustomers";
-    public $depends = array("societe");
+	public $boxcode = "goodcustomers";
+	public $boximg = "object_company";
+	public $boxlabel = "BoxGoodCustomers";
+	public $depends = array("societe");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $enabled = 1;
+	public $enabled = 1;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
+	 *  @param	string	$param		More parameters
 	 */
 	public function __construct($db, $param = '')
 	{
@@ -62,53 +62,53 @@ class box_goodcustomers extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
-		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) $this->enabled=0; // not enabled by default. Very slow on large database
+		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+			$this->enabled = 0; // disabled by this option
+		}
+		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) {
+			$this->enabled = 0; // not enabled by default. Very slow on large database
+		}
 
-		$this->hidden = ! ($user->rights->societe->lire);
+		$this->hidden = !($user->rights->societe->lire);
 	}
 
 	/**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 		$langs->load("boxes");
 
-		$this->max=$max;
+		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        $thirdpartystatic=new Societe($db);
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$thirdpartystatic = new Societe($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleGoodCustomers", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleGoodCustomers", $max));
 
-		if ($user->rights->societe->lire)
-		{
-
+		if ($user->rights->societe->lire) {
 			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
-			$sql.= " count(*) as nbfact, sum(". $db->ifsql('f.paye=1', '1', '0').") as nbfactpaye";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-			$sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
-			$sql.= ' AND s.rowid = f.fk_soc';
-			$sql.= " GROUP BY s.rowid, s.nom, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms, s.status";
-			$sql.= $db->order("nbfact", "DESC");
-			$sql.= $db->plimit($max, 0);
+			$sql .= " count(*) as nbfact, sum(".$this->db->ifsql('f.paye=1', '1', '0').") as nbfactpaye";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
+			$sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
+			$sql .= ' AND s.rowid = f.fk_soc';
+			$sql .= " GROUP BY s.rowid, s.nom, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms, s.status";
+			$sql .= $this->db->order("nbfact", "DESC");
+			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$num = $db->num_rows($result);
+			$result = $this->db->query($sql);
+			if ($result) {
+				$num = $this->db->num_rows($result);
 
 				$line = 0;
-				while ($line < $num)
-				{
-					$objp = $db->fetch_object($result);
-					$datem=$db->jdate($objp->tms);
+				while ($line < $num) {
+					$objp = $this->db->fetch_object($result);
+					$datem = $this->db->jdate($objp->tms);
 					$thirdpartystatic->id = $objp->rowid;
 					$thirdpartystatic->name = $objp->name;
 					$thirdpartystatic->code_client = $objp->code_client;
@@ -120,44 +120,47 @@ class box_goodcustomers extends ModeleBoxes
 					$nbimpaye = $objp->nbfact - $objp->nbfactpaye;
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => '',
-					    'text' => $thirdpartystatic->getNomUrl(1),
-					    'asis' => 1,
+						'td' => 'class="tdoverflowmax150"',
+						'text' => $thirdpartystatic->getNomUrl(1),
+						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'class="right"',
-					    'text' => dol_print_date($datem, "day")
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, "day", 'tzuserrel')
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'class="right"',
-					    'text' => $nbfact.( $nbimpaye != 0 ? ' ('.$nbimpaye.')':'')
+						'td' => 'class="right"',
+						'text' => $nbfact.($nbimpaye != 0 ? ' ('.$nbimpaye.')' : '')
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'class="right" width="18"',
-					    'text' => $thirdpartystatic->LibStatut($objp->status, 3)
+						'td' => 'class="right" width="18"',
+						'text' => $thirdpartystatic->LibStatut($objp->status, 3)
 					);
 
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedCustomers"));
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array(
+					'td' => 'class="center opacitymedium"',
+					'text'=>$langs->trans("NoRecordedCustomers")
+					);
+				}
 
-				$db->free($result);
-			}
-			else {
+				$this->db->free($result);
+			} else {
 				$this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
-                );
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
+				'td' => 'class="nohover opacitymedium left"',
 				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
@@ -171,8 +174,8 @@ class box_goodcustomers extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

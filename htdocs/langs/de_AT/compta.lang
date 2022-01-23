@@ -2,7 +2,7 @@
 TaxModuleSetupToModifyRules=Die Einstellungen zur Berechnung finden Sie in den entsprechenden <a href="%s">Modul-Einstellungen</a>
 OptionModeTrueDesc=In diesem Modus erfolgt die Umsatzberechnung über Zahlungseingänge (Zahlungsdatum).<br>Die Gültigkeit der Daten ist nur bei der Überprüfung der Zu- und Abgänge auf den Konten durch Rechnungen gewährleistet.
 VATReportBuildWithOptionDefinedInModule=Ausgewiesenen Beträge sind hier anhand von Regeln Tax Modul Setup definiert.
-RemainingAmountPayment=Leistende Zahlung übrig:
+Account=Kontonummer
 VATCollected=Eingehobene MwSt.
 MenuSpecialExpenses=Steuern, Sozialbeiträge und Dividenden
 AnnualSummaryDueDebtMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus<b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.

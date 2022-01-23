@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Débese cambiar o contrasinal do usuario <b>%s </b> no dominio <b>%s </b>.
+UserMustChangePassNextLogon=O usuario debe cambiar o contrasinal no dominio %s
+LDAPInformationsForThisContact=Información na base de datos LDAP deste contacto
+LDAPInformationsForThisUser=Información na base de datos LDAP para este usuario
+LDAPInformationsForThisGroup=Información na base de datos LDAP para este grupo
+LDAPInformationsForThisMember=Información na base de datos LDAP para este membro
+LDAPInformationsForThisMemberType=Información na base de datos LDAP para este tipo de membro
+LDAPAttributes=Atributos LDAP
+LDAPCard=Tarxeta LDAP
+LDAPRecordNotFound=Non se atopou o rexistro na base de datos LDAP
+LDAPUsers=Usuarios na base de datos LDAP
+LDAPFieldStatus=Estado
+LDAPFieldFirstSubscriptionDate=Data da primeira cotización
+LDAPFieldFirstSubscriptionAmount=Importe da primeira cotización
+LDAPFieldLastSubscriptionDate=Datos da última cotización
+LDAPFieldLastSubscriptionAmount=Importe da última cotización
+LDAPFieldSkype=ID de Skype
+LDAPFieldSkypeExample=Exemplo: skypeName
+UserSynchronized=Usuario sincronizado
+GroupSynchronized=Grupo sincronizado
+MemberSynchronized=Membro sincronizado
+MemberTypeSynchronized=Tipo de membro sincronizado
+ContactSynchronized=Contacto sincronizado
+ForceSynchronize=Forzar a sincronización Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Fallou ao ler a base de datos LDAP. Comprobe a configuración do módulo LDAP e a accesibilidade á base de datos.
+PasswordOfUserInLDAP=Contrasinal do usuario en LDAP

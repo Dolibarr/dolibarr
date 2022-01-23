@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,28 +27,34 @@ require '../../main.inc.php';
 // Load translation files required by the page
 $langs->load("bills");
 
-// Security check
-if (! $user->rights->facture->lire)
-  accessforbidden();
-
-$socid=0;
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
+$socid = 0;
+if ($user->socid > 0) {
+	$action = '';
+	$socid = $user->socid;
 }
 
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.rowid";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "p.rowid";
+}
+
+// Security check
+if (empty($user->rights->facture->lire)) {
+	accessforbidden();
+}
 
 
 /*
@@ -64,79 +70,70 @@ if (! $sortfield) $sortfield="p.rowid";
 llxHeader();
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
-$sql.=", c.libelle as paiement_type, p.num_paiement";
-$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
-if ($socid)
-{
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
+$sql .= ", c.libelle as paiement_type, p.num_paiement as num_payment";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
+if ($socid) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
-$sql.= " WHERE p.entity IN (" . getEntity('invoice') . ')';
-if ($socid)
-{
-    $sql.= " AND f.fk_soc = ".$socid;
+$sql .= " WHERE p.entity IN (".getEntity('invoice').')';
+if ($socid) {
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-$sql.= " AND p.statut = 0";
+$sql .= " AND p.statut = 0";
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
 }
 
-$sql.= $db->plimit($limit + 1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
-    $num = $db->num_rows($resql);
-    $i = 0;
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", "", 'width="60"', $sortfield, $sortorder);
-    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", "", 'width="80" align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.libelle", "", "", "", $sortfield, $sortorder);
-    print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "c.libelle", "", "", 'class="right"', $sortfield, $sortorder);
-    print_liste_field_titre('');
-    print "</tr>\n";
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", "", 'width="60"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", "", 'width="80" align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.libelle", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "c.libelle", "", "", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre('');
+	print "</tr>\n";
 
-    while ($i < min($num, $limit))
-    {
-        $objp = $db->fetch_object($resql);
+	while ($i < min($num, $limit)) {
+		$objp = $db->fetch_object($resql);
 
-        print '<tr class="oddeven">';
-        print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$objp->rowid.'</a></td>';
-        print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-        print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-        print '<td class="right">'.price($objp->amount).'</td>';
-        print '<td align="center">';
+		print '<tr class="oddeven">';
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$objp->rowid.'</a></td>';
+		print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
+		print "<td>$objp->paiement_type $objp->num_payment</td>\n";
+		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+		print '<td class="center">';
 
-        if ($objp->statut == 0)
-        {
-            print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
-        }
-        else
-        {
-            print "-";
-        }
+		if ($objp->statut == 0) {
+			print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
+		} else {
+			print "-";
+		}
 
-        print '</td>';
-        print "</tr>";
-        $i++;
-    }
-    print "</table>";
+		print '</td>';
+		print "</tr>";
+		$i++;
+	}
+	print "</table>";
 }
 
 // End of page

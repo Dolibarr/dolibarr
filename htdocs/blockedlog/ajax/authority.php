@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,16 +26,22 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
 
-$res=require '../../master.inc.php';
+$res = require '../../master.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 
-$user=new User($db);
+$user = new User($db);
 $user->fetch(1); //TODO conf user authority
 
 $auth = new BlockedLogAuthority($db);
@@ -44,28 +50,23 @@ $signature = GETPOST('s');
 $newblock = GETPOST('b');
 $hash = GETPOST('h');
 
-if($auth->fetch(0, $signature)<=0) {
+if ($auth->fetch(0, $signature) <= 0) {
 	$auth->signature = $signature;
 	$auth->create($user);
 }
 
 
-if(!empty($hash)) {
-
+if (!empty($hash)) {
 	echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
-}
-elseif(!empty($newblock)){
-	if($auth->checkBlock($newblock)) {
+} elseif (!empty($newblock)) {
+	if ($auth->checkBlock($newblock)) {
 		$auth->addBlock($newblock);
 		$auth->update($user);
 
 		echo 'blockadded';
-	}
-	else{
-
+	} else {
 		echo 'blockalreadyadded';
 	}
-}
-else{
+} else {
 	echo 'idontunderstandwhatihavetodo';
 }

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,16 +44,19 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	// TODO: move to a global configuration file?
 	/** @var string Base URL of the webserver under test */
 	protected static $base_url = 'http://dev.zenfusion.fr';
+
 	/**
 	 * @var string Dolibarr admin username
 	 * @see authenticate
 	 */
 	protected static $dol_admin_user = 'admin';
+
 	/**
 	 * @var string Dolibarr admin password
 	 * @see authenticate
 	 */
 	protected static $dol_admin_pass = 'admin';
+
 	/** @var int Dolibarr module ID */
 	private static $module_id = 500000; // TODO: autodetect?
 
@@ -67,14 +70,14 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		),
 		// Geckodriver does not keep the session at the moment?!
 		// XPath selectors also don't seem to work
-//        array(
-//            'browser' => 'Mozilla Firefox on Linux',
-//            'browserName' => 'firefox',
-//            'sessionStrategy' => 'shared',
-//            'desiredCapabilities' => array(
-//                'marionette' => true
-//            )
-//        )
+		//array(
+		//    'browser' => 'Mozilla Firefox on Linux',
+		//    'browserName' => 'firefox',
+		//    'sessionStrategy' => 'shared',
+		//    'desiredCapabilities' => array(
+		//        'marionette' => true
+		//    )
+		//)
 	);
 
 	/**

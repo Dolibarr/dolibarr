@@ -12,14 +12,15 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 create table llx_c_shipment_mode
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  entity				   integer	DEFAULT 1 NOT NULL,	-- multi company id
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   code             varchar(30) NOT NULL,
   libelle          varchar(50) NOT NULL,
   description      text,

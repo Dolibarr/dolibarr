@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,7 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';	   // This is to include def like $genbarcode_loc and $font_loc
+require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // This is to include def like $genbarcode_loc and $font_loc
 
 /**
  *	Class to generate barcode images using tcpdf barcode generator
@@ -32,15 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';	   // This is to inc
 class modTcpdfbarcode extends ModeleBarCode
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @public string
-     */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	public $is2d = false;
 
@@ -67,10 +67,10 @@ class modTcpdfbarcode extends ModeleBarCode
 	}
 
 	/**
-	 *	Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *	de conflits qui empechera cette numerotation de fonctionner.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return		boolean		false si conflit, true si ok
+	 *	@return		boolean		false if conflict, true if ok
 	 */
 	public function canBeActivated()
 	{
@@ -100,7 +100,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *
 	 *	@param	   string	    $code		      Value to encode
 	 *	@param	   string	    $encoding	      Mode of encoding
-	 *	@param	   string	    $readable	      Code can be read
+	 *	@param	   string	    $readable	      Code can be read (What is this ? is this used ?)
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK
@@ -110,14 +110,15 @@ class modTcpdfbarcode extends ModeleBarCode
 		global $_GET;
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
-		if (empty($tcpdfEncoding)) return -1;
+		if (empty($tcpdfEncoding)) {
+			return -1;
+		}
 
-		$color = array(0,0,0);
+		$color = array(0, 0, 0);
 
-		$_GET["code"]=$code;
-		$_GET["type"]=$encoding;
-		$_GET["height"]=$height;
-		$_GET["readable"]=$readable;
+		$_GET["code"] = $code;
+		$_GET["type"] = $encoding;
+		$_GET["readable"] = $readable;
 
 		if ($code) {
 			// Load the tcpdf barcode class
@@ -154,20 +155,27 @@ class modTcpdfbarcode extends ModeleBarCode
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf,$_GET;
+		global $conf, $_GET;
 
 		dol_mkdir($conf->barcode->dir_temp);
-		$file=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+		if (!is_writable($conf->barcode->dir_temp)) {
+			$this->error = "Failed to write in temp directory ".$conf->barcode->dir_temp;
+			dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$file = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
-		if (empty($tcpdfEncoding)) return -1;
+		if (empty($tcpdfEncoding)) {
+			return -1;
+		}
 
-		$color = array(0,0,0);
+		$color = array(0, 0, 0);
 
-		$_GET["code"]=$code;
-		$_GET["type"]=$encoding;
-		$_GET["height"]=$height;
-		$_GET["readable"]=$readable;
+		$_GET["code"] = $code;
+		$_GET["type"] = $encoding;
+		$_GET["readable"] = $readable;
 
 		if ($code) {
 			// Load the tcpdf barcode class

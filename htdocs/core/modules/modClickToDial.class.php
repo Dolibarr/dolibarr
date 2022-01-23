@@ -13,18 +13,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\defgroup   clicktodial      Module clicktodial
- *	\brief      Module pour gerer l'appel automatique
+ *	\brief      Module to manage a ClickToDial system
  *	\file       htdocs/core/modules/modClickToDial.class.php
  *	\ingroup    clicktodial
- *	\brief      Fichier de description et activation du module de click to Dial
+ *	\brief      Description and activation file for the module Click to Dial
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -46,12 +46,13 @@ class modClickToDial extends DolibarrModules
 		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion du Click To Dial";
+		$this->description = "Integration of a ClickToDial system (Asterisk, ...)";
+		$this->descriptionlong = "Support a Click To Dial feature with a SIP system. When clicking on a phone number, your phone system automatically call the callee.";
 
-		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
+		$this->version = 'dolibarr'; // 'development' or 'experimental' or 'dolibarr' or version
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='phoning';
+		$this->picto = 'phoning';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();

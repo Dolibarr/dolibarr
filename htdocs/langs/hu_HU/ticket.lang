@@ -1,0 +1,324 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Jegyek
+Module56000Desc=Jegyrendszer a probléma vagy kérések kezeléséhez
+
+Permission56001=Tekintse meg a jegyeket
+Permission56002=Jegyek módosítása
+Permission56003=Jegyek törlése\n
+Permission56004=Jegyek kezelése\n
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+
+TicketDictType=Jegy - típusok
+TicketDictCategory=Jegy - Csoportok
+TicketDictSeverity=Ticket - Severities
+TicketDictResolution=Ticket - Resolution
+
+TicketTypeShortCOM=Kereskedelmi kérdés\n
+TicketTypeShortHELP=Funkcionális segítség kérése\n
+TicketTypeShortISSUE=Probléma vagy hiba\n
+TicketTypeShortPROBLEM=Probléma
+TicketTypeShortREQUEST=Change or enhancement request
+TicketTypeShortPROJET=Projekt
+TicketTypeShortOTHER=Egyéb
+
+TicketSeverityShortLOW=Alacsony
+TicketSeverityShortNORMAL=Normal
+TicketSeverityShortHIGH=Magas
+TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=Egyéb
+
+ErrorBadEmailAddress=Field '%s' incorrect
+MenuTicketMyAssign=A jegyeimet\n
+MenuTicketMyAssignNonClosed=Nyitott jegyeim\n
+MenuListNonClosed=Nyitott jegyek
+
+TypeContact_ticket_internal_CONTRIBUTOR=Hozzájáruló
+TypeContact_ticket_internal_SUPPORTTEC=Hozzárendelt felhasználó
+TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
+TypeContact_ticket_external_CONTRIBUTOR=Külső közreműködő
+
+OriginEmail=Reporter Email
+Notify_TICKET_SENTBYMAIL=Send ticket message by email
+
+# Status
+Read=Olvas
+Assigned=Assigned
+InProgress=Folyamatban
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Várom a visszajelzést
+Answered=Válaszolt
+Waiting=Várakozás
+SolvedClosed=Megoldva
+Deleted=Törölve
+
+# Dict
+Type=Típus
+Severity=Súlyosság
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
+
+# Email templates
+MailToSendTicketMessage=To send email from ticket message
+
+#
+# Admin page
+#
+TicketSetup=Ticket module setup
+TicketSettings=Beállítások
+TicketSetupPage=
+TicketPublicAccess=A public interface requiring no identification is available at the following url
+TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
+TicketParamModule=Module variable setup
+TicketParamMail=E -mail beállítás\n
+TicketEmailNotificationFrom=Értesítő e-mail
+TicketEmailNotificationFromHelp=Used into ticket message answer by example
+TicketEmailNotificationTo=Notifications email to
+TicketEmailNotificationToHelp=Send email notifications to this address.
+TicketNewEmailBodyLabel=Text message sent after creating a ticket
+TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
+TicketParamPublicInterface=Public interface setup
+TicketsEmailMustExist=Require an existing email address to create a ticket
+TicketsEmailMustExistHelp=In the public interface, the email address should already be filled in the database to create a new ticket.
+PublicInterface=Nyilvános felület\n
+TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
+TicketPublicInterfaceTextHomeLabelAdmin=Welcome text of the public interface
+TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
+TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.
+TicketPublicInterfaceTopicLabelAdmin=Interfész címe
+TicketPublicInterfaceTopicHelp=This text will appear as the title of the public interface.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Help text to the message entry
+TicketPublicInterfaceTextHelpMessageHelpAdmin=This text will appear above the message input area of the user.
+ExtraFieldsTicket=Extra attribútumok
+TicketCkEditorEmailNotActivated=HTML editor is not activated. Please put FCKEDITOR_ENABLE_MAIL content to 1 to get it.
+TicketsDisableEmail=Do not send emails for ticket creation or message recording
+TicketsDisableEmailHelp=By default, emails are sent when new tickets or messages created. Enable this option to disable *all* email notifications
+TicketsLogEnableEmail=Enable log by email
+TicketsLogEnableEmailHelp=At each change, an email will be sent **to each contact** associated with the ticket.
+TicketParams=Params
+TicketsShowModuleLogo=Display the logo of the module in the public interface
+TicketsShowModuleLogoHelp=Enable this option to hide the logo module in the pages of the public interface
+TicketsShowCompanyLogo=Display the logo of the company in the public interface
+TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
+TicketsEmailAlsoSendToMainAddress=Továbbá küldjön értesítést a fő e -mail címre\n
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
+TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
+TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will be visible. Does not apply to a user with tickets management rights.
+TicketsActivatePublicInterface=Aktiválja a nyilvános felületet
+TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create tickets.
+TicketsAutoAssignTicket=Automatically assign the user who created the ticket
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
+TicketNumberingModules=Tickets numbering module
+TicketsModelModule=Document templates for tickets
+TicketNotifyTiersAtCreation=Notify third party at creation
+TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+#
+# Index & list page
+#
+TicketsIndex=Tickets area
+TicketList=Jegyek listája\n
+TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
+NoTicketsFound=Nem található jegy\n
+NoUnreadTicketsFound=No unread ticket found
+TicketViewAllTickets=Az összes jegy megtekintése
+TicketViewNonClosedOnly=Csak nyitott jegyek megtekintése
+TicketStatByStatus=Jegyek állapot szerint
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
+
+#
+# Ticket card
+#
+Ticket=Jegy
+TicketCard=Ticket card
+CreateTicket=Jegy létrehozása\n
+EditTicket=Jegy szerkesztése
+TicketsManagement=Tickets Management
+CreatedBy=Készítette
+NewTicket=Új Jegy\n
+SubjectAnswerToTicket=Jegyválasz
+TicketTypeRequest=Request type
+TicketCategory=Jegyek kategorizálása\n
+SeeTicket=Lásd a jegyet
+TicketMarkedAsRead=A jegyet olvasottként jelölték meg
+TicketReadOn=Read on
+TicketCloseOn=Lezárás dátuma
+MarkAsRead=Jegy megjelölése olvasottként
+TicketHistory=Jegytörténet
+AssignUser=Hozzárendelés a felhasználóhoz
+TicketAssigned=A jegy most hozzá van rendelve
+TicketChangeType=Típus módosítása
+TicketChangeCategory=Change analytic code
+TicketChangeSeverity=Change severity
+TicketAddMessage=Üzenet hozzáadása\n
+AddMessage=Üzenet hozzáadása\n
+MessageSuccessfullyAdded=Jegy hozzáadva
+TicketMessageSuccessfullyAdded=Message successfully added
+TicketMessagesList=Üzenetlista
+NoMsgForThisTicket=No message for this ticket
+TicketProperties=Osztályozás
+LatestNewTickets=Latest %s newest tickets (not read)
+TicketSeverity=Súlyosság
+ShowTicket=Lásd a jegyet
+RelatedTickets=Kapcsolódó jegyek
+TicketAddIntervention=Create intervention
+CloseTicket=Close|Solve ticket
+AbandonTicket=Jegy elhagyása
+CloseATicket=Zárt|Megoldott jegy
+ConfirmCloseAticket=Erősítse meg a jegyzárást
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
+ConfirmDeleteTicket=Please confirm ticket deleting
+TicketDeletedSuccess=Ticket deleted with success
+TicketMarkedAsClosed=Ticket marked as closed
+TicketDurationAuto=Calculated duration
+TicketDurationAutoInfos=Duration calculated automatically from intervention related
+TicketUpdated=Jegy frissítve
+SendMessageByEmail=Send message by email
+TicketNewMessage=Új üzenet
+ErrorMailRecipientIsEmptyForSendTicketMessage=Recipient is empty. No email send
+TicketGoIntoContactTab=Please go into "Contacts" tab to select them
+TicketMessageMailIntro=Bevezetés
+TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.
+TicketMessageMailIntroLabelAdmin=Introduction to the message when sending email
+TicketMessageMailIntroText=Hello,<br>A new response was sent on a ticket that you contact. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of the response to a ticket.
+TicketMessageMailSignature=Aláírás
+TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
+TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
+TicketMessageMailSignatureLabelAdmin=Signature of response email
+TicketMessageMailSignatureHelpAdmin=This text will be inserted after the response message.
+TicketMessageHelp=Only this text will be saved in the message list on ticket card.
+TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
+TimeElapsedSince=Time elapsed since
+TicketTimeToRead=Time elapsed before read
+TicketTimeElapsedBeforeSince=Time elapsed before / since
+TicketContacts=Contacts ticket
+TicketDocumentsLinked=Jegyhez kapcsolódó dokumentumok
+ConfirmReOpenTicket=Confirm reopen this ticket ?
+TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s:
+TicketAssignedToYou=Ticket assigned
+TicketAssignedEmailBody=You have been assigned the ticket #%s by %s
+MarkMessageAsPrivate=Mark message as private
+TicketMessagePrivateHelp=This message will not display to external users
+TicketEmailOriginIssuer=Issuer at origin of the tickets
+InitialMessage=Initial Message
+LinkToAContract=Link a szerződéshez
+TicketPleaseSelectAContract=Válasszon szerződést
+UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
+TicketMailExchanges=Mail exchanges
+TicketInitialMessageModified=Initial message modified
+TicketMessageSuccesfullyUpdated=Message successfully updated
+TicketChangeStatus=Állapotváltozás
+TicketConfirmChangeStatus=Confirm the status change: %s ?
+TicketLogStatusChanged=Status changed: %s to %s
+TicketNotNotifyTiersAtCreate=Not notify company at create
+Unread=Nem olvasott
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+ErrorTicketRefRequired=Ticket reference name is required
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Ticket %s read by %s
+NoLogForThisTicket=No log for this ticket yet
+TicketLogAssignedTo=Ticket %s assigned to %s
+TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
+TicketLogClosedBy=Ticket %s closed by %s
+TicketLogReopen=Ticket %s re-open
+
+#
+# Public pages
+#
+TicketSystem=Jegyrendszer
+ShowListTicketWithTrackId=Display ticket list from track ID
+ShowTicketWithTrackId=Display ticket from track ID
+TicketPublicDesc=You can create a support ticket or check from an existing ID.
+YourTicketSuccessfullySaved=Ticket has been successfully saved!
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
+PleaseRememberThisId=Please keep the tracking number that we might ask you later.
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
+TicketNewEmailSubjectCustomer=Új támogatási jegy\n
+TicketNewEmailBody=This is an automatic email to confirm you have registered a new ticket.
+TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
+TicketNewEmailBodyInfosTicket=Információk a jegy ellenőrzéséhez\n
+TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the link above.
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
+TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.
+TicketPublicInfoCreateTicket=This form allows you to record a support ticket in our management system.
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe the problem. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicMsgViewLogIn=Please enter ticket tracking ID
+TicketTrackId=Public Tracking ID
+OneOfTicketTrackId=One of your tracking ID
+ErrorTicketNotFound=Ticket with tracking ID %s not found!
+Subject=Tárgy
+ViewTicket=A jegy megtekintése\n
+ViewMyTicketList=View my ticket list
+ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
+SeeThisTicketIntomanagementInterface=See ticket in management interface
+TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
+ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
+OldUser=Régi felhasználó\n
+NewUser=Új felhasználó
+NumberOfTicketsByMonth=Jegyek száma havonta\n
+NbOfTickets=Jegyek száma\n
+# notifications
+TicketNotificationEmailSubject=Ticket %s updated
+TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated
+TicketNotificationRecipient=Notification recipient
+TicketNotificationLogMessage=Napló üzenet\n
+TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
+TicketNotificationNumberEmailSent=Notification email sent: %s
+
+ActionsOnTicket=Események a jegyben\n
+
+#
+# Boxes
+#
+BoxLastTicket=Latest created tickets
+BoxLastTicketDescription=Latest %s created tickets
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=No recent unread tickets
+BoxLastModifiedTicket=Latest modified tickets
+BoxLastModifiedTicketDescription=Latest %s modified tickets
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Nincsenek frissen módosított jegyek\n
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=Nem nyitottak jegyeket
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Napi új jegyek száma\n
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=A jegy ma készült\n
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

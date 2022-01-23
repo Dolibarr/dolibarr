@@ -13,13 +13,13 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
 create table llx_c_civility
 (
-  rowid       integer    PRIMARY KEY,
+  rowid       integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
   code        varchar(6) NOT NULL,
   label		  varchar(50),
   active      tinyint DEFAULT 1  NOT NULL,

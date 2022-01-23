@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -20,14 +20,16 @@ create table llx_payment_donation
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_donation     integer,
-  datec           datetime,           -- date de creation
-  tms             timestamp,
-  datep           datetime,           -- payment date
+  datec           datetime,                             -- date de creation
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  datep           datetime,                             -- payment date
   amount          double(24,8) DEFAULT 0,
   fk_typepayment  integer NOT NULL,
   num_payment     varchar(50),
   note            text,
+  ext_payment_id   varchar(128),						-- external id of payment (for example Stripe charge id)
+  ext_payment_site varchar(128),						-- name of external paymentmode (for example 'stripe')
   fk_bank         integer NOT NULL,
-  fk_user_creat   integer,            -- creation user
-  fk_user_modif   integer             -- last modification user
+  fk_user_creat   integer,                              -- creation user
+  fk_user_modif   integer                               -- last modification user
 )ENGINE=innodb;

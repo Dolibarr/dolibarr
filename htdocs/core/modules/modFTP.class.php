@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,10 +21,10 @@
  * 		\brief      Module for FTP client module
  *      \file       htdocs/core/modules/modFTP.class.php
  *      \ingroup    ftp
- *      \brief      Description and activation file for module FTP
+ *      \brief      Description and activation file for the module FTP
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -33,11 +33,11 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modFTP extends DolibarrModules
 {
 
-    /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
-     *
-     *   @param      DoliDB		$db      Database handler
-    */
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -58,7 +58,7 @@ class modFTP extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module
-		$this->picto='dir';
+		$this->picto = 'dir';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/ftp/temp");
@@ -70,29 +70,29 @@ class modFTP extends DolibarrModules
 		$this->config_page_url = array('ftpclient.php@ftp');
 
 		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 
 		// Constants
 		$this->const = array(
-		    1=>array('FTP_CONNECT_WITH_SSL','chaine','0','Use FTPS for FTP module', 1, 'current', 1),
-		    2=>array('FTP_CONNECT_WITH_SFTP','chaine','0','Use SFTP for FTP module', 1, 'current', 1)
-		);			// List of parameters
+			1=>array('FTP_CONNECT_WITH_SSL', 'chaine', '0', 'Use FTPS for FTP module', 1, 'current', 1),
+			2=>array('FTP_CONNECT_WITH_SFTP', 'chaine', '0', 'Use SFTP for FTP module', 1, 'current', 1)
+		); // List of parameters
 
 		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+		$this->boxes = array(); // List of boxes
+		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
-        //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
-        //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
+		//$this->boxes[$r][1] = "myboxa.php";
+		//$r++;
+		//$this->boxes[$r][1] = "myboxb.php";
+		//$r++;
 
 		// Permissions
-		$this->rights_class = 'ftp';	// Permission key
-		$this->rights = array();		// Permission array used by this module
+		$this->rights_class = 'ftp'; // Permission key
+		$this->rights = array(); // Permission array used by this module
 
 		$r++;
 		$this->rights[$r][0] = 2801;
@@ -111,17 +111,17 @@ class modFTP extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu[$r]=array('fk_menu'=>0,
+		$this->menu[$r] = array('fk_menu'=>0,
 							  'type'=>'top',
 							  'titre'=>'FTP',
 							  'mainmenu'=>'ftp',
 							  'url'=>'/ftp/index.php',
 							  'langs'=>'ftp',
 							  'position'=>100,
-                              'enabled'=>'$conf->ftp->enabled',
-		                      'perms'=>'$user->rights->ftp->read || $user->rights->ftp->write || $user->rights->ftp->setup',
+							  'enabled'=>'$conf->ftp->enabled',
+							  'perms'=>'$user->rights->ftp->read || $user->rights->ftp->write || $user->rights->ftp->setup',
 							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 	}
 }

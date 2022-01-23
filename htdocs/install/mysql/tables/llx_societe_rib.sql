@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Table with the payment modes of a thirdparty (BAN, Paypal, Card, ...)
 -- =============================================================================
@@ -24,19 +24,21 @@ create table llx_societe_rib
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   type           varchar(32) DEFAULT 'ban' NOT NULL,							-- 'ban' or 'paypal' or 'card' or 'stripe'
-  label          varchar(30),
+  label          varchar(200),
   fk_soc         integer NOT NULL,
   datec          datetime,
-  tms            timestamp,
-  
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   -- For BAN
   bank           varchar(255),  -- bank name
   code_banque    varchar(128),  -- bank code
   code_guichet   varchar(6),    -- desk code
   number         varchar(255),  -- account number
   cle_rib        varchar(5),    -- key of bank account
-  bic            varchar(20),  -- 11 according to ISO 9362 (we keep 20 for backward compatibility)
+
+  bic            varchar(20),   -- 11 according to ISO 9362 (we keep 20 for backward compatibility)
   iban_prefix    varchar(34),	-- full iban. 34 according to ISO 13616
+
   domiciliation  varchar(255),
   proprio        varchar(60),
   owner_address  varchar(255),
@@ -66,6 +68,7 @@ create table llx_societe_rib
   
   --For Stripe
   stripe_card_ref varchar(128),								-- 'card_...'
+  stripe_account varchar(128),								-- 'pk_live_...'
 
   comment        varchar(255),
   ipaddress      varchar(68),

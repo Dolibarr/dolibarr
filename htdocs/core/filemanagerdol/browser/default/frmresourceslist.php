@@ -3,7 +3,7 @@
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * Source modified from part of fckeditor (http://www.fckeditor.net)
- * retreived as GPL v2 or later
+ * retrieved as GPL v2 or later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 define('NOTOKENRENEWAL', 1); // Disables token renewal
@@ -34,10 +34,10 @@ require '../../../../main.inc.php';
  * choice:
  *
  *  - GNU General Public License Version 2 or later (the "GPL")
- *    http://www.gnu.org/licenses/gpl.html
+ *    https://www.gnu.org/licenses/gpl.html
  *
  *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
- *    http://www.gnu.org/licenses/lgpl.html
+ *    https://www.gnu.org/licenses/lgpl.html
  *
  *  - Mozilla Public License Version 1.1 or later (the "MPL")
  *    http://www.mozilla.org/MPL/MPL-1.1.html
@@ -115,25 +115,25 @@ function OpenFolder( folderPath )
 
 function GetUrlParam( paramName )
 {
-    var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' );
-    var oMatch = oRegex.exec( window.top.location.search );
+	var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' );
+	var oMatch = oRegex.exec( window.top.location.search );
 
-    if ( oMatch && oMatch.length > 1 )
-        return decodeURIComponent( oMatch[1] );
-    else
-        return '' ;
+	if ( oMatch && oMatch.length > 1 )
+		return decodeURIComponent( oMatch[1] );
+	else
+		return '' ;
 }
 
 // Note fileUrl must be already "URL encoded"
 function OpenFile( fileUrl )
 {
-    funcNum = GetUrlParam('CKEditorFuncNum');
-    //window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
+	funcNum = GetUrlParam('CKEditorFuncNum');
+	//window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
 	window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl.replace( '#', '%23' ));
-    
-    ///////////////////////////////////
-    window.top.close();
-    window.top.opener.focus();
+
+	///////////////////////////////////
+	window.top.close();
+	window.top.opener.focus();
 }
 
 function LoadResources( resourceType, folderPath )

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,6 +27,14 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+$year = GETPOST("year", 'int');
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'reception', 0, '');
+
 
 /*
  * View
@@ -34,15 +42,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 llxHeader();
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
-print load_fiche_titre($langs->trans("StatisticsOfReceptions").' '.$_GET["year"], $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfReceptions").' '.GETPOST("year", 'int'), $mesg);
 
 $stats = new ReceptionStats($db);
-$data = $stats->getNbReceptionByMonth($_GET["year"]);
+$data = $stats->getNbReceptionByMonth(GETPOST("year", 'int'));
 
 dol_mkdir($conf->reception->dir_temp);
 
@@ -51,20 +59,18 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=reception
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg)
-{
-    $px->SetData($data);
-    $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
-    $px->SetYLabel($langs->trans("NbOfOrders"));
-    $px->SetShading(3);
+if (!$mesg) {
+	$px->SetData($data);
+	$px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetWidth($WIDTH);
+	$px->SetHeight($HEIGHT);
+	$px->SetYLabel($langs->trans("NbOfOrders"));
+	$px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
-    $px->draw($filename, $fileurl);
+	$px->draw($filename, $fileurl);
 }
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="center">Nombre d reception par mois</td>';
 print '<td class="center">';
 print $px->show();

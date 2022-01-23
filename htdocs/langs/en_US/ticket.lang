@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,17 +30,22 @@ Permission56005=See tickets of all third parties (not effective for external use
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
-TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
+TicketDictResolution=Ticket - Resolution
+
 TicketTypeShortCOM=Commercial question
-TicketTypeShortINCIDENT=Request for assistance
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Project
 TicketTypeShortOTHER=Other
 
 TicketSeverityShortLOW=Low
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=High
-TicketSeverityShortBLOCKING=Critical/Blocking
+TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=Other
 
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
@@ -52,23 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Assigned user
 TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=External contributor
 
-OriginEmail=Email source
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
-NotRead=Not read
 Read=Read
-Answered=Answered
 Assigned=Assigned
 InProgress=In progress
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
+Answered=Answered
 Waiting=Waiting
-Closed=Closed
+SolvedClosed=Solved
 Deleted=Deleted
 
 # Dict
 Type=Type
-Category=Analytic code
 Severity=Severity
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=To send email from ticket message
@@ -113,8 +120,8 @@ TicketsShowModuleLogo=Display the logo of the module in the public interface
 TicketsShowModuleLogoHelp=Enable this option to hide the logo module in the pages of the public interface
 TicketsShowCompanyLogo=Display the logo of the company in the public interface
 TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
-TicketsEmailAlsoSendToMainAddress=Also send notification to main email address
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to send an email to "Notification email from" address (see setup below)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
 TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will be visible. Does not apply to a user with tickets management rights.
 TicketsActivatePublicInterface=Activate public interface
@@ -122,19 +129,28 @@ TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
+TicketsModelModule=Document templates for tickets 
 TicketNotifyTiersAtCreation=Notify third party at creation
-TicketGroup=Group
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
-TicketsIndex=Ticket - home
+TicketsIndex=Tickets area
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found
+NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -148,7 +164,7 @@ CreatedBy=Created by
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Analytic code
+TicketCategory=Ticket categorization
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
@@ -166,15 +182,17 @@ MessageSuccessfullyAdded=Ticket added
 TicketMessageSuccessfullyAdded=Message successfully added
 TicketMessagesList=Message list
 NoMsgForThisTicket=No message for this ticket
-Properties=Classification
+TicketProperties=Classification
 LatestNewTickets=Latest %s newest tickets (not read)
 TicketSeverity=Severity
 ShowTicket=See ticket
 RelatedTickets=Related tickets
 TicketAddIntervention=Create intervention
-CloseTicket=Close ticket
-CloseATicket=Close a ticket
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Confirm ticket closing
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed
@@ -199,6 +217,7 @@ TicketMessageHelp=Only this text will be saved in the message list on ticket car
 TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
 TimeElapsedSince=Time elapsed since
 TicketTimeToRead=Time elapsed before read
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Contacts ticket
 TicketDocumentsLinked=Documents linked to ticket
 ConfirmReOpenTicket=Confirm reopen this ticket ?
@@ -220,6 +239,8 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs
@@ -229,7 +250,7 @@ NoLogForThisTicket=No log for this ticket yet
 TicketLogAssignedTo=Ticket %s assigned to %s
 TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
 TicketLogClosedBy=Ticket %s closed by %s
-TicketLogReopen=Ticket %s re-opened
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages
@@ -239,9 +260,9 @@ ShowListTicketWithTrackId=Display ticket list from track ID
 ShowTicketWithTrackId=Display ticket from track ID
 TicketPublicDesc=You can create a support ticket or check from an existing ID.
 YourTicketSuccessfullySaved=Ticket has been successfully saved!
-MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=Please keep the tracking number that we might ask you later.
-TicketNewEmailSubject=Ticket creation confirmation
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=New support ticket
 TicketNewEmailBody=This is an automatic email to confirm you have registered a new ticket.
 TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
@@ -260,12 +281,15 @@ Subject=Subject
 ViewTicket=View ticket
 ViewMyTicketList=View my ticket list
 ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
-TicketNewEmailSubjectAdmin=New ticket created
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=See ticket in management interface
 TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
 ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
-
+OldUser=Old user
+NewUser=New user
+NumberOfTicketsByMonth=Number of tickets per month
+NbOfTickets=Number of tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated
 TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated
@@ -287,3 +311,14 @@ BoxLastModifiedTicket=Latest modified tickets
 BoxLastModifiedTicketDescription=Latest %s modified tickets
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No recent modified tickets
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

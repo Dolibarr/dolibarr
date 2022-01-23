@@ -13,10 +13,9 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
-
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_soc (fk_soc);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_contact (fk_contact);
@@ -27,5 +26,6 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_project (fk_project);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datep (datep);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datep2 (datep2);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_recurid (recurid);
-
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref_ext (ref_ext);
+
+ALTER TABLE llx_actioncomm ADD UNIQUE INDEX uk_actioncomm_ref (ref, entity);

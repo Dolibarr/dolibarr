@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -28,11 +28,12 @@ create table llx_mailing_cibles
   firstname			varchar(160),
   email				varchar(160) NOT NULL,
   other				varchar(255) NULL,
-  tag				varchar(128) NULL,
+  tag				varchar(64) NULL,					-- a unique key as a hash of: dolibarr_main_instance_unique_id;email;lastname;mailing_id;MAILING_EMAIL_UNSUBSCRIBE_KEY
   statut			smallint NOT NULL DEFAULT 0,		-- -1 = error, 0 = not sent, ...
   source_url		varchar(255),
   source_id			integer,
   source_type		varchar(16),
   date_envoi		datetime,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   error_text		varchar(255)						-- text with error if statut is -1
 )ENGINE=innodb;

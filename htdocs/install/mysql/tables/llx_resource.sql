@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 CREATE TABLE llx_resource
 (
@@ -34,5 +34,5 @@ CREATE TABLE llx_resource
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
   fk_country          integer DEFAULT NULL,          -- Optional id of original country
-  tms         			  timestamp
+  tms         			  timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

@@ -1,0 +1,32 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Configuración Oauth
+OAuthServices=Servizos OAuth
+ManualTokenGeneration=Xeración manual de token
+TokenManager=Xestor de token
+IsTokenGenerated=¿Está o token xerado?
+NoAccessToken=Non hai token de acceso gardado na base de datos local
+HasAccessToken=Foi xerado e gardado na base de datos local un token
+NewTokenStored=Token recibido e gardado
+ToCheckDeleteTokenOnProvider=Faga clic aquí para comprobar/eliminar a autorización gardada polo fornecedor de OAuth %s
+TokenDeleted=Token eliminado
+RequestAccess=Faga clic aquí para consultar/renovar acceso e recibir un novo token a gardar
+DeleteAccess=Faga clic aquí para eliminar o token
+UseTheFollowingUrlAsRedirectURI=Utilice o seguinte URL como redirección URI cando cree as súas credenciais co seu provedor de OAuth:
+ListOfSupportedOauthProviders=Introduza as credenciais proporcionadas polo seu provedor OAuth2. Aquí só figuran os provedores compatibles con OAuth2. Estes servizos poden ser empregados por outros módulos que precisan autenticación OAuth2.
+OAuthSetupForLogin=Páxina para xerar un token OAuth
+SeePreviousTab=Ver a lapela previa
+OAuthIDSecret=ID OAuth e contrasinal
+TOKEN_REFRESH=Actualizar o token actual
+TOKEN_EXPIRED=Token expirado
+TOKEN_EXPIRE_AT=Token expira o
+TOKEN_DELETE=Eliminar token gardado
+OAUTH_GOOGLE_NAME=Servicio Oauth Google
+OAUTH_GOOGLE_ID=Id Oauth Google
+OAUTH_GOOGLE_SECRET=Oauth Google Secret
+OAUTH_GOOGLE_DESC=Vaia a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">esta páxina</a> e a "Credenciais" para crear credenciais Oauth
+OAUTH_GITHUB_NAME=Servizo Oauth GitHub
+OAUTH_GITHUB_ID=Id Oauth Github
+OAUTH_GITHUB_SECRET=Oauth GitHub Secret
+OAUTH_GITHUB_DESC=Vaia a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">esta páxina</a> e a  "Rexistrar unha nova aplicación" para crear crecenciais Oauth
+OAUTH_STRIPE_TEST_NAME=Test OAuth Stripe
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

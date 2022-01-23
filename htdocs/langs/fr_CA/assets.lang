@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - assets
+Assets =Atouts
+NewAsset =Nouvel Atout
+AssetsLines=Atouts
+ModuleAssetsName =Atouts
+MenuAssets =Atouts
+MenuNewAsset =Nouvel Atout
+MenuNewTypeAssets =Nouveau
+NewAsset=Nouvel Atout

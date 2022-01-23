@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman மற்றும் SPIP தொகுதி அமைவு
+MailmanTitle=மெயில்மேன் அஞ்சல் பட்டியல் அமைப்பு
+TestSubscribe=மெயில்மேன் பட்டியல்களுக்கான சந்தாவை சோதிக்க
+TestUnSubscribe=Mailman பட்டியல்களில் இருந்து குழுவிலகுவதை சோதிக்க
+MailmanCreationSuccess=சந்தா சோதனை வெற்றிகரமாகச் செயல்படுத்தப்பட்டது
+MailmanDeletionSuccess=குழுவிலகல் சோதனை வெற்றிகரமாகச் செயல்படுத்தப்பட்டது
+SynchroMailManEnabled=ஒரு Mailman மேம்படுத்தல் செய்யப்படும்
+SynchroSpipEnabled=ஒரு ஸ்பிப் அப்டேட் செய்யப்படும்
+DescADHERENT_MAILMAN_ADMINPW=Mailman நிர்வாகி கடவுச்சொல்
+DescADHERENT_MAILMAN_URL=Mailman சந்தாக்களுக்கான URL
+DescADHERENT_MAILMAN_UNSUB_URL=Mailman சந்தா விலக்குக்கான URL
+DescADHERENT_MAILMAN_LISTS=புதிய உறுப்பினர்களின் தானியங்கி கல்வெட்டுக்கான பட்டியல்(கள்) (காற்புள்ளியால் பிரிக்கப்பட்டது)
+SPIPTitle=SPIP உள்ளடக்க மேலாண்மை அமைப்பு
+DescADHERENT_SPIP_SERVEUR=SPIP சேவையகம்
+DescADHERENT_SPIP_DB=SPIP தரவுத்தள பெயர்
+DescADHERENT_SPIP_USER=SPIP தரவுத்தள உள்நுழைவு
+DescADHERENT_SPIP_PASS=SPIP தரவுத்தள கடவுச்சொல்
+AddIntoSpip=SPIP இல் சேர்க்கவும்
+AddIntoSpipConfirmation=இந்த உறுப்பினரை SPIP இல் நிச்சயமாகச் சேர்க்க விரும்புகிறீர்களா?
+AddIntoSpipError=SPIP இல் பயனரைச் சேர்க்க முடியவில்லை
+DeleteIntoSpip=SPIP இலிருந்து அகற்று
+DeleteIntoSpipConfirmation=SPIP இலிருந்து இந்த உறுப்பினரை நிச்சயமாக அகற்ற விரும்புகிறீர்களா?
+DeleteIntoSpipError=SPIP இலிருந்து பயனரை அடக்குவதில் தோல்வி
+SPIPConnectionFailed=SPIP உடன் இணைப்பதில் தோல்வி
+SuccessToAddToMailmanList=%s மெயில்மேன் பட்டியலில் %s அல்லது SPIP தரவுத்தளத்தில் வெற்றிகரமாக சேர்க்கப்பட்டது
+SuccessToRemoveToMailmanList=%s மெயில்மேன் பட்டியல் %s அல்லது SPIP தரவுத்தளத்திலிருந்து வெற்றிகரமாக அகற்றப்பட்டது

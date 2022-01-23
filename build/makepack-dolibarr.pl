@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \author       (c)2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
 #
 # This is list of constant you can set to have generated packages moved into a specific dir: 
 #DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'
@@ -19,7 +19,7 @@ use Term::ANSIColor;
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
 $PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
+$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
 
 
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -129,7 +129,7 @@ $BUILDROOT="$TEMP/buildroot";
 $result = open( IN, "<" . $SOURCE . "/htdocs/filefunc.inc.php" );
 if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
 while (<IN>) {
-	if ( $_ =~ /define\('DOL_VERSION','([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
+	if ( $_ =~ /define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
 }
 close IN;
 ($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
@@ -357,7 +357,7 @@ if ($nboftargetok) {
 		}
 		else
 		{
-			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog. But you can regenerate it with command:'\n";
+			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog'. But you can regenerate it with command:\n";
 		}
 		if (! $BUILD || $BUILD eq '0-rc')	# For a major version
 		{
@@ -367,7 +367,6 @@ if ($nboftargetok) {
 		{
 			#print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\'| sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
 			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
-			
 		}
 		print "\n";
 		if (! $ret)
@@ -382,11 +381,18 @@ if ($nboftargetok) {
 			}
 		}
 	}
-		
+
 	# Build xml check file
 	#-----------------------
 	if ($CHOOSEDTARGET{'-CHKSUM'})
 	{
+		print "Go to directory $SOURCE\n";
+		$olddir=getcwd();
+		chdir("$SOURCE");
+		
+		print "Clean $SOURCE/htdocs\n";
+		$ret=`rm -f  $SOURCE/htdocs/includes/autoload.php`;
+		
 		$ret=`git ls-files . --exclude-standard --others`;
 		if ($ret)
 		{
@@ -427,12 +433,14 @@ if ($nboftargetok) {
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
 				print 'Run git push -f --tags'."\n";
 				$ret=`git push -f --tags`;
+				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
 		}
 		else
 		{
 			print 'Run git push --tags'."\n";
 			$ret=`git push --tags`;
+			#$ret=`git push origin "$MAJOR.$MINOR.$BUILD"`;
 		}
 		chdir("$olddir");
 	}
@@ -458,16 +466,20 @@ if ($nboftargetok) {
 		print "Clean $BUILDROOT\n";
 		$ret=`rm -f  $BUILDROOT/$PROJECT/.buildpath`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/.editorconfig`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.codeclimate`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.stickler.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.travis.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.tx`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/phpstan.neon`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/README-*.md`;
 		
 		$ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/Doli*-*`;
@@ -495,7 +507,10 @@ if ($nboftargetok) {
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README`;
 
-		$ret=`rm -fr  $BUILDROOT/$PROJECT/htdocs/install/mssql`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3`;
+
+		$ret=`rm -fr $BUILDROOT/$PROJECT/node_modules`;
 
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ansible`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codesniffer`;
@@ -567,52 +582,53 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/workstation*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/theme/common/octicons/LICENSE`;
+		
 		# Removed other test files
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore $BUILDROOT/$PROJECT/*/.gitignore $BUILDROOT/$PROJECT/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.gitignore`;
+		
+		# Removed files installed by the awful composer   	    
    	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/bin`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/adapters`;		# Keep this removal in case we embed libraries
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/samples`;		# Keep this removal in case we embed libraries
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;					# _source must be kept into tarball for official debian, not for the rest
-   	    
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/composer`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/doctrine`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/select2/release.sh`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/doc`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/example`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/test`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/example`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mobiledetect/mobiledetectlib/.gitmodules`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mobiledetect/mobiledetectlib/docs`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/.github`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/docs`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/samples`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/scripts`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/src`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/parsedown/LICENSE.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/php-iban/docs`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/.gitattributes`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/Classes/license.md`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared/PDF`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared/PCLZip`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/Examples`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/unitTests`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/license.md`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/tests`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/stripe/tests`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/stripe/LICENSE`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-*`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-*`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/ae_fonts_*`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/examples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/dejavu-fonts-ttf-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/utils`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/LICENSE.TXT`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/theme/common/octicons/LICENSE`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/vendor`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/webmozart`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/autoload.php`;
 	}
 
 	# Build package for each target
@@ -1002,7 +1018,7 @@ if ($nboftargetok) {
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_card.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_list.php`;
-			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/myobject.php`;
+			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/mymodule.php`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/scripts -name '*.sh' -type f -exec chmod 755 {} \\; ";
@@ -1059,7 +1075,7 @@ if ($nboftargetok) {
      		print "Remove target $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe...\n";
     		unlink "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe";
  
- 			print "Check that in your Wine setup, you create a Z: drive that point to your / directory.\n";
+ 			print "Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
 
  			$SOURCEBACK=$SOURCE;
  			$SOURCEBACK =~ s/\//\\/g;

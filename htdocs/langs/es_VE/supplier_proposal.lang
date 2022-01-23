@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
+supplier_proposalDESC=Administrar solicitudes de precios a proveedores
 SupplierProposalNew=Nueva solicitud de precio
 CommRequest=Solicitud de precio
 CommRequests=Solicitudes de precios
@@ -24,7 +25,6 @@ SupplierProposalStatusSignedShort=Aceptada
 SupplierProposalStatusNotSignedShort=Devuelta
 CopyAskFrom=Crear solicitud de precio copiando una solicitud existente
 CreateEmptyAsk=Crear solicitud en blanco
-CloneAsk=Clonar solicitud de precio
 ConfirmCloneAsk=¿Seguro que deseas clonar la solicitud de precio <b>%s</b>?
 ConfirmReOpenAsk=¿Seguro que desea abrir otra vez la solicitud de precio <b>%s</b>?
 SendAskByMail=Enviar solicitud de precio por email

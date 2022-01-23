@@ -1,13 +1,12 @@
 <?php
 
-require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 
 /**
  * TraceableDB class
  *
  * Used to log queries into DebugBar
  */
-
 class TraceableDB extends DoliDB
 {
 	/**
@@ -27,7 +26,7 @@ class TraceableDB extends DoliDB
 	 */
 	protected $startMemory;
 	/**
-	 * @var Database type
+	 * @var string type
 	 */
 	public $type;
 	/**
@@ -47,7 +46,7 @@ class TraceableDB extends DoliDB
 	public function __construct($db)
 	{
 		$this->db      = $db;
-		$this->type    = $db->type;
+		$this->type    = $this->db->type;
 		$this->queries = array();
 	}
 
@@ -73,7 +72,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_row($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_row($resultset);
 	}
 
@@ -81,12 +80,13 @@ class TraceableDB extends DoliDB
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 * @param   int		$param 		Date TMS to convert
-	 * @return  string            	Date in a string YYYYMMDDHHMMSS
+	 *   @param	    int		$param      Date TMS to convert
+	 *	 @param		mixed	$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
+	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-	public function idate($param)
+	public function idate($param, $gm = 'tzserver')
 	{
-		return $this->db->idate($param);
+		return $this->db->idate($param, $gm);
 	}
 
 	/**
@@ -144,20 +144,20 @@ class TraceableDB extends DoliDB
 	 */
 	public static function convertSQLFromMysql($line, $type = 'ddl')
 	{
-		return $this->db->convertSQLFromMysql($line);
+		return self::$db->convertSQLFromMysql($line);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 * Return the number o flines into the result of a request INSERT, DELETE or UPDATE
 	 *
 	 * @param   resource $resultset    Curseur de la requete voulue
-	 * @return 	int                    Nombre de lignes
+	 * @return 	int                    Number of lines
 	 * @see    	num_rows()
 	 */
 	public function affected_rows($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->affected_rows($resultset);
 	}
 
@@ -225,7 +225,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_array($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_array($resultset);
 	}
 
@@ -250,6 +250,17 @@ class TraceableDB extends DoliDB
 		return $this->db->escape($stringtoencode);
 	}
 
+	/**
+	 * Escape a string to insert data
+	 *
+	 * @param   string $stringtoencode String to escape
+	 * @return  string                        String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return $this->db->escapeunderscore($stringtoencode);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get last ID after an insert INSERT
@@ -260,8 +271,8 @@ class TraceableDB extends DoliDB
 	 */
 	public function last_insert_id($tab, $fieldid = 'rowid')
 	{
-	    // phpcs:enable
-	    return $this->db->last_insert_id($tab, $fieldid);
+		// phpcs:enable
+		return $this->db->last_insert_id($tab, $fieldid);
 	}
 
 	/**
@@ -275,10 +286,10 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
-	 * Annulation d'une transaction et retour aux anciennes valeurs
+	 *	Cancel a transaction and go back to initial data values
 	 *
-	 * @param	string $log Add more log to default log line
-	 * @return  int                1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@param	string			$log		Add more log to default log line
+	 * 	@return	resource|int         		1 if cancelation is ok or transaction not open, 0 if error
 	 */
 	public function rollback($log = '')
 	{
@@ -288,17 +299,18 @@ class TraceableDB extends DoliDB
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
-	 * @param   string $query          SQL query string
-	 * @param   int    $usesavepoint   0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                                 Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 * @param   string $type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @return  resource               Resultset of answer
+	 * @param   string 	$query          SQL query string
+	 * @param   int    	$usesavepoint   0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *                                 	Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 * @param   string 	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param	int		$result_mode	Result mode
+	 * @return  resource               	Resultset of answer
 	 */
-	public function query($query, $usesavepoint = 0, $type = 'auto')
+	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
 		$this->startTracing();
 
-		$resql = $this->db->query($query, $usesavepoint, $type);
+		$resql = $this->db->query($query, $usesavepoint, $type, $result_mode);
 
 		$this->endTracing($query, $resql);
 
@@ -334,9 +346,9 @@ class TraceableDB extends DoliDB
 			'sql'           => $sql,
 			'duration'      => $duration,
 			'memory_usage'  => $memoryDelta,
-			'is_success'    => $resql,
-			'error_code'    => ! $resql ? $this->db->lasterrno() : null,
-			'error_message' => ! $resql ? $this->db->lasterror() : null
+			'is_success'    => $resql ? true : false,
+			'error_code'    => $resql ? null : $this->db->lasterrno(),
+			'error_message' => $resql ? null : $this->db->lasterror()
 		);
 	}
 
@@ -410,7 +422,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function num_rows($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->num_rows($resultset);
 	}
 
@@ -589,19 +601,19 @@ class TraceableDB extends DoliDB
 	 */
 	public function jdate($string, $gm = false)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->jdate($string, $gm);
 	}
 
 	/**
 	 * Encrypt sensitive data in database
-	 * Warning: This function includes the escape, so it must use direct value
+	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param   string 			$fieldorvalue 	Field name or value to encrypt
-	 * @param  	int 			$withQuotes 	Return string with quotes
-	 * @return 	string                     		XXX(field) or XXX('value') or field or 'value'
+	 * @param	string	$fieldorvalue	Field name or value to encrypt
+	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string					XXX(field) or XXX('value') or field or 'value'
 	 */
-	public function encrypt($fieldorvalue, $withQuotes = 0)
+	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
 		return $this->db->encrypt($fieldorvalue, $withQuotes);
 	}
@@ -679,7 +691,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_object($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_object($resultset);
 	}
 
@@ -692,7 +704,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function select_db($database)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->select_db($database);
 	}
 }

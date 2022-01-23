@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum/Wiki support
 EMailSupport=Emails support
-RemoteControlSupport=Online real time / remote support
+RemoteControlSupport=Online real-time / remote support
 OtherSupport=Other support
 ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help center
+HelpCenter=Help Center
 DolibarrHelpCenter=Dolibarr Help and Support Center
 ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
 TypeOfSupport=Type of support
 TypeSupportCommunauty=Community (free)
 TypeSupportCommercial=Commercial
-TypeOfHelp=Type
+TypeOfHelp=Тип
 NeedHelpCenter=Need help or support?
 Efficiency=Efficiency
 TypeHelpOnly=Help only

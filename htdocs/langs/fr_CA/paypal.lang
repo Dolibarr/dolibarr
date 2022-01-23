@@ -1,17 +1,12 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuration du module PayPal
-PaypalDesc=Ce module offre des pages pour permettre le paiement sur <a href="http://www.paypal.com" target="_blank"> PayPal </a> par les clients. Cela peut être utilisé pour un paiement gratuit ou pour un paiement sur un objet Dolibarr particulier (facture, commande, ...)
-PaypalDoPayment=Payer avec PayPal
 PAYPAL_API_SANDBOX=Mode test / sandbox
 PAYPAL_API_USER=Nom d'utilisateur de l'API
 PAYPAL_API_PASSWORD=Mot de passe de l'API
 PAYPAL_API_SIGNATURE=Signature de l'API
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offre de paiement "intégral" (carte de crédit + Paypal) ou "Paypal" seulement
 PaypalModeOnlyPaypal=PayPal uniquement
 ThisIsTransactionId=Ceci est un identifiant de transaction: <b> %s</b>
-PAYPAL_ADD_PAYMENT_URL=Ajoutez l'URL du paiement Paypal lorsque vous envoyez un document par mail
 NewOnlinePaymentFailed=Nouveau paiement en ligne essayé mais échoué
-ONLINE_PAYMENT_SENDEMAIL=EMail à avertir après un paiement (succès ou non)
 ReturnURLAfterPayment=Retourner l'URL après le paiement
 ValidationOfOnlinePaymentFailed=La validation du paiement en ligne a échoué
 PaymentSystemConfirmPaymentPageWasCalledButFailed=La page de confirmation de paiement a été appelée par système de paiement renvoyé une erreur
@@ -19,4 +14,3 @@ SetExpressCheckoutAPICallFailed=L'appel de l'API SetExpressCheckout a échoué.
 DoExpressCheckoutPaymentAPICallFailed=L'appel de l'API DoExpressCheckoutPayment a échoué.
 ErrorCode=Code d'erreur
 ErrorSeverityCode=Code de gravité des erreurs
-PaypalLiveEnabled=Paypal activé en direct (autrement, mode test / sandbox)

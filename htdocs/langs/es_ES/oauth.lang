@@ -23,8 +23,10 @@ TOKEN_DELETE=Eliminar token guardado
 OAUTH_GOOGLE_NAME=Servicio Oauth Google
 OAUTH_GOOGLE_ID=Id Oauth Google
 OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Vaya a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">esta página</a> y a "Credenciales" para crear credenciales Oauth
+OAUTH_GOOGLE_DESC=Vaya a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external">esta página</a> y luego "Credenciales" para crear credenciales de OAuth
 OAUTH_GITHUB_NAME=Servicio Oauth GitHub
 OAUTH_GITHUB_ID=Id Oauth Github
 OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Vaya a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">esta página</a> y a  "Register a new application" para crear crecenciales Oauth
+OAUTH_GITHUB_DESC=Vaya a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external">en esta página</a> y luego "Registrar una nueva aplicación" para crear credenciales de OAuth.
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

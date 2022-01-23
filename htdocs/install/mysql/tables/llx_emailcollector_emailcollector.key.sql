@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 -- BEGIN MODULEBUILDER INDEXES
@@ -19,7 +19,5 @@ ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entit
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
 -- END MODULEBUILDER INDEXES
 
---ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_fieldxyz(fieldx, fieldy);
-
---ALTER TABLE llx_emailcollector_emailcollector ADD CONSTRAINT llx_emailcollector_emailcollector_field_id FOREIGN KEY (fk_field) REFERENCES llx_myotherobject(rowid);
+ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_ref(ref, entity);
 

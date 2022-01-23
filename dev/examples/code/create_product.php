@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,8 +29,8 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Global variables
@@ -49,7 +49,10 @@ $langs->load("main");				// To load language file for default language
 
 // Load user and its permissions
 $result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('', $user->error); exit; }
+if (! $result > 0) {
+	dol_print_error('', $user->error);
+	exit;
+}
 $user->getrights();
 
 
@@ -79,25 +82,19 @@ $myproduct->weight_units       = 0;
 
 // Create product in database
 $idobject = $myproduct->create($user);
-if ($idobject > 0)
-{
+if ($idobject > 0) {
 	print "OK Object created with id ".$idobject."\n";
-}
-else
-{
+} else {
 	$error++;
 	dol_print_error($db, $myproduct->error);
 }
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (! $error)
-{
+if (! $error) {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else
-{
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

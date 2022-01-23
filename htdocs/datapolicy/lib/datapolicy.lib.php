@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,26 +29,28 @@
  */
 function datapolicyAdminPrepareHead()
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    $langs->load("datapolicy@datapolicy");
+	$langs->load("datapolicy@datapolicy");
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setup.php";
-    $head[$h][1] = $langs->trans("Deletion");
-    $head[$h][2] = 'settings';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setup.php";
+	$head[$h][1] = $langs->trans("Deletion");
+	$head[$h][2] = 'settings';
+	$h++;
 
-    if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS)) {
-        $head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setupmail.php";
-        $head[$h][1] = $langs->trans("DATAPOLICIESMail");
-        $head[$h][2] = 'settings';
-        $h++;
-    }
+	if (!empty($conf->global->DATAPOLICIES_ENABLE_EMAILS)) {
+		$head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setupmail.php";
+		$head[$h][1] = $langs->trans("DATAPOLICIESMail");
+		$head[$h][2] = 'settings';
+		$h++;
+	}
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'datapolicy');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy');
 
-    return $head;
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy', 'remove');
+
+	return $head;
 }

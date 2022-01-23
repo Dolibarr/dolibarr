@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuración del módulo PayPal
-PaypalDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paypal.com" target="_blank">Paypal</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
+PaypalDesc=Este módulo permite el pago por parte de los clientes a través de <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a>. Esto se puede utilizar para un pago ad-hoc o para un pago relacionado con un objeto Dolibarr (factura, pedido, ...)
 PaypalOrCBDoPayment=Pagar con Paypal (tarjeta de crédito o Paypal)
 PaypalDoPayment=Continuar el pago mediante Paypal
 PAYPAL_API_SANDBOX=Modo de pruebas (sandbox)
@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=Sólo PayPal
 ONLINE_PAYMENT_CSS_URL=URL opcional de la hoja de estilo CSS en la página de pago en línea
 ThisIsTransactionId=Identificador de la transacción: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Añadir la url del pago Paypal al enviar un documento por e-mail
-YouAreCurrentlyInSandboxMode=Actualmente se encuentra en el modo %s "sandbox"
 NewOnlinePaymentReceived=Nuevo pago en línea recibido
 NewOnlinePaymentFailed=Nuevo pago en línea intentado pero ha fallado
 ONLINE_PAYMENT_SENDEMAIL=E-Mail a avisar en caso de pago (con éxito o no)
@@ -32,3 +31,6 @@ PaypalLiveEnabled=Paypal en vivo habilitado (de lo contrario, modo prueba/sandbo
 PaypalImportPayment=Importe pagos Paypal
 PostActionAfterPayment=Acciones después de los pagos
 ARollbackWasPerformedOnPostActions=Se realizó una reversión en todas las acciones. Debe completar las acciones manualmente si son necesarias.
+ValidationOfPaymentFailed=La validación del pago Paypal ha fallado
+CardOwner=Titular de la tarjeta
+PayPalBalance=Crédito paypal

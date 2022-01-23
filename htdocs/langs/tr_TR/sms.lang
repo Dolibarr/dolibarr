@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
-SmsSetup=SMS setup
-SmsDesc=This page allows you to define global options on SMS features
+SmsSetup=SMS kurulumu
+SmsDesc=Bu sayfa SMS özellikleri için genel seçenekleri tanımlamanıza imkan sağlar
 SmsCard=SMS Kartı
 AllSms=Tüm SMS kampanyaları
 SmsTargets=Hedefler
@@ -44,7 +44,7 @@ NbOfSms=Telefon numarası sayısı
 ThisIsATestMessage=Bu bir test mesajıdır
 SendSms=SMS gönder
 SmsInfoCharRemain=Kalan karakter sayısı
-SmsInfoNumero= (uluslararası format, örn : +33899701761)
+SmsInfoNumero= (uluslararası format, örn.: +33899701761)
 DelayBeforeSending=Gönderimden önceki süre (Dakika)
 SmsNoPossibleSenderFound=Gönderen yok. SMS sağlayıcınızın ayarlarını denetleyin.
 SmsNoPossibleRecipientFound=Hedef yok. SMS sağlayıcı kurulumu kontrol edin.

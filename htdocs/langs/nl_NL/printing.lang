@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Direct afdrukken
-Module64000Desc=Direct afdruksysteem inschakelen
-PrintingSetup=Installatie van Direct Printing System
-PrintingDesc=Deze module voegt een afdrukknop toe aan verschillende modules zodat documenten rechtstreeks naar een printer kunnen worden afgedrukt zonder dat het document in een andere toepassing hoeft te worden geopend.
-MenuDirectPrinting=Directe print opdrachten
-DirectPrint=Direct afdrukken
+Module64000Name=One click Printing
+Module64000Desc=Enable One click Printing System
+PrintingSetup=Setup of One click Printing System
+PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
+MenuDirectPrinting=One click Printing jobs
+DirectPrint=One click Print
 PrintingDriverDesc=Configuratievariabelen voor printerdriver.
 ListDrivers=Lijst met stuurprogramma's
 PrintTestDesc=Lijst met printers.
@@ -46,7 +46,7 @@ IPP_Device=Apparaat
 IPP_Media=Printer media
 IPP_Supported=Soort media
 DirectPrintingJobsDesc=Deze pagina geeft een overzicht van de afdruktaken die voor beschikbare printers zijn gevonden.
-GoogleAuthNotConfigured=Google OAuth-installatie niet voltooid. Schakel OAuth-module in en stel een Google ID / geheim in.
+GoogleAuthNotConfigured=Google OAuth is niet ingesteld. Schakel module OAuth in en stel een Google ID / Secret in.
 GoogleAuthConfigured=OAuth-referenties van Google zijn gevonden bij het instellen van de module OAuth.
 PrintingDriverDescprintgcp=Configuratievariabelen voor het afdrukken van stuurprogramma Google Cloudprinter.
 PrintingDriverDescprintipp=Configuratievariabelen voor het afdrukken van Driver Cups.

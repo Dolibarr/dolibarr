@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - orders
+OrdersArea=منطقة طلبات العملاء
+OrderCard=بطاقة الأمر
+OrderId=رقم التعريف الخاص بالأمر
+Order=طلب
+PdfOrderTitle=طلب
+Orders=الطلبات
+OrderDateShort=تاريخ الأمر
+OrderToProcess=طلب تحت التشغيل
+NewOrder=أمر جديد
+NewSupplierOrderShort=أمر جديد
+ToOrder=إصدار أمر
+MakeOrder=إصدار أمر
+SuppliersOrders=أوامر الشراء
+StatusOrderValidatedShort=معتمد
+StatusOrderRefusedShort=مرفوض
+StatusOrderDraft=مسودة(مطلوب الاعتماد)
+StatusOrderRefused=مرفوض
+StatusSupplierOrderRefusedShort=مرفوض
+StatusSupplierOrderDraft=مسودة(مطلوب الاعتماد)
+StatusSupplierOrderValidated=معتمد
+StatusSupplierOrderRefused=مرفوض

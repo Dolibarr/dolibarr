@@ -12,15 +12,19 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ============================================================================
 
 CREATE TABLE llx_oauth_token (
-    rowid integer AUTO_INCREMENT PRIMARY KEY,
-    service varchar(36),
-    token text,						-- token in serialize() format, of an object StdOAuth2Token of library phpoauth2
-    tokenstring text,				-- token in json format '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
-    fk_user integer,
-    fk_adherent integer,
+    rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+    service 		varchar(36),         	-- What king of key or token: 'Google', 'Stripe', 'auth-public-key', ...
+    token 			text,				 	-- token in serialize format, of an object StdOAuth2Token of library phpoauth2. Deprecated, use tokenstring instead.
+    tokenstring 	text,				 	-- token in json or text format. Value depends on 'service'. For example for an OAUTH service: '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
+    fk_soc 			integer,				-- Id of thirdparty in llx_societe
+    fk_user 		integer,             	-- Id of user in llx_user
+    fk_adherent 	integer,				-- Id of member in llx_adherent
+    restricted_ips 	varchar(200), 			-- Restrict the authentication mode/token to some IPs
+    datec       	datetime DEFAULT NULL,	-- date creation project
+    tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     entity integer DEFAULT 1
-)ENGINE=InnoDB;
+)ENGINE=innodb;

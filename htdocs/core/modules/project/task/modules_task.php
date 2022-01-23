@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -35,29 +35,29 @@ abstract class ModelePDFTask extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-     */
-    public static function liste_modeles($db, $maxfilenamelength = 0)
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		$type='project_task';
-		$liste=array();
+		$type = 'project_task';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -71,14 +71,14 @@ abstract class ModeleNumRefTask
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *  Return if a module can be used or not
 	 *
 	 *  @return		boolean     true if module can be used
 	 */
-    public function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -88,7 +88,7 @@ abstract class ModeleNumRefTask
 	 *
 	 *  @return     string      Texte descripif
 	 */
-    public function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("projects");
@@ -96,11 +96,11 @@ abstract class ModeleNumRefTask
 	}
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */
-    public function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("projects");
@@ -108,12 +108,12 @@ abstract class ModeleNumRefTask
 	}
 
 	/**
-	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false si conflit, true si ok
+	 *  @return     boolean     false if conflict, true if ok
 	 */
-    public function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -125,7 +125,7 @@ abstract class ModeleNumRefTask
 	 *	@param	Project		$project	Object project
 	 *	@return	string					Valeur
 	 */
-    public function getNextValue($objsoc, $project)
+	public function getNextValue($objsoc, $project)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -136,14 +136,20 @@ abstract class ModeleNumRefTask
 	 *
 	 *  @return     string      Valeur
 	 */
-    public function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

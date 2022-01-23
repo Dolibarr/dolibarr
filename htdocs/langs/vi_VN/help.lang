@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Diễn đàn / hỗ trợ Wiki
 EMailSupport=Email hỗ trợ
-RemoteControlSupport=Trực tuyến thời gian thực / hỗ trợ từ xa
+RemoteControlSupport=Hỗ trợ từ xa / thời gian thực trực tuyến
 OtherSupport=Hỗ trợ khác
 ToSeeListOfAvailableRessources=Để liên hệ / xem các nguồn lực có sẵn:
 HelpCenter=Trung tâm trợ giúp
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+DolibarrHelpCenter=Trung tâm trợ giúp và hỗ trợ của Dolibarr
+ToGoBackToDolibarr=Nếu không, <a href="%s">bấm vào đây để tiếp tục sử dụng Dolibarr</a> .
+TypeOfSupport=Loại hỗ trợ
 TypeSupportCommunauty=Cộng đồng (miễn phí)
 TypeSupportCommercial=Thương mại
 TypeOfHelp=Loại
-NeedHelpCenter=Need help or support?
+NeedHelpCenter=Cần giúp đỡ hoặc hỗ trợ?
 Efficiency=Hiệu quả
 TypeHelpOnly=Chỉ giúp
 TypeHelpDev=Trợ giúp + Phát triển
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Trợ giúp + Phát triển + Đào tạo
+BackToHelpCenter=Nếu không, <a href="%s">hãy quay lại trang chủ của trung tâm trợ giúp</a> .
+LinkToGoldMember=Bạn có thể gọi một trong những giảng viên được Dolibarr chọn trước cho ngôn ngữ của bạn (%s) bằng cách nhấp vào Widget của họ (trạng thái và giá tối đa được tự động cập nhật):
 PossibleLanguages=Ngôn ngữ được hỗ trợ
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SubscribeToFoundation=Giúp dự án Dolibarr, đăng ký vào sáng lập
 SeeOfficalSupport=Để được hỗ trợ Dolibarr chính thức ngôn ngữ của bạn: <br> <a href="%s" target="_blank"><b>% S</b></a>

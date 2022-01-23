@@ -16,12 +16,13 @@ MarginDetails=Margin details
 ProductMargins=Product margins
 CustomerMargins=Customer margins
 SalesRepresentativeMargins=Sales representative margins
+ContactOfInvoice=Contact of invoice
 UserMargins=User margins
 ProductService=Product or Service
 AllProducts=All products and services
 ChooseProduct/Service=Choose product or service
 ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
-ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
 UseDiscountAsProduct=As a product
 UseDiscountAsService=As a service
@@ -36,7 +37,7 @@ CostPrice=Cost price
 UnitCharges=Unit charges
 Charges=Charges
 AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=Rate must be a numeric value
 markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Show margin infos

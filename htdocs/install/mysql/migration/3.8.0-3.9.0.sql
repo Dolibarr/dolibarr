@@ -146,7 +146,7 @@ CREATE TABLE llx_ecm_files
   cover             text,                           -- is this file a file to use for a cover
   extraparams		varchar(255),					-- for stock other parameters with json format
   date_c			datetime,
-  date_m			timestamp,
+  date_m			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,
   acl				text							-- for future permission 'per file'
@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS llx_establishment (
   fk_user_author 	integer NOT NULL,
   fk_user_mod		integer NOT NULL,
   datec				datetime NOT NULL,
-  tms				timestamp NOT NULL,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   status            smallint DEFAULT 1
 ) ENGINE=InnoDB;
 
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS llx_user_rib (
   fk_user        integer      NOT NULL,
   entity         integer DEFAULT 1 NOT NULL,	-- multi company id
   datec          datetime,
-  tms            timestamp,
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label          varchar(30),
   bank           varchar(255),  -- bank name
   code_banque    varchar(128),  -- bank code
@@ -263,7 +263,7 @@ create table llx_stock_lotserial
   eatby           date DEFAULT NULL,			-- Eatby date
   sellby          date DEFAULT NULL, 			-- Sellby date
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer  
@@ -282,7 +282,7 @@ create table llx_budget
   date_start	date,
   date_end		date,
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer  
@@ -296,7 +296,7 @@ create table llx_budget_lines
   fk_project_ids	varchar(255) NOT NULL,		-- List of project ids related to this budget. If budget is dedicated to projects not yet started, we recommand to create a project 'Projects to come'.
   amount		double(24,8) NOT NULL,
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer  
@@ -369,7 +369,7 @@ create table llx_categorie_project
 create table llx_expedition_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -379,7 +379,7 @@ ALTER TABLE llx_expedition_extrafields ADD INDEX idx_expedition_extrafields (fk_
 create table llx_expeditiondet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -392,7 +392,7 @@ ALTER TABLE llx_expeditiondet_extrafields ADD INDEX idx_expeditiondet_extrafield
 create table llx_livraison_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -402,7 +402,7 @@ ALTER TABLE llx_livraison_extrafields ADD INDEX idx_livraison_extrafields (fk_ob
 create table llx_livraisondet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -595,7 +595,7 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NULL;
 
-ALTER TABLE llx_holiday ADD COLUMN tms timestamp;
+ALTER TABLE llx_holiday ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_entity (entity);
 

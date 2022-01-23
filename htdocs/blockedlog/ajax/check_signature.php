@@ -13,32 +13,42 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *      \file       htdocs/blockedlog/ajax/block-info.php
+ *      \file       htdocs/blockedlog/ajax/check_signature.php
  *      \ingroup    blockedlog
- *      \brief      block-info
+ *      \brief      This page is not used yet.
  */
 
 
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
 
 
 require '../../main.inc.php';
-
-if(empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) exit('BLOCKEDLOG_AUTHORITY_URL not set');
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 
-$auth=new BlockedLogAuthority($db);
+
+if (empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+	exit('BLOCKEDLOG_AUTHORITY_URL not set');
+}
+
+
+$auth = new BlockedLogAuthority($db);
 $auth->syncSignatureWithAuthority();
 
 $block_static = new BlockedLog($db);
@@ -47,14 +57,19 @@ $blocks = $block_static->getLog('just_certified', 0, 0, 'rowid', 'ASC');
 
 $auth->signature = $block_static->getSignature();
 
-foreach($blocks as &$b) {
-	$auth->blockchain.=$b->signature;
+if (is_array($bocks)) {
+	foreach ($blocks as &$b) {
+		$auth->blockchain .= $b->signature;
+	}
 }
 
 $hash = $auth->getBlockchainHash();
 
-$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$auth->signature.'&h='.$hash;
+// Call external authority
+$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.urlencode($auth->signature).'&h='.urlencode($hash);
 
-$res = file_get_contents($url);
+$resarray = getURLContent($url, 'GET', '', 1, array(), array(), 2);
+$res = $resarray['content'];
+
 //echo $url;
-echo $res;
+echo dol_escape_htmltag($res);

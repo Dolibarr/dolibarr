@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - admin
+Module310Name=Membres
+LDAPMembersSynchro=Membres
+LDAPMembersTypesSynchro=Types de membres
+MailToMember=Membres

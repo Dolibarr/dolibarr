@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -23,6 +23,7 @@ create table llx_product_association
   fk_product_pere       integer NOT NULL DEFAULT 0, -- id du produit maitre
   fk_product_fils       integer NOT NULL DEFAULT 0, -- id du sous-produit
   qty                   double NULL,
-  incdec                integer DEFAULT 1			-- when set to 1 changing stock of product will change stock of linked product too
+  incdec                integer DEFAULT 1, -- when set to 1 changing stock of product will change stock of linked product too
+  rang                  integer DEFAULT 0
 )ENGINE=innodb;
 

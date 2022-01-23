@@ -5,14 +5,14 @@
 // Begin       : 2013-09-25
 // Last Update : 2013-09-25
 // Author      : Paul Nicholls - https://github.com/pauln
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
 //
 // Based on    : tcpdf_parser.php
 // Version     : 1.0.003
 // Begin       : 2011-05-23
 // Last Update : 2013-03-17
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
 // Copyright (C) 2011-2013 Nicola Asuni - Tecnick.com LTD
 //
@@ -703,11 +703,11 @@ class tcpdi_parser {
 		$objtype = ''; // object type to be returned
 		$objval = ''; // object value to be returned
 		// skip initial white space chars: \x00 null (NUL), \x09 horizontal tab (HT), \x0A line feed (LF), \x0C form feed (FF), \x0D carriage return (CR), \x20 space (SP)
-		while (strspn($data{$offset}, "\x00\x09\x0a\x0c\x0d\x20") == 1) {
+		while (strspn($data[$offset], "\x00\x09\x0a\x0c\x0d\x20") == 1) {
 			$offset++;
 		}
 		// get first char
-		$char = $data{$offset};
+		$char = $data[$offset];
 		// get object type
 		switch ($char) {
 			case '%': { // \x25 PERCENT SIGN
@@ -738,10 +738,10 @@ class tcpdi_parser {
 				if ($char == '(') {
 					$open_bracket = 1;
 					while ($open_bracket > 0) {
-						if (!isset($data{$strpos})) {
+						if (!isset($data[$strpos])) {
 							break;
 						}
-						$ch = $data{$strpos};
+						$ch = $data[$strpos];
 						switch ($ch) {
 							case '\\': { // REVERSE SOLIDUS (5Ch) (Backslash)
 								// skip next character
@@ -786,7 +786,7 @@ class tcpdi_parser {
 			}
 			case '<':   // \x3C LESS-THAN SIGN
 			case '>': { // \x3E GREATER-THAN SIGN
-				if (isset($data{($offset + 1)}) AND ($data{($offset + 1)} == $char)) {
+				if (isset($data[($offset + 1)]) AND ($data[($offset + 1)] == $char)) {
 					// dictionary object
 					$objtype = PDF_TYPE_DICTIONARY;
 					if ($char == '<') {
@@ -809,7 +809,7 @@ class tcpdi_parser {
 				break;
 			}
 			default: {
-				$frag = $data{$offset} . @$data{$offset+1} . @$data{$offset+2} . @$data{$offset+3};
+				$frag = $data[$offset] . @$data[$offset+1] . @$data[$offset+2] . @$data[$offset+3];
 				switch ($frag) {
 					case 'endo':
 						// indirect object
@@ -886,16 +886,16 @@ class tcpdi_parser {
 		$dict = '';
 		$offset += 2;
 		do {
-			if ($data{$offset} == '>' && $data{$offset+1} == '>') {
+			if ($data[$offset] == '>' && $data[$offset+1] == '>') {
 				$i--;
 				$dict .= '>>';
 				$offset += 2;
-			} else if ($data{$offset} == '<' && $data{$offset+1} == '<') {
+			} else if ($data[$offset] == '<' && $data[$offset+1] == '<') {
 				$i++;
 				$dict .= '<<';
 				$offset += 2;
 			} else {
-				$dict .= $data{$offset};
+				$dict .= $data[$offset];
 				$offset++;
 			}
 		} while ($i>0);

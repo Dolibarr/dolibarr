@@ -12,15 +12,31 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-$id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $object = new ProductAttribute($db);
+$rowid = GETPOST('rowid', 'int');		// Id of line for up / down when no javascript available
+
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+$permissiontoadd = $user->rights->produit->creer || $user->rights->service->creer;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+
+
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
 
 
 
@@ -28,13 +44,13 @@ $object = new ProductAttribute($db);
  * Actions
  */
 
-if ($action == 'up') {
+if ($action == 'up' && $permissiontoadd) {
 	$object->fetch($rowid);
 	$object->moveUp();
 
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit();
-} elseif ($action == 'down') {
+} elseif ($action == 'down' && $permissiontoadd) {
 	$object->fetch($rowid);
 	$object->moveDown();
 
@@ -56,19 +72,16 @@ $variants = $object->fetchAll();
 
 llxHeader('', $title);
 
-$newcardbutton='';
-if ($user->rights->produit->creer)
-{
-	$newcardbutton='<a href="'.DOL_URL_ROOT.'/variants/create.php" class="butActionNew"><span class="valignmiddle text-plus-circle">'.$langs->trans('Create').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+$newcardbutton = '';
+if ($user->rights->produit->creer) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 
-print load_fiche_titre($title, $newcardbutton, 'title_products');
+print load_fiche_titre($title, $newcardbutton, 'product');
 
-$forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
+$forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 ?>
-	<script type="text/javascript">
+	<script>
 		$(document).ready(function(){
 			$(".imgupforline, .imgdownforline").hide();
 			$(".lineupdown").removeAttr('href');
@@ -91,7 +104,8 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 					var roworder = cleanSerialize(decodeURI($("#tablelines").tableDnDSerialize()));
 					$.post("<?php echo DOL_URL_ROOT; ?>/variants/ajax/orderAttribute.php",
 						{
-							roworder: roworder
+							roworder: roworder,
+							token: "<?php echo currentToken(); ?>"
 						},
 						function() {
 							if (reloadpage == 1) {
@@ -112,7 +126,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 		});
 	</script>
 
-	<table class="liste" id="tablelines">
+	<table class="liste nobottom" id="tablelines">
 		<tr class="liste_titre nodrag nodrop">
 			<th class="liste_titre"><?php print $langs->trans('Ref') ?></th>
 			<th class="liste_titre"><?php print $langs->trans('Label') ?></th>
@@ -120,34 +134,29 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 			<th class="liste_titre right"><?php print $langs->trans('NbProducts') ?></th>
 			<th class="liste_titre" colspan="2"></th>
 		</tr>
-		<?php foreach ($variants as $key => $attribute): ?>
-		<tr id="row-<?php echo $attribute->id ?>" class="drag drop oddeven">
-			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->ref) ?></a></td>
-			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->label) ?></a></td>
-			<td class="right"><?php echo $attribute->countChildValues() ?></td>
-			<td class="right"><?php echo $attribute->countChildProducts() ?></td>
-			<td class="right">
-				<a href="card.php?id=<?php echo $attribute->id ?>&action=edit"><?php echo img_edit() ?></a>
-				<a href="card.php?id=<?php echo $attribute->id ?>&action=delete"><?php echo img_delete() ?></a>
-			</td>
-			<td class="center linecolmove tdlineupdown">
-				<?php if ($key > 0): ?>
-				<a class="lineupdown"
-				   href="<?php echo $_SERVER['PHP_SELF'] ?>?action=up&amp;rowid=<?php echo $attribute->id ?>"><?php echo img_up('default', 0, 'imgupforline'); ?></a>
-				<?php endif ?>
-				<?php if ($key < count($variants)-1): ?>
-				<a class="lineupdown"
-				   href="<?php echo $_SERVER['PHP_SELF'] ?>?action=down&amp;rowid=<?php echo $attribute->id ?>"><?php echo img_down('default', 0, 'imgdownforline'); ?></a>
-				<?php endif ?>
-			</td>
-		</tr>
-	<?php
-		endforeach
-	?>
-
-	</table>
-
 <?php
+foreach ($variants as $key => $attribute) {
+	print '<tr id="row-'.$attribute->id.'" class="drag drop oddeven">';
+	print '<td><a href="card.php?id='.$attribute->id.'">'.dol_htmlentities($attribute->ref).'</a></td>';
+	print '<td><a href="card.php?id='.$attribute->id.'">'.dol_htmlentities($attribute->label).'</a></td>';
+	print '<td class="right">'.$attribute->countChildValues().'</td>';
+	print '<td class="right">'.$attribute->countChildProducts().'</td>';
+	print '<td class="right">';
+	print '<a class="editfielda marginrightonly paddingleftonly" href="card.php?id='.$attribute->id.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+	print '<a class="marginrightonly paddingleftonlyhref="card.php?id='.$attribute->id.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+	print '</td>';
+	print '<td class="center linecolmove tdlineupdown">';
+	if ($key > 0) {
+		print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$attribute->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+	}
+	if ($key < count($variants) - 1) {
+		print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$attribute->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+	}
+	print '</td>';
+	print "</tr>\n";
+}
+
+print '</table>';
 
 // End of page
 llxFooter();

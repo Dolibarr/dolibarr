@@ -2,7 +2,7 @@
 Delivery=Delivery
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=Delivery order
+DeliveryOrder=Delivery receipt
 DeliveryDate=Delivery date
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
@@ -27,5 +27,7 @@ Recipient=Recipient
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
 ShowReceiving=Show delivery receipt
 NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

@@ -9,10 +9,10 @@
  * choice:
  *
  *  - GNU General Public License Version 2 or later (the "GPL")
- *    http://www.gnu.org/licenses/gpl.html
+ *    https://www.gnu.org/licenses/gpl.html
  *
  *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
- *    http://www.gnu.org/licenses/lgpl.html
+ *    https://www.gnu.org/licenses/lgpl.html
  *
  *  - Mozilla Public License Version 1.1 or later (the "MPL")
  *    http://www.mozilla.org/MPL/MPL-1.1.html
@@ -31,7 +31,7 @@
  */
 function RemoveFromStart($sourceString, $charToRemove)
 {
-	$sPattern = '|^' . $charToRemove . '+|' ;
+	$sPattern = '|^'.$charToRemove.'+|';
 	return preg_replace($sPattern, '', $sourceString);
 }
 
@@ -44,7 +44,7 @@ function RemoveFromStart($sourceString, $charToRemove)
  */
 function RemoveFromEnd($sourceString, $charToRemove)
 {
-	$sPattern = '|' . $charToRemove . '+$|' ;
+	$sPattern = '|'.$charToRemove.'+$|';
 	return preg_replace($sPattern, '', $sourceString);
 }
 
@@ -56,18 +56,12 @@ function RemoveFromEnd($sourceString, $charToRemove)
  */
 function FindBadUtf8($string)
 {
-	$regex = '([\x00-\x7F]'.
-	'|[\xC2-\xDF][\x80-\xBF]'.
-	'|\xE0[\xA0-\xBF][\x80-\xBF]'.
-	'|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}'.
-	'|\xED[\x80-\x9F][\x80-\xBF]'.
-	'|\xF0[\x90-\xBF][\x80-\xBF]{2}'.
-	'|[\xF1-\xF3][\x80-\xBF]{3}'.
-	'|\xF4[\x80-\x8F][\x80-\xBF]{2}'.
-	'|(.{1}))';
+	$regex = '([\x00-\x7F]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-\xBF]|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}|\xED[\x80-\x9F][\x80-\xBF]';
+	$regex .= '|\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}|(.{1}))';
 
+	$matches = array();
 	while (preg_match('/'.$regex.'/S', $string, $matches)) {
-		if ( isset($matches[2])) {
+		if (isset($matches[2])) {
 			return true;
 		}
 		$string = substr($string, strlen($matches[0]));
@@ -84,21 +78,15 @@ function FindBadUtf8($string)
  */
 function ConvertToXmlAttribute($value)
 {
-	if ( defined('PHP_OS') )
-	{
-		$os = PHP_OS ;
-	}
-	else
-	{
+	if (defined('PHP_OS')) {
+		$os = PHP_OS;
+	} else {
 		$os = php_uname();
 	}
 
-	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value))
-	{
+	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value)) {
 		return (utf8_encode(htmlspecialchars($value)));
-	}
-	else
-	{
+	} else {
 		return (htmlspecialchars($value));
 	}
 }
@@ -112,13 +100,11 @@ function ConvertToXmlAttribute($value)
  */
 function IsHtmlExtension($ext, $formExtensions)
 {
-	if (!$formExtensions || !is_array($formExtensions) )
-	{
-		return false ;
+	if (!$formExtensions || !is_array($formExtensions)) {
+		return false;
 	}
 	$lcaseHtmlExtensions = array();
-	foreach ($formExtensions as $key => $val)
-	{
+	foreach ($formExtensions as $key => $val) {
 		$lcaseHtmlExtensions[$key] = strtolower($val);
 	}
 	return in_array($ext, $lcaseHtmlExtensions);
@@ -137,9 +123,8 @@ function DetectHtml($filePath)
 	$fp = @fopen($filePath, 'rb');
 
 	//open_basedir restriction, see #1906
-	if ( $fp === false || !flock($fp, LOCK_SH) )
-	{
-		return -1 ;
+	if ($fp === false || !flock($fp, LOCK_SH)) {
+		return -1;
 	}
 
 	$chunk = fread($fp, 1024);
@@ -148,49 +133,42 @@ function DetectHtml($filePath)
 
 	$chunk = strtolower($chunk);
 
-	if (!$chunk)
-	{
-		return false ;
+	if (!$chunk) {
+		return false;
 	}
 
 	$chunk = trim($chunk);
 
-	if ( preg_match("/<!DOCTYPE\W*X?HTML/sim", $chunk) )
-	{
+	if (preg_match("/<!DOCTYPE\W*X?HTML/sim", $chunk)) {
 		return true;
 	}
 
-	$tags = array( '<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title' );
+	$tags = array('<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title');
 
-	foreach($tags as $tag)
-	{
-		if( false !== strpos($chunk, $tag) )
-		{
-			return true ;
+	foreach ($tags as $tag) {
+		if (false !== strpos($chunk, $tag)) {
+			return true;
 		}
 	}
 
 	//type = javascript
-	if ( preg_match('!type\s*=\s*[\'"]?\s*(?:\w*/)?(?:ecma|java)!sim', $chunk) )
-	{
-		return true ;
+	if (preg_match('!type\s*=\s*[\'"]?\s*(?:\w*/)?(?:ecma|java)!sim', $chunk)) {
+		return true;
 	}
 
 	//href = javascript
 	//src = javascript
 	//data = javascript
-	if ( preg_match('!(?:href|src|data)\s*=\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk) )
-	{
-		return true ;
+	if (preg_match('!(?:href|src|data)\s*=\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk)) {
+		return true;
 	}
 
 	//url(javascript
-	if ( preg_match('!url\s*\(\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk) )
-	{
-		return true ;
+	if (preg_match('!url\s*\(\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk)) {
+		return true;
 	}
 
-	return false ;
+	return false;
 }
 
 /**
@@ -209,31 +187,31 @@ function IsImageValid($filePath, $extension)
 	}
 
 	$imageCheckExtensions = array(
-        'gif',
-        'jpeg',
-        'jpg',
-        'png',
-        'swf',
-        'psd',
-        'bmp',
-        'iff',
-        'tiff',
-        'tif',
-        'swc',
-        'jpc',
-        'jp2',
-        'jpx',
-        'jb2',
-        'xbm',
-        'wbmp'
-    );
+		'gif',
+		'jpeg',
+		'jpg',
+		'png',
+		'swf',
+		'psd',
+		'bmp',
+		'iff',
+		'tiff',
+		'tif',
+		'swc',
+		'jpc',
+		'jp2',
+		'jpx',
+		'jb2',
+		'xbm',
+		'wbmp'
+	);
 
-	if (!in_array($extension, $imageCheckExtensions) ) {
+	if (!in_array($extension, $imageCheckExtensions)) {
 		return true;
 	}
 
 	if (@getimagesize($filePath) === false) {
-		return false ;
+		return false;
 	}
 
 	return true;

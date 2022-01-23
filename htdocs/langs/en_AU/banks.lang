@@ -4,4 +4,3 @@ ShowCheckReceipt=Show cheque deposit receipt
 RejectCheck=Cheque returned
 RejectCheckDate=Date the cheque was returned
 CheckRejected=Cheque returned
-CheckRejectedAndInvoicesReopened=Cheque returned and invoices reopened

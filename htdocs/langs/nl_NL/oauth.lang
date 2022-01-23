@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth configuratie
-OAuthServices=OAuth services
+ConfigOAuth=OAuth-configuratie
+OAuthServices=OAuth-services
 ManualTokenGeneration=Handmatig aanmaken token
-TokenManager=Token manager
+TokenManager=Token Manager
 IsTokenGenerated=Is token aangemaakt?
 NoAccessToken=Token voor toegang is niet opgeslagen in locale database
 HasAccessToken=Token is gegenereerd en opgeslagen in locale database
@@ -11,8 +11,8 @@ ToCheckDeleteTokenOnProvider=Klik hier om de autorisatie te controleren/verwijde
 TokenDeleted=Token verwijderd
 RequestAccess=Klik hier voor her-opvragen/vernieuwen van toegang en ontvang een nieuw token te bewaren.
 DeleteAccess=Klik hier om token te verwijderen
-UseTheFollowingUrlAsRedirectURI=Gebruik de volgende URL als omleidings-URI bij het maken van uw referentie op uw OAuth-provider:
-ListOfSupportedOauthProviders=Voer hier de inloggegevens in die zijn verstrekt door uw OAuth2-provider. Alleen ondersteunde OAuth2-providers zijn hier zichtbaar. Deze setup kan worden gebruikt door andere modules die OAuth2-authenticatie nodig hebben.
+UseTheFollowingUrlAsRedirectURI=Gebruik de volgende URL als de omleidings-URI bij het maken van uw inloggegevens bij uw OAuth-provider:
+ListOfSupportedOauthProviders=Voer de inloggegevens in die door uw OAuth2-provider zijn verstrekt. Alleen ondersteunde OAuth2-providers worden hier vermeld. Deze services kunnen worden gebruikt door andere modules die OAuth2-authenticatie nodig hebben.
 OAuthSetupForLogin=Pagina om Oauth token te genereren
 SeePreviousTab=Zie vorige tab
 OAuthIDSecret=OAuth ID en Secret
@@ -20,11 +20,13 @@ TOKEN_REFRESH=Token Vernieuw aanwezig
 TOKEN_EXPIRED=Token verlopen
 TOKEN_EXPIRE_AT=Token verloopt op
 TOKEN_DELETE=Verwijder opgeslagen token
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google Id
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Ga op <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> deze pagina </a> en vervolgens 'Credentials' om Oauth-inloggegevens te maken
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub Id
-OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Ga op <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> deze pagina </a> en vervolgens "Registreer een nieuwe applicatie" om Oauth-inloggegevens te maken
+OAUTH_GOOGLE_NAME=OAuth Google-service
+OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Ga naar <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">deze pagina en</a> vervolgens "Referenties" om OAuth-referenties te maken
+OAUTH_GITHUB_NAME=OAuth GitHub-service
+OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=Ga naar <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">deze pagina</a> en "Registreer een nieuwe toepassing" om OAuth-referenties te maken
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

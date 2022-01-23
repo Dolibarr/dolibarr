@@ -33,7 +33,7 @@ ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<
 ExpenseReportPaid=An expense report was paid
 ExpenseReportPaidMessage=The expense report %s was paid.<br> - User: %s<br> - Paid by: %s<br>Click here to show the expense report: %s
 TripId=รายงานค่าใช้จ่าย Id
-AnyOtherInThisListCanValidate=คนที่จะแจ้งให้สำหรับการตรวจสอบ
+AnyOtherInThisListCanValidate=Person to be informed for validating the request.
 TripSociete=ข้อมูล บริษัท
 TripNDF=ข้อมูลรายงานค่าใช้จ่าย
 PDFStandardExpenseReports=แม่แบบมาตรฐานในการสร้างเอกสาร PDF สำหรับรายงานค่าใช้จ่าย
@@ -73,28 +73,23 @@ EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
 DefaultCategoryCar=Default transportation mode
 DefaultRangeNumber=Default range number
-
+UploadANewFileNow=Upload a new document now
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
 ErrorDoubleDeclaration=คุณได้ประกาศรายงานค่าใช้จ่ายอื่นเข้ามาในช่วงวันที่ที่คล้ายกัน
 AucuneLigne=มีรายงานค่าใช้จ่ายไม่มีการประกาศความเป็นส่วนตัว
-
 ModePaiement=โหมดการชำระเงิน
-
 VALIDATOR=ผู้รับผิดชอบในการอนุมัติ
 VALIDOR=อนุมัติโดย
 AUTHOR=บันทึกโดย
 AUTHORPAIEMENT=จ่ายโดย
 REFUSEUR=ปฏิเสธโดย
 CANCEL_USER=ลบโดย
-
 MOTIF_REFUS=เหตุผล
 MOTIF_CANCEL=เหตุผล
-
 DATE_REFUS=ปฏิเสธวัน
 DATE_SAVE=วันที่ตรวจสอบ
 DATE_CANCEL=วันที่ยกเลิก
 DATE_PAIEMENT=วันที่ชำระเงิน
-BROUILLONNER=เปิดใหม่
 ExpenseReportRef=Ref. expense report
 ValidateAndSubmit=ตรวจสอบและส่งเพื่อขออนุมัติ
 ValidatedWaitingApproval=การตรวจสอบ (รอการอนุมัติ)
@@ -113,12 +108,11 @@ NoTripsToExportCSV=ไม่มีรายงานค่าใช้จ่า�
 ExpenseReportPayment=Expense report payment
 ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay
-CloneExpenseReport=Clone expense report
 ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?
-ExpenseReportsIk=Expense report milles index
+ExpenseReportsIk=Configuration of mileage charges
 ExpenseReportsRules=Expense report rules
 ExpenseReportIkDesc=You can modify the calculation of kilometers expense by category and range who they are previously defined. <b>d</b> is the distance in kilometers
-ExpenseReportRulesDesc=You can create or update any rules of calculation. This part will be used when user will create a new expense report
+ExpenseReportRulesDesc=You can define max amount rules for expense reports. These rules will be applied when a new expense is added to an expense report
 expenseReportOffset=สาขา
 expenseReportCoef=Coefficient
 expenseReportTotalForFive=Example with <u>d</u> = 5
@@ -133,25 +127,24 @@ ExpenseReportDomain=Domain to apply
 ExpenseReportLimitOn=Limit on
 ExpenseReportDateStart=เริ่มต้นวันที่
 ExpenseReportDateEnd=สิ้นสุดวันที่
-ExpenseReportLimitAmount=Limite amount
-ExpenseReportRestrictive=Restrictive
+ExpenseReportLimitAmount=Max amount
+ExpenseReportRestrictive=Exceeding forbidden
 AllExpenseReport=All type of expense report
 OnExpense=Expense line
 ExpenseReportRuleSave=Expense report rule saved
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Range %d
-
-ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
+ExpenseReportConstraintViolationError=Max amount exceeded (rule %s): %s is higher than %s (Exceeding forbidden)
 byEX_DAY=by day (limitation to %s)
 byEX_MON=by month (limitation to %s)
 byEX_YEA=by year (limitation to %s)
 byEX_EXP=by line (limitation to %s)
-ExpenseReportConstraintViolationWarning=Constraint violation id [%s]: %s  is superior to %s %s
+ExpenseReportConstraintViolationWarning=Max amount exceeded (rule %s): %s is higher than %s (Exceeding authorized)
 nolimitbyEX_DAY=by day (no limitation)
 nolimitbyEX_MON=by month (no limitation)
 nolimitbyEX_YEA=by year (no limitation)
 nolimitbyEX_EXP=by line (no limitation)
-
-CarCategory=Category of car
+CarCategory=Vehicle category
 ExpenseRangeOffset=Offset amount: %s
 RangeIk=Mileage range
+AttachTheNewLineToTheDocument=Attach the line to an uploaded document

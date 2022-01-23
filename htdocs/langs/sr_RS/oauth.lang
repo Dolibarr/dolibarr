@@ -1,0 +1,32 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=OAuth Configuration
+OAuthServices=OAuth Services
+ManualTokenGeneration=Manual token generation
+TokenManager=Token Manager
+IsTokenGenerated=Is token generated ?
+NoAccessToken=Nema tokena u lokalnoj bazi
+HasAccessToken=Token je generisan i sačuvan u lokalnoj bazi
+NewTokenStored=Token received and saved
+ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
+TokenDeleted=Token obrisan
+RequestAccess=Kliknite ovde da biste tražili/obnovili pristup i primili novi token za čuvanje
+DeleteAccess=Kliknite ovde da obrišete token
+UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credentials with your OAuth provider:
+ListOfSupportedOauthProviders=Enter the credentials provided by your OAuth2 provider. Only supported OAuth2 providers are listedd here. These services may be used by other modules that need OAuth2 authentication.
+OAuthSetupForLogin=Page to generate an OAuth token
+SeePreviousTab=See previous tab
+OAuthIDSecret=OAuth ID and Secret
+TOKEN_REFRESH=Token Refresh Present
+TOKEN_EXPIRED=Token expired
+TOKEN_EXPIRE_AT=Token ističe
+TOKEN_DELETE=Obriši sačuvani token
+OAUTH_GOOGLE_NAME=OAuth Google service
+OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Go to <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create OAuth credentials
+OAUTH_GITHUB_NAME=OAuth GitHub service
+OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=Go to <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create OAuth credentials
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
