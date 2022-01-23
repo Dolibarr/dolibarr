@@ -3418,6 +3418,10 @@ if ($action == 'create') {
 					$optionsav .= '<option value="'.$key.'"';
 					if ($key == GETPOST('fac_avoir')) {
 						$optionsav .= ' selected';
+
+						// pre-filled extra fields with selected credit note
+						$newinvoice_static->fetch_optionals($key);
+						$object->array_options = $newinvoice_static->array_options;
 					}
 					$optionsav .= '>';
 					$optionsav .= $newinvoice_static->ref;
