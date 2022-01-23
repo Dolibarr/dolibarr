@@ -15,7 +15,7 @@ NEW: Add option to disable globaly some notifications emails.
 NEW: #18326 Workflow: Close order on shipment closing.
 NEW: #18401 Add __NEWREF__ subtitute to get new object reference.
 NEW: #18403 Add __URL_SHIPMENT__ substitute to get the URL of a shipment
-NEW: #18689 REST API module: add api key generate / modify right.
+NEW: #18689 REST API module: add api key generate / modify pemrission.
 NEW: #18663 Make "L'Annuaire des Entreprises" the default provider for SIREN verification for French thirdparties.
 NEW: #18046 Add tags on ticket/categories
 NEW: #18326 Workflow: Close order on shipment closing.
@@ -123,6 +123,7 @@ NEW: Introduce method hasRight
 NEW: Can use textarea field into a confirm popup.
 NEW: Can use the result_mode of mysqli driver. Save memory for list count
 NEW: #18319 REST API - Shipment: Add 'close' action / endpoint / POST method.
+NEW: Add API /approve and /makeOrder for purchase orders. 
 NEW: add action trigger for member excluded
 NEW: add option MAIN_IBAN_IS_NEVER_MANDATORY, MAIN_IBAN_NOT_MANDATORY, PROPAL_NOT_BILLABLE, PROPAL_REOPEN_UNSIGNED_ONLY, PROPOSAL_ARE_NOT_BILLABLE, TICKETS_MESSAGE_FORCE_MAIL
 NEW: Add code codebar column on serial/lot structure
