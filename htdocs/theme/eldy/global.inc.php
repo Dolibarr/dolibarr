@@ -261,7 +261,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.select2-search__field):not(#top-bookmark-search-input), select:focus, .select2-container--open .select2-selection--single {
+input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input), select:focus, .select2-container--open .select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -994,7 +994,7 @@ div.divsearchfield {
 	padding-left: 2px;
 }
 .divfilteralone {
-	background-color: #e8e8e8;
+	background-color: rgba(0, 0, 0, 0.08);
 	border-radius: 5px;
 	padding-left: 5px;
 }

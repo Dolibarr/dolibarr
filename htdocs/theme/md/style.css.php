@@ -1099,7 +1099,7 @@ a.editfielda.nohover *:hover:before {
 	padding-<?php print $right; ?>: 20px;
 }
 .divfilteralone {
-	background-color: #e8e8e8;
+	background-color: rgba(0, 0, 0, 0.08);
 	border-radius: 5px;
 	padding-left: 5px;
 }
