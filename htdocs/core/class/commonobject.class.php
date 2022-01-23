@@ -1215,7 +1215,7 @@ abstract class CommonObject
 	public function delete_linked_contact($source = '', $code = '')
 	{
 		// phpcs:enable
-		$listId = null;
+		$listId = '';
 		$temp = array();
 		$typeContact = $this->liste_type_contact($source, '', 0, 0, $code);
 
