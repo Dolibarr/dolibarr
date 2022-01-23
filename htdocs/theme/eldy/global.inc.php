@@ -261,7 +261,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.select2-search__field), select:focus, .select2-container--open .select2-selection--single {
+input:focus:not(.select2-search__field):not(#top-bookmark-search-input), select:focus, .select2-container--open .select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -985,12 +985,18 @@ span.fa.fa-plus-circle.paddingleft {
 	padding-<?php print $right; ?>: 20px;
 }
 div.divsearchfield {
-	float: <?php print $left; ?>;
+	/* float: <?php print $left; ?>; */
+	display: inline-block;
 	margin-<?php print $right; ?>: 12px;
 	margin-<?php print $left; ?>: 2px;
 	margin-top: 4px;
 	margin-bottom: 4px;
-	  padding-left: 2px;
+	padding-left: 2px;
+}
+.divfilteralone {
+	background-color: #e8e8e8;
+	border-radius: 5px;
+	padding-left: 5px;
 }
 .divsearchfieldfilter {
 	text-overflow: clip;
@@ -2808,8 +2814,8 @@ div.login a:hover {
 div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
-	height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '52'; ?>px;
+	height: <?php echo $disableimages ? '25' : '52'; ?>px;
 }
 div.login_block_other {
 	display: inline-block;
@@ -3396,6 +3402,7 @@ input.buttonreset {
 	padding: 8px 15px;
 	text-decoration: underline;
 	color: var(--colortextlink);
+	background-color: transparent;
 	cursor: pointer;
 }
 .nopaddingleft {
