@@ -109,8 +109,7 @@ if ($idprod > 0)
 	{
 		// Add price for pmp
 		$price=$producttmp->pmp;
-		if (empty($price))
-		{
+		if (empty($price) && !empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {
 			// get pmp for subproducts if any
 			$producttmp->get_sousproduits_arbo();
 			$prods_arbo=$producttmp->get_arbo_each_prod();
