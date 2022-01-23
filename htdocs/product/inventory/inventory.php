@@ -630,7 +630,10 @@ if ($object->id > 0) {
 				errortab3 = [];
 				errortab4 = [];
 
-				if(textarray[0] != ""){
+				textarray = textarray.filter(function(value){
+					return value != "";
+				});
+				if(textarray.some((element) => element != "")){
 					$(".expectedqty").each(function(){
 						id = this.id;
 						console.log("Analyze line "+id+" in inventory");
@@ -851,7 +854,7 @@ if ($object->id > 0) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Warehouse").'</td>';
 	print '<td>'.$langs->trans("Product").'</td>';
-	if ($conf->productbatch->enabled) {
+	if (!empty($conf->productbatch->enabled)) {
 		print '<td>';
 		print $langs->trans("Batch");
 		print '</td>';
@@ -881,7 +884,7 @@ if ($object->id > 0) {
 		print '<td>';
 		print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOST('fk_product', 'int') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
 		print '</td>';
-		if ($conf->productbatch->enabled) {
+		if (!empty($conf->productbatch->enabled)) {
 			print '<td>';
 			print '<input type="text" name="batch" class="maxwidth100" value="'.(GETPOSTISSET('batch') ? GETPOST('batch') : '').'">';
 			print '</td>';
@@ -927,6 +930,7 @@ if ($object->id > 0) {
 			}
 
 			// Load real stock we have now
+			$option = '';
 			if (isset($cacheOfProducts[$obj->fk_product])) {
 				$product_static = $cacheOfProducts[$obj->fk_product];
 			} else {
@@ -948,7 +952,7 @@ if ($object->id > 0) {
 			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
-			if ($conf->productbatch->enabled) {
+			if (!empty($conf->productbatch->enabled)) {
 				print '<td id="id_'.$obj->rowid.'_batch">';
 				print $obj->batch;
 				print '</td>';
@@ -959,7 +963,7 @@ if ($object->id > 0) {
 			$valuetoshow = $obj->qty_stock;
 			// For inventory not yet close, we overwrite with the real value in stock now
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
-				if ($conf->productbatch->enabled && $product_static->hasbatch()) {
+				if (!empty($conf->productbatch->enabled) && $product_static->hasbatch()) {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 				} else {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
