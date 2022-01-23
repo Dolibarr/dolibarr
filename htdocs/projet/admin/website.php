@@ -134,7 +134,7 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print '</table>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 }
 */
@@ -159,7 +159,7 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<a target="_blank" href="'.$urlwithroot.'/public/project/new.php'.$entity_qr.'">'.$urlwithroot.'/public/project/new.php'.$entity_qr.'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/project/new.php'.$entity_qr.'">'.$urlwithroot.'/public/project/new.php'.$entity_qr.'</a>';
 }
 
 // End of page

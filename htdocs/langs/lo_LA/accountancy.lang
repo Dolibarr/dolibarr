@@ -48,7 +48,7 @@ CountriesNotInEEC=ປະເທດທີ່ບໍ່ຢູ່ໃນ EEC
 CountriesInEECExceptMe=ປະເທດໃນ EEC ຍົກເວັ້ນ %s
 CountriesExceptMe=ທຸກປະເທດຍົກເວັ້ນ %s
 AccountantFiles=ສົ່ງອອກເອກະສານແຫຼ່ງທີ່ມາ
-ExportAccountingSourceDocHelp=ດ້ວຍເຄື່ອງມືນີ້, ເຈົ້າສາມາດສົ່ງອອກເຫດການຕົ້ນທາງ (ລາຍການຢູ່ໃນ CSV ແລະ PDFs) ທີ່ໄດ້ຖືກນໍາໃຊ້ເພື່ອສ້າງບັນຊີຂອງເຈົ້າ.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=ເພື່ອສົ່ງອອກວາລະສານຂອງເຈົ້າ, ໃຊ້ລາຍການເມນູ %s - %s.
 VueByAccountAccounting=ເບິ່ງຕາມບັນຊີບັນຊີ
 VueBySubAccountAccounting=ເບິ່ງຕາມບັນຊີຍ່ອຍບັນຊີ
@@ -286,7 +286,7 @@ ValidateMovements=ກວດສອບການເຄື່ອນໄຫວ
 DescValidateMovements=ການດັດແກ້ຫຼືການລຶບລາຍລັກອັກສອນ, ຕົວອັກສອນແລະການລຶບໃດ will ຈະຖືກຫ້າມ. ລາຍການທັງforົດ ສຳ ລັບການອອກ ກຳ ລັງກາຍຕ້ອງຖືກກວດສອບຖ້າບໍ່ດັ່ງນັ້ນຈະປິດບໍ່ໄດ້
 
 ValidateHistory=ຜູກມັດອັດຕະໂນມັດ
-AutomaticBindingDone=ການຜູກມັດອັດຕະໂນມັດ ສຳ ເລັດແລ້ວ
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=ການເຄື່ອນໄຫວບໍ່ສົມດຸນຖືກຕ້ອງ. ເດບິດ = %s | ສິນເຊື່ອ = %s
@@ -387,7 +387,8 @@ SaleExport=ຂາຍສົ່ງອອກ
 SaleEEC=ຂາຍໃນ EEC
 SaleEECWithVAT=ການຂາຍໃນ EEC ດ້ວຍອາກອນມູນຄ່າເພີ່ມບໍ່ແມ່ນ null, ດັ່ງນັ້ນພວກເຮົາຄິດວ່າອັນນີ້ບໍ່ແມ່ນການຂາຍພາຍໃນລະບົບສື່ສານແລະບັນຊີທີ່ແນະນໍາແມ່ນບັນຊີຜະລິດຕະພັນມາດຕະຖານ.
 SaleEECWithoutVATNumber=ຂາຍໃນ EEC ໂດຍບໍ່ມີ VAT ແຕ່ ID VAT ຂອງພາກສ່ວນທີສາມບໍ່ໄດ້ລະບຸ. ພວກເຮົາຕົກຢູ່ໃນບັນຊີຜະລິດຕະພັນສໍາລັບການຂາຍມາດຕະຖານ. ເຈົ້າສາມາດແກ້ໄຂ VAT ID ຂອງພາກສ່ວນທີສາມຫຼືບັນຊີຜະລິດຕະພັນຖ້າຈໍາເປັນ.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=ຂອບເຂດຂອງບັນຊີບັນຊີ
 Calculated=ຄຳ ນວນແລ້ວ
@@ -404,6 +405,7 @@ NoJournalDefined=ບໍ່ໄດ້ ກຳ ນົດວາລະສານ
 Binded=ເສັ້ນຖືກຜູກມັດ
 ToBind=ສາຍເພື່ອຜູກມັດ
 UseMenuToSetBindindManualy=ເສັ້ນບໍ່ຖືກຜູກມັດເທື່ອ, ໃຊ້ເມນູ <a href="%s"> %s </a> ເພື່ອເຮັດການຜູກມັດດ້ວຍຕົນເອງ
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=ລາຍການບັນຊີ

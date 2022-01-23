@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +62,8 @@ $search_company = GETPOST("search_company", 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -291,8 +292,6 @@ if (empty($reshook)) {
 
 			$paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 			$paiement->note_private = GETPOST('comment', 'alpha');
-			$paiement->num_payment = $paiement->num_payment;
-			$paiement->note_private = $paiement->note_private;
 
 			if (!$error) {
 				$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices') == 'on' ? 1 : 0), $thirdparty);
@@ -361,16 +360,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
 	$sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", sc.fk_soc, sc.fk_user ";
 	}
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= ' WHERE f.fk_soc = s.rowid';
 	$sql .= ' AND f.rowid = '.((int) $facid);
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$resql = $db->query($sql);
@@ -384,7 +383,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			// Add realtime total information
 			if (!empty($conf->use_javascript_ajax)) {
-				print "\n".'<script type="text/javascript" language="javascript">';
+				print "\n".'<script type="text/javascript">';
 				print '$(document).ready(function () {
 
 						function _elemToJson(selector)
@@ -510,8 +509,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$sql .= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-				$sql .= " WHERE f.entity = ".$conf->entity;
-				$sql .= ' AND f.fk_soc = '.$object->socid;
+				$sql .= " WHERE f.entity = ".((int) $conf->entity);
+				$sql .= ' AND f.fk_soc = '.((int) $object->socid);
 				$sql .= ' AND f.paye = 0';
 				$sql .= ' AND f.fk_statut = 1'; // Status=0 => unvalidated, Status=2 => canceled
 				if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE) {
@@ -520,7 +519,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$sql .= ' AND f.type = 2'; // If paying back a credit note, we show all credit notes
 				}
 				// Group by because we have a total
-				$sql .= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef, f.date_lim_reglement';
+				$sql .= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc,';
+				$sql .= ' f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+				$sql .= ' f.datef, f.date_lim_reglement';
 				// Sort invoices by date and serial number: the older one comes first
 				$sql .= ' ORDER BY f.datef ASC, f.ref ASC';
 
@@ -533,7 +534,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 						if (!empty($conf->use_javascript_ajax)) {
 							//Add js for AutoFill
-							print "\n".'<script type="text/javascript" language="javascript">';
+							print "\n".'<script type="text/javascript">';
 							print ' $(document).ready(function () {';
 							print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
 											$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value"));
@@ -686,7 +687,31 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 							print '</td>';
 
-							print '<td class="right">'.price($sign * $remaintopay).'</td>';
+							print '<td class="right">';
+							print price($sign * $remaintopay);
+							if (!empty($conf->paymentbybanktransfer->enabled)) {
+								$numdirectdebitopen = 0;
+								$totaldirectdebit = 0;
+								$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
+								$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+								$sql .= " WHERE fk_facture_fourn = ".((int) $objp->facid);
+								$sql .= " AND pfd.traite = 0";
+								$sql .= " AND pfd.ext_payment_id IS NULL";
+
+								$result_sql = $db->query($sql);
+								if ($result_sql) {
+									$obj = $db->fetch_object($result_sql);
+									$numdirectdebitopen = $obj->nb;
+									$totaldirectdebit = $obj->amount;
+								} else {
+									dol_print_error($db);
+								}
+								if ($numdirectdebitopen) {
+									$langs->load("withdrawals");
+									print img_warning($langs->trans("WarningSomeCreditTransferAlreadyExists", $numdirectdebitopen, price(price2num($totaldirectdebit, 'MT'), 0, $langs, 1, -1, -1, $conf->currency)), '', 'classfortooltip');
+								}
+							}
+							print '</td>';
 
 							// Amount
 							print '<td class="center nowraponall">';
@@ -699,10 +724,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
 								}
 									print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-									print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';	// class is requied to be used by javascript callForResult();
+									print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is requied to be used by javascript callForResult();
 							} else {
 								print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
-								print '<input type="hidden" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';	// class is requied to be used by javascript callForResult();
+								print '<input type="hidden" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is requied to be used by javascript callForResult();
 							}
 							print "</td>";
 

@@ -66,10 +66,6 @@ function show_skin($fuser, $edit = 0)
 	// Title
 	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
 	print '<th class="right">';
-	$url = 'http://ckeditor.com/addons/skins/all';
-	/*print '<a href="'.$url.'" target="_blank">';
-	   print $langs->trans('DownloadMoreSkins');
-	   print '</a>';*/
 	print '</th></tr>';
 
 	print '<tr class="oddeven">';

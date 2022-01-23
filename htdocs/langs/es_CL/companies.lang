@@ -149,7 +149,6 @@ EditCompany=Editar empresa
 VATIntraCheck=Cheque
 VATIntraCheckDesc=La identificación del IVA debe incluir el prefijo del país. El enlace <b>%s</b> utiliza el servicio europeo de verificación de IVA (VIES), que requiere acceso a Internet desde el servidor Dolibarr.
 VATIntraCheckableOnEUSite=Compruebe la identificación del IVA intracomunitaria en el sitio web de la Comisión Europea
-VATIntraManualCheck=También puede consultar manualmente en el sitio web de la Comisión Europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=No es posible comprobar. El servicio de verificación no proporcionado por el estado miembro  (%s).
 NorProspectNorCustomer=No prospecto, ni cliente
 ProspectLevel=Potencial prospectivo

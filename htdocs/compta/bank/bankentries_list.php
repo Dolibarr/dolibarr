@@ -8,7 +8,7 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,12 +64,13 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
+$massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'aZ09');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if ($fielvalue) {
+if ($fieldvalue) {
 	if ($user->socid) {
 		$socid = $user->socid;
 	}
@@ -98,14 +99,16 @@ $search_thirdparty_user = GETPOST("search_thirdparty", 'alpha') ?GETPOST("search
 $search_req_nb = GETPOST("req_nb", 'alpha');
 $search_num_releve = GETPOST("search_num_releve", 'alpha');
 $search_conciliated = GETPOST("search_conciliated", 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
+$toselect = GETPOST('toselect', 'array');
 $num_releve = GETPOST("num_releve", "alpha");
 if (empty($dateop)) {
 	$dateop = -1;
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $pageplusone = GETPOST("pageplusone", 'int');
 if ($pageplusone) {
@@ -211,6 +214,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_thirdparty_user = '';
 	$search_num_releve = '';
 	$search_conciliated = '';
+	$toselect = '';
 
 	$search_account = "";
 	if ($id > 0 || !empty($ref)) {
@@ -221,14 +225,14 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (empty($reshook)) {
 	$objectclass = 'Account';
 	$objectlabel = 'BankTransaction';
-	$permissiontoread = $user->rights->banque->lire;
-	$permissiontodelete = $user->rights->banque->supprimer;
+	$permissiontoread = !empty($user->rights->banque->lire);
+	$permissiontodelete = !empty($user->rights->banque->modifier);
 	$uploaddir = $conf->bank->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 // Conciliation
-if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && $user->rights->banque->consolidate
+if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && !empty($user->rights->banque->consolidate)
 	&& (!GETPOSTISSET('pageplusone') || (GETPOST('pageplusone') == GETPOST('pageplusoneold')))) {
 	$error = 0;
 
@@ -312,7 +316,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 }
 
 
-if (GETPOST('save') && !$cancel && $user->rights->banque->modifier) {
+if (GETPOST('save') && !$cancel && !empty($user->rights->banque->modifier)) {
 	$error = 0;
 
 	if (price2num(GETPOST("addcredit")) > 0) {
@@ -372,7 +376,7 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier) {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->modifier) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && !empty($user->rights->banque->modifier)) {
 	$accline = new AccountLine($db);
 	$result = $accline->fetch(GETPOST("rowid", "int"));
 	$result = $accline->delete($user);
@@ -485,6 +489,11 @@ if ($optioncss != '') {
 if ($action == 'reconcile') {
 	$param .= '&action=reconcile';
 }
+$totalarray = array(
+	'nbfield' => 0,
+	'totalcred' => 0,
+	'totaldeb' => 0,
+);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -562,7 +571,7 @@ $sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -575,7 +584,7 @@ if ($search_bid > 0) {
 }
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 $sql .= " WHERE b.fk_account = ba.rowid";
@@ -733,7 +742,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$arrayofselected = is_array($toselect) ? $toselect : array();
+	$arrayofselected = (!empty($toselect) && is_array($toselect)) ? $toselect : array();
 
 	// List of mass actions available
 	$arrayofmassactions = array(
@@ -760,7 +769,9 @@ if ($resql) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="'.($action != 'delete' ? $action : 'search').'">';
-	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
+	if (!empty($view)) {
+		print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
+	}
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
@@ -834,7 +845,7 @@ if ($resql) {
 	}
 
 	// Form to add a transaction with no invoice
-	if ($user->rights->banque->modifier && $action == 'addline' && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
+	if (!empty($user->rights->banque->modifier) && $action == 'addline' && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
 		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
 
 		print '<table class="noborder centpercent">';
@@ -890,7 +901,7 @@ if ($resql) {
 			print '</td>';
 		}*/
 		print '<td class="center">';
-		print '<input type="submit" name="save" class="button buttongen marginbottomonly" value="'.$langs->trans("Add").'"><br>';
+		print '<input type="submit" name="save" class="button buttongen marginbottomonly button-add" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly button-cancel" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
 
@@ -930,16 +941,17 @@ if ($resql) {
 	if ($action != 'addline' && $action != 'reconcile') {
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
 			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {	// Default is to record miscellaneous direct entries using miscellaneous payments
-				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
+				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.urlencode($search_account).'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			} else // If direct entries is not done using miscellaneous payments
 			{
-				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', $user->rights->banque->modifier);
+				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', $user->rights->banque->modifier);
 			}
 		} else {
-			$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', -1);
+			$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', -1);
 		}
 	}
 
+	$morehtml = '';
 	/*$morehtml = '<div class="inline-block '.(($buttonreconcile || $newcardbutton) ? 'marginrightonly' : '').'">';
 	$morehtml .= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
 	$morehtml .= '<input type="text" name="pageplusone" id="pageplusone" class="flat right width25 pageplusone" value="'.($page + 1).'">';
@@ -1090,8 +1102,7 @@ if ($resql) {
 		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
 		print '</td>';
 	}
-	print '<td class="liste_titre" align="middle">';
-	print '</td>';
+	// Actions and select
 	print '<td class="liste_titre" align="middle">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
@@ -1148,7 +1159,7 @@ if ($resql) {
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'class="right"', $sortfield, $sortorder, 'maxwidthsearch ');
+	// Actions and select
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -1161,7 +1172,6 @@ if ($resql) {
 	// Loop on each record
 	$sign = 1;
 
-	$totalarray = array();
 	while ($i < min($num, $limit)) {
 		$objp = $db->fetch_object($resql);
 		$links = $bankaccountstatic->get_url($objp->rowid);
@@ -1268,7 +1278,7 @@ if ($resql) {
 							</script>';
 					print '</td>';
 				}
-				print '<td colspan="'.($tmpnbfieldafterbalance + 2).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance + 1).'">';
 				print '&nbsp;';
 				print '</td>';
 				print '</tr>';
@@ -1296,18 +1306,10 @@ if ($resql) {
 			$backgroundcolor = "class='oddeven'";
 		} else {
 			if ($objp->amount < 0) {
-				if (empty($conf->global->BANK_COLORIZE_MOVEMENT_COLOR1)) {
-					$color = '#fca955';
-				} else {
-					$color = '#'.$conf->global->BANK_COLORIZE_MOVEMENT_COLOR1;
-				}
+				$color = '#' . getDolGlobalString('BANK_COLORIZE_MOVEMENT_COLOR1', 'fca955');
 				$backgroundcolor = 'style="background: '.$color.';"';
 			} else {
-				if (empty($conf->global->BANK_COLORIZE_MOVEMENT_COLOR2)) {
-					$color = '#7fdb86';
-				} else {
-					$color = '#'.$conf->global->BANK_COLORIZE_MOVEMENT_COLOR2;
-				}
+				$color = '#' . getDolGlobalString('BANK_COLORIZE_MOVEMENT_COLOR2', '7fdb86');
 				$backgroundcolor = 'style="background: '.$color.';"';
 			}
 		}
@@ -1333,7 +1335,7 @@ if ($resql) {
 			$titletoshow = '';
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthee on tente recherche de traduction
-			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) {
+			if (!empty($reg[1]) && $langs->trans($reg[1]) != $reg[1]) {
 				$labeltoshow = $langs->trans($reg[1]);
 			} else {
 				if ($objp->label == '(payment_salary)') {
@@ -1357,6 +1359,7 @@ if ($resql) {
 				} elseif ($links[$key]['type'] == 'payment') {
 					$paymentstatic->id = $links[$key]['url_id'];
 					$paymentstatic->ref = $links[$key]['url_id']; // FIXME This is id, not ref of payment
+					$paymentstatic->date = $db->jdate($objp->do);
 					print ' '.$paymentstatic->getNomUrl(2);
 				} elseif ($links[$key]['type'] == 'payment_supplier') {
 					$paymentsupplierstatic->id = $links[$key]['url_id'];
@@ -1660,7 +1663,7 @@ if ($resql) {
 			}
 		}
 
-		// Action edit/delete
+		// Action edit/delete and select
 		print '<td class="nowraponall" align="center">';
 		// Transaction reconciliated or edit link
 		if ($objp->conciliated && $bankaccount->canBeConciliated() > 0) {  // If line not conciliated and account can be conciliated
@@ -1688,19 +1691,14 @@ if ($resql) {
 				print '</a>';
 			}
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
 
 		// Action column
-		print '<td class="nowrap" align="center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($obj->rowid, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {

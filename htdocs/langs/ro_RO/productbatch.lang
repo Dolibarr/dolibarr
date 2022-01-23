@@ -30,7 +30,7 @@ ManageLotMask=Mască personalizată
 CustomMasks=Opţiunea de definire a unei măşti de numerotare diferite pentru fiecare produs
 BatchLotNumberingModules=Regulă de numerotare pentru generarea automată a numărului de lot
 BatchSerialNumberingModules=Regula de numerotare pentru generarea automată a numărului de serie (pentru produsele cu proprietatea 1 lot/serie unică pentru fiecare produs)
-QtyToAddAfterBarcodeScan=Cantitate de adăugat pentru fiecare cod de bare/lot/serie scanată
+QtyToAddAfterBarcodeScan=Cantitate de %s pentru fiecare cod de bare/lot/serie scanat
 LifeTime=Durata de viață (în zile)
 EndOfLife=Sfârşitul duratei de viaţă
 ManufacturingDate=Data de producţie
@@ -42,3 +42,4 @@ HideLots=Ascunde loturile
 #Traceability - qc status
 OutOfOrder=Indisponibil
 InWorkingOrder=În stare de funcționare
+ToReplace=De înlocuit

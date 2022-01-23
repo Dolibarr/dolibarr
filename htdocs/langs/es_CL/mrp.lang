@@ -19,7 +19,6 @@ WatermarkOnDraftMOs=Marca de agua de borrador MO
 ConfirmCloneMo=¿Estas seguro de que deseas clonar la Orden de Fabricación (MO) %s ?
 DeleteBillOfMaterials=Eliminar lista de materiales
 DeleteMo=Borrar Orden de Fabricación-MO
-ConfirmDeleteMo=Are you sure you want to delete this Manufacturing Order?
 QtyToProduce=Cantidad para producir
 DateStartPlannedMo=Fecha de inicio prevista
 DateEndPlannedMo=Fecha de finalización prevista

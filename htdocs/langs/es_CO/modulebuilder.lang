@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-ModuleBuilderDesc=Esta herramienta solo debe ser utilizada por usuarios o desarrolladores experimentados. Proporciona utilidades para crear o editar su propio módulo. La documentación para el desarrollo manual alternativo <a href="%s" target="_blank"> está aquí </a>.
 EnterNameOfModuleDesc=Ingrese el nombre del módulo / aplicación a crear sin espacios. Utilice mayúsculas para separar palabras (por ejemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Ingrese el nombre del objeto a crear sin espacios. Utilice mayúsculas para separar palabras (por ejemplo: MyObject, Student, Teacher ...). Se generarán el archivo de clase CRUD, pero también el archivo API, las páginas para listar / agregar / editar / eliminar objetos y archivos SQL.
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definido en %s): <strong> %s </strong>
@@ -107,3 +106,4 @@ AsciiToHtmlConverter=Convertidor de ascii a HTML
 AsciiToPdfConverter=Convertidor de ascii a PDF
 TableNotEmptyDropCanceled=Mesa no vacía. Drop ha sido cancelado.
 ModuleBuilderNotAllowed=El constructor de módulos está disponible pero no está permitido para su usuario.
+ValidateModBuilderDesc=Ponga 1 si este campo necesita ser validado con $ this-> validateField () o 0 si se requiere validación

@@ -48,7 +48,7 @@ CountriesNotInEEC=Negara bukan di EEC
 CountriesInEECExceptMe=Negara di EEC kecuali %s
 CountriesExceptMe=Semua negara kecuali %s
 AccountantFiles=Ekspor dokumen sumber
-ExportAccountingSourceDocHelp=Dengan alat ini, Anda dapat mengekspor sumber acara (daftar dalam CSV dan PDF) yang digunakan untuk menghasilkan akuntansi Anda.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Untuk mengekspor jurnal Anda, gunakan entri menu %s - %s.
 VueByAccountAccounting=Lihat berdasarkan akun akuntansi
 VueBySubAccountAccounting=Lihat menurut sub-akun akuntansi
@@ -286,7 +286,7 @@ ValidateMovements=Validasi gerakan
 DescValidateMovements=Setiap modifikasi atau penghapusan tulisan, huruf dan penghapusan akan dilarang. Semua entri untuk latihan harus divalidasi jika tidak, penutupan tidak akan mungkin
 
 ValidateHistory=Mengikat Secara Otomatis
-AutomaticBindingDone=Pengikatan otomatis dilakukan
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Kesalahan, Anda tidak dapat menghapus akun akuntansi ini karena digunakan
 MvtNotCorrectlyBalanced=Gerakan tidak seimbang dengan benar. Debit = %s | Kredit = %s
@@ -387,7 +387,8 @@ SaleExport=Penjualan ekspor
 SaleEEC=Dijual dalam EEC
 SaleEECWithVAT=Dijual dalam EEC dengan PPN bukan nol, jadi kami mengira ini BUKAN penjualan intracommunautary dan akun yang disarankan adalah akun produk standar.
 SaleEECWithoutVATNumber=Dijual dalam EEC tanpa PPN tetapi ID PPN pihak ketiga tidak ditentukan. Kami mundur pada akun produk untuk penjualan standar. Anda dapat memperbaiki ID PPN pihak ketiga atau akun produk jika diperlukan.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Rentang akun-akun akuntansi
 Calculated=Terhitung
@@ -404,6 +405,7 @@ NoJournalDefined=Tidak ada jurnal yang ditentukan
 Binded=Garis terikat
 ToBind=Baris untuk mengikat
 UseMenuToSetBindindManualy=Baris belum terikat, gunakan menu <a href="%s"> %s </a> untuk membuat pengikatan secara manual
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Entri akuntansi

@@ -77,8 +77,8 @@ if (empty($search_datev_end)) {
 	$search_datev_end = GETPOST("search_datev_end", 'int');
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -160,7 +160,7 @@ $arrayfields = array(
 	'ref'			=>array('label'=>"Ref", 'checked'=>1, 'position'=>100),
 	'label'			=>array('label'=>"Label", 'checked'=>1, 'position'=>110),
 	'datep'			=>array('label'=>"DatePayment", 'checked'=>1, 'position'=>120),
-	'datev'			=>array('label'=>"DateValue", 'checked'=>1, 'position'=>130),
+	'datev'			=>array('label'=>"DateValue", 'checked'=>-1, 'position'=>130),
 	'type'			=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>140),
 	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>!empty($conf->projet->enabled)),
 	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>!empty($conf->banque->enabled)),

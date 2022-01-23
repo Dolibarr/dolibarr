@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Banques | Encaisse
 SwiftValid=BIC / SWIFT valide
-SwiftVNotalid=BIC / SWIFT non valide
 IbanValid=BAN valide
 IbanNotValid=BAN non valide
 StandingOrders=Ordres de débit direct
@@ -10,7 +9,6 @@ PaymentByDirectDebit=Paiement par paiement direct
 AccountStatement=Relevé de compte
 AccountStatements=Relevés de compte
 BankAccountDomiciliation=Adresse de la banque
-RIBControlError=Échec de la vérification de l'intégrité des valeurs. Cela signifie que l'information pour ce numéro de compte est incomplète ou incorrecte (vérifier pays, numéros et IBAN)
 EditFinancialAccount=Modifier compte
 ConfirmDeleteAccount=Êtes-vous sûr de vouloir supprimer ce compte?
 BankTransactionByCategories=Entrées bancaires par catégories

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-SaleOrderLines=Sales order lines
 StatusOrderCanceledShort=Cancelled
 StatusOrderCanceled=Cancelled
 StatusSupplierOrderCanceledShort=Cancelled

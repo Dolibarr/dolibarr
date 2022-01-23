@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Instalasi PHP Anda tidak mendukung Curl.
 ErrorPHPDoesNotSupportCalendar=Instalasi PHP Anda tidak mendukung ekstensi kalender php.
 ErrorPHPDoesNotSupportUTF8=Instalasi PHP Anda tidak mendukung fungsi UTF8. Dolibarr tidak dapat bekerja dengan benar. Atasi ini sebelum menginstal Dolibarr.
 ErrorPHPDoesNotSupportIntl=Instalasi PHP Anda tidak mendukung fungsi Intl.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Instalasi PHP Anda tidak mendukung perluasan fungsi debug.
 ErrorPHPDoesNotSupport=Instalasi PHP Anda tidak mendukung fungsi %s.
 ErrorDirDoesNotExists=Direktori %s tidak ada.

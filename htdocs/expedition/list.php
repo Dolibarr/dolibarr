@@ -58,6 +58,7 @@ $search_ref_exp = GETPOST("search_ref_exp", 'alpha');
 $search_ref_liv = GETPOST('search_ref_liv', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST("search_company", 'alpha');
+$search_shipping_method_id = GETPOST('search_shipping_method_id');
 $search_tracking = GETPOST("search_tracking", 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
@@ -115,6 +116,7 @@ $fieldstosearchall = array(
 	'e.ref'=>"Ref",
 	's.nom'=>"ThirdParty",
 	'e.note_public'=>'NotePublic',
+	'e.shipping_method_id'=>'SendingMethod',
 	'e.tracking_number'=>"TrackingNumber",
 );
 if (empty($user->socid)) {
@@ -123,17 +125,18 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'e.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'e.ref_customer'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
-	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
-	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-	'e.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1),
-	'e.tracking_number'=>array('label'=>$langs->trans("TrackingNumber"), 'checked'=>1),
-	'e.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0),
+	'e.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1, 'position'=>1),
+	'e.ref_customer'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1, 'position'=>2),
+	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>3),
+	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1, 'position'=>4),
+	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1, 'position'=>5),
+	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0, 'position'=>6),
+	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0, 'position'=>7),
+	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers, 'position'=>8),
+	'e.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1, 'position'=>9),
+	'e.shipping_method_id'=>array('label'=>$langs->trans('SendingMethod'), 'checked'=>1, 'position'=>10),
+	'e.tracking_number'=>array('label'=>$langs->trans("TrackingNumber"), 'checked'=>1, 'position'=>11),
+	'e.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'position'=>12),
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -185,6 +188,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = '';
 	$search_country = '';
 	$search_tracking = '';
+	$search_shipping_method_id = '';
 	$search_type_thirdparty = '';
 	$search_billed = '';
 	$search_datedelivery_start = '';
@@ -228,7 +232,7 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
 $sql .= " l.date_delivery as date_reception,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
@@ -241,7 +245,7 @@ if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -249,7 +253,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 }
 if ($sall || $search_product_category > 0) {
@@ -273,7 +277,7 @@ if ($search_user > 0) {		// Get link to order to get the order id in eesource.fk
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as eesource ON eesource.fk_target = e.rowid AND eesource.targettype = 'shipping' AND eesource.sourcetype = 'commande'";
 }
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -291,9 +295,9 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
@@ -320,6 +324,9 @@ if ($search_state) {
 }
 if ($search_country) {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
+}
+if ($search_shipping_method_id > 0) {
+	$sql .= " AND e.fk_shipping_method = ".((int) $search_shipping_method_id);
 }
 if ($search_tracking) {
 	$sql .= natural_search("e.tracking_number", $search_tracking);
@@ -376,7 +383,7 @@ $sql .= $hookmanager->resPrint;
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= !empty($hookmanager->resPrint) ? (' HAVING 1=1 ' . $hookmanager->resPrint) : '';
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -432,6 +439,9 @@ if ($search_sale > 0) {
 }
 if ($search_company) {
 	$param .= "&search_company=".urlencode($search_company);
+}
+if ($search_shipping_method_id) {
+	$param .= "&amp;search_shipping_method_id=".urlencode($search_shipping_method_id);
 }
 if ($search_tracking) {
 	$param .= "&search_tracking=".urlencode($search_tracking);
@@ -644,6 +654,13 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
+	// Delivery method
+	print '<td class="liste_titre center">';
+	$shipment->fetch_delivery_methods();
+	print $form->selectarray("search_shipping_method_id", $shipment->meths, $search_shipping_method_id, 1, 0, 0, "", 1);
+	print "</td>\n";
+}
 // Tracking number
 if (!empty($arrayfields['e.tracking_number']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -734,6 +751,9 @@ if (!empty($arrayfields['e.weight']['checked'])) {
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
+	print_liste_field_titre($arrayfields['e.shipping_method_id']['label'], $_SERVER["PHP_SELF"], "e.fk_shipping_method", "", $param, '', $sortfield, $sortorder, 'center ');
+}
 if (!empty($arrayfields['e.tracking_number']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
 }
@@ -767,11 +787,13 @@ print "</tr>\n";
 $typenArray = $formcompany->typent_array(1);
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
 	$shipment->id = $obj->rowid;
 	$shipment->ref = $obj->ref;
+	$shipment->shipping_method_id=$obj->fk_shipping_method;
 
 	$companystatic->id = $obj->socid;
 	$companystatic->ref = $obj->name;
@@ -879,9 +901,18 @@ while ($i < min($num, $limit)) {
 		print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 		print "</td>\n";
 	}
+	if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
+		// Get code using getLabelFromKey
+		$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+		print '<td class="center">';
+		if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
+		print '</td>';
+	}
 	// Tracking number
 	if (!empty($arrayfields['e.tracking_number']['checked'])) {
-		print '<td class="center">'.$obj->tracking_number."</td>\n";
+		$shipment->getUrlTrackingStatus($obj->tracking_number);
+		print '<td class="center">'.$shipment->tracking_url."</td>\n";
+		//print $form->editfieldval("TrackingNumber", 'tracking_number', $obj->tracking_url, $obj, $user->rights->expedition->creer, 'string', $obj->tracking_number);
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

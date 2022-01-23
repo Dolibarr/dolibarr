@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - members
-MembersTickets=Membership address sheet
 SetLinkToUser=Mit Benutzer verknüpfen
 SetLinkToThirdParty=Mit Partner verknüpfen
 MemberId=Mitglieds ID
@@ -8,7 +7,6 @@ MembersTypes=Mitgliedertypen
 MemberStatusActiveLateShort=abgelaufen
 MemberStatusNoSubscriptionShort=Bestätigt
 SubscriptionEndDate=Abonnementauslaufdatum
-NewSubscription=New contribution
 SubscriptionLate=Versätet
 NewMemberType=Neues Mitgliedsrt
 Filehtpasswd=htpasswd-Datei

@@ -21,7 +21,7 @@ CREATE TABLE llx_inventory
 ( 
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
   entity integer DEFAULT 0, 
-  ref varchar(48),
+  ref varchar(48),							-- We will also use this code as inventory code
   date_creation datetime DEFAULT NULL,
   tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   fk_user_creat	integer,					-- user making creation

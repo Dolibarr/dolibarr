@@ -231,7 +231,7 @@ if (!empty($conf->contrat->enabled)) {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -257,7 +257,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-if (!$user->rights->societe->client->voir && empty($socid)) {
+if (empty($user->rights->societe->client->voir) && empty($socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -285,7 +285,7 @@ if ($search_desc) {
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
 }
-if (!$user->rights->societe->client->voir && empty($socid)) {
+if (empty($user->rights->societe->client->voir) && empty($socid)) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {

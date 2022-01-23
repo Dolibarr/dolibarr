@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=بیرونی ویب سائٹ کا لنک سیٹ کریں۔
+ExternalSiteURL=HTML iframe مواد کا بیرونی سائٹ URL
+ExternalSiteModuleNotComplete=ماڈیول ExternalSite کو صحیح طریقے سے کنفیگر نہیں کیا گیا تھا۔
+ExampleMyMenuEntry=میرا مینو اندراج

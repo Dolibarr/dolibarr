@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Ushbu vositadan faqat tajribali foydalanuvchilar yoki ishlab chiquvchilar foydalanishi kerak. O'zingizning modulingizni yaratish yoki tahrirlash uchun yordam dasturlarini taqdim etadi. Muqobil <a href="%s" target="_blank"> qo'lda ishlab chiqish uchun hujjatlar bu erda </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Bo'sh joysiz yaratish uchun modul / dastur nomini kiriting. So'zlarni ajratish uchun katta harflardan foydalaning (Masalan: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Bo'sh joysiz yaratish uchun ob'ekt nomini kiriting. So'zlarni ajratish uchun katta harflardan foydalaning (Masalan: MyObject, Student, Teacher ...). CRUD sinf fayli, shuningdek API fayli, ro'yxat / qo'shish / tahrirlash / o'chirish sahifalari va SQL fayllari yaratiladi.
 ModuleBuilderDesc2=Modullar ishlab chiqarilgan / tahrirlangan yo'l (tashqi modullar uchun birinchi katalog %s da belgilangan): <strong> %s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Sizning modulingiz / ilovangiz tomonidan taqdim etilgan meny
 DictionariesDefDescTooltip=Sizning modulingiz / ilovangiz tomonidan taqdim etilgan lug'atlar <strong> $ this-> lug'atlar </strong> massivida modul tavsiflovchi faylida aniqlangan. Siz ushbu faylni qo'lda tahrirlashingiz yoki o'rnatilgan muharrirdan foydalanishingiz mumkin. <br> <br> Eslatma: Belgilanganidan keyin (va modul qayta yoqilganda), lug'atlar administrator foydalanuvchilariga %s-da o'rnatish maydonchasida ham ko'rinadi.
 PermissionsDefDescTooltip=Sizning modulingiz / ilovangiz tomonidan berilgan ruxsatlar <strong> $ this-> huquqlari </strong> qatorida modul identifikatori faylida aniqlangan. Siz ushbu faylni qo'lda tahrirlashingiz yoki o'rnatilgan muharrirdan foydalanishingiz mumkin. <br> <br> Izoh: Belgilanganidan keyin (va modul qayta yoqilganda), ruxsatnomalar standart ruxsatlar %s-da ko'rinadi.
 HooksDefDesc=<b> module_parts ['ilgaklar'] </b> xususiyatida, modul identifikatorida siz boshqarmoqchi bo'lgan ilgaklar kontekstini aniqlang (kontekstlar ro'yxati '<b> initHooks (a09c094) kodlari) sizning bog'langan funktsiyalaringizning kodini qo'shish uchun kanca fayli (kanca funktsiyalarini '<b> executeHooks </b>' dan qidirish orqali topishingiz mumkin).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=O'rnatishda foydalanilayotgan identifikatorlarni ko'ring
 SeeReservedIDsRangeHere=Saqlangan identifikatorlar qatorini ko'ring
 ToolkitForDevelopers=Dolibarr dasturchilari uchun qo'llanma

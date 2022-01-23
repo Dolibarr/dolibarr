@@ -60,7 +60,7 @@ if ($id) {
 	|| (($user->id != $id) && $user->rights->user->user->password));
 }
 
-$permissiontoadd = $caneditfield;
+$permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 $permtoedit = $caneditfield;
 
 // Security check
@@ -78,8 +78,8 @@ if ($user->id <> $id && !$canreaduser) {
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -105,6 +105,7 @@ if ($id > 0 || !empty($ref)) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
+
 
 
 /*
@@ -139,8 +140,6 @@ if ($object->id) {
 	}
 	$head = user_prepare_head($object);
 
-	$form = new Form($db);
-
 	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
 
 	$linkback = '';
@@ -164,7 +163,25 @@ if ($object->id) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Login
-	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+	if (!empty($object->ldap_sid) && $object->statut == 0) {
+		print '<td class="error">';
+		print $langs->trans("LoginAccountDisableInDolibarr");
+		print '</td>';
+	} else {
+		print '<td>';
+		$addadmin = '';
+		if (property_exists($object, 'admin')) {
+			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			} elseif (!empty($object->admin)) {
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			}
+		}
+		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print '</td>';
+	}
+	print '</tr>';
 
 	// Nunber of files
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';

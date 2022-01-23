@@ -42,7 +42,7 @@ ModuleAssetsDesc = Descrizione espiti
 AssetsSetup = Configurazione cespiti
 Settings = Impostazioni
 AssetsSetupPage = Pagina configurazione cespiti
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
+ExtraFieldsAssetsType = Attributi complementari (tipo di risorse)
 AssetsType=Tipo di cespite
 AssetsTypeId=Id tipo di cespite
 AssetsTypeLabel=Etichetta tipo di cespite
@@ -61,5 +61,7 @@ MenuListTypeAssets = Elenco
 #
 # Module
 #
+Asset=Cespite
 NewAssetType=Nuovo tipo cespite
 NewAsset=Nuovo cespite
+ConfirmDeleteAsset=Sei sicuro di voler eliminare questo cespite?

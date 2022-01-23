@@ -327,8 +327,8 @@ class pdf_beluga extends ModelePDFProjects
 
 				$tab_top = 50;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 170;
-				$tab_height_newpage = 190;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show public note
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;

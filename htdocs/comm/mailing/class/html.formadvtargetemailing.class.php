@@ -230,29 +230,29 @@ class FormAdvTargetEmailing extends Form
 			$InfoFieldList = explode(":", $param_list [0]);
 
 			// 0 1 : tableName
-			// 1 2 : label field name Nom du champ contenant le libelle
+			// 1 2 : label field name 	Name of field that contains the label
 			// 2 3 : key fields name (if differ of rowid)
 			// 3 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 
 			$keyList = 'rowid';
 
 			if (count($InfoFieldList) >= 3) {
-				if (strpos($InfoFieldList [3], 'extra.') !== false) {
-					$keyList = 'main.'.$InfoFieldList [2].' as rowid';
+				if (strpos($InfoFieldList[3], 'extra.') !== false) {
+					$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 				} else {
-					$keyList = $InfoFieldList [2].' as rowid';
+					$keyList = $InfoFieldList[2].' as rowid';
 				}
 			}
 
-			$sql = 'SELECT '.$keyList.', '.$InfoFieldList [1];
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList [0];
-			if (!empty($InfoFieldList [3])) {
+			$sql = "SELECT ".$keyList.", ".$InfoFieldList[1];
+			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
+			if (!empty($InfoFieldList[3])) {
 				// We have to join on extrafield table
-				if (strpos($InfoFieldList [3], 'extra') !== false) {
-					$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList [0].'_extrafields as extra';
-					$sql .= ' WHERE  extra.fk_object=main.'.$InfoFieldList [2].' AND '.$InfoFieldList [3];
+				if (strpos($InfoFieldList[3], 'extra') !== false) {
+					$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+					$sql .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[3];
 				} else {
-					$sql .= ' WHERE '.$InfoFieldList [3];
+					$sql .= " WHERE ".$InfoFieldList[3];
 				}
 			}
 			if (!empty($InfoFieldList[1])) {
@@ -267,7 +267,7 @@ class FormAdvTargetEmailing extends Form
 				if ($num) {
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$labeltoshow = dol_trunc($obj->$InfoFieldList [1], 90);
+						$labeltoshow = dol_trunc($obj->$InfoFieldList[1], 90);
 						$options_array[$obj->rowid] = $labeltoshow;
 						$i++;
 					}
@@ -304,7 +304,7 @@ class FormAdvTargetEmailing extends Form
 			if ($num) {
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					// If a translation exists, we use it, else we use the default label
 					$label = ($langs->trans("Civility".$obj->code) != "Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite != '-' ? $obj->civilite : ''));
 
 					$options_array[$obj->code] = $label;

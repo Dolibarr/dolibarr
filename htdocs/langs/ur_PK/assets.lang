@@ -1,0 +1,67 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = اثاثے
+NewAsset = نیا اثاثہ
+AccountancyCodeAsset = اکاؤنٹنگ کوڈ (اثاثہ)
+AccountancyCodeDepreciationAsset = اکاؤنٹنگ کوڈ (فرسودگی اثاثہ اکاؤنٹ)
+AccountancyCodeDepreciationExpense = اکاؤنٹنگ کوڈ (فرسودگی کے اخراجات کا اکاؤنٹ)
+NewAssetType=اثاثہ کی نئی قسم
+AssetsTypeSetup=اثاثہ کی قسم کا سیٹ اپ
+AssetTypeModified=اثاثہ کی قسم میں ترمیم کی گئی۔
+AssetType=اثاثہ کی قسم
+AssetsLines=اثاثے
+DeleteType=حذف کریں۔
+DeleteAnAssetType=اثاثہ کی قسم کو حذف کریں۔
+ConfirmDeleteAssetType=کیا آپ واقعی اس اثاثہ کی قسم کو حذف کرنا چاہتے ہیں؟
+ShowTypeCard=قسم '%s' دکھائیں
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = اثاثے
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = اثاثوں کی تفصیل
+
+#
+# Admin page
+#
+AssetsSetup = اثاثوں کا سیٹ اپ
+Settings = ترتیبات
+AssetsSetupPage = اثاثوں کا سیٹ اپ صفحہ
+ExtraFieldsAssetsType = تکمیلی صفات (اثاثہ کی قسم)
+AssetsType=اثاثہ کی قسم
+AssetsTypeId=اثاثہ کی قسم کی شناخت
+AssetsTypeLabel=اثاثہ کی قسم کا لیبل
+AssetsTypes=اثاثوں کی اقسام
+
+#
+# Menu
+#
+MenuAssets = اثاثے
+MenuNewAsset = نیا اثاثہ
+MenuTypeAssets = اثاثوں کی قسم
+MenuListAssets = فہرست
+MenuNewTypeAssets = نئی
+MenuListTypeAssets = فہرست
+
+#
+# Module
+#
+Asset=اثاثہ
+NewAssetType=اثاثہ کی نئی قسم
+NewAsset=نیا اثاثہ
+ConfirmDeleteAsset=کیا آپ واقعی اس اثاثہ کو حذف کرنا چاہتے ہیں؟

@@ -19,12 +19,17 @@
  */
 
 // Following var must be set:
+// $action
 // $arrayofselected = array of id selected
-// $object
-// $objecttmp=new Propal($db);
+// $objecttmp = new MyObject($db);
 // $topicmail="SendSupplierProposalRef";
 // $modelmail="supplier_proposal_send";
-// $trackid='ord'.$object->id;
+// $trackid='ord'.$objecttmp->id;
+//
+// Following var can be set
+// $object = Object fetched;
+// $sendto
+// $withmaindocfilemail
 
 
 if ($massaction == 'predeletedraft') {
@@ -38,17 +43,18 @@ if ($massaction == 'predelete') {
 if ($massaction == 'preaffecttag') {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$categ = new Categorie($db);
-	$categ_types=array();
-	$categ_type_array=$categ->getMapList();
+	$categ_types = array();
+	$categ_type_array = $categ->getMapList();
 	foreach ($categ_type_array as $categdef) {
-		if (isset($object) && $categdef['obj_table']==$object->table_element) {
+		// Test on $object (should be useless, we already check on $objecttmp just after)
+		if (isset($object) && $categdef['obj_table'] == $object->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
 			}
 		}
-		if (isset($objecttmp) && $categdef['obj_table']==$objecttmp->table_element) {
+		if (isset($objecttmp) && $categdef['obj_table'] == $objecttmp->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
 			}
 		}
 	}
@@ -57,12 +63,12 @@ if ($massaction == 'preaffecttag') {
 	if (!empty($categ_types)) {
 		foreach ($categ_types as $categ_type) {
 			$cate_arbo = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 1);
-			$formquestion[]=array('type' => 'other',
+			$formquestion[] = array('type' => 'other',
 					'name' => 'affecttag_'.$categ_type['code'],
 					'label' => $langs->trans("Tag").' '.$categ_type['label'],
 					'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $cate_arbo, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, null, null, '60%'));
 		}
-		$formquestion[]=array('type' => 'other',
+		$formquestion[] = array('type' => 'other',
 				'name' => 'affecttag_type',
 				'label' => '',
 				'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",", array_keys($categ_types)).'"/>');
@@ -76,7 +82,7 @@ if ($massaction == 'presend') {
 	$langs->load("mails");
 
 	$listofselectedid = array();
-	$listofselectedthirdparties = array();
+	$listofselectedrecipientobjid = array();
 	$listofselectedref = array();
 
 	if (!GETPOST('cancel', 'alpha')) {
@@ -84,14 +90,19 @@ if ($massaction == 'presend') {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$listofselectedid[$toselectid] = $toselectid;
-				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
-				if ($objecttmp->element == 'societe') {
+				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);	// For proposal, order, invoice, conferenceorbooth, ...
+				if (in_array($objecttmp->element, array('societe', 'conferenceorboothattendee'))) {
 					$thirdpartyid = $objecttmp->id;
 				}
 				if ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
 				}
-				$listofselectedthirdparties[$thirdpartyid] = $thirdpartyid;
+				if (empty($thirdpartyid)) {
+					$thirdpartyid = 0;
+				}
+				if ($thirdpartyid) {
+					$listofselectedrecipientobjid[$thirdpartyid] = $thirdpartyid;
+				}
 				$listofselectedref[$thirdpartyid][$toselectid] = $objecttmp->ref;
 			}
 		}
@@ -111,15 +122,11 @@ if ($massaction == 'presend') {
 		$formmail->fromid = $user->id;
 	}
 	$formmail->trackid = $trackid;
-	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) { // If bit 2 is set
-		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
-	}
 	$formmail->withfrom = 1;
 	$liste = $langs->trans("AllRecipientSelected", count($arrayofselected));
-	if (count($listofselectedthirdparties) == 1) { // Only 1 different recipient selected, we can suggest contacts
+	if (count($listofselectedrecipientobjid) == 1) { // Only 1 different recipient selected, we can suggest contacts
 		$liste = array();
-		$thirdpartyid = array_shift($listofselectedthirdparties);
+		$thirdpartyid = array_shift($listofselectedrecipientobjid);
 		if ($objecttmp->element == 'expensereport') {
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
@@ -140,19 +147,31 @@ if ($massaction == 'presend') {
 		$formmail->withtoreadonly = 1;
 	}
 
-	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : ((GETPOST('oneemailperrecipient') == 'on') ? 1 : -1);
+
+	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : (GETPOST('oneemailperrecipient', 'int') ? 1 : -1);
+	if (in_array($objecttmp->element, array('conferenceorboothattendee'))) {
+		$formmail->withoptiononeemailperrecipient = 0;
+	}
 
 	$formmail->withto = empty($liste) ? (GETPOST('sendto', 'alpha') ?GETPOST('sendto', 'alpha') : array()) : $liste;
 	$formmail->withtofree = empty($liste) ? 1 : 0;
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
-	$formmail->withfile = 1;
-	// $formmail->withfile = 2; Not yet supported in mass action
-	$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"
-	if ($objecttmp->element != 'societe') {
-		$formmail->withfile = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
-		$formmail->withmaindocfile = - 1; // Add a checkbox "Attach also main document" but not checked by default
+	if (!empty($topicmail)) {
+		$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
+	} else {
+		$formmail->withtopic = 1;
+	}
+	$formmail->withfile = 1;	// $formmail->withfile = 2 to allow to upload files is not yet supported in mass action
+	// Add a checkbox "Attach also main document"
+	if (isset($withmaindocfilemail)) {
+		$formmail->withmaindocfile = $withmaindocfilemail;
+	} else {	// Do an automatic definition of $formmail->withmaindocfile
+		$formmail->withmaindocfile = 1;
+		if ($objecttmp->element != 'societe') {
+			$formmail->withfile = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
+			$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
+		}
 	}
 	$formmail->withbody = 1;
 	$formmail->withdeliveryreceipt = 1;
@@ -171,16 +190,16 @@ if ($massaction == 'presend') {
 	);
 	complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 
-	// Tableau des substitutions
+	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 
 	// Tableau des parametres complementaires du post
 	$formmail->param['action'] = $action;
-	$formmail->param['models'] = $modelmail;
-	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
+	$formmail->param['models'] = $modelmail;	// the filter to know which kind of template emails to show. 'none' means no template suggested.
+	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int') ? GETPOST('modelmailselected', 'int') : '-1';
 	$formmail->param['id'] = join(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedthirdparties) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
+	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
 		$langs->load("errors");
 		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
@@ -191,6 +210,18 @@ if ($massaction == 'presend') {
 
 	print dol_get_fiche_end();
 }
+
+if ($massaction == 'preenable') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassEnabling"), $langs->trans("ConfirmMassEnablingQuestion", count($toselect)), "enable", null, '', 0, 200, 500, 1);
+}
+if ($massaction == 'predisable') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDisabling"), $langs->trans("ConfirmMassDisablingQuestion", count($toselect)), "disable", null, '', 0, 200, 500, 1);
+}
+
+if ($massaction == 'preapproveleave') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, '', 0, 200, 500, 1);
+}
+
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => $toselect,
