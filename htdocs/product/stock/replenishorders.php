@@ -37,11 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'produit|service');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'replenishorders'; // To manage different context of search
 
 $sall = GETPOST('search_all', 'alphanohtml');
 $sref = GETPOST('search_ref', 'alpha');
@@ -69,6 +65,12 @@ if ($page < 0) {
 	$page = 0;
 }
 $offset = $limit * $page;
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'produit|service');
 
 
 /*
@@ -171,9 +173,10 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentOrdersDesc").'</span><br><br>';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
+	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ReplenishmentOrdersDesc").'</span><br class="hideonsmartphone">';
 
 	print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
 
@@ -209,6 +212,7 @@ if ($resql) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre_filter">';
@@ -347,6 +351,8 @@ if ($resql) {
 		$i++;
 	}
 	print '</table>';
+	print '</div>';
+
 	print '</form>';
 
 	$db->free($resql);

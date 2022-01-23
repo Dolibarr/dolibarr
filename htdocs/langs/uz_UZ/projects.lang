@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Izoh: 100%% da barcha vazifalar
 SelectLinesOfTimeSpentToInvoice=Hisob-kitob qilinmagan sarflangan vaqtni tanlang, so'ngra hisob-kitob qilish uchun "Hisob-fakturani yaratish" ommaviy harakati
 ProjectTasksWithoutTimeSpent=Vaqt sarflamasdan loyiha vazifalari
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
+StartDateCannotBeAfterEndDate=End date cannot be before start date

@@ -277,7 +277,7 @@ if ($action == 'add' && empty($cancel)) {
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
 			$paiement->paiementtype = $type_payment;
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note = GETPOST("note", 'none');
+			$paiement->note = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (int) GETPOST('closepaidsalary'));

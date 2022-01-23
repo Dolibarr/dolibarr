@@ -273,6 +273,7 @@ ErrorWrongFileName=Faila nosaukumā nedrīkst būt __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Nav Maksājumu nosacījumu vārdnīcā, lūdzu, modificējiet.
 ErrorIsNotADraft=%s nav melnraksts
 ErrorExecIdFailed=Nevar izpildīt komandu "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Jūsu PHP parametrs upload_max_filesize (%s) ir augstāks nekā PHP parametrs post_max_size (%s). Šī nav konsekventa iestatīšana.

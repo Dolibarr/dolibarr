@@ -111,7 +111,7 @@ ErrorFailedToLoadRSSFile=Error en la recuperación del flujo RSS. Añada la cons
 ErrorForbidden=Acceso denegado.<br>Intenta acceder a una página, área o funcionalidad de un módulo desactivado o sin una sesión autenticada o no permitida a su usuario
 ErrorForbidden2=Los permisos para este usuario pueden ser asignados por el administrador Dolibarr mediante el menú %s-> %s.
 ErrorForbidden3=Dolibarr no parece funcionar en una sesión autentificada. Consulte la documentación de instalación de Dolibarr para saber cómo administrar las autenticaciones (htaccess, mod_auth u otro...).
-ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
+ErrorForbidden4=Nota: borre las cookies de su navegador para destruir las sesiones existentes para este inicio de sesión.
 ErrorNoImagickReadimage=La classe imagick_readimage no está presente en esta instalación de PHP. La reseña no está pues disponible. Los administradores pueden desactivar esta pestaña en el menú Configuración - Visualización.
 ErrorRecordAlreadyExists=Registro ya existente
 ErrorLabelAlreadyExists=Esta etiqueta ya existe
@@ -273,6 +273,7 @@ ErrorWrongFileName=El nombre del archivo no puede contener __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=No está en el Diccionario de términos de pago, modifíquelo.
 ErrorIsNotADraft=%s no es un borrador
 ErrorExecIdFailed=No se puede ejecutar el comando "id"
+ErrorBadCharIntoLoginName=Carácter no autorizado en el nombre de inicio de sesión
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.

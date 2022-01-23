@@ -129,7 +129,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'com
 // Common permissions
 $usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
 $usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
-$usercandelete	= ($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer);
+$usercandelete	= (($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer) || ($usercancreate && isset($object->statut) && $object->statut == $object::STATUS_DRAFT));
 
 // Advanced permissions
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)));
@@ -2582,14 +2582,14 @@ if ($action == 'create') {
 			}
 
 			// Cancel
-			if ($object->statut == 2) {
+			if ($object->statut == CommandeFournisseur::STATUS_ACCEPTED) {
 				if ($usercanorder) {
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
 				}
 			}
 
 			// Delete
-			if (!empty($usercandelete) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && !empty($usercancreate))) {
+			if (!empty($usercandelete)) {
 				if ($hasreception) {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ReceptionExist").'">'.$langs->trans("Delete").'</a>';
 				} else {

@@ -1098,13 +1098,19 @@ a.editfielda.nohover *:hover:before {
 .divsocialnetwork:not(:last-child) {
 	padding-<?php print $right; ?>: 20px;
 }
+.divfilteralone {
+	background-color: rgba(0, 0, 0, 0.08);
+	border-radius: 5px;
+	padding-left: 5px;
+}
 div.divsearchfield {
-	float: <?php print $left; ?>;
+	/* float: <?php print $left; ?>; */
+	display: inline-block;
 	margin-<?php print $right; ?>: 12px;
 	margin-<?php print $left; ?>: 2px;
 	margin-top: 4px;
 	margin-bottom: 4px;
-	  padding-left: 2px;
+	padding-left: 2px;
 }
 .divsearchfieldfilter {
 	text-overflow: clip;
@@ -3003,8 +3009,14 @@ a.vmenu:link, a.vmenu:visited {
 }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+span.vsmenudisabled:not(.spanlilevel0), font.vsmenudisabled:not(.spanlilevel0) {
+	font-size:<?php print $fontsize ?>px;
+}
 span.vsmenudisabled, font.vsmenudisabled {
-	font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa;
+	font-family: <?php print $fontlist ?>;
+	text-align: <?php print $left; ?>;
+	font-weight: normal;
+	color: #aaa;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -3035,11 +3047,11 @@ div.blockvmenulogo
 	border-bottom: 0 !important;
 }
 .menulogocontainer {
-	margin: <?php echo $disableimages ? '0' : '6'; ?>px;
+	margin: <?php echo $disableimages ? '-1' : '6'; ?>px;
 	margin-left: 12px;
 	margin-right: 6px;
 	padding: 0;
-	height: <?php echo $disableimages ? '20' : '32'; ?>px;
+	height: <?php echo $disableimages ? '18' : '32'; ?>px;
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
@@ -3436,6 +3448,7 @@ input.buttonreset {
 	padding: 8px 15px;
 	text-decoration: underline;
 	color: var(--colortextlink);
+	background-color: transparent;
 	cursor: pointer;
 }
 
@@ -4286,11 +4299,7 @@ span.dashboardlineko {
 	border-radius: .25em;
 }
 .boxtable {
-	margin-bottom: 8px !important;
-	border-bottom-width: 1px;
-}
-.boxtable {
-	margin-bottom: 8px !important;
+	margin-bottom: 20px !important;
 	border-bottom-width: 1px;
 }
 .boxtablenotop {
@@ -4462,7 +4471,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
+td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
@@ -4490,7 +4499,7 @@ label.radioprivate {
 /*	margin-bottom: 2px;
 	margin-top: 2px; */
 }
-div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
 }
 .photowithborder {
@@ -4860,6 +4869,11 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.websiteformtoolbar {
+	position: sticky;
+	top: <?php echo $disableimages ? '36px' : '50px'; ?>;
+}
+
 .exampleapachesetup {
 	overflow-y: auto;
 	max-height: 100px;
@@ -4889,7 +4903,10 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
 	display: inline-block;
-	padding: 4px 0 4px 0;
+	padding: 5px 5px 5px 5px;
+}
+.centpercent.websitebar {
+	width: calc(100% - 10px);
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -4906,7 +4923,7 @@ span[phptag] {
 }
 .websiteselection {
 	/* display: inline-block; */
-	padding-left: 10px;
+	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
 }
 .websitetools {
@@ -7124,7 +7141,7 @@ div.clipboardCPValue.hidewithsize {
 
 	.websiteselectionsection {
 		border-left: unset;
-		boerder-right: unset;
+		border-right: unset;
 		padding-left: 5px;
 	}
 

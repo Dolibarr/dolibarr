@@ -490,7 +490,8 @@ class Commande extends CommonOrder
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".((int) $user->id);
+		$sql .= " fk_user_valid = ".((int) $user->id).",";
+		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::valid", LOG_DEBUG);
@@ -620,7 +621,8 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
+		$sql .= " SET fk_statut = ".self::STATUS_DRAFT."',";
+		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
@@ -694,7 +696,8 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-		$sql .= ' SET fk_statut='.self::STATUS_VALIDATED.', facture=0';
+		$sql .= ' SET fk_statut='.self::STATUS_VALIDATED.', facture=0,';
+		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::set_reopen", LOG_DEBUG);
@@ -755,7 +758,8 @@ class Commande extends CommonOrder
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET fk_statut = '.self::STATUS_CLOSED.',';
 			$sql .= ' fk_user_cloture = '.((int) $user->id).',';
-			$sql .= " date_cloture = '".$this->db->idate($now)."'";
+			$sql .= " date_cloture = '".$this->db->idate($now)."',";
+			$sql .= " fk_user_modif = ".((int) $user->id);
 			$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 			if ($this->db->query($sql)) {
@@ -803,7 +807,8 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-		$sql .= " SET fk_statut = ".self::STATUS_CANCELED;
+		$sql .= " SET fk_statut = ".self::STATUS_CANCELED.",";
+		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 
@@ -1779,7 +1784,7 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
-		$sql = 'SELECT c.rowid, c.entity, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
+		$sql = 'SELECT c.rowid, c.entity, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_user_modif, c.fk_statut';
 		$sql .= ', c.amount_ht, c.total_ht, c.total_ttc, c.total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
 		$sql .= ', c.fk_account';
 		$sql .= ', c.date_commande, c.date_valid, c.tms';
@@ -1844,6 +1849,7 @@ class Commande extends CommonOrder
 
 				$this->user_author_id = $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
+				$this->user_modification = $obj->fk_user_modif;
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->total_localtax1;

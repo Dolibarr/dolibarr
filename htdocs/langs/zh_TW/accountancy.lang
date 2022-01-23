@@ -37,8 +37,8 @@ OtherInfo=其他資訊
 DeleteCptCategory=從群組移除會計帳戶
 ConfirmDeleteCptCategory=您確定要從會計帳戶組中刪除此會計帳戶嗎？
 JournalizationInLedgerStatus=日誌狀態
-AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
+AlreadyInGeneralLedger=已經轉移到會計日記帳和分類帳中
+NotYetInGeneralLedger=尚未轉移到結帳日記帳和分類帳中
 GroupIsEmptyCheckSetup=群組是空的，檢查個人化會計群組的設定
 DetailByAccount=依帳戶顯示細節
 AccountWithNonZeroValues=非零值的帳戶
@@ -48,8 +48,8 @@ CountriesNotInEEC=非歐盟國家
 CountriesInEECExceptMe=除了%s以外的歐盟國家
 CountriesExceptMe=除了%s以外的所有國家
 AccountantFiles=匯出來源文件
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
-ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
+ExportAccountingSourceDocHelp=使用此工具，您可以匯出用於產生會計的來源事件（CSV 和 PDF 中的清單）。
+ExportAccountingSourceDocHelp2=要匯出您的日記帳，請使用選單條目 %s - %s。
 VueByAccountAccounting=依會計科目檢視
 VueBySubAccountAccounting=依會計子分類帳檢視
 
@@ -87,7 +87,7 @@ AccountancyAreaDescAnalyze=步驟%s：新增或編輯現有交易並生成報告
 
 AccountancyAreaDescClosePeriod=步驟%s：關帳期，因此我們之後無法進行修改。
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=設定中的強制性步驟尚未完成（未為所有銀行帳戶定義會計代碼日記帳）
 Selectchartofaccounts=選擇有效的會計科目表
 ChangeAndLoad=修改並載入
 Addanaccount=新增會計科目
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=費用報表的關聯
 CreateMvts=建立新的交易
 UpdateMvts=交易的修改
 ValidTransaction=驗證交易
-WriteBookKeeping=Register transactions in accounting
+WriteBookKeeping=在總帳中記錄交易
 Bookkeeping=總帳
 BookkeepingSubAccount=子分類帳
 AccountBalance=帳戶餘額
@@ -148,7 +148,7 @@ NotVentilatedinAccount=不受會計項目約束
 XLineSuccessfullyBinded=%s 產品/服務成功地指定會計項目
 XLineFailedToBeBinded=%s 產品/服務沒指定任何會計項目
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=清單與綁定頁面中的最大行數（建議：50）
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=開始按最新元件對“待綁定”頁面進行排序
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=開始按最新元件對“完成綁定”頁面進行排序
 
@@ -159,7 +159,7 @@ ACCOUNTING_LENGTH_AACCOUNT=合作方會計帳戶的長度（如果在此處將�
 ACCOUNTING_MANAGE_ZERO=允許在會計帳戶末尾管理不同數量的零。一些國家（例如瑞士）需要。如果設置為off（默認），則可以設置以下兩個參數來要求應用程序添加虛擬零。
 BANK_DISABLE_DIRECT_INPUT=停用銀行帳戶中直接記錄交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日記帳上啟用草稿匯出
-ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
+ACCOUNTANCY_COMBO_FOR_AUX=為子公司帳戶啟用組合列表（如果您有很多合作方，可能會很慢,損失搜尋部份數值的能力）
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -211,15 +211,15 @@ JournalLabel=日記帳標籤
 NumPiece=件數
 TransactionNumShort=交易編號
 AccountingCategory=自定義群組
-GroupByAccountAccounting=Group by general ledger account
-GroupBySubAccountAccounting=Group by subledger account
+GroupByAccountAccounting=依總分類帳帳戶的群組
+GroupBySubAccountAccounting=依子分類帳帳戶的群組
 AccountingAccountGroupsDesc=您可定義某些會計科目大類。他們可以在個人化會計報表中使用。
 ByAccounts=依帳戶
 ByPredefinedAccountGroups=依大類
 ByPersonalizedAccountGroups=依個人化大類
 ByYear=依年度
 NotMatch=未設定
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=從會計中刪除一些操作行
 DelMonth=刪除月份
 DelYear=刪除年度
 DelJournal=刪除日記帳
@@ -298,10 +298,10 @@ NoNewRecordSaved=沒有交易可記錄
 ListOfProductsWithoutAccountingAccount=清單中的產品沒有指定任何會計項目
 ChangeBinding=修改關聯性
 Accounted=計入總帳
-NotYetAccounted=Not yet transferred to accounting
+NotYetAccounted=尚未轉入會計
 ShowTutorial=顯示教程
 NotReconciled=未對帳
-WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
+WarningRecordWithoutSubledgerAreExcluded=警告，所有未定義子分類帳帳戶的操作都將被過濾並從該檢視中排除
 
 ## Admin
 BindingOptions=綁定選項
@@ -352,9 +352,9 @@ Modelcsv_FEC=匯出為FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=匯出為Sage 50 Switzerland
 Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
-Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5=Export for Gestinum (v5)
-Modelcsv_charlemagne=Export for Aplim Charlemagne
+Modelcsv_Gestinumv3=匯出為Gestinum (v3)
+Modelcsv_Gestinumv5=匯出為Gestinum (v5)
+Modelcsv_charlemagne=匯出為Aplim Charlemagne
 ChartofaccountsId=會計項目表ID
 
 ## Tools - Init accounting account on product / service
@@ -387,8 +387,8 @@ SaleExport=出口銷售
 SaleEEC=在歐盟銷售
 SaleEECWithVAT=在EEC中具有營業稅的銷售不為空，因此我們認為這不是內部銷售，建議的帳戶是標準產品帳戶。
 SaleEECWithoutVATNumber=在EEC中銷售沒有營業稅但合作方的營業稅ID未定義。我們退回標準銷售的產品帳戶。您可以根據需要修改合作方或產品帳戶的營業稅ID。
-ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
-ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
+ForbiddenTransactionAlreadyExported=禁止：交易已被驗證和/或匯出。
+ForbiddenTransactionAlreadyValidated=禁止：交易已被驗證。
 ## Dictionary
 Range=會計項目範圍
 Calculated=已計算
@@ -405,14 +405,14 @@ NoJournalDefined=沒有定義的日記帳
 Binded=關聯行數
 ToBind=關聯行
 UseMenuToSetBindindManualy=尚未綁定的行，請使用選單<a href="%s">%s</a>手動進行綁定
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=抱歉此模組不相容於情況發票的實驗功能
 
 ## Import
 ImportAccountingEntries=會計條目
-ImportAccountingEntriesFECFormat=Accounting entries - FEC format
-FECFormatJournalCode=Code journal (JournalCode)
-FECFormatJournalLabel=Label journal (JournalLib)
-FECFormatEntryNum=Piece number (EcritureNum)
+ImportAccountingEntriesFECFormat=會計科目 - FEC 格式
+FECFormatJournalCode=代碼日記簿（日記簿代碼）
+FECFormatJournalLabel=標籤日記簿 (JournalLib)
+FECFormatEntryNum=件數 (EcritureNum)
 FECFormatEntryDate=Piece date (EcritureDate)
 FECFormatGeneralAccountNumber=General account number (CompteNum)
 FECFormatGeneralAccountLabel=General account label (CompteLib)
@@ -424,14 +424,14 @@ FECFormatLabelOperation=Label operation (EcritureLib)
 FECFormatDebit=借記（借記）
 FECFormatCredit=貸記（貸記）
 FECFormatReconcilableCode=Reconcilable code (EcritureLet)
-FECFormatReconcilableDate=Reconcilable date (DateLet)
-FECFormatValidateDate=Piece date validated (ValidDate)
-FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
-FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+FECFormatReconcilableDate=可對帳日期
+FECFormatValidateDate=驗證日期
+FECFormatMulticurrencyAmount=多國幣別金額（貨幣金額）
+FECFormatMulticurrencyCode=多國幣別代碼（Idevise）
 
 DateExport=日期輸出
 WarningReportNotReliable=警告，此報表非依總帳製作的，所以不含總帳中人工修改的交易。若您日記簿是最新的日期，則記帳檢視會比較準確。
 ExpenseReportJournal=費用報表日記帳
 InventoryJournal=庫存日記帳
 
-NAccounts=%s accounts
+NAccounts=%s 個帳戶

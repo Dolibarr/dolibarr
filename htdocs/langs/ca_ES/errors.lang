@@ -273,6 +273,7 @@ ErrorWrongFileName=El nom del fitxer no pot contenir __COSA__
 ErrorNotInDictionaryPaymentConditions=No es troba al Diccionari de condicions de pagament, modifiqueu-lo.
 ErrorIsNotADraft=%s no és un esborrany
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El paràmetre PHP upload_max_filesize (%s) és superior al paràmetre PHP post_max_size (%s). No es tracta d’una configuració consistent.
