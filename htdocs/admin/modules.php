@@ -1139,7 +1139,7 @@ if ($mode == 'deploy') {
 		}
 
 		if ($allowfromweb == 1) {
-			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
+			print '<span class="opacitymedium">'.$langs->trans("UnpackPackageInModulesRoot", $dirins).'</span><br>';
 
 			print '<br>';
 
