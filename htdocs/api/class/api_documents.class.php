@@ -624,6 +624,9 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'expensereport') {
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
+			} elseif ($modulepart == 'fichinter') {
+				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+				$object = new Fichinter($this->db);
 			} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 				$modulepart = 'adherent';
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
