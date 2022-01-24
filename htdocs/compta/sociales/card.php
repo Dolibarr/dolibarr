@@ -426,7 +426,7 @@ if ($id > 0) {
 	$result = $object->fetch($id);
 
 	$formconfirm = '';
-	
+
 	if ($result > 0) {
 		$head = tax_prepare_head($object);
 
