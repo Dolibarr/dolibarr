@@ -285,7 +285,6 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 
 			$result = $object->addTimeSpent($user);
-
 		} else {
 			$object->fetch($id, $ref);
 
@@ -391,7 +390,6 @@ if ($action == 'confirm_generateinvoice') {
 		$fuser = new User($db);
 
 		$db->begin();
-		//TODO produit du temps passé ou produt id
 		$idprod = GETPOST('productid', 'int');
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'string');
 		$invoiceToUse = GETPOST('invoiceid', 'int');
@@ -1196,7 +1194,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$form->select_produits('', 'productid', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 0, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500');
 					print '</td>';
 					print '</tr>';
-					//TODO : Use product of time affect
 				}
 
 				print '<tr>';
@@ -1794,7 +1791,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					if ($resultFetch < 0) {
 						setEventMessages($product->error, $product->errors, 'errors');
 					} else {
-
 						print $product->getNomUrl(1);
 					}
 				}
