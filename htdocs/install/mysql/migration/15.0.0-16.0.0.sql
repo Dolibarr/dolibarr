@@ -32,6 +32,8 @@
 
 -- Missing in v15 or lower
 
+UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
+
 
 -- v16
 
@@ -252,6 +254,7 @@ ALTER TABLE llx_asset_model ADD CONSTRAINT fk_asset_model_user_modif	FOREIGN KEY
 
 ALTER TABLE llx_asset_model_extrafields ADD INDEX idx_asset_model_extrafields (fk_object);
 
-
-UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
+ALTER TABLE llx_asset CHANGE COLUMN recovered_vat recovered_vat double(24,8);
+ALTER TABLE llx_asset_model ADD COLUMN fk_pays integer DEFAULT 0 AFTER asset_type;
+ALTER TABLE llx_asset_model ADD INDEX idx_asset_model_pays (fk_pays);
 

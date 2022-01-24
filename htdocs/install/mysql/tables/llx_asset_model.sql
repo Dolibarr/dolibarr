@@ -21,6 +21,7 @@ CREATE TABLE llx_asset_model(
 	label					varchar(255)	NOT NULL,
 
 	asset_type				smallint		NOT NULL,
+	fk_pays					integer			DEFAULT 0,
 
 	note_public				text,
 	note_private			text,

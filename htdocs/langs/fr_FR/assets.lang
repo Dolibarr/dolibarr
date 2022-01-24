@@ -45,7 +45,7 @@ AssetsType=Type d'immobilisations
 AssetsTypeId=Id du type d'immobilisations
 AssetsTypeLabel=Libellé du type d'immobilisations
 AssetsTypes=Types d'immobilisations
-ASSET_ACCOUNTANCY_CODE=Code comptable immobilisation
+ASSET_ACCOUNTANCY_CATEGORY=Groupe comptable immobilisation
 
 #
 # Menu

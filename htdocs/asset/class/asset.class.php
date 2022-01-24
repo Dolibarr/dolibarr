@@ -792,7 +792,7 @@ class Asset extends CommonObject
 	 */
 	public function calculationDepreciation()
 	{
-		global $langs;
+		global $conf, $langs;
 		$langs->load('assets');
 
 		// Clean parameters
@@ -916,11 +916,20 @@ class Asset extends CommonObject
 				}
 
 				// Get depreciation period
-				$fiscal_period_start = $init_fiscal_period_start;
-				$fiscal_period_end = $init_fiscal_period_end;
 				$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
 				$depreciation_date_end = dol_time_plus_duree($depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y'));
 				$depreciation_amount = $fields['amount_base_depreciation_ht'];
+				if ($fields['duration_type'] == 2) { // Daily
+					$fiscal_period_start = $depreciation_date_start;
+					$fiscal_period_end = $depreciation_date_start;
+				} elseif ($fields['duration_type'] == 1) { // Monthly
+					$date_temp = dol_getdate($depreciation_date_start);
+					$fiscal_period_start = dol_get_first_day($date_temp['year'], $date_temp['mon'], false);
+					$fiscal_period_end = dol_get_last_day($date_temp['year'], $date_temp['mon'], false);
+				} else { // Annually
+					$fiscal_period_start = $init_fiscal_period_start;
+					$fiscal_period_end = $init_fiscal_period_end;
+				}
 				$cumulative_depreciation_ht = $last_cumulative_depreciation_ht;
 				$depreciation_period_amount = $depreciation_amount - $this->reversal_amount_ht;
 				$start_date = $depreciation_date_start;
@@ -963,9 +972,12 @@ class Asset extends CommonObject
 				// futures depreciation lines
 				//-----------------------------------------------------
 				$nb_days_in_year = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 360;
-				$period_amount = (double) price2num($depreciation_period_amount * ($fields['duration_type'] == 1 ? 12 : ($fields['duration_type'] == 2 ? $nb_days_in_year : 1)) / $fields['duration'], 'MT');
+				$nb_days_in_month = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
+				$period_amount = (double) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
+
+				$ref_date_format = "%Y" . ($fields['duration_type'] == 1 || $fields['duration_type'] == 2 ? '-%m' : '') . ($fields['duration_type'] == 2 ? '-%d' : '');
 
 				// Loop security
 				$idx_loop = 0;
@@ -983,8 +995,8 @@ class Asset extends CommonObject
 
 						$first_period_found = true;
 
-						$period_begin = dol_print_date($fiscal_period_start, '%Y');
-						$period_end = dol_print_date($fiscal_period_end, '%Y');
+						$period_begin = dol_print_date($fiscal_period_start, $ref_date_format);
+						$period_end = dol_print_date($fiscal_period_end, $ref_date_format);
 						$ref = $period_begin . ($period_begin != $period_end ? ' - ' . $period_end : '');
 						if ($fiscal_period_start <= $disposal_date && $disposal_date <= $fiscal_period_end) {
 							$ref .= ' - ' . $langs->transnoentitiesnoconv('AssetDisposal');
@@ -992,8 +1004,21 @@ class Asset extends CommonObject
 
 						$begin_date = $fiscal_period_start < $start_date && $start_date <= $fiscal_period_end ? $start_date : $fiscal_period_start;
 						$end_date = $fiscal_period_start < $finish_date && $finish_date <= $fiscal_period_end ? $finish_date : $fiscal_period_end;
-						$nb_days = min($nb_days_in_year, ($end_date - $begin_date) / 86400); // 86400s = 1d
-						$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+						if ($fields['duration_type'] == 2) { // Daily
+							$depreciation_ht = $period_amount;
+						} elseif ($fields['duration_type'] == 1) { // Monthly
+							$nb_days = min($nb_days_in_month, num_between_day($begin_date, $end_date, 1));
+							if ($nb_days >= 28) {
+								$date_temp = dol_getdate($begin_date);
+								if ($date_temp['mon'] == 2) {
+									$nb_days = 30;
+								}
+							}
+							$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
+						} else { // Annually
+							$nb_days = min($nb_days_in_year, num_between_day($begin_date, $end_date, 1));
+							$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+						}
 						if ($fiscal_period_start <= $depreciation_date_end && $depreciation_date_end <= $fiscal_period_end) { // last period
 							$depreciation_ht = (double) price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
 							$cumulative_depreciation_ht = $depreciation_amount;
@@ -1008,9 +1033,15 @@ class Asset extends CommonObject
 						}
 					}
 
-					// Next fiscal period (+1 year)
+					// Next fiscal period (+1 day/month/year)
 					$fiscal_period_start = dol_time_plus_duree($fiscal_period_end, 1, 'd');
-					$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
+					if ($fields['duration_type'] == 2) { // Daily
+						$fiscal_period_end = $fiscal_period_start;
+					} elseif ($fields['duration_type'] == 1) { // Monthly
+						$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'm'), -1, 'd');
+					} else { // Annually
+						$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
+					}
 					$last_period_date = $disposal_date !== "" && $disposal_date < $depreciation_date_end ? $disposal_date : $depreciation_date_end;
 				} while ($fiscal_period_start < $last_period_date);
 

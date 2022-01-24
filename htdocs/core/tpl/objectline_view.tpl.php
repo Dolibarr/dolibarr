@@ -384,17 +384,30 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
 		$coldisplay++;
-		$accountancy_code_asset = $conf->global->ASSET_ACCOUNTANCY_CODE;
-		if (!empty($accountancy_code_asset) && (
-				$product_static->accountancy_code_buy == $accountancy_code_asset ||
-				$product_static->accountancy_code_buy_intra == $accountancy_code_asset ||
-				$product_static->accountancy_code_buy_export == $accountancy_code_asset
-			)
+		if (!empty($product_static->accountancy_code_buy) ||
+			!empty($product_static->accountancy_code_buy_intra) ||
+			!empty($product_static->accountancy_code_buy_export)
 		) {
-			print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&supplier_invoice_id=' . $object->id . '&token=' . newToken() . '">';
-			print img_edit_add() . '</a>';
-			print '</td>';
+			$accountancy_category_asset = $conf->global->ASSET_ACCOUNTANCY_CATEGORY;
+			$filters = array();
+			if (!empty($product_static->accountancy_code_buy)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+			if (!empty($product_static->accountancy_code_buy_intra)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
+			if (!empty($product_static->accountancy_code_buy_export)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+			$sql = "SELECT COUNT(*) AS found";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
+			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
+			$sql .= " AND (" . implode(' OR ', $filters). ")";
+			$resql_asset = $this->db->query($sql);
+			if (!$resql_asset) {
+				print 'Error SQL: ' . $this->db->lasterror();
+			} elseif ($obj = $this->db->fetch_object($resql_asset)) {
+				if (!empty($obj->found)) {
+					print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&supplier_invoice_id=' . $object->id . '&token=' . newToken() . '">';
+					print img_edit_add() . '</a>';
+				}
+			}
 		}
+		print '</td>';
 	}
 
 	print '<td class="linecoledit center">';
