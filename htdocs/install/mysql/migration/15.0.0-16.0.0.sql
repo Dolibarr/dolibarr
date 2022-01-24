@@ -38,6 +38,4 @@ UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AN
 
 -- v16
 
-
--- Missing in v14 or lower
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
