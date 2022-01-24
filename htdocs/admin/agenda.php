@@ -192,6 +192,7 @@ if (!empty($triggers)) {
 			}
 
 			if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code'])) {
+				print '<!-- '.$trigger['position'].' -->';
 				print '<tr class="oddeven">';
 				print '<td>'.$trigger['code'].'</td>';
 				print '<td>'.$trigger['label'].'</td>';

@@ -124,14 +124,15 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
+	 * @var string Agenda event label
+	 * @deprecated Use $label
+	 */
+	public $libelle;
+
+	/**
 	 * @var integer Date creation record (datec)
 	 */
 	public $datec;
-
-	/**
-	 * @var integer Date end record (datef)
-	 */
-	public $datef;
 
 	/**
 	 * @var integer Duration (duree)
@@ -173,6 +174,21 @@ class ActionComm extends CommonObject
 	public $datep;
 
 	/**
+	 * @var integer Date action end (datef)
+	 */
+	public $datef;
+
+	/**
+	 * @var integer This is date start action (datep) but modified to not be outside calendar view.
+	 */
+	public $date_start_in_calendar;
+
+	/**
+	 * @var integer This is date end action (datef) but modified to not be outside calendar view.
+	 */
+	public $date_end_in_calendar;
+
+	/**
 	 * @var integer Date action end (datep2)
 	 */
 	public $datep2;
@@ -187,6 +203,11 @@ class ActionComm extends CommonObject
 	 * @var int 1=Event on full day
 	 */
 	public $fulldayevent = 0;
+
+	/**
+	 * @var int 1=???
+	 */
+	public $ponctuel;
 
 	/**
 	 * @var integer Percentage
@@ -219,8 +240,7 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
-	 * @var int Id of user done (deprecated)
-	 * @deprecated
+	 * @var int Id of user that has done the event. Used only if AGENDA_ENABLE_DONEBY is set.
 	 */
 	public $userdoneid;
 
@@ -238,20 +258,6 @@ class ActionComm extends CommonObject
 	 * @var array	Array of reminders
 	 */
 	public $reminders = array();
-
-	/**
-	 * @var User Object user of owner
-	 * @deprecated
-	 * @see $userownerid
-	 */
-	public $usertodo;
-
-	/**
-	 * @var User Object user that did action
-	 * @deprecated
-	 * @see $userdoneid
-	 */
-	public $userdone;
 
 	/**
 	 * @var int thirdparty id linked to action
@@ -827,18 +833,17 @@ class ActionComm extends CommonObject
 				$this->usermodid = $obj->fk_user_mod;
 
 				if (!is_object($this->author)) {
-					$this->author = new stdClass(); // To avoid warning
+					$this->author = new User($this->db); // To avoid warning
 				}
 				$this->author->id = $obj->fk_user_author; // deprecated
 				$this->author->firstname = $obj->firstname; // deprecated
 				$this->author->lastname = $obj->lastname; // deprecated
 				if (!is_object($this->usermod)) {
-					$this->usermod = new stdClass(); // To avoid warning
+					$this->usermod = new User($this->db); // To avoid warning
 				}
 				$this->usermod->id = $obj->fk_user_mod; // deprecated
 
 				$this->userownerid = $obj->fk_user_action;
-				$this->userdoneid = $obj->fk_user_done;
 				$this->priority				= $obj->priority;
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
@@ -1130,18 +1135,18 @@ class ActionComm extends CommonObject
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
 		$sql .= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '' ? "'".$this->db->escape($this->durationp)."'" : "null"); // deprecated
 		$sql .= ", note = '".$this->db->escape($this->note_private)."'";
-		$sql .= ", fk_project =".($this->fk_project > 0 ? $this->fk_project : "null");
-		$sql .= ", fk_soc =".($socid > 0 ? $socid : "null");
-		$sql .= ", fk_contact =".($contactid > 0 ? $contactid : "null");
+		$sql .= ", fk_project =".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", fk_soc =".($socid > 0 ? ((int) $socid) : "null");
+		$sql .= ", fk_contact =".($contactid > 0 ? ((int) $contactid) : "null");
 		$sql .= ", priority = '".$this->db->escape($this->priority)."'";
 		$sql .= ", fulldayevent = '".$this->db->escape($this->fulldayevent)."'";
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
 		$sql .= ", transparency = '".$this->db->escape($this->transparency)."'";
-		$sql .= ", fk_user_mod = ".$user->id;
-		$sql .= ", fk_user_action = ".($userownerid > 0 ? "'".$this->db->escape($userownerid)."'" : "null");
-		$sql .= ", fk_user_done = ".($userdoneid > 0 ? "'".$this->db->escape($userdoneid)."'" : "null");
+		$sql .= ", fk_user_mod = ".((int) $user->id);
+		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
+		$sql .= ", fk_user_done = ".($userdoneid > 0 ? ((int) $userdoneid) : "null");
 		if (!empty($this->fk_element)) {
-			$sql .= ", fk_element=".($this->fk_element ? $this->db->escape($this->fk_element) : "null");
+			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
 		}
 		if (!empty($this->elementtype)) {
 			$sql .= ", elementtype=".($this->elementtype ? "'".$this->db->escape($this->elementtype)."'" : "null");
@@ -1439,9 +1444,9 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *  Return label of status
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
 	 *  @return string          		String with status
 	 */
@@ -1628,36 +1633,34 @@ class ActionComm extends CommonObject
 		}
 
 		if ($withpicto == 2) {
-			$libelle = $label;
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-				$libelle = $labeltype;
+				$label = $labeltype;
 			}
-			$libelleshort = '';
+			$labelshort = '';
 		} else {
-			$libelle = (empty($this->libelle) ? $label : $this->libelle.(($label && $label != $this->libelle) ? ' '.$label : ''));
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) {
-				$libelle = $labeltype;
+			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($label)) {
+				$label = $labeltype;
 			}
 			if ($maxlength < 0) {
-				$libelleshort = $this->ref;
+				$labelshort = $this->ref;
 			} else {
-				$libelleshort = dol_trunc($libelle, $maxlength);
+				$labelshort = dol_trunc($label, $maxlength);
 			}
 		}
 
 		if ($withpicto) {
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {	// Add code into ()
 				if ($labeltype) {
-					$libelle .= (preg_match('/'.preg_quote($labeltype, '/').'/', $libelle) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
+					$label .= (preg_match('/'.preg_quote($labeltype, '/').'/', $label) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
 				}
 			}
 		}
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		$result .= $libelleshort;
+		$result .= $labelshort;
 		$result .= $linkend;
 
 		global $action;

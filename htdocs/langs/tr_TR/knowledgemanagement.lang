@@ -18,16 +18,16 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Bilgi Yönetim Sistemi
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Bir Bilgi Yönetimi (BY) veya Yardım-Masası tabanını yönetin
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Bilgi Yönetim Sistemi Kurulumu
 Settings = Ayarlar
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Bilgi Yönetim Sistemi Kurulum Sayfası
 
 
 #

@@ -273,6 +273,7 @@ ErrorWrongFileName=ຊື່ຂອງໄຟລ cannot ບໍ່ສາມາດ�
 ErrorNotInDictionaryPaymentConditions=ບໍ່ຢູ່ໃນວັດຈະນານຸກົມເງື່ອນໄຂການຈ່າຍເງິນ, ກະລຸນາແກ້ໄຂ.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=ພາຣາມິເຕີ PHP ຂອງເຈົ້າ upload_max_filesize (%s) ສູງກວ່າພາລາມິເຕີ PHP post_max_size (%s). ອັນນີ້ບໍ່ແມ່ນການຕັ້ງທີ່ສອດຄ່ອງ.

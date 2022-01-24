@@ -20,7 +20,7 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	entity integer DEFAULT 1 NOT NULL,  -- multi company id
 	ref varchar(128) NOT NULL, 
 	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	last_main_doc varchar(255), 
 	lang varchar(6),
 	fk_user_creat integer NOT NULL, 

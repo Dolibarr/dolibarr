@@ -273,6 +273,7 @@ ErrorWrongFileName=Номи файл наметавонад дар он __SOMETH
 ErrorNotInDictionaryPaymentConditions=Дар луғати шартҳои пардохт нест, лутфан тағир диҳед.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Параметри PHP -и шумо upload_max_filesize (%s) аз параметрҳои PHP post_max_size (%s) баландтар аст. Ин танзимоти пайдарпай нест.

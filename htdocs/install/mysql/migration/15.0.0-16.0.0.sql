@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 14.0.0 or higher.
+-- when current version is 15.0.0 or higher.
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -30,5 +30,12 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- Missing in v14 or lower
+-- Missing in v15 or lower
+
+UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
+
+
+
+-- v16
+
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;

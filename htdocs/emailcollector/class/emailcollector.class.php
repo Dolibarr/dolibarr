@@ -762,6 +762,11 @@ class EmailCollector extends CommonObject
 		if ($norsh || !empty($conf->global->IMAP_FORCE_NORSH)) {
 			$flags .= '/norsh';
 		}
+		//Used in shared mailbox from Office365
+		if (strpos($this->login, '/') != false) {
+			$partofauth = explode('/', $this->login);
+			$flags .= '/authuser='.$partofauth[0].'/user='.$partofauth[1];
+		}
 
 		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
 
@@ -2361,7 +2366,8 @@ class EmailCollector extends CommonObject
 						global $hookmanager;
 
 						if (!is_object($hookmanager)) {
-							$hookmanager->initHooks(array('emailcollectorcard'));
+							include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+							$hookmanager = new HookManager($this->db);
 						}
 
 						$parameters = array(
@@ -2381,6 +2387,7 @@ class EmailCollector extends CommonObject
 							'messagetext'=>$messagetext,
 							'subject'=>$subject,
 							'header'=>$header,
+							'attachments'=>$attachments,
 						);
 						$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
 

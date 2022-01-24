@@ -305,6 +305,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid') {
 				$texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
+			} elseif ($type == 'timestamp') {
+				$texttoinsert .= ' DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
 			}
 			if ($key == 'entity') {
 				$texttoinsert .= ' DEFAULT 1';

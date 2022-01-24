@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = スケジュールされたジョブを読む
+Permission23101 = スケジュールされたジョブを読込む
 Permission23102 = スケジュールされたジョブの作成/更新
 Permission23103 = スケジュールされたジョブを削除する
 Permission23104 = スケジュールされたジョブを実行する
