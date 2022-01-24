@@ -511,7 +511,7 @@ class FactureFournisseurRec extends CommonInvoice
         $sql .= " nb_gen_done = ". (!empty($this->nb_gen_done) ? $this->nb_gen_done : 0) . ',';
         $sql .= " nb_gen_max = ". (!empty($this->nb_gen_max) ? $this->nb_gen_max : 0) . ',';
         $sql .= " auto_validate = ". (!empty($this->auto_validate) ? $this->auto_validate : 0);
-        $sql .= " WHERE rowid = ". $this->id;
+        $sql .= " WHERE rowid = ". (int) $this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
