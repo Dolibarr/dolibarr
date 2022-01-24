@@ -1016,56 +1016,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '</td>';
 
-						?>
-
-						<script  type="text/javascript" language="javascript">
-
-							var element = $("select[name*='idwarehouse']");
-
-							element.change(function(){
-
-								var element = $(this);
-
-								var product_element_name = element.attr('name').replace('idwarehouse', 'product');
-
-								$.ajax({
-									type: "POST",
-									url: "<?php echo DOL_URL_ROOT.'/mrp/ajax/interface.php'; ?>",
-									data: {
-										action: "updateselectbatchbywarehouse",
-										warehouse_id: $(this).val(),
-										product_id: $("input[name='"+product_element_name+"']").val()
-									}
-								}).done(function( data ) {
-
-									var element2_name = element.attr('name').replace('idwarehouse', 'batch');
-									var element2 = $("select[name*='"+element2_name+"']");
-
-									element2.empty();
-
-									var data = JSON.parse(data);
-
-									element2.append($('<option>', {
-										value: -1,
-										text : ''
-									}));
-
-									$.each(data, function (key, value) {
-
-										element2.append($('<option>', {
-											value: key,
-											text : value
-										}));
-									});
-
-								});
-
-							});
-
-						</script>
-
-						<?php
-
 						// Stock
 						if ($conf->stock->enabled) {
 							print '<td></td>';
@@ -1081,49 +1031,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 //								print $formproduct->selectLotStock('', 'batch-'.$line->id.'-'.$i, '', 0, '', $line->fk_product);
 							}
 							print '</td>';
-
-							?>
-
-							<script  type="text/javascript" language="javascript">
-
-
-								element.change(function(){
-
-									var element = $(this);
-
-									$.ajax({
-										type: "POST",
-										url: "<?php echo DOL_URL_ROOT.'/mrp/ajax/interface.php'; ?>",
-										data: {
-											action: "updateselectwarehousebybatch",
-											batch_id: $(this).val(),
-											fk_product : <?php echo $line->fk_product ?>
-										}
-									}).done(function(data) {
-
-										// var element2_name = element.attr('id').replace('batch', 'idwarehouse');
-										// var element2 = $("select[name*='"+element2_name+"']");
-										//
-										// element2.empty();
-										//
-										// var data = JSON.parse(data);
-										//
-										// $.each(data, function (key, value) {
-										// 	element2.append($('<option>', {
-										// 		value: key,
-										// 		text: value,
-										// 	}).attr('data-html', value));
-										// });
-									});
-
-								});
-
-							</script>
-
-							<?php
-
-
-
 						}
 
 						// Action delete line
@@ -1412,6 +1319,111 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</div>';
 		print '</div>';
+
+		?>
+
+		<script  type="text/javascript" language="javascript">
+
+			$(document).ready(function() {
+				updateselectbatchbywarehouse();
+				updateselectwarehousebybatch();
+			});
+
+			//Lorsqu'un entrepôt est sélectionné, on propose seulement les numéro de séries qui sont disponibles dans celui-ci
+			//TODO : revoir requête sql de l'interface pour les cas suivants : si entrepôt sélectionné, alors quantité des nums individuel, sinon quantité globale
+			function updateselectbatchbywarehouse() {
+
+				var element = $("select[name*='idwarehouse']");
+
+				element.change(function () {
+
+					var element = $(this);
+
+					var product_element_name = element.attr('name').replace('idwarehouse', 'product');
+
+					$.ajax({
+						type: "POST",
+						url: "<?php echo DOL_URL_ROOT . '/mrp/ajax/interface.php'; ?>",
+						data: {
+							action: "updateselectbatchbywarehouse",
+							warehouse_id: $(this).val(),
+							product_id: $("input[name='" + product_element_name + "']").val()
+						}
+					}).done(function (data) {
+
+						console.log(data);
+						var element2_name = element.attr('name').replace('idwarehouse', 'batch');
+						var element2 = $("select[name*='" + element2_name + "']");
+
+						element2.empty();
+
+						var data = JSON.parse(data);
+
+						element2.append($('<option>', {
+							value: -1,
+							text: ''
+						}));
+
+						$.each(data, function (key, value) {
+
+							element2.append($('<option>', {
+								value: key,
+								text: value
+							}));
+						});
+
+					});
+
+				});
+			}
+
+			//Lorsqu'un numéro de lot/série est sélectionné, on propose seulement le ou les entrepôts où celui-ci est disponible
+			//TODO : revoir requête sql de l'interface pour les cas suivants : si num sélectionné, alors quantité des entrepôts individuel, sinon quantité globale
+			function updateselectwarehousebybatch() {
+				var element = $("select[name*='batch']");
+
+				element.change(function () {
+
+					var element = $(this);
+
+					var product_element_name = element.attr('name').replace('batch', 'product');
+
+					$.ajax({
+						type: "POST",
+						url: "<?php echo DOL_URL_ROOT . '/mrp/ajax/interface.php'; ?>",
+						data: {
+							action: "updateselectwarehousebybatch",
+							batch_id: $(this).val(),
+							product_id: $("input[name='" + product_element_name + "']").val()
+						}
+					}).done(function (data) {
+
+						var element2_name = element.attr('name').replace('batch', 'idwarehouse');
+						var element2 = $("select[name*='" + element2_name + "']");
+
+						element2.empty();
+
+						var data = JSON.parse(data);
+
+						element2.append($('<option>', {
+							value: -1,
+							text: ''
+						}));
+
+						$.each(data, function (key, value) {
+							element2.append($('<option>', {
+								value: key,
+								text: value,
+							}).attr('data-html', value));
+						});
+					});
+
+				});
+			}
+
+		</script>
+
+		<?php
 	}
 
 	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
