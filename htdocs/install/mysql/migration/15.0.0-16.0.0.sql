@@ -29,6 +29,7 @@
 -- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+
 -- Missing in v15 or lower
 
 UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
@@ -36,6 +37,8 @@ UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AN
 
 
 -- v16
+
+ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
 
 -- Facture fourn rec
 CREATE TABLE llx_facture_fourn_rec
