@@ -15,23 +15,23 @@
  */
 interface Swift_Events_TransportChangeListener extends Swift_Events_EventListener
 {
-    /**
-     * Invoked just before a Transport is started.
-     */
-    public function beforeTransportStarted(Swift_Events_TransportChangeEvent $evt);
+	/**
+	 * Invoked just before a Transport is started.
+	 */
+	public function beforeTransportStarted(Swift_Events_TransportChangeEvent $evt);
 
-    /**
-     * Invoked immediately after the Transport is started.
-     */
-    public function transportStarted(Swift_Events_TransportChangeEvent $evt);
+	/**
+	 * Invoked immediately after the Transport is started.
+	 */
+	public function transportStarted(Swift_Events_TransportChangeEvent $evt);
 
-    /**
-     * Invoked just before a Transport is stopped.
-     */
-    public function beforeTransportStopped(Swift_Events_TransportChangeEvent $evt);
+	/**
+	 * Invoked just before a Transport is stopped.
+	 */
+	public function beforeTransportStopped(Swift_Events_TransportChangeEvent $evt);
 
-    /**
-     * Invoked immediately after the Transport is stopped.
-     */
-    public function transportStopped(Swift_Events_TransportChangeEvent $evt);
+	/**
+	 * Invoked immediately after the Transport is stopped.
+	 */
+	public function transportStopped(Swift_Events_TransportChangeEvent $evt);
 }

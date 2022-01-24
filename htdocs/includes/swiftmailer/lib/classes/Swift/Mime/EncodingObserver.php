@@ -15,8 +15,8 @@
  */
 interface Swift_Mime_EncodingObserver
 {
-    /**
-     * Notify this observer that the observed entity's ContentEncoder has changed.
-     */
-    public function encoderChanged(Swift_Mime_ContentEncoder $encoder);
+	/**
+	 * Notify this observer that the observed entity's ContentEncoder has changed.
+	 */
+	public function encoderChanged(Swift_Mime_ContentEncoder $encoder);
 }

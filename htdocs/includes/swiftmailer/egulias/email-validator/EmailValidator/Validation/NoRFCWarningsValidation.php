@@ -8,34 +8,34 @@ use Egulias\EmailValidator\Validation\Error\RFCWarnings;
 
 class NoRFCWarningsValidation extends RFCValidation
 {
-    /**
-     * @var InvalidEmail|null
-     */
-    private $error;
+	/**
+	 * @var InvalidEmail|null
+	 */
+	private $error;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isValid($email, EmailLexer $emailLexer)
-    {
-        if (!parent::isValid($email, $emailLexer)) {
-            return false;
-        }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function isValid($email, EmailLexer $emailLexer)
+	{
+		if (!parent::isValid($email, $emailLexer)) {
+			return false;
+		}
 
-        if (empty($this->getWarnings())) {
-            return true;
-        }
+		if (empty($this->getWarnings())) {
+			return true;
+		}
 
-        $this->error = new RFCWarnings();
+		$this->error = new RFCWarnings();
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getError()
-    {
-        return $this->error ?: parent::getError();
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getError()
+	{
+		return $this->error ?: parent::getError();
+	}
 }

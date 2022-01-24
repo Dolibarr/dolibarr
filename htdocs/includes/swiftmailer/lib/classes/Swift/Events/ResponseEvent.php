@@ -15,50 +15,50 @@
  */
 class Swift_Events_ResponseEvent extends Swift_Events_EventObject
 {
-    /**
-     * The overall result.
-     *
-     * @var bool
-     */
-    private $valid;
+	/**
+	 * The overall result.
+	 *
+	 * @var bool
+	 */
+	private $valid;
 
-    /**
-     * The response received from the server.
-     *
-     * @var string
-     */
-    private $response;
+	/**
+	 * The response received from the server.
+	 *
+	 * @var string
+	 */
+	private $response;
 
-    /**
-     * Create a new ResponseEvent for $source and $response.
-     *
-     * @param string $response
-     * @param bool   $valid
-     */
-    public function __construct(Swift_Transport $source, $response, $valid = false)
-    {
-        parent::__construct($source);
-        $this->response = $response;
-        $this->valid = $valid;
-    }
+	/**
+	 * Create a new ResponseEvent for $source and $response.
+	 *
+	 * @param string $response
+	 * @param bool   $valid
+	 */
+	public function __construct(Swift_Transport $source, $response, $valid = false)
+	{
+		parent::__construct($source);
+		$this->response = $response;
+		$this->valid = $valid;
+	}
 
-    /**
-     * Get the response which was received from the server.
-     *
-     * @return string
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
+	/**
+	 * Get the response which was received from the server.
+	 *
+	 * @return string
+	 */
+	public function getResponse()
+	{
+		return $this->response;
+	}
 
-    /**
-     * Get the success status of this Event.
-     *
-     * @return bool
-     */
-    public function isValid()
-    {
-        return $this->valid;
-    }
+	/**
+	 * Get the success status of this Event.
+	 *
+	 * @return bool
+	 */
+	public function isValid()
+	{
+		return $this->valid;
+	}
 }
