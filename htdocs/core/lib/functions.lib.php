@@ -1545,6 +1545,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 			$data['ip'] = '???@'.$_SERVER['LOGNAME'];
 		}
+
 		// Loop on each log handler and send output
 		foreach ($conf->loghandlers as $loghandlerinstance) {
 			if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) {

@@ -7598,7 +7598,7 @@ abstract class CommonObject
 			} else { return true; }
 		} elseif (in_array($type, array('double', 'real', 'price'))) {
 			// is numeric
-			if (!$validate->isPrice($fieldValue)) {
+			if (!$validate->isNumeric($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
