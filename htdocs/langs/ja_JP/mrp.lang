@@ -14,7 +14,7 @@ BOMsSetup=モジュールBOMの設定
 ListOfBOMs=部品表のリスト - BOM
 ListOfManufacturingOrders=製造注文のリスト
 NewBOM=新規部品表
-ProductBOMHelp=このBOMで作成（または分解）する製品。 <br>注：プロパティ「製品の性質」=「原材料」を持つ製品はこのリストに表示されない。
+ProductBOMHelp=このBOMで作成（または分解）する製品。 <br>注：プロパティ「製品目」=「原材料」を持つ製品はこのリストに表示されない。
 BOMsNumberingModules=BOM番号付けテンプレート
 BOMsModelModule=BOMドキュメントテンプレート
 MOsNumberingModules=MOナンバリングテンプレート
@@ -67,7 +67,7 @@ TheProductXIsAlreadyTheProductToProduce=追加する製品は、すでに生産�
 ForAQuantityOf=%sの生産数量について
 ForAQuantityToConsumeOf=%sを分解する数量に対して
 ConfirmValidateMo=この製造指図を検証してよいか？
-ConfirmProductionDesc='%s'をクリックすると、設定された数量の消費および/または生産を検証する。これにより、在庫が更新され、在庫の動きが記録される。
+ConfirmProductionDesc='%s'をクリックすると、設定された数量の消費および/または生産を検証する。これにより、在庫が更新され、在庫推移が記録される。
 ProductionForRef=%sの生産
 AutoCloseMO=消費および生産する数量に達した場合、製造指図を自動的に閉じる
 NoStockChangeOnServices=サービスの在庫変更はない

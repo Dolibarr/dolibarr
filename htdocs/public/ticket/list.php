@@ -294,8 +294,8 @@ if ($action == "view_ticketlist") {
 
 		require DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-		$sortfield = GETPOST("sortfield", 'alpha');
-		$sortorder = GETPOST("sortorder", 'alpha');
+		$sortfield = GETPOST('sortfield', 'aZ09comma');
+		$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 		if (!$sortfield) {
 			$sortfield = 't.datec';

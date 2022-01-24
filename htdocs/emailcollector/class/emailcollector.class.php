@@ -2366,7 +2366,8 @@ class EmailCollector extends CommonObject
 						global $hookmanager;
 
 						if (!is_object($hookmanager)) {
-							$hookmanager->initHooks(array('emailcollectorcard'));
+							include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+							$hookmanager = new HookManager($this->db);
 						}
 
 						$parameters = array(

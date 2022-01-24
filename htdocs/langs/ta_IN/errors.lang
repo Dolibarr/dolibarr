@@ -273,6 +273,7 @@ ErrorWrongFileName=கோப்பின் பெயரில் __சம்த
 ErrorNotInDictionaryPaymentConditions=கட்டண விதிமுறைகள் அகராதியில் இல்லை, தயவுசெய்து மாற்றவும்.
 ErrorIsNotADraft=%s ஒரு வரைவு அல்ல
 ErrorExecIdFailed="id" கட்டளையை இயக்க முடியவில்லை
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=உங்கள் PHP அளவுரு upload_max_filesize (%s) PHP அளவுரு post_max_size (%s) ஐ விட அதிகமாக உள்ளது. இது ஒரு நிலையான அமைப்பு அல்ல.

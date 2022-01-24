@@ -134,4 +134,4 @@ HolidaysToApprove=Vacaciones para aprobar
 NobodyHasPermissionToValidateHolidays=Nadie tiene permiso para validar días libres
 HolidayBalanceMonthlyUpdate=Actualización mensual del saldo de vacaciones
 XIsAUsualNonWorkingDay=%s es normalmente un día NO laborable
-ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Leave request %s must be draft, canceled or refused to be deleted
+ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=La solicitud de abandono %s debe ser borrador, cancelada o rechazada para ser eliminada

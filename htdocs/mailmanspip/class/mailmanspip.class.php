@@ -278,11 +278,11 @@ class MailmanSpip
 					if ($result) {
 						if ($mydb->num_rows($result)) {
 							// nous avons au moins une reponse
-							$mydb->close($result);
+							$mydb->close();
 							return 1;
 						} else {
 							// nous n'avons pas de reponse => n'existe pas
-							$mydb->close($result);
+							$mydb->close();
 							return 0;
 						}
 					} else {

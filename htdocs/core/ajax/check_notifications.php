@@ -170,8 +170,10 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 			$event['code'] = $obj->code;
 			$event['label'] = $obj->label;
 			$event['location'] = $obj->location;
-			$event['reminder_date_formated'] = dol_print_date($db->jdate($obj->dateremind), 'standard');
-			$event['event_date_start_formated'] = dol_print_date($db->jdate($obj->datep), 'standard');
+			$event['reminder_date_formated_tzserver'] = dol_print_date($db->jdate($obj->dateremind), 'standard', 'tzserver');
+			$event['event_date_start_formated_tzserver'] = dol_print_date($db->jdate($obj->datep), 'standard', 'tzserver');
+			$event['reminder_date_formated'] = dol_print_date($db->jdate($obj->dateremind), 'standard', 'tzuser');
+			$event['event_date_start_formated'] = dol_print_date($db->jdate($obj->datep), 'standard', 'tzuser');
 
 			$eventfound[$obj->id_agenda] = $event;
 		}
