@@ -261,6 +261,11 @@ class Commande extends CommonOrder
 	//! key of pos source ('0', '1', ...)
 	public $pos_source;
 
+	/**
+	 * @var array	Array with line of all shipments
+	 */
+	public $expeditions;
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -2010,9 +2015,9 @@ class Commande extends CommonOrder
 	/**
 	 *	Load array lines
 	 *
-	 *	@param		int		$only_product	Return only physical products, not services
+	 *	@param		int		$only_product			Return only physical products, not services
 	 *	@param		int		$loadalsotranslation	Return translation for products
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int								<0 if KO, >0 if OK
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
@@ -2207,9 +2212,10 @@ class Commande extends CommonOrder
 	 *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
 	 *
 	 *	@param      int		$filtre_statut      Filter on shipment status
+	 *  @param		int		$fk_product			Add a filter on a product
 	 * 	@return     int                			<0 if KO, Nb of lines found if OK
 	 */
-	public function loadExpeditions($filtre_statut = -1)
+	public function loadExpeditions($filtre_statut = -1, $fk_product = 0)
 	{
 		$this->expeditions = array();
 

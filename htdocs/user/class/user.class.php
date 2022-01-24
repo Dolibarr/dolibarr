@@ -524,7 +524,7 @@ class User extends CommonObject
 				$this->admin		= $obj->admin;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
-				$this->note			= $obj->note_private;
+				$this->note			= $obj->note_private;	// deprecated
 				$this->statut		= $obj->statut;
 				$this->photo		= $obj->photo;
 				$this->openid		= $obj->openid;
@@ -1905,7 +1905,7 @@ class User extends CommonObject
 			// Update password
 			if (!empty($this->pass)) {
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
-					// Si mot de passe saisi et different de celui en base
+					// If a new value for password is set and different than the one crypted into database
 					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass);
 					if ($result < 0) {
 						return -5;
@@ -3080,7 +3080,7 @@ class User extends CommonObject
 		$this->personal_mobile = '0999999996';
 		$this->admin = 0;
 		$this->login = 'dolibspec';
-		$this->pass = 'dolibspec';
+		$this->pass = 'dolibSpec+@123';
 		//$this->pass_indatabase='dolibspec';									Set after a fetch
 		//$this->pass_indatabase_crypted='e80ca5a88c892b0aaaf7e154853bccab';	Set after a fetch
 		$this->datec = $now;
