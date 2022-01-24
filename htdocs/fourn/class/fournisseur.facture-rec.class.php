@@ -297,10 +297,10 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ') VALUES (';
             $sql .= "'".$this->db->escape($this->titre)."'";
             $sql .= ", '".$this->db->escape($this->ref_supplier)."'";
-            $sql .= ', ' . $conf->entity;
+            $sql .= ', ' . (int) $conf->entity;
             $sql .= ', ' . (int) $facfourn_src->socid;
             $sql .= ", '".$this->db->idate($now)."'";
-            $sql .= ', ' . $this->suspended;
+            $sql .= ', ' . (int) $this->suspended;
             if (!empty(GETPOST('libelle'))){
                 $sql .= ", '" . $this->db->escape(GETPOST('libelle')) . "'";
             } elseif (! empty($this->libelle)) {
@@ -310,7 +310,7 @@ class FactureFournisseurRec extends CommonInvoice
             }
             $sql .= ', ' .(!empty($facfourn_src->total_ttc) ? (float) $facfourn_src->total_ttc : '0');                              // amount
             $sql .= ', ' .(!empty($facfourn_src->remise) ? (float) $facfourn_src->remise : '0');
-            $sql .= ', ' . $user->id;
+            $sql .= ', ' . (int) $user->id;
             $sql .= ', ' .(!empty($this->fk_project) ? $this->fk_project : 'NULL');                                                 // Fields declarded on creation
             $sql .= ', ' .(!empty($facfourn_src->fk_account) ? $facfourn_src->fk_account : 'NULL');
             $sql .= ', ' .($this->cond_reglement_id > 0 ? (int) $this->cond_reglement_id : 'NULL');
@@ -319,18 +319,18 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ', ' .(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : 'NULL');                  // Fields declarded on creation         
             $sql .= ', ' .(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : 'NULL');                    // Fields declarded on creation
             $sql .= ', ' .(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : 'NULL');                        // Fields declarded on creation
-            $sql .= ', ' . $facfourn_src->fk_multicurrency;                                        
+            $sql .= ', ' . (int) $facfourn_src->fk_multicurrency;
             $sql .= ", '".$this->db->escape($facfourn_src->multicurrency_code)."'";                
             $sql .= ', ' . (float) $facfourn_src->multicurrency_tx;                                
-            $sql .= ', ' . $this->usenewprice;                                                                                      // Fields declarded on creation
+            $sql .= ', ' . (int) $this->usenewprice;                                                                                      // Fields declarded on creation
             $sql .= ', ' . (int) $this->frequency;                                                                                  // Fields declarded on creation
             $sql .= ", '".$this->db->escape($this->unit_frequency)."'";                                                             // Fields declarded on creation
             $sql .= ', ' .(!empty($this->date_when) ? "'".$this->db->idate($this->date_when)."'" : 'NULL');                         // Fields declarded on creation
             $sql .= ', ' .(!empty($this->date_last_gen) ? "'".$this->db->idate($this->date_last_gen)."'" : 'NULL');                 // Fields declarded on creation
-            $sql .= ', ' . $this->nb_gen_done;                                                                                      // Fields declarded on creation
-            $sql .= ', ' . $this->nb_gen_max;                                                                                       // Fields declarded on creation
-            $sql .= ', ' . $this->auto_validate;                                                                                    // Fields declarded on creation
-            $sql .= ', ' . $this->generate_pdf;                                                                                     // Fields declarded on creation
+            $sql .= ', ' . (int) $this->nb_gen_done;                                                                                      // Fields declarded on creation
+            $sql .= ', ' . (int) $this->nb_gen_max;                                                                                       // Fields declarded on creation
+            $sql .= ', ' . (int) $this->auto_validate;                                                                                    // Fields declarded on creation
+            $sql .= ', ' . (int) $this->generate_pdf;                                                                                     // Fields declarded on creation
             $sql .= ')';
 
             if ($this->db->query($sql)) {
@@ -966,7 +966,7 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ', fk_user_author';
             $sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
             $sql .= ') VALUES (';
-            $sql .= ' ' . $facid;   // source supplier invoie id
+            $sql .= ' ' . (int) $facid;   // source supplier invoie id
             $sql .= ', ' . (! empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
             $sql .= ', ' . (! empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
             $sql .= ', ' . (! empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
@@ -987,7 +987,7 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ', ' . price2num($total_localtax1);
             $sql .= ', ' . price2num($total_localtax2);
             $sql .= ', ' . price2num($total_ttc);
-            $sql .= ', ' . $product_type;
+            $sql .= ', ' . (int) $product_type;
             $sql .= ', ' . ($date_start > 0 ? (int) $date_start : 'NULL');
             $sql .= ', ' . ($date_end > 0 ? (int) $date_end : 'NULL');
             $sql .= ', ' . (int) $info_bits;
@@ -1142,7 +1142,7 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ", total_localtax1='" . price2num($total_localtax1) . "'";
             $sql .= ", total_localtax2='" . price2num($total_localtax2) . "'";
             $sql .= ", total_ttc='" . price2num($total_ttc) . "'";
-            $sql .= ', product_type=' . $product_type;
+            $sql .= ', product_type=' . (int) $product_type;
             $sql .= ', date_start=' . (empty($date_start) ? 'NULL' : (int) $date_start);
             $sql .= ', date_end=' . (empty($date_end) ? 'NULL' : (int) $date_end);
             $sql .= ', info_bits=' . (int) $info_bits;
@@ -1750,7 +1750,7 @@ class FactureFournisseurRec extends CommonInvoice
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql .= ' SET frequency = '.($frequency ? $this->db->escape($frequency) : 'null');
         if (!empty($unit)) {
-            $sql .= ', unit_frequency = \''.$this->db->escape($unit).'\'';
+            $sql .= ', unit_frequency = '.$this->db->escape($unit);
         }
         $sql .= ' WHERE rowid = ' . (int) $this->id;
 
@@ -2131,7 +2131,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
         $sql .= ', pu_ttc =' . price2num($this->pu_ttc);
         $sql .= ', qty =' . price2num($this->qty);
         $sql .= ", remise_percent ='" . price2num($this->remise_percent) . "'";
-        $sql .= ', fk_remise_except =' . $this->fk_remise_except;
+        $sql .= ', fk_remise_except =' . (int) $this->fk_remise_except;
         $sql .= ", vat_src_code ='" . $this->db->escape($this->vat_src_code) . "'";
         $sql .= ', tva_tx =' . price2num($this->tva_tx);
         $sql .= ', localtax1_tx =' . price2num($this->localtax1_tx);
@@ -2145,7 +2145,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
             $sql .= ', total_localtax2 =' . price2num($this->total_localtax2);
             $sql .= ', total_ttc =' . price2num($this->total_ttc);
         }
-        $sql .= ', product_type =' . $this->product_type;
+        $sql .= ', product_type =' . (int) $this->product_type;
         $sql .= ', date_start =' . (int) $this->date_start;
         $sql .= ', date_end =' . (int) $this->date_end;
         $sql .= ", info_bits ='" . price2num($this->info_bits) . "'";
