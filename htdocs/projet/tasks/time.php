@@ -285,6 +285,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 
 			$result = $object->addTimeSpent($user);
+
 		} else {
 			$object->fetch($id, $ref);
 
@@ -1793,6 +1794,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					if ($resultFetch < 0) {
 						setEventMessages($product->error, $product->errors, 'errors');
 					} else {
+
 						print $product->getNomUrl(1);
 					}
 				}
