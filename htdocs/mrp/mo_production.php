@@ -1014,6 +1014,54 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '</td>';
 
+						?>
+
+						<script  type="text/javascript" language="javascript">
+
+							var element = $("select[name*='idwarehouse']");
+
+							element.change(function(){
+
+
+								console.log($(this).val());
+
+								$.ajax({
+									type: "POST",
+									url: "<?php echo DOL_URL_ROOT.'/mrp/ajax/interface.php'; ?>",
+									data: {
+										action: "updateselectbatchbywarehouse",
+										warehouse_id: $(this).val(),
+										fk_product : <?php echo $line->fk_product ?>
+									}
+								}).done(function( data ) {
+
+									var element2 = $("#<?php echo 'batch-'.$line->id.'-'.$i ?>");
+
+									element2.empty();
+
+									var data = JSON.parse(data);
+
+									element2.append($('<option>', {
+										value: -1,
+										text : ''
+									}));
+
+									$.each(data, function (key, value) {
+
+										element2.append($('<option>', {
+											value: key,
+											text : value
+										}));
+									});
+
+								});
+
+							});
+
+						</script>
+
+						<?php
+
 						// Stock
 						if ($conf->stock->enabled) {
 							print '<td></td>';
@@ -1029,6 +1077,54 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 //								print $formproduct->selectLotStock('', 'batch-'.$line->id.'-'.$i, '', 0, '', $line->fk_product);
 							}
 							print '</td>';
+
+							?>
+
+							<script  type="text/javascript" language="javascript">
+
+								var element = $("select[name*='batch']");
+
+								element.change(function(){
+
+									$.ajax({
+										type: "POST",
+										url: "<?php echo DOL_URL_ROOT.'/mrp/ajax/interface.php'; ?>",
+										data: {
+											action: "updateselectwarehousebybatch",
+											batch_id: $(this).val(),
+											fk_product : <?php echo $line->fk_product ?>
+										}
+									}).done(function( data ) {
+
+										console.log(data);
+
+										if(data != 0) {
+
+											var element2 = $("#<?php echo 'idwarehouse-' . $line->id . '-' . $i ?>");
+
+											element2.empty();
+
+											var data = JSON.parse(data);
+
+											$.each(data, function (key, value) {
+
+												element2.append($('<option>', {
+													value: key,
+													text: value
+												}));
+											});
+										}
+
+									});
+
+								});
+
+							</script>
+
+							<?php
+
+
+
 						}
 
 						// Action delete line
