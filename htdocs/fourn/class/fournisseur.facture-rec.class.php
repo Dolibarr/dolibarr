@@ -302,9 +302,9 @@ class FactureFournisseurRec extends CommonInvoice
             $sql .= ", '".$this->db->idate($now)."'";
             $sql .= ', ' . $this->suspended;
             if (!empty(GETPOST('libelle'))){
-                $sql .= ", '" . GETPOST('libelle') . "'";
+                $sql .= ", '" . $this->db->escape(GETPOST('libelle')) . "'";
             } elseif (! empty($this->libelle)) {
-                $sql .= ", '" . $this->libelle . "'";
+                $sql .= ", '" . $this->db->escape($this->libelle) . "'";
             } else {
                 $sql .= ", ''";
             }
