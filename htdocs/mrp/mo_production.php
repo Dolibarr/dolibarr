@@ -989,6 +989,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$disable = 'disabled';
 						}
 
+						print '<input type="hidden" name="product-'.$line->id.'-'.$i.'" value="'.$line->fk_product.'">';
+
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.' ></td>';
 
@@ -1022,8 +1024,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							element.change(function(){
 
+								var element = $(this);
 
-								console.log($(this).val());
+								var product_element_name = element.attr('name').replace('idwarehouse', 'product');
 
 								$.ajax({
 									type: "POST",
@@ -1031,11 +1034,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 									data: {
 										action: "updateselectbatchbywarehouse",
 										warehouse_id: $(this).val(),
-										fk_product : <?php echo $line->fk_product ?>
+										product_id: $("input[name='"+product_element_name+"']").val()
 									}
 								}).done(function( data ) {
 
-									var element2 = $("#<?php echo 'batch-'.$line->id.'-'.$i ?>");
+									var element2_name = element.attr('name').replace('idwarehouse', 'batch');
+									var element2 = $("select[name*='"+element2_name+"']");
 
 									element2.empty();
 
@@ -1082,9 +1086,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							<script  type="text/javascript" language="javascript">
 
-								var element = $("select[name*='batch']");
 
 								element.change(function(){
+
+									var element = $(this);
 
 									$.ajax({
 										type: "POST",
@@ -1094,27 +1099,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 											batch_id: $(this).val(),
 											fk_product : <?php echo $line->fk_product ?>
 										}
-									}).done(function( data ) {
+									}).done(function(data) {
 
-										console.log(data);
-
-										if(data != 0) {
-
-											var element2 = $("#<?php echo 'idwarehouse-' . $line->id . '-' . $i ?>");
-
-											element2.empty();
-
-											var data = JSON.parse(data);
-
-											$.each(data, function (key, value) {
-
-												element2.append($('<option>', {
-													value: key,
-													text: value
-												}));
-											});
-										}
-
+										// var element2_name = element.attr('id').replace('batch', 'idwarehouse');
+										// var element2 = $("select[name*='"+element2_name+"']");
+										//
+										// element2.empty();
+										//
+										// var data = JSON.parse(data);
+										//
+										// $.each(data, function (key, value) {
+										// 	element2.append($('<option>', {
+										// 		value: key,
+										// 		text: value,
+										// 	}).attr('data-html', value));
+										// });
 									});
 
 								});
