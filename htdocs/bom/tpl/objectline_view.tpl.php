@@ -41,7 +41,7 @@ if (empty($object) || !is_object($object)) {
 }
 
 
-global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
+global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
 
 if (empty($dateSelector)) {
 	$dateSelector = 0;
@@ -83,8 +83,10 @@ $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
 $res = $tmpbom->fetch($line->fk_bom_child);
 if ($tmpbom->id > 0) {
-	print $tmpbom->getNomUrl(1);
 	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
+	print $tmpproduct->getNomUrl(1);
+    print ' '.$langs->trans('OR').' ';
+    print $tmpbom->getNomUrl(1);
 } else {
 	print $tmpproduct->getNomUrl(1);
 	print ' - '.$tmpproduct->label;
@@ -176,7 +178,7 @@ if ($action == 'selectlines') {
 print '</tr>';
 
 // Select of all the sub-BOM lines
-$sql = 'SELECT rowid, fk_bom_child, fk_product FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
+$sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
 $sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);
 
@@ -199,14 +201,23 @@ if ($resql) {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
 		}
 
-		// Product
-		print '<td style="padding-left: 5%" id="sub_bom_product_'.$sub_bom_line->id.'">'.$sub_bom_product->getNomUrl(1).'</td>';
+		// Product OR BOM
+		print '<td style="padding-left: 5%" id="sub_bom_product_'.$sub_bom_line->id.'">';
+        if(!empty($obj->fk_bom_child)){
+			print $sub_bom_product->getNomUrl(1);
+			print ' '.$langs->trans('OR').' ';
+			print $sub_bom->getNomUrl(1);
+        } else {
+			print $sub_bom_product->getNomUrl(1);
+            print '</td>';
+        }
 
 		// Qty
-		print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 		if ($sub_bom_line->qty_frozen > 0) {
-			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$sub_bom_line->qty_frozen.'</td>';
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
+			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
 		} else {
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">&nbsp;</td>';
 		}
 
@@ -221,9 +232,16 @@ if ($resql) {
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
 
 		// Cost price if it's defined
-		if ($sub_bom_product->cost_price > 0) {
+        if (!empty($obj->fk_bom_child)) {
+            $bom = new BOM($object->db);
+            $bom->fetch($obj->fk_bom_child);
+            $bom->calculateCosts();
+            $bom->total_cost * $line->qty;
+            print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($bom->total_cost * $line->qty).'</td>';
+            $total_cost+= $bom->total_cost * $line->qty;
+        } elseif ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
-			$total_cost.= $sub_bom_product->cost_price * $line->qty;
+			$total_cost+= $sub_bom_product->cost_price * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $line->qty).'</td>';
 			$total_cost.= $sub_bom_product->pmp * $line->qty;
