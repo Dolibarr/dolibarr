@@ -111,10 +111,11 @@ class modGeneratePassNone extends ModeleGenPassword
 	}
 
 	/**
-	 * 		Validate a password
+	 * 	Validate a password.
+	 * 	This function is called by User->setPassword() and internally to validate that the password matches the constraints.
 	 *
-	 *		@param		string	$password	Password to check
-	 *      @return     int					0 if KO, >0 if OK
+	 *	@param		string	$password	Password to check
+	 *  @return     int					0 if KO, >0 if OK
 	 */
 	public function validatePassword($password)
 	{

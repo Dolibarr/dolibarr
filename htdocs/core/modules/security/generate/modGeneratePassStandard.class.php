@@ -137,15 +137,21 @@ class modGeneratePassStandard extends ModeleGenPassword
 
 	/**
 	 *  Validate a password
+	 * 	This function is called by User->setPassword() and internally to validate that the password matches the constraints.
 	 *
 	 *  @param      string  $password   Password to check
 	 *  @return     int                 0 if KO, >0 if OK
 	 */
 	public function validatePassword($password)
 	{
-		if (dol_strlen($password) < $this->length) {
+		global $langs;
+
+		if (dol_strlen($password) < $this->length2) {
+			$langs->load("other");
+			$this->error = $langs->trans("YourPasswordMustHaveAtLeastXChars", $this->length2);
 			return 0;
 		}
+
 		return 1;
 	}
 }

@@ -285,3 +285,4 @@ SelectLinesOfTimeSpentToInvoice=Sélectionnez les lignes de temps passé non fac
 ProjectTasksWithoutTimeSpent=Tâches de projet sans temps consommé
 FormForNewLeadDesc=Veuillez remplir ce formulaire de contact ou écrivez un e-mail à <b>%s</b>.
 ProjectsHavingThisContact=Projets ayant ce contact associé
+StartDateCannotBeAfterEndDate=La date de fin ne peux être avant la date de début

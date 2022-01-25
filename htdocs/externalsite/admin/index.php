@@ -57,7 +57,7 @@ if ($action == 'update') {
 	$label  = GETPOST('EXTERNALSITE_LABEL', 'alphanohtml');
 
 	// exturl can be an url or a HTML string
-	$exturl = GETPOST('EXTERNALSITE_URL', 'none');
+	$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
 	$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
 	$exturl = dol_string_onlythesehtmlattributes($exturl);
 
@@ -110,7 +110,7 @@ print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
 print '<td><textarea class="flat minwidth500" name="EXTERNALSITE_URL">';
 
-$exturl = GETPOST('EXTERNALSITE_URL', 'none');
+$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
 $exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
 $exturl = dol_string_onlythesehtmlattributes($exturl);
 

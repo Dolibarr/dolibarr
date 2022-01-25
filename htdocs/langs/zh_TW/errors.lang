@@ -111,7 +111,7 @@ ErrorFailedToLoadRSSFile=無法獲取RSS訂閱. 如果錯誤訊息沒有提供�
 ErrorForbidden=訪問被拒絕。 <br>您嘗試訪問已停用模組的頁面，區域或功能，或者沒經過身份驗證的程序，或者不允許用戶訪問。
 ErrorForbidden2=可以經由您的Dolibarr管理員從選單%s->%s中定義此登入權限。
 ErrorForbidden3=似乎Dolibarr被未通過身份驗證的程序使用。查看Dolibarr設定文件，以了解如何管理身份驗證（htaccess，mod_auth或其他...）。
-ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
+ErrorForbidden4=注意：清除您的瀏覽器 cookie 以銷毀此登錄的現有程序。
 ErrorNoImagickReadimage=在此 PHP 中沒有 imagick 類別，所以無法預覽。管理員可以從選單設定 - 顯示中停用此分頁。
 ErrorRecordAlreadyExists=記錄已存在
 ErrorLabelAlreadyExists=此標籤已存在
@@ -271,8 +271,9 @@ ErrorActionCommBadType=選擇的事件類型（id：%n，代碼：%s）在事件
 CheckVersionFail=版本檢查失敗
 ErrorWrongFileName=檔案名稱中不可以有__SOMETHING__
 ErrorNotInDictionaryPaymentConditions=不在支付條款類別中，請修改。
-ErrorIsNotADraft=%s is not a draft
-ErrorExecIdFailed=Can't execute command "id"
+ErrorIsNotADraft=%s 不是草案狀態
+ErrorExecIdFailed=無法執行命令“id”
+ErrorBadCharIntoLoginName=登錄名稱中的未核准字元
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=您的PHP參數upload_max_filesize（%s）高於PHP參數post_max_size（%s）。這不是相同的設定。

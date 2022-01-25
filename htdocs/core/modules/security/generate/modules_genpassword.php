@@ -30,6 +30,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 abstract class ModeleGenPassword
 {
 	/**
+	 * Flag to 1 if we must clean ambiguous charaters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
+	 *
+	 * @var integer
+	 */
+	public $WithoutAmbi = 0;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -79,10 +86,11 @@ abstract class ModeleGenPassword
 	}
 
 	/**
-	 * 		Validate a password
+	 * 	Validate a password.
+	 * 	This function is called by User->setPassword() and internally to validate that the password matches the constraints.
 	 *
-	 *		@param		string	$password	Password to check
-	 *      @return     int					0 if KO, >0 if OK
+	 *	@param		string	$password	Password to check
+	 *  @return     int					0 if KO, >0 if OK
 	 */
 	public function validatePassword($password)
 	{

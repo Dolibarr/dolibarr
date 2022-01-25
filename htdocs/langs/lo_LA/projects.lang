@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Noteາຍເຫດ: ໂຄງ�
 SelectLinesOfTimeSpentToInvoice=ເລືອກແຖວທີ່ໃຊ້ເວລາທີ່ຍັງບໍ່ໄດ້ຮຽກເກັບເງິນ, ຈາກນັ້ນປະຕິບັດຫຼາຍ bulk ອັນ "ສ້າງໃບແຈ້ງ ໜີ້" ເພື່ອເກັບເງິນເຂົາເຈົ້າ
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
+StartDateCannotBeAfterEndDate=End date cannot be before start date

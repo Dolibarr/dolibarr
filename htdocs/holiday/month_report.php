@@ -54,7 +54,7 @@ $search_description = GETPOST('search_description', 'alphanohtml');
 
 $limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
-$sortorder   = GETPOST('sortorder', 'alpha');
+$sortorder   = GETPOST('sortorder', 'aZ09comma');
 
 if (!$sortfield) {
 	$sortfield = "cp.rowid";

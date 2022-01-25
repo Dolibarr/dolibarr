@@ -60,12 +60,15 @@ $SECUREKEY = GETPOST("securekey"); // Secure key
 $error = 0;
 $response = "";
 
-// Check securitykey
-$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
 $type = $mode;
-$calculatedsecuritykey = dol_hash($securekeyseed.$type.$ref, '0');
 
-if ($calculatedsecuritykey != $SECUREKEY) {
+// Check securitykey
+$securekeyseed = '';
+if ($type == 'proposal') {
+	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+}
+
+if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
 	http_response_code(403);
 	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
 	exit(-1);
@@ -110,24 +113,39 @@ if ($action == "importSignature") {
 				$return = file_put_contents($upload_dir.$filename, $data);
 				if ($return == false) {
 					$error++;
-					$response = 'error file_put_content';
+					$response = 'Error file_put_content: failed to create signature file.';
 				}
 			}
 
 			if (!$error) {
+				$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+
 				$pdf = pdf_getInstance();
 				$pdf->Open();
 				$pdf->AddPage();
-				$pagecount = $pdf->setSourceFile($upload_dir.$ref.".pdf");
+				$pagecount = $pdf->setSourceFile($upload_dir.$ref.".pdf");		// original PDF
 
 				$tppl = $pdf->importPage(1);
 				$pdf->useTemplate($tppl);
-				$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);
+				$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
 				$pdf->Close();
-				$pdf->Output($upload_dir.$ref."_signed-".$date.".pdf", "F");
+				$pdf->Output($newpdffilename, "F");
+
+				$db->begin();
+
+				// Index the new file and update the last_main_doc property of object.
+				$object->indexFile($newpdffilename, 1);
+
+				$online_sign_ip = getUserRemoteIP();
+				$online_sign_name = '';		// TODO Ask name on form to sign
 
 				$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-				$sql .= " SET fk_statut = ".((int) $object::STATUS_SIGNED).", note_private = '".$object->note_private."', date_signature='".$db->idate(dol_now())."'";
+				$sql .= " SET fk_statut = ".((int) $object::STATUS_SIGNED).", note_private = '".$db->escape($object->note_private)."',";
+				$sql .= " date_signature = '".$db->idate(dol_now())."',";
+				$sql .= " online_sign_ip = '".$db->escape($online_sign_ip)."'";
+				if ($online_sign_name) {
+					$sql .= ", online_sign_name = '".$db->escape($online_sign_name)."'";
+				}
 				$sql .= " WHERE rowid = ".((int) $object->id);
 
 				dol_syslog(__METHOD__, LOG_DEBUG);

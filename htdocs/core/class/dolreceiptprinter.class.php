@@ -61,6 +61,7 @@
  * <dol_value_month>                                Replaced by month number
  * <dol_value_day>                                  Replaced by day number
  * <dol_value_day_letters>                          Replaced by day number
+ * <dol_value_currentdate>                          Replaced by current date
  * <dol_object_id>                                  Replaced by object id
  * <dol_object_ref>                                 Replaced by object ref
  * <dol_value_customer_firstname>                   Replaced by customer firstname
@@ -186,6 +187,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_month' => 'DOL_VALUE_MONTH',
 			'dol_value_day' => 'DOL_VALUE_DAY',
 			'dol_value_day_letters' => 'DOL_VALUE_DAY',
+			'dol_value_currentdate' => 'DOL_VALUE_CURRENTDATE',
 			'dol_print_payment' => 'DOL_PRINT_PAYMENT',
 			'dol_print_logo' => 'DOL_PRINT_LOGO',
 			'dol_print_logo_old' => 'DOL_PRINT_LOGO_OLD',
@@ -585,6 +587,7 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_month}', dol_print_date($object->date, '%m'), $this->template);
 		$this->template = str_replace('{dol_value_day}', dol_print_date($object->date, '%d'), $this->template);
 		$this->template = str_replace('{dol_value_day_letters}', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
+		$this->template = str_replace('{dol_value_currentdate}', dol_print_date(dol_now(), 'dayhour'), $this->template);
 
 		$this->template = str_replace('{dol_value_customer_firstname}', $object->thirdparty->firstname, $this->template);
 		$this->template = str_replace('{dol_value_customer_lastname}', $object->thirdparty->lastname, $this->template);

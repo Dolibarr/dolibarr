@@ -285,3 +285,4 @@ SelectLinesOfTimeSpentToInvoice=Select lines of time spent that are unbilled, th
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
 ProjectsHavingThisContact=Projects having this contact
+StartDateCannotBeAfterEndDate=End date cannot be before start date
