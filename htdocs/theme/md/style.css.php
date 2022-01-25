@@ -1098,13 +1098,19 @@ a.editfielda.nohover *:hover:before {
 .divsocialnetwork:not(:last-child) {
 	padding-<?php print $right; ?>: 20px;
 }
+.divfilteralone {
+	background-color: rgba(0, 0, 0, 0.08);
+	border-radius: 5px;
+	padding-left: 5px;
+}
 div.divsearchfield {
-	float: <?php print $left; ?>;
+	/* float: <?php print $left; ?>; */
+	display: inline-block;
 	margin-<?php print $right; ?>: 12px;
 	margin-<?php print $left; ?>: 2px;
 	margin-top: 4px;
 	margin-bottom: 4px;
-	  padding-left: 2px;
+	padding-left: 2px;
 }
 .divsearchfieldfilter {
 	text-overflow: clip;
@@ -3442,6 +3448,7 @@ input.buttonreset {
 	padding: 8px 15px;
 	text-decoration: underline;
 	color: var(--colortextlink);
+	background-color: transparent;
 	cursor: pointer;
 }
 

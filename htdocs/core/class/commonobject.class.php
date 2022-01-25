@@ -1215,17 +1215,20 @@ abstract class CommonObject
 	public function delete_linked_contact($source = '', $code = '')
 	{
 		// phpcs:enable
+		$listId = '';
 		$temp = array();
 		$typeContact = $this->liste_type_contact($source, '', 0, 0, $code);
 
-		foreach ($typeContact as $key => $value) {
-			array_push($temp, $key);
+		if (!empty($typeContact)) {
+			foreach ($typeContact as $key => $value) {
+				array_push($temp, $key);
+			}
+			$listId = implode(",", $temp);
 		}
-		$listId = implode(",", $temp);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql .= " WHERE element_id = ".((int) $this->id);
-		if ($listId) {
+		if (!empty($listId)) {
 			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 		}
 
@@ -7595,7 +7598,7 @@ abstract class CommonObject
 			} else { return true; }
 		} elseif (in_array($type, array('double', 'real', 'price'))) {
 			// is numeric
-			if (!$validate->isDuration($fieldValue)) {
+			if (!$validate->isNumeric($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
