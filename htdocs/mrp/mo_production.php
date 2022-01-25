@@ -1330,17 +1330,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			});
 
 			//Lorsqu'un entrepôt est sélectionné, on propose seulement les numéro de séries qui sont disponibles dans celui-ci
-			//TODO : revoir requête sql de l'interface pour les cas suivants : si entrepôt sélectionné, alors quantité des nums individuel, sinon quantité globale
 			function updateselectbatchbywarehouse() {
 				var element = $("select[name*='idwarehouse']");
 
 				element.change(function () {
-					var element = $(this);
 
-					var element2_name = element.attr('name').replace('idwarehouse', 'batch');
-					var element2 = $("select[name*='" + element2_name + "']");
+					//select entrepôts
+					var selectwarehouse = $(this);
 
-					var product_element_name = element.attr('name').replace('idwarehouse', 'product');
+					//select lots/series
+					var selectbatch_name = selectwarehouse.attr('name').replace('idwarehouse', 'batch');
+					var selectbatch = $("select[name*='" + selectbatch_name + "']");
+					var selectedbatch = selectbatch.val();
+
+					//produit de la ligne
+					var product_element_name = selectwarehouse.attr('name').replace('idwarehouse', 'product');
 
 					$.ajax({
 						type: "POST",
@@ -1352,33 +1356,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 					}).done(function (data) {
 
-						console.log(data)
-						var selected = element2.val();
-
-						element2.empty();
+						selectbatch.empty();
 
 						var data = JSON.parse(data);
 
-						element2.append($('<option>', {
+						selectbatch.append($('<option>', {
 							value: -1,
 							text: ''
 						}));
 
 						$.each(data, function (key, value) {
 
-							if(element.val() == -1) {
+							//si aucun entrepôt sélectionné, alors c'est le stock total du num lot/serie qui s'affiche
+							if(selectwarehouse.val() == -1) {
 								var label = key + " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
 							} else {
 								var label = key + " (<?php echo $langs->trans('Stock') ?> : " + value + ")";
 							}
 
-							if(key === selected) {
+							if(key === selectedbatch) {
 								var option ='<option value="'+key+'" selected>'+ label +'</option>';
 							} else {
 								var option ='<option value="'+key+'">'+ label +'</option>';
 							}
 
-							element2.append(option);
+							selectbatch.append(option);
 
 						});
 
@@ -1387,24 +1389,26 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				});
 			}
 
-			//Lorsqu'un numéro de lot/série est sélectionné, on propose seulement le ou les entrepôts où celui-ci est disponible
-			//TODO : revoir requête sql de l'interface pour les cas suivants : si num sélectionné, alors quantité des entrepôts individuel, sinon quantité globale
+			//Lorsqu'un numéro de lot/série est sélectionné et qu'il n'est disponible seulement dans un entrepôt, l'entrepôt est automatiquement sélectionné
 			function updateselectwarehousebybatch() {
 				var element = $("select[name*='batch']");
 
 				element.change(function () {
 
-					var element = $(this);
+					//select lot/série
+					var selectbatch = $(this);
 
-					var element2_name = element.attr('name').replace('batch', 'idwarehouse');
-					var element2 = $("select[name*='" + element2_name + "']");
+					//select entrepôts
+					var selectwarehouse_name = selectbatch.attr('name').replace('batch', 'idwarehouse');
+					var selectwarehouse = $("select[name*='" + selectwarehouse_name + "']");
+					var selectedwarehouse = selectwarehouse.val();
 
-					var selected = element2.val();
-
-					if(selected != -1){
+					//si un entrepôt est déjà sélectionné, alors on ne change rien
+					if(selectedwarehouse != -1){
 						return;
 					}
 
+					//produit de la ligne
 					var product_element_name = element.attr('name').replace('batch', 'product');
 
 					$.ajax({
@@ -1417,10 +1421,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 					}).done(function (data) {
 
+						console.log(data);
 						var data = JSON.parse(data);
 
 						if(data != 0){
-							element2.val(data).change();
+							selectwarehouse.val(data).change();
 						}
 					});
 
