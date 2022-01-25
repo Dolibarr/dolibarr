@@ -143,7 +143,7 @@ class Segment implements IteratorAggregate, Countable
         }
         $reg = "/\[!--\sBEGIN\s$this->name\s--\](.*)\[!--\sEND\s$this->name\s--\]/sm";
         $this->xmlParsed = preg_replace($reg, '$1', $this->xmlParsed);
-	// Miguel Erill 09/04/2017 - Add macro replacement to invoice lines
+		// Miguel Erill 09/04/2017 - Add macro replacement to invoice lines
         $this->xmlParsed = $this->macroReplace($this->xmlParsed);
         $this->file->open($this->odf->getTmpfile());
         foreach ($this->images as $imageKey => $imageValue) {
@@ -183,70 +183,91 @@ class Segment implements IteratorAggregate, Countable
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         global $langs;
 
-	// Find the format the date is in. We may have d-m-y, y-m-d or m-d-y depending on the locale
-	// Use our NEW function in odf.php to get the invoice date
-	$tmp = $this->odf->getVar('object_date');
+		// Use our NEW function in odf.php to get the invoice date
+		$tmp = $this->odf->getVar('object_date');
 
-	$invarr = false;
-	if     ( strpos($tmp, '-') !== false ) 	{ $invarr = explode('-', $tmp); }
-	elseif ( strpos($tmp, '/') !== false )	{ $invarr = explode('/', $tmp);	}
+		// Find the format the invoice date is in. We may have d-m-y, y-m-d or m-d-y depending on the locale
+		$invarr = false;
+		if     ( strpos($tmp, '-') !== false ) 	{ $invarr = explode('-', $tmp); }
+		elseif ( strpos($tmp, '/') !== false )	{ $invarr = explode('/', $tmp);	}
 
-	// Reformat it as appropriate
-	$fmt = str_replace('%', '', $langs->trans("FormatDateShortInput"));
-	if ( ($dayPos = stripos ($fmt, 'd')) === false )
-	{
-		// We MUST have day in the date format
-		throw new OdfException("Invalid date format $fmt");
-	}
-	// If $invarr is false it means that no separator in date was found
-	// so $tmp should contain the right date
-	if ( $invarr !== false )
-	{
-		if ( $dayPos == 0 )  // We had d-m-y
+		// Reformat it as appropriate
+		$fmt = str_replace('%', '', $langs->trans("FormatDateShortInput"));
+		if ( ($dayPos = stripos ($fmt, 'd')) === false )
 		{
-			$tmp = $invarr[2].$invarr[1].$invarr[0];
-		} else if ( $dayPos == 2 ) // We already had y-m-d
+			// We MUST have day in the date format
+			throw new OdfException("Invalid date format $fmt");
+		}
+		// If $invarr is false it means that no separator in date was found
+		// so $tmp should contain the right date
+		if ( $invarr !== false )
 		{
-			$tmp = $invarr[0].$invarr[1].$invarr[2];				
-		} else // We had y-d-m
-			$tmp = $invarr[0].$invarr[2].$invarr[1];
-	}
-	// Now we have, at last, the invoice date in the format that the dol_stringtotime/dol_getdate needs
-  $tmp = dol_stringtotime($tmp);
-  $tmp = dol_getdate($tmp, true);
+			if ( $dayPos == 0 )  // We had d-m-y
+			{
+				$tmp = $invarr[2].$invarr[1].$invarr[0];
+			} else if ( $dayPos == 2 ) // We already had y-m-d
+			{
+				$tmp = $invarr[0].$invarr[1].$invarr[2];				
+			} else // We had y-d-m
+				$tmp = $invarr[0].$invarr[2].$invarr[1];
+		}
+		// Now we have, at last, the invoice date in the format that the dol_stringtotime/dol_getdate needs
+  		$tmp = dol_stringtotime($tmp);
+  		$tmp = dol_getdate($tmp, true);
 
-	// Old style -> get date of processing. May be needed for new invoices
-	//$tmp = dol_getdate(dol_now(), true));
-  $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-  $tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
-  $tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-  $tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
+		// Get related dates (prev, next)
+  		$tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+  		$tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
+  		$tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+  		$tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
 
-  $substitutionarray=array(
-	// Compatibility
-          '__DAY__' => $tmp['mday'],
-          '__MONTH__' => $tmp['mon'],
-          '__YEAR__' => $tmp['year'],
-          '__MONTHTEXT__' => monthArray($langs)[$tmp['mon']],
-          '__NEXTMONTH__' => $tmp5['month'],
-          '__NEXTYEAR__' => ($tmp['year'] + 1),
-  
-	// New format
-          '__CURRENTDAY__' => $tmp['mday'],
-          '__CURRENTMONTH__' => $tmp['mon'],
-          '__CURRENTMONTHLONG__' => monthArray($langs)[$tmp['mon']],
-          '__CURRENTYEAR__' => $tmp['year'],
-          '__PREVIOUS_DAY__' => $tmp2['day'],
-          '__PREVIOUS_MONTH__' => $tmp3['month'],
-          '__PREVIOUS_YEAR__' => ($tmp['year'] - 1),
-          '__NEXT_DAY__' => $tmp4['day'],
-          '__NEXT_MONTH__' => $tmp5['month'],
-          '__NEXTMONTHLONG__' => monthArray($langs)[$tmp5['month']],
-          '__NEXT_YEAR__' => ($tmp['year'] + 1),
-        );
+		// We get now the current date for the current date replacements
+		$cur = dol_getdate(dol_now(), true));
 
-        complete_substitutions_array($substitutionarray, $langs);
-        return make_substitutions($text,$substitutionarray);
+		// Get related dates (prev, next)
+		$cur2=dol_get_prev_day($cur['mday'], $cur['mon'], $cur['year']);
+		$cur3=dol_get_prev_month($cur['mon'], $cur['year']);
+		$cur4=dol_get_next_day($cur['mday'], $cur['mon'], $cur['year']);
+		$cur5=dol_get_next_month($cur['mon'], $cur['year']);
+
+		$substitutionarray=array(
+			// Compatibility
+			'__DAY__' => $cur['mday'],
+			'__MONTH__' => $cur['mon'],
+			'__YEAR__' => $cur['year'],
+			'__MONTHTEXT__' => monthArray($langs)[$cur['mon']],
+			'__NEXTMONTH__' => $cur5['month'],
+			'__NEXTYEAR__' => ($cur['year'] + 1),
+
+			// New format for replacements of current date
+			'__CURRENTDAY__' => $cur['mday'],
+			'__CURRENTMONTH__' => $cur['mon'],
+			'__CURRENTMONTHLONG__' => monthArray($langs)[$cur['mon']],
+			'__CURRENTYEAR__' => $cur['year'],
+			'__PREVIOUS_DAY__' => $cur2['day'],
+			'__PREVIOUS_MONTH__' => $cur3['month'],
+			'__PREVIOUS_YEAR__' => ($cur['year'] - 1),
+			'__NEXT_DAY__' => $cur4['day'],
+			'__NEXT_MONTH__' => $cur5['month'],
+			'__NEXTMONTHLONG__' => monthArray($langs)[$cur5['month']],
+			'__NEXT_YEAR__' => ($cur['year'] + 1),
+
+			// Replacements of invoice date
+			'__INVOICEDAY__' => $tmp['mday'],
+			'__INVOICEMONTH__' => $tmp['mon'],
+			'__INVOICEMONTHLONG__' => monthArray($langs)[$tmp['mon']],
+			'__INVOICEYEAR__' => $tmp['year'],
+			'__PREVIOUS_INVOICEDAY__' => $tmp2['day'],
+			'__PREVIOUS_INVOICEMONTH__' => $tmp3['month'],
+			'__PREVIOUS_INVOICEYEAR__' => ($tmp['year'] - 1),
+			'__NEXT_INVOICEDAY__' => $tmp4['day'],
+ 			'__NEXT_INVOICEMONTH__' => $tmp5['month'],
+			'__NEXTINVOICEMONTHLONG__' => monthArray($langs)[$tmp5['month']],
+			'__NEXT_INVOICEYEAR__' => ($tmp['year'] + 1),
+		);
+		
+		complete_substitutions_array($substitutionarray, $langs);
+		return make_substitutions($text,$substitutionarray);
     }
 
     /**
