@@ -1,6 +1,6 @@
 name: Bug report
 description: Create a report to help us fix something that is broken
-title: ''
+title:
 labels: ["Bug"]
 
 body:
