@@ -50,9 +50,10 @@ $toolowstock = GETPOST('toolowstock');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id", 'int');
+$sbarcode = GETPOST("sbarcode", 'int');
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) {
 	$page = 0;
@@ -135,11 +136,11 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
 }
 if ($sall) {
@@ -178,7 +179,7 @@ if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 if ($search_warehouse) {
@@ -277,7 +278,7 @@ if ($resql) {
 	if ($search_sale) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
 	/*if ($eatby)		$param.="&eatby=".$eatby;
@@ -393,8 +394,8 @@ if ($resql) {
 		if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql .= " WHERE fk_product=".$objp->rowid;
-			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$result = $db->query($sql);
@@ -405,7 +406,6 @@ if ($resql) {
 				}
 			}
 		}
-
 
 		$product_static->ref = $objp->ref;
 		$product_static->id = $objp->rowid;

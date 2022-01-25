@@ -29,7 +29,7 @@ CREATE TABLE llx_ticket
 	message	text,
 	fk_statut integer,
 	resolution integer,
-	progress varchar(100),
+	progress integer DEFAULT 0,				-- progression 0 - 100 or null
 	timing varchar(20),
 	type_code varchar(32),
 	category_code varchar(32),

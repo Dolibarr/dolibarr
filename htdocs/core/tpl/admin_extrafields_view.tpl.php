@@ -41,7 +41,7 @@ $langs->load("modulebuilder");
 print '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", $textobject).'</span><br>'."\n";
 print '<br>';
 
-// Load attribute_label
+// Load $extrafields->attributes
 $extrafields->fetch_name_optionals_label($elementtype);
 
 print '<div class="div-table-responsive">';
@@ -84,18 +84,34 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		}
 
 		print '<tr class="oddeven">';
-		print "<td>".$extrafields->attributes[$elementtype]['pos'][$key]."</td>\n";
-		print "<td>".$extrafields->attributes[$elementtype]['label'][$key]."</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
-		print "<td>".$langs->trans($extrafields->attributes[$elementtype]['label'][$key])."</td>\n";
-		print "<td>".$key."</td>\n";
-		print "<td>".$type2label[$extrafields->attributes[$elementtype]['type'][$key]]."</td>\n";
-		print '<td class="right">'.$extrafields->attributes[$elementtype]['size'][$key]."</td>\n";
-		print '<td>'.dol_trunc($extrafields->attributes[$elementtype]['computed'][$key], 20)."</td>\n";
+		// Position
+		print "<td>".dol_escape_htmltag($extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
+		// Label
+		print "<td>".dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key])."</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
+		// Label translated
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key])).'">'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]))."</td>\n";
+		// Key
+		print "<td>".dol_escape_htmltag($key)."</td>\n";
+		// Type
+		$typetoshow = $type2label[$extrafields->attributes[$elementtype]['type'][$key]];
+		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax150">';
+		print dol_escape_htmltag($typetoshow);
+		print "</td>\n";
+		// Size
+		print '<td class="right">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['size'][$key])."</td>\n";
+		// Computed field
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['computed'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['computed'][$key])."</td>\n";
+		// Is unique ?
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['unique'][$key])."</td>\n";
+		// Is mandatory ?
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
+		// Can always be editable ?
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
-		print '<td class="center">'.$extrafields->attributes[$elementtype]['list'][$key]."</td>\n";
-		print '<td class="center">'.$extrafields->attributes[$elementtype]['printable'][$key]."</td>\n";
+		// Visible
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['list'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['list'][$key])."</td>\n";
+		// Print on PDF
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key])."</td>\n";
+		// Summable
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
 		if (!empty($conf->multicompany->enabled)) {
 			print '<td class="center">';
@@ -116,8 +132,8 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 			print '</td>';
 		}
 		print '<td class="right nowraponall">';
-		print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
-		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.$key.'">'.img_delete().'</a>';
+		print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
+		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
 		print '</td>'."\n";
 		print "</tr>";
 	}
@@ -128,9 +144,9 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 	}
 
 	print '<tr class="oddeven">';
-	print '<td class="opacitymedium" colspan="'.$colspan.'">';
+	print '<td colspan="'.$colspan.'"><span class="opacitymedium">';
 	print $langs->trans("None");
-	print '</td>';
+	print '</span></td>';
 	print '</tr>';
 }
 

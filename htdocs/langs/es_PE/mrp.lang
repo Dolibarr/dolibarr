@@ -25,7 +25,6 @@ ConfirmCloneMo=Está seguro de clonar la Orden de Fabricación %s?
 ValueOfMeansLoss=Valor de 0.95 significa un promedio de 5%% pérdidas durante la producción
 ValueOfMeansLossForProductProduced=Valor de 0.95 significa un promedio de 5 %% de pérdidas del producto producido
 DeleteBillOfMaterials=Eliminar Lista De Materiales
-ConfirmDeleteMo=Are you sure you want to delete this Manufacturing Order?
 NewMO=Nueva Orden de Fabricación
 QtyToProduce=Cantidad a producir
 DateEndPlannedMo=Fecha de fin planeada

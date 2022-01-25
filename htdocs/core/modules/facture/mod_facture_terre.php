@@ -177,12 +177,15 @@ class mod_facture_terre extends ModeleNumRefFactures
 	}
 
 	/**
-	 * Return next value not used or last value used
+	 * Return next value not used or last value used.
+	 * Note to increase perf of this numbering engine, you can create a calculated column and modify request to use this field instead for select:
+	 * ALTER TABLE llx_facture ADD COLUMN calculated_numrefonly INTEGER AS (CASE SUBSTRING(ref FROM 1 FOR 2) WHEN 'FA' THEN CAST(SUBSTRING(ref FROM 10) AS SIGNED) ELSE 0 END) PERSISTENT;
+	 * ALTER TABLE llx_facture ADD INDEX calculated_numrefonly_idx (calculated_numrefonly);
 	 *
 	 * @param   Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string       			Value
+	 * @return  string       			Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{

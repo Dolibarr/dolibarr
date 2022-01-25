@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,7 +388,7 @@ if ($action == 'new') {
 		$i = 0;
 		while ($obj = $db->fetch_object($resql)) {
 			$accounts[$obj->bid] = $obj->label;
-			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->date);
+			$lines[$obj->bid][$i]["date"] = $db->jdate($obj->datec);
 			$lines[$obj->bid][$i]["amount"] = $obj->amount;
 			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
@@ -398,6 +398,7 @@ if ($action == 'new') {
 			$lines[$obj->bid][$i]["label"] = $obj->transactionlabel;
 			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
 			$lines[$obj->bid][$i]["paymentref"] = $obj->paymentref;
+			$lines[$obj->bid][$i]["paymentdate"] = $db->jdate($obj->date);
 			$i++;
 		}
 
@@ -408,7 +409,7 @@ if ($action == 'new') {
 
 	foreach ($accounts as $bid => $account_label) {
 		print '
-        <script language="javascript" type="text/javascript">
+        <script type="text/javascript">
         jQuery(document).ready(function()
         {
             jQuery("#checkall_'.$bid.'").click(function()
@@ -468,6 +469,7 @@ if ($action == 'new') {
 				print '<td class="center">';
 				$paymentstatic->id = $value["paymentid"];
 				$paymentstatic->ref = $value["paymentref"];
+				$paymentstatic->date = $value["paymentdate"];
 				if ($paymentstatic->id) {
 					print $paymentstatic->getNomUrl(1);
 				} else {
@@ -529,7 +531,7 @@ if ($action == 'new') {
 	print $langs->trans('Date');
 	print '</td>';
 	if ($action != 'editdate') {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td colspan="2">';
@@ -538,7 +540,7 @@ if ($action == 'new') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
 		print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
 		print $object->date_bordereau ? dol_print_date($object->date_bordereau, 'day') : '&nbsp;';
@@ -554,7 +556,7 @@ if ($action == 'new') {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('RefExt');
 	print '</td>';
-	if ($action != 'editrefext') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
+	if ($action != 'editrefext') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrefext&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="2">';
 	if ($action == 'editrefext')
@@ -563,7 +565,7 @@ if ($action == 'new') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setrefext">';
 		print '<input type="text" name="ref_ext" value="'.$object->ref_ext.'">';
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
 	else
@@ -710,11 +712,11 @@ if ($action == 'new') {
 print '<div class="tabsAction">';
 
 if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque) {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valide&amp;token='.newToken().'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valide&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
 }
 
 if ($user->socid == 0 && !empty($object->id) && $user->rights->banque->cheque) {
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
 }
 print '</div>';
 

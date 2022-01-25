@@ -4,7 +4,6 @@ MemberCard=Ficha de miembro
 SubscriptionCard=Ficha de la suscripción
 ShowMember=Mostrar ficha de miembro
 ThirdpartyNotLinkedToMember=Tercero no vinculado a un miembro
-MembersTickets=Membership address sheet
 FundationMembers=Miembros de la fundación
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Otro miembro (nombre: <b>%s</b>, usuario: <b>%s</b>) está vinculado al tercero <b>%s</b>. Debes quitar primero este vínculo pues un tercero no puede estar vinculado a más de un miembro (y viceversa).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Por motivos de seguridad, debe tener permisos para editar todos los usuarios para poder vincular a un miembro a un usuario que no sea suyo.

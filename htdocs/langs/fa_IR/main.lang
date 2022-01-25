@@ -67,6 +67,7 @@ ErrorNoVATRateDefinedForSellerCountry=خطا، نرخ م‌ب‌اا برای ک
 ErrorNoSocialContributionForSellerCountry=خطا، مالیات‌های اجتماعی/سیاست‌های مالی برای کشور "%s" تعریف نشده است.
 ErrorFailedToSaveFile=خطا، امکان ذخیرۀ فایل وجود نداشت.
 ErrorCannotAddThisParentWarehouse=شما در حال تلاش برای اضافه کردن یک انبار والد هستید که در حال حاضر مولودی از یک انبار والد دیگر است
+FieldCannotBeNegative=Field "%s" cannot be negative
 MaxNbOfRecordPerPage=حداکثر تعداد ردیف در یک صفحه
 NotAuthorized=شما برای انجام این کار مجاز نیستید.
 SetDate=تنظیم تاریخ
@@ -87,7 +88,7 @@ FileWasNotUploaded=یک فایل برای پیوست کردن انتخاب شد�
 NbOfEntries=تعداد ورودی‌ه
 GoToWikiHelpPage=مطالعۀ راهنمای برخط (دسترسی به اینترنت نیاز است)
 GoToHelpPage=مطالعۀ راهنما
-DedicatedPageAvailable=There is a dedicated help page related to your current screen
+DedicatedPageAvailable=Dedicated help page related to your current screen
 HomePage=Home Page
 RecordSaved=ردیف، ذخیره شد
 RecordDeleted=ردیف، حذف شد
@@ -114,7 +115,7 @@ ReturnCodeLastAccessInError=کد آخرین خطای دسترسی به پایگ�
 InformationLastAccessInError=اطلاعات مربوط به آخرین خطای دسترسی به پایگاه داده
 DolibarrHasDetectedError=Dolibarr با یک خطای فنی مواجه شده است
 YouCanSetOptionDolibarrMainProdToZero=شما می‌توانید فایل گزارش‌کار را مطالعه کرده یا در فایل پیکربندی گزینۀ $dolibarr_main_prod را برای دریافت اطلاعات بیشتر به '0' تغییر دهید
-InformationToHelpDiagnose=این اطلاعات برای اهداف تحلیل و بررسی قابل استفاده خواهد بود ( شما همچنان می‌توانید گزینۀ $dolibarr_main_prod را برای حذف این یادداشت‌ها به '1' تغییر دهید.
+InformationToHelpDiagnose=This information can be useful for diagnostic purposes (you can set option $dolibarr_main_prod to '1' to hide sensitive information)
 MoreInformation=اطلاعات بیشتر
 TechnicalInformation=اطلاعات فنی
 TechnicalID=شناسۀ فنی
@@ -211,6 +212,8 @@ User=کاربر
 Users=کاربر
 Group=گروه
 Groups=گروه
+UserGroup=User group
+UserGroups=User groups
 NoUserGroupDefined=هیچ گروه‌کاربری تعریف نشده است
 Password=گذرواژه
 PasswordRetype=گذرواژۀ خود را وارد نمائید
@@ -906,7 +909,7 @@ ViewFlatList=نمایش فهرست خطی
 ViewAccountList=View ledger
 ViewSubAccountList=View subaccount ledger
 RemoveString=حذف عبارت '%s'
-SomeTranslationAreUncomplete=برخی از زبان‌های قابل انتخاب ممکن است تنها به شکل ناقص ترجمه شده باشد یا دارای خطا باشند. لطفا برای تکمیل و تصحیح زبان مورد نظر خود در <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> ثبت نام نمائید و اصلاحات مورد نظر خود را انجام دهید.
+SomeTranslationAreUncomplete=Some of the languages offered may be only partially translated or may contain errors. Please help to correct your language by registering at <a href="https://transifex.com/projects/p/dolibarr/" target="_blank" rel="noopener noreferrer external">https://transifex.com/projects/p/dolibarr/</a> to add your improvements.
 DirectDownloadLink=Public download link
 PublicDownloadLinkDesc=Only the link is required to download the file
 DirectDownloadInternalLink=Private download link
@@ -1158,4 +1161,6 @@ Properties=Properties
 hasBeenValidated=%s has been validated
 ClientTZ=منطقۀ زمانی مشتری (کاربر)
 NotClosedYet=Not yet closed
-ClearSignature=Signature reset
+ClearSignature=Reset signature
+CanceledHidden=Canceled hidden
+CanceledShown=Canceled shown

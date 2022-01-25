@@ -21,7 +21,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE ticket/tpl/linkedopjectblock.tpl.php -->\n";
 
 
 global $user;
@@ -65,7 +65,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			// For now, shipments must stay linked to order, so link is not deletable
 			if ($object->element != 'shipping') {
 				?>
-				<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
+				<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
 				<?php
 			}
 			?>

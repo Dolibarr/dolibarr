@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -177,7 +177,7 @@ foreach ($filesToProcess as $fileToProcess) {
 
 
 	// Start reading and parsing English
-
+	$aEnglish = array();
 	if ($handle = fopen($lEnglishFile, 'r')) {
 		print "Read English File $lEnglishFile:\n";
 		$cnt = 0;
@@ -246,6 +246,9 @@ foreach ($filesToProcess as $fileToProcess) {
 
 		fwrite($oh, "# Dolibarr language file - Source file is en_US - ".(preg_replace('/\.lang$/', '', $fileToProcess))."\n");
 
+		$fileFirstFound = array();
+		$lineFirstFound = array();
+
 		$cnt = 0;
 		while (($line = fgets($handle)) !== false) {
 			$cnt++;
@@ -299,6 +302,7 @@ foreach ($filesToProcess as $fileToProcess) {
 			}
 
 			// String exists in both files and value into alternative language differs from main language but also from english files
+			// so we keep it.
 			if ((! empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
 				&& ! empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
 				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)

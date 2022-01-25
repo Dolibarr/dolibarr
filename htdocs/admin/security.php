@@ -188,8 +188,9 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'passwords', '', -1);
 
+print '<br>';
 
-// Choix du gestionnaire du generateur de mot de passe
+// Select manager to generate passwords
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
@@ -249,7 +250,7 @@ foreach ($arrayhandler as $key => $module) {
 			$langs->load("errors");
 			print '<div class="error">'.$langs->trans($tmp).'</div>';
 		} elseif ($tmp == 'NotConfigured') {
-			print $langs->trans($tmp);
+			print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 		} else {
 			print '<span class="opacitymedium">'.$tmp.'</span>';
 		}
@@ -260,7 +261,7 @@ foreach ($arrayhandler as $key => $module) {
 			//print img_picto('', 'tick');
 			print img_picto($langs->trans("Enabled"), 'switch_on');
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;token='.newToken().'&amp;value='.$key.'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&token='.newToken().'&value='.$key.'">';
 			//print $langs->trans("Activate");
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a>';
@@ -318,7 +319,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NoAmbiCaracAutoGeneration")."</td>";
-	print '<td><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <span id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</span></td>';
+	print '<td><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <label for="NoAmbiCaracAutoGeneration" id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</label></td>';
 	print '</tr>';
 
 	print '</table>';

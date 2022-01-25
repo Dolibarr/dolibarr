@@ -30,7 +30,7 @@ ManageLotMask=ຫນ້າກາກທີ່ກໍາຫນົດເອງ
 CustomMasks=ທາງເລືອກໃນການ ກຳ ນົດ ໜ້າ ກາກຕົວເລກທີ່ແຕກຕ່າງກັນ ສຳ ລັບແຕ່ລະຜະລິດຕະພັນ
 BatchLotNumberingModules=ກົດລະບຽບການໃສ່ຕົວເລກສໍາລັບການສ້າງຈໍານວນລັອດອັດຕະໂນມັດ
 BatchSerialNumberingModules=ກົດລະບຽບການໃສ່ຕົວເລກສໍາລັບການສ້າງserາຍເລກລໍາດັບອັດຕະໂນມັດ (ສໍາລັບຜະລິດຕະພັນທີ່ມີຊັບສິນ 1 ຈໍານວນທີ່ບໍ່ຊໍ້າກັນ/ຈໍານວນຕໍ່ເນື່ອງສໍາລັບແຕ່ລະຜະລິດຕະພັນ)
-QtyToAddAfterBarcodeScan=ຈໍານວນທີ່ຈະເພີ່ມສໍາລັບແຕ່ລະ barcode/lot/serial scanned
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=ຊ່ວງຊີວິດ (ເປັນມື້)
 EndOfLife=ສິ້ນສຸດຂອງຊີວິດ
 ManufacturingDate=ວັນທີຜະລິດ
@@ -42,3 +42,4 @@ HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=ບໍ່ໄດ້ສັ່ງ
 InWorkingOrder=ໃນຄໍາສັ່ງເຮັດວຽກ
+ToReplace=Replace

@@ -20,4 +20,4 @@ BackToHelpCenter=De lo contrario, <a href="%s">vuelva a la página de inicio del
 LinkToGoldMember=Puede llamar a uno de los formadores preseleccionados por Dolibarr para su idioma (%s) haciendo clic en su Widget (el estado y el precio máximo se actualizan automáticamente):
 PossibleLanguages=Idiomas disponibles
 SubscribeToFoundation=Ayude al proyecto Dolibarr, adhiérase a la asociación Dolibarr
-SeeOfficalSupport=Para obtener soporte oficial Dolibarr en su idioma: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=Para soporte oficial Dolibarr en su idioma: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>

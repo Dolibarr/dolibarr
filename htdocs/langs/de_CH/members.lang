@@ -3,7 +3,6 @@ MemberCard=Mitgliederkarte
 SubscriptionCard=Abo-Karte
 ShowMember=Mitgliederkarte anzeigen
 UserNotLinkedToMember=Benutzer nicht mit einem Mitglied verknüpft
-MembersTickets=Membership address sheet
 FundationMembers=Gründungsmitglieder
 ListOfValidatedPublicMembers=Liste der verifizierten öffentlichen Mitglieder
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Ein anderes Mitglied (Name: <b>%s</b>, login: <b>%s</b>) ist schon mit Partner <b>%s</b> verknüpft. Entfernen Sie zuerst die Verknüpfung, da immer nur ein Mitglied zugewiesen sein kann (und umgekehrt).

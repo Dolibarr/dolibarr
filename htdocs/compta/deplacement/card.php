@@ -431,7 +431,7 @@ if ($action == 'create') {
 				print $langs->trans('Project');
 				print '</td>';
 				if ($action != 'classify' && $user->rights->deplacement->creer) {
-					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
+					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&token='.newToken().'&id='.$object->id.'">';
 					print img_edit($langs->trans('SetProject'), 1);
 					print '</a></td>';
 				}
@@ -469,7 +469,7 @@ if ($action == 'create') {
 
 			if ($object->statut < Deplacement::STATUS_REFUNDED) { 	// if not refunded
 				if ($user->rights->deplacement->creer) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 				}
@@ -485,7 +485,7 @@ if ($action == 'create') {
 
 			if ($object->statut == Deplacement::STATUS_VALIDATED) { 	// if validated
 				if ($user->rights->deplacement->creer) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=classifyrefunded&id='.$id.'">'.$langs->trans('ClassifyRefunded').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=classifyrefunded&token='.newToken().'&id='.$id.'">'.$langs->trans('ClassifyRefunded').'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ClassifyRefunded').'</a>';
 				}

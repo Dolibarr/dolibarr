@@ -22,19 +22,22 @@ if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
 }
 
-
 require '../../main.inc.php';
 
+// Security
 if ($dolibarr_main_prod) {
 	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
-$usedolheader = 1; // 1 = Test inside a dolibarr page, 0 = Use hard coded header
+
+
+/*
+ * View
+ */
 
 $form = new Form($db);
 
-
-
+$usedolheader = 1; // 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
 // HEADER
 //--------
@@ -150,7 +153,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 <br><hr><br>Example 1 : Standard table/thead/tbody/tr/th-td (no class pair/impair on td) => Use this if you need the drag and drop for lines or for long result tables<br>
 
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 /*jQuery(document).ready(function() {
 $(document).ready(function() {
 	var table = $('#tablelines3').DataTable( {
@@ -183,7 +186,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 $nav = '';
-$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?mode=show_peruser'.$param.'">';
 if ($actioncode || GETPOSTISSET('actioncode')) {
 	$nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 }

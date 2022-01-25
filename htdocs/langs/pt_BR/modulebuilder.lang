@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-ModuleBuilderDesc=Esta ferramenta deve ser usada apenas por usuários experientes ou desenvolvedores. Ele fornece utilitários para construir ou editar seu próprio módulo. A documentação para o <a href="%s" target="_blank">desenvolvimento manual alternativo está aqui </a> .
 EnterNameOfModuleDesc=Digite o nome do módulo / aplicativo para criar sem espaços. Use letras maiúsculas para separar palavras (por exemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
 ModuleBuilderDesc2=Caminho onde os módulos são gerados/editados (primeiro diretório para módulos externos definidos em %s): <strong>%s</strong>
 ModuleBuilderDesc3=Módulos gerados / editáveis ​​encontrados: <strong> %s </ strong>

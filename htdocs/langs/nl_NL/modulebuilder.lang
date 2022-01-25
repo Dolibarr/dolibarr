@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Deze tool mag alleen worden gebruikt door ervaren gebruikers of ontwikkelaars. Het biedt hulpprogramma's om uw eigen module te bouwen of te bewerken. Documentatie voor alternatieve <a href="%s" target="_blank">handmatige ontwikkeling kunt u vinden op</a> .
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Voer de naam in van de module / toepassing die u wilt maken zonder spaties. Gebruik hoofdletters om woorden te scheiden (bijvoorbeeld: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Voer de naam in van het object dat u wilt maken zonder spaties. Gebruik hoofdletters om woorden te scheiden (bijvoorbeeld: MyObject, Student, Teacher ...). Het CRUD-classfile, maar ook het API-bestand, pagina's voor het weergeven/toevoegen/bewerken/verwijderen van objecten en SQL-bestanden worden gegenereerd.
 ModuleBuilderDesc2=Pad waar modules worden gegenereerd / bewerkt (eerste map voor externe modules gedefinieerd in %s): <strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=De menu&#39;s van uw module / toepassing worden gedefinieerd
 DictionariesDefDescTooltip=De woordenboeken van uw module / applicatie worden gedefinieerd in de array <strong>$ this-&gt; woordenboeken</strong> in het modulebeschrijvingsbestand. U kunt dit bestand handmatig bewerken of de ingesloten editor gebruiken. <br><br> Opmerking: eenmaal gedefinieerd (en module opnieuw geactiveerd), zijn woordenboeken ook zichtbaar in het installatiegebied voor beheerders op %s.
 PermissionsDefDescTooltip=De machtigingen die door uw module / toepassing worden verstrekt, worden gedefinieerd in de array <strong>$ this-&gt; -rechten</strong> in het modulebeschrijvingsbestand. U kunt dit bestand handmatig bewerken of de ingesloten editor gebruiken. <br><br> Opmerking: Eenmaal gedefinieerd (en module opnieuw geactiveerd), zijn machtigingen zichtbaar in de standaardinstellingen voor machtigingen %s.
 HooksDefDesc=Definieer in de <b>eigenschap module_parts ['hooks']</b> , in de modulebeschrijving, de context van hooks die u wilt beheren (lijst met contexten kan worden gevonden door te zoeken op '<b>initHooks (</b>' in kerncode). <br> Bewerk het haakbestand om code van uw gekoppelde functies toe te voegen (haakbare functies zijn te vinden door te zoeken op '<b>executeHooks</b>' in de kerncode).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Zie ID's die in uw installatie worden gebruikt
 SeeReservedIDsRangeHere=Zie bereik van gereserveerde ID's
 ToolkitForDevelopers=Toolkit voor Dolibarr-ontwikkelaars

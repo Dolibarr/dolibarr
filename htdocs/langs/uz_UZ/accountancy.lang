@@ -48,7 +48,7 @@ CountriesNotInEEC=EEC tarkibiga kirmagan mamlakatlar
 CountriesInEECExceptMe=%s dan tashqari EECdagi mamlakatlar
 CountriesExceptMe=%s dan tashqari barcha mamlakatlar
 AccountantFiles=Dastlabki hujjatlarni eksport qilish
-ExportAccountingSourceDocHelp=Ushbu vosita yordamida siz buxgalteriya hisobini yaratish uchun foydalanilgan manba hodisalarini (CSV va PDF-lardagi ro'yxat) eksport qilishingiz mumkin.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Jurnallaringizni eksport qilish uchun %s - %s menyu yozuvidan foydalaning.
 VueByAccountAccounting=Buxgalteriya hisobi bo'yicha ko'rish
 VueBySubAccountAccounting=Buxgalteriya subkontaji bo'yicha ko'rish
@@ -286,7 +286,7 @@ ValidateMovements=Harakatlarni tasdiqlang
 DescValidateMovements=Yozishni, xatlarni va o'chirishni har qanday o'zgartirish yoki o'chirish taqiqlanadi. Jismoniy mashqlar uchun barcha yozuvlar tasdiqlanishi kerak, aks holda yopish mumkin bo'lmaydi
 
 ValidateHistory=Avtomatik bog'lash
-AutomaticBindingDone=Avtomatik ulanish amalga oshirildi
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Harakat to'g'ri muvozanatlashtirilmagan. Debit = %s | Kredit = %s
@@ -387,7 +387,8 @@ SaleExport=Eksportni sotish
 SaleEEC=EECda sotish
 SaleEECWithVAT=EECda QQS bilan sotish bekor bo'lmaydi, shuning uchun bu kommunal ichki savdo emas va taklif qilingan hisob standart mahsulot hisobvarag'i.
 SaleEECWithoutVATNumber=EECda QQSsiz sotish, lekin uchinchi tomonning QQS identifikatori aniqlanmagan. Biz standart sotuvlar uchun mahsulot hisobiga tushamiz. Agar kerak bo'lsa, siz uchinchi tomonning QQS identifikatorini yoki mahsulot hisobini tuzatishingiz mumkin.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Buxgalteriya hisobi doirasi
 Calculated=Hisoblangan
@@ -404,6 +405,7 @@ NoJournalDefined=Hech qanday jurnal aniqlanmagan
 Binded=Chiziqlar bog'langan
 ToBind=Bog'lash uchun chiziqlar
 UseMenuToSetBindindManualy=Chiziqlar hali bog'lanmagan, bog'lanishni qo'lda bajarish uchun <a href="%s"> %s </a> menyusidan foydalaning
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Buxgalteriya yozuvlari

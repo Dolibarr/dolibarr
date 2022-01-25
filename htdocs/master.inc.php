@@ -32,7 +32,8 @@
  * 				This script reads the conf file, init $lang, $db and and empty $user
  */
 
-// Declaration of variables. May have been already require by main.inc.php. But may not by scripts. So, here the require_once must be kept.
+// Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
+// This file may have been already required by main.inc.php. But may not by scripts. So, here the require_once must be kept.
 require_once 'filefunc.inc.php';
 
 
@@ -161,8 +162,9 @@ if (!defined('NOREQUIREDB')) {
 }
 
 // Now database connexion is known, so we can forget password
-//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in a lot of pages
+//unset($dolibarr_main_db_pass); 	// We comment this because this constant is used in some other pages
 unset($conf->db->pass); // This is to avoid password to be shown in memory/swap dump
+
 
 /*
  * Object $user
@@ -171,9 +173,9 @@ if (!defined('NOREQUIREUSER')) {
 	$user = new User($db);
 }
 
+
 /*
  * Load object $conf
- * After this, all parameters conf->global->CONSTANTS are loaded
  */
 
 // By default conf->entity is 1, but we change this if we ask another value.
@@ -190,15 +192,12 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');
 }
-
 // Sanitize entity
 if (!is_numeric($conf->entity)) {
 	$conf->entity = 1;
 }
-
-//print "We work with data into entity instance number '".$conf->entity."'";
-
 // Here we read database (llx_const table) and define $conf->global->XXX var.
+//print "We work with data into entity instance number '".$conf->entity."'";
 $conf->setValues($db);
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.

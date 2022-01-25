@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 
 /**
- * \file       htdocs/core/modules/knowledgemanagement/mod_knowledgerecord_advanced.php
+ * \file       htdocs/knowledgemanagement/core/modules/knowledgemanagement/mod_knowledgerecord_advanced.php
  * \ingroup    knowledgemanagement
  * \brief      File containing class for advanced numbering model of KnowledgeRecord
  */
@@ -81,7 +81,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskKnowledgeRecord" value="'.$conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 

@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Αποτυγχάνει να πάρει RSS feed. Προ
 ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Η άδεια για αυτή τη σύνδεση μπορεί να οριστεί από το διαχειριστή σας Dolibarr από το μενού %s-> %s.
 ErrorForbidden3=Φαίνεται ότι Dolibarr δεν χρησιμοποιείται μέσω επικυρωμένο συνεδρία. Ρίξτε μια ματιά στην τεκμηρίωση της εγκατάστασης Dolibarr να ξέρει πώς να διαχειριστεί authentications (htaccess, mod_auth ή άλλα ...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Κατηγορία imagick δεν βρίσκεται σε αυτό το PHP. Δεν προεπισκόπηση μπορεί να είναι διαθέσιμες. Οι διαχειριστές μπορούν να απενεργοποιήσουν αυτή την καρτέλα από το πρόγραμμα Εγκατάστασης μενού - Οθόνη.
 ErrorRecordAlreadyExists=Εγγραφή υπάρχει ήδη
 ErrorLabelAlreadyExists=Αυτή η ετικέτα υπάρχει ήδη
@@ -271,6 +272,8 @@ CheckVersionFail=Version check fail
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτό δεν είναι μια σταθερή ρύθμιση.
@@ -284,7 +287,7 @@ WarningConfFileMustBeReadOnly=Προειδοποίηση, config αρχείο σ
 WarningsOnXLines=Προειδοποιήσεις στα <b>%s</b> γραμμές κώδικα
 WarningNoDocumentModelActivated=Δεν έχει ενεργοποιηθεί κανένα μοντέλο για την παραγωγή εγγράφων. Ένα πρότυπο θα επιλεγεί από προεπιλογή μέχρι να ελέγξετε τη ρύθμιση της μονάδας σας.
 WarningLockFileDoesNotExists=Προειδοποίηση, αφού ολοκληρωθεί η εγκατάσταση, πρέπει να απενεργοποιήσετε τα εργαλεία εγκατάστασης / μετάβασης προσθέτοντας ένα αρχείο <b>install.lock</b> στον κατάλογο <b>%s</b> . Η παράλειψη της δημιουργίας αυτού του αρχείου αποτελεί σοβαρό κίνδυνο για την ασφάλεια.
-WarningUntilDirRemoved=Όλες οι προειδοποιήσεις ασφαλείας (ορατές μόνο από τους χρήστες διαχειριστή) θα παραμείνουν ενεργοποιημένες όσο υπάρχει ευπάθεια (ή ότι η σταθερή MAIN_REMOVE_INSTALL_WARNING προστίθεται στο Setup-&gt; Other Setup).
+WarningUntilDirRemoved=Όλες οι προειδοποιήσεις ασφαλείας (ορατές μόνο από τους χρήστες διαχειριστή) θα παραμείνουν ενεργοποιημένες όσο υπάρχει ευπάθεια (ή ότι η σταθερή MAIN_REMOVE_INSTALL_WARNING προστίθεται στο Setup -> Other).
 WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
 WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
 WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).

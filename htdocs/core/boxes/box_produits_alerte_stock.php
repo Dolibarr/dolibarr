@@ -129,8 +129,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld .= " WHERE fk_product=".$objp->rowid;
-						$sqld .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+						$sqld .= " WHERE fk_product = ".((int) $objp->rowid);
+						$sqld .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
@@ -187,7 +187,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => $price,
 					);
 
@@ -210,7 +210,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'</span>',
+						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 1).'</span>',
 						'asis' => 1
 					);
 

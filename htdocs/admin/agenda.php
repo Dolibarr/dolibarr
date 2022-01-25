@@ -192,6 +192,7 @@ if (!empty($triggers)) {
 			}
 
 			if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code'])) {
+				print '<!-- '.$trigger['position'].' -->';
 				print '<tr class="oddeven">';
 				print '<td>'.$trigger['code'].'</td>';
 				print '<td>'.$trigger['label'].'</td>';
@@ -209,9 +210,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print '<div class="center">';
-print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
-print "</div>";
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 

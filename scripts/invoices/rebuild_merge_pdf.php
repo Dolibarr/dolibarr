@@ -52,6 +52,7 @@ $langs->load("main");
 $version = DOL_VERSION;
 $error = 0;
 
+
 /*
  * Main
  */
@@ -63,6 +64,11 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 // Check parameters
 if (!isset($argv[1])) {
 	usage();
+	exit(-1);
+}
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
 	exit(-1);
 }
 

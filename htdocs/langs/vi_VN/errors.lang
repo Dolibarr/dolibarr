@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Không có nguồn cấp dữ liệu RSS. Cố gắng t
 ErrorForbidden=Truy cập bị từ chối. <br> Bạn cố gắng truy cập vào một trang, khu vực hoặc tính năng của một mô-đun bị vô hiệu hóa hoặc không có trong một phiên xác thực hoặc không được phép cho người dùng của bạn.
 ErrorForbidden2=Cho phép đăng nhập này có thể được xác định bởi người quản trị Dolibarr của bạn từ trình đơn% s ->% s.
 ErrorForbidden3=Dường như Dolibarr không được sử dụng thông qua một phiên chứng thực. Hãy xem tài liệu hướng dẫn thiết lập Dolibarr biết làm thế nào để quản lý xác thực (htaccess, mod_auth hay khác ...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Lớp Imagick không tìm thấy trong PHP này. Không có xem trước có thể có sẵn. Quản trị có thể vô hiệu hóa tab này từ menu Setup - Hiển thị.
 ErrorRecordAlreadyExists=Kỷ lục đã tồn tại
 ErrorLabelAlreadyExists=Nhãn này đã tồn tại
@@ -271,6 +272,8 @@ CheckVersionFail=Version check fail
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Tham số PHP của bạn upload_max_filesize (%s) cao hơn tham số PHP post_max_size (%s). Đây không phải là một thiết lập phù hợp.

@@ -19,7 +19,7 @@
 ModulePartnershipName=Partnerības vadība
 PartnershipDescription=Partnerības vadības modulis
 PartnershipDescriptionLong= Partnerības vadības modulis
-
+Partnership=Partnerība
 AddPartnership=Pievienojiet partnerību
 CancelPartnershipForExpiredMembers=Partnerība: atceļ partnerību ar abonementiem, kuriem beidzies derīguma termiņš
 PartnershipCheckBacklink=Partnerība: pārbaudiet atsauces saiti
@@ -58,7 +58,7 @@ ManagePartnership=Pārvaldiet partnerību
 BacklinkNotFoundOnPartnerWebsite=Atpakaļsaite nav atrasta partnera vietnē
 ConfirmClosePartnershipAsk=Vai tiešām vēlaties atcelt šo partnerību?
 PartnershipType=Partnerības veids
-PartnershipRefApproved=Partnership %s approved
+PartnershipRefApproved=Partnerība %s apstiprināta
 
 #
 # Template Mail

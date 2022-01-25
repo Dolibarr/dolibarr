@@ -25,7 +25,7 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE reception/tpl/linkedopjectblock.tpl.php  -->
 
 <?php
 
@@ -56,8 +56,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		} ?>
 		</td>
 		<td class="linkedcol-name nowraponall" ><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref center"></td>
-		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
+		<td class="linkedcol-ref"></td>
+		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		if ($user->rights->reception->lire) {
 			$total = $total + $objectlink->total_ht;
@@ -69,7 +69,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		// For now, receptions must stay linked to order, so link is not deletable
 		if ($object->element != 'order_supplier') {
 			?>
-			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
+			<a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
 			<?php
 		}
 		?>

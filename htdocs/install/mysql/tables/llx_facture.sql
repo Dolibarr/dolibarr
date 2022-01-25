@@ -42,7 +42,7 @@ create table llx_facture
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,								-- last modification date
   date_closing				datetime,						-- date de cloture
   paye					smallint DEFAULT 0 NOT NULL,
-  --amount				double(24,8)     DEFAULT 0 NOT NULL,
+
   remise_percent		real     DEFAULT 0,						-- remise relative
   remise_absolue		real     DEFAULT 0,						-- remise absolue
   remise				real     DEFAULT 0,						-- remise totale calculee
@@ -100,7 +100,7 @@ create table llx_facture
   extraparams			varchar(255),							-- for other parameters with json format
   
   fk_multicurrency		integer,
-  multicurrency_code			varchar(255),
+  multicurrency_code			varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

@@ -75,6 +75,7 @@ print dol_get_fiche_head($head, 'setup', $langs->trans("ImportArea"), -1, "techn
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="action" value="setModuleOptions">';
 print '<input type="hidden" name="param" value="IMPORT_CSV_SEPARATOR_TO_USE">';
 
@@ -87,7 +88,7 @@ print '<td class="center" width="100"></td>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ImportCsvSeparator").' ('.$langs->trans("ByDefault").')</td>';
 print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".(empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
-print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></td>';
 print '</td></tr>';
 
 print '</table>';
