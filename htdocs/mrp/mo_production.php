@@ -1332,12 +1332,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			//Lorsqu'un entrepôt est sélectionné, on propose seulement les numéro de séries qui sont disponibles dans celui-ci
 			//TODO : revoir requête sql de l'interface pour les cas suivants : si entrepôt sélectionné, alors quantité des nums individuel, sinon quantité globale
 			function updateselectbatchbywarehouse() {
-
 				var element = $("select[name*='idwarehouse']");
 
 				element.change(function () {
-
 					var element = $(this);
+
+					var element2_name = element.attr('name').replace('idwarehouse', 'batch');
+					var element2 = $("select[name*='" + element2_name + "']");
 
 					var product_element_name = element.attr('name').replace('idwarehouse', 'product');
 
@@ -1351,9 +1352,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 					}).done(function (data) {
 
-						console.log(data);
-						var element2_name = element.attr('name').replace('idwarehouse', 'batch');
-						var element2 = $("select[name*='" + element2_name + "']");
+						console.log(data)
+						var selected = element2.val();
 
 						element2.empty();
 
@@ -1366,10 +1366,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						$.each(data, function (key, value) {
 
-							element2.append($('<option>', {
-								value: key,
-								text: value
-							}));
+							if(element.val() == -1) {
+								var label = key + " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
+							} else {
+								var label = key + " (<?php echo $langs->trans('Stock') ?> : " + value + ")";
+							}
+
+							if(key === selected) {
+								var option ='<option value="'+key+'" selected>'+ label +'</option>';
+							} else {
+								var option ='<option value="'+key+'">'+ label +'</option>';
+							}
+
+							element2.append(option);
+
 						});
 
 					});
@@ -1386,6 +1396,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					var element = $(this);
 
+					var element2_name = element.attr('name').replace('batch', 'idwarehouse');
+					var element2 = $("select[name*='" + element2_name + "']");
+
+					var selected = element2.val();
+
+					if(selected != -1){
+						return;
+					}
+
 					var product_element_name = element.attr('name').replace('batch', 'product');
 
 					$.ajax({
@@ -1398,24 +1417,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 					}).done(function (data) {
 
-						var element2_name = element.attr('name').replace('batch', 'idwarehouse');
-						var element2 = $("select[name*='" + element2_name + "']");
-
-						element2.empty();
-
 						var data = JSON.parse(data);
 
-						element2.append($('<option>', {
-							value: -1,
-							text: ''
-						}));
-
-						$.each(data, function (key, value) {
-							element2.append($('<option>', {
-								value: key,
-								text: value,
-							}).attr('data-html', value));
-						});
+						if(data != 0){
+							element2.val(data).change();
+						}
 					});
 
 				});
