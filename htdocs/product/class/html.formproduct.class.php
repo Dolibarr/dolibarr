@@ -622,7 +622,7 @@ class FormProduct
 	 *  @param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
 	 *  @return	string					HTML datalist
 	 */
-	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(),  $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $disabled = 0, $selected = '', $empty_label = '')
+	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
 	{
 		global $conf, $langs;
 
