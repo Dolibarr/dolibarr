@@ -2376,20 +2376,28 @@ class Form
 	 * @param string $morecss Add more css on select
 	 * @return        void|string
 	 */
-	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '')
+	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
 		$error = 0;
 		$out = '';
 
+		if (!$forcecombo) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("PRODUIT_USE_SEARCH_TO_SELECT"));
+		}
+
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 
-		$sql = 'SELECT b.rowid, b.ref, b.label';
+		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'bom_bom as b';
-		$sql .= ' WHERE b.entity IN ('.getEntity('bom').')';
-		if(!empty($status)) $sql.= ' AND status = '.$status;
-		if(!empty($type)) $sql.= ' AND status = '. $type;
+		$sql.= ' WHERE b.entity IN ('.getEntity('bom').')';
+		if(!empty($status)) $sql.= ' AND status = '. (int) $status;
+		if(!empty($type)) $sql.= ' AND status = '. (int) $type;
 		if(!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
 		$resql = $db->query($sql);
 		if($resql){
@@ -2399,8 +2407,10 @@ class Form
 				$out .= '>&nbsp;</option>';
 			}
 			while ($obj = $db->fetch_object($resql)){
-				if($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $obj->label.'</option>';
-				$out .= '<option value="'.$obj->rowid.'">'.$obj->ref.' - '. $obj->label.'</option>';
+				$product = new Product($db);
+				$res = $product->fetch($obj->fk_product);
+				if($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $product->label .' - '.$obj->label.'</option>';
+				$out .= '<option value="'.$obj->rowid.'">'.$obj->ref.' - '.$product->label .' - '. $obj->label.'</option>';
 			}
 		} else {
 			$error++;
