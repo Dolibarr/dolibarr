@@ -222,7 +222,7 @@ class Segment implements IteratorAggregate, Countable
   		$tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
 
 		// We get now the current date for the current date replacements
-		$cur = dol_getdate(dol_now(), true));
+		$cur = dol_getdate(dol_now(), true);
 
 		// Get related dates (prev, next)
 		$cur2=dol_get_prev_day($cur['mday'], $cur['mon'], $cur['year']);
