@@ -48,7 +48,7 @@ CountriesNotInEEC=Avrupa Ekonomi Topluluğu'nda Olmayan Ülkeler
 CountriesInEECExceptMe=%s hariç Avrupa Ekonomi Topluluğu ülkeleri
 CountriesExceptMe=%s hariç tüm ülkeler
 AccountantFiles=Kaynak belgeleri dışa aktar
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
@@ -286,7 +286,7 @@ ValidateMovements=Hareketleri doğrula
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=Otomatik Olarak Bağla
-AutomaticBindingDone=Otomatik bağlama bitti
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
@@ -387,7 +387,8 @@ SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Muhasebe hesabı aralığı
 Calculated=Hesaplanmış
@@ -395,7 +396,7 @@ Formula=Formül
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Kurulumun bazı zorunlu adımları tamamlanmadı, lütfen onları tamamlayın.
-ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
+ErrorNoAccountingCategoryForThisCountry=%s ülkesi için muhasebe hesap grubu yok (Giriş - Ayarlar - Sözlükler kısmına bakın)
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=Ayarlanan dışa aktarım biçimi bu sayfada desteklenmiyor
@@ -404,6 +405,7 @@ NoJournalDefined=No journal defined
 Binded=Bağlanmış satırlar
 ToBind=Bağlanacak satırlar
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Muhasebe girişleri

@@ -164,7 +164,6 @@ DescVentilDoneExpenseReport=Consulte aquí la lista de las líneas de informes d
 ValidateMovements=Validar Movimientos
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de escritura, letras y eliminaciones. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrar
 ValidateHistory=Enlazar automáticamente
-AutomaticBindingDone=Encuadernación automática hecha
 ErrorAccountancyCodeIsAlreadyUse=No puede eliminar esta cuenta porque está siendo usada
 MvtNotCorrectlyBalanced=El movimiento no está correctamente equilibrado. Débito = %s | Crédito = %s
 Balancing=Equilibrio
@@ -186,8 +185,6 @@ AccountingJournalType1=Operaciones misceláneas
 AccountingJournalType5=Informe de gastos
 ErrorAccountingJournalIsAlreadyUse=Este diario ya es uso
 AccountingAccountForSalesTaxAreDefinedInto=Nota: La cuenta de contabilidad para el impuesto a las ventas se define en el menú <b> %s </ b> - <b> %s </ b>
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ExportDraftJournal=Exportar borrador del diario
 Selectmodelcsv=Seleccione un modelo
 Modelcsv_normal=Exportación clasica

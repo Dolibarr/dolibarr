@@ -62,10 +62,25 @@ abstract class DoliDB implements Database
 	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
+	/** @var string If we need to set a prefix specific to the database so it can be reused (when defined instead of MAIN_DB_PREFIX) to forge requests */
+	public $prefix_db;
+
 	/** @var bool Status */
 	public $ok;
 	/** @var string */
 	public $error;
+
+
+
+	/**
+	 *	Return the DB prefix
+	 *
+	 *	@return string		The DB prefix
+	 */
+	public function prefix()
+	{
+		return (empty($this->prefix_db) ? MAIN_DB_PREFIX : $this->prefix_db);
+	}
 
 	/**
 	 *	Format a SQL IF
@@ -77,7 +92,8 @@ abstract class DoliDB implements Database
 	 */
 	public function ifsql($test, $resok, $resko)
 	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
+		//return 'IF('.$test.','.$resok.','.$resko.')';		// Not sql standard
+		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
 	}
 
 	/**
@@ -203,9 +219,9 @@ abstract class DoliDB implements Database
 			$limit = $conf->liste_limit;
 		}
 		if ($offset > 0) {
-			return " LIMIT $offset,$limit ";
+			return " LIMIT ".((int) $offset).",".((int) $limit)." ";
 		} else {
-			return " LIMIT $limit ";
+			return " LIMIT ".((int) $limit)." ";
 		}
 	}
 
@@ -233,7 +249,7 @@ abstract class DoliDB implements Database
 	 * Define sort criteria of request
 	 *
 	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
-	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
 	public function order($sortfield = null, $sortorder = null)
@@ -341,11 +357,13 @@ abstract class DoliDB implements Database
 	}
 
 	/**
-	 * return all results from query as an array of objects
+	 * Return all results from query as an array of objects
 	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
-	 * be carefull with this method use it only with some limit of results to avoid performences loss
-	 * @param string $sql the sql query string
-	 * @return bool| array
+	 * be carefull with this method use it only with some limit of results to avoid performences loss.
+	 *
+	 * @param 	string 		$sql 		The sql query string
+	 * @return 	bool|array				Result
+	 * @deprecated
 	 */
 	public function getRows($sql)
 	{

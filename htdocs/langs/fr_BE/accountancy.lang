@@ -4,7 +4,5 @@ Lineofinvoice=Lignes de facture
 Doctype=Type de document
 ErrorDebitCredit=Débit et crédit ne peuvent pas être non-nuls en même temps
 TotalMarge=Marge de ventes totale
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 Selectmodelcsv=Sélectionnez un modèle d'export
 Modelcsv_normal=Export classique

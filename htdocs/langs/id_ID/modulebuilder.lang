@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Alat ini harus digunakan hanya oleh pengguna atau pengembang berpengalaman. Ini menyediakan utilitas untuk membangun atau mengedit modul Anda sendiri. Dokumentasi untuk pengembangan manual <a href="%s" target="_blank"> alternatif ada di sini </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Masukkan nama modul / aplikasi yang akan dibuat tanpa spasi. Gunakan huruf besar untuk memisahkan kata-kata (Misalnya: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Masukkan nama objek yang akan dibuat tanpa spasi. Gunakan huruf besar untuk memisahkan kata-kata (Misalnya: MyObject, Siswa, Guru ...). File kelas CRUD, tetapi juga file API, halaman ke daftar / tambahkan / edit / hapus objek dan file SQL akan dihasilkan.
 ModuleBuilderDesc2=Jalur tempat modul dihasilkan / diedit (direktori pertama untuk modul eksternal didefinisikan menjadi %s):<strong>%s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Menu yang disediakan oleh modul / aplikasi Anda didefinisika
 DictionariesDefDescTooltip=Kamus yang disediakan oleh modul / aplikasi Anda didefinisikan ke dalam array<strong>$ this-> kamus </strong> ke file deskriptor modul. Anda dapat mengedit file ini secara manual atau menggunakan editor yang disematkan. <br> <br> Catatan: Setelah ditentukan (dan modul diaktifkan kembali), kamus juga dapat dilihat di area pengaturan untuk pengguna administrator pada %s.
 PermissionsDefDescTooltip=Izin yang disediakan oleh modul / aplikasi Anda didefinisikan ke dalam array<strong>$ this-> rights </strong> ke file deskriptor modul. Anda dapat mengedit file ini secara manual atau menggunakan editor yang disematkan. <br> <br> Catatan: Setelah ditentukan (dan modul diaktifkan kembali), izin terlihat ke pengaturan izin default %s.
 HooksDefDesc=Definisikan di properti<b>module_parts ['hooks] </b>, dalam deskriptor modul, konteks kait yang ingin Anda kelola (daftar konteks dapat ditemukan dengan pencarian di'<b>initHooks (a04fbf07fbf0fbfbf0fbfbfbfbfbfbfbfjfbfjfjjfjfjjfjjfjjfjjfjfjjfjfjfjjfjfjjfjfjfjfjfjfjjfjjfjfjfjfjfjjfjjfjfjfjfjjfjfjfjfjjfjfjfjfjjfjfjfjfjjfjfjfjfjfjfjfjfjfjfjfjjfjfjjfj) file kait untuk menambahkan kode fungsi terkait Anda (fungsi hookable dapat ditemukan dengan pencarian di '<b> executeHooks </b>' dalam kode inti).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Lihat ID yang digunakan dalam instalasi Anda
 SeeReservedIDsRangeHere=Lihat berbagai ID yang dipesan
 ToolkitForDevelopers=Toolkit untuk pengembang Dolibarr

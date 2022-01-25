@@ -44,8 +44,9 @@ class Login
 	 * Login
 	 *
 	 * Request the API token for a couple username / password.
-	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
-	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: The API token (DOLAPIKEY) can be found/set on the user page.
+	 * WARNING: You should NEVER use this API, like you should never use the similare API that uses the POST method. This will expose your password.
+	 * To use the APIs, you should instead set an API token to the user you want to allow to use API (This API token called DOLAPIKEY can be found/set on the user page) and use this token as credential for any API call.
+	 * From the API explorer, you can enter directly the "DOLAPIKEY" into the field at the top right of the page to get access to any allowed APIs.
 	 *
 	 * @param   string  $login			User login
 	 * @param   string  $password		User password
@@ -67,8 +68,9 @@ class Login
 	 * Login
 	 *
 	 * Request the API token for a couple username / password.
-	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
-	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: The API token (DOLAPIKEY) can be found/set on the user page.
+	 * WARNING: You should NEVER use this API, like you should never use the similare API that uses the POST method. This will expose your password.
+	 * To use the APIs, you should instead set an API token to the user you want to allow to use API (This API token called DOLAPIKEY can be found/set on the user page) and use this token as credential for any API call.
+	 * From the API explorer, you can enter directly the "DOLAPIKEY" into the field at the top right of the page to get access to any allowed APIs.
 	 *
 	 * @param   string  $login			User login
 	 * @param   string  $password		User password
@@ -135,7 +137,11 @@ class Login
 		if (empty($tmpuser->api_key) || $reset) {
 			$tmpuser->getrights();
 			if (empty($tmpuser->rights->user->self->creer)) {
-				throw new RestException(403, 'User need write permission on itself to reset its API token');
+				if (empty($tmpuser->api_key)) {
+					throw new RestException(403, 'No API token set for this user and user need write permission on itself to reset its API token');
+				} else {
+					throw new RestException(403, 'User need write permission on itself to reset its API token');
+				}
 			}
 
 			// Generate token for user

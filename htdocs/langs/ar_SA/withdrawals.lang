@@ -15,6 +15,7 @@ BankTransferReceipt=أمر تحويل رصيد
 LatestBankTransferReceipts=أحدث %s أوامر تحويل الرصيد 
 LastWithdrawalReceipts=أحدث %s ملفات الخصم المباشر 
 WithdrawalsLine=بند أمر الخصم المباشر
+CreditTransfer=تحويل الرصيد
 CreditTransferLine=بند تحويل الرصيد
 WithdrawalsLines=بنود أوامر الخصم المباشر
 CreditTransferLines=بنود تحويل الرصيد
@@ -47,6 +48,7 @@ ThirdPartyBankCode=كود بنك الطرف الثالث
 NoInvoiceCouldBeWithdrawed=لم يتم الخصم من فاتورة بنجاح. تحقق من أن الفواتير موجودة في الشركات التي لديها رقم IBAN صالح وأن IBAN يحتوي على UMR (مرجع تفويض فريد) بالوضع <strong> %s </strong>.
 WithdrawalCantBeCreditedTwice=تم بالفعل تمييز إيصال السحب هذا على أنه مدين ؛ لا يمكن القيام بذلك مرتين ، حيث من المحتمل أن يؤدي ذلك إلى إنشاء مدفوعات وإدخالات بنكية مكررة.
 ClassCredited=تصنيف حساب
+ClassDebited=Classify debited
 ClassCreditedConfirm=هل أنت متأكد من أنك تريد تصنيف إيصال السحب هذا على أنه مقيد في حسابك المصرفي؟
 TransData=تاريخ الإرسال
 TransMetod=طريقة الإرسال
@@ -80,7 +82,7 @@ StatusMotif7=قرار قضائي
 StatusMotif8=سبب آخر
 CreateForSepaFRST=إنشاء ملف الخصم المباشر (SEPA FRST)
 CreateForSepaRCUR=إنشاء ملف الخصم المباشر (SEPA RCUR)
-CreateAll=إنشاء ملف الخصم المباشر (الكل)
+CreateAll=إنشاء ملف الخصم المباشر
 CreateFileForPaymentByBankTransfer=إنشاء ملف لتحويل الرصيد
 CreateSepaFileForPaymentByBankTransfer=إنشاء ملف تحويل رصيد (SEPA)
 CreateGuichet=فقط المكتب
@@ -115,7 +117,7 @@ WithdrawRequestErrorNilAmount=تعذر إنشاء طلب الخصم المباش
 SepaMandate=تفويض الخصم المباشر لمنطقة الدفعات الأوروبية الموحدة (SEPA)
 SepaMandateShort=تفويض SEPA
 PleaseReturnMandate=يرجى إعادة نموذج التفويض هذا بالبريد الإلكتروني إلى %s أو بالبريد إلى
-SEPALegalText=من خلال التوقيع على نموذج التفويض هذا ، فإنك تفوض (أ) %s لإرسال تعليمات إلى البنك الخاص بك للخصم من حسابك و (ب) البنك الذي تتعامل معه للخصم من حسابك وفقًا للتعليمات الواردة من %s. كجزء من حقوقك ، يحق لك استرداد الأموال من البنك الذي تتعامل معه بموجب شروط وأحكام اتفاقيتك مع البنك الذي تتعامل معه. يجب المطالبة باسترداد الأموال في غضون 8 أسابيع بدءًا من تاريخ الخصم من حسابك. يتم توضيح حقوقك فيما يتعلق بالولاية المذكورة أعلاه في بيان يمكنك الحصول عليه من البنك الذي تتعامل معه.
+SEPALegalText=By signing this mandate form, you authorize (A) %s to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from %s. As part of your rights, you are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. Your rights regarding the above mandate are explained in a statement that you can obtain from your bank.
 CreditorIdentifier=معرف الدائن
 CreditorName=اسم الدائن
 SEPAFillForm=(ب) الرجاء استكمال جميع الحقول المعلمة *
@@ -150,3 +152,5 @@ ModeWarning=لم يتم تعيين خيار الوضع الحقيقي ، نتو�
 ErrorCompanyHasDuplicateDefaultBAN=تمتلك الشركة ذات المعرف %s أكثر من حساب مصرفي افتراضي. لا توجد طريقة لمعرفة أي واحد يستخدم.
 ErrorICSmissing=ICS مفقود في الحساب المصرفي %s
 TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=يختلف المبلغ الإجمالي لأمر الخصم المباشر عن مجموع البنود
+WarningSomeDirectDebitOrdersAlreadyExists=Warning: There is already some pending Direct Debit orders (%s) requested for an amount of %s
+WarningSomeCreditTransferAlreadyExists=Warning: There is already some pending Credit Transfer (%s) requested for an amount of %s

@@ -159,7 +159,6 @@ EditCompany=Editar empresa
 ThisUserIsNot=Este usuario no es un cliente potencial, cliente ni proveedor
 VATIntraCheckDesc=El numero de control de IVA intracomunitario debe incluir el prefijo del país. El enlace <b>%s</b> permite consultar al servicio de control de números de IVA intracomunitario (VIES). Se requiere acceso a Internet desde el servidor para que este servicio funcione.
 VATIntraCheckableOnEUSite=Verificar el numero de control de IVA intracomunitario en la web de la Comisión Europea
-VATIntraManualCheck=También puedes verificar manualmente desde el sitio web de la comision europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=No es posible realizar la verificación. El servicio de comprobación no es prestado por el país miembro (%s).
 NorProspectNorCustomer=No es cliente potencial, ni cliente
 OthersNotLinkedToThirdParty=Otros, no vinculado a un tercero

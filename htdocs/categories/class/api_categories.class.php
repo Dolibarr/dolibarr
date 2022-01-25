@@ -103,7 +103,7 @@ class Categories extends DolibarrApi
 			if (!is_array($cats)) {
 				throw new RestException(500, 'Error when fetching child categories', array_merge(array($this->category->error), $this->category->errors));
 			}
-			$this->category->childs = [];
+			$this->category->childs = array();
 			foreach ($cats as $cat) {
 				$this->category->childs[] = $this->_cleanObjectDatas($cat);
 			}
@@ -145,8 +145,9 @@ class Categories extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";

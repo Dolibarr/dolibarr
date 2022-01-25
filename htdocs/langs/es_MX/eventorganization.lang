@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - eventorganization
 ModuleEventOrganizationName =Organización de Eventos
 EventOrganizationDescription =Organización de Eventos a través el Módulo de Proyectos
-EventOrganizationDescriptionLong=Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
 EventOrganizationConferenceOrBoothMenuLeft =Conferencia o Puesto
 EventOrganizationSetup=Configuración de Organización de Evento
 Settings=Configuración

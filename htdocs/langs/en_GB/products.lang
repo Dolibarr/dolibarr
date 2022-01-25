@@ -1,4 +1,2 @@
 # Dolibarr language file - Source file is en_US - products
 PrintsheetForOneBarCode=Print several labels for one barcode
-IncludingProductWithTag=Including products/services with the tag
-UseProductFournDesc=Add a feature to define the product description defined by the vendors (for each vendor reference) in addition to the description for customers

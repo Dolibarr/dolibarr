@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=未能得到RSS提要。尝试添加恒定MAIN_SIMPLEXM
 ErrorForbidden=访问被拒绝。<br>您尝试访问已禁用模块的页面，区域或功能，或者不在经过身份验证的会话中或不允许您的用户访问。
 ErrorForbidden2=此登陆权限可在你的Dolibarr管理员菜单 %s->%s中定义。
 ErrorForbidden3=看来Dolibarr是不是通过身份验证的会话中使用。以在Dolibarr安装文件就会知道如何管理认证（htaccess的，mod_auth或其他...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=功能imagick_readimage是没有发现在这个PHP。没有预览可用。管理员可以从菜单中禁用此设置 - 显示选项卡。
 ErrorRecordAlreadyExists=记录已存在
 ErrorLabelAlreadyExists=此标签已存在
@@ -271,6 +272,8 @@ CheckVersionFail=Version check fail
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

@@ -67,6 +67,7 @@ ErrorNoVATRateDefinedForSellerCountry=خطأ ، لم يتم تحديد معدل�
 ErrorNoSocialContributionForSellerCountry=خطأ ، لم يتم تحديد نوع الضرائب الاجتماعية | المالية للبلد "%s".
 ErrorFailedToSaveFile=خطأ، فشل في حفظ الملف.
 ErrorCannotAddThisParentWarehouse=أنت تحاول إضافة مستودع رئيسي هو بالفعل تابع لمستودع موجود
+FieldCannotBeNegative=Field "%s" cannot be negative
 MaxNbOfRecordPerPage=عدد السجلات الاعلى في الصفحة الواحدة
 NotAuthorized=غير مصرح لك ان تفعل ذلك.
 SetDate=تحديد التاريخ
@@ -87,7 +88,7 @@ FileWasNotUploaded=تم تحديد ملف للإرفاق ولكن لم يتم ت
 NbOfEntries=عدد الإدخالات
 GoToWikiHelpPage=قراءة التعليمات عبر الإنترنت (يلزم الاتصال بالإنترنت)
 GoToHelpPage=قراءة المساعدة
-DedicatedPageAvailable=هناك صفحة تعليمات مخصصة تتعلق بشاشتك الحالية
+DedicatedPageAvailable=Dedicated help page related to your current screen
 HomePage=الصفحة الرئيسية
 RecordSaved=تم حفظ سجل
 RecordDeleted=سجل محذوف
@@ -114,7 +115,7 @@ ReturnCodeLastAccessInError=إرجاع الكود لأحدث خطأ في طلب 
 InformationLastAccessInError=معلومات عن خطأ طلب الوصول إلى قاعدة البيانات الأخيرة
 DolibarrHasDetectedError=Dolibarr اكتشف خطأ تقني
 YouCanSetOptionDolibarrMainProdToZero=يمكنك قراءة ملف السجل أو تعيين الخيار $ dolibarr_main_prod إلى "0" في (config file) للحصول على مزيد من المعلومات.
-InformationToHelpDiagnose=يمكن أن تكون هذه المعلومات مفيدة لأغراض التشخيص (يمكنك تعيين الخيار $ dolibarr_main_prod على "1" لإزالة هذه الإشعارات)
+InformationToHelpDiagnose=This information can be useful for diagnostic purposes (you can set option $dolibarr_main_prod to '1' to hide sensitive information)
 MoreInformation=المزيد من المعلومات
 TechnicalInformation=المعلومات التقنية
 TechnicalID=ID الفني
@@ -211,6 +212,8 @@ User=المستعمل
 Users=المستخدمين
 Group=مجموعة
 Groups=المجموعات
+UserGroup=User group
+UserGroups=User groups
 NoUserGroupDefined=لم يتم تحديد مجموعة مستخدمين
 Password=كلمة المرور
 PasswordRetype=أعد كتابة كلمة المرور
@@ -906,7 +909,7 @@ ViewFlatList=عرض قائمة مسطحة
 ViewAccountList=عرض دفتر الأستاذ
 ViewSubAccountList=عرض دفتر الأستاذ الفرعي
 RemoveString=Remove string '%s'
-SomeTranslationAreUncomplete=قد تكون بعض اللغات المعروضة مترجمة جزئيًا فقط أو قد تحتوي على أخطاء. الرجاء المساعدة في تصحيح لغتك بالتسجيل في <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/ </a> لإضافة تحسيناتك.
+SomeTranslationAreUncomplete=Some of the languages offered may be only partially translated or may contain errors. Please help to correct your language by registering at <a href="https://transifex.com/projects/p/dolibarr/" target="_blank" rel="noopener noreferrer external">https://transifex.com/projects/p/dolibarr/</a> to add your improvements.
 DirectDownloadLink=رابط التحميل العام
 PublicDownloadLinkDesc=فقط مطلوب الرابط لتنزيل الملف
 DirectDownloadInternalLink=رابط التحميل الخاص
@@ -1158,4 +1161,6 @@ Properties=Properties
 hasBeenValidated=%s has been validated
 ClientTZ=المنطقة الزمنية للعميل (المستخدم)
 NotClosedYet=Not yet closed
-ClearSignature=Signature reset
+ClearSignature=Reset signature
+CanceledHidden=Canceled hidden
+CanceledShown=Canceled shown

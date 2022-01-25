@@ -43,5 +43,3 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta contable de espera
 Codejournal=Periódico
 FinanceJournal=Periodo Financiero
 TotalMarge=Margen total de ventas
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)

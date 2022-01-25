@@ -27,6 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
+// $supportedoauth2array is defined into oauth.lib.php
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -96,10 +97,12 @@ print '<table class="noborder centpercent">';
 
 $i = 0;
 
-// $list is defined into oauth.lib.php
+// $list is defined into oauth.lib.php to the list of supporter OAuth providers.
 foreach ($list as $key) {
 	$supported = 0;
-	if (in_array($key[0], array_keys($supportedoauth2array))) {
+	$keyforsupportedoauth2array = $key[0];
+
+	if (in_array($keyforsupportedoauth2array, array_keys($supportedoauth2array))) {
 		$supported = 1;
 	}
 	if (!$supported) {
@@ -110,20 +113,23 @@ foreach ($list as $key) {
 
 	print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
 	// Api Name
-	$label = $langs->trans($key[0]);
-	print '<td>'.$label.'</td>';
+	$label = $langs->trans($keyforsupportedoauth2array);
 	print '<td>';
-	if (!empty($key[3])) {
-		print $langs->trans($key[3]);
+	print img_picto('', $supportedoauth2array[$keyforsupportedoauth2array]['picto'], 'class="pictofixedwidth"');
+	print $label;
+	print '</td>';
+	print '<td>';
+	if (!empty($supportedoauth2array[$keyforsupportedoauth2array]['urlforapp'])) {
+		print $langs->trans($supportedoauth2array[$keyforsupportedoauth2array]['urlforapp']);
 	}
 	print '</td>';
 	print '</tr>';
 
 	if ($supported) {
-		$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
+		$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
 		print '<tr class="oddeven value">';
 		print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
-		print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
+		print '<td><input style="width: 80%" type"text" name="uri'.$keyforsupportedoauth2array.'" value="'.$redirect_uri.'">';
 		print '</td></tr>';
 	} else {
 		print '<tr class="oddeven value">';
@@ -150,7 +156,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

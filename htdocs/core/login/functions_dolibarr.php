@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022      Harry Winner Kamdem  <harry@sense.africa>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,18 +56,18 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		$usernamecol2 = 'email';
 		$entitycol = 'entity';
 
-		$sql = 'SELECT rowid, login, entity, pass, pass_crypted, datestartvalidity, dateendvalidity';
-		$sql .= ' FROM '.$table;
-		$sql .= ' WHERE ('.$usernamecol1." = '".$db->escape($usertotest)."'";
+		$sql = "SELECT rowid, login, entity, pass, pass_crypted, datestartvalidity, dateendvalidity";
+		$sql .= " FROM ".$table;
+		$sql .= " WHERE (".$usernamecol1." = '".$db->escape($usertotest)."'";
 		if (preg_match('/@/', $usertotest)) {
-			$sql .= ' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
+			$sql .= " OR ".$usernamecol2." = '".$db->escape($usertotest)."'";
 		}
-		$sql .= ') AND '.$entitycol." IN (0,".($entity ? $entity : 1).")";
-		$sql .= ' AND statut = 1';
+		$sql .= ") AND ".$entitycol." IN (0,".($entity ? ((int) $entity) : 1).")";
+		$sql .= " AND statut = 1";
 		// Note: Test on validity is done later
-		// Required to firstly found the user into entity, then the superadmin.
-		// For the case (TODO we must avoid that) a user has renamed its login with same value than a user in entity 0.
-		$sql .= ' ORDER BY entity DESC';
+		// Order is required to firstly found the user into entity, then the superadmin.
+		// For the case (TODO: we must avoid that) a user has renamed its login with same value than a user in entity 0.
+		$sql .= " ORDER BY entity DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -104,7 +105,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				}
 				// Check crypted password according to crypt algorithm
 				if ($cryptType == 'auto') {
-					if (dol_verifyHash($passtyped, $passcrypted, '0')) {
+					if ($passcrypted && dol_verifyHash($passtyped, $passcrypted, '0')) {
 						$passok = true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - hash ".$cryptType." of pass is ok");
 					}

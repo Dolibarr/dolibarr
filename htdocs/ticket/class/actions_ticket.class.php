@@ -40,6 +40,9 @@ class ActionsTicket
 	 */
 	public $db;
 
+	/**
+	 * @var Ticket Ticket
+	 */
 	public $dao;
 
 	public $mesg;
@@ -197,7 +200,7 @@ class ActionsTicket
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
 		if ($user->rights->ticket->manage) {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr>';
 
@@ -233,7 +236,7 @@ class ActionsTicket
 		}
 		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
 			print '<div class="center">';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 		}

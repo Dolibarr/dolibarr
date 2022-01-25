@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
-if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) {
+if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
@@ -47,11 +47,17 @@ if ($search_showonlyerrors < 0) {
 	$search_showonlyerrors = 0;
 }
 
+$search_startyear = GETPOST('search_startyear', 'int');
+$search_startmonth = GETPOST('search_startmonth', 'int');
+$search_startday = GETPOST('search_startday', 'int');
+$search_endyear = GETPOST('search_endyear', 'int');
+$search_endmonth = GETPOST('search_endmonth', 'int');
+$search_endday = GETPOST('search_endday', 'int');
 $search_id = GETPOST('search_id', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
-if (GETPOST('search_startyear') != '') {
-	$search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
+if ($search_startyear != '') {
+	$search_start = dol_mktime(0, 0, 0, $search_startmonth, $search_startday, $search_startyear);
 }
 $search_end = -1;
 if (GETPOST('search_endyear') != '') {
@@ -321,22 +327,22 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_startyear > 0) {
-	$param .= '&search_startyear='.urlencode(GETPOST('search_startyear', 'int'));
+	$param .= '&search_startyear='.urlencode($search_startyear);
 }
 if ($search_startmonth > 0) {
-	$param .= '&search_startmonth='.urlencode(GETPOST('search_startmonth', 'int'));
+	$param .= '&search_startmonth='.urlencode($search_startmonth);
 }
 if ($search_startday > 0) {
-	$param .= '&search_startday='.urlencode(GETPOST('search_startday', 'int'));
+	$param .= '&search_startday='.urlencode($search_startday);
 }
 if ($search_endyear > 0) {
-	$param .= '&search_endyear='.urlencode(GETPOST('search_endyear', 'int'));
+	$param .= '&search_endyear='.urlencode($search_endyear);
 }
 if ($search_endmonth > 0) {
-	$param .= '&search_endmonth='.urlencode(GETPOST('search_endmonth', 'int'));
+	$param .= '&search_endmonth='.urlencode($search_endmonth);
 }
 if ($search_endday > 0) {
-	$param .= '&search_endday='.urlencode(GETPOST('search_endday', 'int'));
+	$param .= '&search_endday='.urlencode($search_endday);
 }
 if ($search_showonlyerrors > 0) {
 	$param .= '&search_showonlyerrors='.urlencode($search_showonlyerrors);

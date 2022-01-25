@@ -216,13 +216,13 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $object->title;
 // Thirdparty
-if ($object->thirdparty->id > 0) {
+if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = " te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -296,7 +296,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
 	if (strcmp($object->opp_amount, '')) {
-		print price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency);
+		print '<span class="amount">'.price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';
 }
@@ -316,7 +316,7 @@ print '</td></tr>';
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 if (strcmp($object->budget_amount, '')) {
-	print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 }
 print '</td></tr>';
 
@@ -328,10 +328,9 @@ print '</table>';
 
 print '</div>';
 print '<div class="fichehalfright">';
-print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border tableforfield" width="100%">';
+print '<table class="border tableforfield centpercent">';
 
 // Description
 print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -347,7 +346,6 @@ if ($conf->categorie->enabled) {
 
 print '</table>';
 
-print '</div>';
 print '</div>';
 print '</div>';
 
@@ -882,7 +880,7 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				// Add total if we have to
-				if ($qualifiedfortotal)	{
+				if ($qualifiedfortotal) {
 					$total_ht = $total_ht + $total_ht_by_line;
 					$total_ttc = $total_ttc + $total_ttc_by_line;
 				}
@@ -1018,8 +1016,11 @@ foreach ($listofreferent as $key => $value) {
 			}
 		}
 
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
+
+
 		if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
-			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, !empty($project_field) ? $project_field : 'fk_projet');
+			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
 			if ($selectList < 0) {
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			} elseif ($selectList) {
@@ -1031,9 +1032,10 @@ foreach ($listofreferent as $key => $value) {
 				$addform .= '<input type="hidden" name="action" value="addelement">';
 				$addform .= '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
-				$addform .= '<table><tr><td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
+				$addform .= '<table><tr>';
+				//$addform .= '<td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
 				$addform .= '<td>'.$selectList.'</td>';
-				$addform .= '<td><input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
+				$addform .= '<td><input type="submit" class="button button-linkto smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
 				$addform .= '</tr></table>';
 				$addform .= '</form>';
 				$addform .= '</div>';
@@ -1042,11 +1044,35 @@ foreach ($listofreferent as $key => $value) {
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew) {
 			$addform .= '<div class="inline-block valignmiddle">';
 			if ($testnew) {
-				$addform .= '<a class="buttonxxx marginleftonly" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				$addform .= '<a class="buttonxxx marginleftonly" href="'.$urlnew.'" title="'.dol_escape_htmltag($langs->trans($buttonnew)).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			} elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				$addform .= '<span title="'.dol_escape_htmltag($langs->trans($buttonnew)).'"><a class="buttonxxx marginleftonly buttonRefused" disabled="disabled" href="#"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a></span>';
 			}
 			$addform .= '<div>';
+		}
+		if (is_array($elementarray) && !count($elementarray) > 0 && $key == "order_supplier") {
+			$addform = '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
+						 <span id="textBtnShow" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("CanceledShown").'</span><span id="minus-circle" class="fa fa-eye valignmiddle paddingleft"></span>
+						 </a>
+						 <script>
+						 $("#btnShow").on("click", function () {
+							console.log("We click to show or hide the canceled lines");
+							var attr = $(this).attr("data-canceledarehidden");
+							if (typeof attr !== "undefined" && attr !== false) {
+								console.log("Show canceled");
+								$(".tr_canceled").show();
+								$("#textBtnShow").text("'.dol_escape_js($langs->trans("CanceledShown")).'");
+								$("#btnShow").removeAttr("data-canceledarehidden");
+								$("#minus-circle").removeClass("fa-eye-slash").addClass("fa-eye");
+							} else {
+								console.log("Hide canceled");
+								$(".tr_canceled").hide();
+								$("#textBtnShow").text("'.dol_escape_js($langs->trans("CanceledHidden")).'");
+								$("#btnShow").attr("data-canceledarehidden", 1);
+								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
+							}
+						 });
+						 </script></div> '.$addform;
 		}
 
 		print load_fiche_titre($langs->trans($title), $addform, '');
@@ -1115,7 +1141,6 @@ foreach ($listofreferent as $key => $value) {
 		}
 		print '</tr>';
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
@@ -1170,9 +1195,16 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->close_code) && $element->close_code == 'replaced') {
 						$qualifiedfortotal = false; // Replacement invoice, do not include into total
 					}
+				} elseif ($key == 'order_supplier' && $element->status == 7) {
+					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				print '<tr class="oddeven">';
+				if ($key == "order_supplier" && $element->status == 7) {
+					print '<tr class="oddeven tr_canceled" style=display:none>';
+				} else {
+					print '<tr class="oddeven" >';
+				}
+
 
 				// Remove link
 				print '<td style="width: 24px">';
@@ -1358,7 +1390,7 @@ foreach ($listofreferent as $key => $value) {
 						if (!$qualifiedfortotal) {
 							print '<strike>';
 						}
-						print price($total_ht_by_line);
+						print '<span class="amount">'.price($total_ht_by_line).'</span>';
 						if (!$qualifiedfortotal) {
 							print '</strike>';
 						}
@@ -1409,7 +1441,7 @@ foreach ($listofreferent as $key => $value) {
 						if (!$qualifiedfortotal) {
 							print '<strike>';
 						}
-						print price($total_ttc_by_line);
+						print '<span class="amount">'.price($total_ttc_by_line).'</span>';
 						if (!$qualifiedfortotal) {
 							print '</strike>';
 						}
@@ -1482,6 +1514,7 @@ foreach ($listofreferent as $key => $value) {
 			if (in_array($tablename, array('projet_task'))) {
 				$colspan = 2;
 			}
+
 			print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 			if (in_array($tablename, array('projet_task'))) {
 				print '<td class="center">';
@@ -1520,7 +1553,16 @@ foreach ($listofreferent as $key => $value) {
 			print '</tr>';
 		} else {
 			if (!is_array($elementarray)) {	// error
-				print $elementarray;
+				print '<tr><td>'.$elementarray.'</td></tr>';
+			} else {
+				$colspan = 7;
+				if (in_array($tablename, array('projet_task'))) {
+					$colspan = 5;
+				}
+				if ($tablename == 'fichinter') {
+					$colspan++;
+				}
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 		}
 		print "</table>";

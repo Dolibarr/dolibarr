@@ -180,6 +180,7 @@ if (GETPOST("delete")) {
 /*
  * View
  */
+$form = new Form($db);
 
 llxHeader('', $langs->trans("ExternalRSSSetup"));
 
@@ -209,11 +210,9 @@ print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.d
 print '</tr>';
 print '</table>';
 
-print '<br><div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+print $form->buttonsSaveCancel("Add", '');
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="norss" value="'.($lastexternalrss + 1).'">';
-print '</div>';
 
 print '</form>';
 
@@ -253,9 +252,8 @@ if ($resql) {
 		print '<tr class="liste_titre">';
 		print "<td>".$langs->trans("RSS")." ".($i + 1)."</td>";
 		print '<td class="right">';
-		print '<input type="submit" class="button buttongen" name="modify" value="'.$langs->trans("Modify").'">';
-		print " &nbsp; ";
-		print '<input type="submit" class="button buttongen" name="delete" value="'.$langs->trans("Delete").'">';
+		print '<input type="submit" class="button buttongen button-save" name="modify" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button buttongen button-cancel" name="delete" value="'.$langs->trans("Delete").'">';
 		print '<input type="hidden" name="norss" value="'.$idrss.'">';
 		print '</td>';
 		print '</tr>'."\n";
@@ -277,9 +275,9 @@ if ($resql) {
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
 		if ($result > 0 && empty($rss->error)) {
-			print '<font class="ok">'.$langs->trans("Online").'</div>';
+			print '<span class="ok">'.$langs->trans("Online").'</div>';
 		} else {
-			print '<font class="error">'.$langs->trans("Offline");
+			print '<span class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
 			if ($rssparser->error) {
 				print ' - '.$langs->trans($rssparser->error);

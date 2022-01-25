@@ -392,7 +392,7 @@ class SocieteAccount extends CommonObject
 		$label .= '<b>'.$langs->trans('Login').':</b> '.$this->ref;
 		//$label.= '<b>' . $langs->trans('WebSite') . ':</b> ' . $this->ref;
 
-		$url = dol_buildpath('/website/websiteaccount_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/website/websiteaccount_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

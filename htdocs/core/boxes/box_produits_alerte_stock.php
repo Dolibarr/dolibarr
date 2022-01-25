@@ -94,12 +94,12 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
-			$sql .= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
+			$sql .= " AND p.seuil_stock_alerte > 0";
 			if (empty($user->rights->produit->lire)) {
-				$sql .= ' AND p.fk_product_type != 0';
+				$sql .= ' AND p.fk_product_type <> 0';
 			}
 			if (empty($user->rights->service->lire)) {
-				$sql .= ' AND p.fk_product_type != 1';
+				$sql .= ' AND p.fk_product_type <> 1';
 			}
 			// Add where from hooks
 			if (is_object($hookmanager)) {
@@ -129,8 +129,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld .= " WHERE fk_product=".$objp->rowid;
-						$sqld .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+						$sqld .= " WHERE fk_product = ".((int) $objp->rowid);
+						$sqld .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
@@ -187,7 +187,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => $price,
 					);
 
@@ -210,7 +210,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'</span>',
+						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 1).'</span>',
 						'asis' => 1
 					);
 

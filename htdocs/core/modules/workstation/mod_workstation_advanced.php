@@ -27,7 +27,7 @@
  * \brief      File containing class for advanced numbering model of Workstation
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/modules/workstation/modules_workstation.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/workstation/modules_workstation.php';
 
 
 /**
@@ -82,7 +82,7 @@ class mod_workstation_advanced extends ModeleNumRefWorkstation
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskWorkstation" value="'.$conf->global->WORKSTATION_WORKSTATION_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
