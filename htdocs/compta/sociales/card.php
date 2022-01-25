@@ -57,7 +57,7 @@ $actioncode = GETPOST('actioncode');
 $fk_user = GETPOST('userid', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('propalcard', 'globalcard'));
+$hookmanager->initHooks(array('taxcard', 'globalcard'));
 
 $object = new ChargeSociales($db);
 if ($id > 0) {
