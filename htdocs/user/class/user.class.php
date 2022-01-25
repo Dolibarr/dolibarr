@@ -1149,9 +1149,12 @@ class User extends CommonObject
 				$sql .= " AND r.entity = ".((int) $conf->entity);
 			}
 		} else {
-			$sql .= " AND gr.entity = ".((int) $conf->entity);
-			$sql .= " AND gu.entity = ".((int) $conf->entity);
-			$sql .= " AND r.entity = ".((int) $conf->entity);
+			$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
+			// The entity on the table usergroup_user should be useless and shoumd never be used because it is alreay into gr and r.
+			// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
+			// other entities, so we are forced to add a filter here
+			$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+			$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
 		}
 		$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 		$sql .= " AND gu.fk_user = ".((int) $this->id);
@@ -1394,6 +1397,8 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::create login=".$this->login.", user=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
 
+		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+
 		// Check parameters
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
@@ -1404,7 +1409,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
 			return -1;
-		} elseif (preg_match('/[,@<>"\']/', $this->login)) {
+		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
 			return -1;
@@ -1788,6 +1793,8 @@ class User extends CommonObject
 		$this->fk_warehouse = (int) $this->fk_warehouse;
 
 		// Check parameters
+		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
@@ -1797,7 +1804,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", 'Login');
 			return -1;
-		} elseif (preg_match('/[,@<>"\']/', $this->login)) {
+		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
 			return -1;
