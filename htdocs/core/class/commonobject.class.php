@@ -2293,6 +2293,15 @@ abstract class CommonObject
 				if (get_class($this) == 'Fournisseur') {
 					$this->mode_reglement_supplier_id = $id;
 				}
+				// Triggers
+				if (!$error && !$notrigger) {
+					// Call triggers
+					$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::setPaymentMethods Error '.$this->db->error());
