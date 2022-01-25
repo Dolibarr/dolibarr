@@ -40,12 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-// Easya 2022 - PR19832 - Create contract from invoice
-// Code ajouté
-if (!empty($conf->facture->enabled) && !empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-// Easya 2022 - PR19832 - Fin
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -231,15 +226,10 @@ if (empty($reshook)) {
 				if ($element == 'propal') {
 					$element = 'comm/propal'; $subelement = 'propal';
 				}
-				// Easya 2022 - PR19832 - Create contract from invoice
-				// Code ajouté
-				if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
-					if ($element == 'invoice' || $element == 'facture') {
-						$element = 'compta/facture';
-						$subelement = 'facture';
-					}
+				if ($element == 'invoice' || $element == 'facture') {
+					$element = 'compta/facture';
+					$subelement = 'facture';
 				}
-				// Easya 2022 - PR19832 - Fin
 
 				$object->origin    = $origin;
 				$object->origin_id = $originid;
@@ -1037,15 +1027,10 @@ if ($action == 'create') {
 			if ($element == 'propal') {
 				$element = 'comm/propal'; $subelement = 'propal';
 			}
-			// Easya 2022 - PR19832 - Create contract from invoice
-			// Code ajouté
-			if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
-				if ($element == 'invoice' || $element == 'facture') {
-					$element = 'compta/facture';
-					$subelement = 'facture';
-				}
+			if ($element == 'invoice' || $element == 'facture') {
+				$element = 'compta/facture';
+				$subelement = 'facture';
 			}
-			// Easya 2022 - PR19832 - Fin
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
