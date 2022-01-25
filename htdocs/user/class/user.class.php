@@ -1789,7 +1789,7 @@ class User extends CommonObject
 		$this->fk_warehouse = (int) $this->fk_warehouse;
 
 		// Check parameters
-		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', '/[,@<>"\']/');
+		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
@@ -1800,7 +1800,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", 'Login');
 			return -1;
-		} elseif (preg_match($badCharUnauthorizedIntoLoginName, $this->login)) {
+		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
 			return -1;
