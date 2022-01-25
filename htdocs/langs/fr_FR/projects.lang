@@ -197,6 +197,7 @@ InputPerMonth=Saisie par mois
 InputDetail=Saisir le détail
 TimeAlreadyRecorded=C'est le temps passé déjà enregistré pour cette tâche/jour et pour l'utilisateur %s
 ProjectsWithThisUserAsContact=Projets avec cet utilisateur comme contact
+ProjectsWithThisContact=Projets avec ce contact
 TasksWithThisUserAsContact=Tâches assignées à cet utilisateur
 ResourceNotAssignedToProject=Non assigné au projet
 ResourceNotAssignedToTheTask=Non assigné à la tache
