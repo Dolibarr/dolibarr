@@ -178,7 +178,7 @@ if (empty($reshook)) {
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_dateep_start = '';
-				$search_dateep_end = '';
+		$search_dateep_end = '';
 		$search_amount = "";
 		$search_account = '';
 		$search_fk_bank = '';
@@ -553,6 +553,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['nbfield']++;
 	}
 
+	// Ref salary
 	print "<td>".$salstatic->getNomUrl(1)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
@@ -587,7 +588,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Type
-	print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
+	print '<td>';
+	print $langs->trans("PaymentTypeShort".$obj->payment_code);
+	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

@@ -42,9 +42,13 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
 	public $atleastonediscount = 0;
 	public $atleastoneratenotnull = 0;
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

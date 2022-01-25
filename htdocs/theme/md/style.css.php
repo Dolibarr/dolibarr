@@ -422,7 +422,7 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	font-family: <?php print $fontlist ?>;
 	border: none;
-	border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px rgba(0,0,0,.2);
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	outline: none;
 	margin: 0px 0px 0px 0px;
 }
@@ -470,10 +470,10 @@ input.short {
 
 textarea {
 	border-radius: 0;
-	border-top:solid 1px rgba(0,0,0,.1);
-	border-left:solid 1px rgba(0,0,0,.1);
-	border-right:solid 1px rgba(0,0,0,.1);
-	border-bottom:solid 1px rgba(0,0,0,.2);
+	border-top:solid 1px var(--inputbordercolor);
+	border-left:solid 1px var(--inputbordercolor);
+	border-right:solid 1px var(--inputbordercolor);
+	border-bottom:solid 1px var(--inputbordercolor);
 
 	background-color: #FFF;
 	padding:4px;
@@ -573,6 +573,10 @@ a.butStatus {
 	margin: 0 0.45em !important;
 }
 
+span.userimg.notfirst {
+	margin-left: -5px;
+}
+
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
 	border: none;
@@ -595,7 +599,7 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
-td.amount, span.amount, div.amount {
+td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
 }
 td.actionbuttons a {
@@ -854,10 +858,10 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1) translate(2px, 0);
+	transform: scaleX(-1) translate(<?php print ($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, 2px);
+	transform: rotate(90deg) translate(0, <?php print ($left == 'left' ? '' : '-'); ?>2px);
 }
 .center {
 	text-align: center;
@@ -1099,13 +1103,19 @@ a.editfielda.nohover *:hover:before {
 .divsocialnetwork:not(:last-child) {
 	padding-<?php print $right; ?>: 20px;
 }
+.divfilteralone {
+	background-color: rgba(0, 0, 0, 0.08);
+	border-radius: 5px;
+	padding-left: 5px;
+}
 div.divsearchfield {
-	float: <?php print $left; ?>;
+	/* float: <?php print $left; ?>; */
+	display: inline-block;
 	margin-<?php print $right; ?>: 12px;
 	margin-<?php print $left; ?>: 2px;
 	margin-top: 4px;
 	margin-bottom: 4px;
-	  padding-left: 2px;
+	padding-left: 2px;
 }
 .divsearchfieldfilter {
 	text-overflow: clip;
@@ -1279,6 +1289,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax50 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 50px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax60 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 60px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax80 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 80px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -1703,6 +1725,13 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.quatrevingtpercent, .inputsearch {
 		width: 95%;
+	}
+
+	div.tabs div.tab a.tab  {
+		max-width: 200px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	select {
@@ -2233,7 +2262,7 @@ div.arearefnobottom {
 div.heightref {
 	min-height: 80px;
 }
-div.divphotoref {
+div.divphotoref:last-child {
 	padding-<?php echo $right; ?>: 20px;
 }
 div.paginationref {
@@ -2985,8 +3014,14 @@ a.vmenu:link, a.vmenu:visited {
 }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+span.vsmenudisabled:not(.spanlilevel0), font.vsmenudisabled:not(.spanlilevel0) {
+	font-size:<?php print $fontsize ?>px;
+}
 span.vsmenudisabled, font.vsmenudisabled {
-	font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa;
+	font-family: <?php print $fontlist ?>;
+	text-align: <?php print $left; ?>;
+	font-weight: normal;
+	color: #aaa;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -3017,11 +3052,11 @@ div.blockvmenulogo
 	border-bottom: 0 !important;
 }
 .menulogocontainer {
-	margin: <?php echo $disableimages ? '0' : '6'; ?>px;
+	margin: <?php echo $disableimages ? '-1' : '6'; ?>px;
 	margin-left: 12px;
 	margin-right: 6px;
 	padding: 0;
-	height: <?php echo $disableimages ? '20' : '32'; ?>px;
+	height: <?php echo $disableimages ? '18' : '32'; ?>px;
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
@@ -3418,6 +3453,7 @@ input.buttonreset {
 	padding: 8px 15px;
 	text-decoration: underline;
 	color: var(--colortextlink);
+	background-color: transparent;
 	cursor: pointer;
 }
 
@@ -3605,8 +3641,10 @@ tr.liste_titre_filter td.liste_titre {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 	padding: 8px 6px 8px 6px;			/* t r b l */
 }
-table.noborder td, div.noborder form, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
+
+table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 6px 4px 6px;			/* t r b l */
+	height: 22px;
 }
 form.tagtable {
 	padding: unset !important;
@@ -4266,11 +4304,7 @@ span.dashboardlineko {
 	border-radius: .25em;
 }
 .boxtable {
-	margin-bottom: 8px !important;
-	border-bottom-width: 1px;
-}
-.boxtable {
-	margin-bottom: 8px !important;
+	margin-bottom: 20px !important;
 	border-bottom-width: 1px;
 }
 .boxtablenotop {
@@ -4442,12 +4476,14 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
+td.widthpictotitle, .table-fiche-title img.widthpictotitle { width: 32px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
-.dolgraphchart canvas { width: calc(100% - 20px) !important; }
+.dolgraphchart canvas {
+	/* width: calc(100% - 20px) !important; */
+}
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }
@@ -4465,10 +4501,10 @@ label.radioprivate {
 	border: 0px;
 }
 .photowithmargin {
-	margin-bottom: 2px;
-	margin-top: 2px;
+/*	margin-bottom: 2px;
+	margin-top: 2px; */
 }
-div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
 }
 .photowithborder {
@@ -4838,6 +4874,11 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.websiteformtoolbar {
+	position: sticky;
+	top: <?php echo $disableimages ? '36px' : '50px'; ?>;
+}
+
 .exampleapachesetup {
 	overflow-y: auto;
 	max-height: 100px;
@@ -4867,7 +4908,10 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #eee;
 	display: inline-block;
-	padding: 4px 0 4px 0;
+	padding: 5px 5px 5px 5px;
+}
+.centpercent.websitebar {
+	width: calc(100% - 10px);
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -4884,7 +4928,7 @@ span[phptag] {
 }
 .websiteselection {
 	/* display: inline-block; */
-	padding-left: 10px;
+	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
 }
 .websitetools {
@@ -5894,6 +5938,7 @@ a span.select2-chosen
 }
 .select2-results__option {
 	word-break: break-word;
+	text-align: <?php echo $left; ?>;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
@@ -5948,7 +5993,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 2px 5px 1px 5px;
+  padding: 3px 5px 2px 5px;
   margin: 0 0 2px 3px;
   position: relative;
   line-height: 13px;
@@ -5998,6 +6043,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
+	margin-bottom: 0 !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
@@ -6088,6 +6134,9 @@ span.noborderoncategories {
 	clear: both;
 	float: left;
 	padding-left: 5px
+}
+label.multi-select-menuitem {
+	line-height: 24px;
 }
 
 
@@ -7097,7 +7146,7 @@ div.clipboardCPValue.hidewithsize {
 
 	.websiteselectionsection {
 		border-left: unset;
-		boerder-right: unset;
+		border-right: unset;
 		padding-left: 5px;
 	}
 

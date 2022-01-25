@@ -55,13 +55,17 @@ class Validate
 	{
 		global $langs;
 
-		if ($outputLang) {
+		if (empty($outputLang)) {
 			$this->outputLang = $langs;
 		} else {
 			$this->outputLang = $outputLang;
 		}
 
-		$outputLang->load('validate');
+		if (!is_object($this->outputLang) || !method_exists($this->outputLang, 'load')) {
+			return false;
+		}
+
+		$this->outputLang->loadLangs(array('validate', 'errors'));
 
 		$this->db = $db;
 	}
@@ -212,13 +216,28 @@ class Validate
 	/**
 	 * Check Duration validity
 	 *
-	 * @param string $duration to validate
+	 * @param mixed $duration to validate
 	 * @return boolean Validity is ok or not
 	 */
 	public function isDuration($duration)
 	{
 		if (!is_int($duration) && $duration >= 0) {
 			$this->error = $this->outputLang->trans('RequireValidDuration');
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check numeric validity
+	 *
+	 * @param mixed $string to validate
+	 * @return boolean Validity is ok or not
+	 */
+	public function isNumeric($string)
+	{
+		if (!is_numeric($string)) {
+			$this->error = $this->outputLang->trans('RequireValidNumeric');
 			return false;
 		}
 		return true;

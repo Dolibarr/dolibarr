@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Eşec la obţinerea feed-ului RSS. Încercaţi să adă
 ErrorForbidden=Acces restricționat. <De> Încercați să accesați o pagină, zonă sau caracteristică a unui modul fără a fi autentificat sau pentru care utilizatorul dvs. nu are permisiunile necesare.
 ErrorForbidden2=Permisiunea pentru acest nume de autentificare poate fi definită de către administratorul sistemului din meniul %s->%s.
 ErrorForbidden3=Se pare că sistemul nu este utilizat printr-o sesiune cu autentificare. Aruncati o privire în documentaţia de instalare pentru a şti cum să gestionaţi autentificările (htaccess, mod_auth sau altele...).
+ErrorForbidden4=Atenţie: șterge cookie-urile browserului pentru a distruge sesiunile existente aferente acestei conectări.
 ErrorNoImagickReadimage=Clasa Imagick nu a fost găsită în PHP. Nu este disponibilă previzualizarea. Administratorii pot dezactiva această filă din meniul Setări - Afişare.
 ErrorRecordAlreadyExists=Înregistrarea există deja
 ErrorLabelAlreadyExists=Această etichetă există deja
@@ -150,7 +151,7 @@ ErrorWarehouseMustDiffers=Depozitul sursă și depozitul țintă trebuie să dif
 ErrorBadFormat=Format greşit!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Eroare, acest membru nu este încă asociat unui terț. Asociază un membru la un terț existent sau crează un terț nou înainte de a crea factura de adeziune  - cotizaţie.
 ErrorThereIsSomeDeliveries=Eroare, există unele expedieri legate de această livrare. Ștergere refuzată.
-ErrorCantDeletePaymentReconciliated=Nu se poate șterge o plată care a generat o intrare bancară care a fost reconciliată
+ErrorCantDeletePaymentReconciliated=Nu se poate șterge o plată care a generat o tranzacţie bancară reconciliată
 ErrorCantDeletePaymentSharedWithPayedInvoice=Nu se poate șterge o plată conţinută de cel puțin o factură cu starea Plătită
 ErrorPriceExpression1=Nu se poate atribui la constanta '%s'
 ErrorPriceExpression2=Nu se poate redefini funcția built-in  '%s'
@@ -271,6 +272,8 @@ CheckVersionFail=Verificarea versiunii a eşuat
 ErrorWrongFileName=Numele fișierului nu poate să conțină _SOMETHING_ în el
 ErrorNotInDictionaryPaymentConditions=Nu se află în dicționarul Condiții de plată, vă rugăm să modificați.
 ErrorIsNotADraft=%s nu este o schiţă
+ErrorExecIdFailed=Nu se poate executa comanda "id"
+ErrorBadCharIntoLoginName=Caracter nepermis în numele de utilizator
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.

@@ -48,7 +48,7 @@ CountriesNotInEEC=Các nước không thuộc EEC
 CountriesInEECExceptMe=Các quốc gia trong EEC ngoại trừ %s
 CountriesExceptMe=Tất cả các quốc gia trừ %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
@@ -286,7 +286,7 @@ ValidateMovements=Xác nhận các kết chuyển
 DescValidateMovements=Bất kỳ sửa đổi hoặc xóa viết, chữ và xóa sẽ bị cấm. Tất cả các mục cho một thi hành phải được xác nhận nếu không việc đóng sẽ không thể thực hiện được
 
 ValidateHistory=Tự động ràng buộc
-AutomaticBindingDone=Tự động ràng buộc thực hiện xong
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Lỗi, bạn không thể xóa tài khoản kế toán này bởi vì nó được sử dụng
 MvtNotCorrectlyBalanced=Kết chuyển không đúng số dư. Nợ = %s | Tín dụng = %s
@@ -387,7 +387,8 @@ SaleExport=Bán hàng xuất khẩu
 SaleEEC=Bán trong EEC
 SaleEECWithVAT=Bán trong EEC với VAT không phải là null, vì vậy chúng tôi cho rằng đây KHÔNG phải là bán hàng nội bộ và tài khoản được đề xuất là tài khoản sản phẩm tiêu chuẩn.
 SaleEECWithoutVATNumber=Bán trong EEC không có VAT nhưng ID VAT của bên thứ ba không được xác định. Chúng tôi dự phòng tài khoản sản phẩm để bán hàng tiêu chuẩn. Bạn có thể sửa ID VAT của bên thứ ba hoặc tài khoản sản phẩm nếu cần.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Phạm vi tài khoản kế toán
 Calculated=Tính toán
@@ -404,6 +405,7 @@ NoJournalDefined=Không có nhật ký được xác định
 Binded=Dòng ràng buộc
 ToBind=Dòng để ràng buộc
 UseMenuToSetBindindManualy=Các dòng chưa bị ràng buộc, sử dụng menu <a href="%s">%s</a> để tạo ràng buộc theo cách thủ công
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Ghi sổ kế toán

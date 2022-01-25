@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Note: existing projects with al
 SelectLinesOfTimeSpentToInvoice=Select lines of time spent that are unbilled, then bulk action "Generate Invoice" to bill them
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
+StartDateCannotBeAfterEndDate=Datum ukončení nemůže být před datem zahájení

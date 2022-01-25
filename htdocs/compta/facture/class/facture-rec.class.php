@@ -470,11 +470,23 @@ class FactureRec extends CommonInvoice
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
-		$sql .= " fk_soc = ".((int) $this->fk_soc);
+		$sql .= " entity = ".((int) $this->entity).",";
+		$sql .= " titre = '".$this->db->escape($this->title)."',";
+		$sql .= " suspended = ".((int) $this->suspended).",";
+		$sql .= " fk_soc = ".((int) $this->socid).",";
+		$sql .= " total_tva = ".((float) $this->total_tva).",";
+		$sql .= " localtax1 = ".((float) $this->localtax1).",";
+		$sql .= " localtax2 = ".((float) $this->localtax2).",";
+		$sql .= " total_ht = ".((float) $this->total_ht).",";
+		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
+		$sql .= " remise_percent = ".((float) $this->remise_percent);
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!$error) {
@@ -498,7 +510,7 @@ class FactureRec extends CommonInvoice
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
-			return -2;
+			return -1;
 		}
 	}
 
@@ -531,9 +543,9 @@ class FactureRec extends CommonInvoice
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 		$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')';
 		if ($rowid) {
-			$sql .= ' AND f.rowid='.((int) $rowid);
+			$sql .= ' AND f.rowid = '.((int) $rowid);
 		} elseif ($ref) {
-			$sql .= " AND f.titre='".$this->db->escape($ref)."'";
+			$sql .= " AND f.titre = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= ' AND f.rowid = 0';
 		}
@@ -2130,6 +2142,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!$error) {

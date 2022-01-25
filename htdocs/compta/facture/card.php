@@ -130,6 +130,7 @@ $usercanread = $user->rights->facture->lire;
 $usercancreate = $user->rights->facture->creer;
 $usercanissuepayment = $user->rights->facture->paiement;
 $usercandelete = $user->rights->facture->supprimer;
+$usercancreatecontract = $user->rights->contrat->creer;
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->send)));
 $usercanreopen = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->reopen)));
@@ -264,6 +265,8 @@ if (empty($reshook)) {
 
 		$result = $object->deleteline(GETPOST('lineid', 'int'));
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -607,7 +610,7 @@ if (empty($reshook)) {
 		// Check parameters
 
 		// Check for mandatory fields in thirdparty (defined into setup)
-		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL');
+		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'ACCOUNTANCY_CODE_CUSTOMER');
 		foreach ($array_to_check as $key) {
 			$keymin = strtolower($key);
 			$i = (int) preg_replace('/[^0-9]/', '', $key);
@@ -633,6 +636,14 @@ if (empty($reshook)) {
 						$langs->load("errors");
 						$error++;
 						setEventMessages($langs->trans("ErrorBadEMail", $object->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+					}
+				}
+				if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') {
+					// Check for mandatory
+					if (!empty($conf->global->SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY) && empty($object->thirdparty->code_compta)) {
+						$langs->load("errors");
+						$error++;
+						setEventMessages($langs->trans("ErrorAccountancyCodeCustomerIsMandatory", $object->thirdparty->name).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
 					}
 				}
 			}
@@ -2889,6 +2900,7 @@ if ($action == 'create') {
 	}
 
 	$currency_code = $conf->currency;
+	$fk_account = 0;
 
 	// Load objectsrc
 	$remise_absolue = 0;
@@ -3414,6 +3426,10 @@ if ($action == 'create') {
 					$optionsav .= '<option value="'.$key.'"';
 					if ($key == GETPOST('fac_avoir')) {
 						$optionsav .= ' selected';
+
+						// pre-filled extra fields with selected credit note
+						$newinvoice_static->fetch_optionals($key);
+						$object->array_options = $newinvoice_static->array_options;
 					}
 					$optionsav .= '>';
 					$optionsav .= $newinvoice_static->ref;
@@ -3619,7 +3635,7 @@ if ($action == 'create') {
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$fk_account = GETPOST('fk_account', 'int');
+		$fk_account = GETPOSTISSET('fk_account') ? GETPOST('fk_account', 'int') : $fk_account;
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
@@ -4104,10 +4120,10 @@ if ($action == 'create') {
 	}
 
 	// Confirmation du classement paye
-	if ($action == 'paid' && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) && $resteapayer == $object->total_ttc))) {
+	if ($action == 'paid' && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) && $resteapayer == $object->total_ttc))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 1);
 	}
-	if ($action == 'paid' && $resteapayer > 0 && (empty($conf->global->INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) || $resteapayer != $object->total_ttc)) {
+	if ($action == 'paid' && $resteapayer > 0 && (empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) || $resteapayer != $object->total_ttc)) {
 		$close = array();
 		// Code
 		$i = 0;
@@ -5375,6 +5391,17 @@ if ($action == 'create') {
 				}
 			}
 
+			// Create contract
+			if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
+				if ($conf->contrat->enabled && $object->statut == Facture::STATUS_VALIDATED) {
+					$langs->load("contracts");
+
+					if ($usercancreatecontract) {
+						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
+					}
+				}
+			}
+
 			// Validate
 			if ($object->statut == Facture::STATUS_DRAFT && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (!empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($usercanvalidate) {
@@ -5436,7 +5463,8 @@ if ($action == 'create') {
 				}
 			}
 
-			$sumofpayment = $object->getSommePaiement();
+			$sumofpayment = $totalpaye;
+			$sumofpaymentall = $totalpaye + $totalcreditnotes + $totaldeposits;
 
 			// Reverse back money or convert to reduction
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
@@ -5460,8 +5488,8 @@ if ($action == 'create') {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > 0 && empty($discount->id)) {
-					if (price2num($object->total_ttc, 'MT') == price2num($sumofpayment, 'MT')) {
+				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > Facture::STATUS_DRAFT && empty($discount->id)) {
+					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT')) {
 						// We can close a down payment only if paid amount is same than amount of down payment (by definition)
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
 					} else {
@@ -5472,12 +5500,12 @@ if ($action == 'create') {
 
 			// Classify paid
 			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment && (
-					($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) && $object->total_ttc == $resteapayer))) ||
+					($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && ($resteapayer <= 0 || (!empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) && $object->total_ttc == $resteapayer))) ||
 					($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0) ||
 					($object->type == Facture::TYPE_DEPOSIT && $object->total_ttc > 0)
 				)
 			) {
-				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') != price2num($sumofpayment, 'MT')) {
+				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') != price2num($sumofpaymentall, 'MT')) {
 					// We can close a down payment only if paid amount is same than amount of down payment (by definition)
 					print '<span class="butActionRefused" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ClassifyPaid').'</span>';
 				} else {
@@ -5486,7 +5514,7 @@ if ($action == 'create') {
 			}
 
 			// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
-			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (empty($conf->global->INVOICE_CAN_ADD_PAYMENT_EVEN_IF_ALREADY_PAID) || $resteapayer != $object->total_ttc) && $usercanissuepayment) {
+			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (empty($conf->global->INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) || $resteapayer != $object->total_ttc) && $usercanissuepayment) {
 				if ($totalpaye > 0 || $totalcreditnotes > 0) {
 					// If one payment or one credit note was linked to this invoice
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';

@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Greška prilikom čitanja RSS-a. Pokušajte da dodate k
 ErrorForbidden=Zabranjen pristup.<br>Pokušali ste da pristupite sadržaju deaktiviranog modula ili Vaš korisnik nema potrebna prava za pristup.
 ErrorForbidden2=Prava za ovog korisnik mogu biti definisana od strane administratora u meniju %s->%s.
 ErrorForbidden3=Izgleda da niste pristupili Dolibarr-u preko autentifikovane sesije. Proverite dokumentaciju podešavanja da biste videli kako se podešavaju autentifikacije (htaccess, mod_auth i dr.).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Klasa Imagick nije nađena u PHP-u. Prikaz nije dostupan. Administratori mogu da deaktiviraju ovaj tab iz Podešavanja - Prikaz.
 ErrorRecordAlreadyExists=Linija već postoji
 ErrorLabelAlreadyExists=This label already exists
@@ -271,6 +272,8 @@ CheckVersionFail=Version check fail
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

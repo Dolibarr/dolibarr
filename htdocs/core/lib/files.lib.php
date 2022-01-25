@@ -2270,13 +2270,13 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
- * TODO Replace code that set $accesallowed by a call to restrictedArea()
+ * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
  * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
  * @param	string	$entity				Restrict onto entity (0=no restriction)
  * @param  	User	$fuser				User object (forced)
- * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
+ * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
  * @param   string  $mode               Check permission for 'read' or 'write'
  * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea()
@@ -2423,6 +2423,30 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'holiday') && !empty($conf->holiday->dir_output)) {
+		if ($fuser->rights->holiday->{$read} || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// If we known $id of holiday, call checkUserAccessToObject to check permission on properties and hierarchy of leave request
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+				$tmpholiday = new Holiday($db);
+				$tmpholiday->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
+			}
+		}
+		$original_file = $conf->holiday->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
+		if ($fuser->rights->expensereport->{$lire} || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// If we known $id of expensereport, call checkUserAccessToObject to check permission on properties and hierarchy of expense report
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+				$tmpexpensereport = new ExpenseReport($db);
+				$tmpexpensereport->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
+			}
+		}
+		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercuexpensereport') && !empty($conf->expensereport->dir_output)) {
 		// Wrapping pour les apercu supplier invoice
 		if ($fuser->rights->expensereport->{$lire}) {
@@ -2686,7 +2710,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
 				$tmptask->fetch('', $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
@@ -2971,9 +2995,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	$ret = array(
-		'accessallowed' => $accessallowed,
-		'sqlprotectagainstexternals'=>$sqlprotectagainstexternals,
-		'original_file'=>$original_file
+		'accessallowed' => ($accessallowed ? 1 : 0),
+		'sqlprotectagainstexternals' => $sqlprotectagainstexternals,
+		'original_file' => $original_file
 	);
 
 	return $ret;

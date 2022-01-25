@@ -47,7 +47,6 @@ if (!$user->rights->projet->lire) {
 
 $hookmanager->initHooks(array('projettasknote'));
 
-//$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
 $object = new Task($db);
 $projectstatic = new Project($db);
@@ -89,6 +88,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
+//$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 $permissionnote = ($user->rights->projet->creer || $user->rights->projet->all->creer);

@@ -115,7 +115,6 @@ if ($id || $track_id || $ref) {
 $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 
 // Security check - Protection if external user
-$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id);
 
@@ -241,6 +240,13 @@ if (empty($reshook)) {
 
 				if ($projectid > 0) {
 					$object->setProject($projectid);
+				}
+
+				// Auto mark as read if created from backend
+				if (!empty($conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND) && $user->rights->ticket->write) {
+					if ( ! $object->markAsRead($user) > 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 
 				// Auto assign user
@@ -742,7 +748,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
-	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : 0);
+	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (empty($conf->global->TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION) ? 0 : 1));
 	$formticket->withusercreate = 0;
 	$formticket->withref = 1;
 	$formticket->fk_user_create = $user->id;
@@ -1220,7 +1226,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<td>';
 			print $langs->trans('TicketCategory');
 			print '</td><td>';
-			$formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2, 0, 0, 0, 'maxwidth500');
+			$formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2, 0, 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			print '</td>';
 			print '</tr>';
 			// Severity

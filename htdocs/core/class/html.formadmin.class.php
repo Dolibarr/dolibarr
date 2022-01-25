@@ -73,15 +73,19 @@ class FormAdmin
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
-		// If the language to select is not inside the list of available language and empty value is not available, we must find
-		// an alternative as the language code to pre-select (to avoid to have first element in list pre-selected).
-		if ($selected && !array_key_exists($selected, $langs_available) && empty($showempty)) {
-			$tmparray = explode('_', $selected);
-			if (!empty($tmparray[1])) {
-				$selected = getLanguageCodeFromCountryCode($tmparray[1]);
-			}
-			if (empty($selected)) {
-				$selected = $langs->defaultlang;
+		// If empty value is not allowed and the language to select is not inside the list of available language and we must find
+		// an alternative of the language code to pre-select (to avoid to have first element in list pre-selected).
+		if ($selected && empty($showempty)) {
+			if (!is_array($selected) && !array_key_exists($selected, $langs_available)) {
+				$tmparray = explode('_', $selected);
+				if (!empty($tmparray[1])) {
+					$selected = getLanguageCodeFromCountryCode($tmparray[1]);
+				}
+				if (empty($selected)) {
+					$selected = $langs->defaultlang;
+				}
+			} else {
+				// If the preselected value is an array, we do not try to find alternative to preselect
 			}
 		}
 

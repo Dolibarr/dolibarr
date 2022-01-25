@@ -30,7 +30,7 @@ ManageLotMask=Пользовательская маска
 CustomMasks=Возможность определить разные маски нумерации для каждого продукта
 BatchLotNumberingModules=Правило нумерации для автоматического создания номера партии
 BatchSerialNumberingModules=Правило нумерации для автоматического создания серийного номера (для продуктов со свойством 1 уникальная партия/серия для каждого продукта)
-QtyToAddAfterBarcodeScan=Кол-во для добавления для каждого отсканированного штрих-кода/партии/серии
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Срок службы (в днях)
 EndOfLife=Конец срока службы
 ManufacturingDate=Дата производства
@@ -42,3 +42,4 @@ HideLots=Скрыть партии
 #Traceability - qc status
 OutOfOrder=Не работает
 InWorkingOrder=В рабочем порядке
+ToReplace=Replace

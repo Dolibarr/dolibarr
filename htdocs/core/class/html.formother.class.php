@@ -844,6 +844,7 @@ class FormOther
 				$out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
 				$out .= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
+					var originalhex = null;
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
 		                window: {
 		                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
@@ -873,18 +874,33 @@ class FormOther
 		                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
 		                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
 		                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
-		                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
+		                      ok: \''.dol_escape_js($langs->trans("Validate")).'\',
 		                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
 		                    }
 		                  }
 				        },
-						function(color, context) { console.log("close"); },
+						function(color, context) { console.log("close color selector"); },
 						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
 				if ($setpropertyonselect) {
-					$out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', \'#\'+hex);';
+					$out .= 'if (originalhex == null) {';
+					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
+					$out .= '   console.log("original color is saved into originalhex = "+originalhex);';
+					$out .= '}';
+					$out .= 'if (hex != null) {';
+					$out .= '	document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', \'#\'+hex);';
+					$out .= '}';
 				}
-						$out .= '},
-						function(color, context) { console.log("cancel"); }
+				$out .= '},
+						function(color, context) {
+							console.log("cancel selection of color");';
+				if ($setpropertyonselect) {
+					$out .= 'if (originalhex != null) {
+								console.log("Restore old color "+originalhex);
+								document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', originalhex);
+							}';
+				}
+				$out .= '
+						}
 					);
 				 });
 	             </script>';
@@ -922,11 +938,11 @@ class FormOther
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Creation d'un icone de couleur
+	 *	Creae an image for color
 	 *
-	 *	@param	string	$color		Couleur de l'image
-	 *	@param	string	$module 	Nom du module
-	 *	@param	string	$name		Nom de l'image
+	 *	@param	string	$color		Color of image
+	 *	@param	string	$module 	Name of module
+	 *	@param	string	$name		Name of image
 	 *	@param	int		$x 			Largeur de l'image en pixels
 	 *	@param	int		$y      	Hauteur de l'image en pixels
 	 *	@return	void

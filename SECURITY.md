@@ -6,13 +6,14 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 | Version    | Supported              |
 | ---------- | ---------------------- |
-| <= 14.0.1  | :x:                    |
-| >= 14.0.2+ | :white_check_mark: except CSRF attacks|
+| <= 14.0.4  | :x:                    |
+| >= 14.0.5+ | :white_check_mark: except CSRF attacks|
 | >= develop | :white_check_mark:     |
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, please use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new) (if you have permissions) or alternatively send an email to security@dolibarr.org (for everybody)
+To report a vulnerability, for a private report, please use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new) (if you have permissions).
+Alternatively send an email to security@dolibarr.org (for everybody)
 
 ## Hunting vulnerabilities on Dolibarr
 
@@ -66,7 +67,7 @@ Scope is the web application (back office) and the APIs.
 * Remote code execution (RCE)
 * Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
 * Code injections (HTML, JS, SQL, PHP, ...)
-* Cross-Site Scripting (XSS), except from setup page of module "External web site" (allowing any content here, editable by admin user only, is accepted on purpose or into module "Web site" when permission to edit website content is allowed).
+* Cross-Site Scripting (XSS), except from setup page of module "External web site" (allowing any content here, editable by admin user only, is accepted on purpose) and except into module "Web site" when permission to edit website content is allowed (injecting any data in this case is allowed too).
 * Cross-Site Requests Forgery (CSRF) with real security impact (when using GET URLs, CSRF are qualified only for creating, updating or deleting data from pages restricted to admin users)
 * Open redirect
 * Broken authentication & session management

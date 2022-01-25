@@ -198,6 +198,9 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	font-size: 25px;
 	line-height: 92px;
 }
+.opened-dash-board-wrap .info-box .info-box-icon {
+	font-size: 2em;
+}
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
 	line-height: 80px;
 }

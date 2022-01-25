@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2022 Ferran Marcet <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +65,8 @@ $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -154,6 +155,9 @@ $permissiontoupdatecost = $user->rights->bom->write; // User who can define cost
 if ($permissiontoupdatecost) {
 	$arrayfields['m.price']['enabled'] = 1;
 }
+
+$arrayofselected = array();
+
 
 /*
  * Actions
@@ -798,9 +802,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	$num = $db->num_rows($resql);
 
+	$totalarray = array();
 	$i = 0;
 	while ($i < ($limit ? min($num, $limit) : $num)) {
 		$objp = $db->fetch_object($resql);
+
+		// Multilangs
+		if (!empty($conf->global->MAIN_MULTILANGS)) { // If multilang is enabled
+			// TODO Use a cache here
+			$sql = "SELECT label";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " LIMIT 1";
+
+			$result = $db->query($sql);
+			if ($result) {
+				$objtp = $db->fetch_object($result);
+				if (!empty($objtp->label)) {
+					$objp->produit = $objtp->label;
+				}
+			}
+		}
 
 		$userstatic->id = $objp->fk_user_author;
 		$userstatic->login = $objp->login;
@@ -835,7 +858,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
 			// This is primary not movement id
-			print '<td>'.$objp->mid.'</td>';
+			print '<td>'.dol_escape_htmltag($objp->mid).'</td>';
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date
@@ -858,7 +881,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($productlot->id > 0) {
 				print $productlot->getNomUrl(1);
 			} else {
-				print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
+				print dol_escape_htmltag($productlot->batch); // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
 			}
 			print '</td>';
 		}
@@ -884,13 +907,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Inventory code
 			print '<td>';
 			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
-			print $objp->inventorycode;
+			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';
 		}
 		if (!empty($arrayfields['m.label']['checked'])) {
 			// Label of movement
-			print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($objp->label).'">'.$objp->label.'</td>';
+			print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 		}
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 			// Type of movement
@@ -911,7 +934,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		if (!empty($arrayfields['origin']['checked'])) {
 			// Origin of movement
-			print '<td class="nowraponall">'.$origin.'</td>';
+			print '<td class="nowraponall">'.dol_escape_htmltag($origin).'</td>';
 		}
 		if (!empty($arrayfields['m.fk_projet']['checked'])) {
 			// fk_project

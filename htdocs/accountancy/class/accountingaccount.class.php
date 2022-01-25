@@ -29,6 +29,7 @@
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
 /**
  * Class to manage accounting accounts
  */
@@ -168,7 +169,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		$this->db = $db;
-		$this->next_prev_filter = "fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid=".((int) $conf->global->CHARTOFACCOUNTS).")"; // Used to add a filter in Form::showrefnav method
+		$this->next_prev_filter = "fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid = ".((int) $conf->global->CHARTOFACCOUNTS).")"; // Used to add a filter in Form::showrefnav method
 	}
 
 	/**
@@ -197,7 +198,7 @@ class AccountingAccount extends CommonObject
 				$sql .= " AND a.entity = ".$conf->entity;
 			}
 			if (!empty($limittocurrentchart)) {
-				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$this->db->escape($conf->global->CHARTOFACCOUNTS).')';
+				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid = '.((int) $conf->global->CHARTOFACCOUNTS).')';
 			}
 			if (!empty($limittoachartaccount)) {
 				$sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
@@ -566,7 +567,7 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Information on record
 	 *
-	 * @param int $id of record
+	 * @param int 	$id 	ID of record
 	 * @return void
 	 */
 	public function info($id)
@@ -850,8 +851,8 @@ class AccountingAccount extends CommonObject
 
 			// Level 3 (define $code_t): Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				if (!empty($buyer->code_compta)) {
-					$code_t = $buyer->code_compta;
+				if (!empty($buyer->code_compta_product)) {
+					$code_t = $buyer->code_compta_product;
 					$suggestedid = $accountingAccount['thirdparty'];
 					$suggestedaccountingaccountfor = 'thridparty';
 				}

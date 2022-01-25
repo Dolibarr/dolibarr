@@ -44,8 +44,8 @@ if (!empty($user->socid)) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -212,7 +212,7 @@ if ($mode && $mode != '-1') {
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product = ".((int) $prodid);
-			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$resultp = $db->query($sql);

@@ -61,8 +61,8 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 
 $newparam = '';
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -107,10 +107,10 @@ $year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
 $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
 $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 $day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
-$pid = GETPOST("search_projectid", "int", 3) ?GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
-$status = GETPOST("search_status", 'aZ09') ?GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
-$type = GETPOST("search_type", 'aZ09') ?GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
-$maxprint = (isset($_GET["maxprint"]) ?GETPOST("maxprint") : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$pid = GETPOST("search_projectid", "int", 3) ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
+$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
+$type = GETPOSTISSET("search_type", 'aZ09') ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
+$maxprint = GETPOSTISSET("maxprint") ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
@@ -459,7 +459,7 @@ if ($mode == 'show_day') {
 
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 //$nav .= ' <input type="submit" class="button button-save" name="submitdateselect" value="'.$langs->trans("Refresh").'">';
-$nav .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+$nav .= '<button type="submit" class="liste_titre button_search valignmiddle" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 
 // Must be after the nav definition
 $paramnodate = $param;
@@ -570,7 +570,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		$s .= 'console.log("found parent div.dayevent with id = "+newval);'."\n";
 		$s .= 'var frm=jQuery("#searchFormList");'."\n";
 		$s .= 'var newurl = ui.item.find("a.cal_event").attr("href");'."\n";
-		$s .= 'console.log(newurl);'."\n";
+		$s .= 'console.log("Found url on href of a.cal_event"+newurl+", we submit form with actionmove=mupdate");'."\n";
 		$s .= 'frm.attr("action", newurl).children("#newdate").val(newval);frm.submit();}'."\n";
 		$s .= '});'."\n";
 	}
@@ -581,7 +581,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
 
 	// Holiday calendar
-	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_holiday" name="check_holiday" class="check_holiday"><label for="check_holiday"> <span class="check_holiday_text">'.$langs->trans("Holidays").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" class="check_holiday"><label for="check_holiday"> <span class="check_holiday_text">'.$langs->trans("Holidays").'</span></label> &nbsp; </div>';
 
 	// External calendars
 	if (is_array($showextcals) && count($showextcals) > 0) {
@@ -612,12 +612,12 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" '.$default.'> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" '.$default.'> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
 		}
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Calendars from hooks
 	$parameters = array(); $object = null;
@@ -629,8 +629,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	}
 
 	$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
-} else // If javascript off
-{
+} else { // If javascript off
 	$newparam = $param; // newparam is for birthday links
 	$newparam = preg_replace('/showbirthday=[0-1]/i', 'showbirthday='.(empty($showbirthday) ? 1 : 0), $newparam);
 	if (!preg_match('/showbirthday=/i', $newparam)) {
@@ -722,7 +721,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
-	$sql .= ' AND a.fk_soc = '.$socid;
+	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) {
@@ -838,7 +837,7 @@ if ($resql) {
 
 		$event->fk_project = $obj->fk_project;
 
-		$event->thirdparty_id = $obj->fk_soc;
+		$event->socid = $obj->fk_soc;
 		$event->contact_id = $obj->fk_contact;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -848,10 +847,6 @@ if ($resql) {
 			$event->date_end_in_calendar = $event->datef;
 		} else {
 			$event->date_end_in_calendar = $event->datep;
-		}
-		// Define ponctual property
-		if ($event->date_start_in_calendar == $event->date_end_in_calendar) {
-			$event->ponctuel = 1;
 		}
 
 		// Check values
@@ -946,7 +941,6 @@ if ($showbirthday) {
 
 			$event->date_start_in_calendar = $db->jdate($event->datep);
 			$event->date_end_in_calendar = $db->jdate($event->datef);
-			$event->ponctuel = 0;
 
 			// Add an entry in eventarray for each day
 			$daycursor = $event->datep;
@@ -1289,12 +1283,6 @@ if (count($listofextcals)) {
 						$event->date_end_in_calendar = $event->datep;
 					}
 
-					// Define ponctual property
-					if ($event->date_start_in_calendar == $event->date_end_in_calendar) {
-						$event->ponctuel = 1;
-						//print 'x'.$datestart.'-'.$dateend;exit;
-					}
-
 					// Add event into $eventarray if date range are ok.
 					if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar >= $lastdaytoshow) {
 						//print 'x'.$datestart.'-'.$dateend;exit;
@@ -1394,7 +1382,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
-	print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
+	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
 	print ' <tr class="liste_titre">';
 	// Column title of weeks numbers
 	echo '  <td class="center">#</td>';
@@ -1483,7 +1471,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	print '<input type="hidden" name="actionmove" value="mupdate">';
-	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
+	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?mode=show_month&'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 	print '<input type="hidden" name="newdate" id="newdate">';
 } elseif ($mode == 'show_week') {
 	// View by week
@@ -1503,7 +1491,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div></div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
-	print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
+	print '<table class="centpercent noborder nocellnopadd cal_pannel cal_month">';
 	print ' <tr class="liste_titre">';
 	$i = 0;
 	while ($i < 7) {
@@ -1545,10 +1533,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	print '</div>';
 
 	echo '<input type="hidden" name="actionmove" value="mupdate">';
-	echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
+	echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?mode=show_week&'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 	echo '<input type="hidden" name="newdate" id="newdate">';
-} else // View by day
-{
+} else { // View by day
 	$newparam = $param; // newparam is for birthday links
 	$newparam = preg_replace('/mode=show_month&?/i', '', $newparam);
 	$newparam = preg_replace('/mode=show_week&?/i', '', $newparam);
@@ -1966,7 +1953,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						if ($event->type_code != 'ICALEVENT') {
 							$savlabel = $event->label ? $event->label : $event->libelle;
 							$event->label = $titletoshow;
-							$event->libelle = $titletoshow;
+							$event->libelle = $titletoshow;		// deprecatd
 							// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
 							$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
 							$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title', '', 0, 0);
@@ -1998,7 +1985,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
 						}
 
-						$thirdparty_id = ($event->thirdparty_id > 0 ? $event->thirdparty_id : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
+						$thirdparty_id = ($event->socid > 0 ? $event->socid : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
 						$contact_id = ($event->contact_id > 0 ? $event->contact_id : ((is_object($event->contact) && $event->contact->id > 0) ? $event->contact->id : 0));
 
 						// If action related to company / contact

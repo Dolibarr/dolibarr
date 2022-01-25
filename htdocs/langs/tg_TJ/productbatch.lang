@@ -30,7 +30,7 @@ ManageLotMask=Ниқоби фармоишӣ
 CustomMasks=Опсия барои муайян кардани ниқоби рақамгузории гуногун барои ҳар як маҳсулот
 BatchLotNumberingModules=Қоидаи рақамгузорӣ барои тавлиди худкори рақами лот
 BatchSerialNumberingModules=Қоидаи рақамгузорӣ барои тавлиди худкори рақами силсилавӣ (барои маҳсулоти дорои моликият 1 лот/силсилаи беназир барои ҳар як маҳсулот)
-QtyToAddAfterBarcodeScan=Миқдори илова кардан барои ҳар як штрих -код/лот/силсилавии скан
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Давомнокии умр (бо рӯзҳо)
 EndOfLife=Поёни умр
 ManufacturingDate=Санаи истеҳсол
@@ -42,3 +42,4 @@ HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Аз кор баромадан
 InWorkingOrder=Дар ҳолати корӣ
+ToReplace=Replace
