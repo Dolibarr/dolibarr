@@ -202,13 +202,6 @@ if ($resql) {
 		// Product
 		print '<td style="padding-left: 5%" id="sub_bom_product_'.$sub_bom_line->id.'">'.$sub_bom_product->getNomUrl(1).'</td>';
 
-		// Sub-BOM
-		if ($sub_bom_line->fk_bom_child > 0) {
-			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">'.$sub_bom->getNomUrl(1).'</td>';
-		} else {
-			print '<td id="sub_bom_bom_'.$sub_bom_line->id.'">&nbsp;</td>';
-		}
-
 		// Qty
 		print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 		if ($sub_bom_line->qty_frozen > 0) {
