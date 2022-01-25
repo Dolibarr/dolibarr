@@ -2363,6 +2363,57 @@ class Form
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Return list of BOM for customer in Ajax if Ajax activated or go to select_produits_list
+	 *
+	 * @param int $selected Preselected BOM id
+	 * @param string $htmlname Name of HTML select field (must be unique in page).
+	 * @param int $limit Limit on number of returned lines
+	 * @param int $status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
+	 * @param int $type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
+	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string $morecss Add more css on select
+	 * @return        void|string
+	 */
+	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '')
+	{
+		// phpcs:enable
+		global $conf, $user, $langs, $db;
+		$error = 0;
+		$out = '';
+
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+
+		$sql = 'SELECT b.rowid, b.ref, b.label';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'bom_bom as b';
+		$sql .= ' WHERE b.entity IN ('.getEntity('bom').')';
+		if(!empty($status)) $sql.= ' AND status = '.$status;
+		if(!empty($type)) $sql.= ' AND status = '. $type;
+		if(!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
+		$resql = $db->query($sql);
+		if($resql){
+			if ($showempty)	{
+				$out .= '<option value="-1"';
+				if(empty($selected)) $out .= ' selected';
+				$out .= '>&nbsp;</option>';
+			}
+			while ($obj = $db->fetch_object($resql)){
+				if($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $obj->label.'</option>';
+				$out .= '<option value="'.$obj->rowid.'">'.$obj->ref.' - '. $obj->label.'</option>';
+			}
+		} else {
+			$error++;
+			dol_print_error($db);
+		}
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of products for a customer.
 	 *  Called by select_produits.
