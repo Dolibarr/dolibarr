@@ -263,7 +263,7 @@ class PriceParser
 			return -1;
 		} elseif ($res == 0) {
 			$supplier_min_price = 0;
-        	$supplier_min_price_with_discount = 0;
+			$supplier_min_price_with_discount = 0;
 		} else {
 			 $supplier_min_price = $productFournisseur->fourn_unitprice;
 			 $supplier_min_price_with_discount = $productFournisseur->fourn_unitprice_with_discount;
