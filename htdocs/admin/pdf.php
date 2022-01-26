@@ -170,6 +170,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('PDF_INVERT_ALIAS_NAME_THIRDPARTY')) {
+		dolibarr_set_const($db, "PDF_INVERT_ALIAS_NAME_THIRDPARTY", GETPOST('PDF_INVERT_ALIAS_NAME_THIRDPARTY', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+
 	if (GETPOSTISSET('PDF_USE_A')) {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -541,6 +545,17 @@ if ($conf->use_javascript_ajax) {
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, $conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME);
+}
+
+// Invert alias and name thirdparty
+
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_INVERT_ALIAS_NAME_THIRDPARTY").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_INVERT_ALIAS_NAME_THIRDPARTY');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("PDF_INVERT_ALIAS_NAME_THIRDPARTY", $arrval, $conf->global->PDF_INVERT_ALIAS_NAME_THIRDPARTY);
+}
 
 // Show online payment link on invoices
 
