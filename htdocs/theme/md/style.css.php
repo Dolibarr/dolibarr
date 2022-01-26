@@ -445,7 +445,7 @@ input, select {
 	margin-top:1px;
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
-	background: var(--butactionbg);;
+	background: var(--butactionbg);
 	color: #FFF !important;
 	border-radius: 3px;
 	border-collapse: collapse;
