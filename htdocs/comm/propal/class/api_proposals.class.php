@@ -398,13 +398,11 @@ class Proposals extends DolibarrApi
 		$errors = [];
 		$this->db->begin();
 
-		foreach ($request_data as $TData)
-		{
-			if(empty($TData[0])) $TData = array($TData);
+		foreach ($request_data as $TData) {
+			if (empty($TData[0])) $TData = array($TData);
 
 			foreach ($TData as $lineData) {
-
-				$line = (object)$lineData;
+				$line = (object) $lineData;
 
 				$updateRes = $this->propal->addline(
 					$line->desc,
