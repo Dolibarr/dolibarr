@@ -232,27 +232,22 @@ if ($resql) {
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
 
 		// Cost price if it's defined
-        if (!empty($obj->fk_bom_child)) {
-            $bom = new BOM($object->db);
-            $bom->fetch($obj->fk_bom_child);
-            $bom->calculateCosts();
-            $bom->total_cost * $line->qty;
-            print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($bom->total_cost * $line->qty).'</td>';
-            $total_cost+= $bom->total_cost * $line->qty;
-        } elseif ($sub_bom_product->cost_price > 0) {
+        if ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
 			$total_cost+= $sub_bom_product->cost_price * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $line->qty).'</td>';
 			$total_cost.= $sub_bom_product->pmp * $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
-			$sql_supplier_price = 'SELECT MIN(price) AS min_price FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
+			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
 			$sql_supplier_price.= ' WHERE fk_product = '. (int) $sub_bom_product->id;
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
-				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($obj->min_price * $line->qty).'</td>';
-				$total_cost+= $obj->min_price * $line->qty;
+                $line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty;
+
+				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($line_cost).'</td>';
+				$total_cost+= $line_cost;
 			}
 		}
 
