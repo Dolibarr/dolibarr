@@ -70,14 +70,14 @@ function addDispatchLine(index, type, mode)
 	mode = mode || 'qtymissing'
 
 	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
-    if(mode == 'qtymissingconsume') {
-        var inputId = 'qtytoconsume';
-        var warehouseId = 'idwarehouse';
-    }
-    else {
-        var inputId = 'qtytoproduce';
-        var warehouseId = 'idwarehousetoproduce';
-    }
+	if(mode == 'qtymissingconsume') {
+		var inputId = 'qtytoconsume';
+		var warehouseId = 'idwarehouse';
+	}
+	else {
+		var inputId = 'qtytoproduce';
+		var warehouseId = 'idwarehousetoproduce';
+	}
 	var nbrTrs = $("tr[name^='"+type+"_"+index+"']").length; 				// position of line for batch
 	var $row = $("tr[name='"+type+'_'+index+"_1']").clone(true); 				// clone last batch line to jQuery object
 	var	qtyOrdered = parseFloat($("#qty_ordered_"+index).val()); 	// Qty ordered is same for all rows
