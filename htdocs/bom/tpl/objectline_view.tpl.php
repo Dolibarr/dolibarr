@@ -85,7 +85,7 @@ $res = $tmpbom->fetch($line->fk_bom_child);
 if ($tmpbom->id > 0) {
 	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
 	print $tmpproduct->getNomUrl(1);
-    print ' '.$langs->trans('OR').' ';
+    print ' '.$langs->trans('or').' ';
     print $tmpbom->getNomUrl(1);
 } else {
 	print $tmpproduct->getNomUrl(1);
@@ -205,7 +205,7 @@ if ($resql) {
 		print '<td style="padding-left: 5%" id="sub_bom_product_'.$sub_bom_line->id.'">';
         if(!empty($obj->fk_bom_child)){
 			print $sub_bom_product->getNomUrl(1);
-			print ' '.$langs->trans('OR').' ';
+			print ' '.$langs->trans('or').' ';
 			print $sub_bom->getNomUrl(1);
         } else {
 			print $sub_bom_product->getNomUrl(1);
