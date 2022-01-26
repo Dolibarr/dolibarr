@@ -343,6 +343,7 @@ print '*/'."\n";
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+	--butactionbg : #<?php print $butactionbg; ?>;
 }
 
 body {
@@ -444,7 +445,7 @@ input, select {
 	margin-top:1px;
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
-	background: rgb(<?php echo $butactionbg ?>);
+	background: var(--butactionbg);;
 	color: #FFF !important;
 	border-radius: 3px;
 	border-collapse: collapse;
@@ -569,7 +570,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid rgb(<?php echo $butactionbg ?>);
+	border: 2px solid var( --butactionbg);
 	margin: 0 0.45em !important;
 }
 
