@@ -55,10 +55,22 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  * View
  */
 
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
+	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public');
+	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	// HTTP/1.0
+	header('Pragma: token=public');
+} else {
+	// HTTP/1.0
+	header('Cache-Control: no-cache');
+}
+
 $title = $langs->trans("Bookmarks");
 
 // URL http://mydolibarr/core/bookmarks_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Bookmarks access -->'."\n";
+$head = '<!-- Bookmarks -->'."\n";	// This is used by DoliDroid to know page is a bookmark selection page
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
@@ -77,7 +89,7 @@ $bookmarkList = '';
 $searchForm = '';
 
 
-if (empty($conf->bookmarks->enabled)) {
+if (empty($conf->bookmark->enabled)) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Bookmarks")).'</span>';
 	$bookmarkList .= '<br><br>';
@@ -91,7 +103,7 @@ if (empty($conf->bookmarks->enabled)) {
 		$bookmarkList = '<div id="dropdown-bookmarks-list" class="start">';
 		$i = 0;
 		while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
-			$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
+			$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank" rel="noopener noreferrer"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 			$bookmarkList .= dol_escape_htmltag($obj->title);
 			$bookmarkList .= '</a>';
 			$i++;
@@ -99,12 +111,20 @@ if (empty($conf->bookmarks->enabled)) {
 		if ($i == 0) {
 			$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("NoBookmarks").'</span>';
 			$bookmarkList .= '<br><br>';
-
-			$newcardbutton = '';
-			$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
-
-			$bookmarkList .= '<center>'.$newcardbutton.'</center>';
 		}
+
+		$newcardbutton = '';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
+
+		// Url to list bookmark
+		$bookmarkList .= '<br>';
+		$bookmarkList .= '<a class="top-menu-dropdown-link" title="'.$langs->trans('Bookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
+		$bookmarkList .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
+		$bookmarkList .= '<br>';
+		$bookmarkList .= '<br>';
+
+		$bookmarkList .= '<center>'.$newcardbutton.'</center>';
+
 		$bookmarkList .= '</div>';
 
 

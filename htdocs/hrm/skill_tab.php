@@ -93,14 +93,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/hrm/skill_list.php', 1);
+	$backurlforlist = DOL_URL_ROOT.'/hrm/skill_list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/hrm/skill_list.php', 1) . '?id=' . ($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/hrm/skill_list.php?id=' . ($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
@@ -130,7 +130,7 @@ if (empty($reshook)) {
 				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . ((int) $id) . " AND objecttype='" . $db->escape($objecttype) . "' AND fk_skill = " . ((int) $skillId)));
 				if (is_array($TSkills) && !empty($TSkills)) {
 					foreach ($TSkills as $tmpObj) {
-						$tmpObj->rank = $rank;
+						$tmpObj->rankorder = $rank;
 						$tmpObj->update($user);
 					}
 				}
@@ -305,7 +305,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td>';
 			print $sk->description;
 			print '</td><td class="linecolrank">';
-			print displayRankInfos($skillElement->rank, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
+			print displayRankInfos($skillElement->rankorder, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
 			print '</td>';
 			if ($objecttype != 'user' && $permissiontoadd) {
 				print '<td class="linecoledit"></td>';

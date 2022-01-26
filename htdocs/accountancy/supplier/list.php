@@ -529,11 +529,12 @@ if ($result) {
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
-		// product_type: 0 = service ? 1 = product
+		// product_type: 0 = service, 1 = product
 		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
 		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
-		$objp->code_buy_l = '';
-		$objp->code_buy_p = '';
+		$code_buy_l = '';
+		$code_buy_p = '';
+		$code_buy_t = '';
 
 		$thirdpartystatic->id = $objp->socid;
 		$thirdpartystatic->name = $objp->name;
@@ -546,7 +547,7 @@ if ($result) {
 		$thirdpartystatic->email = $objp->email;
 		$thirdpartystatic->country_code = $objp->country_code;
 		$thirdpartystatic->tva_intra = $objp->tva_intra;
-		$thirdpartystatic->code_compta_company = $objp->company_code_buy;
+		$thirdpartystatic->code_compta_product = $objp->company_code_buy;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -575,10 +576,6 @@ if ($result) {
 		$facturefourn_static_det->product_type = $objp->type_l;
 		$facturefourn_static_det->desc = $objp->description;
 
-		$code_buy_p_notset = '';
-		$code_buy_t_notset = '';
-		$objp->aarowid_suggest = ''; // Will be set later
-
 		$accountingAccountArray = array(
 			'dom'=>$objp->aarowid,
 			'intra'=>$objp->aarowid_intra,
@@ -588,6 +585,8 @@ if ($result) {
 		$code_buy_p_notset = '';
 		$code_buy_t_notset = '';
 
+		$suggestedid = 0;
+
 		$return=$accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facturefourn_static, $facturefourn_static_det, $accountingAccountArray, 'supplier');
 		if (!is_array($return) && $return<0) {
 			setEventMessage($accountingAccount->error, 'errors');
@@ -595,9 +594,9 @@ if ($result) {
 			$suggestedid=$return['suggestedid'];
 			$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
 			$suggestedaccountingaccountbydefaultfor=$return['suggestedaccountingaccountbydefaultfor'];
-			$code_buy_l=$return['code_buy_l'];
-			$code_buy_p=$return['code_buy_p'];
-			$code_buy_t=$return['code_buy_t'];
+			$code_buy_l=$return['code_l'];
+			$code_buy_p=$return['code_p'];
+			$code_buy_t=$return['code_t'];
 		}
 		//var_dump($return);
 
@@ -616,6 +615,7 @@ if ($result) {
 		// $code_buy_l is now default code of product/service
 		// $code_buy_p is now code of product/service
 		// $code_buy_t is now code of thirdparty
+		//var_dump($code_buy_l.' - '.$code_buy_p.' - '.$code_buy_t.' -> '.$suggestedid.' ('.$suggestedaccountingaccountbydefaultfor.' '.$suggestedaccountingaccountfor.')');
 
 		print '<tr class="oddeven">';
 
@@ -654,11 +654,11 @@ if ($result) {
 		print '</td>';
 
 		// Vat rate
-		$code_vat_differ='';
-		if ($objp->vat_tx_l != $objp->vat_tx_p && ! empty($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
-			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		$code_vat_differ = '';
+		if ($objp->vat_tx_l != $objp->vat_tx_p && price2num($objp->vat_tx_p) && price2num($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
+			$code_vat_differ = 'warning bold';
 		}
-		print '<td style="'.$code_vat_differ.'" class="right">';
+		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
 		print vatrate($facturefourn_static_det->tva_tx.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
@@ -691,6 +691,11 @@ if ($result) {
 			$shelp = ''; $ttype = 'help';
 			if ($suggestedaccountingaccountfor == 'eec') {
 				$shelp = $langs->trans("SaleEEC");
+			} elseif ($suggestedaccountingaccountfor == 'eecwithvat') {
+				$shelp = $langs->trans("SaleEECWithVAT");
+			} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
+				$shelp = $langs->trans("SaleEECWithoutVATNumber");
+				$ttype = 'warning';
 			} elseif ($suggestedaccountingaccountfor == 'export') {
 				$shelp = $langs->trans("SaleExport");
 			}
@@ -719,12 +724,11 @@ if ($result) {
 
 		// Column with checkbox
 		print '<td class="center">';
-		if (!empty($suggestedid)) {
+		$ischecked = 0;
+		if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
 			$ischecked = 1;
-		} else {
-			$ischecked = 0;
 		}
-		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? "checked" : "").'/>';
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
 		print '</td>';
 
 		print '</tr>';
@@ -743,7 +747,7 @@ if ($db->type == 'mysqli') {
 }
 
 // Add code to auto check the box when we select an account
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".codeventil").change(function() {
 		var s=$(this).attr("id").replace("codeventil", "")

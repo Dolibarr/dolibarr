@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe-moduloppsett
-StripeDesc=Tilby kundene en Stripe online betalingsside for betalinger med kredittkort/debetkort via <a href="http://www.stripe.com" target="_blank"> Stripe </a>. Dette kan brukes til å la kundene dine foreta ad hoc-betalinger eller for betalinger knyttet til et bestemt Dolibarr-objekt (faktura, bestilling, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Betal med kredittkort eller Stripe
 FollowingUrlAreAvailableToMakePayments=Følgende nettadresser er tilgjengelige for kundene til å foreta betalinger for Dolibarr objekter
 PaymentForm=Betalingskjema
@@ -28,7 +28,6 @@ AccountParameter=Kontoparametre
 UsageParameter=Parametre for bruk
 InformationToFindParameters=Hjelp til å finne din %s kontoinformasjon
 STRIPE_CGI_URL_V2=Url av Stripe CGI-modul for betaling
-VendorName=Navn på leverandøren
 CSSUrlForPaymentForm=URL til CSS-stilark for betalingsskjema
 NewStripePaymentReceived=Ny Stripe betaling mottatt
 NewStripePaymentFailed=Ny Stripe betaling prøvd men mislyktes
@@ -69,4 +68,4 @@ ToOfferALinkForTestWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN
 ToOfferALinkForLiveWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (live-modus)
 PaymentWillBeRecordedForNextPeriod=Betalingen blir registrert for neste periode.
 ClickHereToTryAgain=<a href="%s">Klikk her for å prøve igjen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=På grunn av sterke regler for godkjenning av kunder, må opprettelse av et kort gjøres fra Stripe backoffice. Du kan klikke her for å slå på Stripe kundeoppføring: %s

@@ -47,8 +47,14 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 restrictedArea($user, 'salaries');
 
+
+/*
+ * View
+ */
+
 $fk_user = GETPOST('fk_user', 'int');
 $return_arr = array();
+
 if (!empty(GETPOST('fk_user', 'int'))) {
 	$sql = "SELECT s.amount, s.rowid FROM ".MAIN_DB_PREFIX."salary as s";
 	$sql .= " WHERE s.fk_user = ".((int) $fk_user);
@@ -60,7 +66,7 @@ if (!empty(GETPOST('fk_user', 'int'))) {
 		$obj = $db->fetch_object($resql);
 		$label = "Salary amount";
 		$row_array['label'] = $label;
-		$row_array['value'] = $obj->amount;
+		$row_array['value'] = price2num($obj->amount, 'MT');
 		$row_array['key'] = "Amount";
 
 		array_push($return_arr, $row_array);

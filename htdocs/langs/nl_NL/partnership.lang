@@ -19,7 +19,7 @@
 ModulePartnershipName=Partnerschap beheer
 PartnershipDescription=Module Partnerschap beheer
 PartnershipDescriptionLong= Module Partnerschap beheer
-
+Partnership=Partnership
 AddPartnership=Partnerschap toevoegen
 CancelPartnershipForExpiredMembers=Partnerschap: annuleer partnerschap van leden met verlopen abonnementen
 PartnershipCheckBacklink=Partnerschap: controleer verwijzende backlink
@@ -58,6 +58,7 @@ ManagePartnership=Partnerschap beheren
 BacklinkNotFoundOnPartnerWebsite=Backlink niet gevonden op partnerwebsite
 ConfirmClosePartnershipAsk=Weet u zeker dat u deze partnerschap wilt opzeggen?
 PartnershipType=Partnerschapstype
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

@@ -174,6 +174,13 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('PDF_BOLD_PRODUCT_LABEL')) {
+		dolibarr_set_const($db, "PDF_BOLD_PRODUCT_LABEL", GETPOST('PDF_BOLD_PRODUCT_LABEL', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('PDF_BOLD_PRODUCT_REF_AND_PERIOD')) {
+		dolibarr_set_const($db, "PDF_BOLD_PRODUCT_REF_AND_PERIOD", GETPOST('PDF_BOLD_PRODUCT_REF_AND_PERIOD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	}
+
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -198,6 +205,12 @@ $arraydetailsforpdffoot = array(
 	1 => $langs->transnoentitiesnoconv('DisplayCompanyInfo'),
 	2 => $langs->transnoentitiesnoconv('DisplayCompanyManagers'),
 	3 => $langs->transnoentitiesnoconv('DisplayCompanyInfoAndManagers')
+);
+
+$arraylistofpdfformat = array(
+	0 => $langs->transnoentitiesnoconv('PDF 1.7'),
+	1 => $langs->transnoentitiesnoconv('PDF/A-1b'),
+	3 => $langs->transnoentitiesnoconv('PDF/A-3b'),
 );
 
 $s = $langs->trans("LibraryToBuildPDF")."<br>";
@@ -497,6 +510,22 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_BOLD_PRODUCT_LABEL');
+} else {
+	print $form->selectyesno('PDF_BOLD_PRODUCT_LABEL', (!empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) ? $conf->global->PDF_BOLD_PRODUCT_LABEL : 0, 1);
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_BOLD_PRODUCT_REF_AND_PERIOD');
+} else {
+	print $form->selectyesno('PDF_BOLD_PRODUCT_REF_AND_PERIOD', (!empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) ? $conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD : 0, 1);
+}
+print '</td></tr>';
+
 // Desc
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
@@ -555,11 +584,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_USE_A');
-} else {
-	print $form->selectyesno('PDF_USE_A', (empty($conf->global->PDF_USE_A) ? 0 : $conf->global->PDF_USE_A), 1);
-}
+print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, (empty($conf->global->PDF_USE_A) ? 0 : $conf->global->PDF_USE_A));
 print '</td></tr>';
 
 print '</table>';

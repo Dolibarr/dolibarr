@@ -110,10 +110,13 @@ class Conf
 		// Common objects that are not modules
 		$this->mycompany = new stdClass();
 		$this->admin = new stdClass();
-		$this->browser = new stdClass();
 		$this->medias = new stdClass();
 		$this->global = new stdClass();
 
+		// Common objects that are not modules and set by the main and not into the this->setValues()
+		$this->browser = new stdClass();
+
+		// Common arrays
 		$this->cache = array();
 		$this->modules = array();
 		$this->modules_parts = array(
@@ -152,7 +155,6 @@ class Conf
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->user	= new stdClass();
-		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
 		$this->bank = new stdClass();
 		$this->notification		= new stdClass();
@@ -161,6 +163,24 @@ class Conf
 		$this->productbatch		= new stdClass();
 	}
 
+	/**
+	 * Load setup values into conf object (read llx_const) for a specified entity
+	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
+	 *
+	 * @param	DoliDB	$db			Database handler
+	 * @param	int		$entity		Entity to get
+	 * @return	int					< 0 if KO, >= 0 if OK
+	 */
+	public function setEntityValues($db, $entity)
+	{
+		if ($this->entity != $entity) {
+			// If we ask to reload setup for a new entity
+			$this->entity = $entity;
+			return $this->setValues($db);
+		}
+
+		return 0;
+	}
 
 	/**
 	 *  Load setup values into conf object (read llx_const)
@@ -173,11 +193,72 @@ class Conf
 	{
 		dol_syslog(get_class($this)."::setValues");
 
+		// Unset all old modules values
+		if (!empty($this->modules)) {
+			foreach ($this->modules as $m) {
+				if (isset($this->$m)) unset($this->$m);
+			}
+		}
+
+		// Common objects that are not modules
+		$this->mycompany = new stdClass();
+		$this->admin = new stdClass();
+		$this->medias = new stdClass();
+		$this->global = new stdClass();
+
+		// Common objects that are not modules and set by the main and not into the this->setValues()
+		//$this->browser = new stdClass();	// This is set by main and not into this setValues(), so we keep it intact.
+
+		// First level object
+		// TODO Remove this part.
+		$this->syslog = new stdClass();
+		$this->expedition_bon = new stdClass();
+		$this->delivery_note = new stdClass();
+		$this->fournisseur = new stdClass();
+		$this->product			= new stdClass();
+		$this->service			= new stdClass();
+		$this->contrat			= new stdClass();
+		$this->actions			= new stdClass();
+		$this->agenda			= new stdClass();
+		$this->commande = new stdClass();
+		$this->propal = new stdClass();
+		$this->facture			= new stdClass();
+		$this->contrat			= new stdClass();
+		$this->user	= new stdClass();
+		$this->adherent			= new stdClass();
+		$this->bank = new stdClass();
+		$this->notification		= new stdClass();
+		$this->mailing = new stdClass();
+		$this->expensereport	= new stdClass();
+		$this->productbatch		= new stdClass();
+
+		// Common arrays
+		$this->cache = array();
+		$this->modules = array();;
+		$this->modules_parts = array(
+			'css' => array(),
+			'js' => array(),
+			'tabs' => array(),
+			'triggers' => array(),
+			'login' => array(),
+			'substitutions' => array(),
+			'menus' => array(),
+			'theme' => array(),
+			'sms' => array(),
+			'tpl' => array(),
+			'barcode' => array(),
+			'models' => array(),
+			'societe' => array(),
+			'hooks' => array(),
+			'dir' => array(),
+			'syslog' => array(),
+		);
+
 		if (!is_null($db) && is_object($db)) {
 			// Define all global constants into $this->global->key=value
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
-			$sql .= " FROM ".MAIN_DB_PREFIX."const";
+			$sql .= " FROM ".$db->prefix()."const";
 			$sql .= " WHERE entity IN (0,".$this->entity.")";
 			$sql .= " ORDER BY entity"; // This is to have entity 0 first, then entity 1 that overwrite.
 
@@ -400,10 +481,6 @@ class Conf
 			// For backward compatibility
 			$this->user->dir_output = $rootforuser."/users";
 			$this->user->dir_temp = $rootfortemp."/users/temp";
-
-			// For usergroup storage
-			$this->usergroup->dir_output = $rootforuser."/usergroups";
-			$this->usergroup->dir_temp = $rootfortemp."/usergroups/temp";
 
 			// For proposal storage
 			$this->propal->multidir_output = array($this->entity => $rootfordata."/propale");
@@ -692,6 +769,11 @@ class Conf
 				$this->global->MAIN_SHOW_STATE_CODE = 1;
 			}
 
+			// By default, we show state code in combo list
+			if (!isset($this->global->MULTICURRENCY_USE_ORIGIN_TX)) {
+				$this->global->MULTICURRENCY_USE_ORIGIN_TX = 1;
+			}
+
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -775,8 +857,8 @@ class Conf
 				$this->contrat->services->expires->warning_delay = (isset($this->global->MAIN_DELAY_RUNNING_SERVICES) ? $this->global->MAIN_DELAY_RUNNING_SERVICES : 0) * 86400;
 			}
 			if (isset($this->commande)) {
-				$this->bank->rappro					= new stdClass();
-				$this->bank->cheque					= new stdClass();
+				$this->bank->rappro	= new stdClass();
+				$this->bank->cheque	= new stdClass();
 				$this->bank->rappro->warning_delay = (isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE) ? $this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE : 0) * 86400;
 				$this->bank->cheque->warning_delay = (isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT) ? $this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT : 0) * 86400;
 			}
@@ -805,10 +887,6 @@ class Conf
 
 			if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) {
 				$this->global->MAIN_SIZE_SHORTLIST_LIMIT = 3;
-			}
-
-			if (!isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) {
-				$this->global->THEME_HIDE_BORDER_ON_INPUT = 0;
 			}
 
 			// Save inconsistent option
@@ -843,6 +921,23 @@ class Conf
 				if (defined('MAIN_ANTIVIRUS_PARAM')) {
 					$this->global->MAIN_ANTIVIRUS_PARAM = constant('MAIN_ANTIVIRUS_PARAM');
 				}
+			}
+
+			// For backward compatibility
+			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {
+				if ($this->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
+					$this->global->LDAP_SYNCHRO_ACTIVE = 1;
+				} elseif ($this->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {
+					$this->global->LDAP_SYNCHRO_ACTIVE = 2;
+				}
+			}
+			// For backward compatibility
+			if (!empty($this->global->LDAP_MEMBER_ACTIVE) && $this->global->LDAP_MEMBER_ACTIVE == 'ldap2dolibarr') {
+				$this->global->LDAP_MEMBER_ACTIVE = 2;
+			}
+			// For backward compatibility
+			if (!empty($this->global->LDAP_MEMBER_TYPE_ACTIVE) && $this->global->LDAP_MEMBER_TYPE_ACTIVE == 'ldap2dolibarr') {
+				$this->global->LDAP_MEMBER_TYPE_ACTIVE = 2;
 			}
 
 			if (!empty($this->global->MAIN_TZUSERINPUTKEY)) {

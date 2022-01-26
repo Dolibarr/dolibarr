@@ -93,7 +93,7 @@ print '</td>';
 <?php
 global $permissiontoadd;
 
-		print displayRankInfos($line->rank, $line->fk_skill, 'TNote', ($this->status == 0 && $permissiontoadd) ? 'edit' : 'view');
+		print displayRankInfos($line->rankorder, $line->fk_skill, 'TNote', ($this->status == 0 && $permissiontoadd) ? 'edit' : 'view');
 
 ?>
 

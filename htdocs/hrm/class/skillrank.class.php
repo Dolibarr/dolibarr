@@ -107,7 +107,7 @@ class SkillRank extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'fk_skill' => array('type'=>'integer:Skill:hrm/class/skill.class.php:1', 'label'=>'Skill', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
-		'rank' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>1, 'default' => 0),
+		'rankorder' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>1, 'default' => 0),
 		'fk_object' => array('type'=>'integer', 'label'=>'object', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
@@ -371,7 +371,7 @@ class SkillRank extends CommonObject
 		global $user;
 
 		$this->fk_skill 		= $currentSkill->fk_skill;
-		$this->rank 			= $currentSkill->rank;
+		$this->rankorder 			= $currentSkill->rankorder;
 		$this->fk_object		= $fk_user;
 		$this->date_creation 	= dol_now();
 		$this->fk_user_creat 	= $user->id;

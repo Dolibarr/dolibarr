@@ -1,17 +1,17 @@
 Module68000Name = Внутренний отчет
-Module68000Desc = Управление отчетами Intracomm (поддержка французского формата DEB / DES)
-IntracommReportSetup = Настройка модуля Intracommreport
-IntracommReportAbout = О intracommreport
+Module68000Desc = Управление отчетами внутри компании (поддержка французского формата DEB/DES)
+IntracommReportSetup = Настройка модуля внутрикомпонентного отчета
+IntracommReportAbout = О внутреннем отчете
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_NUM_AGREMENT=Номер разрешения (выдан CISD приложения)
 INTRACOMMREPORT_TYPE_ACTEUR=Тип актера
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les Introduction
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Категория услуг типа "Frais de port"
+INTRACOMMREPORT_ROLE_ACTEUR=Роль, сыгранная актером
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Уровень обязательств по ознакомлению
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Уровень обязательств по отгрузке
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Категория услуги типа «Почтовая оплата»
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Номер декларанта
 
 # Menu
 MenuIntracommReport=Внутренний отчет

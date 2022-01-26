@@ -552,7 +552,7 @@ if ($id > 0 || $ref) {
 
 	if (!empty($conf->use_javascript_ajax)) {
 		?>
-		<script type="text/javascript" language="javascript">
+		<script type="text/javascript">
 			$(document).ready(function() {
 				$(".collapse_batch").click(function() {
 					console.log("We click on collapse_batch");
@@ -763,7 +763,7 @@ if ($id > 0 || $ref) {
 				if ($result < 0) {
 					dol_print_error($db, $object->error);
 				}
-				$helpondiff .= ' ('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')';
+				$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')</span>';
 			}
 
 			// Number of product from customer order already sent (partial shipping)
@@ -797,7 +797,7 @@ if ($id > 0 || $ref) {
 				if ($result < 0) {
 					dol_print_error($db, $object->error);
 				}
-				$helpondiff .= ' ('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')';
+				$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')</span>';
 			}
 
 			// Number of product from supplier order already received (partial receipt)
@@ -983,6 +983,7 @@ if (!$variants) {
 	$entrepotstatic = new Entrepot($db);
 	$product_lot_static = new Productlot($db);
 
+	$num = 0;
 	$total = 0;
 	$totalvalue = $totalvaluesell = 0;
 
@@ -1025,18 +1026,45 @@ if (!$variants) {
 			print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
 
 			// Sell price
+			$minsellprice = null; $maxsellprice = null;
 			print '<td class="right">';
-			print price(price2num($object->price, 'MU'), 1);
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				foreach ($object->multiprices as $priceforlevel) {
+					if (is_numeric($priceforlevel)) {
+						if (is_null($maxsellprice) || $priceforlevel > $maxsellprice) {
+							$maxsellprice = $priceforlevel;
+						}
+						if (is_null($minsellprice) || $priceforlevel < $minsellprice) {
+							$minsellprice = $priceforlevel;
+						}
+					}
+				}
+				print '<span class="valignmiddle">';
+				if ($minsellprice != $maxsellprice) {
+					print price(price2num($minsellprice, 'MU'), 1).' - '.price(price2num($maxsellprice, 'MU'), 1);
+				} else {
+					print price(price2num($minsellprice, 'MU'), 1);
+				}
+				print '</span>';
 				print $form->textwithpicto('', $langs->trans("Variable"));
+			} else {
+				print price(price2num($object->price, 'MU'), 1);
 			}
 			print '</td>';
 
 			// Value sell
 			print '<td class="right amount nowraponall">';
-			print price(price2num($object->price * $obj->reel, 'MT'), 1);
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print '<span class="valignmiddle">';
+				if ($minsellprice != $maxsellprice) {
+					print price(price2num($minsellprice * $obj->reel, 'MT'), 1).' - '.price(price2num($maxsellprice * $obj->reel, 'MT'), 1);
+				} else {
+					print price(price2num($minsellprice * $obj->reel, 'MT'), 1);
+				}
+				print '</span>';
 				print $form->textwithpicto('', $langs->trans("Variable"));
+			} else {
+				print price(price2num($object->price * $obj->reel, 'MT'), 1);
 			}
 			print '</td>';
 			print '<td></td>';
@@ -1148,17 +1176,28 @@ if (!$variants) {
 	print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
 	print '</td>';
 	print '<td class="liste_total right">';
-	print ($total ? price($totalvaluesell / $total, 1) : '&nbsp;');
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-		print $form->textwithpicto('', $langs->trans("Variable"));
+	if ($num) {
+		if ($total) {
+			print '<span class="valignmiddle">';
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print $form->textwithpicto('', $langs->trans("Variable"));
+			} else {
+				print price($totalvaluesell / $total, 1);
+			}
+			print '</span>';
+		}
 	}
 	print '</td>';
 	// Value to sell
-	print '<td class="liste_total right">';
-	if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-		print price(price2num($totalvaluesell, 'MT'), 1);
-	} else {
-		print $langs->trans("Variable");
+	print '<td class="liste_total right amount">';
+	if ($num) {
+		print '<span class="valignmiddle">';
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			print price(price2num($totalvaluesell, 'MT'), 1);
+		} else {
+			print $form->textwithpicto('', $langs->trans("Variable"));
+		}
+		print '</span>';
 	}
 	print '</td>';
 	print '<td></td>';
@@ -1180,13 +1219,13 @@ if (!$variants) {
 		}
 		print '<table class="noborder centpercent">';
 		if (!empty($user->rights->produit->creer)) {
-			print '<tr class="liste_titre"><td width="40%">'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
+			print '<tr class="liste_titre"><td>'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
 			print '<td class="right"><input name="seuil_stock_alerte" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
 			print '<td class="right"><input name="desiredstock" type="text" placeholder="'.$langs->trans("DesiredStock").'" /></td>';
 			print '<td class="right"><input type="submit" value="'.$langs->trans("Save").'" class="button button-save" /></td>';
 			print '</tr>';
 		} else {
-			print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td>';
+			print '<tr class="liste_titre"><td>'.$langs->trans("Warehouse").'</td>';
 			print '<td class="right">'.$langs->trans("StockLimit").'</td>';
 			print '<td class="right">'.$langs->trans("DesiredStock").'</td>';
 			print '</tr>';
@@ -1200,7 +1239,7 @@ if (!$variants) {
 			foreach ($lines as $line) {
 				$ent = new Entrepot($db);
 				$ent->fetch($line['fk_entrepot']);
-				print '<tr class="oddeven"><td width="40%">'.$ent->getNomUrl(3).'</td>';
+				print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
 				print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
 				print '<td class="right">'.$line['desiredstock'].'</td>';
 				if (!empty($user->rights->produit->creer)) {

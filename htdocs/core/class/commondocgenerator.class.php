@@ -492,7 +492,7 @@ abstract class CommonDocGenerator
 			$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $already_payed_all, 'MT')
 		);
 
-		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
+		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
 			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
 		} else {
@@ -516,8 +516,9 @@ abstract class CommonDocGenerator
 		// Add vat by rates
 		if (is_array($object->lines) && count($object->lines) > 0) {
 			$totalUp = 0;
+			// Set substitution keys for different VAT rates
 			foreach ($object->lines as $line) {
-				// $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward compatibility
+				// $line->tva_tx format depends on database field accuracy, no reliable. This is kept for backward compatibility
 				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) {
 					$resarray[$array_key.'_total_vat_'.$line->tva_tx] = 0;
 				}
@@ -538,7 +539,7 @@ abstract class CommonDocGenerator
 			// Note that this added fields does not match a field into database in Dolibarr (Dolibarr manage discount on lines not as a global property of object)
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
-			if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
+			if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 				$totalDiscount = $object->getTotalDiscount();
 			} else {
 				$totalDiscount = 0;

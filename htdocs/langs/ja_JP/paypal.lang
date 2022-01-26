@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
-PaypalSetup=ペイパルモジュールのセットアップ
-PaypalDesc=このモジュールでは、<a href="http://www.paypal.com" target="_blank"> PayPal</a>を介した顧客による支払いが可能です。これは、アドホック支払いまたはDolibarrオブジェクト(請求書、注文など)に関連する支払いに使用できる。
+PaypalSetup=ペイパルモジュールの設定
+PaypalDesc=このモジュールでは、<a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal</a>を介した顧客による支払いが可能。これは、アドホック支払いまたはDolibarrオブジェクト（請求書、注文など）に関連する支払いに使用できる。
 PaypalOrCBDoPayment=PayPalで支払う(カードまたはPayPal)
 PaypalDoPayment=PayPalで支払う
 PAYPAL_API_SANDBOX=モード試験/サンドボックス
@@ -12,7 +12,7 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=「統合」支払い(クレジットカード
 PaypalModeIntegral=統合
 PaypalModeOnlyPaypal=PayPalのみ
 ONLINE_PAYMENT_CSS_URL=オンライン支払いページのCSSスタイルシートのオプションのURL
-ThisIsTransactionId=<b>%s：</b>これは、トランザクションのIDです。
+ThisIsTransactionId=<b>%s：</b>これは、トランザクションのID。
 PAYPAL_ADD_PAYMENT_URL=メールでドキュメントを送信するときは、PayPalの支払いURLを含めること
 NewOnlinePaymentReceived=受け取った新規オンライン支払い
 NewOnlinePaymentFailed=新規オンライン支払いが試行されたが失敗した
@@ -27,10 +27,10 @@ ShortErrorMessage=短いエラーメッセージ
 ErrorCode=エラーコード
 ErrorSeverityCode=エラー重大度コード
 OnlinePaymentSystem=オンライン決済システム
-PaypalLiveEnabled=PayPalの「ライブ」モードが有効になっています(それ以外の場合はテスト/サンドボックスモード)
+PaypalLiveEnabled=PayPalの「ライブ」モードが有効になっている(それ以外の場合はテスト/サンドボックスモード)
 PaypalImportPayment=PayPal支払いをインポートする
 PostActionAfterPayment=支払い後にアクションを投稿する
-ARollbackWasPerformedOnPostActions=すべてのPostアクションでロールバックが実行された。必要に応じて、投稿アクションを手動で完了する必要があります。
+ARollbackWasPerformedOnPostActions=すべてのPostアクションでロールバックが実行された。必要に応じて、投稿アクションを手動で完了する必要がある。
 ValidationOfPaymentFailed=支払いの検証に失敗した
 CardOwner=カードホルダー
 PayPalBalance=ペイパルクレジット

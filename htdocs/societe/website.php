@@ -43,8 +43,6 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'web
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$search_status = GETPOST('search_status');
-
 // Security check
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 if ($user->socid) {
@@ -53,8 +51,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -159,7 +157,7 @@ if (empty($reshook)) {
 	$objectlabel = 'WebsiteAccount';
 	$permissiontoread = $user->rights->societe->lire;
 	$permissiontodelete = $user->rights->societe->supprimer;
-	$uploaddir = $conf->societe->dir_output;
+	$uploaddir = $conf->societe->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

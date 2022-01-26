@@ -86,3 +86,4 @@ SearchIntoContacts=Kontakt
 SearchIntoInterventions=Eingriffe
 AssignedTo=zugewisen an
 DateOfBirth=Geburtstdatum
+ClientTZ=Client-Zeitzone (Benutzer)

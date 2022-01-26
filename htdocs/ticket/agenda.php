@@ -80,7 +80,6 @@ if (!$action) {
 
 // Security check
 $id = GETPOST("id", 'int');
-$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $id, '');
 
@@ -249,7 +248,7 @@ if (!empty($object->id)) {
 
 	// Show link to add event (if read and not closed)
 	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-	$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
 	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);

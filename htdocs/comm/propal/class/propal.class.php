@@ -1,20 +1,22 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
- * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2020 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2017 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
- * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
- * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2021 Frédéric France          <frederic.france@netlogic.fr>
- * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley           <marc@ocebo.com>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2017  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2014  Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,9 +206,16 @@ class Propal extends CommonObject
 
 	public $cond_reglement_code;
 	public $mode_reglement_code;
-	public $remise = 0;
-	public $remise_percent = 0;
-	public $remise_absolue = 0;
+	public $remise_percent;
+
+	/**
+	 * @deprecated
+	 */
+	public $remise;
+	/**
+	 * @deprecated
+	 */
+	public $remise_absolue;
 
 	/**
 	 * @var int ID
@@ -299,7 +308,7 @@ class Propal extends CommonObject
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'price' =>array('type'=>'double', 'label'=>'Price', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		//'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
@@ -1099,9 +1108,9 @@ class Propal extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= $this->socid;
 		$sql .= ", 0";
-		$sql .= ", ".((float) $this->remise);
+		$sql .= ", ".((float) $this->remise);												// deprecated
 		$sql .= ", ".($this->remise_percent ? ((float) $this->remise_percent) : 'NULL');
-		$sql .= ", ".($this->remise_absolue ? ((float) $this->remise_absolue) : 'NULL');
+		$sql .= ", ".($this->remise_absolue ? ((float) $this->remise_absolue) : 'NULL');	// deprecated
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($this->date)."'";
@@ -1707,12 +1716,13 @@ class Propal extends CommonObject
 	/**
 	 * Load array lines
 	 *
-	 *	@param		int		$only_product	Return only physical products
-	 *	@param		int		$loadalsotranslation	Return translation for products
+	 *	@param		int			$only_product			Return only physical products
+	 *	@param		int			$loadalsotranslation	Return translation for products
+	 *	@param		string		$filters				Filter on other fields
 	 *
-	 * @return		int						<0 if KO, >0 if OK
+	 *	@return		int									<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $filters = '')
 	{
 		global $langs, $conf;
 		// phpcs:enable
@@ -1730,6 +1740,9 @@ class Propal extends CommonObject
 		$sql .= ' WHERE d.fk_propal = '.((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
+		}
+		if ($filters) {
+			$sql .= $filters;
 		}
 		$sql .= ' ORDER by d.rang';
 
@@ -2420,7 +2433,6 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->remise_absolue = $remise;
 				$this->update_price(1);
 			}
 
@@ -3683,12 +3695,13 @@ class Propal extends CommonObject
 
 	/**
 	 * 	Retrieve an array of proposal lines
+	 *	@param  string              $filters        Filter on other fields
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
-	public function getLinesArray()
+	public function getLinesArray($filters = '')
 	{
-		return $this->fetch_lines();
+		return $this->fetch_lines(0, 0, $filters);
 	}
 
 	/**

@@ -22,7 +22,7 @@ create table llx_payment_vat
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_tva          integer,
   datec           datetime,           -- date de creation
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           datetime,           -- payment date
   amount          double(24,8) DEFAULT 0,
   fk_typepaiement integer NOT NULL,
