@@ -156,7 +156,7 @@ class StockMovements extends DolibarrApi
 	 * $price Can be set to update AWP (Average Weighted Price) when you make a stock increase
 	 * $dlc Eat-by date. Will be used if lot does not exists yet and will be created.
 	 * $dluo Sell-by date. Will be used if lot does not exists yet and will be created.
-         * 
+		 *
 	 * @param int $product_id Id product id {@min 1} {@from body} {@required true}
 	 * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
 	 * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
@@ -174,7 +174,7 @@ class StockMovements extends DolibarrApi
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
 	 */
-	public function post($product_id, $warehouse_id, $qty, $type='', $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
+	public function post($product_id, $warehouse_id, $qty, $type = '', $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
@@ -186,13 +186,13 @@ class StockMovements extends DolibarrApi
 
 		// Type increase or decrease
 		if ($type == '') {
-                  $type = 2;
-                  if ($qty >= 0) {
-                          $type = 3;
-                  }
-                } else {
-                  $type = $type - 1;
-                }
+				  $type = 2;
+			if ($qty >= 0) {
+					$type = 3;
+			}
+		} else {
+			$type = $type - 1;
+		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
