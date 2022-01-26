@@ -69,12 +69,3 @@ body:
     attributes:
       label: Attached files
       description: Screenshots, screencasts, dolibarr.log, debugging informations
-      
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CODE_OF_CONDUCT.md)
-      options:
-        - label: I agree to follow this project's Code of Conduct
-          required: true
