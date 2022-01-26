@@ -80,7 +80,6 @@ $permissiontoadd = $user->rights->ticket->write;
 
 // Security check
 $id = GETPOST("id", 'int');
-$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id, '');
 
@@ -161,7 +160,7 @@ if ($object->fk_user_create > 0) {
 	$langs->load("users");
 	$fuser = new User($db);
 	$fuser->fetch($object->fk_user_create);
-	$morehtmlref .= $fuser->getNomUrl(0);
+	$morehtmlref .= $fuser->getNomUrl(-1);
 }
 if (!empty($object->origin_email)) {
 	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
@@ -204,6 +203,7 @@ if (!empty($conf->projet->enabled)) {
 		}
 	} else {
 		if (!empty($object->fk_project)) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
 			$morehtmlref .= $proj->getNomUrl(1);

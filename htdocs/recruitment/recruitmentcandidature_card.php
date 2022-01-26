@@ -260,6 +260,8 @@ if (empty($reshook)) {
 			$nuser->employee = 1;
 			$nuser->firstname = $object->firstname;
 			$nuser->lastname = $object->lastname;
+			$nuser->email = '';
+			$nuser->personal_email = $object->email;
 			$nuser->personal_mobile = $object->phone;
 			$nuser->birth = $object->date_birth;
 			$nuser->salary = $object->remuneration_proposed;
@@ -660,14 +662,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.dol_buildpath('/recruitment/recruitmentcandidature_agenda.php', 1).'?id='.$object->id.'">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/recruitment/recruitmentcandidature_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element.'@recruitment', (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, $object->element.'@recruitment', (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div></div>';
 	}

@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -54,7 +54,7 @@ $search_description = GETPOST('search_description', 'alphanohtml');
 
 $limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
-$sortorder   = GETPOST('sortorder', 'alpha');
+$sortorder   = GETPOST('sortorder', 'aZ09comma');
 
 if (!$sortfield) {
 	$sortfield = "cp.rowid";
@@ -147,8 +147,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
 $sql .= " WHERE cp.rowid > 0";
 $sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
-$sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
-
+$sql .= " AND (";
+$sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
+$sql .= " OR";	// For leave over several months
+$sql .= " (date_format(cp.date_debut, '%Y-%m') < '".$db->escape($year_month)."' AND date_format(cp.date_fin, '%Y-%m') > '".$db->escape($year_month)."') ";
+$sql .= " )";
 if (!empty($search_ref)) {
 	$sql .= natural_search('cp.ref', $search_ref);
 }

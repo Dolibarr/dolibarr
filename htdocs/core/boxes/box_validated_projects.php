@@ -26,6 +26,7 @@
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
+
 /**
  * Class to manage the box to show last projet
  */
@@ -63,7 +64,7 @@ class box_validated_projects extends ModeleBoxes
 		$langs->loadLangs(array('boxes', 'projects'));
 
 		$this->db = $db;
-		$this->boxlabel = "ProjectsWithTask";
+		$this->boxlabel = "ProjectTasksWithoutTimeSpent";
 
 		$this->hidden = !($user->rights->projet->lire);
 
@@ -116,7 +117,7 @@ class box_validated_projects extends ModeleBoxes
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid AND fk_c_type_contact IN (-1, -2, -3)";
 			$sql .= " WHERE p.fk_statut = 1"; // Only open projects
 			if ($projectsListId) {
-				$sql .= ' AND p.rowid IN ('.$this->db->sanitize($projectsListId).')'; // Only project are allowed
+				$sql .= ' AND p.rowid IN ('.$this->db->sanitize($projectsListId).')'; // Only projects that are allowed
 			}
 			$sql .= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user = ".((int) $user->id).")";
 			$sql .= " GROUP BY p.rowid, p.ref, p.fk_soc, p.dateo";

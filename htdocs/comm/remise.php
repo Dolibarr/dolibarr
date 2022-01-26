@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,18 +38,30 @@ if ($user->socid > 0) {
 }
 
 $backtopage = GETPOST('backtopage', 'alpha');
+$cancel = GETPOST('cancel', 'aplha');
+$action = GETPOST('action', 'aZ09');
+
+// Security check
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
-	 header("Location: ".$backtopage);
-	 exit;
+if ($cancel) {
+	if (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	} else {
+		$action = '';
+	}
 }
 
-if (GETPOST('action', 'aZ09') == 'setremise') {
+if ($action == 'setremise') {
 	$object = new Societe($db);
 	$object->fetch($id);
 
@@ -74,11 +86,6 @@ if (GETPOST('action', 'aZ09') == 'setremise') {
 	}
 }
 
-// Security check
-if ($user->socid > 0) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
 /*

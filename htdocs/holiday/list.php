@@ -488,9 +488,15 @@ if ($resql) {
 
 		print '<div class="tabsAction">';
 
-		$canedit = (($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))));
+		$cancreate = 0;
+		if (!empty($user->rights->holiday->writeall)) {
+			$cancreate = 1;
+		}
+		if (!empty($user->rights->holiday->write) && in_array($user_id, $childids)) {
+			$cancreate = 1;
+		}
 
-		if ($canedit) {
+		if ($cancreate) {
 			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
 		}
 
@@ -736,6 +742,7 @@ if ($resql) {
 		$i = 0;
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
+		$totalduration = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -805,6 +812,7 @@ if ($resql) {
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
 				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
+				$totalduration += $nbopenedday;
 				print $nbopenedday.' '.$langs->trans('DurationDays');
 				print '</td>';
 				if (!$i) {
@@ -886,6 +894,21 @@ if ($resql) {
 			print '</tr>'."\n";
 
 			$i++;
+		}
+
+		// Add a line for total if there is a total to show
+		if (!empty($arrayfields['duration']['checked'])) {
+			print '<tr class="total">';
+			foreach ($arrayfields as $key => $val) {
+				if (!empty($val['checked'])) {
+					if ($key == 'duration') {
+						print '<td class="right">'.$totalduration.' '.$langs->trans('DurationDays').'</td>';
+					} else {
+						print '<td></td>';
+					}
+				}
+			}
+			print '</tr>';
 		}
 	}
 

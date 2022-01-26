@@ -24,6 +24,7 @@
  * \ingroup		Accountancy (Double entries)
  * \brief 		List operation of book keeping
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -333,10 +334,6 @@ if (empty($reshook)) {
 		$filter['t.numero_compte<='] = $search_accountancy_code_end;
 		$param .= '&search_accountancy_code_end='.urlencode($search_accountancy_code_end);
 	}
-	if (!empty($search_accountancy_aux_code)) {
-		$filter['t.subledger_account'] = $search_accountancy_aux_code;
-		$param .= '&search_accountancy_aux_code='.urlencode($search_accountancy_aux_code);
-	}
 	if (!empty($search_accountancy_aux_code_start)) {
 		$filter['t.subledger_account>='] = $search_accountancy_aux_code_start;
 		$param .= '&search_accountancy_aux_code_start='.urlencode($search_accountancy_aux_code_start);
@@ -533,11 +530,11 @@ if (count($filter) > 0) {
 			$sqlwhere[] = $key."='".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
 			$sqlwhere[] = $key."'".$db->idate($value)."'";
-		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=') {
+		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 			$sqlwhere[] = $key."'".$db->escape($value)."'";
 		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 			$sqlwhere[] = $key.'='.((int) $value);
-		} elseif ($key == 't.numero_compte') {
+		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 			$sqlwhere[] = $key." LIKE '".$db->escape($value)."%'";
 		} elseif ($key == 't.subledger_account') {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
@@ -769,7 +766,7 @@ if (count($filter)) {
 }
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {

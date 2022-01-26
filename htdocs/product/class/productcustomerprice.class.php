@@ -392,9 +392,9 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.import_key,";
 		$sql .= " soc.nom as socname,";
 		$sql .= " prod.ref as prodref";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price as t ";
-		$sql .= " ,".MAIN_DB_PREFIX."product as prod ";
-		$sql .= " ,".MAIN_DB_PREFIX."societe as soc ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price as t,";
+		$sql .= " ".MAIN_DB_PREFIX."product as prod,";
+		$sql .= " ".MAIN_DB_PREFIX."societe as soc";
 		$sql .= " WHERE soc.rowid=t.fk_soc ";
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (".getEntity('product').")";

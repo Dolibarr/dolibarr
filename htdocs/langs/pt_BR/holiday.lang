@@ -14,7 +14,6 @@ UserForApprovalID=Usuário para ID de aprovação
 UserForApprovalLogin=Login do usuário de aprovação
 SendRequestCP=Criar solicitação de licença
 DelayToRequestCP=Solicitações devem ser feitas pelo menos<b> %s dias (s)</b> antes.
-SoldeCPUser=Licenças saldo é <b> %s </ b> dias.
 ErrorEndDateCP=Você deve selecionar uma data final posterior à data inicial.
 ErrorSQLCreateCP=Ocorreu um erro de SQL durante a criação:
 ErrorIDFicheCP=Ocorreu um erro, a solicitação de licença não existe.

@@ -60,8 +60,8 @@ $title = $langs->trans('Establishments');
 llxHeader('', $title, '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortorder     = GETPOST("sortorder", 'alpha');
-$sortfield     = GETPOST("sortfield", 'alpha');
+$sortorder     = GETPOST('sortorder', 'aZ09comma');
+$sortfield     = GETPOST('sortfield', 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -99,7 +99,6 @@ if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	// Load attribute_label
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Công cụ này phải chỉ được sử dụng bởi người dùng hoặc nhà phát triển có kinh nghiệm. Nó cung cấp các tiện ích để xây dựng hoặc chỉnh sửa mô-đun của riêng bạn. Tài liệu cho <a href="%s" target="_blank">phát triển thủ công ở đây </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Nhập tên của mô-đun / ứng dụng để tạo không có khoảng trắng. Sử dụng chữ hoa để phân tách các từ (Ví dụ: MyModule, ECommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Nhập tên của đối tượng để tạo không có khoảng trắng. Sử dụng chữ hoa để phân tách các từ (Ví dụ: MyObject, Student, Teacher ...). Tệp lớp CRUD, nhưng cũng là tệp API, các trang để liệt kê/thêm/chỉnh sửa/xóa đối tượng và các tệp SQL sẽ được tạo.
 ModuleBuilderDesc2=Đường dẫn nơi các mô-đun được tạo/chỉnh sửa (thư mục đầu tiên cho các mô-đun bên ngoài được xác định vào %s): <strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Các menu được cung cấp bởi mô-đun / ứng dụng 
 DictionariesDefDescTooltip=Các từ điển được cung cấp bởi mô-đun / ứng dụng của bạn được định nghĩa trong mảng <strong>$this->dictionaries</strong> vào tệp mô tả mô-đun. Bạn có thể chỉnh sửa thủ công tệp này hoặc sử dụng trình chỉnh sửa được nhúng. <br><br> Lưu ý: Sau khi được định nghĩa (và kích hoạt lại mô-đun), từ điển cũng được hiển thị trong khu vực thiết lập cho người dùng quản trị viên trên %s.
 PermissionsDefDescTooltip=Các quyền được cung cấp bởi mô-đun / ứng dụng của bạn được định nghĩa trong mảng <strong>$this->rights</strong> vào tệp mô tả mô-đun. Bạn có thể chỉnh sửa thủ công tệp này hoặc sử dụng trình chỉnh sửa được nhúng. <br><br> Lưu ý: Sau khi được định nghĩa (và kích hoạt lại mô-đun), các quyền được hiển thị trong thiết lập quyền mặc định %s.
 HooksDefDesc=Định nghĩa trong thuộc tính <b>module_parts ['hook']</b> , trong mô tả mô-đun, ngữ cảnh của các hook bạn muốn quản lý (có thể tìm thấy danh sách các ngữ cảnh bằng cách tìm kiếm trên ' <b>initHooks (</b> ' trong mã lõi). <br> Chỉnh sửa tệp hook để thêm mã của các hàm hooked của bạn (có thể tìm thấy các hàm hookable bằng cách tìm kiếm trên ' <b>execHooks</b> ' trong mã lõi).
-TriggerDefDesc=Định nghĩa trong tệp trigger mã bạn muốn thực thi cho mỗi sự kiện kinh doanh được thực thi.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Xem ID được sử dụng trong cài đặt của bạn
 SeeReservedIDsRangeHere=Xem phạm vi ID dành riêng
 ToolkitForDevelopers=Bộ công cụ dành cho nhà phát triển Dolibarr
@@ -144,3 +144,4 @@ AsciiToPdfConverter=Chuyển ASCII sang PDF
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
 ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

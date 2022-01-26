@@ -19,7 +19,7 @@
 ModulePartnershipName=Gestão de parceria
 PartnershipDescription=Módulo de gestão de parceria
 PartnershipDescriptionLong= Módulo de gestão de parceria
-
+Partnership=Partnership
 AddPartnership=Add partnership
 CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
 PartnershipCheckBacklink=Partnership: Check referring backlink
@@ -58,6 +58,7 @@ ManagePartnership=Manage partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
 ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 PartnershipType=Partnership type
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

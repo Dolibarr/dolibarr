@@ -43,11 +43,12 @@ $langcode = GETPOST('langcode', 'alphanohtml');
 $transkey = GETPOST('transkey', 'alphanohtml');
 $transvalue = GETPOST('transvalue', 'restricthtml');
 
+
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'searchkey';
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -268,7 +269,7 @@ if ($mode == 'overwrite') {
 	print '<div class="justify"><span class="opacitymedium">';
 	print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
-	print ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
+	print ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
 	print $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("Key"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	print '</span></div>';
@@ -477,9 +478,9 @@ if ($mode == 'searchkey') {
 	print $formadmin->select_language($langcode, 'langcode', 0, null, 0, 0, 0, 'maxwidth250', 1);
 	print '</td>'."\n";
 	print '<td>';
-	print '<input type="text" class="flat maxwidthonsmartphone" name="transkey" value="'.$transkey.'">';
+	print '<input type="text" class="flat maxwidthonsmartphone" name="transkey" value="'.dol_escape_htmltag($transkey).'">';
 	print '</td><td>';
-	print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.$transvalue.'">';
+	print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($transvalue).'">';
 	// Limit to superadmin
 	/*if (! empty($conf->multicompany->enabled) && !$user->entity)
 	{

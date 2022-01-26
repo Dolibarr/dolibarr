@@ -3,8 +3,8 @@
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2019	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2022	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2021	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
@@ -77,8 +77,8 @@ $listoffset = GETPOST('listoffset');
 $listlimit = GETPOST('listlimit') > 0 ?GETPOST('listlimit') : 1000; // To avoid too long dictionaries
 $active = 1;
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -1834,6 +1834,7 @@ if ($id) {
 							$class = '';
 							$showfield = 1;
 							$valuetoshow = empty($obj->{$value}) ? '' : $obj->{$value};
+							$titletoshow = '';
 
 							if ($value == 'entity') {
 								$withentity = $valuetoshow;
@@ -1965,6 +1966,12 @@ if ($id) {
 							} elseif (in_array($value, array('recuperableonly'))) {
 								$class = "center";
 							} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
+								if (!empty($conf->accounting->enabled)) {
+									require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+									$tmpaccountingaccount = new AccountingAccount($db);
+									$tmpaccountingaccount->fetch(0, $valuetoshow, 1);
+									$titletoshow = $langs->transnoentitiesnoconv("Pcgtype").': '.$tmpaccountingaccount->pcg_type;
+								}
 								$valuetoshow = length_accountg($valuetoshow);
 							} elseif ($value == 'fk_tva') {
 								foreach ($form->cache_vatrates as $key => $Tab) {
@@ -2012,7 +2019,7 @@ if ($id) {
 							}
 							// Show value for field
 							if ($showfield) {
-								print '<!-- '. $value .' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+								print '<!-- '. $value .' --><td class="'.$class.'"'.($titletoshow ? ' title="'.dol_escape_htmltag($titletoshow).'"' : '').'>'.$valuetoshow.'</td>';
 							}
 						}
 					}
@@ -2401,6 +2408,31 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 					$fieldValue = '0';
 				}
 			}
+
+			// Labels Length
+			$maxlength = '';
+			if (in_array($fieldlist[$field], array('libelle', 'label'))) {
+				switch ($tabname) {
+					case MAIN_DB_PREFIX . 'c_accounting_category':
+					case MAIN_DB_PREFIX . 'c_ecotaxe':
+					case MAIN_DB_PREFIX . 'c_email_senderprofile':
+					case MAIN_DB_PREFIX . 'c_forme_juridique':
+					case MAIN_DB_PREFIX . 'c_holiday_types':
+					case MAIN_DB_PREFIX . 'c_payment_term':
+					case MAIN_DB_PREFIX . 'c_transport_mode':
+						$maxlength = ' maxlength="255"';
+						break;
+					case MAIN_DB_PREFIX . 'c_email_templates':
+						$maxlength = ' maxlength="180"';
+						break;
+					case MAIN_DB_PREFIX . 'c_socialnetworks':
+						$maxlength = ' maxlength="150"';
+						break;
+					default:
+						$maxlength = ' maxlength="128"';
+				}
+			}
+
 			print '<td class="'.$classtd.'">';
 			$transfound = 0;
 			$transkey = '';
@@ -2419,7 +2451,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				}
 			}
 			if (!$transfound) {
-				print '<input type="text" class="flat'.($class ? ' '.$class : '').'" value="'.dol_escape_htmltag($fieldValue).'" name="'.$fieldlist[$field].'">';
+				print '<input type="text" class="flat'.($class ? ' '.$class : '').'"'.($maxlength ? ' '.$maxlength : '').' value="'.dol_escape_htmltag($fieldValue).'" name="'.$fieldlist[$field].'">';
 			} else {
 				print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$transkey.'">';
 			}

@@ -27,7 +27,7 @@ Module4100Desc = Module de gestion de la protection des données (RGPD)
 #
 datapolicySetup = Configuration du module Protection des données
 Settings_DATAPOLICY = Paramétrage du module Protection des données
-datapolicySetupPage = Selon la loi de votre pays (Exemple <a href="http://www.privacy-regulation.eu/fr/5.htm" target="_blank">l’article 5</a> du RGPD), les données à caractère personnel doivent être conservées pendant une durée n’excédant pas celle nécessaire au regard des finalités pour lesquelles elles ont été traitées, à l’exception de fins archivistiques. La suppression se fera automatiquement après une certaine durée sans évènement (la durée que vous aurez indiquée ci-dessous).
+datapolicySetupPage = Selon la loi de votre pays (Exemple <a href="http://www.privacy-regulation.eu/fr/5.htm" target="_blank" rel="noopener noreferrer">l’article 5</a> du RGPD), les données à caractère personnel doivent être conservées pendant une durée n’excédant pas celle nécessaire au regard des finalités pour lesquelles elles ont été traitées, à l’exception de fins archivistiques. La suppression se fera automatiquement après une certaine durée sans évènement (la durée que vous aurez indiquée ci-dessous).
 NB_MONTHS = %s mois
 ONE_YEAR = 1 an
 NB_YEARS = %s ans

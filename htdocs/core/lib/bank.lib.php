@@ -277,7 +277,9 @@ function checkIbanForAccount($account)
 {
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
 
-	$iban = new IBAN($account->iban);
+	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
+
+	$iban = new IBAN($ibantocheck);
 	$check = $iban->Verify();
 
 	if ($check) {

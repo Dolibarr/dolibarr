@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Oddiy
 TicketSeverityShortHIGH=Yuqori
 TicketSeverityShortBLOCKING=Muhim, blokirovka qilish
 
+TicketCategoryShortOTHER=Boshqa
+
 ErrorBadEmailAddress='%s' maydoni noto'g'ri
 MenuTicketMyAssign=Mening chiptalarim
 MenuTicketMyAssignNonClosed=Mening ochiq chiptalarim
@@ -55,7 +57,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Tayinlangan foydalanuvchi
 TypeContact_ticket_external_SUPPORTCLI=Mijozlar bilan aloqa / hodisalarni kuzatish
 TypeContact_ticket_external_CONTRIBUTOR=Tashqi yordamchi
 
-OriginEmail=Reporter Email
+OriginEmail=Muxbirning elektron pochtasi
 Notify_TICKET_SENTBYMAIL=Elektron pochta orqali chiptani yuboring
 
 # Status
@@ -66,7 +68,7 @@ NeedMoreInformation=Muxbirlarning fikri kutilmoqda
 NeedMoreInformationShort=Fikr-mulohaza kutilmoqda
 Answered=Javob berdi
 Waiting=Kutish
-SolvedClosed=Solved
+SolvedClosed=Yechilgan
 Deleted=O'chirildi
 
 # Dict
@@ -180,17 +182,17 @@ MessageSuccessfullyAdded=Chipta qo'shildi
 TicketMessageSuccessfullyAdded=Xabar muvaffaqiyatli qo'shildi
 TicketMessagesList=Xatlar ro'yxati
 NoMsgForThisTicket=Ushbu chipta uchun xabar yo'q
-Properties=Tasnifi
+TicketProperties=Tasniflash
 LatestNewTickets=Eng so'nggi %s eng yangi chiptalar (o'qilmaydi)
 TicketSeverity=Jiddiylik
 ShowTicket=Chiptani ko'ring
 RelatedTickets=Tegishli chiptalar
 TicketAddIntervention=Aralashuvni yarating
-CloseTicket=Close|Solve ticket
-AbandonTicket=Abandon ticket
-CloseATicket=Close|Solve a ticket
+CloseTicket=Yoping | Chiptani hal qiling
+AbandonTicket=Chiptadan voz kechish
+CloseATicket=Yoping | Chiptani hal qiling
 ConfirmCloseAticket=Chipta yopilishini tasdiqlang
-ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
+ConfirmAbandonTicket=Chiptaning "tashlab ketilgan" maqomiga yopilishini tasdiqlaysizmi?
 ConfirmDeleteTicket=Iltimos, chipta o'chirilishini tasdiqlang
 TicketDeletedSuccess=Muvaffaqiyat bilan chipta o'chirildi
 TicketMarkedAsClosed=Chipta yopiq deb belgilangan
@@ -316,6 +318,7 @@ BoxTicketLastXDays=Oxirgi %s kunlar ichida yangi chiptalar soni
 BoxTicketLastXDayswidget = Oxirgi X kunlardagi kunlar bo'yicha yangi chiptalar soni
 BoxNoTicketLastXDays=Oxirgi %s kunida yangi chiptalar yo'q
 BoxNumberOfTicketByDay=Kuniga yangi chiptalar soni
-BoxNewTicketVSClose=Bugungi yangi chiptalar soni va bugungi yopiq chiptalarga nisbatan
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Bugun yaratilgan chipta
 TicketClosedToday=Bugun chipta yopildi
+KMFoundForTicketGroup=Biz sizning savolingizga javob beradigan mavzular va savol -javoblarni topdik, chiptani topshirishdan oldin ularni tekshirib ko'ring

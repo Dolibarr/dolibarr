@@ -290,7 +290,7 @@ if ($modulepart == 'barcode') {
 	if (in_array($encoding, array('EAN8', 'EAN13'))) {
 		$code = GETPOST("code", 'alphanohtml');
 	} else {
-		$code = GETPOST("code", 'none'); // This can be rich content (qrcode, datamatrix, ...)
+		$code = GETPOST("code", 'restricthtml'); // This can be rich content (qrcode, datamatrix, ...)
 	}
 
 	if (empty($generator) || empty($encoding)) {

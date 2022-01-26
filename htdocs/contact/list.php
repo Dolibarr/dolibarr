@@ -75,7 +75,11 @@ $search_phone_pro = GETPOST("search_phone_pro", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_fax = GETPOST("search_fax", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
-$search_no_email = GETPOST("search_no_email", 'int');
+if (!empty($conf->mailing->enabled)) {
+	$search_no_email = GETPOSTISSET("search_no_email") ? GETPOST("search_no_email", 'int') : -1;
+} else {
+	$search_no_email = -1;
+}
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
@@ -98,8 +102,11 @@ $search_roles = GETPOST("search_roles", 'array');
 $search_level = GETPOST("search_level", "array");
 $search_stcomm = GETPOST('search_stcomm', 'int');
 
-if ($search_status == '') {
+if ($search_status === '') {
 	$search_status = 1; // always display active customer first
+}
+if ($search_no_email === '') {
+	$search_no_email = -1;
 }
 
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -1162,7 +1169,7 @@ while ($i < min($num, $limit)) {
 	}
 	// EMail
 	if (!empty($arrayfields['p.email']['checked'])) {
-		print '<td class="nowraponall tdmaxoverflow300">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
+		print '<td class="nowraponall tdoverflowmax300">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

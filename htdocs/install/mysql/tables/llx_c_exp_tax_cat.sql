@@ -2,10 +2,11 @@
 -- Copyright (C) 2012 Mikael Carlavan     <mcarlavan@qis-network.com>
 -- Copyright (C) 2017 ATM Consulting      <contact@atm-consulting.fr>
 -- Copyright (C) 2017 Pierre-Henry Favre  <phf@atm-consulting.fr>
+-- Copyright (C) 2022 Juanjo Menent       <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
+-- the Free Software Foundation; either version 3 of the License, or
 -- (at your option) any later version.
 --
 -- This program is distributed in the hope that it will be useful,
@@ -20,7 +21,7 @@
 
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
-    label       varchar(48) NOT NULL, 
+    label       varchar(128) NOT NULL,
     entity      integer DEFAULT 1 NOT NULL,
     active      integer DEFAULT 1 NOT NULL	          
 )ENGINE=innodb;

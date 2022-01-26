@@ -348,8 +348,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $hidden = false;
 
-
-
+	/**
+	 * @var string url to check for module update
+	 */
+	public $url_last_version;
 
 
 	/**
@@ -957,7 +959,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$tmp = json_decode($obj->note, true);
 			}
 			if ($obj) {
-				return array('authorid'=>$tmp['authorid'], 'ip'=>$tmp['ip'], 'lastactivationdate'=>$this->db->jdate($obj->tms));
+				return array(
+					'authorid' => $tmp['authorid'],
+					'ip' => $tmp['ip'],
+					'lastactivationdate' => $this->db->jdate($obj->tms),
+					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
+				);
 			}
 		}
 
@@ -991,7 +998,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err++;
 		}
 
-		$note = json_encode(array('authorid'=>(is_object($user) ? $user->id : 0), 'ip'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR'])));
+		$note = json_encode(
+			array(
+				'authorid' => (is_object($user) ? $user->id : 0),
+				'ip' => (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']),
+				'lastactivationversion' => $this->version,
+			)
+		);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, value, visible, entity, note) VALUES";
 		$sql .= " (".$this->db->encrypt($this->const_name);
@@ -1038,15 +1051,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps,PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Create tables and keys required by module.
-	 * Files module.sql and module.key.sql with create table and create keys
-	 * commands must be stored in directory reldir='/module/sql/'
-	 * This function is called by this->init
+	 * Create tables and keys required by module:
+	 * - Files module.sql files with create table instructions
+	 * - Then files modules.key.sql with create keys instructions
+	 * - Then data_xxx.sql (usualy provided by external modules only)
+	 * - Then update_xxx.sql (usualy provided by external modules only)
+	 * Files must be stored in directory defined by reldir (Example: '/install/mysql/tables' or '/module/sql/')
+	 * This function is usually called by the this->init of module descriptors.
 	 *
-	 * @param  string $reldir Relative directory where to scan files
-	 * @return int             <=0 if KO, >0 if OK
+	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/tables' or '/module/sql/'
+	 * @param	string	$onlywithsuffix		Only with the defined suffix
+	 * @return 	int             			<=0 if KO, >0 if OK
 	 */
-	protected function _load_tables($reldir)
+	protected function _load_tables($reldir, $onlywithsuffix = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -1077,6 +1094,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 					sort($files);
 					foreach ($files as $file) {
+						if ($onlywithsuffix) {
+							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+								continue;
+							} else {
+								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+							}
+						}
 						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
 							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 							if ($result <= 0) {
@@ -1094,6 +1119,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 					sort($files);
 					foreach ($files as $file) {
+						if ($onlywithsuffix) {
+							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+								continue;
+							} else {
+								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+							}
+						}
 						if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
 							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 							if ($result <= 0) {
@@ -1111,6 +1144,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 					sort($files);
 					foreach ($files as $file) {
+						if ($onlywithsuffix) {
+							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+								continue;
+							} else {
+								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+							}
+						}
 						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
 							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 							if ($result <= 0) {
@@ -1128,6 +1169,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 					sort($files);
 					foreach ($files as $file) {
+						if ($onlywithsuffix) {
+							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+								continue;
+							} else {
+								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+							}
+						}
 						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
 							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
 							if ($result <= 0) {
@@ -1689,10 +1738,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Adds access rights
 	 *
-	 * @param  int $reinitadminperms If 1, we also grant them to all admin users
-	 * @param  int $force_entity     Force current entity
-	 * @param  int $notrigger        1=Does not execute triggers, 0= execute triggers
-	 * @return int                     Error count (0 if OK)
+	 * @param  int $reinitadminperms 	If 1, we also grant them to all admin users
+	 * @param  int $force_entity     	Force current entity
+	 * @param  int $notrigger        	1=Does not execute triggers, 0= execute triggers
+	 * @return int                     	Error count (0 if OK)
 	 */
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
 	{
@@ -1714,16 +1763,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
+
 			if ($obj !== null && !empty($obj->value) && !empty($this->rights)) {
+				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
-					$r_id       = $this->rights[$key][0];
+					$r_id       = $this->rights[$key][0];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
 					$r_desc     = $this->rights[$key][1];
 					$r_type     = isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';
 					$r_def      = empty($this->rights[$key][3]) ? 0 : $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
 					$r_subperms = isset($this->rights[$key][5]) ? $this->rights[$key][5] : '';
-					$r_modul = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
+					$r_modul = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
 
 					if (empty($r_type)) {
 						$r_type = 'w';
@@ -1776,21 +1828,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 					// If we want to init permissions on admin users
 					if ($reinitadminperms) {
-						if (!class_exists('User')) {
-							include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-						}
 						$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
 						dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
+
 						$resqlseladmin = $this->db->query($sql, 1);
+
 						if ($resqlseladmin) {
 							$num = $this->db->num_rows($resqlseladmin);
 							$i = 0;
 							while ($i < $num) {
-								  $obj2 = $this->db->fetch_object($resqlseladmin);
-								  dol_syslog(get_class($this)."::insert_permissions Add permission to user id=".$obj2->rowid);
+								$obj2 = $this->db->fetch_object($resqlseladmin);
+								dol_syslog(get_class($this)."::insert_permissions Add permission id '.$r_id.' to user id=".$obj2->rowid);
 
-								  $tmpuser = new User($this->db);
-								  $result = $tmpuser->fetch($obj2->rowid);
+								$tmpuser = new User($this->db);
+								$result = $tmpuser->fetch($obj2->rowid);
 								if ($result > 0) {
 									$tmpuser->addrights($r_id, '', '', 0, 1);
 								} else {
