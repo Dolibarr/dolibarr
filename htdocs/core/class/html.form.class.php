@@ -2374,6 +2374,8 @@ class Form
 	 * @param int $type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
 	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param string $morecss Add more css on select
+	 * @param string $nooutput
+	 * @param string $forcecombo
 	 * @return        void|string
 	 */
 	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0)
@@ -2396,20 +2398,20 @@ class Form
 		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'bom_bom as b';
 		$sql.= ' WHERE b.entity IN ('.getEntity('bom').')';
-		if(!empty($status)) $sql.= ' AND status = '. (int) $status;
-		if(!empty($type)) $sql.= ' AND status = '. (int) $type;
-		if(!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
+		if (!empty($status)) $sql.= ' AND status = '. (int) $status;
+		if (!empty($type)) $sql.= ' AND status = '. (int) $type;
+		if (!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
 		$resql = $db->query($sql);
-		if($resql){
+		if ($resql) {
 			if ($showempty)	{
 				$out .= '<option value="-1"';
-				if(empty($selected)) $out .= ' selected';
+				if (empty($selected)) $out .= ' selected';
 				$out .= '>&nbsp;</option>';
 			}
-			while ($obj = $db->fetch_object($resql)){
+			while ($obj = $db->fetch_object($resql)) {
 				$product = new Product($db);
 				$res = $product->fetch($obj->fk_product);
-				if($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $product->label .' - '.$obj->label.'</option>';
+				if ($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $product->label .' - '.$obj->label.'</option>';
 				$out .= '<option value="'.$obj->rowid.'">'.$obj->ref.' - '.$product->label .' - '. $obj->label.'</option>';
 			}
 		} else {
