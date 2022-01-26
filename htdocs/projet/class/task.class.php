@@ -41,7 +41,7 @@ class Task extends CommonObjectLine
 	public $element = 'project_task';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 	Name of table without prefix where object is stored
 	 */
 	public $table_element = 'projet_task';
 
