@@ -2266,7 +2266,10 @@ abstract class CommonObject
 	 */
 	public function setPaymentMethods($id)
 	{
+		$error = 0; $notrigger = 0;
+
 		dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
+
 		if ($this->statut >= 0 || $this->element == 'societe') {
 			// TODO uniformize field name
 			$fieldname = 'fk_mode_reglement';
