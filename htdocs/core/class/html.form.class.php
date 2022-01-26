@@ -2374,8 +2374,8 @@ class Form
 	 * @param int $type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
 	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param string $morecss Add more css on select
-	 * @param string $nooutput
-	 * @param string $forcecombo
+	 * @param string $nooutput No print, return the output into a string
+	 * @param int $forcecombo Force to use combo box
 	 * @return        void|string
 	 */
 	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0)
