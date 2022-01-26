@@ -1027,8 +1027,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
 								print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'" list="batch-'.$line->id.'-'.$i.'">';
-								print $formproduct->selectLotDataList('batch-'.$line->id.'-'.$i, 1, $line->fk_product, '');
-//								print $formproduct->selectLotStock('', 'batch-'.$line->id.'-'.$i, '', 0, '', $line->fk_product);
+								print $formproduct->selectLotDataList('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');//								print $formproduct->selectLotStock('', 'batch-'.$line->id.'-'.$i, '', 0, '', $line->fk_product);
 							}
 							print '</td>';
 						}
@@ -1357,7 +1356,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}).done(function (data) {
 
 						selectbatch.empty();
-						$('input[name*='+selectbatch_name+']').val('');
 
 						var data = JSON.parse(data);
 
@@ -1381,11 +1379,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 
 							selectbatch.append(option);
-
 						});
-
 					});
-
 				});
 			}
 
@@ -1420,14 +1415,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 					}).done(function (data) {
 
-						console.log(data);
 						var data = JSON.parse(data);
 
 						if(data != 0){
 							selectwarehouse.val(data).change();
 						}
 					});
-
 				});
 			}
 
