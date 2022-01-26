@@ -2269,6 +2269,8 @@ abstract class CommonObject
 	 */
 	public function setPaymentMethods($id)
 	{
+		global $user;
+
 		$error = 0; $notrigger = 0;
 
 		dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
