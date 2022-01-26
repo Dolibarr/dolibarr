@@ -1064,7 +1064,7 @@ class BOM extends CommonObject
 				$tmpproduct->cost_price = 0;
 				$tmpproduct->pmp = 0;
 
-				if(empty($line->fk_bom_child)){
+				if (empty($line->fk_bom_child)) {
 					$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 					if ($result < 0) {
 						$this->error = $tmpproduct->error;
@@ -1083,7 +1083,7 @@ class BOM extends CommonObject
 				} else {
 					$bom_child= new BOM($this->db);
 					$res = $bom_child->fetch($line->fk_bom_child);
-					if($res>0){
+					if ($res>0) {
 						$bom_child->calculateCosts();
 						$this->total_cost += $bom_child->total_cost;
 					} else {

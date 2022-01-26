@@ -85,8 +85,8 @@ $res = $tmpbom->fetch($line->fk_bom_child);
 if ($tmpbom->id > 0) {
 	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
 	print $tmpproduct->getNomUrl(1);
-    print ' '.$langs->trans('or').' ';
-    print $tmpbom->getNomUrl(1);
+	print ' '.$langs->trans('or').' ';
+	print $tmpbom->getNomUrl(1);
 } else {
 	print $tmpproduct->getNomUrl(1);
 	print ' - '.$tmpproduct->label;
@@ -203,14 +203,14 @@ if ($resql) {
 
 		// Product OR BOM
 		print '<td style="padding-left: 5%" id="sub_bom_product_'.$sub_bom_line->id.'">';
-        if(!empty($obj->fk_bom_child)){
+		if (!empty($obj->fk_bom_child)) {
 			print $sub_bom_product->getNomUrl(1);
 			print ' '.$langs->trans('or').' ';
 			print $sub_bom->getNomUrl(1);
-        } else {
+		} else {
 			print $sub_bom_product->getNomUrl(1);
-            print '</td>';
-        }
+			print '</td>';
+		}
 
 		// Qty
 		if ($sub_bom_line->qty_frozen > 0) {
@@ -232,7 +232,7 @@ if ($resql) {
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
 
 		// Cost price if it's defined
-        if ($sub_bom_product->cost_price > 0) {
+		if ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
 			$total_cost+= $sub_bom_product->cost_price * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
@@ -244,7 +244,7 @@ if ($resql) {
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
-                $line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty;
+				$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty;
 
 				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($line_cost).'</td>';
 				$total_cost+= $line_cost;

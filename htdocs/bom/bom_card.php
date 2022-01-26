@@ -149,13 +149,13 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$bom_child_id = (int) GETPOST('bom_id', 'int');
-        if($bom_child_id > 0){
-            $bom_child = new BOM($db);
-            $res = $bom_child->fetch($bom_child_id);
-            if($res){
-                $idprod = $bom_child->fk_product;
-            }
-        } else {
+		if ($bom_child_id > 0) {
+			$bom_child = new BOM($db);
+			$res = $bom_child->fetch($bom_child_id);
+			if ($res) {
+				$idprod = $bom_child->fk_product;
+			}
+		} else {
 			$idprod = (int) GETPOST('idprod', 'int');
 		}
 
