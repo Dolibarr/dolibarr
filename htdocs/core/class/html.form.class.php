@@ -1693,8 +1693,7 @@ class Form
 			if ($showempty && ! is_numeric($showempty)) {
 				$textforempty = $showempty;
 				$out .= '<option class="optiongrey" value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'>'.$textforempty.'</option>';
-			}
-			else {
+			} else {
 				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && ! $multiple) {
 					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
 				}
