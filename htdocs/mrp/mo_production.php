@@ -1027,7 +1027,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
 								print '<input type="text" class="width50" name="batch-'.$line->id.'-'.$i.'" value="'.$preselected.'" list="batch-'.$line->id.'-'.$i.'">';
-								print $formproduct->selectLotDataList('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');//								print $formproduct->selectLotStock('', 'batch-'.$line->id.'-'.$i, '', 0, '', $line->fk_product);
+								print $formproduct->selectLotDataList('batch-'.$line->id.'-'.$i, 0, $line->fk_product, '', '');
 							}
 							print '</td>';
 						}
@@ -1324,25 +1324,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		<script  type="text/javascript" language="javascript">
 
 			$(document).ready(function() {
+				//Consumption : When a warehouse is selected, only the lot/serial numbers that are available in it are offered
 				updateselectbatchbywarehouse();
+				//Consumption : When a lot/serial number is selected and it is only available in one warehouse, the warehouse is automatically selected
 				updateselectwarehousebybatch();
 			});
 
-			//Lorsqu'un entrepôt est sélectionné, on propose seulement les numéro de séries qui sont disponibles dans celui-ci
 			function updateselectbatchbywarehouse() {
 				var element = $("select[name*='idwarehouse']");
 
 				element.change(function () {
 
-					//select entrepôts
 					var selectwarehouse = $(this);
 
-					//select lots/series
 					var selectbatch_name = selectwarehouse.attr('name').replace('idwarehouse', 'batch');
 					var selectbatch = $("datalist[id*='" + selectbatch_name + "']");
 					var selectedbatch = selectbatch.val();
 
-					//produit de la ligne
 					var product_element_name = selectwarehouse.attr('name').replace('idwarehouse', 'product');
 
 					$.ajax({
@@ -1365,7 +1363,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						$.each(data, function (key, value) {
 
-							//si aucun entrepôt sélectionné, alors c'est le stock total du num lot/serie qui s'affiche
 							if(selectwarehouse.val() == -1) {
 								var label = " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
 							} else {
@@ -1384,25 +1381,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				});
 			}
 
-			//Lorsqu'un numéro de lot/série est sélectionné et qu'il n'est disponible seulement dans un entrepôt, l'entrepôt est automatiquement sélectionné
 			function updateselectwarehousebybatch() {
 
-				$(document).on('change', 'input', function(){
+				$(document).on('change', 'input[name*=batch]', function(){
 
-					//select lot/série
 					var selectbatch = $(this);
 
-					//select entrepôts
 					var selectwarehouse_name = selectbatch.attr('name').replace('batch', 'idwarehouse');
 					var selectwarehouse = $("select[name*='" + selectwarehouse_name + "']");
 					var selectedwarehouse = selectwarehouse.val();
 
-					//si un entrepôt est déjà sélectionné, alors on ne change rien
 					if(selectedwarehouse != -1){
 						return;
 					}
 
-					//produit de la ligne
 					var product_element_name = selectbatch.attr('name').replace('batch', 'product');
 
 					$.ajax({
