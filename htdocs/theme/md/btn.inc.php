@@ -11,6 +11,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 			--btncolorborder: #FFF;
 			--butactiondeletebg: rgb(234,228,225);
 			--butactionbg: rgb(<?php print $butactionbg; ?>);
+			--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
 
 <?php
@@ -28,6 +29,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
             --btncolorborder: #2b2c2e;
             --butactiondeletebg: rgb(252,84,91);
 			--butactionbg: rgb(173,140,79);
+			--textbutaction: rgb(255,255,255);
 
       }\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
@@ -62,7 +64,7 @@ span.butAction, span.butActionDelete {
 
 .butAction {
 	background: var(--butactionbg);
-	color: #FFF !important;
+	color: var(--textbutaction) !important;
 	/* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butActionDelete {
