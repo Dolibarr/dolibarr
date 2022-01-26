@@ -1319,6 +1319,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div>';
 		print '</div>';
 
+		if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
+			print "</form>\n";
+		}
+
 		?>
 
 		<script  type="text/javascript" language="javascript">
@@ -1419,10 +1423,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		</script>
 
 		<?php
-	}
-
-	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
-		print "</form>\n";
 	}
 }
 
