@@ -715,6 +715,26 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</tr>';
 	}
 
+	// ColorTopBorderTitle
+	if ($foruserprofile) {
+	} else {
+		$default = (empty($colortopbordertitle1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortopbordertitle1)));
+
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("ColorTopBorderTitle1").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		if ($edit) {
+			print $formother->selectColor(colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_TOPBORDER_TITLE1) ? $conf->global->THEME_ELDY_TOPBORDER_TITLE1: ''), array()), ''), 'THEME_ELDY_TOPBORDER_TITLE1', '', 1, '', '', 'colortopbordertitle1').' ';
+		} else {
+			print $formother->showColor($conf->global->THEME_ELDY_TOPBORDER_TITLE1, $langs->trans("Default"));
+		}
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong><span style="color: #'.$default.'">'.$default.'</span></strong> ';
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+		print '</span>';
+		print '</td>';
+		print '</tr>';
+	}
+
 	// BackgroundTableLineOddColor
 	if ($foruserprofile) {
 	} else {

@@ -121,7 +121,7 @@ $dol_no_mouse_hover = $conf->dol_no_mouse_hover;
 
 $useboldtitle = getDolGlobalInt('THEME_ELDY_USEBOLDTITLE');
 $userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
-$borderwidth = 1;
+$borderwidth = 2;
 
 // Case of option always editable
 if (!isset($conf->global->THEME_ELDY_BACKBODY)) {
@@ -153,6 +153,9 @@ if (!isset($conf->global->THEME_ELDY_TEXTLINK)) {
 }
 if (!isset($conf->global->THEME_ELDY_BTNACTION)) {
 	$conf->global->THEME_ELDY_BTNACTION = $butactionbg;
+}
+if (!isset($conf->global->THEME_ELDY_TOPBORDER_TITLE1)) {
+	$conf->global->THEME_ELDY_TOPBORDER_TITLE1 = $colortopbordertitle1;
 }
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED)) {

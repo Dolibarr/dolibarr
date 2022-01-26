@@ -80,6 +80,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colortextlink: #4390dc;
 	            --colortextbackhmenu: rgb(220,220,220);
 	            --colortextbackvmenu: rgb(220,220,220);
+				--colortopbordertitle1: rgb(255,255,255);
 				--tooltipfontcolor : rgb(220,220,220);
 	            --listetotal: rgb(245, 83, 158);
 	            --inputbackgroundcolor: #2b2d2f;
