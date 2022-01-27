@@ -77,7 +77,6 @@ class Productbatch extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -114,6 +113,14 @@ class Productbatch extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 		}
 
+		// Actions on extra fields
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
@@ -133,7 +140,6 @@ class Productbatch extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 
@@ -169,6 +175,9 @@ class Productbatch extends CommonObject
 				$this->import_key = $obj->import_key;
 				$this->warehouseid = $obj->fk_entrepot;
 				$this->fk_product = $obj->fk_product;
+
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 			}
 			$this->db->free($resql);
 
@@ -216,6 +225,14 @@ class Productbatch extends CommonObject
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		// Actions on extra fields
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -252,6 +269,15 @@ class Productbatch extends CommonObject
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		// Removed extrafields
+		if (!$error) {
+			// For avoid conflicts if trigger used
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
