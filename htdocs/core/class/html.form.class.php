@@ -7388,6 +7388,8 @@ class Form
 	 */
 	protected static function forgeCriteriaCallback($matches)
 	{
+		global $db;
+
 		//dol_syslog("Convert matches ".$matches[1]);
 		if (empty($matches[1])) {
 			return '';
@@ -7400,11 +7402,11 @@ class Form
 		$tmpescaped = $tmp[2];
 		$regbis = array();
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$this->db->escape($regbis[1])."'";
+			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		} else {
-			$tmpescaped = $$this->db->escape($tmpescaped);
+			$tmpescaped = $db->escape($tmpescaped);
 		}
-		return $$this->db->escape($tmp[0]).' '.strtoupper($$this->db->escape($tmp[1]))." ".$tmpescaped;
+		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
 	}
 
 	/**

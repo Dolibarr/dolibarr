@@ -436,7 +436,7 @@ class Productbatch extends CommonObject
 	 */
 	public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$ret = array();
 
@@ -453,9 +453,9 @@ class Productbatch extends CommonObject
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
 			// TODO May add extrafields to ?
 		}
-		$sql .= " FROM ".$this->db->prefix()."product_batch as t";
+		$sql .= " FROM ".$db->prefix()."product_batch as t";
 		if ($fk_product > 0) {
-			$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
+			$sql .= " LEFT JOIN ".$db->prefix()."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
@@ -526,10 +526,10 @@ class Productbatch extends CommonObject
 		$sql .= ", pl.sellby";
 		$sql .= ", pl.eatby";
 		$sql .= ", pb.qty";
-		$sql .= " FROM ".$this->db->prefix()."product_lot as pl";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = pl.fk_product";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch AS pb ON pl.batch = pb.batch";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " FROM ".$db->prefix()."product_lot as pl";
+		$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = pl.fk_product";
+		$sql .= " LEFT JOIN ".$db->prefix()."product_batch AS pb ON pl.batch = pb.batch";
+		$sql .= " LEFT JOIN ".$db->prefix()."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		$sql .= " AND pl.fk_product = ".((int) $fk_product);
 		if ($fk_warehouse > 0) {
