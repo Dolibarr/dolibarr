@@ -5,6 +5,7 @@
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,6 +199,20 @@ if ($action == 'update') {
 			dolibarr_del_const($db, 'THEME_ELDY_USE_CHECKED', $conf->entity);
 		} else {
 			dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BTNACTION'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_BTNACTION', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_BTNACTION', $val, 'chaine', 0, '', $conf->entity);
+		}
+
+		$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTBTNACTION'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_TEXTBTNACTION', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_TEXTBTNACTION', $val, 'chaine', 0, '', $conf->entity);
 		}
 	}
 

@@ -1,6 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2009      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2022 		    Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 create table llx_c_chargesociales
 (
   id           integer AUTO_INCREMENT PRIMARY KEY,
-  libelle      varchar(80),
+  libelle      varchar(128),
   deductible   smallint DEFAULT 0 NOT NULL,
   active       tinyint DEFAULT 1  NOT NULL,
   code         varchar(12) NOT NULL,

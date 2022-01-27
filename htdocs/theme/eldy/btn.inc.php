@@ -5,17 +5,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 /* <style type="text/css" > */
 
 :root {
-			--btncolortext:rgb(<?php print $colortextlink; ?>);
+			--btncolortext: rgb(<?php print $colortextlink; ?>);
 			--btncolorbg: #fbfbfb;
 			--btncolorborderhover: none;
 			--btncolorborder: #FFF;
-			/* --butactionbg:rgba(150, 110, 162, 0.95); */
-			--butactionbg:rgb(118, 145, 225);
-			--butactionbg:rgba(150, 110, 162, 0.95);
 			--butactiondeletebg: rgb(234,228,225);
-			/* tertiary color */
-			/* --butactionbg:rgb(218, 235, 225); */
-			/* --butactionbg:rgb(228, 218, 235); */
+			--butactionbg: rgb(<?php print $butactionbg; ?>);
+			--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
 
 <?php
@@ -31,8 +27,9 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
             --btncolorbg: rgb(26,27,27);
             --btncolorborderhover: #ffffff;
             --btncolorborder: #2b2c2e;
-            --butactionbg: rgb(173,140,79);
             --butactiondeletebg: rgb(252,84,91);
+			--butactionbg: rgb(173,140,79);
+			--textbutaction: rgb(255,255,255);
 
       }\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
@@ -72,7 +69,7 @@ span.butAction, span.butActionDelete {
 }
 .butAction {
 	background: var(--butactionbg);
-	color: #FFF !important;
+	color: var(--textbutaction) !important;
 	/* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butActionDelete {
