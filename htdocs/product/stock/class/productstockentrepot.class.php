@@ -184,19 +184,19 @@ class ProductStockEntrepot extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_entrepot,";
 		$sql .= " t.seuil_stock_alerte,";
 		$sql .= " t.desiredstock,";
 		$sql .= " t.import_key";
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if (!empty($id)) {
-			$sql .= ' WHERE t.rowid = '.((int) $id);
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
-			$sql .= ' WHERE t.fk_product = '.((int) $fk_product).' AND t.fk_entrepot = '.((int) $fk_entrepot);
+			$sql .= " WHERE t.fk_product = ".((int) $fk_product)." AND t.fk_entrepot = ".((int) $fk_entrepot);
 		}
 
 		$resql = $this->db->query($sql);
@@ -254,8 +254,8 @@ class ProductStockEntrepot extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product,";
@@ -265,9 +265,9 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= " t.import_key";
 
 
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 
-		$sql .= ' WHERE 1=1';
+		$sql .= " WHERE 1=1";
 
 		// Manage filter
 		$sqlwhere = array();
@@ -277,13 +277,13 @@ class ProductStockEntrepot extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 
 		if (!empty($fk_product) && $fk_product > 0) {
-			$sql .= ' AND fk_product = '.((int) $fk_product);
+			$sql .= " AND fk_product = ".((int) $fk_product);
 		} elseif (!empty($fk_entrepot) && $fk_entrepot > 0) {
-			$sql .= ' AND fk_entrepot = '.((int) $fk_entrepot);
+			$sql .= " AND fk_entrepot = ".((int) $fk_entrepot);
 		}
 		// "elseif" used instead of "if" because getting list with specified fk_product and specified fk_entrepot would be the same as doing a fetch
 

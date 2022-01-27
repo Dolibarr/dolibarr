@@ -626,8 +626,8 @@ class MouvementStock extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
 		$sql .= " t.datem,";
 		$sql .= " t.fk_product,";
@@ -644,8 +644,8 @@ class MouvementStock extends CommonObject
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
 		$sql .= " t.fk_projet as fk_project";
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -824,8 +824,8 @@ class MouvementStock extends CommonObject
 	{
 		$nb = 0;
 
-		$sql = 'SELECT SUM(value) as nb from '.$this->db->prefix().'stock_mouvement';
-		$sql .= ' WHERE fk_product = '.((int) $productidselected);
+		$sql = "SELECT SUM(value) as nb from ".$this->db->prefix()."stock_mouvement";
+		$sql .= " WHERE fk_product = ".((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
 		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);

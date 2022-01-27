@@ -316,11 +316,11 @@ class ProductFournisseurPrice extends CommonObject
 
 		$records = array();
 
-		$sql = 'SELECT ';
+		$sql = "SELECT ";
 		$sql .= $this->getFieldList();
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
-		else $sql .= ' WHERE 1 = 1';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= " WHERE t.entity IN (".getEntity($this->element).")";
+		else $sql .= " WHERE 1 = 1";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -698,10 +698,10 @@ class ProductFournisseurPrice extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql = "SELECT rowid, date_creation as datec, tms as datem,";
+		$sql .= " fk_user_creat, fk_user_modif";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

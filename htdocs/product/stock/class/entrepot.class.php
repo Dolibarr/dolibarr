@@ -852,9 +852,9 @@ class Entrepot extends CommonObject
 	{
 		// phpcs:enable
 
-		$sql = 'SELECT rowid
-				FROM '.$this->db->prefix().'entrepot
-				WHERE fk_parent = '.((int) $id);
+		$sql = "SELECT rowid
+				FROM ".$this->db->prefix()."entrepot
+				WHERE fk_parent = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

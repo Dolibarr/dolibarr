@@ -275,21 +275,21 @@ class Inventory extends CommonObject
 			}
 
 			// Scan existing stock to prefill the inventory
-			$sql = 'SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,';
-			$sql .= ' pb.batch, pb.qty';
-			$sql .= ' FROM '.$this->db->prefix().'product_stock as ps';
-			$sql .= ' LEFT JOIN '.$this->db->prefix().'product_batch as pb ON pb.fk_product_stock = ps.rowid,';
-			$sql .= ' '.$this->db->prefix().'product as p, '.$this->db->prefix().'entrepot as e';
-			$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-			$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
+			$sql = "SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,";
+			$sql .= " pb.batch, pb.qty";
+			$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb ON pb.fk_product_stock = ps.rowid,";
+			$sql .= " ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
+			$sql .= " WHERE p.entity IN (".getEntity('product').")";
+			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 				$sql .= " AND p.fk_product_type = 0";
 			}
 			if ($this->fk_product > 0) {
-				$sql .= ' AND ps.fk_product = '.((int) $this->fk_product);
+				$sql .= " AND ps.fk_product = ".((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= ' AND ps.fk_entrepot = '.((int) $this->fk_warehouse);
+				$sql .= " AND ps.fk_entrepot = ".((int) $this->fk_warehouse);
 			}
 
 			$inventoryline = new InventoryLine($this->db);
@@ -640,10 +640,10 @@ class Inventory extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem, date_validation as datev,';
-		$sql .= ' fk_user_creat, fk_user_modif, fk_user_valid';
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql = "SELECT rowid, date_creation as datec, tms as datem, date_validation as datev,";
+		$sql .= " fk_user_creat, fk_user_modif, fk_user_valid";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

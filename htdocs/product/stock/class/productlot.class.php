@@ -279,8 +279,8 @@ class Productlot extends CommonObject
 		global $conf;
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.batch,";
@@ -296,11 +296,11 @@ class Productlot extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.import_key";
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($product_id > 0 && $batch != '') {
 			$sql .= " WHERE t.batch = '".$this->db->escape($batch)."' AND t.fk_product = ".((int) $product_id);
 		} else {
-			$sql .= ' WHERE t.rowid = '.((int) $id);
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
