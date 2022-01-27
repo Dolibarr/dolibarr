@@ -41,13 +41,14 @@ if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
+print "*** SHOW SESSION STATUS<br>\n";
 print "Legend:<br>\n";
 print 'PHP_SESSION_DISABLED='.PHP_SESSION_DISABLED."<br>\n";
 print 'PHP_SESSION_NONE='.PHP_SESSION_NONE."<br>\n";
 print 'PHP_SESSION_ACTIVE='.PHP_SESSION_ACTIVE."<br>\n";
 print '<br>';
 
-print 'session_status='.session_status().' (before main.inc.php)';
+print 'session_status='.session_status().' (before main.inc.php)<br>';
 print '<br>';
 
 require '../../main.inc.php';
@@ -61,6 +62,8 @@ if ($dolibarr_main_prod) {
 /*
  * View
  */
+
+print "*** TEST READ OF /tmp/test.txt FILE<br>\n";
 
 echo "Test<br>\n";
 $out='';
@@ -78,11 +81,16 @@ if ($f) {
 
 print '<br><br>'."\n";
 
+
+print "*** TEST READ OF /test.txt FILE AND LS /dev/std*<br>\n";
+
 exec('cat /test.txt; ls /dev/std*; sleep 1;', $out, $ret);
 print $ret."<br>\n";
 print_r($out);
 
 print '<br><br>'."\n";
+
+print "*** TRY TO RUN CLAMDSCAN<br>\n";
 
 $ret = 0;
 $out = null;
