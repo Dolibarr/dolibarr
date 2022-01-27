@@ -1279,7 +1279,7 @@ class FormMail extends Form
 		}
 
 		$sql = "SELECT rowid, module, label, type_template, topic, joinfiles, content, content_lines, lang";
-		$sql .= " FROM ".$this->db->prefix().'c_email_templates';
+		$sql .= " FROM ".$db->prefix().'c_email_templates';
 		$sql .= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
