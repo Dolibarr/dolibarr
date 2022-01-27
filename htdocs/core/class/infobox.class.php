@@ -114,7 +114,7 @@ class InfoBox
 			$sql .= " ORDER BY b.box_order";
 		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
-			$sql .= " FROM ".$this->db->prefix()."boxes_def as d";
+			$sql .= " FROM ".$db->prefix()."boxes_def as d";
 			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
 		}
 

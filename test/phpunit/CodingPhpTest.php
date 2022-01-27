@@ -213,6 +213,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'multicurrency.class.php',
 					'productbatch.class.php',
 					'reception.class.php',
+					'infobox.class.php',
 				))) {
 					// Must not find $db->
 					$ok=true;
