@@ -1082,7 +1082,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 					$constantname = $obj->name; // Name of constant for hook or js or css declaration
 
 					print '<tr><td>';
-					print $constantname;
+					print dol_escape_htmltag($constantname);
 
 					$db->begin();
 
@@ -1106,7 +1106,8 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 							if ($key == 'css') {
 								$value = $obj->value;
 								$valuearray = json_decode($value);
-								if ($value && count($valuearray) == 0) {
+								if ($value && (!is_array($valuearray) || count($valuearray) == 0)) {
+									$valuearray = array();
 									$valuearray[0] = $value; // If value was not a json array but a string
 								}
 								$reloffile = preg_replace('/^\//', '', $valuearray[0]);
@@ -1117,9 +1118,10 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 								try {
 									$result = dol_buildpath($reloffile, 0, 2);
 								} catch (Exception $e) {
-									// No catch yet
-									$result = 'found'; // If error, we force lke if we found to avoid any deletion
+									$result = 'found'; // If error, we force like if we found to avoid any deletion
 								}
+							} else {
+								$result = 'found';	//
 							}
 
 							if (!$result) {

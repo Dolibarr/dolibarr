@@ -767,7 +767,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 
 // remove/delete File
 if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
-	$relativefilename = dol_sanitizePathName(GETPOST('file', 'none'));
+	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 	if ($relativefilename) {
 		$dirnametodelete = dirname($relativefilename);
 		$filetodelete = $dirins.'/'.$relativefilename;

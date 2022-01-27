@@ -56,7 +56,7 @@ VueBySubAccountAccounting=Ansicht nach Buchhaltungsunterkonto
 MainAccountForCustomersNotDefined=Standardkonto für Kunden im Setup nicht definiert
 MainAccountForSuppliersNotDefined=Standardkonto für Lieferanten die nicht im Setup definiert sind
 MainAccountForUsersNotDefined=Standardkonto für Benutzer ist im Setup nicht definiert
-MainAccountForVatPaymentNotDefined=Standardkonto für MWSt Zahlungen ist im Setup nicht definiert
+MainAccountForVatPaymentNotDefined=Standardkonto für MwSt.-Zahlungen ist im Setup nicht definiert
 MainAccountForSubscriptionPaymentNotDefined=Standardkonto für wiederkehrende Zahlungen ist im Setup nicht definiert
 
 AccountancyArea=Bereich Buchhaltung

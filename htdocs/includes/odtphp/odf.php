@@ -122,7 +122,8 @@ class Odf
 	}
 
 	/**
-	 * Assing a template variable
+	 * Assing a template variable into ->vars.
+	 * For example, key is {object_date} and value is '2021-01-01'
 	 *
 	 * @param string   $key        Name of the variable within the template
 	 * @param string   $value      Replacement value
@@ -134,6 +135,7 @@ class Odf
 	public function setVars($key, $value, $encode = true, $charset = 'ISO-8859')
 	{
 		$tag = $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT'];
+
 		// TODO Warning string may be:
 		// <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
 		// instead of {aaa} so we should enhance this function.

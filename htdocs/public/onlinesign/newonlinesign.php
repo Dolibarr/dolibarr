@@ -448,10 +448,8 @@ if ($action == "dosign" && empty($cancel)) {
 	  $("#clearsignature").on("click",function(){
 		$("#signature").jSignature("clear");
 		$("#signbutton").attr("disabled",true);
-		/* $("#clearsignature").css("display","none"); */
 	  });
 
-	  /* $("#clearsignature").css("display","none"); */
 	  $("#signbutton").attr("disabled",true);
 	});
 	</script>';

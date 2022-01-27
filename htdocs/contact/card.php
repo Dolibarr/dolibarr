@@ -532,6 +532,8 @@ if (empty($reshook)) {
  *	View
  */
 
+$form = new Form($db);
+$formcompany = new FormCompany($db);
 
 $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
@@ -539,9 +541,6 @@ if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $c
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
-
-$form = new Form($db);
-$formcompany = new FormCompany($db);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -1284,7 +1283,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref = '<div class="refidno">';
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= '</a>';
+
+		$morehtmlref .= '<div class="refidno">';
 		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 			$objsoc->fetch($object->socid);
 			// Thirdparty
@@ -1460,14 +1463,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		} else {
 			print $langs->trans("NoDolibarrAccess");
 		}
-		print '</td></tr>';
-
-		print '<tr><td>';
-		print $langs->trans("VCard").'</td><td colspan="3">';
-		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
-		print $langs->trans("Download");
-		print '</a>';
 		print '</td></tr>';
 
 		print "</table>";

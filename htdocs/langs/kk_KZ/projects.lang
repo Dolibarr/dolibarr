@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Ескерту: 100%% барл�
 SelectLinesOfTimeSpentToInvoice=Есепке алынбаған уақытты таңдаңыз, содан кейін оларды есепке алу үшін «Шот -фактураны құру» жаппай әрекетін таңдаңыз
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
+StartDateCannotBeAfterEndDate=End date cannot be before start date

@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=குறிப்பு: 100%%
 SelectLinesOfTimeSpentToInvoice=கட்டணம் செலுத்தப்படாத நேரத்தைத் தேர்ந்தெடுத்து, அவற்றை பில் செய்ய மொத்த நடவடிக்கை "இன்வாய்ஸை உருவாக்கு"
 ProjectTasksWithoutTimeSpent=நேரத்தை செலவழிக்காமல் திட்ட பணிகள்
 FormForNewLeadDesc=எங்களை தொடர்பு கொள்ள பின்வரும் படிவத்தை நிரப்பியதற்கு நன்றி. நீங்கள் எங்களுக்கு நேரடியாக <b> %s </b> க்கு மின்னஞ்சல் அனுப்பலாம்.
+StartDateCannotBeAfterEndDate=End date cannot be before start date

@@ -68,14 +68,13 @@ $search_date_limit_endyear = GETPOST('search_date_limit_endyear', 'int');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
-$search_project = GETPOST('search_project', 'alpha');
 $search_users = GETPOST('search_users');
 $search_type = GETPOST('search_type', 'int');
 $search_account				= GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortfield			= GETPOST('sortfield', 'aZ09comma');
+$sortorder			= GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -176,7 +175,6 @@ if (empty($reshook)) {
 		$search_date_limit_start = '';
 		$search_date_limit_end = '';
 		$search_project_ref = '';
-		$search_project = '';
 		$search_users = '';
 		$search_type = '';
 		$search_account = '';
@@ -231,7 +229,7 @@ if (!empty($conf->projet->enabled)) {
 	}
 }
 if (!empty($search_users)) {
-	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
+	$sql .= ' AND cs.fk_user IN ('.$db->sanitize(implode(', ', $search_users)).')';
 }
 if (!empty($search_type) && $search_type > 0) {
 	$sql .= ' AND cs.fk_mode_reglement='.((int) $search_type);
@@ -455,7 +453,7 @@ if (!empty($arrayfields['cs.periode']['checked'])) {
 // Filter: Project ref
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'">';
+	print '<input type="text" class="flat" size="6" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'">';
 	print '</td>';
 }
 
@@ -657,7 +655,9 @@ while ($i < min($num, $limit)) {
 	// Type
 	if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
 		print '<td>';
-		if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+		if (!empty($obj->payment_code)) {
+			print $langs->trans("PaymentTypeShort".$obj->payment_code);
+		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

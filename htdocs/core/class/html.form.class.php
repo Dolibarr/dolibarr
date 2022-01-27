@@ -1690,11 +1690,16 @@ class Form
 				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
 
-			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) {
-				$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
-			}
-			if ($showempty == 2) {
-				$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
+			if ($showempty && ! is_numeric($showempty)) {
+				$textforempty = $showempty;
+				$out .= '<option class="optiongrey" value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'>'.$textforempty.'</option>';
+			} else {
+				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && ! $multiple) {
+					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
+				}
+				if ($showempty == 2) {
+					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
+				}
 			}
 
 			$i = 0;
@@ -3120,7 +3125,7 @@ class Form
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
-		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
+		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
 		// if we use supplier description of the products
 		if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
@@ -3275,7 +3280,7 @@ class Form
 
 				$optlabel = $objp->ref;
 				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
-					$optlabel .= ' <span class=\'opacitymedium\'>('.$objp->ref_fourn.')</span>';
+					$optlabel .= ' <span class="opacitymedium">('.$objp->ref_fourn.')</span>';
 				}
 				if (!empty($conf->barcode->enabled) && !empty($objp->barcode)) {
 					$optlabel .= ' ('.$outbarcode.')';
@@ -3416,7 +3421,6 @@ class Form
 
 				$opt .= "</option>\n";
 
-
 				// Add new entry
 				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -3427,7 +3431,11 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'price_ht'=>price2num($objp->unitprice, 'MT'),
+						'price_qty_ht'=>price2num($objp->fprice, 'MU'),	// Keep higher resolution for price for the min qty
+						'price_unit_ht'=>price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
+						'price_ht'=>price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
+						'tva_tx'=>$objp->tva_tx,
+						'default_vat_code'=>$objp->default_vat_code,
 						'discount'=>$outdiscount,
 						'type'=>$outtype,
 						'duration_value'=>$outdurationvalue,
@@ -3662,7 +3670,7 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge dans cache la liste des délais de livraison possibles
+	 *      Load int a cache property th elist of possible delivery delays.
 	 *
 	 *      @return     int             Nb of lines loaded, <0 if KO
 	 */
@@ -3671,7 +3679,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_availability);
+		$num = count($this->cache_availability);	// TODO Use $conf->cache['availability'] instead of $this->cache_availability
 		if ($num > 0) {
 			return 0; // Cache already loaded
 		}
@@ -3755,7 +3763,7 @@ class Form
 	{
 		global $langs;
 
-		$num = count($this->cache_demand_reason);
+		$num = count($this->cache_demand_reason);	// TODO Use $conf->cache['input_reason'] instead of $this->cache_demand_reason
 		if ($num > 0) {
 			return 0; // Cache already loaded
 		}
@@ -3851,7 +3859,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_types_paiements);
+		$num = count($this->cache_types_paiements);		// TODO Use $conf->cache['payment_mode'] instead of $this->cache_types_paiements
 		if ($num > 0) {
 			return $num; // Cache already loaded
 		}
@@ -3893,7 +3901,7 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Return list of payment modes.
+	 *      print list of payment modes.
 	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
 	 *      See instead to force the default value by the caller.
 	 *
@@ -3908,8 +3916,28 @@ class Form
 	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
 	{
 		// phpcs:enable
-		global $langs, $user, $conf;
+		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss);
+	}
 
+
+	/**
+	 *      Return list of payment modes.
+	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *      See instead to force the default value by the caller.
+	 *
+	 *      @param	int		$selected		Id of payment term to preselect by default
+	 *      @param	string	$htmlname		Nom de la zone select
+	 *      @param	int		$filtertype		Not used
+	 *		@param	int		$addempty		Add an empty entry
+	 * 		@param	int		$noinfoadmin	0=Add admin info, 1=Disable admin info
+	 * 		@param	string	$morecss		Add more CSS on select tag
+	 *		@return	void
+	 */
+	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
+	{
+
+		global $langs, $user, $conf;
+		$out = '';
 		dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
 		$this->load_cache_conditions_paiements();
@@ -3919,24 +3947,25 @@ class Form
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 		}
 
-		print '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+		$out.=  '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($addempty) {
-			print '<option value="0">&nbsp;</option>';
+			$out.=  '<option value="0">&nbsp;</option>';
 		}
 		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
 			if ($selected == $id) {
-				print '<option value="'.$id.'" selected>';
+				$out.=  '<option value="'.$id.'" selected>';
 			} else {
-				print '<option value="'.$id.'">';
+				$out.=  '<option value="'.$id.'">';
 			}
-			print $arrayconditions['label'];
-			print '</option>';
+			$out.=  $arrayconditions['label'];
+			$out.=  '</option>';
 		}
-		print '</select>';
+		$out.=  '</select>';
 		if ($user->admin && empty($noinfoadmin)) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out.=  info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print ajax_combobox($htmlname);
+		$out.=  ajax_combobox($htmlname);
+		return $out;
 	}
 
 
@@ -4092,7 +4121,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_transport_mode);
+		$num = count($this->cache_transport_mode);		// TODO Use $conf->cache['payment_mode'] instead of $this->cache_transport_mode
 		if ($num > 0) {
 			return $num; // Cache already loaded
 		}

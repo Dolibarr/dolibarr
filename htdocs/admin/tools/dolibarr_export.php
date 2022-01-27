@@ -400,8 +400,6 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
-print '</td></tr>';
-print '</table>';
 
 
 
@@ -538,6 +536,8 @@ if (!empty($_SESSION["commandbackuptorun"])) {
 
 print "</div> <!-- end div center button -->\n";
 
+print '</td></tr>';
+print '</table>';
 
 print "</div> 	<!-- end div fichehalfleft -->\n";
 

@@ -29,6 +29,7 @@
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
 /**
  * Class to manage accounting accounts
  */
@@ -566,7 +567,7 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Information on record
 	 *
-	 * @param int $id of record
+	 * @param int 	$id 	ID of record
 	 * @return void
 	 */
 	public function info($id)
@@ -850,8 +851,8 @@ class AccountingAccount extends CommonObject
 
 			// Level 3 (define $code_t): Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				if (!empty($buyer->code_compta)) {
-					$code_t = $buyer->code_compta;
+				if (!empty($buyer->code_compta_product)) {
+					$code_t = $buyer->code_compta_product;
 					$suggestedid = $accountingAccount['thirdparty'];
 					$suggestedaccountingaccountfor = 'thridparty';
 				}

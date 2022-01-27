@@ -555,9 +555,9 @@ class Translate
 	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).
 	 * Search in lang file, then into database. Key must be any complete entry into lang file: CurrencyEUR, ...
 	 * If not found, return key.
-	 * The string return is not formated (translated with transnoentitiesnoconv)
-	 * NOTE: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), if you modify this function,
-	 * check that getLabelFromKey is not called with same value than input.
+	 * The string return is not formated (translated with transnoentitiesnoconv).
+	 * NOTE: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey->getLabelFromKey), if you modify this function,
+	 * check that getLabelFromKey is never called with the same value than $key.
 	 *
 	 * @param	string		$key		Key to translate
 	 * @return 	string					Translated string (translated with transnoentitiesnoconv)
@@ -585,7 +585,7 @@ class Translate
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_lead_status', 'code', 'label');
 		} elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg)) {
 			// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
-			//$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
+			//$newstr=$this->getLabelFromKey($db,$reg[1],'llx_c_input_reason','code','label');
 		}
 
 		/* Disabled. There is too many cases where translation of $newstr is not defined is normal (like when output with setEventMessage an already translated string)
@@ -945,9 +945,9 @@ class Translate
 	 *
 	 * 		@param	DoliDB	$db				Database handler
 	 * 		@param	string	$key			Translation key to get label (key in language file)
-	 * 		@param	string	$tablename		Table name without prefix
-	 * 		@param	string	$fieldkey		Field for key
-	 * 		@param	string	$fieldlabel		Field for label
+	 * 		@param	string	$tablename		Table name without prefix. This value must always be a hardcoded string and not a value coming from user input.
+	 * 		@param	string	$fieldkey		Field for key. This value must always be a hardcoded string and not a value coming from user input.
+	 * 		@param	string	$fieldlabel		Field for label. This value must always be a hardcoded string and not a value coming from user input.
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
 	 *      @param  int		$filteronentity	Use a filter on entity
 	 *      @return string					Label in UTF8 (but without entities)
@@ -959,10 +959,15 @@ class Translate
 		if ($key == '') {
 			return '';
 		}
+		// Test should be useless because the 3 variables are never set from user input but we keep it in case of.
+		if (preg_match('/[^0-9A-Z_]/i', $tablename) || preg_match('/[^0-9A-Z_]/i', $fieldkey) || preg_match('/[^0-9A-Z_]/i', $fieldlabel)) {
+			$this->error = 'Bad value for parameter tablename, fieldkey or fieldlabel';
+			return -1;
+		}
 
 		//print 'param: '.$key.'-'.$keydatabase.'-'.$this->trans($key); exit;
 
-		// Check if a translation is available (this can call getTradFromKey)
+		// Check if a translation is available (Note: this can call getTradFromKey that can call getLabelFromKey)
 		$tmp = $this->transnoentitiesnoconv($key);
 		if ($tmp != $key && $tmp != 'ErrorBadValueForParamNotAString') {
 			return $tmp; // Found in language array
@@ -973,6 +978,7 @@ class Translate
 			return $this->cache_labels[$tablename][$key]; // Found in cache
 		}
 
+		// Not found in loaded language file nor in cache. So we will take the label into database.
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$tablename;
 		$sql .= " WHERE ".$fieldkey." = '".$db->escape($keyforselect ? $keyforselect : $key)."'";
