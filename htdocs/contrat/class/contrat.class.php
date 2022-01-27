@@ -387,7 +387,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
-				$result = $contratline->active_line($user, $date_start, -1, $comment);
+				$result = $contratline->active_line($user, $date_start, -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
 					$this->error = $contratline->error;
