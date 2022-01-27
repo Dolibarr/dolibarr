@@ -3777,8 +3777,8 @@ abstract class CommonObject
 		 }*/
 
 		// Links between objects are stored in table element_element
-		$sql = 'SELECT rowid, fk_source, sourcetype, fk_target, targettype';
-		$sql .= ' FROM '.$this->db->prefix().'element_element';
+		$sql = "SELECT rowid, fk_source, sourcetype, fk_target, targettype";
+		$sql .= " FROM ".$this->db->prefix()."element_element";
 		$sql .= " WHERE ";
 		if ($justsource || $justtarget) {
 			if ($justsource) {
@@ -3796,7 +3796,7 @@ abstract class CommonObject
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
 		}
-		$sql .= ' ORDER BY '.$orderby;
+		$sql .= " ORDER BY ".$orderby;
 
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
 		$resql = $this->db->query($sql);

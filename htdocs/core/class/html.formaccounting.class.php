@@ -307,7 +307,7 @@ class FormAccounting extends Form
 		// phpcs:enable
 		$options = array();
 
-		$sql = 'SELECT DISTINCT import_key from '.$this->db->prefix().'accounting_bookkeeping';
+		$sql = "SELECT DISTINCT import_key FROM ".$this->db->prefix()."accounting_bookkeeping";
 		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= ' ORDER BY import_key DESC';
 

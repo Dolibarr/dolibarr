@@ -130,8 +130,8 @@ abstract class CommonInvoice extends CommonObject
 			$field = 'fk_facturefourn';
 		}
 
-		$sql = 'SELECT sum(amount) as amount, sum(multicurrency_amount) as multicurrency_amount';
-		$sql .= ' FROM '.$this->db->prefix().$table;
+		$sql = "SELECT sum(amount) as amount, sum(multicurrency_amount) as multicurrency_amount";
+		$sql .= " FROM ".$this->db->prefix().$table;
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
@@ -226,10 +226,10 @@ abstract class CommonInvoice extends CommonObject
 	{
 		$idarray = array();
 
-		$sql = 'SELECT rowid';
+		$sql = "SELECT rowid";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_facture_source = ".((int) $this->id);
-		$sql .= ' AND type = 2';
+		$sql .= " AND type = 2";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -253,10 +253,10 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getIdReplacingInvoice($option = '')
 	{
-		$sql = 'SELECT rowid';
+		$sql = "SELECT rowid";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_facture_source = ".((int) $this->id);
-		$sql .= ' AND type < 2';
+		$sql .= " AND type < 2";
 		if ($option == 'validated') {
 			$sql .= ' AND fk_statut = 1';
 		}
@@ -265,7 +265,7 @@ abstract class CommonInvoice extends CommonObject
 		// and another no, priority is given to the valid one.
 		// Should not happen (unless concurrent access and 2 people have created a
 		// replacement invoice for the same invoice at the same time)
-		$sql .= ' ORDER BY fk_statut DESC';
+		$sql .= " ORDER BY fk_statut DESC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -601,8 +601,8 @@ abstract class CommonInvoice extends CommonObject
 		$cdr_type = 0;
 		$cdr_decalage = 0;
 
-		$sqltemp = 'SELECT c.type_cdr, c.nbjour, c.decalage';
-		$sqltemp .= ' FROM '.$this->db->prefix().'c_payment_term as c';
+		$sqltemp = "SELECT c.type_cdr, c.nbjour, c.decalage";
+		$sqltemp .= " FROM ".$this->db->prefix()."c_payment_term as c";
 		if (is_numeric($cond_reglement)) {
 			$sqltemp .= " WHERE c.rowid=".((int) $cond_reglement);
 		} else {
@@ -697,15 +697,15 @@ abstract class CommonInvoice extends CommonObject
 			$bac = new CompanyBankAccount($this->db);
 			$bac->fetch(0, $this->socid);
 
-			$sql = 'SELECT count(*)';
-			$sql .= ' FROM '.$this->db->prefix().'prelevement_facture_demande';
+			$sql = "SELECT count(*)";
+			$sql .= " FROM ".$this->db->prefix()."prelevement_facture_demande";
 			if ($type == 'bank-transfer') {
-				$sql .= ' WHERE fk_facture_fourn = '.((int) $this->id);
+				$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
 			} else {
-				$sql .= ' WHERE fk_facture = '.((int) $this->id);
+				$sql .= " WHERE fk_facture = ".((int) $this->id);
 			}
-			$sql .= ' AND ext_payment_id IS NULL'; // To exclude record done for some online payments
-			$sql .= ' AND traite = 0';
+			$sql .= " AND ext_payment_id IS NULL"; // To exclude record done for some online payments
+			$sql .= " AND traite = 0";
 
 			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 			$resql = $this->db->query($sql);

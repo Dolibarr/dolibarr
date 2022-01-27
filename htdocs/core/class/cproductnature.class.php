@@ -197,12 +197,12 @@ class CProductNature // extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
+		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {

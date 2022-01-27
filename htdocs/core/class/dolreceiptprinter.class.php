@@ -242,9 +242,9 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$line = 0;
 		$obj = array();
-		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
-		$sql .= ' FROM '.$this->db->prefix().'printer_receipt';
-		$sql .= ' WHERE entity = '.$conf->entity;
+		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
+		$sql .= " WHERE entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -310,9 +310,9 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$line = 0;
 		$obj = array();
-		$sql = 'SELECT rowid, name, template';
-		$sql .= ' FROM '.$this->db->prefix().'printer_receipt_template';
-		$sql .= ' WHERE entity = '.$conf->entity;
+		$sql = "SELECT rowid, name, template";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
+		$sql .= " WHERE entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -873,10 +873,10 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'SELECT template';
-		$sql .= ' FROM '.$this->db->prefix().'printer_receipt_template';
-		$sql .= ' WHERE rowid = '.((int) $templateid);
-		$sql .= ' AND entity = '.$conf->entity;
+		$sql = "SELECT template";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
+		$sql .= " WHERE rowid = ".((int) $templateid);
+		$sql .= " AND entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);
@@ -910,10 +910,10 @@ class dolReceiptPrinter extends Printer
 			return;
 		}
 		$error = 0;
-		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
-		$sql .= ' FROM '.$this->db->prefix().'printer_receipt';
-		$sql .= ' WHERE rowid = '.((int) $printerid);
-		$sql .= ' AND entity = '.((int) $conf->entity);
+		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
+		$sql .= " WHERE rowid = ".((int) $printerid);
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);

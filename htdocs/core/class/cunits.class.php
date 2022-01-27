@@ -237,7 +237,7 @@ class CUnits // extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
+		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.sortorder,";
@@ -246,7 +246,7 @@ class CUnits // extends CommonObject
 		$sql .= " t.unit_type,";
 		$sql .= " t.scale,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.$this->db->prefix().'c_units as t';
+		$sql .= " FROM ".$this->db->prefix()."c_units as t";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -471,7 +471,7 @@ class CUnits // extends CommonObject
 	{
 		$base = 10;
 		// TODO : add base col into unit dictionary table
-		$unit = $this->db->getRow('SELECT scale, unit_type from '.$this->db->prefix().'c_units WHERE rowid = '.intval($id));
+		$unit = $this->db->getRow("SELECT scale, unit_type from ".$this->db->prefix()."c_units WHERE rowid = ".intval($id));
 		if ($unit) {
 			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
 			if ($unit->unit_type == 'time') {

@@ -163,12 +163,12 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($id) {
 			$sql .= " WHERE t.id = ".((int) $id);
 		} elseif ($code) {
@@ -228,12 +228,12 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 
 		// Manage filter
 		$sqlwhere = array();

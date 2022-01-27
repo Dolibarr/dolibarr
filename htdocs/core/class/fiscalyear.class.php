@@ -414,10 +414,10 @@ class Fiscalyear extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,';
-		$sql .= ' fy.tms';
-		$sql .= ' FROM '.$this->db->prefix().'accounting_fiscalyear as fy';
-		$sql .= ' WHERE fy.rowid = '.((int) $id);
+		$sql = "SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,";
+		$sql .= " fy.tms";
+		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear as fy";
+		$sql .= " WHERE fy.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
 		$result = $this->db->query($sql);
