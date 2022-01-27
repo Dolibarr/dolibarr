@@ -113,7 +113,7 @@ class ProductStockEntrepot extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
+		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
 
 		$sql .= 'fk_product,';
 		$sql .= 'fk_entrepot,';
@@ -143,7 +143,7 @@ class ProductStockEntrepot extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			//if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -192,7 +192,7 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= " t.seuil_stock_alerte,";
 		$sql .= " t.desiredstock,";
 		$sql .= " t.import_key";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
 		if (!empty($id)) {
 			$sql .= ' WHERE t.rowid = '.((int) $id);
 		} else {
@@ -265,7 +265,7 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= " t.import_key";
 
 
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
 
 		$sql .= ' WHERE 1=1';
 
@@ -355,7 +355,7 @@ class ProductStockEntrepot extends CommonObject
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
@@ -425,7 +425,7 @@ class ProductStockEntrepot extends CommonObject
 		//}
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
+			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
