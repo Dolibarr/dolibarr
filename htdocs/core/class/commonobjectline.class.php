@@ -93,7 +93,7 @@ abstract class CommonObjectLine extends CommonObject
 			$label_type = 'code';
 		}
 
-		$sql = "SELECT ".$label_type.", code from ".MAIN_DB_PREFIX."c_units where rowid = ".((int) $this->fk_unit);
+		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {

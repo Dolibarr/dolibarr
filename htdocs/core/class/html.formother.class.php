@@ -139,7 +139,7 @@ class FormOther
 		global $conf, $langs, $user;
 
 		$sql = "SELECT rowid, label, fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
+		$sql .= " FROM ".$this->db->prefix()."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
 		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
@@ -201,7 +201,7 @@ class FormOther
 		global $conf, $langs, $user;
 
 		$sql = "SELECT rowid, label, fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
+		$sql .= " FROM ".$this->db->prefix()."import_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
 		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
@@ -261,7 +261,7 @@ class FormOther
 
 		$sql = "SELECT e.rowid, e.code, e.label, e.price, e.organization,";
 		$sql .= " c.label as country";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " FROM ".$this->db->prefix()."c_ecotaxe as e,".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
 		$sql .= " ORDER BY country, e.organization ASC, e.code ASC";
 
@@ -313,7 +313,7 @@ class FormOther
 		$out = '';
 
 		$sql = "SELECT r.taux, r.revenuestamp_type";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " FROM ".$this->db->prefix()."c_revenuestamp as r,".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
 		$sql .= " AND c.code = '".$this->db->escape($country_code)."'";
 
@@ -500,13 +500,13 @@ class FormOther
 
 		// Get list of users allowed to be viewed
 		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut as status, u.login, u.photo, u.gender, u.entity, u.admin";
-		$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql_usr .= " FROM ".$this->db->prefix()."user as u";
 
 		if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 				$sql_usr .= " WHERE u.entity IS NOT NULL"; // Show all users
 			} else {
-				$sql_usr .= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
+				$sql_usr .= " WHERE EXISTS (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
 				$sql_usr .= " OR u.entity = 0"; // Show always superadmin
 			}
 		} else {
@@ -529,13 +529,13 @@ class FormOther
 		if (empty($user->rights->user->user->lire) && $user->socid) {
 			$sql_usr .= " UNION ";
 			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut as status, u2.login, u2.photo, u2.gender, u2.entity, u2.admin";
-			$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql_usr .= " FROM ".$this->db->prefix()."user as u2, ".$this->db->prefix()."societe_commerciaux as sc";
 
 			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql_usr .= " WHERE u2.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql_usr .= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
+					$sql_usr .= " WHERE EXISTS (SELECT ug2.fk_user FROM ".$this->db->prefix()."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
 				}
 			} else {
 				$sql_usr .= " WHERE u2.entity IN (".getEntity('user').")";
@@ -1398,7 +1398,7 @@ class FormOther
 		$langs->load("admin");
 
 		$sql = "SELECT rowid, ".$keyfield.", ".$labelfield;
-		$sql .= " FROM ".MAIN_DB_PREFIX.$dictionarytable;
+		$sql .= " FROM ".$this->db->prefix().$dictionarytable;
 		$sql .= " ORDER BY ".$labelfield;
 
 		dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);

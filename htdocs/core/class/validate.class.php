@@ -262,7 +262,7 @@ class Validate
 	 * Check for all values in db
 	 *
 	 * @param array  $values Boolean to validate
-	 * @param string $table  the db table name without MAIN_DB_PREFIX
+	 * @param string $table  the db table name without $this->db->prefix()
 	 * @param string $col    the target col
 	 * @return boolean Validity is ok or not
 	 * @throws Exception
@@ -281,7 +281,7 @@ class Validate
 		}
 
 		foreach ($value_arr as $val) {
-			$sql = "SELECT ".$col." FROM ".MAIN_DB_PREFIX.$table." WHERE ".$col." = '".$this->db->escape($val)."'"; // nore quick than count(*) to check existing of a row
+			$sql = "SELECT ".$col." FROM ".$this->db->prefix().$table." WHERE ".$col." = '".$this->db->escape($val)."'"; // nore quick than count(*) to check existing of a row
 			$resql = $this->db->getRow($sql);
 			if ($resql) {
 				continue;

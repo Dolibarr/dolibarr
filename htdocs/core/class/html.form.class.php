@@ -886,7 +886,7 @@ class Form
 		$atleastonefavorite = 0;
 
 		$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite, eec";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
+		$sql .= " FROM ".$this->db->prefix()."c_country";
 		$sql .= " WHERE active > 0";
 		//$sql.= " ORDER BY code ASC";
 
@@ -1009,7 +1009,7 @@ class Form
 		$incotermArray = array();
 
 		$sql = "SELECT rowid, code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_incoterms";
+		$sql .= " FROM ".$this->db->prefix()."c_incoterms";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY code ASC";
 
@@ -1155,7 +1155,7 @@ class Form
 		$langs->load("trips");
 
 		$sql = "SELECT c.code, c.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
+		$sql .= " FROM ".$this->db->prefix()."c_type_fees as c";
 		$sql .= " WHERE active > 0";
 
 		$resql = $this->db->query($sql);
@@ -1344,12 +1344,12 @@ class Form
 			$sql .= ", s.address, s.zip, s.town";
 			$sql .= ", dictp.code as country_code";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " FROM ".$this->db->prefix()."societe as s";
 		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		if (!empty($user->socid)) {
@@ -1523,7 +1523,7 @@ class Form
 		// On recherche les remises
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+		$sql .= " FROM ".$this->db->prefix()."societe_remise_except as re";
 		$sql .= " WHERE re.fk_soc = ".(int) $socid;
 		$sql .= " AND re.entity = ".$conf->entity;
 		if ($filter) {
@@ -1668,9 +1668,9 @@ class Form
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 			$sql .= ", s.nom as company, s.town AS company_town";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+		$sql .= " FROM ".$this->db->prefix()."socpeople as sp";
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
-			$sql .= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX."societe as s ON s.rowid=sp.fk_soc";
+			$sql .= " LEFT OUTER JOIN  ".$this->db->prefix()."societe as s ON s.rowid=sp.fk_soc";
 		}
 		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		if ($socid > 0 || $socid == -1) {
@@ -1922,9 +1922,9 @@ class Form
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= ", e.label";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql .= " FROM ".$this->db->prefix()."user as u";
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid = u.entity";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."entity as e ON e.rowid = u.entity";
 			if ($force_entity) {
 				$sql .= " WHERE u.entity IN (0, ".$this->db->sanitize($force_entity).")";
 			} else {
@@ -1932,7 +1932,7 @@ class Form
 			}
 		} else {
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
+				$sql .= " LEFT JOIN ".$this->db->prefix()."usergroup_user as ug";
 				$sql .= " ON ug.fk_user = u.rowid";
 				$sql .= " WHERE ug.entity = ".$conf->entity;
 			} else {
@@ -2431,9 +2431,9 @@ class Form
 
 		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
 			//Product category
-			$sql .= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
-						FROM ".MAIN_DB_PREFIX."categorie_product
-						WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid
+			$sql .= ", (SELECT ".$this->db->prefix()."categorie_product.fk_categorie
+						FROM ".$this->db->prefix()."categorie_product
+						WHERE ".$this->db->prefix()."categorie_product.fk_product=p.rowid
 						LIMIT 1
 				) AS categorie_product_id ";
 		}
@@ -2459,13 +2459,13 @@ class Form
 		}
 		// Price by quantity
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			$sql .= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
+			$sql .= ", (SELECT pp.rowid FROM ".$this->db->prefix()."product_price as pp WHERE pp.fk_product = p.rowid";
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 				$sql .= " AND price_level = ".((int) $price_level);
 			}
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1) as price_rowid";
-			$sql .= ", (SELECT pp.price_by_qty FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid"; // price_by_qty is 1 if some prices by qty exists in subtable
+			$sql .= ", (SELECT pp.price_by_qty FROM ".$this->db->prefix()."product_price as pp WHERE pp.fk_product = p.rowid"; // price_by_qty is 1 if some prices by qty exists in subtable
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 				$sql .= " AND price_level = ".((int) $price_level);
 			}
@@ -2473,29 +2473,29 @@ class Form
 			$sql .= " DESC LIMIT 1) as price_by_qty";
 			$selectFields .= ", price_rowid, price_by_qty";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+		$sql .= " FROM ".$this->db->prefix()."product as p";
 		if (count($warehouseStatusArray)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.fk_product = p.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
 			$sql .= ' AND e.statut IN ('.$this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 		}
 
 		// include search in supplier ref
 		if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		}
 
 		//Price by customer
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
-			$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".((int) $socid)." AND pcp.fk_product=p.rowid";
+			$sql .= " LEFT JOIN  ".$this->db->prefix()."product_customer_price as pcp ON pcp.fk_soc=".((int) $socid)." AND pcp.fk_product=p.rowid";
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_units u ON u.rowid = p.fk_unit";
 		}
 		// Multilang : we add translation
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid ";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_lang as pl ON pl.fk_product = p.rowid ";
 			if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && !empty($socid)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$soc = new Societe($db);
@@ -2511,7 +2511,7 @@ class Form
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 		}
 
 		$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -2639,7 +2639,7 @@ class Form
 
 				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
-					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+					$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
 					$sql .= " WHERE fk_product_price = ".((int) $objp->price_rowid);
 					$sql .= " ORDER BY quantity ASC";
 
@@ -2879,7 +2879,7 @@ class Form
 		// If we need a particular price level (from 1 to n)
 		if (empty($hidepriceinlabel) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx, default_vat_code";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
+			$sql .= " FROM ".$this->db->prefix()."product_price";
 			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
 			$sql .= " AND price_level = ".((int) $price_level);
@@ -3140,15 +3140,15 @@ class Form
 		if (!empty($conf->barcode->enabled)) {
 			$sql .= ", pfp.barcode";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (".getEntity('product').") )";
+		$sql .= " FROM ".$this->db->prefix()."product as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (".getEntity('product').") )";
 		if ($socid > 0) {
 			$sql .= " AND pfp.fk_soc = ".((int) $socid);
 		}
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON pfp.fk_soc = s.rowid";
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		if ($statut != -1) {
@@ -3490,9 +3490,9 @@ class Form
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, pfp.fk_soc,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
+		$sql .= " FROM ".$this->db->prefix()."product as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON pfp.fk_soc = s.rowid";
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND p.tobuy = 1";
 		$sql .= " AND s.fournisseur = 1";
@@ -3588,7 +3588,7 @@ class Form
 		// phpcs:enable
 		// looking for users
 		$sql = "SELECT a.rowid, a.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_address as a";
+		$sql .= " FROM ".$this->db->prefix()."societe_address as a";
 		$sql .= " WHERE a.fk_soc = ".((int) $socid);
 		$sql .= " ORDER BY a.label ASC";
 
@@ -3640,7 +3640,7 @@ class Form
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
+		$sql .= " FROM ".$this->db->prefix().'c_payment_term';
 		$sql .= " WHERE entity IN (".getEntity('c_payment_term').")";
 		$sql .= " AND active > 0";
 		$sql .= " ORDER BY sortorder";
@@ -3689,7 +3689,7 @@ class Form
 		$langs->load('propal');
 
 		$sql = "SELECT rowid, code, label, position";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_availability';
+		$sql .= " FROM ".$this->db->prefix().'c_availability';
 		$sql .= " WHERE active > 0";
 
 		$resql = $this->db->query($sql);
@@ -3769,7 +3769,7 @@ class Form
 		}
 
 		$sql = "SELECT rowid, code, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
+		$sql .= " FROM ".$this->db->prefix().'c_input_reason';
 		$sql .= " WHERE active > 0";
 
 		$resql = $this->db->query($sql);
@@ -3869,7 +3869,7 @@ class Form
 		$this->cache_types_paiements = array();
 
 		$sql = "SELECT id, code, libelle as label, type, active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_paiement";
+		$sql .= " FROM ".$this->db->prefix()."c_paiement";
 		$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
 
 		$resql = $this->db->query($sql);
@@ -4131,7 +4131,7 @@ class Form
 		$this->cache_transport_mode = array();
 
 		$sql = "SELECT rowid, code, label, active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
+		$sql .= " FROM ".$this->db->prefix()."c_transport_mode";
 		$sql .= " WHERE entity IN (".getEntity('c_transport_mode').")";
 
 		$resql = $this->db->query($sql);
@@ -4249,7 +4249,7 @@ class Form
 		$langs->load("deliveries");
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode";
+		$sql .= " FROM ".$this->db->prefix()."c_shipment_mode";
 		$sql .= " WHERE active > 0";
 		if ($filtre) {
 			$sql .= " AND ".$filtre;
@@ -4339,7 +4339,7 @@ class Form
 
 		$opt = '<option value ="" selected></option>';
 		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture';
+		$sql .= ' FROM '.$this->db->prefix().'facture';
 		$sql .= ' WHERE entity IN ('.getEntity('invoice').')';
 		$sql .= ' AND situation_counter >= 1';
 		$sql .= ' AND fk_soc = '.(int) $socid;
@@ -4394,7 +4394,7 @@ class Form
 
 		$return = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 
-		$sql = 'SELECT rowid, label, code from '.MAIN_DB_PREFIX.'c_units';
+		$sql = 'SELECT rowid, label, code from '.$this->db->prefix().'c_units';
 		$sql .= ' WHERE active > 0';
 		if (!empty($unit_type)) {
 			$sql .= " AND unit_type = '".$this->db->escape($unit_type)."'";
@@ -4450,7 +4450,7 @@ class Form
 		$num = 0;
 
 		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql .= " FROM ".$this->db->prefix()."bank_account";
 		$sql .= " WHERE entity IN (".getEntity('bank_account').")";
 		if ($status != 2) {
 			$sql .= " AND clos = ".(int) $status;
@@ -4530,7 +4530,7 @@ class Form
 		$num = 0;
 
 		$sql = "SELECT rowid, name, fk_country, status, entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."establishment";
+		$sql .= " FROM ".$this->db->prefix()."establishment";
 		$sql .= " WHERE 1=1";
 		if ($status != 2) {
 			$sql .= " AND status = ".(int) $status;
@@ -4652,7 +4652,7 @@ class Form
 			// TODO Move this into common category feature
 			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
+			$sql .= " FROM ".$this->db->prefix()."bank_categ as c";
 			$sql .= " WHERE entity = ".$conf->entity;
 			$sql .= " ORDER BY c.label";
 			$result = $this->db->query($sql);
@@ -5742,7 +5742,7 @@ class Form
 
 		$TCurrency = array();
 
-		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
+		$sql = 'SELECT code FROM '.$this->db->prefix().'multicurrency';
 		$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
 		if ($filter) {
 			$sql .= " AND ".$filter;
@@ -5807,7 +5807,7 @@ class Form
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT DISTINCT t.rowid, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
 		$sql .= " AND c.code IN (".$this->db->sanitize($country_code, 1).")";
@@ -6765,7 +6765,7 @@ class Form
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
-		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
+		$sql .= " FROM ".$this->db->prefix()."ticket as p";
 		$sql .= ' WHERE p.entity IN ('.getEntity('ticket').')';
 
 		// Add criteria on ref/label
@@ -6971,7 +6971,7 @@ class Form
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " FROM ".$this->db->prefix()."projet as p";
 		$sql .= ' WHERE p.entity IN ('.getEntity('project').')';
 
 		// Add criteria on ref/label
@@ -7178,7 +7178,7 @@ class Form
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as p";
+		$sql .= " FROM ".$this->db->prefix()."adherent as p";
 		$sql .= ' WHERE p.entity IN ('.getEntity('adherent').')';
 
 		// Add criteria on ref/label
@@ -7480,15 +7480,15 @@ class Form
 		$num = 0;
 
 		// Search data
-		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
+		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".$this->db->prefix().$objecttmp->table_element." as t";
 		if (isset($objecttmp->ismultientitymanaged)) {
 			if (!is_numeric($objecttmp->ismultientitymanaged)) {
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
+				$sql .= " INNER JOIN ".$this->db->prefix().$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
 			}
 			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
 				if (empty($user->rights->societe->client->voir) && !$user->socid) {
-					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+					$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 				}
 			}
 		}
@@ -8454,22 +8454,22 @@ class Form
 			}
 
 			$possiblelinks = array(
-				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
-				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
-				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
-				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
+				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
+				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
+				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
+				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'contrat'=>array(
 					'enabled'=>$conf->contrat->enabled,
 					'perms'=>1,
 					'label'=>'LinkToContract',
-					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t, ".MAIN_DB_PREFIX."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."contrat as t, ".$this->db->prefix()."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
 				),
-				'fichinter'=>array('enabled'=>!empty($conf->ficheinter->enabled) ? $conf->ficheinter->enabled : 0, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
-				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
-				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
-				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled, 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('facture_fourn').')'),
-				'ticket'=>array('enabled'=>$conf->ticket->enabled, 'perms'=>1, 'label'=>'LinkToTicket', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('ticket').')'),
-				'mo'=>array('enabled'=>$conf->mrp->enabled, 'perms'=>1, 'label'=>'LinkToMo', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".MAIN_DB_PREFIX."societe as s INNER JOIN ".MAIN_DB_PREFIX."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
+				'fichinter'=>array('enabled'=>!empty($conf->ficheinter->enabled) ? $conf->ficheinter->enabled : 0, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
+				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
+				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
+				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled, 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('facture_fourn').')'),
+				'ticket'=>array('enabled'=>$conf->ticket->enabled, 'perms'=>1, 'label'=>'LinkToTicket', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('ticket').')'),
+				'mo'=>array('enabled'=>$conf->mrp->enabled, 'perms'=>1, 'label'=>'LinkToMo', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix()."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
 			);
 		}
 
@@ -8675,7 +8675,7 @@ class Form
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
+		$sql .= " FROM ".$this->db->prefix()."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
 		$sql .= " ORDER BY rowid";
 		$result = $this->db->query($sql);
@@ -9193,9 +9193,9 @@ class Form
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= ", e.label";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+		$sql .= " FROM ".$this->db->prefix()."usergroup as ug ";
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=ug.entity";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."entity as e ON e.rowid=ug.entity";
 			if ($force_entity) {
 				$sql .= " WHERE ug.entity IN (0, ".$force_entity.")";
 			} else {
@@ -9360,7 +9360,7 @@ class Form
 		global $db, $langs, $user;
 
 		$out = '';
-		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
+		$sql = 'SELECT rowid, label FROM '.$this->db->prefix().'c_exp_tax_cat WHERE active = 1';
 		$sql .= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
 		if (!empty($excludeid)) {
 			$sql .= ' AND rowid NOT IN ('.$this->db->sanitize(implode(',', $excludeid)).')';
@@ -9385,7 +9385,7 @@ class Form
 			}
 
 			if (!empty($target)) {
-				$sql = "SELECT c.id FROM ".MAIN_DB_PREFIX."c_type_fees as c WHERE c.code = 'EX_KME' AND c.active = 1";
+				$sql = "SELECT c.id FROM ".$this->db->prefix()."c_type_fees as c WHERE c.code = 'EX_KME' AND c.active = 1";
 				$resql = $db->query($sql);
 				if ($resql) {
 					if ($db->num_rows($resql) > 0) {
@@ -9450,7 +9450,7 @@ class Form
 		global $db, $conf, $langs;
 
 		$out = '';
-		$sql = 'SELECT rowid, range_ik FROM '.MAIN_DB_PREFIX.'c_exp_tax_range';
+		$sql = 'SELECT rowid, range_ik FROM '.$this->db->prefix().'c_exp_tax_range';
 		$sql .= ' WHERE entity = '.$conf->entity.' AND active = 1';
 
 		$resql = $db->query($sql);
@@ -9486,7 +9486,7 @@ class Form
 		global $db, $langs;
 
 		$out = '';
-		$sql = 'SELECT id, code, label FROM '.MAIN_DB_PREFIX.'c_type_fees';
+		$sql = 'SELECT id, code, label FROM '.$this->db->prefix().'c_type_fees';
 		$sql .= ' WHERE active = 1';
 
 		$resql = $db->query($sql);
@@ -9562,9 +9562,9 @@ class Form
 		$sql = "SELECT f.rowid, f.ref as fref, 'nolabel' as flabel, p.rowid as pid, f.ref,
             p.title, p.fk_soc, p.fk_statut, p.public,";
 		$sql .= ' s.nom as name';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
-		$sql .= ' '.MAIN_DB_PREFIX.'facture as f';
+		$sql .= ' FROM '.$this->db->prefix().'projet as p';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'societe as s ON s.rowid = p.fk_soc,';
+		$sql .= ' '.$this->db->prefix().'facture as f';
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		$sql .= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";

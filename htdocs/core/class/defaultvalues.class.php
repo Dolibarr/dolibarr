@@ -261,7 +261,7 @@ class DefaultValues extends CommonObject
 
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();

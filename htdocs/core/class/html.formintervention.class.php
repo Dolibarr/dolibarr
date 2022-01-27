@@ -72,7 +72,7 @@ class FormIntervention
 
 		// Search all contacts
 		$sql = 'SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter as f';
+		$sql .= ' FROM '.$this->db->prefix().'fichinter as f';
 		$sql .= " WHERE f.entity = ".$conf->entity;
 		if ($socid != '') {
 			if ($socid == '0') {
