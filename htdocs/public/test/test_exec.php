@@ -49,7 +49,8 @@ print 'PHP_SESSION_ACTIVE='.PHP_SESSION_ACTIVE."<br>\n";
 print '<br>';
 
 print 'session_status='.session_status().' (before main.inc.php)<br>';
-print '<br>';
+
+print '<br><br>'."\n";
 
 require '../../main.inc.php';
 
@@ -65,7 +66,6 @@ if ($dolibarr_main_prod) {
 
 print "*** TEST READ OF /tmp/test.txt FILE<br>\n";
 
-echo "Test<br>\n";
 $out='';
 $ret=0;
 
