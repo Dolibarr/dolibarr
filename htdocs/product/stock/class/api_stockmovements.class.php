@@ -174,7 +174,7 @@ class StockMovements extends DolibarrApi
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
 	 */
-	public function post($product_id, $warehouse_id, $qty, $type = 3, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
+	public function post($product_id, $warehouse_id, $qty, $type = 2, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
