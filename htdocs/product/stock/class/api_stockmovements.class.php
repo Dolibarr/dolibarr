@@ -160,7 +160,7 @@ class StockMovements extends DolibarrApi
 	 * @param int $product_id Id product id {@min 1} {@from body} {@required true}
 	 * @param int $warehouse_id Id warehouse {@min 1} {@from body} {@required true}
 	 * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
-	 * @param string $type Optionally specify the type of movement. 1=input (stock increase by a stock transfer), 2=output (stock decrease by a stock transfer),3=output (stock decrease), 4=input (stock increase). {@from body} {@type int}
+	 * @param int $type Optionally specify the type of movement. 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase). {@from body} {@type int}
 	 * @param string $lot Lot {@from body}
 	 * @param string $movementcode Movement code {@example INV123} {@from body}
 	 * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
@@ -174,7 +174,7 @@ class StockMovements extends DolibarrApi
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
 	 */
-	public function post($product_id, $warehouse_id, $qty, $type = '', $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
+	public function post($product_id, $warehouse_id, $qty, $type = 3, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $datem = '', $dlc = '', $dluo = '', $origin_type = '', $origin_id = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
@@ -185,13 +185,11 @@ class StockMovements extends DolibarrApi
 		}
 
 		// Type increase or decrease
-		if ($type == '') {
-				  $type = 2;
-			if ($qty >= 0) {
-					$type = 3;
-			}
-		} else {
-			$type = $type - 1;
+		if ($type == 1 && $qty >= 0) {
+			$type = 0;
+		}
+		if ($type == 2 && $qty >= 0) {
+			$type = 3;
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
