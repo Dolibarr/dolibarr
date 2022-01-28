@@ -273,6 +273,7 @@ ErrorWrongFileName=Имя файла не может содержать __SOMETH
 ErrorNotInDictionaryPaymentConditions=Нет в Словаре условий оплаты, пожалуйста, измените.
 ErrorIsNotADraft=%s это не черновик
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ваш параметр PHP upload_max_filesize (%s) выше, чем параметр PHP post_max_size (%s). Это непоследовательная установка.

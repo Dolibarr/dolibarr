@@ -28,5 +28,5 @@ create table llx_intracommreport
   content_xml		text,
   type_export		varchar(10),
   datec             datetime,
-  tms               timestamp
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

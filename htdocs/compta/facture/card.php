@@ -15,7 +15,7 @@
  * Copyright (C) 2014-2019  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +132,7 @@ $usercanread = $user->rights->facture->lire;
 $usercancreate = $user->rights->facture->creer;
 $usercanissuepayment = $user->rights->facture->paiement;
 $usercandelete = $user->rights->facture->supprimer;
+$usercancreatecontract = $user->rights->contrat->creer;
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->send)));
 $usercanreopen = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->reopen)));
@@ -266,6 +267,8 @@ if (empty($reshook)) {
 
 		$result = $object->deleteline(GETPOST('lineid', 'int'));
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -609,7 +612,7 @@ if (empty($reshook)) {
 		// Check parameters
 
 		// Check for mandatory fields in thirdparty (defined into setup)
-		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL');
+		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'ACCOUNTANCY_CODE_CUSTOMER');
 		foreach ($array_to_check as $key) {
 			$keymin = strtolower($key);
 			$i = (int) preg_replace('/[^0-9]/', '', $key);
@@ -635,6 +638,14 @@ if (empty($reshook)) {
 						$langs->load("errors");
 						$error++;
 						setEventMessages($langs->trans("ErrorBadEMail", $object->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+					}
+				}
+				if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') {
+					// Check for mandatory
+					if (!empty($conf->global->SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY) && empty($object->thirdparty->code_compta)) {
+						$langs->load("errors");
+						$error++;
+						setEventMessages($langs->trans("ErrorAccountancyCodeCustomerIsMandatory", $object->thirdparty->name).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
 					}
 				}
 			}
@@ -3417,6 +3428,10 @@ if ($action == 'create') {
 					$optionsav .= '<option value="'.$key.'"';
 					if ($key == GETPOST('fac_avoir')) {
 						$optionsav .= ' selected';
+
+						// pre-filled extra fields with selected credit note
+						$newinvoice_static->fetch_optionals($key);
+						$object->array_options = $newinvoice_static->array_options;
 					}
 					$optionsav .= '>';
 					$optionsav .= $newinvoice_static->ref;
@@ -5375,6 +5390,17 @@ if ($action == 'create') {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a>';
 				} else {
 					print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+				}
+			}
+
+			// Create contract
+			if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
+				if ($conf->contrat->enabled && $object->statut == Facture::STATUS_VALIDATED) {
+					$langs->load("contracts");
+
+					if ($usercancreatecontract) {
+						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
+					}
 				}
 			}
 

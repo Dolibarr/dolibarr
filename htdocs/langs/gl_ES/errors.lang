@@ -273,6 +273,7 @@ ErrorWrongFileName=O nome do ficheiro non pode conte  __SOMETHING__ nel
 ErrorNotInDictionaryPaymentConditions=Non está no Dicionario de Condicións de Pagamento. Modifíqueo. 
 ErrorIsNotADraft=%s non é un borrador
 ErrorExecIdFailed=Non se pode executar o comando "id" 
+ErrorBadCharIntoLoginName=Carácter non autorizado no nome de inicio de sesión
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.

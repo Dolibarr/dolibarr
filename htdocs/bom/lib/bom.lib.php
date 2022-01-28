@@ -56,7 +56,7 @@ function bomAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'bom@mrp');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom@mrp', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'bom@mrp', 'remove');
 
 	return $head;
 }

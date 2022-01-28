@@ -420,29 +420,26 @@ if (!file_exists($conffile)) {
 		if (GETPOST('allowupgrade')) {
 			$allowupgrade = true;
 		}
-		$migrationscript = array(
-			array('from'=>'3.0.0', 'to'=>'3.1.0'),
-			array('from'=>'3.1.0', 'to'=>'3.2.0'),
-			array('from'=>'3.2.0', 'to'=>'3.3.0'),
-			array('from'=>'3.3.0', 'to'=>'3.4.0'),
-			array('from'=>'3.4.0', 'to'=>'3.5.0'),
-			array('from'=>'3.5.0', 'to'=>'3.6.0'),
-			array('from'=>'3.6.0', 'to'=>'3.7.0'),
-			array('from'=>'3.7.0', 'to'=>'3.8.0'),
-			array('from'=>'3.8.0', 'to'=>'3.9.0'),
-			array('from'=>'3.9.0', 'to'=>'4.0.0'),
-			array('from'=>'4.0.0', 'to'=>'5.0.0'),
-			array('from'=>'5.0.0', 'to'=>'6.0.0'),
-			array('from'=>'6.0.0', 'to'=>'7.0.0'),
-			array('from'=>'7.0.0', 'to'=>'8.0.0'),
-			array('from'=>'8.0.0', 'to'=>'9.0.0'),
-			array('from'=>'9.0.0', 'to'=>'10.0.0'),
-			array('from'=>'10.0.0', 'to'=>'11.0.0'),
-			array('from'=>'11.0.0', 'to'=>'12.0.0'),
-			array('from'=>'12.0.0', 'to'=>'13.0.0'),
-			array('from'=>'13.0.0', 'to'=>'14.0.0'),
-			array('from'=>'14.0.0', 'to'=>'15.0.0'),
-		);
+
+		$dir = DOL_DOCUMENT_ROOT."/install/mysql/migration/";	// We use mysql migration scripts whatever is database driver
+		dolibarr_install_syslog("Scan sql files for migration files in ".$dir);
+
+		// Get files list of migration file x.y.z-a.b.c.sql into /install/mysql/migration
+		$migrationscript = array();
+		$handle = opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				$reg = array();
+				if (preg_match('/^(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+)\.sql$/i', $file, $reg)) {
+					if (!empty($reg[2]) && version_compare(DOL_VERSION, $reg[2])) {
+						$migrationscript[] = array('from' => $reg[1], 'to' => $reg[2]);
+					}
+				}
+			}
+			$migrationscript = dol_sort_array($migrationscript, 'from', 'asc', 1);
+		} else {
+			print '<div class="error">'.$langs->trans("ErrorCanNotReadDir", $dir).'</div>';
+		}
 
 		$count = 0;
 		foreach ($migrationscript as $migarray) {

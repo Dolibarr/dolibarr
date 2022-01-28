@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2021 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2022 Juanjo Menent        <jmenent@2byte.es>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ create table llx_c_partnership_type
   rowid      	integer AUTO_INCREMENT PRIMARY KEY,
   entity        integer DEFAULT 1 NOT NULL,
   code          varchar(32) NOT NULL,
-  label 	    varchar(64)	NOT NULL,
+  label 	    varchar(128)	NOT NULL,
   active  	    tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
 

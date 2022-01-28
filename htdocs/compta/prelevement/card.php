@@ -439,6 +439,8 @@ if ($id > 0 || $ref) {
 		}
 
 		if ($num > 0) {
+			$total = price2num($total, 'MT');
+
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';

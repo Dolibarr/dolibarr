@@ -196,7 +196,8 @@ if ($action == 'add' && !$cancel) {
 	}
 	$object->amount = $amount;
 	$object->label = GETPOST("label", 'alpha');
-	$object->note = GETPOST("note", 'none');
+	$object->note = GETPOST("note", 'restricthtml');
+	$object->note_private = GETPOST("note", 'restricthtml');
 
 	if (empty($object->datep)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment")), null, 'errors');
@@ -236,7 +237,7 @@ if ($action == 'add' && !$cancel) {
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
 			$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note = GETPOST("note", 'none');
+			$paiement->note = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (int) GETPOST('closepaidtva'));

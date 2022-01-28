@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuración del módulo Stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Ofrezca a sus clientes una página de pago en línea para pagos con tarjetas de crédito / débito a través de <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a>. Esto se puede utilizar para permitir que sus clientes realicen pagos ad-hoc o para pagos relacionados con un objeto Dolibarr en particular (factura, pedido, ...)
 StripeOrCBDoPayment=Pagar con tarjeta de crédito o Stripe
 FollowingUrlAreAvailableToMakePayments=Las siguientes URL están disponibles para permitir a un cliente efectuar un pago
 PaymentForm=Formulario de pago

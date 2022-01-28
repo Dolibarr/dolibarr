@@ -40,8 +40,8 @@ $search_id = GETPOST("search_id", 'alpha');
 $search_version = GETPOST("search_version", 'alpha');
 $search_permission = GETPOST("search_permission", 'alpha');
 
-$sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortfield			= GETPOST('sortfield', 'aZ09comma');
+$sortorder			= GETPOST('sortorder', 'aZ09comma');
 
 if (!$sortfield) {
 	$sortfield = "id";

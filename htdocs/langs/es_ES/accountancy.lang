@@ -48,7 +48,7 @@ CountriesNotInEEC=Países no incluidos en la CEE
 CountriesInEECExceptMe=Países en la CEE excepto %s
 CountriesExceptMe=Todos los países excepto %s
 AccountantFiles=Exportar documentos de origen
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp=Con esta herramienta, puede exportar los eventos de origen (lista en CSV y PDF) que se utilizan para generar su contabilidad.
 ExportAccountingSourceDocHelp2=Para exportar sus diarios, use la entrada de menú %s - %s.
 VueByAccountAccounting=Ver por cuenta contable
 VueBySubAccountAccounting=Ver por subcuenta contable
@@ -286,7 +286,7 @@ ValidateMovements=Validar movimientos
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de registros. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrarlo
 
 ValidateHistory=Vincular automáticamente
-AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+AutomaticBindingDone=Vinculaciones automáticas realizadas (%s) - La vinculación automática no es posible para algunos registros (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
 MvtNotCorrectlyBalanced=Asiento contabilizado incorrectamente. Debe=%s. Haber=%s
@@ -387,8 +387,8 @@ SaleExport=Venta de exportación
 SaleEEC=Venta en CEE
 SaleEECWithVAT=Venta en CEE con un IVA no nulo, por lo que suponemos que esto NO es una venta intracomunitaria y la cuenta sugerida es la cuenta de producto estándar.
 SaleEECWithoutVATNumber=Venta en CEE sin IVA pero el ID de IVA de un tercero no está definido. Recurrimos a la cuenta del producto para ventas estándar. Puede corregir el ID de IVA de un tercero o la cuenta del producto si es necesario.
-ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
-ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
+ForbiddenTransactionAlreadyExported=Prohibido: La transacción ha sido validada y / o exportada.
+ForbiddenTransactionAlreadyValidated=Prohibido: la transacción ha sido validada.
 ## Dictionary
 Range=Rango de cuenta contable
 Calculated=Calculado

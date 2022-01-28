@@ -211,7 +211,7 @@ if ($action == 'validatehistory') {
 			$thirdpartystatic->email = $objp->email;
 			$thirdpartystatic->country_code = $objp->country_code;
 			$thirdpartystatic->tva_intra = $objp->tva_intra;
-			$thirdpartystatic->code_compta = $objp->company_code_sell;
+			$thirdpartystatic->code_compta_product = $objp->company_code_buy;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 			$product_static->ref = $objp->product_ref;
 			$product_static->id = $objp->product_id;
@@ -230,7 +230,7 @@ if ($action == 'validatehistory') {
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			$facture_static->type = $objp->ftype;
-			$facture_static->datef = $objp->datef;
+			$facture_static->date = $objp->datef;
 
 			$facture_static_det->id = $objp->rowid;
 			$facture_static_det->total_ht = $objp->total_ht;

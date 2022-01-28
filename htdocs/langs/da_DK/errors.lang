@@ -273,6 +273,7 @@ ErrorWrongFileName=Filens navn kan ikke indeholde __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Ikke i ordbogen om betalingsbetingelser, bedes du ændre.
 ErrorIsNotADraft=%s er ikke et udkast
 ErrorExecIdFailed=Kan ikke udføre kommandoen "id"
+ErrorBadCharIntoLoginName=Ikke godkendt tegn i login-navnet
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.

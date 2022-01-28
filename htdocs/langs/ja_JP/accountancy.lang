@@ -48,7 +48,7 @@ CountriesNotInEEC=EECにない国
 CountriesInEECExceptMe=%sを除くEECの国
 CountriesExceptMe=%sを除くすべての国
 AccountantFiles=ソースドキュメントのエクスポート
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp=このツールで、会計処理を生成するために使用されるソースイベント（CSVおよびPDFのリスト）をエクスポートできる。
 ExportAccountingSourceDocHelp2=ジャーナルをエクスポートするには、メニューエントリ%s --%sを使用。
 VueByAccountAccounting=会計科目順に表示
 VueBySubAccountAccounting=アカウンティングサブアカウントで表示
@@ -83,7 +83,7 @@ AccountancyAreaDescProd=ステップ%s：製品/サービスの会計科目を�
 
 AccountancyAreaDescBind=ステップ%s：既存の%s行と会計科目の間の紐付けが完了していることを確認する。これにより、アプリケーションはワンクリックで元帳のトランザクションを仕訳できるようになる。不足している紐付を完了する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescWriteRecords=ステップ%s：元帳にトランザクションを書き込む。これを行うには、メニュー<strong> %s </strong>に移動し、ボタン<strong>%s</strong>をクリックする。
-AccountancyAreaDescAnalyze=ステップ%s：既存のトランザクションを追加または編集し、レポートとエクスポートを生成する。
+AccountancyAreaDescAnalyze=ステップ%s：既存のトランザクションを追加または編集し、報告書sとエクスポートを生成する。
 
 AccountancyAreaDescClosePeriod=ステップ%s：期間を閉じて、将来変更できないようにする。
 
@@ -126,11 +126,11 @@ BookkeepingSubAccount=補助元帳
 AccountBalance=勘定残高
 ObjectsRef=ソースオブジェクト参照
 CAHTF=税引前の合計購入ベンダー
-TotalExpenseReport=総経費レポート
+TotalExpenseReport=総経費報告書
 InvoiceLines=紐付けする請求書の行
 InvoiceLinesDone=請求書の境界線
-ExpenseReportLines=紐付けする経費報告書の行
-ExpenseReportLinesDone=経費報告書の境界線
+ExpenseReportLines=紐付けする経費報告書sの行
+ExpenseReportLinesDone=経費報告書sの境界線
 IntoAccount=会計科目との紐付け行
 TotalForAccount=総会計勘定
 
@@ -213,7 +213,7 @@ TransactionNumShort=数トランザクション
 AccountingCategory=カスタムグループ
 GroupByAccountAccounting=総勘定元帳勘定によるグループ化
 GroupBySubAccountAccounting=補助元帳アカウントでグループ化
-AccountingAccountGroupsDesc=ここで、会計科目のいくつかのグループを定義できる。それらは、パーソナライズされた会計レポートに使用される。
+AccountingAccountGroupsDesc=ここで、会計科目のいくつかのグループを定義できる。それらは、パーソナライズされた会計報告書sに使用される。
 ByAccounts=科目別
 ByPredefinedAccountGroups=事前定義されたグループによる
 ByPersonalizedAccountGroups=パーソナライズされたグループによる
@@ -257,7 +257,7 @@ HideOpeningBalance=期首残高を非表示にする
 ShowSubtotalByGroup=レベルごとに小計を表示
 
 Pcgtype=勘定科目のグループ
-PcgtypeDesc=科目のグループは、一部のアカウンティングレポートの事前定義された「フィルタ」および「グループ化」基準として使用される。たとえば、「INCOME」または「EXPENSE」は、費用/収入レポートを作成するための製品の会計科目のグループとして使用される。
+PcgtypeDesc=科目のグループは、一部のアカウンティング報告書sの事前定義された「フィルタ」および「グループ化」基準として使用される。たとえば、「INCOME」または「EXPENSE」は、費用/収入報告書sを作成するための製品の会計科目のグループとして使用される。
 
 Reconcilable=調整可能
 
@@ -272,10 +272,10 @@ ChangeAccount=選択したラインの製品/サービス会計科目を次の�
 Vide=-
 DescVentilSupplier=製品会計科目にバインドされている、またはまだバインドされていない仕入先請求書明細のリストをここで参照すること(会計でまだ転送されていないレコードのみが表示される)
 DescVentilDoneSupplier=ベンダーの請求書の行とその会計科目のリストをここで参照すること
-DescVentilTodoExpenseReport=まだ料金会計科目に紐付けされていない経費レポート行を紐付けする
+DescVentilTodoExpenseReport=まだ料金会計科目に紐付けされていない経費報告書行を紐付けする
 DescVentilExpenseReport=手数料会計科目にバインドされている(またはバインドされていない)経費報告行のリストをここで参照すること
 DescVentilExpenseReportMore=経費報告行の種別で会計科目を設定すると、アプリケーションは、ボタン<strong> "%s" </strong>をワンクリックするだけで、経費報告行と勘定科目表の会計科目の間のすべての紐付けを行うことができる。科目が料金辞書に設定されていない場合、または科目に紐付けされていない行がまだある場合は、メニュー「<strong>%s</strong>」から手動で紐付けする必要がある。
-DescVentilDoneExpenseReport=経費報告書の行とその手数料会計科目のリストをここで参照すること
+DescVentilDoneExpenseReport=経費報告書sの行とその手数料会計科目のリストをここで参照すること
 
 Closure=年次閉鎖
 DescClosure=検証されていない月ごとの動きの数とすでに開いている会計年度をここで参照すること
@@ -326,7 +326,7 @@ NumberOfAccountancyEntries=エントリー数
 NumberOfAccountancyMovements=楽章の数
 ACCOUNTING_DISABLE_BINDING_ON_SALES=販売の会計における紐付け力と移転を無効にする(顧客の請求書は会計に考慮されない)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=購入時の会計における紐付け力と移転を無効にする(ベンダーの請求書は会計で考慮されない)
-ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=経費報告書の会計における紐付け力と移転を無効にする(経費報告書は会計で考慮されない)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=経費報告書sの会計における紐付け力と移転を無効にする(経費報告書sは会計で考慮されない)
 
 ## Export
 NotifiedExportDate=エクスポートされた行にエクスポート済みのフラグを付ける（行の変更はできない）
@@ -385,7 +385,7 @@ AccountRemovedFromGroup=科目がグループから削除された
 SaleLocal=ローカルセール
 SaleExport=エクスポート販売
 SaleEEC=EECでの販売
-SaleEECWithVAT=VATがnullではないEECでの販売。したがって、これは共同体内販売ではなく、提案された科目は標準の製品科目であると想定する。
+SaleEECWithVAT=VATがnullではないEECでの販売。したがって、これは域内販売ではなく、提案された科目は標準の製品科目であると想定する。
 SaleEECWithoutVATNumber=VATなしのEECでの販売 が、取引先のVATIDは定義されていない。標準販売の製品科目にフォールバックする。必要に応じて、取引先または製品科目のVATIDを修正できる。
 ForbiddenTransactionAlreadyExported=禁止：トランザクションが検証済 かつ/または エクスポート済。
 ForbiddenTransactionAlreadyValidated=禁止：トランザクションは検証済。
@@ -430,7 +430,7 @@ FECFormatMulticurrencyAmount=多通貨額 (Montantdevise)
 FECFormatMulticurrencyCode=他通貨 コード (Idevise)
 
 DateExport=日付のエクスポート
-WarningReportNotReliable=警告、このレポートは元帳に基づいていないため、元帳で手動で変更されたトランザクションは含まれていない。仕訳帳化が最新の場合、簿記ビューはより正確。
+WarningReportNotReliable=警告、この報告書は元帳に基づいていないため、元帳で手動で変更されたトランザクションは含まれていない。仕訳帳化が最新の場合、簿記ビューはより正確。
 ExpenseReportJournal=経費報告仕訳帳
 InventoryJournal=目録日記帳
 

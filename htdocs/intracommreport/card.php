@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,6 +21,18 @@
  *	\ingroup    Intracomm report
  *	\brief      Page to manage intracomm report export
  */
+
+
+/** Terms
+ *
+ *	DEB = Declaration d'Exchanges de Biens (FR)   =  Declaration of Exchange of Goods (EN)
+ *  DES = Déclaration Européenne de Services (FR) =  European Declaration of Services (EN)
+ *
+ *  INTRACOMM: Douanes françaises (FR) = french customs (EN)  -  https://www.douane.gouv.fr/professionnels/commerce-international/import-export
+ *
+ */
+
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -29,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php
 $langs->loadLangs(array("intracommreport"));
 
 $action = GETPOST('action');
-$exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB ou DES
+$exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB or DES
 $year = GETPOSTINT('year');
 $month = GETPOSTINT('month');
 $label = (string) GETPOST('label', 'alphanohtml');

@@ -4,7 +4,7 @@
  * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
  * Copyright (C) 2018-2021   Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018-2021   Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2018-2022   Thibault FOUCART        <support@ptibogxiv.net>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
 /**
  * API class for dictionaries
@@ -1721,6 +1721,66 @@ class Setup extends DolibarrApi
 		return $this->_cleanObjectDatas($mysoc);
 	}
 
+	/**
+	 * Get the list of establishments.
+	 *
+	 * @return array				List of establishments
+	 *
+	 * @url     GET /establishments
+	 *
+	 * @throws RestException
+	 */
+	public function getEstablishments()
+	{
+		$list = array();
+
+		$limit = 0;
+
+		$sql = "SELECT e.rowid, e.rowid as ref, e.label, e.address, e.zip, e.town, e.status";
+		$sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
+		$sql .= " WHERE e.entity IN (".getEntity('establishment').')';
+		// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
+		// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+		// Add sql filters
+
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			for ($i = 0; $i < $min; $i++) {
+				$list[] = $this->db->fetch_object($result);
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of establishments : '.$this->db->lasterror());
+		}
+
+		return $list;
+	}
+
+	/**
+	 * Get establishment by ID.
+	 *
+	 * @param int       $id        ID of establishment
+	 * @return array    		   Array of cleaned object properties
+	 *
+	 * @url     GET establishments/{id}
+	 *
+	 * @throws RestException
+	 */
+	public function getEtablishmentByID($id)
+	{
+		$establishment = new Establishment($this->db);
+
+		$result = $establishment->fetch($id);
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieving state : '.$establishment->error);
+		} elseif ($result == 0) {
+			throw new RestException(404, 'Establishment not found');
+		}
+
+		return $this->_cleanObjectDatas($establishment);
+	}
 
 	/**
 	 * Get value of a setup variables

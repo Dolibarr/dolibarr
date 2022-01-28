@@ -61,5 +61,7 @@ MenuListTypeAssets = Λίστα
 #
 # Module
 #
+Asset=Στοιχείο
 NewAssetType=Νέος τύπος παγίου
 NewAsset=Νέα εγγραφή παγίου
+ConfirmDeleteAsset=Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το στοιχείο;

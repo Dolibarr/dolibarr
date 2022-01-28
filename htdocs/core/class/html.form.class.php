@@ -1690,11 +1690,16 @@ class Form
 				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
 
-			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) {
-				$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
-			}
-			if ($showempty == 2) {
-				$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
+			if ($showempty && ! is_numeric($showempty)) {
+				$textforempty = $showempty;
+				$out .= '<option class="optiongrey" value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'>'.$textforempty.'</option>';
+			} else {
+				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && ! $multiple) {
+					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
+				}
+				if ($showempty == 2) {
+					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
+				}
 			}
 
 			$i = 0;
@@ -3896,7 +3901,7 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Return list of payment modes.
+	 *      print list of payment modes.
 	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
 	 *      See instead to force the default value by the caller.
 	 *
@@ -3911,8 +3916,28 @@ class Form
 	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
 	{
 		// phpcs:enable
-		global $langs, $user, $conf;
+		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss);
+	}
 
+
+	/**
+	 *      Return list of payment modes.
+	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *      See instead to force the default value by the caller.
+	 *
+	 *      @param	int		$selected		Id of payment term to preselect by default
+	 *      @param	string	$htmlname		Nom de la zone select
+	 *      @param	int		$filtertype		Not used
+	 *		@param	int		$addempty		Add an empty entry
+	 * 		@param	int		$noinfoadmin	0=Add admin info, 1=Disable admin info
+	 * 		@param	string	$morecss		Add more CSS on select tag
+	 *		@return	void
+	 */
+	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
+	{
+
+		global $langs, $user, $conf;
+		$out = '';
 		dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
 		$this->load_cache_conditions_paiements();
@@ -3922,24 +3947,25 @@ class Form
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 		}
 
-		print '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+		$out.=  '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($addempty) {
-			print '<option value="0">&nbsp;</option>';
+			$out.=  '<option value="0">&nbsp;</option>';
 		}
 		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
 			if ($selected == $id) {
-				print '<option value="'.$id.'" selected>';
+				$out.=  '<option value="'.$id.'" selected>';
 			} else {
-				print '<option value="'.$id.'">';
+				$out.=  '<option value="'.$id.'">';
 			}
-			print $arrayconditions['label'];
-			print '</option>';
+			$out.=  $arrayconditions['label'];
+			$out.=  '</option>';
 		}
-		print '</select>';
+		$out.=  '</select>';
 		if ($user->admin && empty($noinfoadmin)) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out.=  info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print ajax_combobox($htmlname);
+		$out.=  ajax_combobox($htmlname);
+		return $out;
 	}
 
 
