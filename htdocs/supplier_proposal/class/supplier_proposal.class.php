@@ -725,7 +725,9 @@ class SupplierProposal extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
-			$pu = $pu_ht = $tabprice[3];
+			$pu_ht = $tabprice[3];
+			$pu_tva = $tabprice[4];
+			$pu_ttc = $tabprice[5];
 
 			// MultiCurrency
 			$multicurrency_total_ht  = $tabprice[16];
@@ -733,6 +735,11 @@ class SupplierProposal extends CommonObject
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
+			$pu = $pu_ht;
+			if ($price_base_type == 'TTC') {
+				$pu = $pu_ttc;
+			}
+			
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new SupplierProposalLine($this->db);
 			$line->fetch($rowid);
