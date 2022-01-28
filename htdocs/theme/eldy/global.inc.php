@@ -59,7 +59,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 		print "@media (prefers-color-scheme: dark) {";
 	}
 	print ":root {
-	            --colorbackhmenu1: #1d1e20;
+	            --colorbackhmenu1: #3d3e40;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
 	            --colorbacktabcard1: #1d1e20;				/* Must be same than colorbackbody */
