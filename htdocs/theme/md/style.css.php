@@ -463,6 +463,18 @@ input.short {
 	width: 40px;
 }
 
+input:invalid, select:invalid, input.--error , select.--error {
+	border-color: #ea1212;
+}
+
+section.setupsection {
+	padding: 20px;
+	background-color: var(--colorbacktitle1);
+	border-radius: 5px;
+}
+
+.field-error-icon { color: #ea1212; !important; }
+
 textarea {
 	border-radius: 0;
 	border-top:solid 1px var(--inputbordercolor);
