@@ -410,3 +410,4 @@ DefaultBOMDesc=The default BOM recommended to use to manufacture this product. T
 Rank=Rank
 SwitchOnSaleStatus=Switch on sale status
 SwitchOnPurchaseStatus=Switch on purchase status
+StockMouvementExtraFields= Campi extra (movimenti scorte)
