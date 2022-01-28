@@ -2951,7 +2951,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		if ($profIDtype == 'VATIntra' && dol_strlen($newProfID) == 13)	$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
 	}
 	if (!empty($addcpButton))	$ret = showValueWithClipboardCPButton(dol_escape_htmltag($profID), ($addcpButton == 1 ? 1 : 0), $newProfID);
-	else	$ret = $newProfID;
+	else $ret = $newProfID;
 	return $ret;
 }
 
