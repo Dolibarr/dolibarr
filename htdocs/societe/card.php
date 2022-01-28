@@ -2540,7 +2540,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td>'.$idprof.'</td><td>';
 				$key = 'idprof'.$i;
-				print showValueWithClipboardCPButton(dol_escape_htmltag($object->$key));
+				print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
 				if ($object->$key) {
 					if ($object->id_prof_check($i, $object) > 0) {
 						print ' &nbsp; '.$object->id_prof_url($i, $object);
@@ -2653,7 +2653,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
 		if ($object->tva_intra) {
 			$s = '';
-			$s .= showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra));
+			$s .= dol_print_profids($object->tva_intra, 'VATIntra', $object->country_code, 1);
 			$s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
 			if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
