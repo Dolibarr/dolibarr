@@ -254,7 +254,7 @@ class Projects extends DolibarrApi
 				$timespent = $line->getSummaryOfTimeSpent(0);
 			}
 			if ($includetimespent == 2) {
-			    $timespent = $line->fetchTimeSpentOnTask();
+				$timespent = $line->fetchTimeSpentOnTask();
 			}
 			array_push($result, $this->_cleanObjectDatas($line));
 		}

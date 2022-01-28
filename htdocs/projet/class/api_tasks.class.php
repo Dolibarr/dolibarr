@@ -84,7 +84,7 @@ class Tasks extends DolibarrApi
 			$timespent = $this->task->getSummaryOfTimeSpent(0);
 		}
 		if ($includetimespent == 2) {
-		    $timespent = $this->task->fetchTimeSpentOnTask();
+			$timespent = $this->task->fetchTimeSpentOnTask();
 		}
 
 		return $this->_cleanObjectDatas($this->task);
