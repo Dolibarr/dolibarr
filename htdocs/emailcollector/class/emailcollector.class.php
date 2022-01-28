@@ -2498,6 +2498,7 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    prefix
+	 * @param 	string $destdir	    Target dir for attachments
 	 * @return 	array				Array with number and object
 	 */
 	private function getmsg($mbox, $mid, $destdir = '')
@@ -2548,6 +2549,7 @@ class EmailCollector extends CommonObject
 	 * @param 	string		$mid			Part no
 	 * @param 	Object		$p              Object p
 	 * @param   string      $partno         Partno
+	 * @param 	string 		$destdir	    Target dir for attachments
 	 * @return	void
 	 */
 	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
