@@ -784,6 +784,12 @@ if (empty($reshook)) {
 			$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
+				// Call trigger
+				$result = $object->call_trigger('HOLIDAY_CANCEL', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				
 				// Calculcate number of days consummed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
