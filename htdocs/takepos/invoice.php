@@ -290,7 +290,7 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 			$payment->datepaye = $now;
 			$payment->fk_account = $bankaccount;
 			$payment->amounts[$invoice->id] = $amountofpayment;
-			if ($pay == 'cash') {
+			if ($pay == 'LIQ') {
 				$payment->pos_change = price2num(GETPOST('excess', 'alpha'));
 			}
 
