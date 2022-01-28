@@ -309,8 +309,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		$filelist = array();
 		$i = 0;
 		$ok = 0;
-		$from = '^'.$newversionfrom;
-		$to = $newversionto.'\.sql$';
+		$from = '^'.preg_quote($newversionfrom, '/');
+		$to = preg_quote($newversionto.'.sql', '/').'$';
 
 		// Get files list
 		$filesindir = array();
@@ -328,9 +328,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 		// Define which file to run
 		foreach ($filesindir as $file) {
-			if (preg_match('/'.$from.'/i', $file)) {
+			if (preg_match('/'.$from.'\-/i', $file)) {
 				$filelist[] = $file;
-			} elseif (preg_match('/'.$to.'/i', $file)) {	// First test may be false if we migrate from x.y.* to x.y.*
+			} elseif (preg_match('/\-'.$to.'/i', $file)) {	// First test may be false if we migrate from x.y.* to x.y.*
 				$filelist[] = $file;
 			}
 		}
