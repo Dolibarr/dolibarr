@@ -83,10 +83,12 @@ $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
 $res = $tmpbom->fetch($line->fk_bom_child);
 if ($tmpbom->id > 0) {
-	print '<a class="collapse_bom" id="collapse-'.$line->id.'" href="#">' . (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
 	print $tmpproduct->getNomUrl(1);
-	print ' '.$langs->trans('or').' ';
+	print ' '.$langs->trans("or").' ';
 	print $tmpbom->getNomUrl(1);
+	print ' <a class="collapse_bom" id="collapse-'.$line->id.'" href="#">';
+	print (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? img_picto('', 'folder') : img_picto('', 'folder-open'));
+	print '</a>';
 } else {
 	print $tmpproduct->getNomUrl(1);
 	print ' - '.$tmpproduct->label;
