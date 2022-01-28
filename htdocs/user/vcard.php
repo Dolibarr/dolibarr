@@ -66,7 +66,7 @@ $v->setName($user2->lastname, $user2->firstname, "", $user2->civility_code, "");
 $v->setFormattedName($user2->getFullName($langs, 1));
 
 $v->setPhoneNumber($user2->office_phone, "TYPE=WORK;VOICE");
-$v->setPhoneNumber($user2->personal_mobile,"TYPE=HOME;VOICE");
+$v->setPhoneNumber($user2->personal_mobile, "TYPE=HOME;VOICE");
 $v->setPhoneNumber($user2->user_mobile, "TYPE=CELL;VOICE");
 $v->setPhoneNumber($user2->office_fax, "TYPE=WORK;FAX");
 
