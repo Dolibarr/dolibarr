@@ -5122,7 +5122,7 @@ class Product extends CommonObject
 	 * @param  int	  $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @return int                     <0 if KO, >0 if OK
 	 */
-	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0,$extrafields = null)
+	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -5145,7 +5145,7 @@ class Product extends CommonObject
 			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', '', '', '', false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
-				if($extrafields){
+				if ($extrafields) {
 					$array_options = $extrafields->getOptionalsFromPost('stock_mouvement');
 					$movementstock->array_options = $array_options;
 					$movementstock->insertExtraFields();
@@ -5181,7 +5181,7 @@ class Product extends CommonObject
 	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @return int                      <0 if KO, >0 if OK
 	 */
-	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0,$extrafields = null)
+	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -5204,7 +5204,7 @@ class Product extends CommonObject
 			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
-				if($extrafields){
+				if ($extrafields) {
 					$array_options = $extrafields->getOptionalsFromPost('stock_mouvement');
 					$movementstock->array_options = $array_options;
 					$movementstock->insertExtraFields();
