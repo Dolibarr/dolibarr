@@ -790,7 +790,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 				}
-				
+
 				// Calculcate number of days consummed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
