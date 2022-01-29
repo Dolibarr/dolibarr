@@ -675,7 +675,7 @@ if ($sql_select) {
 	print '<td colspan="3"></td>';
 	print '<td class="right">'.$total_qty.'</td>';
 	print '<td class="right">'.price($total_ht).'</td>';
-	print '<td class="right">'.price($total_ht / (empty($total_qty) ? 1 : $total_qty)).'</td>';
+	print '<td class="right">'.price(price2num($total_ht / (empty($total_qty) ? 1 : $total_qty), 'MU')).'</td>';
 	print "</table>";
 	print '</div>';
 
