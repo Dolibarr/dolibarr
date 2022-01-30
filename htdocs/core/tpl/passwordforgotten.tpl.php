@@ -27,6 +27,12 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+// DDOS protection
+$size = (int) $_SERVER['CONTENT_LENGTH'];
+if ($size > 10000) {
+	http_response_code(413);
+	exit;
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
