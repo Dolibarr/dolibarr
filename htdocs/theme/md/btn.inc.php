@@ -233,7 +233,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	background: var(--butactiondeletebg);
 	/* border: 1px solid #633; */
 	color: #633;
-	vertical-align: middle;
+	/* vertical-align: middle; */
 }
 
 .butActionDelete:hover {
