@@ -210,11 +210,11 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '<td class="nobordernopadding nowraponall">';
 				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
-				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($tmpinvoice->hasDelay()) {
+					print '<td width="20" class="nobordernopadding nowrap">';
 					print img_warning($langs->trans("Late"));
+					print '</td>';
 				}
-				print '</td>';
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
