@@ -1231,8 +1231,8 @@ function dol_string_unaccent($str)
  *
  *	@param	string			$str            	String to clean
  * 	@param	string			$newstr				String to replace forbidden chars with
- *  @param  array|string	$badcharstoreplace  List of forbidden characters to replace
- *  @param  array|string	$badcharstoremove   List of forbidden characters to remove
+ *  @param  array|string	$badcharstoreplace  Array of forbidden characters to replace. Use '' to keep default list.
+ *  @param  array|string	$badcharstoremove   Array of forbidden characters to remove. Use '' to keep default list.
  * 	@return string          					Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
@@ -2881,15 +2881,15 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
 		$htmllink .= '<span class="fa paddingright '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
-			$htmllink .= $value;
+			$htmllink .= dol_escape_htmltag($value);
 			$htmllink .= '&nbsp;';
 			$htmllink .= '<a href="skype:';
-			$htmllink .= $value;
-			$htmllink .= '?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
+			$htmllink .= dol_string_nospecial($value, '_', '', array('@'));
+			$htmllink .= '?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Call").' '.$value).'">';
 			$htmllink .= '<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
 			$htmllink .= '</a><a href="skype:';
-			$htmllink .= $value;
-			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
+			$htmllink .= dol_string_nospecial($value, '_', '', array('@'));
+			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Chat").' '.$value).'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
 			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
@@ -2903,9 +2903,9 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.$value.'</a>';
+				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 			} else {
-				$htmllink .= $value;
+				$htmllink .= dol_escape_htmltag($value);
 			}
 		}
 		$htmllink .= '</div>';
