@@ -7993,6 +7993,31 @@ class Form
 			}
 		}
 
+		// Try also magic suggest
+		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
+		if (is_array($array) && !empty($array)) {
+			if ($value_as_key) {
+				$array = array_combine($array, $array);
+			}
+
+			if (!empty($array)) {
+				foreach ($array as $key => $value) {
+					$newval = ($translate ? $langs->trans($value) : $value);
+					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+
+					$out .= '<option value="'.$key.'"';
+					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
+						$out .= ' selected';
+					}
+					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
+					$out .= '>';
+					$out .= dol_htmlentitiesbr($newval);
+					$out .= '</option>'."\n";
+				}
+			}
+		}
+		$out .= '</select>'."\n";
+
 		// Add code for jquery to use multiselect
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->';
@@ -8046,31 +8071,6 @@ class Form
 			}
 			$out .= '</script>';
 		}
-
-		// Try also magic suggest
-		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
-		if (is_array($array) && !empty($array)) {
-			if ($value_as_key) {
-				$array = array_combine($array, $array);
-			}
-
-			if (!empty($array)) {
-				foreach ($array as $key => $value) {
-					$newval = ($translate ? $langs->trans($value) : $value);
-					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-
-					$out .= '<option value="'.$key.'"';
-					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
-						$out .= ' selected';
-					}
-					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
-					$out .= '>';
-					$out .= dol_htmlentitiesbr($newval);
-					$out .= '</option>'."\n";
-				}
-			}
-		}
-		$out .= '</select>'."\n";
 
 		return $out;
 	}
