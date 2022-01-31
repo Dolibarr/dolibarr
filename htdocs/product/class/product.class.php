@@ -874,9 +874,10 @@ class Product extends CommonObject
 
 		$arrayofnonnegativevalue = array('weight'=>'Weight', 'width'=>'Width', 'height'=>'Height', 'length'=>'Length', 'surface'=>'Surface', 'volume'=>'Volume');
 		foreach ($arrayofnonnegativevalue as $key => $value) {
-			if (property_exists($this, $key) && $this->$key < 0) {
-				$langs->load("other");
-				$this->errors[] = $langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv($value));
+			if (property_exists($this, $key) && !empty($this->$key) && ($this->$key < 0)) {
+				$langs->loadLangs(array("main", "other"));
+				$this->error = $langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv($value));
+				$this->errors[] = $this->error;
 				$result = -4;
 			}
 		}
