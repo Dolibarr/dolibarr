@@ -310,6 +310,8 @@ if ($object->fetch($id) >= 0) {
 		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
 
 		//print '<table class="noborder centpercent">';
+
+		print '<div class="div-table-responsive">';
 		print '<div class="tagtable centpercent liste_titre_bydiv borderbottom" id="tablelines">';
 
 		//print '<tr class="liste_titre">';
@@ -323,7 +325,7 @@ if ($object->fetch($id) >= 0) {
 		//print '<td class="liste_titre" align="center">&nbsp;</td>';
 		print '<div class="tagtd">&nbsp;</div>';
 		//print "</tr>\n";
-		print '</div>';
+		print '</div>';	// End tr
 
 		clearstatcache();
 
@@ -424,9 +426,9 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd right">';
 					if ($allowaddtarget) {
-						print '<input type="submit" class="button button-add" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="button button-add small" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					} else {
-						print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="button small disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
 					}
@@ -445,6 +447,7 @@ if ($object->fetch($id) >= 0) {
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
+		print '</div>';	// End table
 		print '</div>';
 
 		print '<br><br>';
@@ -535,7 +538,7 @@ if ($object->fetch($id) >= 0) {
 
 		$morehtmlcenter = '';
 		if ($allowaddtarget) {
-			$morehtmlcenter = '<span class="opacitymedium">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
+			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
 		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
 
