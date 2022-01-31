@@ -32,6 +32,40 @@
 
 -- Missing in v15 or lower
 
+ALTER TABLE llx_c_availability MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_civility MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_country MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_currencies MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_effectif MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_exp_tax_cat MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_hrm_department MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_hrm_function MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_input_reason MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_lead_status MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_paper_format MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_partnership_type MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_product_nature MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_productbatch_qcstatus MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_propalst MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_prospectcontactlevel MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_prospectlevel MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_recruitment_origin MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_shipment_package_type MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_type_container MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_type_fees MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_type_resource MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_units MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_actioncomm MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_barcode_type MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_input_method MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_shipment_mode MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_stcomm MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_stcommcontact MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_type_contact MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(128);
+
 UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
 
 
@@ -52,6 +86,15 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',41);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_MODIFY','Expense report modified','Executed when an expense report is modified','expensereport',202);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_MODIFY','Expense report modified','Executed when an expense report is modified','expensereport',212);
+
+
+CREATE TABLE llx_stock_mouvement_extrafields (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object integer NOT NULL,
+    import_key varchar(14)
+)ENGINE=innodb;
+
 
 -- Facture fourn rec
 CREATE TABLE llx_facture_fourn_rec

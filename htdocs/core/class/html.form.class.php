@@ -1693,8 +1693,7 @@ class Form
 			if ($showempty && ! is_numeric($showempty)) {
 				$textforempty = $showempty;
 				$out .= '<option class="optiongrey" value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'>'.$textforempty.'</option>';
-			}
-			else {
+			} else {
 				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && ! $multiple) {
 					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
 				}
@@ -2361,6 +2360,69 @@ class Form
 			$out .= $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
 		}
 
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Return list of BOM for customer in Ajax if Ajax activated or go to select_produits_list
+	 *
+	 * @param int $selected Preselected BOM id
+	 * @param string $htmlname Name of HTML select field (must be unique in page).
+	 * @param int $limit Limit on number of returned lines
+	 * @param int $status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
+	 * @param int $type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
+	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string $morecss Add more css on select
+	 * @param string $nooutput No print, return the output into a string
+	 * @param int $forcecombo Force to use combo box
+	 * @return        void|string
+	 */
+	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0)
+	{
+		// phpcs:enable
+		global $conf, $user, $langs, $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		$error = 0;
+		$out = '';
+
+		if (!$forcecombo) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("PRODUIT_USE_SEARCH_TO_SELECT"));
+		}
+
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+
+		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'bom_bom as b';
+		$sql.= ' WHERE b.entity IN ('.getEntity('bom').')';
+		if (!empty($status)) $sql.= ' AND status = '. (int) $status;
+		if (!empty($type)) $sql.= ' AND status = '. (int) $type;
+		if (!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($showempty)	{
+				$out .= '<option value="-1"';
+				if (empty($selected)) $out .= ' selected';
+				$out .= '>&nbsp;</option>';
+			}
+			while ($obj = $db->fetch_object($resql)) {
+				$product = new Product($db);
+				$res = $product->fetch($obj->fk_product);
+				if ($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $product->label .' - '.$obj->label.'</option>';
+				$out .= '<option value="'.$obj->rowid.'">'.$obj->ref.' - '.$product->label .' - '. $obj->label.'</option>';
+			}
+		} else {
+			$error++;
+			dol_print_error($db);
+		}
 		if (empty($nooutput)) {
 			print $out;
 		} else {
@@ -6273,7 +6335,7 @@ class Form
 						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS)) {
 							$retstring .= "
 								showOn: 'button',	/* both has problem with autocompletion */
-								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
+								buttonImage: '".DOL_URL_ROOT."/theme/".dol_escape_js($conf->theme)."/img/object_calendarday.png',
 								buttonImageOnly: true";
 						}
 						$retstring .= "
@@ -6286,7 +6348,7 @@ class Form
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '');
-					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\''.dol_escape_js($prefix).'\',\''.dol_escape_js($langs->trans("FormatDateShortJavaInput")).'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
 
 					// Icone calendrier
@@ -8020,6 +8082,31 @@ class Form
 			}
 		}
 
+		// Try also magic suggest
+		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
+		if (is_array($array) && !empty($array)) {
+			if ($value_as_key) {
+				$array = array_combine($array, $array);
+			}
+
+			if (!empty($array)) {
+				foreach ($array as $key => $value) {
+					$newval = ($translate ? $langs->trans($value) : $value);
+					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+
+					$out .= '<option value="'.$key.'"';
+					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
+						$out .= ' selected';
+					}
+					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
+					$out .= '>';
+					$out .= dol_htmlentitiesbr($newval);
+					$out .= '</option>'."\n";
+				}
+			}
+		}
+		$out .= '</select>'."\n";
+
 		// Add code for jquery to use multiselect
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->';
@@ -8073,31 +8160,6 @@ class Form
 			}
 			$out .= '</script>';
 		}
-
-		// Try also magic suggest
-		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
-		if (is_array($array) && !empty($array)) {
-			if ($value_as_key) {
-				$array = array_combine($array, $array);
-			}
-
-			if (!empty($array)) {
-				foreach ($array as $key => $value) {
-					$newval = ($translate ? $langs->trans($value) : $value);
-					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-
-					$out .= '<option value="'.$key.'"';
-					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
-						$out .= ' selected';
-					}
-					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
-					$out .= '>';
-					$out .= dol_htmlentitiesbr($newval);
-					$out .= '</option>'."\n";
-				}
-			}
-		}
-		$out .= '</select>'."\n";
 
 		return $out;
 	}

@@ -1098,8 +1098,8 @@ if (!defined('NOLOGIN')) {
 
 
 // Case forcing style from url
-if (GETPOST('theme', 'alpha')) {
-	$conf->theme = GETPOST('theme', 'alpha', 1);
+if (GETPOST('theme', 'aZ09')) {
+	$conf->theme = GETPOST('theme', 'aZ09', 1);
 	$conf->css = "/theme/".$conf->theme."/style.css.php";
 }
 
@@ -1404,11 +1404,11 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  * @param 	int    	$disablehead	 Disable head output
  * @param 	array  	$arrayofjs		 Array of complementary js files
  * @param 	array  	$arrayofcss		 Array of complementary css files
- * @param 	int    	$disablejmobile	 Disable jmobile (No more used)
+ * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
  * @param   int     $disablenofollow Disable no follow tag
  * @return	void
  */
-function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disablejmobile = 0, $disablenofollow = 0)
+function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0)
 {
 	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
 
@@ -1646,15 +1646,16 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			} else {
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
-			if (!defined('DISABLE_JQUERY_TABLEDND')) {
-				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-			}
 			// jQuery jnotify
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
+			// Table drag and drop lines
+			if (empty($disableforlogin) && !defined('DISABLE_JQUERY_TABLEDND')) {
+				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			}
 			// Chart
-			if ((empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
+			if (empty($disableforlogin) && (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
 				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
@@ -1694,7 +1695,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!$disablejs && !empty($conf->use_javascript_ajax)) {
 			// CKEditor
-			if ((!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
+			if (empty($disableforlogin) && (!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
 				print '<!-- Includes JS for CKEditor -->'."\n";
 				$pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
 				$jsckeditor = 'ckeditor.js';
@@ -1704,8 +1705,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				}
 				print '<script>';
 				print '/* enable ckeditor by main.inc.php */';
-				print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
-				print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext ? '?'.$ext : ''), 1).'\';'."\n"; // $themesubdir='' in standard usage
+				print 'var CKEDITOR_BASEPATH = \''.dol_escape_js($pathckeditor).'\';'."\n";
+				print 'var ckeditorConfig = \''.dol_escape_js(dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext ? '?'.$ext : ''), 1)).'\';'."\n"; // $themesubdir='' in standard usage
 				print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
 				print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
 				print '</script>'."\n";
@@ -2073,24 +2074,24 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
 	if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_SIREN")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_SIREN"), 1).'</span>';
 	}
 	if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_SIRET")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_SIRET"), 2).'</span>';
 	}
 	if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_APE")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_APE"), 3).'</span>';
 	}
 	if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_RCS")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_RCS"), 4).'</span>';
 	}
 	if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_PROFID5")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_PROFID5"), 5).'</span>';
 	}
 	if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_PROFID6")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_PROFID6"), 6).'</span>';
 	}
-	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_TVAINTRA")).'</span>';
+	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
 
 	$dropdownBody .= '</div>';
 

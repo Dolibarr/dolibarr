@@ -1,6 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2022 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2022	Salvatore Chiariello	<sal.chiariello@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,12 +16,9 @@
 --
 -- ===================================================================
 
-create table llx_c_prospectlevel
-(
-  code            varchar(12) PRIMARY KEY,
-  label           varchar(128),
-  sortorder       smallint,
-  active          smallint    DEFAULT 1 NOT NULL,
-  module          varchar(32) NULL
-) ENGINE=innodb;
-
+CREATE TABLE llx_stock_mouvement_extrafields (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object integer NOT NULL,
+    import_key varchar(14)
+)ENGINE=innodb;
