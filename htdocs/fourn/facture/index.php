@@ -27,9 +27,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
-// Security check
-restrictedArea($user, 'fournisseur', 0, '', 'facture');
-
 // Load translation files required by the page
 $langs->loadLangs(['bills', 'boxes']);
 
@@ -47,9 +44,21 @@ $maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->glob
 $maxLatestEditCount = 5;
 $maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
+// Security check
+restrictedArea($user, 'fournisseur', 0, '', 'facture');
+
+
 /*
-* View
-*/
+ * Actions
+ */
+
+// None
+
+
+
+/*
+ * View
+ */
 
 llxHeader("", $langs->trans("SupplierInvoicesArea"), 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
@@ -64,7 +73,7 @@ if ($tmp) {
 	print '<br>';
 }
 
-$tmp = getDraftSupplierTable($maxDraftCount, $socid);
+$tmp = getDraftSupplierTable($max, $socid);
 if ($tmp) {
 	print $tmp;
 	print '<br>';
