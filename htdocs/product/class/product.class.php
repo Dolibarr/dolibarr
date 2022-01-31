@@ -860,6 +860,8 @@ class Product extends CommonObject
 	 */
 	public function verify()
 	{
+		global $langs;
+
 		$this->errors = array();
 
 		$result = 0;
@@ -868,6 +870,15 @@ class Product extends CommonObject
 		if (!$this->ref) {
 			$this->errors[] = 'ErrorBadRef';
 			$result = -2;
+		}
+
+		$arrayofnonnegativevalue = array('weight'=>'Weight', 'width'=>'Width', 'height'=>'Height', 'length'=>'Length', 'surface'=>'Surface', 'volume'=>'Volume');
+		foreach ($arrayofnonnegativevalue as $key => $value) {
+			if (property_exists($this, $key) && $this->$key < 0) {
+				$langs->load("other");
+				$this->errors[] = $langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv($value));
+				$result = -4;
+			}
 		}
 
 		$rescode = $this->check_barcode($this->barcode, $this->barcode_type_code);

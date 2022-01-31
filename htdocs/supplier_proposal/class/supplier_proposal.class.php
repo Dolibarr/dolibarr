@@ -739,7 +739,7 @@ class SupplierProposal extends CommonObject
 			if ($price_base_type == 'TTC') {
 				$pu = $pu_ttc;
 			}
-			
+
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new SupplierProposalLine($this->db);
 			$line->fetch($rowid);

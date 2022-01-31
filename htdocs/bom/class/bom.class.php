@@ -1091,7 +1091,6 @@ class BOM extends CommonObject
 						return -2;
 					}
 				}
-
 			}
 
 			$this->total_cost = price2num($this->total_cost, 'MT');
