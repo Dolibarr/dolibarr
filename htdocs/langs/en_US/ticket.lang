@@ -137,6 +137,10 @@ TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address
 TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
 TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
 
 #
 # Index & list page
