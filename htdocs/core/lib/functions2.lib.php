@@ -1368,6 +1368,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$numFinal = $ref;
 	} elseif ($mode == 'next') {
 		$counter++;
+		$maskrefclient_counter = 0;
 
 		// If value for $counter has a length higher than $maskcounter chars
 		if ($counter >= pow(10, dol_strlen($maskcounter))) {
@@ -1398,7 +1399,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
 			// Get counter in database
-			$maskrefclient_counter = 0;
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
