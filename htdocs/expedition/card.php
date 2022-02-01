@@ -63,7 +63,7 @@ if (isModEnabled('project')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'errors'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -1553,7 +1553,7 @@ if ($action == 'create') {
 										if ($result > 0) {
 											print $productlotObject->getNomUrl(1);
 										} else {
-											print 'TableLotIncompleteRunRepairWithParamStandardEqualConfirmed';
+											print $langs->trans("TableLotIncompleteRunRepairWithParamStandardEqualConfirmed");
 										}
 										if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
 											print ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");

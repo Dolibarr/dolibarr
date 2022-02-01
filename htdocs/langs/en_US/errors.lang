@@ -361,3 +361,4 @@ BadSetupOfField = Error bad setup of field
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed = Lot table incomplete run repair with parameter '...repair.php?standard=confirmed'

@@ -1166,7 +1166,11 @@ if (!$variants) {
 						print "\n".'<tr style="display:'.(empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'none' : 'visible').';" class="batch_warehouse'.$entrepotstatic->id.'"><td class="left">';
 						print '</td>';
 						print '<td class="right nowraponall">';
-						print $product_lot_static->getNomUrl(1);
+						if ($product_lot_static->id > 0) {
+							print $product_lot_static->getNomUrl(1);
+						} else {
+							print $product_lot_static->getNomUrl(1, 'nolink');
+						}						
 						print '</td>';
 						$colspan = 3;
 						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
