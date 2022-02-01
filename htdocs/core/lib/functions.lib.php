@@ -9158,10 +9158,6 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						}
 						else $newres .= $field." LIKE '";
 
-						$tmpcrit = trim($tmpcrit);
-						$tmpcrit2 = $tmpcrit;
-						$tmpbefore = '%';
-						$tmpafter = '%';
 						if (preg_match('/^[\^\$]/', $tmpcrit)) {
 							$tmpbefore = '';
 							$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
