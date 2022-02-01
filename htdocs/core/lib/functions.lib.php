@@ -9151,12 +9151,11 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$tmpcrit = trim($tmpcrit);
 						$tmpcrit2 = $tmpcrit;
 						$tmpbefore = '%';
-						$tmpafter = '%';						
-						if(preg_match('/^!/', $tmpcrit)) {
+						$tmpafter = '%';
+						if (preg_match('/^!/', $tmpcrit)) {
 							$newres .= $field." NOT LIKE '"; // ! as exclude character
 							$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
-						}
-						else $newres .= $field." LIKE '";
+						} else $newres .= $field." LIKE '";
 
 						if (preg_match('/^[\^\$]/', $tmpcrit)) {
 							$tmpbefore = '';
