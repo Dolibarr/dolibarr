@@ -94,3 +94,5 @@ CREATE TABLE llx_stock_mouvement_extrafields (
     fk_object integer NOT NULL,
     import_key varchar(14)
 )ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo ADD COLUMN fk_parent_line integer;
