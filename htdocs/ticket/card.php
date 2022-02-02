@@ -481,11 +481,12 @@ if (empty($reshook)) {
 
 	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $user->rights->ticket->write) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
+		$object->notify_tiers_at_closing = (empty(GETPOST('contactid', 'alpha'))) ? 0 : 1;
 
 		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {
-			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
+			setEventMessage($langs->trans('TicketMarkedAsClosed'), 'mesgs');
+			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha') . '&action=view';
 
-			$url = 'card.php?action=view&track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
 		} else {
 			$action = '';
@@ -820,7 +821,22 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Confirmation close
 		if ($action == 'close') {
-			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", '', '', 1);
+
+			$thirdparty_contacts = $object->getInfosTicketExternalContact();
+			$contacts_select = array();
+			foreach ($thirdparty_contacts as $thirdparty_contact) {
+				$contacts_select[$thirdparty_contact['id']] = $thirdparty_contact['civility'] . ' ' . $thirdparty_contact['lastname'] . ' ' . $thirdparty_contact['firstname'];
+			}
+
+			$formquestion = array(
+				array(
+					'name' => 'contactid',
+					'type' => 'select',
+					'label' => $langs->trans('NotifyThirdpartyOnTicketClosing'),
+					'values' => $contacts_select
+				),
+			);
+			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", $formquestion, '', 1 );
 			if ($ret == 'html') {
 				print '<br>';
 			}

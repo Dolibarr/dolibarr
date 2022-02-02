@@ -198,6 +198,11 @@ class Ticket extends CommonObject
 	public $notify_tiers_at_create;
 
 	/**
+	 * @var int Notify thirdparty at closing
+	 */
+	public $notify_tiers_at_closing = 0;
+
+	/**
 	 * @var string msgid
 	 */
 	public $email_msgid;
