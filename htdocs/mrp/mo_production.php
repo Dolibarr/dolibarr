@@ -184,7 +184,6 @@ if (empty($reshook)) {
 		$pos = 0;
 		// Process line to consume
 		foreach ($object->lines as $line) {
-
 			if ($line->role == 'toconsume') {
 				$tmpproduct = new Product($db);
 				$tmpproduct->fetch($line->fk_product);
