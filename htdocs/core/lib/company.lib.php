@@ -201,8 +201,7 @@ function societe_prepare_head(Societe $object)
 		$foundonexternalonlinesystem = 0;
 		$langs->load("banks");
 
-		//$title = $langs->trans("BankAccounts");
-		$title = $langs->trans("PaymentInformation");
+		$title = $langs->trans("PaymentModes");
 
 		if (!empty($conf->stripe->enabled)) {
 			//$langs->load("stripe");
