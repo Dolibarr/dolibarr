@@ -1389,7 +1389,7 @@ class Contact extends CommonObject
 	 *  Return name of contact with link (and eventually picto)
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
-	 *	@param		int			$withpicto					Include picto with link
+	 *	@param		int			$withpicto					Include picto with link (1=picto + name, 2=picto only, -1=photo+name, -2=photo only)
 	 *	@param		string		$option						Where the link point to
 	 *	@param		int			$maxlen						Max length of
 	 *  @param		string		$moreparam					Add more param into URL
@@ -1475,14 +1475,14 @@ class Contact extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			if ($withpicto == -2) {
+			if ($withpicto < 0) {
 				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
 			} else {
 				$result .= img_object(($notooltip ? '' : $label), ( $this->picto ?  $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 			}
 		}
 		if ($withpicto != 2 && $withpicto != -2) {
-			$result .= ($maxlen ?dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs));
+			$result .= '<span class="valigmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
 		}
 		$result .= $linkend;
 
