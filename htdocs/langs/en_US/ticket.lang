@@ -241,6 +241,7 @@ TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
 ErrorTicketRefRequired=Ticket reference name is required
+NotifyThirdpartyOnTicketClosing=Notify a contact while closing the ticket
 
 #
 # Logs
