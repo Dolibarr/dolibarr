@@ -823,7 +823,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
-				if (count($arrayfields) > 0 && !empty($arrayfields['c.budget_amount']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
 					print '<td class="center">';
 					print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 					$total_budget_amount += $lines[$i]->budget_amount;

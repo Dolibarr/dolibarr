@@ -41,6 +41,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 
 /*
  * Actions

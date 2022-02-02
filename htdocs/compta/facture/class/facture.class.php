@@ -1622,7 +1622,7 @@ class Facture extends CommonInvoice
 		if ($rowid) {
 			$sql .= " WHERE f.rowid=".((int) $rowid);
 		} else {
-			$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Dont't use entity if you use rowid
+			$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Don't use entity if you use rowid
 			if ($ref) {
 				$sql .= " AND f.ref='".$this->db->escape($ref)."'";
 			}

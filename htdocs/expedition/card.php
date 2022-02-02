@@ -1126,16 +1126,19 @@ if ($action == 'create') {
 						$product_static->status_buy = $line->product_tobuy;
 						$product_static->status_batch = $line->product_tobatch;
 
+						$showdescinproductdesc = (getDolGlobalString('PRODUIT_DESC_IN_FORM') == 2 ? 1 : 0);
+
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
-						$description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($line->desc));
+						$description = ($showdescinproductdesc ? '' : dol_htmlentitiesbr($line->desc));
+
 						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 						// Show range
 						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
 
 						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						if ($showdescinproductdesc) {
 							print ($line->desc && $line->desc != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
 						}
 

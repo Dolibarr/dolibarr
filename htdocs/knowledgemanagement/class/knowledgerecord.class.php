@@ -116,7 +116,7 @@ class KnowledgeRecord extends CommonObject
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		//'url' => array('type'=>'varchar(255)', 'label'=>'URL', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflow200', 'help'=>'UrlForInfoPage'),
 		'fk_c_ticket_category' => array('type'=>'integer:CTicketCategory:ticket/class/cticketcategory.class.php:0::pos', 'label'=>'SuggestedForTicketsInGroup', 'enabled'=>'$conf->ticket->enabled', 'position'=>512, 'notnull'=>0, 'visible'=>-1, 'help'=>'YouCanLinkArticleToATicketCategory', 'csslist'=>'minwidth200 tdoverflowmax250'),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated'),),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Obsolete'),),
 	);
 	public $rowid;
 	public $ref;
@@ -829,10 +829,10 @@ class KnowledgeRecord extends CommonObject
 			//$langs->load("knowledgemanagement");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Obsolete');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Obsolete');
 		}
 
 		$statusType = 'status'.$status;

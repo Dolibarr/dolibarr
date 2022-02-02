@@ -74,13 +74,6 @@ $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_user = GETPOST('search_user', 'int');
 $search_valuebilled = GETPOST('search_valuebilled', 'int');
 
-// Security check
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;	  // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
-	accessforbidden();
-}
-
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -98,6 +91,8 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC,DESC';
 }
 
+$childids = $user->getAllChildIds(1);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 //$object = new TaskTime($db);
 $hookmanager->initHooks(array('projecttasktime', 'globalcard'));
@@ -113,11 +108,19 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
+
+// Security check
+$socid = 0;
+//if ($user->socid > 0) $socid = $user->socid;	  // For external user, no check is done on company because readability is managed by public status of project and assignement.
+if (!$user->rights->projet->lire) {
+	accessforbidden();
+}
+
 if ($object->fk_project > 0) {
 	restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 } else {
 	restrictedArea($user, 'projet', null, 'projet&project');
-	// We check user has permission to see all taks of all users
+	// We check user has permission to see all tasks of all users
 	if (empty($projectid) && !$user->hasRight('projet', 'all', 'lire')) {
 		$search_user = $user->id;
 	}
@@ -246,10 +249,14 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$id = GETPOST('taskid', 'int');
 
 			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
-			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
-			$result = $object->delTimeSpent($user);
+
+			$result = 0;
+			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
+				$result = $object->delTimeSpent($user);
+			}
 
 			$object->fetch($id, $ref);
+
 			$object->timespent_note = GETPOST("timespent_note_line", 'alpha');
 			$object->timespent_old_duration = GETPOST("old_duration");
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
@@ -261,7 +268,12 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
-			$result = $object->addTimeSpent($user);
+
+			$result = 0;
+			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
+				$result = $object->addTimeSpent($user);
+			}
+
 			if ($result >= 0) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			} else {
@@ -270,7 +282,6 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 		} else {
 			$object->fetch($id, $ref);
-			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
 
 			$object->timespent_id = GETPOST("lineid", 'int');
 			$object->timespent_note = GETPOST("timespent_note_line");
@@ -285,12 +296,16 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 
-			$result = $object->updateTimeSpent($user);
-			if ($result >= 0) {
-				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-			} else {
-				setEventMessages($langs->trans($object->error), null, 'errors');
-				$error++;
+			$result = 0;
+			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
+				$result = $object->updateTimeSpent($user);
+
+				if ($result >= 0) {
+					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+				} else {
+					setEventMessages($langs->trans($object->error), null, 'errors');
+					$error++;
+				}
 			}
 		}
 	} else {
@@ -298,18 +313,20 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->lire) {
-	$object->fetchTimeSpent(GETPOST('lineid', 'int'));
-	// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
-	$result = $object->delTimeSpent($user);
+if ($action == 'confirm_deleteline' && $confirm == "yes" && $user->rights->projet->lire) {
+	$object->fetchTimeSpent(GETPOST('lineid', 'int'));	// load properties like $object->timespent_id
 
-	if ($result < 0) {
-		$langs->load("errors");
-		setEventMessages($langs->trans($object->error), null, 'errors');
-		$error++;
-		$action = '';
-	} else {
-		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+	if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
+		$result = $object->delTimeSpent($user);	// delete line with $object->timespent_id
+
+		if ($result < 0) {
+			$langs->load("errors");
+			setEventMessages($langs->trans($object->error), null, 'errors');
+			$error++;
+			$action = '';
+		} else {
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		}
 	}
 }
 
@@ -888,7 +905,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 		}
 
-		$linktocreatetime = dolGetButtonTitle($langs->trans('AddTimeSpent'), $linktocreatetimeHelpText, 'fa fa-plus-circle', $linktocreatetimeUrl, '', $linktocreatetimeBtnStatus);
+		$paramsbutton = array('morecss'=>'reposition');
+		$linktocreatetime = dolGetButtonTitle($langs->trans('AddTimeSpent'), $linktocreatetimeHelpText, 'fa fa-plus-circle', $linktocreatetimeUrl, '', $linktocreatetimeBtnStatus, $paramsbutton);
 	}
 
 	$massactionbutton = '';
@@ -915,7 +933,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print dol_get_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 		if ($action == 'deleteline') {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST("lineid", 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_delete", '', '', 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST("lineid", 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
 		}
 
 		$param = ($withproject ? '&withproject=1' : '');
@@ -1014,7 +1032,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 	if ($projectstatic->id > 0 || $allprojectforuser > 0) {
 		if ($action == 'deleteline' && !empty($projectidforalltimes)) {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_delete", '', '', 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_deleteline", '', '', 1);
 		}
 
 		// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
@@ -1579,8 +1597,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		$i = 0;
 
-		$childids = $user->getAllChildIds();
-
 		$total = 0;
 		$totalvalue = 0;
 		$totalarray = array();
@@ -1796,7 +1812,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<br>';
 				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			} elseif ($user->rights->projet->lire || $user->rights->projet->all->creer) {	 // Read project and enter time consumed on assigned tasks
-				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer) {
+				if (in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer) {
 					if ($conf->MAIN_FEATURES_LEVEL >= 2) {
 						print '&nbsp;';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&action=splitline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';

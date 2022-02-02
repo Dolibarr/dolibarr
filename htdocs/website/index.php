@@ -2787,7 +2787,7 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		}
 		if ($action != 'preview') {
-			print '<input type="submit" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
+			print '<input type="submit" class="button button-cancel small" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 		}
 	}
 
@@ -3123,7 +3123,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			}
 			if ($action != 'preview') {
-				print '<input type="submit" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
+				print '<input type="submit" class="button button-cancel small" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 			}
 		}
 
@@ -3545,8 +3545,8 @@ if ($action == 'createsite') {
 	if ($action == 'createsite') {
 		print '<div class="center">';
 
-		print '<input type="submit" class="button" name="addcontainer" value="'.$langs->trans("Create").'">';
-		print '<input class="button button-cancel" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button small" name="addcontainer" value="'.$langs->trans("Create").'">';
+		print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';
 	}
@@ -3574,8 +3574,8 @@ if ($action == 'importsite') {
 
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
-	print '<input type="submit" class="button" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
-	print '<input type="submit" class="button button-cancel" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+	print '<input type="submit" class="button small" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
+	print '<input type="submit" class="button button-cancel small" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 
 	print '<br><br><br>';
 
@@ -3628,29 +3628,6 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	}
 
 	if ($action == 'createcontainer') {
-		print '<br>';
-
-		if (!empty($conf->use_javascript_ajax)) {
-			print '<input type="radio" name="radiocreatefrom" id="checkboxcreatefromfetching" value="checkboxcreatefromfetching"'.(GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching' ? ' checked' : '').'> ';
-		}
-		print '<label for="checkboxcreatefromfetching"><span class="opacitymediumxx">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
-		print '<hr class="tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
-		print '<table class="tableforfield centpercent tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
-		print '<tr><td class="titlefield">';
-		print $langs->trans("URL");
-		print '</td><td>';
-		print info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, 'warning');
-		print '<input class="flat minwidth500" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl', 'alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
-		print '<br><input class="flat paddingtop" type="checkbox" name="grabimages" value="1" checked="checked"> '.$langs->trans("GrabImagesInto");
-		print ' ';
-		print $langs->trans("ImagesShouldBeSavedInto").' ';
-		$arraygrabimagesinto = array('root'=>$langs->trans("WebsiteRootOfImages"), 'subpage'=>$langs->trans("SubdirOfPage"));
-		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		print '<br>';
-		print '<input class="button" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
-		print '</td></tr>';
-		print '</table>';
-
 		print '<br>';
 
 		if (!empty($conf->use_javascript_ajax)) {
@@ -3819,7 +3796,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	if (empty($object->lang) && empty($object->otherlang)) {
 		$onlykeys = null; // We keep full list of languages
 	}
-	print $formadmin->select_language($pagelang ? $pagelang : '', 'WEBSITE_LANG', 0, null, '1', 0, 0, 'minwidth200', 0, 0, 0, $onlykeys, 1);
+	print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($pagelang ? $pagelang : '', 'WEBSITE_LANG', 0, null, '1', 0, 0, 'minwidth200', 0, 0, 0, $onlykeys, 1);
 	$htmltext = $langs->trans("AvailableLanguagesAreDefinedIntoWebsiteProperties");
 	print $form->textwithpicto('', $htmltext);
 	print '</td></tr>';
@@ -3907,7 +3884,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		}
 
 		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
-		print img_picto('', 'category', 'class="paddingright"');
+		print img_picto('', 'category', 'class="pictofixedwidth"');
 		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'minwidth200 widthcentpercentminusxx');
 		print "</td></tr>";
 	}
@@ -3983,16 +3960,42 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	if ($action == 'createcontainer') {
 		print '<div class="center tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 
-		print '<input type="submit" class="button" name="addcontainer" value="'.$langs->trans("Create").'">';
-		print '<input class="button button-cancel" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button small" name="addcontainer" value="'.$langs->trans("Create").'">';
+		print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';
+
+
+		print '<br>';
+
+		if (!empty($conf->use_javascript_ajax)) {
+			print '<input type="radio" name="radiocreatefrom" id="checkboxcreatefromfetching" value="checkboxcreatefromfetching"'.(GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching' ? ' checked' : '').'> ';
+		}
+		print '<label for="checkboxcreatefromfetching"><span class="opacitymediumxx">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
+		print '<hr class="tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
+		print '<table class="tableforfield centpercent tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
+		print '<tr><td class="titlefield">';
+		print $langs->trans("URL");
+		print '</td><td>';
+		print info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, 'warning');
+		print '<input class="flat minwidth500" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl', 'alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
+		print '<br><input class="flat paddingtop" type="checkbox" name="grabimages" value="1" checked="checked"> '.$langs->trans("GrabImagesInto");
+		print ' ';
+		print $langs->trans("ImagesShouldBeSavedInto").' ';
+		$arraygrabimagesinto = array('root'=>$langs->trans("WebsiteRootOfImages"), 'subpage'=>$langs->trans("SubdirOfPage"));
+		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print '<br>';
+		print '<input class="button" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
+		print '</td></tr>';
+		print '</table>';
 	}
 
 	if ($action == 'createcontainer') {
 		print '<script type="text/javascript">
 			jQuery(document).ready(function() {
 				var disableautofillofalias = 0;
+				var selectedm = \'\';
+				var selectedf = \'\';
 				jQuery("#WEBSITE_TITLE").keyup(function() {
 					if (disableautofillofalias == 0)
 					{
@@ -4009,17 +4012,31 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					disableautofillofalias = 1;
 				});
 
-				jQuery("#checkboxcreatefromfetching,#checkboxcreatemanually").change(function() {
-					console.log("we select a method to create a new container"+jQuery("#checkboxcreatefromfetching:checked").val())
-					if (typeof(jQuery("#checkboxcreatefromfetching:checked").val()) != \'undefined\')
-					{
-						jQuery(".tablecheckboxcreatefromfetching").show();
-						jQuery(".tablecheckboxcreatemanually").hide();
+				jQuery("#checkboxcreatefromfetching,#checkboxcreatemanually").click(function() {
+					console.log("we select a method to create a new container "+jQuery("#checkboxcreatefromfetching:checked").val())
+					jQuery(".tablecheckboxcreatefromfetching").hide();
+					jQuery(".tablecheckboxcreatemanually").hide();
+					if (typeof(jQuery("#checkboxcreatefromfetching:checked").val()) != \'undefined\') {
+						console.log("show a");
+						if (selectedf != \'createfromfetching\') {
+							jQuery(".tablecheckboxcreatefromfetching").show();
+							selectedf = \'createfromfetching\';
+							selectedm = \'\';
+						} else {
+							jQuery(".tablecheckboxcreatefromfetching").hide();
+							selectedf = \'\';
+						}
 					}
-					if (typeof(jQuery("#checkboxcreatemanually:checked").val()) != \'undefined\')
-					{
-						jQuery(".tablecheckboxcreatefromfetching").hide();
-						jQuery(".tablecheckboxcreatemanually").show();
+					if (typeof(jQuery("#checkboxcreatemanually:checked").val()) != \'undefined\') {
+						console.log("show b");
+						if (selectedm != \'createmanually\') {
+							jQuery(".tablecheckboxcreatemanually").show();
+							selectedm = \'createmanually\';
+							selectedf = \'\';
+						} else {
+							jQuery(".tablecheckboxcreatemanually").hide();
+							selectedm = \'\';
+						}
 					}
 				});
 			});

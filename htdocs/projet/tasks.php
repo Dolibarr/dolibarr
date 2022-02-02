@@ -850,8 +850,8 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$moreforfilter = '';
 	if (count($tasksarray) > 0) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans("TasksAssignedTo").': ';
-		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', 1);
+		$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
+		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
 		$moreforfilter .= '</div>';
 	}
 	if ($moreforfilter) {

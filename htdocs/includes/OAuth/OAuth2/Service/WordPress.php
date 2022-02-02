@@ -11,17 +11,28 @@ use OAuth\Common\Http\Exception\TokenResponseException;
 use OAuth\OAuth2\Service\Exception\InvalidAccessTypeException;
 use OAuth\Common\Http\Uri\Uri;
 
+/**
+ * Class For WordPress OAuth
+ */
 class WordPress extends AbstractService
 {
+	/**
+	 * @var string
+	 */
 	protected $accessType = 'online';
 
-	public function __construct(
-		CredentialsInterface $credentials,
-		ClientInterface $httpClient,
-		TokenStorageInterface $storage,
-		$scopes = array(),
-		UriInterface $baseApiUri = null
-	) {
+	/**
+	 * Construct
+	 *
+	 * @param CredentialsInterface $credentials credentials
+	 * @param ClientInterface $httpClient httpClient
+	 * @param TokenStorageInterface $storage storage
+	 * @param $scopes scope
+	 * @param UriInterface|null $baseApiUri baseApiUri
+	 * @throws Exception\InvalidScopeException
+	 */
+	public function __construct(CredentialsInterface $credentials, ClientInterface $httpClient, TokenStorageInterface $storage, $scopes = array(), UriInterface $baseApiUri = null)
+	{
 		parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri, true);
 
 		if (null === $baseApiUri) {
@@ -41,7 +52,7 @@ class WordPress extends AbstractService
 	}*/
 
 	/**
-	 * {@inheritdoc}
+	 * @return Uri
 	 */
 	public function getAuthorizationEndpoint()
 	{
@@ -49,7 +60,7 @@ class WordPress extends AbstractService
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return Uri
 	 */
 	public function getAccessTokenEndpoint()
 	{
@@ -57,7 +68,7 @@ class WordPress extends AbstractService
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return int
 	 */
 	protected function getAuthorizationMethod()
 	{
@@ -66,7 +77,9 @@ class WordPress extends AbstractService
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param $responseBody responseBody
+	 * @return StdOAuth2Token
+	 * @throws TokenResponseException
 	 */
 	protected function parseAccessTokenResponse($responseBody)
 	{

@@ -163,7 +163,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'td' => 'class="tdoverflowmax100 maxwidth150onsmartphone"',
 						'text' => $objp->label,
 					);
 
@@ -186,18 +186,13 @@ class box_produits_alerte_stock extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$line][] = array(
+					/*$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => $price,
-					);
+						'text' => $price.' '.$price_base_type,
+					);*/
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => $price_base_type,
-					);
-
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center"',
+						'td' => 'class="center nowraponall"',
 						'text' => price2num($objp->total_stock, 'MS').' / '.$objp->seuil_stock_alerte,
 						'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
 					);

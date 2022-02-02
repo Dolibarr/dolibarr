@@ -804,9 +804,6 @@ class ExtraFields
 		if ($elementtype == 'order_supplier') {
 			$elementtype = 'commande_fournisseur';
 		}
-		if ($elementtype == 'stock_mouvement') {
-			$elementtype = 'movement';
-		}
 
 		$array_name_label = array();
 

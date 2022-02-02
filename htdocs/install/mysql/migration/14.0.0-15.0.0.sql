@@ -72,10 +72,13 @@ ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskConf)',       10, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskConf)__', '__(Hello)__,<br /><br />__(OrganizationEventConfRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskBooth)',      20, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskBooth)__', '__(Hello)__,<br /><br />__(OrganizationEventBoothRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 -- TODO Add message for registration only to event  __ONLINE_PAYMENT_TEXT_AND_URL__
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailSubsBooth)',     30, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailBoothPayment)__', '__(Hello)__,<br /><br />__(OrganizationEventPaymentOfBoothWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailSubsEvent)',     40, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailRegistrationPayment)__', '__(Hello)__,<br /><br />__(OrganizationEventPaymentOfRegistrationWasReceived)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailBoothPayment)',  30, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailBoothPayment)__', '__(Hello)__,<br /><br />__(OrganizationEventPaymentOfBoothWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailRegistrationPayment)', 40, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailRegistrationPayment)__', '__(Hello)__,<br /><br />__(OrganizationEventPaymentOfRegistrationWasReceived)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationMassEmailAttendees)', 50, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailAttendees)__', '__(Hello)__,<br /><br />__(OrganizationEventBulkMailToAttendees)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationMassEmailSpeakers)',  60, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailSpeakers)__', '__(Hello)__,<br /><br />__(OrganizationEventBulkMailToSpeakers)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
+
+UPDATE llx_c_email_templates SET label = '(EventOrganizationEmailBoothPayment)' WHERE label = '(EventOrganizationEmailSubsBooth)';
+UPDATE llx_c_email_templates SET label = '(EventOrganizationEmailRegistrationPayment)' WHERE label = '(EventOrganizationEmailSubsEvent)';
 
 
 --Fix bad sign on multicompany column for customer invoice lines
@@ -289,7 +292,7 @@ CREATE TABLE llx_hrm_job_user(
     date_creation datetime NOT NULL,
     tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_contrat integer,
-    fk_user integer NOT NULL,
+    fk_user integer,
     fk_job integer NOT NULL,
     date_start date,
     date_end date,
@@ -491,3 +494,10 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_DELETE','User update','Executed when a user is deleted','user',303);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_NEW_PASSWORD','User update','Executed when a user is change password','user',304);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_ENABLEDISABLE','User update','Executed when a user is enable or disable','user',305);
+
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_CREATE','Holiday created','Executed when a holiday is created','holiday',800);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_MODIFY','Holiday modified','Executed when a holiday is modified','holiday',801);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Holiday validated','Executed when a holiday is validated','holiday',802);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Holiday aprouved','Executed when a holiday is aprouved','holiday',803);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_CANCEL','Holiday canceled','Executed when a holiday is canceled','holiday',802);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_DELETE','Holiday deleted','Executed when a holiday is deleted','holiday',804);

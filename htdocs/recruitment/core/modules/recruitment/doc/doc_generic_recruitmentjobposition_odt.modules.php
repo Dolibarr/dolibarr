@@ -174,7 +174,10 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 		if ($nbofiles) {
 			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
 			foreach ($listoffiles as $file) {
-				$texte .= $file['name'].'<br>';
+				$texte .= '- '.$file['name'];
+				//$texte .= ' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=recruitementjobposition/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				//$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}

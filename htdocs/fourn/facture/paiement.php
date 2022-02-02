@@ -11,6 +11,7 @@
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2022       Udo Tamm				<dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,11 +55,11 @@ $day = GETPOST('day', 'int');
 $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
-$search_ref = GETPOST("search_ref", "alpha");
-$search_account = GETPOST("search_account", "int");
-$search_paymenttype = GETPOST("search_paymenttype");
-$search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
-$search_company = GETPOST("search_company", 'alpha');
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_account = GETPOST('search_account', 'int');
+$search_paymenttype = GETPOST('search_paymenttype');
+$search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on "< x"
+$search_company = GETPOST('search_company', 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -773,10 +774,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				}
 			}
 
-			// Save Button
+			// Save + Cancel Buttons
 			if ($action != 'add_paiement') {
 				print '<br><div class="center"><input type="checkbox" checked name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
-				print '<br><input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'"></div>';
+				print '<p>&nbsp;</p>';
+				print '<br><input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
+				print '<p>&nbsp;</p>';
+				print '<br><input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)"></div>';
 			}
 
 			// Form to confirm payment

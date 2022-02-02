@@ -17,6 +17,7 @@
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -782,7 +783,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				// keep lines feed
 			}
 			break;
-		case 'alphawithlgt':		// No " and no ../ but we keep balanced < > tags with no special chars inside. Can be used for email string like "Name <email>"
+		case 'alphawithlgt':		// No " and no ../ but we keep balanced < > tags with no special chars inside. Can be used for email string like "Name <email>". Less secured than 'alphanohtml'
 			if (!is_array($out)) {
 				$out = trim($out);
 				do {
@@ -1231,8 +1232,8 @@ function dol_string_unaccent($str)
  *
  *	@param	string			$str            	String to clean
  * 	@param	string			$newstr				String to replace forbidden chars with
- *  @param  array|string	$badcharstoreplace  List of forbidden characters to replace
- *  @param  array|string	$badcharstoremove   List of forbidden characters to remove
+ *  @param  array|string	$badcharstoreplace  Array of forbidden characters to replace. Use '' to keep default list.
+ *  @param  array|string	$badcharstoremove   Array of forbidden characters to remove. Use '' to keep default list.
  * 	@return string          					Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
@@ -1544,6 +1545,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 			$data['ip'] = '???@'.$_SERVER['LOGNAME'];
 		}
+
 		// Loop on each log handler and send output
 		foreach ($conf->loghandlers as $loghandlerinstance) {
 			if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) {
@@ -1664,7 +1666,11 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$limittitle = 30;
 		$out .= '<a class="tabTitle">';
 		if ($picto) {
-			$out .= img_picto($title, ($pictoisfullpath ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
+			$noprefix = $pictoisfullpath;
+			if (strpos($picto, 'fontawesome_') !== false) {
+				$noprefix = 1;
+			}
+			$out .= img_picto($title, ($noprefix ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
 		}
 		$out .= '<span class="tabTitleText">'.dol_escape_htmltag(dol_trunc($title, $limittitle)).'</span>';
 		$out .= '</a>';
@@ -1897,7 +1903,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	if ($object->element == 'product') {
 		$width = 80;
-		$cssclass = 'photoref';
+		$cssclass = 'photowithmargin photoref';
 		$showimage = $object->is_photo_available($conf->product->multidir_output[$entity]);
 		$maxvisiblephotos = (isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO) ? $conf->global->PRODUCT_MAX_VISIBLE_PHOTO : 5);
 		if ($conf->browser->layout == 'phone') {
@@ -2019,10 +2025,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 					$width = 14;
 					$cssclass = 'photorefcenter';
 					$picto = $object->picto;
+					$prefix = 'object_';
 					if ($object->element == 'project' && !$object->public) {
 						$picto = 'project'; // instead of projectpub
 					}
-					$nophoto = img_picto('No photo', 'object_'.$picto);
+					if (strpos($picto, 'fontawesome_') !== false) {
+						$prefix = '';
+					}
+					$nophoto = img_picto('No photo', $prefix.$picto);
 				}
 				$morehtmlleft .= '<!-- No photo to show -->';
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
@@ -2880,15 +2890,15 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
 		$htmllink .= '<span class="fa paddingright '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
-			$htmllink .= $value;
+			$htmllink .= dol_escape_htmltag($value);
 			$htmllink .= '&nbsp;';
 			$htmllink .= '<a href="skype:';
-			$htmllink .= $value;
-			$htmllink .= '?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
+			$htmllink .= dol_string_nospecial($value, '_', '', array('@'));
+			$htmllink .= '?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Call").' '.$value).'">';
 			$htmllink .= '<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
 			$htmllink .= '</a><a href="skype:';
-			$htmllink .= $value;
-			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
+			$htmllink .= dol_string_nospecial($value, '_', '', array('@'));
+			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Chat").' '.$value).'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
 			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
@@ -2902,9 +2912,9 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.$value.'</a>';
+				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 			} else {
-				$htmllink .= $value;
+				$htmllink .= dol_escape_htmltag($value);
 			}
 		}
 		$htmllink .= '</div>';
@@ -2913,6 +2923,38 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		$htmllink .= img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
 	}
 	return $htmllink;
+}
+
+/**
+ *	Format profIDs according to country
+ *
+ *	@param	string	$profID			Value of profID to format
+ *	@param	string	$profIDtype		Type of profID to format ('1', '2', '3', '4', '5', '6' or 'VAT')
+ *	@param	string	$countrycode	Country code to use for formatting
+ *	@param	int		$addcpButton	Add button to copy to clipboard (1 => show only on hoover ; 2 => always display )
+ * 	@param	string	$separ			Separation between numbers for a better visibility example : xxx xxx xxx xxxxx
+ *	@return string					Formated profID
+ */
+function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton = 1, $separ = '&nbsp;')
+{
+	global $mysoc;
+
+	if (empty($profID) || empty($profIDtype)) {
+		return '';
+	}
+	if (empty($countrycode))	$countrycode = $mysoc->country_code;
+	$newProfID = $profID;
+	$id = substr($profIDtype, -1);
+	$ret = '';
+	if (strtoupper($countrycode) == 'FR') {
+		// France
+		if ($id == 1 && dol_strlen($newProfID) == 9)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3);
+		if ($id == 2 && dol_strlen($newProfID) == 14)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3).$separ.substr($newProfID, 9, 5);
+		if ($profIDtype === 'VAT' && dol_strlen($newProfID) == 13)	$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
+	}
+	if (!empty($addcpButton))	$ret = showValueWithClipboardCPButton(dol_escape_htmltag($profID), ($addcpButton == 1 ? 1 : 0), $newProfID);
+	else $ret = $newProfID;
+	return $ret;
 }
 
 /**
@@ -3607,6 +3649,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+ *                                                  Example: fontawesome_envelope-open-text_fas_red_1em if you want to use fontaweseome icons: fontawesome_<icon-name>_<style>_<color>_<size> (only icon-name is mandatory)
  *	@param		string		$moreatt				Add more attribute on img tag (For example 'class="pictofixedwidth"')
  *	@param		boolean|int	$pictoisfullpath		If true or 1, image path is a full path
  *	@param		int			$srconly				Return only content of the src attribute of img.
@@ -3638,6 +3681,40 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+
+		if (strpos($pictowithouttext, 'fontawesome_') !== false) {
+			$pictowithouttext = explode('_', $pictowithouttext);
+			$marginleftonlyshort = 0;
+
+			$fakey      = 'fa-'.$pictowithouttext[1];
+			$fa         = $pictowithouttext[2] ? $pictowithouttext[2] : 'fa';
+			$facolor    = $pictowithouttext[3] ? $pictowithouttext[3] : '';
+			$fasize     = $pictowithouttext[4] ? $pictowithouttext[4] : '';
+
+			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
+			// class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
+			$morestyle = '';
+			$reg = array();
+			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+				$morecss .= ($morecss ? ' ' : '').$reg[1];
+				$moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
+			}
+			if (preg_match('/style="([^"]+)"/', $moreatt, $reg)) {
+				$morestyle = $reg[1];
+				$moreatt = str_replace('style="'.$reg[1].'"', '', $moreatt);
+			}
+			$moreatt = trim($moreatt);
+
+			$enabledisablehtml = '<span class="'.$fa.' '.$fakey.($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
+			$enabledisablehtml .= ($morecss ? ' '.$morecss : '').'" style="'.($fasize ? ('font-size: '.$fasize.';') : '').($facolor ? (' color: '.$facolor.';') : '').($morestyle ? ' '.$morestyle : '').'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt : '').'>';
+			/*if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$enabledisablehtml .= $titlealt;
+			}*/
+			$enabledisablehtml .= '</span>';
+
+			return $enabledisablehtml;
+		}
+
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
@@ -6951,10 +7028,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
 				'__USER_EMAIL__' => (string) $user->email,
+				'__USER_PHONE__' => (string) dol_print_phone($user->office_phone),
+				'__USER_PHONEPRO__' => (string) dol_print_phone($user->user_mobile),
+				'__USER_PHONEMOBILE__' => (string) dol_print_phone($user->personal_mobile),
+				'__USER_FAX__' => (string) $user->office_fax,
 				'__USER_LASTNAME__' => (string) $user->lastname,
 				'__USER_FIRSTNAME__' => (string) $user->firstname,
 				'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 				'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+				'__USER_JOB__' => (string) $user->job,
 				'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
 				));
 		}
@@ -6963,8 +7045,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
-			'__MYCOMPANY_PHONE__'   => $mysoc->phone,
-			'__MYCOMPANY_FAX__'     => $mysoc->fax,
+			'__MYCOMPANY_PHONE__'   => dol_print_phone($mysoc->phone),
+			'__MYCOMPANY_FAX__'     => dol_print_phone($mysoc->fax),
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
 			'__MYCOMPANY_PROFID3__' => $mysoc->idprof3,
@@ -7025,6 +7107,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
+			// add variables subtitutions ticket
+			if (!empty($conf->ticket->enabled) && (!is_object($object) || $object->element == 'ticket')) {
+				$substitutionarray['__TICKET_TRACKID__'] = '__TICKET_TRACKID__';
+				$substitutionarray['__TICKET_SUBJECT__'] = '__TICKET_SUBJECT__';
+				$substitutionarray['__TICKET_TYPE__'] = '__TICKET_TYPE__';
+				$substitutionarray['__TICKET_SEVERITY__'] = '__TICKET_SEVERITY__';
+				$substitutionarray['__TICKET_CATEGORY__'] = '__TICKET_CATEGORY__';
+				$substitutionarray['__TICKET_ANALYTIC_CODE__'] = '__TICKET_ANALYTIC_CODE__';
+				$substitutionarray['__TICKET_MESSAGE__'] = '__TICKET_MESSAGE__';
+				$substitutionarray['__TICKET_PROGRESSION__'] = '__TICKET_PROGRESSION__';
+				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
+			}
+
 			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'candidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
@@ -7112,9 +7207,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_PHOTO__'] = (isset($object->photo) ? $object->photo : '');
 				$substitutionarray['__MEMBER_LOGIN__'] = (isset($object->login) ? $object->login : '');
 				$substitutionarray['__MEMBER_PASSWORD__'] = (isset($object->pass) ? $object->pass : '');
-				$substitutionarray['__MEMBER_PHONE__'] = (isset($object->phone) ? $object->phone : '');
-				$substitutionarray['__MEMBER_PHONEPRO__'] = (isset($object->phone_perso) ? $object->phone_perso : '');
-				$substitutionarray['__MEMBER_PHONEMOBILE__'] = (isset($object->phone_mobile) ? $object->phone_mobile : '');
+				$substitutionarray['__MEMBER_PHONE__'] = (isset($object->phone) ? dol_print_phone($object->phone) : '');
+				$substitutionarray['__MEMBER_PHONEPRO__'] = (isset($object->phone_perso) ? dol_print_phone($object->phone_perso) : '');
+				$substitutionarray['__MEMBER_PHONEMOBILE__'] = (isset($object->phone_mobile) ? dol_print_phone($object->phone_mobile) : '');
 				$substitutionarray['__MEMBER_TYPE__'] = (isset($object->type) ? $object->type : '');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
@@ -7131,8 +7226,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object) ? $object->code_client : '');
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object) ? $object->code_fournisseur : '');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object) ? $object->email : '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object) ? $object->phone : '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object) ? $object->fax : '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object) ? dol_print_phone($object->phone) : '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object) ? dol_print_phone($object->fax) : '');
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object) ? $object->address : '');
 				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object) ? $object->zip : '');
 				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object) ? $object->town : '');
@@ -7154,8 +7249,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_client : '');
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_fournisseur : '');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty) ? $object->thirdparty->email : '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty) ? $object->thirdparty->phone : '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty) ? $object->thirdparty->fax : '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty) ? dol_print_phone($object->thirdparty->phone) : '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty) ? dol_print_phone($object->thirdparty->fax) : '');
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object->thirdparty) ? $object->thirdparty->address : '');
 				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty) ? $object->thirdparty->zip : '');
 				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty) ? $object->thirdparty->town : '');
@@ -7214,6 +7309,28 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
 			}
+			// add substition variable for ticket
+			if (is_object($object) && $object->element == 'ticket') {
+				$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
+				$substitutionarray['__REF__'] = $object->ref;
+				$substitutionarray['__TICKET_SUBJECT__'] = $object->subject;
+				$substitutionarray['__TICKET_TYPE__'] = $object->type_code;
+				$substitutionarray['__TICKET_SEVERITY__'] = $object->severity_code;
+				$substitutionarray['__TICKET_CATEGORY__'] = $object->category_code; // For backward compatibility
+				$substitutionarray['__TICKET_ANALYTIC_CODE__'] = $object->category_code;
+				$substitutionarray['__TICKET_MESSAGE__'] = $object->message;
+				$substitutionarray['__TICKET_PROGRESSION__'] = $object->progress;
+				$userstat = new User($db);
+				if ($object->fk_user_assign > 0) {
+					$userstat->fetch($object->fk_user_assign);
+					$substitutionarray['__TICKET_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+				}
+
+				if ($object->fk_user_create > 0) {
+					$userstat->fetch($object->fk_user_create);
+					$substitutionarray['__USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+				}
+			}
 
 			// Create dynamic tags for __EXTRAFIELD_FIELD__
 			if ($object->table_element && $object->id > 0) {
@@ -7236,6 +7353,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
+							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'phone') {
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = dol_print_phone($object->array_options['options_'.$key]);
+							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
 							}
 						}
 					}

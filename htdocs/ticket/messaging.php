@@ -80,7 +80,6 @@ $permissiontoadd = $user->rights->ticket->write;
 
 // Security check
 $id = GETPOST("id", 'int');
-$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id, '');
 
@@ -204,6 +203,7 @@ if (!empty($conf->projet->enabled)) {
 		}
 	} else {
 		if (!empty($object->fk_project)) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
 			$morehtmlref .= $proj->getNomUrl(1);

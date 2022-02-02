@@ -46,6 +46,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'order';
@@ -158,18 +160,6 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-} elseif ($action == "setshippableiconinlist") {
-	// Activate Set Shippable Icon In List
-	$setshippableiconinlist = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "SHIPPABLE_ORDER_ICON_IN_LIST", $setshippableiconinlist, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -645,25 +635,6 @@ print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
-
-// Shippable Icon in List
-/* Kept as hidden feature for the moment, result seems bugged.
-Where is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
-print '<td>&nbsp;</td>';
-print '<td class="center">';
-if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&token='.newToken().'&value=0">';
-	print img_picto($langs->trans("Activated"),'switch_on');
-} else {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&token='.newToken().'&value=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-}
-print '</a></td>';
-print '</tr>';
-*/
 
 /*
 // Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.

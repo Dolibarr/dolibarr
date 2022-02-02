@@ -1196,11 +1196,6 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nobordernopadding nowrap">';
 					print $tmpinvoice->getNomUrl(1, '');
 					print '</td>';
-					print '<td width="20" class="nobordernopadding nowrap">';
-					if ($tmpinvoice->hasDelay()) {
-						print img_warning($langs->trans("Late"));
-					}
-					print '</td>';
 					print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 					$filename = dol_sanitizeFileName($obj->ref);
 					$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
@@ -1212,7 +1207,12 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nowrap tdoverflowmax100">';
 					print $societestatic->getNomUrl(1, 'customer');
 					print '</td>';
-					print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
+					print '<td class="right">';
+					print dol_print_date($db->jdate($obj->datelimite), 'day');
+					if ($tmpinvoice->hasDelay()) {
+						print img_warning($langs->trans("Late"));
+					}
+					print '</td>';
 					if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 						print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 					}

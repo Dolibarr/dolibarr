@@ -143,11 +143,13 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		print __METHOD__." USER_PASSWORD_GENERATED=".getDolGlobalString('USER_PASSWORD_GENERATED')."\n";
+
 		$localobject=new User($this->savdb);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Creation of user has failed: '.$localobject->error);
 		print __METHOD__." result=".$result."\n";
 		return $result;
 	}

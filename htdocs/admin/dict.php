@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2022	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2021	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
@@ -2408,6 +2408,31 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 					$fieldValue = '0';
 				}
 			}
+
+			// Labels Length
+			$maxlength = '';
+			if (in_array($fieldlist[$field], array('libelle', 'label'))) {
+				switch ($tabname) {
+					case MAIN_DB_PREFIX . 'c_accounting_category':
+					case MAIN_DB_PREFIX . 'c_ecotaxe':
+					case MAIN_DB_PREFIX . 'c_email_senderprofile':
+					case MAIN_DB_PREFIX . 'c_forme_juridique':
+					case MAIN_DB_PREFIX . 'c_holiday_types':
+					case MAIN_DB_PREFIX . 'c_payment_term':
+					case MAIN_DB_PREFIX . 'c_transport_mode':
+						$maxlength = ' maxlength="255"';
+						break;
+					case MAIN_DB_PREFIX . 'c_email_templates':
+						$maxlength = ' maxlength="180"';
+						break;
+					case MAIN_DB_PREFIX . 'c_socialnetworks':
+						$maxlength = ' maxlength="150"';
+						break;
+					default:
+						$maxlength = ' maxlength="128"';
+				}
+			}
+
 			print '<td class="'.$classtd.'">';
 			$transfound = 0;
 			$transkey = '';
@@ -2426,7 +2451,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				}
 			}
 			if (!$transfound) {
-				print '<input type="text" class="flat'.($class ? ' '.$class : '').'" value="'.dol_escape_htmltag($fieldValue).'" name="'.$fieldlist[$field].'">';
+				print '<input type="text" class="flat'.($class ? ' '.$class : '').'"'.($maxlength ? ' '.$maxlength : '').' value="'.dol_escape_htmltag($fieldValue).'" name="'.$fieldlist[$field].'">';
 			} else {
 				print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$transkey.'">';
 			}

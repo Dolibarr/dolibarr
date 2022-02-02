@@ -860,6 +860,8 @@ class Product extends CommonObject
 	 */
 	public function verify()
 	{
+		global $langs;
+
 		$this->errors = array();
 
 		$result = 0;
@@ -868,6 +870,16 @@ class Product extends CommonObject
 		if (!$this->ref) {
 			$this->errors[] = 'ErrorBadRef';
 			$result = -2;
+		}
+
+		$arrayofnonnegativevalue = array('weight'=>'Weight', 'width'=>'Width', 'height'=>'Height', 'length'=>'Length', 'surface'=>'Surface', 'volume'=>'Volume');
+		foreach ($arrayofnonnegativevalue as $key => $value) {
+			if (property_exists($this, $key) && !empty($this->$key) && ($this->$key < 0)) {
+				$langs->loadLangs(array("main", "other"));
+				$this->error = $langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv($value));
+				$this->errors[] = $this->error;
+				$result = -4;
+			}
 		}
 
 		$rescode = $this->check_barcode($this->barcode, $this->barcode_type_code);
@@ -5120,9 +5132,10 @@ class Product extends CommonObject
 	 * @param  string $origin_element Origin element type
 	 * @param  int    $origin_id      Origin id of element
 	 * @param  int	  $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
-	 * @return int                     <0 if KO, >0 if OK
+	 * @param  array  $extrafields	  Array of extrafields
+	 * @return int                    <0 if KO, >0 if OK
 	 */
-	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
+	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -5145,6 +5158,11 @@ class Product extends CommonObject
 			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', '', '', '', false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
+				if ($extrafields) {
+					$array_options = $extrafields->getOptionalsFromPost('stock_mouvement');
+					$movementstock->array_options = $array_options;
+					$movementstock->insertExtraFields();
+				}
 				$this->db->commit();
 				return 1;
 			} else {
@@ -5174,9 +5192,10 @@ class Product extends CommonObject
 	 * @param  string   $origin_element Origin element type
 	 * @param  int      $origin_id      Origin id of element
 	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 * @param  array    $extrafields	Array of extrafields
 	 * @return int                      <0 if KO, >0 if OK
 	 */
-	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
+	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -5199,6 +5218,11 @@ class Product extends CommonObject
 			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct);
 
 			if ($result >= 0) {
+				if ($extrafields) {
+					$array_options = $extrafields->getOptionalsFromPost('stock_mouvement');
+					$movementstock->array_options = $array_options;
+					$movementstock->insertExtraFields();
+				}
 				$this->db->commit();
 				return 1;
 			} else {

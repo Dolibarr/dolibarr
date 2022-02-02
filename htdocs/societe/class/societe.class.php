@@ -4870,7 +4870,7 @@ class Societe extends CommonObject
 	{
 		global $langs;
 
-		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 
 		$this->partnerships[] = array();

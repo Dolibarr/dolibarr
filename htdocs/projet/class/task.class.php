@@ -800,9 +800,10 @@ class Task extends CommonObject
 	 * @param	array	$extrafields	    Show additional column from project or task
 	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @param   array   $search_array_options Array of search
+	 * @param   int     $loadextras         Fetch all Extrafields on each task
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array())
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -1021,6 +1022,10 @@ class Task extends CommonObject
 								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
 							}
 						}
+					}
+
+					if ($loadextras) {
+						$tasks[$i]->fetch_optionals();
 					}
 				}
 

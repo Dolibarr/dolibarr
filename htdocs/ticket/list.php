@@ -157,6 +157,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (!$user->rights->ticket->read) {
 	accessforbidden();
 }
+// restrict view to current user's company
+if ($user->socid > 0) $socid = $user->socid;
 
 // Store current page url
 $url_page_current = DOL_URL_ROOT.'/ticket/list.php';

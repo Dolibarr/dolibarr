@@ -1462,11 +1462,6 @@ if ($resql) {
 			print '<td class="nowraponall">';
 			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
 
-			// Warning late icon and note
-			if ($generic_commande->hasDelay()) {
-				print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
-			}
-
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -1590,6 +1585,10 @@ if ($resql) {
 		if (!empty($arrayfields['c.date_commande']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_commande), 'day');
+			// Warning late icon and note
+			if ($generic_commande->hasDelay()) {
+				print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1854,10 +1853,13 @@ if ($resql) {
 			print '<td class="center">';
 			if (!empty($show_shippable_command) && !empty($conf->stock->enabled)) {
 				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
-					$generic_commande->getLinesArray(); // This set ->lines
+					$generic_commande->getLinesArray(); 	// Load array ->lines
+					$generic_commande->loadExpeditions();	// Load array ->expeditions
 
 					$numlines = count($generic_commande->lines); // Loop on each line of order
 					for ($lig = 0; $lig < $numlines; $lig++) {
+						$reliquat = $generic_commande->lines[$lig]->qty - $generic_commande->expeditions[$generic_commande->lines[$lig]->id];
+
 						if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0) {  // If line is a product and not a service
 							$nbprod++; // order contains real products
 							$generic_product->id = $generic_commande->lines[$lig]->fk_product;
@@ -1872,15 +1874,15 @@ if ($resql) {
 								$generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 							}
 
+							if ($reliquat > $generic_product->stock_reel) {
+								$notshippable++;
+							}
 							if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {  // Default code. Default should be this case.
-								$text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->product_ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+								$text_info .= $reliquat.' x '.$generic_commande->lines[$lig]->product_ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 20);
 								$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';
 								$text_info .= ' - '.$langs->trans("VirtualStock").': <span class="'.($generic_product->stock_theorique > 0 ? 'ok' : 'error').'">'.$generic_product->stock_theorique.'</span>';
+								$text_info .= ($reliquat != $generic_commande->lines[$lig]->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($generic_commande->lines[$lig]->qty - $reliquat).')</span>' : '');
 								$text_info .= '<br>';
-
-								if ($generic_commande->lines[$lig]->qty > $generic_product->stock_reel) {
-									$notshippable++;
-								}
 							} else {  // BUGGED CODE.
 								// DOES NOT TAKE INTO ACCOUNT MANUFACTURING. THIS CODE SHOULD BE USELESS. PREVIOUS CODE SEEMS COMPLETE.
 								// COUNT STOCK WHEN WE SHOULD ALREADY HAVE VALUE
@@ -1908,32 +1910,31 @@ if ($resql) {
 										$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
 									}
 								}
-								$text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+								$text_info .= $reliquat.' x '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 20);
 								$text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
 								if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $generic_commande->lines[$lig]->qty)) {
 									$warning++;
 									$text_warning .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								}
-								if ($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) {
-									$notshippable++;
+								if ($reliquat > $generic_product->stock_reel) {
 									$text_info .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								} else {
 									$text_info .= '<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								}
 								if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
-									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier.'<br>';
-								} else {
-									$text_info .= '<br>';
+									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier;
 								}
+								$text_info .= ($reliquat != $generic_commande->lines[$lig]->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($generic_commande->lines[$lig]->qty - $reliquat).')</span>' : '');
+								$text_info .= '<br>';
 							}
 						}
 					}
 					if ($notshippable == 0) {
 						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
-						$text_info = $langs->trans('Shippable').'<br>'.$text_info;
+						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
 					} else {
 						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
-						$text_info = $langs->trans('NonShippable').'<br>'.$text_info;
+						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}
 

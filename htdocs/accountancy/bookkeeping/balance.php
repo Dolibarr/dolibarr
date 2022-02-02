@@ -237,7 +237,7 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 

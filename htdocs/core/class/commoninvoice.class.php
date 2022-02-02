@@ -857,7 +857,7 @@ abstract class CommonInvoice extends CommonObject
 		// Using TLV format
 		$s = pack('C1', 1).pack('C1', strlen($this->thirdparty->name)).$this->thirdparty->name;
 		$s .= pack('C1', 2).pack('C1', strlen($this->thirdparty->tva_intra)).$this->thirdparty->tva_intra;
-		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$date;
+		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$this->date;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
 		$s .= '';					// Hash of xml invoice

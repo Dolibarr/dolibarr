@@ -70,6 +70,18 @@ abstract class DoliDB implements Database
 	/** @var string */
 	public $error;
 
+
+
+	/**
+	 *	Return the DB prefix
+	 *
+	 *	@return string		The DB prefix
+	 */
+	public function prefix()
+	{
+		return (empty($this->prefix_db) ? MAIN_DB_PREFIX : $this->prefix_db);
+	}
+
 	/**
 	 *	Format a SQL IF
 	 *
