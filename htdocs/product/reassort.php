@@ -131,7 +131,7 @@ $htmlother = new FormOther($db);
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-$sql .= ' SUM(s.reel) as stock_physique';
+$sql .= ' SUM(distinct s.reel) as stock_physique';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ', u.short_label as unit_short';
 }
@@ -199,7 +199,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 if ($toolowstock) {
-	$sql .= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
+	$sql .= " HAVING SUM(distinct ".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
 }
 $sql .= $db->order($sortfield, $sortorder);
 
