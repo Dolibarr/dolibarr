@@ -106,7 +106,11 @@ class modTicket extends DolibarrModules
 		$this->const = array(
 			1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
 			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0),
-			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0)
+			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0),
+			4 => array('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'chaine', 0, 'Automatically mark ticket as read when created from backend', 0),
+			5 => array('TICKET_AUTO_ASSIGN_CONTRACT_CREATE', 'chaine', 0, 'Automatically assign ticket to current user when created from backend', 0),
+			6 => array('TICKET_AUTO_CREATE_FICHINTER_CREATE', 'chaine', 0, 'Automatically create linked intervention when creating a ticket from backend', 0),
+			7 => array('WORKFLOW_TICKET_CLOSE_INTERVENTION', 'chaine', 1, 'Automatically close linked interventions when closing a ticket', 0)
 		);
 
 
