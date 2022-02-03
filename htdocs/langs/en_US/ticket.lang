@@ -140,6 +140,8 @@ TicketsAutoReadTicket=Automatically mark the ticket as read
 TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice.
 TicketsAutoCreateIntervention=Automatically create an intervention
 TicketsAutoCreateInterventionHelp=Automatically create an intervention linked to the ticket when created from backoffice.
+TicketsAutoAssignContract=Automatically assign a contract
+TicketsAutoAssignContractHelp=If a matching contract is found for the thirdparty, automatically assign a contract to the ticket.
 
 #
 # Index & list page

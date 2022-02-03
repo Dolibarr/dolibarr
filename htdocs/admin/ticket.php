@@ -161,6 +161,12 @@ if ($action == 'setvarworkflow') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$param_auto_assign_contract = GETPOST('TICKET_AUTO_ASSIGN_CONTRACT_CREATE', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_CONTRACT_CREATE', $param_auto_assign_contract, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 if ($action == 'setvarother') {
@@ -535,6 +541,21 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsAutoCreateInterventionHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Auto link ticket to contract if a valid contract exists
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoAssignContract").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_AUTO_ASSIGN_CONTRACT_CREATE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("TICKET_AUTO_ASSIGN_CONTRACT_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsAutoAssignContractHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
