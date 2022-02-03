@@ -254,22 +254,6 @@ if (empty($reshook)) {
 					$result = $object->assignUser($user, $user->id, 1);
 					$object->add_contact($user->id, "SUPPORTTEC", 'internal');
 				}
-
-				// Auto assign contrat
-				$contractid = 0;
-				if (!empty($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE)) {
-					$contrat = new Contrat($db);
-					$contrat->socid = $object->fk_soc;
-					$list = $contrat->getListOfContracts();
-
-					if (is_array($list) && !empty($list)) {
-						if (count($list) == 1) {
-							$contractid = $list[0]->id;
-							$object->setContract($contractid);
-						} else {
-						}
-					}
-				}
 			}
 
 			if (!$error) {

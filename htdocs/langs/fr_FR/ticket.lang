@@ -244,6 +244,8 @@ TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
 Unread=Non lu
 TicketNotCreatedFromPublicInterface=Non disponible. Le ticket n’a pas été créé à partir de l'interface publique.
 ErrorTicketRefRequired=La référence du ticket est requise
+TicketNoContractFoundToLink=Aucun contrat n'a été trouvé pour être lié automatiquement à ce ticket. Veuillez en lier un manuellement.
+TicketManyContractsLinked=Plusieurs contrats ont été liés à ce ticket. Veuillez les vérifier.
 
 #
 # Logs
