@@ -274,27 +274,27 @@ $manifestjsoncontentdefault .= '{
 	"background_color": "#fff",
 	"description": "A simple Web app.",
 	"icons": [{
-	"src": "images/'.$website->ref.'/homescreen48.png",
+	"src": "images/'.urlencode($website->ref).'/homescreen48.png",
 	"sizes": "48x48",
 	"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen72.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen72.png",
 		"sizes": "72x72",
 		"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen96.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen96.png",
 		"sizes": "96x96",
 		"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen144.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen144.png",
 		"sizes": "144x144",
 		"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen168.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen168.png",
 		"sizes": "168x168",
 		"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen192.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen192.png",
 		"sizes": "192x192",
 		"type": "image/png"
 	}],
@@ -2477,7 +2477,7 @@ $formother = new FormOther($db);
 
 // Confirm generation of website sitemaps
 if ($action == 'confirmgeneratesitemaps') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.urlencode($website->ref), $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
 	$action = 'preview';
 }
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
@@ -2692,12 +2692,12 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
 
 			// Regenerate all pages
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
 
 			// Generate site map
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmgeneratesitemaps&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmgeneratesitemaps&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"></span></a>';
 
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=replacesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
 		}
 
 		print '</span>';
@@ -2705,11 +2705,11 @@ if (!GETPOST('hide_websitemenu')) {
 		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			print '<span class="websiteselection">';
 			//print '<a href="'.$_SERVER["PHP_SELF"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"></span></a>';
-			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.$website->ref, $disabled);
+			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.urlencode($website->ref).'&section_dir='.urlencode('image/'.$website->ref.'/'), $disabled);
 
 			if (!empty($conf->categorie->enabled)) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"></span></a>';
-				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.$website->ref, $disabled);
+				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.urlencode($website->ref), $disabled);
 			}
 
 			print '</span>';
@@ -2808,7 +2808,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>';
 
 		print '<span class="websiteselection hideonsmartphoneimp">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=createcontainer&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=createcontainer&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a>';
 		print '</span>';
 
 		//print '<span class="websiteselection">';
@@ -2823,7 +2823,7 @@ if (!GETPOST('hide_websitemenu')) {
 				$out .= $s;
 				$out .= '</span>';
 
-				$urltocreatenewpage = $_SERVER["PHP_SELF"].'?action=createcontainer&website='.$website->ref;
+				$urltocreatenewpage = $_SERVER["PHP_SELF"].'?action=createcontainer&website='.urlencode($website->ref);
 
 				if (!empty($conf->use_javascript_ajax)) {
 					$out .= '<script type="text/javascript">';
@@ -2833,7 +2833,7 @@ if (!GETPOST('hide_websitemenu')) {
 					$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
 					$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
 					$out .= '		} else {';
-					$out .= '  			window.location.href = "'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
+					$out .= '  			window.location.href = "'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&pageid="+jQuery("#pageid option:selected").val();';
 					$out .= '       }';
 					$out .= '   });';
 					$out .= '});';
@@ -3065,7 +3065,7 @@ if (!GETPOST('hide_websitemenu')) {
 				} else {
 					//$disabled='';
 					//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setashome&token='.newToken().'&website='.$website->ref.'&pageid='.$pageid.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"></span></a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setashome&token='.newToken().'&website='.urlencode($website->ref).'&pageid='.((int) $pageid).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"></span></a>';
 				}
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 				print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
@@ -4432,7 +4432,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					// Container url and label
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].$param;
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&token='.newToken().'&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&token='.newToken().'&website='.urlencode($website->ref).'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 
 					// Language
