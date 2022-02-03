@@ -138,6 +138,8 @@ TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 TicketsAutoReadTicket=Automatically mark the ticket as read
 TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice.
+TicketsAutoCreateIntervention=Automatically create an intervention
+TicketsAutoCreateInterventionHelp=Automatically create an intervention linked to the ticket when created from backoffice.
 
 #
 # Index & list page

@@ -155,6 +155,12 @@ if ($action == 'setvarworkflow') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$param_auto_create_inter = GETPOST('TICKET_AUTO_CREATE_FICHINTER_CREATE', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_CREATE_FICHINTER_CREATE', $param_auto_create_inter, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 if ($action == 'setvarother') {
@@ -514,6 +520,21 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Auto create intervention linked to ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoCreateIntervention").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_AUTO_CREATE_FICHINTER_CREATE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("TICKET_AUTO_CREATE_FICHINTER_CREATE", $arrval, $conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsAutoCreateInterventionHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
