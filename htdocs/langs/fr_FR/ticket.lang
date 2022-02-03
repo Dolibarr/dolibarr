@@ -138,6 +138,8 @@ TicketPublicNotificationNewMessageDefaultEmail=Emails de notifications à (mise 
 TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez un email à cette adresse email pour chaque nouveau message de notifications si le ticket n'a pas d'utilisateur assigné ou si l'utilisateur n'a pas d'email connu.
 TicketsAutoReadTicket=Automatiquement marquer le ticket comme lu
 TicketsAutoReadTicketHelp=Automatiquement marquer le ticket comme lu s'il est créé depuis le backoffice.
+TicketChooseProductCategory=Catégorie du produit "ticket"
+TicketChooseProductCategoryHelp=Sélectionner la catégorie de produit à laquelle se rattache le traitement des tickets. Ceci sera utilisé pour lier automatiquement les tickets à des contrats.
 
 #
 # Index & list page
