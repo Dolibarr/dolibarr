@@ -254,6 +254,8 @@ TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from p
 ErrorTicketRefRequired=Ticket reference name is required
 TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
 TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
