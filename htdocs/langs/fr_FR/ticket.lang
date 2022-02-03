@@ -142,6 +142,8 @@ TicketsAutoCreateIntervention=Créer automatiquement une intervention
 TicketsAutoCreateInterventionHelp=Créer automatiquement une intervention liée au ticket s'il est créé depuis le backoffice.
 TicketsAutoAssignContract=Lier un contrat automatiquement
 TicketsAutoAssignContractHelp=Si un contrat de support est trouvé, lier automatiquement le ticket à ce contrat.
+TicketsAutoCloseIntervention=Clore automatiquement les interventions
+TicketsAutoCloseInterventionHelp=À la fermeture d'un ticket, clore automatiquement les interventions liées.
 
 #
 # Index & list page

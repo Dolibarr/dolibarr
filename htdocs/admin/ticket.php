@@ -167,6 +167,12 @@ if ($action == 'setvarworkflow') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$param_auto_close_inter = GETPOST('WORKFLOW_TICKET_CLOSE_INTERVENTION', 'alpha');
+	$res = dolibarr_set_const($db, 'WORKFLOW_TICKET_CLOSE_INTERVENTION', $param_auto_close_inter, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 if ($action == 'setvarother') {
@@ -541,6 +547,21 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsAutoCreateInterventionHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Auto close linked interventions on ticket closing
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoCloseIntervention").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('WORKFLOW_TICKET_CLOSE_INTERVENTION');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("WORKFLOW_TICKET_CLOSE_INTERVENTION", $arrval, $conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsAutoCloseInterventionHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
