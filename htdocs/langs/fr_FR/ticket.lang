@@ -136,6 +136,7 @@ TicketsPublicNotificationNewMessage=Envoyer un ou des emails lorsqu’un nouveau
 TicketsPublicNotificationNewMessageHelp=Envoyer un (des) courriel(s) lorsqu’un nouveau message est ajouté à partir de l’interface publique (à l’utilisateur désigné ou au courriel de notification  (mise à jour) et/ou au courriel de notification)
 TicketPublicNotificationNewMessageDefaultEmail=Emails de notifications à (mise à jour)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez un email à cette adresse email pour chaque nouveau message de notifications si le ticket n'a pas d'utilisateur assigné ou si l'utilisateur n'a pas d'email connu.
+
 #
 # Index & list page
 #
