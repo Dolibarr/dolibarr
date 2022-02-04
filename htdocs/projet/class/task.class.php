@@ -1282,6 +1282,97 @@ class Task extends CommonObject
 	}
 
 	/**
+	 *  Fetch records of time spent of this task
+	 *
+	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 *  @return int							<0 if KO, array of time spent if OK
+	 */
+	public function fetchTimeSpentOnTask($morewherefilter = '')
+	{
+		global $langs;
+
+		$arrayres = array();
+
+		$sql = "SELECT";
+		$sql .= " s.rowid as socid,";
+		$sql .= " s.nom as thirdparty_name,";
+		$sql .= " s.email as thirdparty_email,";
+		$sql .= " ptt.rowid,";
+		$sql .= " ptt.fk_task,";
+		$sql .= " ptt.task_date,";
+		$sql .= " ptt.task_datehour,";
+		$sql .= " ptt.task_date_withhour,";
+		$sql .= " ptt.task_duration,";
+		$sql .= " ptt.fk_user,";
+		$sql .= " ptt.note,";
+		$sql .= " ptt.thm,";
+		$sql .= " pt.rowid as task_id,";
+		$sql .= " pt.ref as task_ref,";
+		$sql .= " pt.label as task_label,";
+		$sql .= " p.rowid as project_id,";
+		$sql .= " p.ref as project_ref,";
+		$sql .= " p.title as project_label,";
+		$sql .= " p.public as public";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+		$sql .= " WHERE ptt.fk_task = pt.rowid AND pt.fk_projet = p.rowid";
+		$sql .= " AND pt.rowid = ".((int) $this->id);
+		$sql .= " AND pt.entity IN (".getEntity('project').")";
+		if ($morewherefilter) {
+			$sql .= $morewherefilter;
+		}
+
+		dol_syslog(get_class($this)."::fetchAllTimeSpent", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				$newobj = new stdClass();
+
+				$newobj->socid              = $obj->socid;
+				$newobj->thirdparty_name    = $obj->thirdparty_name;
+				$newobj->thirdparty_email   = $obj->thirdparty_email;
+
+				$newobj->fk_project			= $obj->project_id;
+				$newobj->project_ref		= $obj->project_ref;
+				$newobj->project_label = $obj->project_label;
+				$newobj->public				= $obj->project_public;
+
+				$newobj->fk_task			= $obj->task_id;
+				$newobj->task_ref = $obj->task_ref;
+				$newobj->task_label = $obj->task_label;
+
+				$newobj->timespent_line_id = $obj->rowid;
+				$newobj->timespent_line_date = $this->db->jdate($obj->task_date);
+				$newobj->timespent_line_datehour	= $this->db->jdate($obj->task_datehour);
+				$newobj->timespent_line_withhour = $obj->task_date_withhour;
+				$newobj->timespent_line_duration = $obj->task_duration;
+				$newobj->timespent_line_fk_user = $obj->fk_user;
+				$newobj->timespent_line_thm = $obj->thm;	// hourly rate
+				$newobj->timespent_line_note = $obj->note;
+
+				$arrayres[] = $newobj;
+
+				$i++;
+			}
+
+			$this->db->free($resql);
+
+			$this->lines = $arrayres;
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
+
+
+	/**
 	 *  Calculate total of time spent for task
 	 *
 	 *  @param  User|int	$userobj			Filter on user. null or 0=No filter
