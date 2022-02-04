@@ -320,12 +320,12 @@ class BlockedLog
 				$this->error++;
 			}
 		} elseif ($this->action == 'MODULE_SET') {
-			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
+			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
 			if ($this->signature == '0000000000') {
-				return '<i class="opacitymedium">System to track events into unalterable logs were disabled after some recording were done. We saved a special Fingerprint to track the chain as broken.</i>';
+				return '<i class="opacitymedium">'.$langs->trans("BlockedLogDisabled").'</i>';
 			} else {
-				return '<i class="opacitymedium">System to track events into unalterable logs were disabled. This is possible because no record were done yet.</i>';
+				return '<i class="opacitymedium">'.$langs->trans("BlockedLogDisabledBis").'</i>';
 			}
 		}
 

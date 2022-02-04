@@ -64,7 +64,7 @@ class FormContract
 	public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0)
 	{
 		// phpcs:enable
-		global $db, $user, $conf, $langs;
+		global $user, $conf, $langs;
 
 		$hideunselectables = false;
 		if (!empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) {
@@ -72,9 +72,9 @@ class FormContract
 		}
 
 		// Search all contacts
-		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut,';
-		$sql .= ' c.ref_customer, c.ref_supplier';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'contrat as c';
+		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut,";
+		$sql .= " c.ref_customer, c.ref_supplier";
+		$sql .= " FROM ".$this->db->prefix()."contrat as c";
 		$sql .= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$this->db->sanitize($contratListId).")";
 		if ($socid > 0) {

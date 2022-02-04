@@ -59,7 +59,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 		print "@media (prefers-color-scheme: dark) {";
 	}
 	print ":root {
-	            --colorbackhmenu1: #1d1e20;
+	            --colorbackhmenu1: #3d3e40;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
 	            --colorbacktabcard1: #1d1e20;				/* Must be same than colorbackbody */
@@ -154,8 +154,9 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 	max-width: 100px;
 	text-overflow: ellipsis;
 }
-.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
+/*.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
+.liste_titre select[name=year],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
 .liste_titre input[name=search_month_lim], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end], .liste_titre input[name=search_month_create],
 .liste_titre input[name=search_month_update], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end],
@@ -166,6 +167,7 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
+*/
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
@@ -253,6 +255,12 @@ input.button.massactionconfirmed {
 
 input:invalid, select:invalid, input.--error , select.--error {
 	border-color: #ea1212;
+}
+
+section.setupsection {
+	padding: 20px;
+	background-color: var(--colorbacktitle1);
+	border-radius: 5px;
 }
 
 .field-error-icon { color: #ea1212; !important; }

@@ -626,7 +626,7 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-		$sql .= " SET fk_statut = ".self::STATUS_DRAFT."',";
+		$sql .= " SET fk_statut = ".self::STATUS_DRAFT.",";
 		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

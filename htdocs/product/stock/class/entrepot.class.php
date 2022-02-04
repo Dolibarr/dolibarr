@@ -204,13 +204,13 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (ref, entity, datec, fk_user_author, fk_parent, fk_project)";
+		$sql = "INSERT INTO ".$this->db->prefix()."entrepot (ref, entity, datec, fk_user_author, fk_parent, fk_project)";
 		$sql .= " VALUES ('".$this->db->escape($this->label)."', ".((int) $conf->entity).", '".$this->db->idate($now)."', ".((int) $user->id).", ".($this->fk_parent > 0 ? ((int) $this->fk_parent) : "NULL").", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "NULL").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");
+			$id = $this->db->last_insert_id($this->db->prefix()."entrepot");
 			if ($id > 0) {
 				$this->id = $id;
 
@@ -293,7 +293,7 @@ class Entrepot extends CommonObject
 		$this->town = trim($this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
+		$sql = "UPDATE ".$this->db->prefix()."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
@@ -365,7 +365,7 @@ class Entrepot extends CommonObject
 		$elements = array('stock_mouvement', 'product_stock', 'product_warehouse_properties');
 		foreach ($elements as $table) {
 			if (!$error) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+				$sql = "DELETE FROM ".$this->db->prefix().$table;
 				$sql .= " WHERE fk_entrepot = ".((int) $this->id);
 
 				$result = $this->db->query($sql);
@@ -388,7 +388,7 @@ class Entrepot extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
+			$sql = "DELETE FROM ".$this->db->prefix()."entrepot";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$resql1 = $this->db->query($sql);
 			if (!$resql1) {
@@ -400,7 +400,7 @@ class Entrepot extends CommonObject
 
 		if (!$error) {
 			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
+			$sql = "UPDATE ".$this->db->prefix()."product as p SET stock = (SELECT SUM(ps.reel) FROM ".$this->db->prefix()."product_stock as ps WHERE ps.fk_product = p.rowid)";
 			$resql2 = $this->db->query($sql);
 			if (!$resql2) {
 				$error++;
@@ -441,7 +441,7 @@ class Entrepot extends CommonObject
 
 		$sql  = "SELECT rowid, entity, fk_parent, fk_project, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
 		$sql .= " model_pdf, import_key";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
+		$sql .= " FROM ".$this->db->prefix()."entrepot";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
@@ -506,7 +506,7 @@ class Entrepot extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT e.rowid, e.datec, e.tms as datem, e.fk_user_author";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql .= " FROM ".$this->db->prefix()."entrepot as e";
 		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
@@ -553,7 +553,7 @@ class Entrepot extends CommonObject
 		$liste = array();
 
 		$sql = "SELECT rowid, ref as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
+		$sql .= " FROM ".$this->db->prefix()."entrepot";
 		$sql .= " WHERE entity IN (".getEntity('stock').")";
 		$sql .= " AND statut = ".((int) $status);
 
@@ -583,8 +583,8 @@ class Entrepot extends CommonObject
 		$ret = array();
 
 		$sql = "SELECT count(distinct p.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-		$sql .= ", ".MAIN_DB_PREFIX."product as p";
+		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+		$sql .= ", ".$this->db->prefix()."product as p";
 		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		$sql .= " AND ps.fk_product = p.rowid";
 
@@ -625,10 +625,10 @@ class Entrepot extends CommonObject
 		} else {
 			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-		$sql .= ", ".MAIN_DB_PREFIX."product as p";
+		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+		$sql .= ", ".$this->db->prefix()."product as p";
 		if ($separatedPMP) {
-			$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+			$sql .= ", ".$this->db->prefix()."product_perentity as pa";
 		}
 		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		if ($separatedPMP) {
@@ -819,7 +819,7 @@ class Entrepot extends CommonObject
 		$parentid = $this->fk_parent; // If parent_id not defined on current object, we do not start consecutive searches of parents
 		$i = 0;
 		while ($parentid > 0 && $i < $protection) {
-			$sql = "SELECT fk_parent FROM ".MAIN_DB_PREFIX."entrepot WHERE rowid = ".((int) $parentid);
+			$sql = "SELECT fk_parent FROM ".$this->db->prefix()."entrepot WHERE rowid = ".((int) $parentid);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objarbo = $this->db->fetch_object($resql);
@@ -852,9 +852,9 @@ class Entrepot extends CommonObject
 	{
 		// phpcs:enable
 
-		$sql = 'SELECT rowid
-				FROM '.MAIN_DB_PREFIX.'entrepot
-				WHERE fk_parent = '.((int) $id);
+		$sql = "SELECT rowid
+				FROM ".$this->db->prefix()."entrepot
+				WHERE fk_parent = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
