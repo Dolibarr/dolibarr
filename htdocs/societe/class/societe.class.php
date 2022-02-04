@@ -2532,7 +2532,7 @@ class Societe extends CommonObject
 	 *      @param	string	$target			  		  add attribute target
 	 *		@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target='_self')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '_self')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2705,8 +2705,8 @@ class Societe extends CommonObject
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip refurl"';
 			$target_value=array('_self','_blank','_parent','_top',);
-			if(in_array($target,$target_value)){
-			    $linkclose .= ' target="'.$target.'"';
+			if (in_array($target, $target_value)) {
+				$linkclose .= ' target="'.$target.'"';
 			}
 
 			/*
