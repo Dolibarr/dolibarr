@@ -2529,9 +2529,10 @@ class Societe extends CommonObject
 	 *      @param	int  	$notooltip		          1=Disable tooltip
 	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *      @param	int		$noaliasinname			  1=Do not add alias into the link ref
+	 *      @param	string	$target			  		  add attribute target
 	 *		@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target='_self')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2703,6 +2704,10 @@ class Societe extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip refurl"';
+			$target_value=array('_self','_blank','_parent','_top',);
+			if(in_array($target,$target_value)){
+			    $linkclose .= ' target="'.$target.'"';
+			}
 
 			/*
 			$hookmanager->initHooks(array('thirdpartydao'));
