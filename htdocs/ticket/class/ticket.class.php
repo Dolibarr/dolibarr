@@ -178,6 +178,11 @@ class Ticket extends CommonObject
 	public $date_read = '';
 
 	/**
+	 * @var int Last message date
+	 */
+	public $date_last_msg_sent = '';
+
+	/**
 	 * @var int Close ticket date
 	 */
 	public $date_close = '';
@@ -266,6 +271,7 @@ class Ticket extends CommonObject
 		'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
 		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
+		'date_last_msg_sent' => array('type'=>'datetime', 'label'=>'TicketLastMessageDate', 'visible'=>0, 'enabled'=>1, 'position'=>502, 'notnull'=>-1),
 		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1, 'css'=>'tdoverflowmax125'),
 		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
@@ -561,6 +567,7 @@ class Ticket extends CommonObject
 		$sql .= " t.severity_code,";
 		$sql .= " t.datec,";
 		$sql .= " t.date_read,";
+		$sql .= " t.date_last_msg_sent,";
 		$sql .= " t.date_close,";
 		$sql .= " t.tms";
 		$sql .= ", type.code as type_code, type.label as type_label, category.code as category_code, category.label as category_label, severity.code as severity_code, severity.label as severity_label";
@@ -627,6 +634,7 @@ class Ticket extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_read = $this->db->jdate($obj->date_read);
 				$this->date_validation = $this->db->jdate($obj->date_read);
+				$this->date_last_msg_sent = $this->db->jdate($obj->date_last_msg_sent);
 				$this->date_close = $this->db->jdate($obj->date_close);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->date_modification = $this->db->jdate($obj->tms);
@@ -687,6 +695,7 @@ class Ticket extends CommonObject
 		$sql .= " t.severity_code,";
 		$sql .= " t.datec,";
 		$sql .= " t.date_read,";
+		$sql .= " t.date_last_msg_sent,";
 		$sql .= " t.date_close,";
 		$sql .= " t.tms";
 		$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
@@ -793,6 +802,7 @@ class Ticket extends CommonObject
 
 					$line->datec = $this->db->jdate($obj->datec);
 					$line->date_read = $this->db->jdate($obj->date_read);
+					$line->date_last_msg_sent = $this->db->jdate($obj->date_last_msg_sent);
 					$line->date_close = $this->db->jdate($obj->date_close);
 
 					// Extra fields
@@ -915,6 +925,7 @@ class Ticket extends CommonObject
 		$sql .= " severity_code=".(isset($this->severity_code) ? "'".$this->db->escape($this->severity_code)."'" : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " date_read=".(dol_strlen($this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
+		$sql .= " date_last_msg_sent=".(dol_strlen($this->date_last_msg_sent) != 0 ? "'".$this->db->idate($this->date_last_msg_sent)."'" : 'null').",";
 		$sql .= " date_close=".(dol_strlen($this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null')."";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1108,6 +1119,7 @@ class Ticket extends CommonObject
 		$this->severity_code = 'SEVERITYCODE';
 		$this->datec = '';
 		$this->date_read = '';
+		$this->date_last_msg_sent = '';
 		$this->date_close = '';
 		$this->tms = '';
 		return 1;
@@ -2798,6 +2810,11 @@ class Ticket extends CommonObject
 									$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
 								}
 							}
+
+							// update last_msg_sent date
+							$object->fetch($object->id);
+							$object->date_last_msg_sent = dol_now();
+							$object->update($user);
 						}
 					}
 				}
@@ -2806,7 +2823,6 @@ class Ticket extends CommonObject
 				if ($object->fk_statut < 3 && !$user->socid) {
 					$object->setStatut(3);
 				}
-
 				return 1;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -3143,6 +3159,11 @@ class TicketsLine
 	 * Read date
 	 */
 	public $date_read = '';
+
+	/**
+	 * @var int Last message date
+	 */
+	public $date_last_msg_sent = '';
 
 	/**
 	 * Close ticket date
