@@ -280,7 +280,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Initialisation objet actioncomm
 		$object->priority = GETPOSTISSET("priority") ? GETPOST("priority", "int") : 0;
-		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
+		$object->fulldayevent = ($fulldayevent ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
 		$object->label = GETPOST('label', 'alphanohtml');
 
@@ -1960,7 +1960,7 @@ if ($id > 0) {
 		}
 
 		// Full day event
-		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent, 3).'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
 		$rowspan = 4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
@@ -1969,7 +1969,7 @@ if ($id > 0) {
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
-		if (!$object->fulldayevent) {
+		if (empty($object->fulldayevent)) {
 			print dol_print_date($object->datep, 'dayhour', 'tzuser');
 		} else {
 			print dol_print_date($object->datep, 'day', 'tzuser');
@@ -1982,7 +1982,7 @@ if ($id > 0) {
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-		if (!$object->fulldayevent) {
+		if (empty($object->fulldayevent)) {
 			print dol_print_date($object->datef, 'dayhour', 'tzuser');
 		} else {
 			print dol_print_date($object->datef, 'day', 'tzuser');

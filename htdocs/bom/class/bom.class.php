@@ -1064,26 +1064,40 @@ class BOM extends CommonObject
 				$tmpproduct->cost_price = 0;
 				$tmpproduct->pmp = 0;
 
-				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
-				if ($result < 0) {
-					$this->error = $tmpproduct->error;
-					return -1;
-				}
-				$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-				if (empty($line->unit_cost)) {
-					if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-						$line->unit_cost = $productFournisseur->fourn_unitprice;
+				if (empty($line->fk_bom_child)) {
+					$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
+					if ($result < 0) {
+						$this->error = $tmpproduct->error;
+						return -1;
+					}
+					$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+					if (empty($line->unit_cost)) {
+						if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+							$line->unit_cost = $productFournisseur->fourn_unitprice;
+						}
+					}
+
+					$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+
+					$this->total_cost += $line->total_cost;
+				} else {
+					$bom_child= new BOM($this->db);
+					$res = $bom_child->fetch($line->fk_bom_child);
+					if ($res>0) {
+						$bom_child->calculateCosts();
+						$this->total_cost += $bom_child->total_cost;
+					} else {
+						$this->error = $bom_child->error;
+						return -2;
 					}
 				}
-
-				$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
-
-				$this->total_cost += $line->total_cost;
 			}
 
 			$this->total_cost = price2num($this->total_cost, 'MT');
-			if ($this->qty) {
+			if ($this->qty > 0) {
 				$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+			} elseif ($this->qty < 0) {
+				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
 	}

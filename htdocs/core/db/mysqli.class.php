@@ -210,6 +210,8 @@ class DoliDBMysqli extends DoliDB
 	{
 		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name", LOG_DEBUG);
 
+		//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 		// Can also be
 		// mysqli::init(); mysql::options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 0'); mysqli::options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
 		// return mysqli::real_connect($host, $user, $pass, $db, $port);
@@ -255,6 +257,8 @@ class DoliDBMysqli extends DoliDB
 		return false;
 	}
 
+
+
 	/**
 	 * 	Execute a SQL request and return the resultset
 	 *
@@ -288,11 +292,16 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 
-		if (!$this->database_name) {
-			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
-			$ret = $this->db->query($query, $result_mode);
-		} else {
-			$ret = $this->db->query($query, $result_mode);
+		try {
+			if (!$this->database_name) {
+				// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+				$ret = $this->db->query($query, $result_mode);
+			} else {
+				$ret = $this->db->query($query, $result_mode);
+			}
+		} catch (Exception $e) {
+			dol_syslog(get_class($this)."::query Exception in query instead of returning an error: ".$e->getMessage(), LOG_ERR);
+			$ret = false;
 		}
 
 		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) {

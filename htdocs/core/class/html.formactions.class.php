@@ -359,7 +359,7 @@ class FormActions
 	 *  @param	string			$morecss		More css to add to SELECT component.
 	 * 	@return	string
 	 */
-	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = '')
+	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300')
 	{
 		// phpcs:enable
 		global $langs, $user, $form, $conf;
@@ -399,7 +399,7 @@ class FormActions
 			}
 			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		} else {
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300'.($morecss ? ' '.$morecss : ''), 1);
+			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) {

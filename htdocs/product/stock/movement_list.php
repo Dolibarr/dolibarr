@@ -139,6 +139,9 @@ $arrayfields = array(
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );
+
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	unset($arrayfields['pl.sellby']);
 }
@@ -381,7 +384,9 @@ if ($action == "correct_stock") {
 				$batch,
 				GETPOST('inventorycode', 'alphanohtml'),
 				$origin_element,
-				$origin_id
+				$origin_id,
+				0,
+				$extrafields
 			); // We do not change value of stock for a correction
 		} else {
 			$result = $product->correct_stock(
@@ -393,7 +398,9 @@ if ($action == "correct_stock") {
 				price2num(GETPOST('unitprice'), 'MT'),
 				GETPOST('inventorycode', 'alphanohtml'),
 				$origin_element,
-				$origin_id
+				$origin_id,
+				0,
+				$extrafields
 			); // We do not change value of stock for a correction
 		}
 
@@ -500,7 +507,11 @@ if ($action == "transfert_stock" && !$cancel) {
 						$eatby,
 						$sellby,
 						$batch,
-						GETPOST('inventorycode')
+						GETPOST('inventorycode'),
+						'',
+						null,
+						0,
+						$extrafields
 					);
 					// Add stock
 					$result2 = $product->correct_stock_batch(
@@ -513,7 +524,11 @@ if ($action == "transfert_stock" && !$cancel) {
 						$eatby,
 						$sellby,
 						$batch,
-						GETPOST('inventorycode', 'alphanohtml')
+						GETPOST('inventorycode', 'alphanohtml'),
+						'',
+						null,
+						0,
+						$extrafields
 					);
 				}
 			} else {
@@ -525,7 +540,11 @@ if ($action == "transfert_stock" && !$cancel) {
 					1,
 					GETPOST("label", 'san_alpha'),
 					$pricesrc,
-					GETPOST('inventorycode', 'alphanohtml')
+					GETPOST('inventorycode', 'alphanohtml'),
+					'',
+					null,
+					0,
+					$extrafields
 				);
 
 				// Add stock
@@ -536,7 +555,11 @@ if ($action == "transfert_stock" && !$cancel) {
 					0,
 					GETPOST("label", 'san_alpha'),
 					$pricedest,
-					GETPOST('inventorycode', 'alphanohtml')
+					GETPOST('inventorycode', 'alphanohtml'),
+					'',
+					null,
+					0,
+					$extrafields
 				);
 			}
 			if (!$error && $result1 >= 0 && $result2 >= 0) {
@@ -1434,6 +1457,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Extra fields
+	$object = $movement;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);

@@ -265,10 +265,10 @@ class ExtraFields
 				'default' => $default_value
 			);
 
-			$result = $this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+			$result = $this->db->DDLAddField($this->db->prefix().$table, $attrname, $field_desc);
 			if ($result > 0) {
 				if ($unique) {
-					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+					$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
 				return 1;
@@ -353,7 +353,7 @@ class ExtraFields
 				$params = '';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,";
 			$sql .= " label,";
 			$sql .= " type,";
@@ -447,7 +447,7 @@ class ExtraFields
 
 			if (!$error) {
 				$sql = "SELECT COUNT(rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql .= " FROM ".$this->db->prefix()."extrafields";
 				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
 				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
@@ -455,7 +455,7 @@ class ExtraFields
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->nb <= 0) {
-						$result = $this->db->DDLDropField(MAIN_DB_PREFIX.$table, $attrname); // This also drop the unique key
+						$result = $this->db->DDLDropField($this->db->prefix().$table, $attrname); // This also drop the unique key
 						if ($result < 0) {
 							$this->error = $this->db->lasterror();
 							$this->errors[] = $this->db->lasterror();
@@ -492,7 +492,7 @@ class ExtraFields
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+			$sql = "DELETE FROM ".$this->db->prefix()."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
 			$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
@@ -597,7 +597,7 @@ class ExtraFields
 			}
 
 			if ($type != 'separate') { // No table update when separate type
-				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
@@ -606,9 +606,9 @@ class ExtraFields
 				if ($result > 0) {
 					$sql = '';
 					if ($unique) {
-						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					} else {
-						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
@@ -699,20 +699,20 @@ class ExtraFields
 
 			if ($entity === '' || $entity != '0') {
 				// We dont want on all entities, we delete all and current
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
 				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			} else {
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity = 0";
 				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			}
 			$resql1 = $this->db->query($sql_del);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,"; // This is code
 			$sql .= " entity,";
 			$sql .= " label,";
@@ -804,15 +804,12 @@ class ExtraFields
 		if ($elementtype == 'order_supplier') {
 			$elementtype = 'commande_fournisseur';
 		}
-		if ($elementtype == 'stock_mouvement') {
-			$elementtype = 'movement';
-		}
 
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
 		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
-		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
@@ -1139,7 +1136,7 @@ class ExtraFields
 
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use curent entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
@@ -1158,7 +1155,7 @@ class ExtraFields
 						}
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE ".$InfoFieldList[4];
@@ -1307,7 +1304,7 @@ class ExtraFields
 
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -1370,7 +1367,7 @@ class ExtraFields
 
 						// We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE ".$InfoFieldList[4];
@@ -1595,7 +1592,7 @@ class ExtraFields
 			}
 
 			$sql = "SELECT ".$keyList;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1699,7 +1696,7 @@ class ExtraFields
 			}
 
 			$sql = "SELECT ".$keyList;
-			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}

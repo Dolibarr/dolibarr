@@ -27,6 +27,12 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+// DDOS protection
+$size = (int) $_SERVER['CONTENT_LENGTH'];
+if ($size > 10000) {
+	http_response_code(413);
+	exit;
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -60,7 +66,18 @@ $php_self = str_replace('action=validatenewpassword', '', $php_self);
 
 $titleofpage = $langs->trans('SendNewPassword');
 
-print top_htmlhead('', $titleofpage);
+// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
+$arrayofjs = array();
+
+$disablenofollow = 1;
+if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) {
+	$disablenofollow = 0;
+}
+if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	$disablenofollow = 0;
+}
+
+print top_htmlhead('', $titleofpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu

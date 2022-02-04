@@ -717,6 +717,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 		if (file_exists($filepath)) {
 			$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
 			$pdf->Image($filepath, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
+			$pdf->SetPageMark(); // This option avoid to have the images missing on some pages
 			$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 		}
 	}

@@ -86,8 +86,8 @@ if (empty($dolibarr_nocache)) {
 	header('Cache-Control: no-cache');
 }
 
-if (GETPOST('theme', 'alpha')) {
-	$conf->theme = GETPOST('theme', 'alpha'); // If theme was forced on URL
+if (GETPOST('theme', 'aZ09')) {
+	$conf->theme = GETPOST('theme', 'aZ09'); // If theme was forced on URL
 }
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
@@ -473,6 +473,18 @@ input.button.massactionconfirmed {
 input.short {
 	width: 40px;
 }
+
+input:invalid, select:invalid, input.--error , select.--error {
+	border-color: #ea1212;
+}
+
+section.setupsection {
+	padding: 20px;
+	background-color: var(--colorbacktitle1);
+	border-radius: 5px;
+}
+
+.field-error-icon { color: #ea1212; !important; }
 
 textarea {
 	border-radius: 0;

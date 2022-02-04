@@ -1232,8 +1232,8 @@ function dol_string_unaccent($str)
  *
  *	@param	string			$str            	String to clean
  * 	@param	string			$newstr				String to replace forbidden chars with
- *  @param  array|string	$badcharstoreplace  List of forbidden characters to replace
- *  @param  array|string	$badcharstoremove   List of forbidden characters to remove
+ *  @param  array|string	$badcharstoreplace  Array of forbidden characters to replace. Use '' to keep default list.
+ *  @param  array|string	$badcharstoremove   Array of forbidden characters to remove. Use '' to keep default list.
  * 	@return string          					Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
@@ -2890,15 +2890,15 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
 		$htmllink .= '<span class="fa paddingright '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
-			$htmllink .= $value;
+			$htmllink .= dol_escape_htmltag($value);
 			$htmllink .= '&nbsp;';
 			$htmllink .= '<a href="skype:';
-			$htmllink .= $value;
-			$htmllink .= '?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
+			$htmllink .= dol_string_nospecial($value, '_', '', array('@'));
+			$htmllink .= '?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Call").' '.$value).'">';
 			$htmllink .= '<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
 			$htmllink .= '</a><a href="skype:';
-			$htmllink .= $value;
-			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
+			$htmllink .= dol_string_nospecial($value, '_', '', array('@'));
+			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Chat").' '.$value).'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
 			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
@@ -2912,9 +2912,9 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.$value.'</a>';
+				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 			} else {
-				$htmllink .= $value;
+				$htmllink .= dol_escape_htmltag($value);
 			}
 		}
 		$htmllink .= '</div>';
@@ -2923,6 +2923,38 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		$htmllink .= img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
 	}
 	return $htmllink;
+}
+
+/**
+ *	Format profIDs according to country
+ *
+ *	@param	string	$profID			Value of profID to format
+ *	@param	string	$profIDtype		Type of profID to format ('1', '2', '3', '4', '5', '6' or 'VAT')
+ *	@param	string	$countrycode	Country code to use for formatting
+ *	@param	int		$addcpButton	Add button to copy to clipboard (1 => show only on hoover ; 2 => always display )
+ * 	@param	string	$separ			Separation between numbers for a better visibility example : xxx xxx xxx xxxxx
+ *	@return string					Formated profID
+ */
+function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton = 1, $separ = '&nbsp;')
+{
+	global $mysoc;
+
+	if (empty($profID) || empty($profIDtype)) {
+		return '';
+	}
+	if (empty($countrycode))	$countrycode = $mysoc->country_code;
+	$newProfID = $profID;
+	$id = substr($profIDtype, -1);
+	$ret = '';
+	if (strtoupper($countrycode) == 'FR') {
+		// France
+		if ($id == 1 && dol_strlen($newProfID) == 9)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3);
+		if ($id == 2 && dol_strlen($newProfID) == 14)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3).$separ.substr($newProfID, 9, 5);
+		if ($profIDtype === 'VAT' && dol_strlen($newProfID) == 13)	$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
+	}
+	if (!empty($addcpButton))	$ret = showValueWithClipboardCPButton(dol_escape_htmltag($profID), ($addcpButton == 1 ? 1 : 0), $newProfID);
+	else $ret = $newProfID;
+	return $ret;
 }
 
 /**
@@ -4819,6 +4851,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./", "", $field1))) {
 		$liste_titre = 'liste_titre_sel';
 	}
+
 	$out .= '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 	$out .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
@@ -4853,7 +4886,6 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		//$out .= (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 		$out .= '>';
 	}
-
 	if ($tooltip) {
 		// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 		$tmptooltip = explode(':', $tooltip);
@@ -7075,6 +7107,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
+			// add variables subtitutions ticket
+			if (!empty($conf->ticket->enabled) && (!is_object($object) || $object->element == 'ticket')) {
+				$substitutionarray['__TICKET_TRACKID__'] = '__TICKET_TRACKID__';
+				$substitutionarray['__TICKET_SUBJECT__'] = '__TICKET_SUBJECT__';
+				$substitutionarray['__TICKET_TYPE__'] = '__TICKET_TYPE__';
+				$substitutionarray['__TICKET_SEVERITY__'] = '__TICKET_SEVERITY__';
+				$substitutionarray['__TICKET_CATEGORY__'] = '__TICKET_CATEGORY__';
+				$substitutionarray['__TICKET_ANALYTIC_CODE__'] = '__TICKET_ANALYTIC_CODE__';
+				$substitutionarray['__TICKET_MESSAGE__'] = '__TICKET_MESSAGE__';
+				$substitutionarray['__TICKET_PROGRESSION__'] = '__TICKET_PROGRESSION__';
+				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
+			}
+
 			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'candidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
@@ -7263,6 +7308,28 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = dol_print_date($dateplannedstart, 'standard');
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
+			}
+			// add substition variable for ticket
+			if (is_object($object) && $object->element == 'ticket') {
+				$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
+				$substitutionarray['__REF__'] = $object->ref;
+				$substitutionarray['__TICKET_SUBJECT__'] = $object->subject;
+				$substitutionarray['__TICKET_TYPE__'] = $object->type_code;
+				$substitutionarray['__TICKET_SEVERITY__'] = $object->severity_code;
+				$substitutionarray['__TICKET_CATEGORY__'] = $object->category_code; // For backward compatibility
+				$substitutionarray['__TICKET_ANALYTIC_CODE__'] = $object->category_code;
+				$substitutionarray['__TICKET_MESSAGE__'] = $object->message;
+				$substitutionarray['__TICKET_PROGRESSION__'] = $object->progress;
+				$userstat = new User($db);
+				if ($object->fk_user_assign > 0) {
+					$userstat->fetch($object->fk_user_assign);
+					$substitutionarray['__TICKET_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+				}
+
+				if ($object->fk_user_create > 0) {
+					$userstat->fetch($object->fk_user_create);
+					$substitutionarray['__USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+				}
 			}
 
 			// Create dynamic tags for __EXTRAFIELD_FIELD__
@@ -9081,12 +9148,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
 						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ? ((float) trim($tmpcrit)) : '0');
 					} else {
-						$newres .= $field." LIKE '";
-
 						$tmpcrit = trim($tmpcrit);
 						$tmpcrit2 = $tmpcrit;
 						$tmpbefore = '%';
 						$tmpafter = '%';
+						if (preg_match('/^!/', $tmpcrit)) {
+							$newres .= $field." NOT LIKE '"; // ! as exclude character
+							$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
+						} else $newres .= $field." LIKE '";
+
 						if (preg_match('/^[\^\$]/', $tmpcrit)) {
 							$tmpbefore = '';
 							$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);

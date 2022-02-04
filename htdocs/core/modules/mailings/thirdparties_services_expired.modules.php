@@ -215,10 +215,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $langs;
 
-		$s = $langs->trans("ProductOrService");
-		$s .= '<select name="filter" class="flat">';
+		$s .= '<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
-			$s .= '<option value="0">&nbsp;</option>';
+			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
 		} else {
 			$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
 		}
@@ -226,6 +225,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$s .= '<option value="'.$key.'">'.$val.'</option>';
 		}
 		$s .= '</select>';
+		$s .= ajax_combobox("filter_services_expired");
 		return $s;
 	}
 

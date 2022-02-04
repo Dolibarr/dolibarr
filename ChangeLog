@@ -12,10 +12,9 @@ NEW: Online proposal signature
 NEW: Can define some max limit on expense report (per period, per type or expense, ...)
 NEW: Allow the use of __NEWREF__ to get for example the new reference a draft order will get after validation.
 NEW: Add option to disable globaly some notifications emails.
-NEW: #18326 Workflow: Close order on shipment closing.
 NEW: #18401 Add __NEWREF__ subtitute to get new object reference.
 NEW: #18403 Add __URL_SHIPMENT__ substitute to get the URL of a shipment
-NEW: #18689 REST API module: add api key generate / modify pemrission.
+NEW: #18689 REST API module: add api key generate / modify permission.
 NEW: #18663 Make "L'Annuaire des Entreprises" the default provider for SIREN verification for French thirdparties.
 NEW: #18046 Add tags on ticket/categories
 NEW: #18326 Workflow: Close order on shipment closing.
