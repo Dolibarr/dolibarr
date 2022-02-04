@@ -1570,6 +1570,18 @@ print $langs->trans('to').' ';*/
 		$totalarray['val'] = array();
 		$totalarray['val']['f.total_ht'] = 0;
 		$totalarray['val']['f.total_ttc'] = 0;
+
+		$with_margin_info = false;
+		if (!empty($conf->margin->enabled) && (
+				!empty($arrayfields['total_pa']['checked'])
+				|| !empty($arrayfields['total_margin']['checked'])
+				|| !empty($arrayfields['total_margin_rate']['checked'])
+				|| !empty($arrayfields['total_mark_rate']['checked'])
+			)
+		) {
+			$with_margin_info = true;
+		}
+
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -1655,7 +1667,7 @@ print $langs->trans('to').' ';*/
 			$facturestatic->alreadypaid = $paiement;
 
 			$marginInfo = array();
-			if (!empty($conf->margin->enabled)) {
+			if ($with_margin_info === true) {
 				$facturestatic->fetch_lines();
 				$marginInfo = $formmargin->getMarginInfosArray($facturestatic);
 			}
@@ -2090,7 +2102,7 @@ print $langs->trans('to').' ';*/
 					$totalarray['nbfield']++;
 				}
 			}
-			// total mark rate
+			// Total mark rate
 			if (!empty($arrayfields['total_mark_rate']['checked'])) {
 				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 				if (!$i) {
