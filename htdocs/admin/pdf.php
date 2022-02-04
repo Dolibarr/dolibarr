@@ -574,23 +574,10 @@ print '</td></tr>';
 
 // Show alias in thirdparty name
 
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_THIRDPARTY_NAME_TO_SHOW_IS").'</td><td>';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', array(), null, 0, 0, 1);
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	$arrval = array('0' => '', '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
 	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, $conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME);
-}
-
-// Invert alias and name thirdparty
-if (!empty($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME)) {
-	print '<tr class="oddeven"><td>'.$langs->trans("PDF_INVERT_ALIAS_NAME_THIRDPARTY").'</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('PDF_INVERT_ALIAS_NAME_THIRDPARTY');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("PDF_INVERT_ALIAS_NAME_THIRDPARTY", $arrval, $conf->global->PDF_INVERT_ALIAS_NAME_THIRDPARTY);
-	}
 }
 
 // Show online payment link on invoices
