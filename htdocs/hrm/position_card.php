@@ -276,7 +276,7 @@ function DisplayPositionCard(&$object)
 		$morehtmlref = '<div class="refidno">';
 		$u_position = new User(($db));
 		$u_position->fetch($object->fk_user);
-		$morehtmlref .= $langs->trans('Employee').' : '.$u_position->getNomUrl(1);
+		$morehtmlref .= $langs->trans('Employee').' : '.($u_position->id > 0 ? $u_position->getNomUrl(1) : '');
 		$job = new Job($db);
 		$job->fetch($object->fk_job);
 		$morehtmlref .= '<br>'.$langs->trans('Job').' : '.$job->getNomUrl(1);
