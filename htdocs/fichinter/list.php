@@ -741,7 +741,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
 			}
-			$totalarray['val']['fd.duree'] += $obj->duree;
+			$totalarray['val']['fd.duree'] += convertSecondToTime($obj->duree, 'allhourmin');
 		}
 		// Action column
 		print '<td class="nowrap center">';
