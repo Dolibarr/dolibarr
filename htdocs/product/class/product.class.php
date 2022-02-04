@@ -5028,14 +5028,16 @@ class Product extends CommonObject
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled))
 		{
+			// Case module reception is not used
 			$filterStatus = '4';
 			if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
 			$result = $this->load_stats_reception(0, $filterStatus, 1);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled))
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && !empty($conf->reception->enabled))
 		{
+			// Case module reception is used
 			$filterStatus = '4';
 			if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
 			$result = $this->load_stats_reception(0, $filterStatus, 1); // Use same tables than when module reception is not used.
