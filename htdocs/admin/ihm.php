@@ -221,6 +221,13 @@ if ($action == 'update') {
 		} else {
 			dolibarr_set_const($db, 'THEME_ELDY_TEXTBTNACTION', $val, 'chaine', 0, '', $conf->entity);
 		}
+
+		$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPBORDER_TITLE1'), array()))));
+		if ($val == '') {
+			dolibarr_del_const($db, 'THEME_ELDY_TOPBORDER_TITLE1', $conf->entity);
+		} else {
+			dolibarr_set_const($db, 'THEME_ELDY_TOPBORDER_TITLE1', $val, 'chaine', 0, '', $conf->entity);
+		}
 	}
 
 	if ($mode == 'dashboard') {
