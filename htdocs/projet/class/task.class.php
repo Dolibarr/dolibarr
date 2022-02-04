@@ -4,6 +4,7 @@
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 /**
  * 	Class to manage tasks
  */
-class Task extends CommonObject
+class Task extends CommonObjectLine
 {
 	/**
 	 * @var string ID to identify managed object
@@ -40,7 +41,7 @@ class Task extends CommonObject
 	public $element = 'project_task';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 	Name of table without prefix where object is stored
 	 */
 	public $table_element = 'projet_task';
 
