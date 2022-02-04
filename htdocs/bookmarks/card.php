@@ -248,7 +248,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	if ($action == 'edit') {
 		print '<input class="flat minwidth500 quatrevingtpercent" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 	} else {
-		print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>';
+		print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank" rel="noopener noreferrer"' : '').'>';
 		print img_picto('', 'globe', 'class="paddingright"');
 		print $object->url;
 		print '</a>';

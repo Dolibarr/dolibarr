@@ -1368,6 +1368,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$numFinal = $ref;
 	} elseif ($mode == 'next') {
 		$counter++;
+		$maskrefclient_counter = 0;
 
 		// If value for $counter has a length higher than $maskcounter chars
 		if ($counter >= pow(10, dol_strlen($maskcounter))) {
@@ -1398,7 +1399,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
 			// Get counter in database
-			$maskrefclient_counter = 0;
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
@@ -2131,30 +2131,38 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 	// Special cases, to work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
+		$langs->load('bills');
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$myobject = 'facture';
 	} elseif ($objecttype == 'commande' || $objecttype == 'order') {
+		$langs->load('orders');
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$myobject = 'commande';
 	} elseif ($objecttype == 'propal') {
+		$langs->load('propal');
 		$classpath = 'comm/propal/class';
 	} elseif ($objecttype == 'supplier_proposal') {
+		$langs->load('supplier_proposal');
 		$classpath = 'supplier_proposal/class';
 	} elseif ($objecttype == 'shipping') {
+		$langs->load('sendings');
 		$classpath = 'expedition/class';
 		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	} elseif ($objecttype == 'delivery') {
+		$langs->load('deliveries');
 		$classpath = 'delivery/class';
 		$myobject = 'delivery';
 		$module = 'delivery_note';
 	} elseif ($objecttype == 'contract') {
+		$langs->load('contracts');
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$myobject = 'contrat';
 	} elseif ($objecttype == 'member') {
+		$langs->load('members');
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$myobject = 'adherent';
@@ -2163,13 +2171,16 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'cabinetmed';
 		$myobject = 'cabinetmedcons';
 	} elseif ($objecttype == 'fichinter') {
+		$langs->load('interventions');
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$myobject = 'fichinter';
 	} elseif ($objecttype == 'project') {
+		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
 	} elseif ($objecttype == 'task') {
+		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$myobject = 'task';

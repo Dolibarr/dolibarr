@@ -30,14 +30,16 @@ ManageLotMask=Pielāgota maska
 CustomMasks=Iespēja katram produktam noteikt atšķirīgu numerācijas masku
 BatchLotNumberingModules=Numerācijas noteikums partijas numura automātiskai ģenerēšanai
 BatchSerialNumberingModules=Numerācijas noteikums automātiskai sērijas numura ģenerēšanai (produktiem ar īpašību 1 unikāla partija / sērija katram produktam)
-QtyToAddAfterBarcodeScan=Katram skenētajam svītrkodam / partijai / sērijai jāpievieno daudzums
+QtyToAddAfterBarcodeScan=Daudzums līdz %s par katru skenēto svītrkodu/sēriju/sēriju
 LifeTime=Mūža ilgums (dienās)
 EndOfLife=Dzīves beigas
 ManufacturingDate=Ražošanas datums
 DestructionDate=Iznīcināšanas datums
 FirstUseDate=Pirmās lietošanas datums
 QCFrequency=Kvalitātes kontroles biežums (dienās)
-
+ShowAllLots=Rādīt visas partijas
+HideLots=Slēpt daudz
 #Traceability - qc status
 OutOfOrder=Nedarbojas
 InWorkingOrder=Darba kārtībā
+ToReplace=Aizvietot

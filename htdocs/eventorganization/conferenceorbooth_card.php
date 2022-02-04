@@ -31,19 +31,23 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+global $dolibarr_main_url_root;
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "projects"));
 
-// Get parameters
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'conferenceorboothcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
+// Get parameters
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $mode = GETPOST('mode', 'alpha');
 
@@ -114,7 +118,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.($id > 0 ? $id : '__ID__').($withproject ? '&withproject=1' : '');
 			}
 		}
 	}
@@ -194,13 +198,13 @@ if (!empty($withproject)) {
 	// Title
 	$morehtmlref .= $projectstatic->title;
 	// Thirdparty
-	if ($projectstatic->thirdparty->id > 0) {
+	if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (empty($user->rights->project->all->lire)) {
 		$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 		$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -275,7 +279,10 @@ if (!empty($withproject)) {
 
 	// Other attributes
 	$cols = 2;
-	//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+	$objectconf = $object;
+	$object = $projectstatic;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	$object = $objectconf;
 
 	print '</table>';
 
@@ -284,17 +291,17 @@ if (!empty($withproject)) {
 	print '<div class="fichehalfright">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print '<td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print nl2br($projectstatic->description);
 	print '</td></tr>';
 
 	// Categories
 	if ($conf->categorie->enabled) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-		print $form->showCategories($projectstatic->id, 'project', 1);
+		print $form->showCategories($projectstatic->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
 	}
 
@@ -315,15 +322,15 @@ if (!empty($withproject)) {
 	print "</td></tr>";
 
 	print '<tr><td>';
-	print $form->editfieldkey('PriceOfRegistration', 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 	print '</td><td>';
-	print $form->editfieldval('PriceOfRegistration', 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td>';
-	print $form->editfieldkey('PriceOfBooth', 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 	print '</td><td>';
-	print $form->editfieldval('PriceOfBooth', 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
@@ -332,11 +339,45 @@ if (!empty($withproject)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 	// Show message
-	$message = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
-	$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
-	$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').'</a>';
+	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
+	$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
+
+	// Link to the submit vote/register page
+	print '<tr><td>';
+	//print '<span class="opacitymedium">';
+	print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
+	//print '</span>';
+	print '</td><td>';
+	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.((int) $projectstatic->id);
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $projectstatic->id), 'md5');
+	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
+	//print '<div class="urllink">';
+	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
+	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
+	//print '</div>';
+	//print ajax_autoselect("linkregister");
+	print '</td></tr>';
+
+	// Link to the subscribe
+	print '<tr><td>';
+	//print '<span class="opacitymedium">';
+	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
+	//print '</span>';
+	print '</td><td>';
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $projectstatic->id).'&type=global';
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $projectstatic->id), 'md5');
+	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+	//print '<div class="urllink">';
+	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
+	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
+	print '<a target="_blank" rel="noopener noreferrer" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+	//print '</div>';
+	//print ajax_autoselect("linkregister");
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -473,7 +514,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	http://dolibarr.local/eventorganization/conferenceorbooth_list.php?projectid=7
 	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorbooth_list.php', 1).'?projectid='.$object->fk_project.$withProjectUrl.'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
@@ -491,44 +531,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$keyforbreak='pubregister';
+	$keyforbreak='num_vote';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
-	$object->fetchObjectLinked();
 
-
-	if (is_array($object->linkedObjects) && count($object->linkedObjects)>0 && array_key_exists("facture", $object->linkedObjects)) {
-		foreach ($object->linkedObjects["facture"] as $fac) {
-			/**
-			 * @var $fac Facture
-			 */
-			if (empty($fac->paye)) {
-				$key = 'paymentlink_'.$fac->id;
-				print '<tr class="field_'.$key.'"><td';
-				print ' class="titlefield fieldname_'.$key;
-				print '">';
-				print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $langs->transnoentitiesnoconv('Online')) . ' '. $fac->ref.'</span><br>';
-				print '</td>';
-
-				print '<td class="valuefield fieldname_'.$key;
-				print '">';
-				$sourcetouse = 'boothlocation';
-				$reftouse = $fac->id;
-				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse.'&booth='.$object->id;
-				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-						$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
-					} else {
-						$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
-					}
-				}
-				print '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$redirection.'">';
-				print '<a href="'.$redirection.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
-				print '</td>';
-				print '</tr>';
-			}
-		}
-	}
 	//var_dump($object);
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -592,9 +598,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('conferenceorbooth'));
+		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+		$object->fetchObjectLinked();
+
+		if (is_array($object->linkedObjects) && count($object->linkedObjects)>0 && array_key_exists("facture", $object->linkedObjects)) {
+			foreach ($object->linkedObjects["facture"] as $fac) {
+				if (empty($fac->paye)) {
+					$key = 'paymentlink_'.$fac->id;
+
+					print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $langs->transnoentitiesnoconv('Online')) . ' '. $fac->ref.'</span><br>';
+
+					$sourcetouse = 'boothlocation';
+					$reftouse = $fac->id;
+
+					$url = getOnlinePaymentUrl(0, $sourcetouse, $reftouse);
+					$url .= '&booth='.$object->id;
+
+					print '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
+					print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
+				}
+			}
+		}
 
 		print '</div><div class="fichehalfright">';
 		print '</div></div>';

@@ -115,7 +115,6 @@ if ($id || $track_id || $ref) {
 $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 
 // Security check - Protection if external user
-$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id);
 
@@ -241,6 +240,13 @@ if (empty($reshook)) {
 
 				if ($projectid > 0) {
 					$object->setProject($projectid);
+				}
+
+				// Auto mark as read if created from backend
+				if (!empty($conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND) && $user->rights->ticket->write) {
+					if ( ! $object->markAsRead($user) > 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 
 				// Auto assign user
@@ -438,7 +444,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			// Log action in ticket logs table
 			$object->fetch_user($usertoassign);
-			$log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
+			//$log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
 
 			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
 
@@ -493,7 +499,7 @@ if (empty($reshook)) {
 			$object->close($user);
 
 			// Log action in ticket logs table
-			$log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
+			//$log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
 
 			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
@@ -579,7 +585,7 @@ if (empty($reshook)) {
 				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
 				if ($res) {
 					// Log action in ticket logs table
-					$log_action = $langs->trans('TicketLogReopen');
+					//$log_action = $langs->trans('TicketLogReopen');
 
 					$url = 'card.php?action=view&track_id='.$object->track_id;
 					header("Location: ".$url);
@@ -616,11 +622,11 @@ if (empty($reshook)) {
 			$object->message = $fieldtomodify;
 			$ret = $object->update($user);
 			if ($ret > 0) {
-				$log_action = $langs->trans('TicketInitialMessageModified')." \n";
+				//$log_action = $langs->trans('TicketInitialMessageModified')." \n";
 				// include the Diff class
 				include_once DOL_DOCUMENT_ROOT.'/core/class/utils_diff.class.php';
 				// output the result of comparing two files as plain text
-				$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
+				//$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
 				setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
 			} else {
@@ -684,7 +690,7 @@ if (empty($reshook)) {
 
 		$ret = $object->update($user);
 		if ($ret > 0) {
-			$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
+			//$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
 
 			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
 		} else {
@@ -742,7 +748,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
-	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : 0);
+	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (empty($conf->global->TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION) ? 0 : 1));
 	$formticket->withusercreate = 0;
 	$formticket->withref = 1;
 	$formticket->fk_user_create = $user->id;
@@ -854,6 +860,7 @@ if ($action == 'create' || $action == 'presend') {
 				//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 				$head = project_prepare_head($projectstat);
+
 				print dol_get_fiche_head($head, 'ticket', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
 
 				/*
@@ -902,7 +909,7 @@ if ($action == 'create' || $action == 'presend') {
 
 				print "</table>";
 
-				print '</div>';
+				print dol_get_fiche_end();
 			} else {
 				print "ErrorRecordNotFound";
 			}
@@ -1178,6 +1185,8 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			print '</table>';
+
+			print '</div>';
 		}
 
 
@@ -1217,7 +1226,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<td>';
 			print $langs->trans('TicketCategory');
 			print '</td><td>';
-			$formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2, 0, 0, 0, 'maxwidth500');
+			$formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2, 0, 0, 0, 'maxwidth500 widthcentpercentminusxx');
 			print '</td>';
 			print '</tr>';
 			// Severity
@@ -1470,31 +1479,6 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlright = '';
 			$help = "";
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
-			if ($object->fk_soc > 0) {
-				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-			}
-			$substitutionarray['__USER_SIGNATURE__'] = $user->signature;
-			$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
-			$substitutionarray['__TICKET_REF__'] = $object->ref;
-			$substitutionarray['__TICKET_SUBJECT__'] = $object->subject;
-			$substitutionarray['__TICKET_TYPE__'] = $object->type_code;
-			$substitutionarray['__TICKET_SEVERITY__'] = $object->severity_code;
-			$substitutionarray['__TICKET_CATEGORY__'] = $object->category_code; // For backward compatibility
-			$substitutionarray['__TICKET_ANALYTIC_CODE__'] = $object->category_code;
-			$substitutionarray['__TICKET_MESSAGE__'] = $object->message;
-			$substitutionarray['__TICKET_PROGRESSION__'] = $object->progress;
-			if ($object->fk_user_assign > 0) {
-				$userstat->fetch($object->fk_user_assign);
-				$substitutionarray['__TICKET_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
-			}
-
-			if ($object->fk_user_create > 0) {
-				$userstat->fetch($object->fk_user_create);
-				$substitutionarray['__TICKET_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
-			}
-			foreach ($substitutionarray as $key => $val) {
-				$help .= $key.' -> '.$langs->trans($val).'<br>';
-			}
 			$morehtmlright .= $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("TicketMessageSubstitutionReplacedByGenericValues").'</span>', $help, 1, 'helpclickable', '', 0, 3, 'helpsubstitution');
 
 			print '<div>';
@@ -1546,17 +1530,17 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlright = '';
 
 			$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
-			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fal fa-list-alt imgforviewmode', $messagingUrl, '', 1);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1);
 
 			// Show link to add a message (if read and not closed)
 			$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message";
 			$url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init';
-			$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fal fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 			// Show link to add event (if read and not closed)
 			$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message"; ;
 			$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
-			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fal fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
 			print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 

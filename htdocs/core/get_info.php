@@ -33,7 +33,7 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
+//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language and need security layer
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', 1);
 }
@@ -56,8 +56,8 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
 $title = $langs->trans("Info");
 
-// URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Quick access -->'."\n";
+// URL http://mydolibarr/core/get_info.php?dol_use_jmobile=1 can be used for tests
+$head = '<!-- Info user page -->'."\n";
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
@@ -93,7 +93,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
 		$logouthtmltext .= $langs->trans("Logout").'<br>';
 
-		$logouttext .= '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+		$logouttext .= '<a href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
 		//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 		$logouttext .= '<span class="fa fa-sign-out atoplogin"></span>';
 		$logouttext .= '</a>';
@@ -158,7 +158,7 @@ if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OP
 		}
 	}
 	$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
-	$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
+	$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank" rel="noopener noreferrer">';
 	//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 	$text.='<span class="fa fa-print atoplogin"></span>';
 	$text.='</a>';
@@ -191,7 +191,7 @@ if (empty($conf->global->MAIN_HELP_DISABLELINK) && empty($conf->global->MAIN_OPT
 		$title=$appli.'<br>';
 		$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 		if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-		$text.='<a class="help" target="_blank" rel="noopener" href="';
+		$text.='<a class="help" target="_blank" rel="noopener noreferrer" href="';
 		if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
 		else $text.=sprintf($helpbaseurl,$helppage);
 		$text.='">';

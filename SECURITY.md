@@ -6,14 +6,14 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 | Version    | Supported              |
 | ---------- | ---------------------- |
-| <= 14.0.1  | :x:                    |
-| >= 14.0.2+ | :white_check_mark: except CSRF attacks|
+| <= 14.0.4  | :x:                    |
+| >= 14.0.5+ | :white_check_mark: except CSRF attacks|
 | >= develop | :white_check_mark:     |
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, please use GitHub security advisory at https://github.com/Dolibarr/dolibarr/security/advisories/new (if you have permissions) or alternatively send an email to security@dolibarr.org (for everybody)
-
+To report a vulnerability, for a private report, please use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new) (if you have permissions).
+Alternatively send an email to security@dolibarr.org (for everybody)
 
 ## Hunting vulnerabilities on Dolibarr
 
@@ -23,7 +23,7 @@ If you believe you've found a security bug in our service, we are happy to work 
 
 Any type of denial of service attacks is strictly forbidden, as well as any interference with network equipment and Dolibarr infrastructure.
 
-We recommand to install Dolibarr ERP CRM on your own server (as most Open Source software, download and use is free: https://www.dolibarr.org/download) to get access on every side of application.
+We recommand to install Dolibarr ERP CRM on your own server (as most Open Source software, download and use is free: [https://www.dolibarr.org/download](https://www.dolibarr.org/download)) to get access on every side of application.
 
 ### User Agent
 
@@ -31,8 +31,7 @@ If you try to find bug on Dolibarr, we recommend to append to your user-agent he
 
 ### Account access
 
-You can install the web application yourself on your own platform/server so you get full access to application and sources. Download the zip of the files to put into your own web server virtual host from https://www.dolibarr.org/download
-
+You can install the web application yourself on your own platform/server so you get full access to application and sources. Download the zip of the files to put into your own web server virtual host from [https://www.dolibarr.org/download](https://www.dolibarr.org/download)
 
 ## Eligibility and Responsible Disclosure
 
@@ -45,7 +44,6 @@ You must send a clear textual description of the report along with steps to repr
 You must avoid tests that could cause degradation or interruption of our service (refrain from using automated tools, and limit yourself about requests per second), that's why we recommand to install softwate on your own platform.
 
 You must not leak, manipulate, or destroy any user data of third parties to find your vulnerability.
-
 
 ## Scope for qualified vulnerabilities
 
@@ -64,13 +62,12 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 
 Scope is the web application (back office) and the APIs.
 
-
 ## Qualifying vulnerabilities for reporting
 
 * Remote code execution (RCE)
 * Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
 * Code injections (HTML, JS, SQL, PHP, ...)
-* Cross-Site Scripting (XSS), except from setup page of module "External web site" (allowing any content here, editable by admin user only, is accepted on purpose or into module "Web site" when permission to edit website content is allowed).
+* Cross-Site Scripting (XSS), except from setup page of module "External web site" (allowing any content here, editable by admin user only, is accepted on purpose) and except into module "Web site" when permission to edit website content is allowed (injecting any data in this case is allowed too).
 * Cross-Site Requests Forgery (CSRF) with real security impact (when using GET URLs, CSRF are qualified only for creating, updating or deleting data from pages restricted to admin users)
 * Open redirect
 * Broken authentication & session management
@@ -80,7 +77,6 @@ Scope is the web application (back office) and the APIs.
 * "HTTP Host Header" XSS
 * Software version disclosure (for non admin users only)
 * Stack traces or path disclosure (for non admin users only)
-
 
 ## Non-qualifying vulnerabilities for reporting
 
@@ -99,4 +95,3 @@ Scope is the web application (back office) and the APIs.
 * Software version or private IP disclosure when logged user is admin
 * Stack traces or path disclosure when logged user is admin
 * Any vulnerabilities due to a configuration different than the one defined into chapter "Scope for qualified vulnerabilities".
-

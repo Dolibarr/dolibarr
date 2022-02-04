@@ -93,23 +93,6 @@ if (($id > 0) || $ref) {
 	}
 }
 
-/*$cancreate = 0;
-
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)) {
-	$cancreate = 1;
-}
-if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) {
-	$cancreate = 1;
-}
-
-$candelete = 0;
-if (!empty($user->rights->holiday->delete)) {
-	$candelete = 1;
-}
-if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) {
-	$candelete = 1;
-}
-*/
 
 $upload_dir = $conf->holiday->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '');
 $modulepart = 'holiday';

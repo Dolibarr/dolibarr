@@ -19,7 +19,7 @@
 #
 
 Module56000Name=Gestionnaire de tickets
-Module56000Desc=Système de ticket pour de l'assistance ou une demande d'accompagnement
+Module56000Desc=Gestionnaire de tickets d'assistance ou de gestion de demandes internes/clients/fournisseurs
 
 Permission56001=Voir tickets
 Permission56002=Modifier des tickets
@@ -318,7 +318,7 @@ BoxTicketLastXDays=Nombre de nouveaux tickets par jour ces %s derniers jours
 BoxTicketLastXDayswidget = Nombre de nouveaux tickets par jour ces X derniers jours
 BoxNoTicketLastXDays=Aucun nouveau ticket ces %s derniers jours
 BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
-BoxNewTicketVSClose=Nombre de nouveaux tickets aujourd’hui par rapport aux tickets fermés aujourd’hui
+BoxNewTicketVSClose=Nombre de nouveaux tickets par rapport aux tickets fermés (aujourd'hui)
 TicketCreatedToday=Ticket créé aujourd'hui
 TicketClosedToday=Ticket fermé aujourd'hui
 KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

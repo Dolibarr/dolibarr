@@ -198,10 +198,9 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		// Validation of parameters
-		if (!$newamount > 0 || empty($this->date_ech) || empty($this->periode)) {
+		if ($newamount == 0 || empty($this->date_ech) || empty($this->periode)) {
 			return false;
 		}
-
 
 		return true;
 	}

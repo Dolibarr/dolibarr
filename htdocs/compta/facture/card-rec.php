@@ -71,8 +71,8 @@ $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -1066,7 +1066,7 @@ if ($action == 'create') {
 
 		// Autogeneration
 		$title = $langs->trans("Recurrence");
-		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$title, '', '');
+		print load_fiche_titre(img_picto('', 'recurring', 'class="pictofixedwidth"').$title, '', '');
 
 		print dol_get_fiche_head(null, '', '', 0);
 
@@ -1354,6 +1354,7 @@ if ($action == 'create') {
 			$dateexample = $object->date_when;
 		}
 
+		// Help of substitution key
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
 
 		$substitutionarray['__INVOICE_PREVIOUS_MONTH__'] = $langs->trans("PreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'), '%m').')';
@@ -1455,7 +1456,7 @@ if ($action == 'create') {
 
 		print '<table class="border centpercent tableforfield">';
 
-		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
+		print '<tr><td colspan="2">'.img_picto('', 'recurring', 'class="pictofixedwidth"').$title.'</td></tr>';
 
 		// if "frequency" is empty or = 0, the reccurence is disabled
 		print '<tr><td style="width: 50%">';

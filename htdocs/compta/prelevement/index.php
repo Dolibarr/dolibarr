@@ -43,6 +43,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'prelevement', '', 'bons');
 
+$usercancreate = $user->rights->prelevement->bons->creer;
+
 
 /*
  * Actions
@@ -62,7 +64,12 @@ if (prelevement_check_config() < 0) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByDirectDebit")), null, 'errors');
 }
 
-print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
+$newcardbutton = '';
+if ($usercancreate) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type=');
+}
+
+print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"), $newcardbutton);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

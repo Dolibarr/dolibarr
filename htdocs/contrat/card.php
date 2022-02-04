@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -247,6 +248,10 @@ if (empty($reshook)) {
 				}
 				if ($element == 'propal') {
 					$element = 'comm/propal'; $subelement = 'propal';
+				}
+				if ($element == 'invoice' || $element == 'facture') {
+					$element = 'compta/facture';
+					$subelement = 'facture';
 				}
 
 				$object->origin    = $origin;
@@ -916,6 +921,8 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	$upload_dir = $conf->contrat->multidir_output[$object->entity];
@@ -1037,6 +1044,10 @@ if ($action == 'create') {
 			}
 			if ($element == 'propal') {
 				$element = 'comm/propal'; $subelement = 'propal';
+			}
+			if ($element == 'invoice' || $element == 'facture') {
+				$element = 'compta/facture';
+				$subelement = 'facture';
 			}
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
@@ -1535,11 +1546,11 @@ if ($action == 'create') {
 
 					// Margin
 					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
-						print '<td class="right nowrap">'.price($objp->pa_ht).'</td>';
+						print '<td class="right nowraponall">'.price($objp->pa_ht).'</td>';
 					}
 
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
-					print '<td class="nowrap right">';
+					print '<td class="nowraponall right">';
 					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0)) {
 						print '<!-- link to move service line into another contract -->';
 						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=move&token='.newToken().'&rowid='.$objp->rowid.'">';

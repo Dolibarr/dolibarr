@@ -121,6 +121,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="USERGROUP_ADDON_PDF_ODT_PATH">';
 		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
@@ -162,7 +163,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= $conf->global->USERGROUP_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small" name="Button"value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small reposition" name="Button" value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -197,7 +198,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -258,7 +261,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				}
 			}
 
-			$dir = $conf->usergroup->dir_output;
+			$dir = $conf->user->dir_output.'/usergroups';
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

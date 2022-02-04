@@ -80,8 +80,8 @@ $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"')
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'alpha') > 0 ?GETPOST('listlimit', 'alpha') : 1000;
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -225,6 +225,9 @@ if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {
 if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
+if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
+	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTExpenseReport'));
+}
 if (!empty($conf->agenda->enabled)) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
@@ -243,9 +246,12 @@ if ($reshook == 0) {
 	}
 }
 
+$permissiontoadd = 1;
+
 //asort($elementList);
 
 $id = 25;
+
 
 
 /*
@@ -335,6 +341,7 @@ if (empty($reshook)) {
 				}
 
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+				$action = 'add';
 			}
 		}
 
@@ -408,6 +415,7 @@ if (empty($reshook)) {
 				} else {
 					dol_print_error($db);
 				}
+				$action = 'add';
 			}
 		}
 
@@ -486,6 +494,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			} else {
 				setEventMessages($db->error(), null, 'errors');
+				$action = 'edit';
 			}
 		}
 	}
@@ -512,7 +521,7 @@ if (empty($reshook)) {
 	if ($action == $acts[0]) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."=".((int) $rowid);
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -524,7 +533,7 @@ if (empty($reshook)) {
 	if ($action == $acts[1]) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."=".((int) $rowid);
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -542,18 +551,38 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $help_url = '';
-$title = $langs->trans("EMailsSetup");
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	$title = $langs->trans("EMailsSetup");
+} else {
+	$title = $langs->trans("EMailsTemplates");
+}
 
 llxHeader('', $title, $help_url);
 
 $linkback = '';
 $titlepicto = 'title_setup';
 
-print load_fiche_titre($title, $linkback, $titlepicto);
 
-$head = email_admin_prepare_head();
+$url = DOL_URL_ROOT.'/admin/mails_templates.php?action=add';
+$newcardbutton = dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
-print dol_get_fiche_head($head, 'templates', '', -1);
+
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	print load_fiche_titre($title, '', $titlepicto);
+} else {
+	print load_fiche_titre($title, $newcardbutton, $titlepicto);
+}
+
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	$head = email_admin_prepare_head();
+
+	print dol_get_fiche_head($head, 'templates', '', -1);
+
+	if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+		print load_fiche_titre('', $newcardbutton, '');
+	}
+}
+
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete') {
@@ -596,7 +625,7 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 
 $fieldlist = explode(',', $tabfield[$id]);
 
-if ($action == 'view') {
+if ($action == 'add') {
 	// Form to add a new line
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -654,7 +683,7 @@ if ($action == 'view') {
 		if ($valuetoshow != '') {
 			print '<td class="'.$align.'">';
 			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-				print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 			} elseif (!empty($tabhelp[$id][$value])) {
 				if (in_array($value, array('topic'))) {
 					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value); // Tooltip on click
@@ -747,7 +776,8 @@ if ($action == 'view') {
 		if ($tmpfieldlist == 'topic') {
 			print '<td class="center" rowspan="'.(count($fieldsforcontent)).'">';
 			if ($action != 'edit') {
-				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
+				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'"><br>';
+				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</td>';
 		}
@@ -1139,7 +1169,10 @@ print '</div>';
 print '</form>';
 
 
-print dol_get_fiche_end();
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	print dol_get_fiche_end();
+}
+
 
 // End of page
 llxFooter();

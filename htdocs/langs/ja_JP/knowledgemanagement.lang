@@ -25,9 +25,9 @@ ModuleKnowledgeManagementDesc=ナレッジマネジメント（KM）またはヘ
 #
 # Admin page
 #
-KnowledgeManagementSetup = ナレッジマネジメントシステムのセットアップ
+KnowledgeManagementSetup = ナレッジマネジメントシステムの設定
 Settings = 設定
-KnowledgeManagementSetupPage = ナレッジマネジメントシステムのセットアップページ
+KnowledgeManagementSetupPage = ナレッジマネジメントシステムの設定ページ
 
 
 #
@@ -47,3 +47,4 @@ KnowledgeRecord = 記事
 KnowledgeRecordExtraFields = 記事のエクストラフィールド
 GroupOfTicket=チケットのグループ
 YouCanLinkArticleToATicketCategory=記事をチケットグループにリンクできる(新規チケット認定時に記事が提案されるようになる)
+SuggestedForTicketsInGroup=チケットに対して提案されるのは、グループが

@@ -84,7 +84,6 @@ RequestLastAccessInError=Último error de solicitud de acceso a la base
 ReturnCodeLastAccessInError=Código de retorno para el último error de solicitud de acceso a la base de datos
 InformationLastAccessInError=Información sobre el último error de solicitud de acceso a la base de datos
 YouCanSetOptionDolibarrMainProdToZero=Puede leer el archivo de registro o establecer la opción $ dolibarr_main_prod en '0' en su archivo de configuración para obtener más información.
-InformationToHelpDiagnose=Esta información puede ser útil para fines de diagnóstico (puede establecer la opción $ dolibarr_main_prod en '1' para eliminar dichos avisos)
 TechnicalID=ID técnico
 LineID=ID de Línea
 NotePrivate=Nota (privado)
@@ -457,7 +456,6 @@ NotAllExportedMovementsCouldBeRecordedAsExported=No todos los movimientos export
 Miscellaneous=Diverso
 GroupBy=Agrupar por...
 RemoveString=Eliminar la cadena '%s'
-SomeTranslationAreUncomplete=Algunos de los idiomas ofrecidos pueden estar solo parcialmente traducidos o pueden contener errores. Ayude a corregir su idioma registrándose en <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> para agregar sus mejoras.
 DownloadDocument=Descargar documento
 ActualizeCurrency=Actualizar la tasa de cambio
 ModuleBuilder=Módulo y generador de aplicaciones

@@ -166,7 +166,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 		$objMod = new $modName($db);
 		$result = $objMod->init();
 		if (!$result) {
-			print 'ERROR in activating module file='.$file;
+			print "ERROR: failed to init module file = ".$file;
 		}
 
 		if ($db->connected) {
@@ -286,7 +286,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 
 						$res = activateModule($modtoactivatenew, 1);
 						if (!empty($res['errors'])) {
-							print 'ERROR in activating module file='.$file;
+							print 'ERROR: failed to activateModule() file='.$file;
 						}
 					}
 				}
@@ -404,7 +404,7 @@ if ($action == "set" && $success) {
 	// If upgrade
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
 		// Upgrade is finished
-		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration"> '.$langs->trans("SystemIsUpgraded")."<br>";
+		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration"> <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
 
 		$createlock = 0;
 

@@ -125,7 +125,7 @@ $userstatic = new User($db);
 $form = new Form($db);
 $ecmdirstatic = new EcmDirectory($db);
 
-// Load full tree of ECM module from database. We will use it to define nbofsubdir and nboffilesinsubdir
+// Load full manual tree of ECM module from database. We will use it to define nbofsubdir and nboffilesinsubdir
 if (empty($sqltree)) {
 	$sqltree = $ecmdirstatic->get_full_arbo(0);
 }
@@ -160,7 +160,7 @@ if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_
 	            	</script>';
 
 	// This ajax service is called only when a directory $selecteddir is opened but not when closed.
-	//print '<script language="javascript">';
+	//print '<script type="text/javascript">';
 	//print "loadandshowpreview('".dol_escape_js($selecteddir)."');";
 	//print '</script>';
 }
@@ -169,7 +169,7 @@ if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_
 if (empty($conf->use_javascript_ajax) || !empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 	print '<ul class="ecmjqft">';
 
-	// Load full tree from database. We will use it to define nbofsubdir and nboffilesinsubdir
+	// Load full manual tree from database. We will use it to define nbofsubdir and nboffilesinsubdir
 	if (empty($sqltree)) {
 		$sqltree = $ecmdirstatic->get_full_arbo(0); // Slow
 	}

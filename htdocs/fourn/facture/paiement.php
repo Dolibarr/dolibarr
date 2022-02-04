@@ -11,6 +11,7 @@
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2022       Udo Tamm				<dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,16 +55,16 @@ $day = GETPOST('day', 'int');
 $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
-$search_ref = GETPOST("search_ref", "alpha");
-$search_account = GETPOST("search_account", "int");
-$search_paymenttype = GETPOST("search_paymenttype");
-$search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
-$search_company = GETPOST("search_company", 'alpha');
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_account = GETPOST('search_account', 'int');
+$search_paymenttype = GETPOST('search_paymenttype');
+$search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on "< x"
+$search_company = GETPOST('search_company', 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -383,7 +384,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			// Add realtime total information
 			if (!empty($conf->use_javascript_ajax)) {
-				print "\n".'<script type="text/javascript" language="javascript">';
+				print "\n".'<script type="text/javascript">';
 				print '$(document).ready(function () {
 
 						function _elemToJson(selector)
@@ -519,7 +520,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$sql .= ' AND f.type = 2'; // If paying back a credit note, we show all credit notes
 				}
 				// Group by because we have a total
-				$sql .= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef, f.date_lim_reglement';
+				$sql .= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc,';
+				$sql .= ' f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+				$sql .= ' f.datef, f.date_lim_reglement';
 				// Sort invoices by date and serial number: the older one comes first
 				$sql .= ' ORDER BY f.datef ASC, f.ref ASC';
 
@@ -532,7 +535,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 						if (!empty($conf->use_javascript_ajax)) {
 							//Add js for AutoFill
-							print "\n".'<script type="text/javascript" language="javascript">';
+							print "\n".'<script type="text/javascript">';
 							print ' $(document).ready(function () {';
 							print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
 											$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value"));
@@ -554,14 +557,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyRemainderToPay').'</td>';
+							print '<td class="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
 						}
 						print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 						print '<td class="right">'.$langs->trans('AlreadyPaid').'</td>';
 						print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
 						print '<td class="center">'.$langs->trans('PaymentAmount').'</td>';
-						if (!empty($conf->multicurrency->enabled)) {
-							print '<td class="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
-						}
 						print '</tr>';
 
 						$total = 0;
@@ -656,6 +657,24 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 									print price($sign * $multicurrency_remaintopay);
 								}
 								print '</td>';
+
+								print '<td class="right">';
+								// Add remind multicurrency amount
+								$namef = 'multicurrency_amount_'.$objp->facid;
+								$nameRemain = 'multicurrency_remain_'.$objp->facid;
+								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
+									if ($action != 'add_paiement') {
+										if (!empty($conf->use_javascript_ajax)) {
+											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+										}
+											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
+											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+									} else {
+										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
+										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+									}
+								}
+								print "</td>";
 							}
 
 							print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
@@ -669,7 +688,31 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 							print '</td>';
 
-							print '<td class="right">'.price($sign * $remaintopay).'</td>';
+							print '<td class="right">';
+							print price($sign * $remaintopay);
+							if (!empty($conf->paymentbybanktransfer->enabled)) {
+								$numdirectdebitopen = 0;
+								$totaldirectdebit = 0;
+								$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
+								$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+								$sql .= " WHERE fk_facture_fourn = ".((int) $objp->facid);
+								$sql .= " AND pfd.traite = 0";
+								$sql .= " AND pfd.ext_payment_id IS NULL";
+
+								$result_sql = $db->query($sql);
+								if ($result_sql) {
+									$obj = $db->fetch_object($result_sql);
+									$numdirectdebitopen = $obj->nb;
+									$totaldirectdebit = $obj->amount;
+								} else {
+									dol_print_error($db);
+								}
+								if ($numdirectdebitopen) {
+									$langs->load("withdrawals");
+									print img_warning($langs->trans("WarningSomeCreditTransferAlreadyExists", $numdirectdebitopen, price(price2num($totaldirectdebit, 'MT'), 0, $langs, 1, -1, -1, $conf->currency)), '', 'classfortooltip');
+								}
+							}
+							print '</td>';
 
 							// Amount
 							print '<td class="center nowraponall">';
@@ -689,29 +732,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 							print "</td>";
 
-							// Multicurrency Price
-							if (!empty($conf->multicurrency->enabled)) {
-								print '<td class="right">';
-
-								// Add remind multicurrency amount
-								$namef = 'multicurrency_amount_'.$objp->facid;
-								$nameRemain = 'multicurrency_remain_'.$objp->facid;
-
-								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									if ($action != 'add_paiement') {
-										if (!empty($conf->use_javascript_ajax)) {
-											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
-										}
-											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
-									} else {
-										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
-									}
-								}
-								print "</td>";
-							}
-
 							print "</tr>\n";
 							$total += $objp->total_ht;
 							$total_ttc += $objp->total_ttc;
@@ -729,6 +749,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
+								print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 							}
 							print '<td class="right"><b>'.price($sign * $total_ttc).'</b></td>';
 							print '<td class="right"><b>'.price($sign * $totalrecu);
@@ -741,9 +762,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print	'</b></td>';
 							print '<td class="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
 							print '<td class="center" id="result" style="font-weight: bold;"></td>'; // Autofilled
-							if (!empty($conf->multicurrency->enabled)) {
-								print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
-							}
 							print "</tr>\n";
 						}
 						print "</table>\n";
@@ -756,10 +774,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				}
 			}
 
-			// Save Button
+			// Save + Cancel Buttons
 			if ($action != 'add_paiement') {
 				print '<br><div class="center"><input type="checkbox" checked name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
-				print '<br><input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'"></div>';
+				print '<p>&nbsp;</p>';
+				print '<br><input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
+				print '<p>&nbsp;</p>';
+				print '<br><input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)"></div>';
 			}
 
 			// Form to confirm payment

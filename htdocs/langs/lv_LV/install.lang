@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Jūsu PHP instalācija neatbalsta Curl.
 ErrorPHPDoesNotSupportCalendar=Jūsu PHP instalācija neatbalsta php kalendāra paplašinājumus.
 ErrorPHPDoesNotSupportUTF8=Jūsu PHP instalācija neatbalsta UTF8 funkcijas. Dolibarr nevar darboties pareizi. Atrisiniet to pirms Dolibarr instalēšanas.
 ErrorPHPDoesNotSupportIntl=Jūsu PHP instalācija neatbalsta Intl funkcijas.
+ErrorPHPDoesNotSupportMbstring=Jūsu PHP instalācija neatbalsta mbstring funkcijas.
 ErrorPHPDoesNotSupportxDebug=Jūsu PHP instalācija neatbalsta paplašināšanas atkļūdošanas funkcijas.
 ErrorPHPDoesNotSupport=Jūsu PHP instalācija neatbalsta %s funkcijas.
 ErrorDirDoesNotExists=Katalogs %s neeksistē.

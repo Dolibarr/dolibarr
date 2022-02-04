@@ -4,7 +4,7 @@ BoxLoginInformation=Anmeldeinformationen
 BoxLastRssInfos=Informationen RSS Feed
 BoxLastProducts=%s zuletzt bearbeitete Produkte/Leistungen
 BoxProductsAlertStock=Bestandeswarnungen für Produkte
-BoxLastProductsInContract=Zuletzt in Verträgen aufgenomme Produkte/Leistungen (maximal %s)
+BoxLastProductsInContract=Zuletzt in Verträgen aufgenommene Produkte/Leistungen (maximal %s)
 BoxLastSupplierBills=neueste Lieferantenrechnungen
 BoxLastCustomerBills=neueste Kundenrechnungen
 BoxOldestUnpaidCustomerBills=älteste unbezahlte Kundenrechnungen
@@ -114,7 +114,7 @@ BoxCustomersOutstandingBillReached=Kunden mit erreichtem Aussenständen-Limit
 # Pages
 UsersHome=Start Anwender und Gruppen
 MembersHome=Start Mitgliedschaft
-ThirdpartiesHome=Start Drittanbieter
+ThirdpartiesHome=Start Geschäftspartner
 TicketsHome=Start Tickets
 AccountancyHome=Start Buchhaltung
 ValidatedProjects=Validierte Projekte

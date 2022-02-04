@@ -48,7 +48,7 @@ CountriesNotInEEC=Países no incluidos en la CEE
 CountriesInEECExceptMe=Países en la CEE excepto %s
 CountriesExceptMe=Todos los países excepto %s
 AccountantFiles=Exportar documentos de origen
-ExportAccountingSourceDocHelp=Con esta herramienta, puede exportar los eventos de origen (lista en CSV y PDF) que se utilizaron para generar su contabilidad.
+ExportAccountingSourceDocHelp=Con esta herramienta, puede exportar los eventos de origen (lista en CSV y PDF) que se utilizan para generar su contabilidad.
 ExportAccountingSourceDocHelp2=Para exportar sus diarios, use la entrada de menú %s - %s.
 VueByAccountAccounting=Ver por cuenta contable
 VueBySubAccountAccounting=Ver por subcuenta contable
@@ -246,9 +246,9 @@ DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus c
 ListAccounts=Listado de cuentas contables
 UnknownAccountForThirdparty=Cuenta contable de tercero desconocida, usaremos %s
 UnknownAccountForThirdpartyBlocking=Cuenta contable de tercero desconocida. Error de bloqueo
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Cuenta de tercero no definida o tercero desconocido. Usaremos %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tercero desconocido y cuenta auxiliar no definida en el pago. Se mantendrá vacío el valor de la cuenta auxiliar.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Cuenta del tercero desconocida o tercero desconocido. Error de bloqueo
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del tercero desconocida y cuenta de espera no definida. Error de bloqueo
 PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
 OpeningBalance=Saldo inicial
@@ -286,7 +286,7 @@ ValidateMovements=Validar movimientos
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de registros. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrarlo
 
 ValidateHistory=Vincular automáticamente
-AutomaticBindingDone=Vinculación automática finalizada
+AutomaticBindingDone=Vinculaciones automáticas realizadas (%s) - La vinculación automática no es posible para algunos registros (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
 MvtNotCorrectlyBalanced=Asiento contabilizado incorrectamente. Debe=%s. Haber=%s
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deshabilitar la vinculación y transfere
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactive la vinculación y transferencia en contabilidad en informes de gastos (los informes de gastos no se tendrán en cuenta en la contabilidad)
 
 ## Export
-NotifiedExportDate=Fecha de exportación notificada (no será posible modificar las entradas)
-NotifiedValidationDate=Validación de las entradas (no será posible modificar o eliminar las entradas)
+NotifiedExportDate=Líneas marcadas como exportadas (no será posible modificar las líneas)
+NotifiedValidationDate=Entradas exportadas validadas (no será posible modificar o borrar las líneas)
 ConfirmExportFile=¿Confirmación de la generación del archivo de exportación contable?
 ExportDraftJournal=Exportar libro borrador
 Modelcsv=Modelo de exportación
@@ -339,11 +339,11 @@ Modelcsv_normal=Exportación clásica
 Modelcsv_CEGID=Exportar a CEGID Expert Comptabilité
 Modelcsv_COALA=Exportar a Sage Coala
 Modelcsv_bob50=Exportar a Sage BOB 50
-Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
+Modelcsv_ciel=Exportar a Sage50, Ciel Compta o Compta Evo. (Formato XIMPORT)
 Modelcsv_quadratus=Exportar a Quadratus QuadraCompta
 Modelcsv_ebp=Exportar a EBP
 Modelcsv_cogilog=Eportar a Cogilog
-Modelcsv_agiris=Exportar a Agiris
+Modelcsv_agiris=Exportar a Agiris Isacompta
 Modelcsv_LDCompta=Exportar a LD Compta (v9 y superior) (En pruebas)
 Modelcsv_LDCompta10=Exportar a LD Compta (v10 & superior)
 Modelcsv_openconcerto=Exportar a OpenConcerto (En pruebas)
@@ -353,7 +353,8 @@ Modelcsv_FEC2=Exportar a FEC (con escritura de generación de fechas / documento
 Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
 Modelcsv_winfic=Exportar a Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Exportar a Gestinum (v3)
-Modelcsv_Gestinumv5Export para Gestinum (v5)
+Modelcsv_Gestinumv5=Exportar a Gestinum (v5)
+Modelcsv_charlemagne=Exportar a Aplim Charlemagne
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service
@@ -386,7 +387,8 @@ SaleExport=Venta de exportación
 SaleEEC=Venta en CEE
 SaleEECWithVAT=Venta en CEE con un IVA no nulo, por lo que suponemos que esto NO es una venta intracomunitaria y la cuenta sugerida es la cuenta de producto estándar.
 SaleEECWithoutVATNumber=Venta en CEE sin IVA pero el ID de IVA de un tercero no está definido. Recurrimos a la cuenta del producto para ventas estándar. Puede corregir el ID de IVA de un tercero o la cuenta del producto si es necesario.
-
+ForbiddenTransactionAlreadyExported=Prohibido: La transacción ha sido validada y / o exportada.
+ForbiddenTransactionAlreadyValidated=Prohibido: la transacción ha sido validada.
 ## Dictionary
 Range=Rango de cuenta contable
 Calculated=Calculado
@@ -403,6 +405,7 @@ NoJournalDefined=Sin diario definido
 Binded=Líneas contabilizadas
 ToBind=Líneas a contabilizar
 UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href="%s"> %s </a> para realizar el apunte manualmente
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Lo sentimos, este módulo no es compatible con la función experimental de facturas de situación.
 
 ## Import
 ImportAccountingEntries=Entradas contables

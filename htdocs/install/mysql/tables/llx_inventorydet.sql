@@ -25,9 +25,10 @@ CREATE TABLE llx_inventorydet
 	fk_inventory integer DEFAULT 0, 
 	fk_warehouse integer DEFAULT 0,
 	fk_product integer DEFAULT 0,  
-	batch varchar(128) DEFAULT NULL,	 -- Lot or serial number
-	qty_stock double DEFAULT NULL,   -- The targeted value. can be filled during draft edition
-	qty_view double DEFAULT NULL, 	   -- must be filled once regulation is done
-	qty_regulated double DEFAULT NULL  -- must be filled once regulation is done
+	batch varchar(128) DEFAULT NULL,   -- Lot or serial number
+	qty_stock double DEFAULT NULL,     -- Value or real stock we have, when we start the inventory (may be updated during intermediary steps).
+	qty_view double DEFAULT NULL, 	   -- Quantity found during inventory. It is the targeted value, filled during edition of inventory.
+	qty_regulated double DEFAULT NULL, -- Never used. Deprecated because we already have the fk_movement now.
+	fk_movement integer NULL           -- can contain the id of stock movement we recorded to make the inventory regulation of this line
 ) 
 ENGINE=innodb;

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Alat ini harus digunakan hanya oleh pengguna atau pengembang berpengalaman. Ini menyediakan utilitas untuk membangun atau mengedit modul Anda sendiri. Dokumentasi untuk pengembangan manual <a href="%s" target="_blank"> alternatif ada di sini </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Masukkan nama modul / aplikasi yang akan dibuat tanpa spasi. Gunakan huruf besar untuk memisahkan kata-kata (Misalnya: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Masukkan nama objek yang akan dibuat tanpa spasi. Gunakan huruf besar untuk memisahkan kata-kata (Misalnya: MyObject, Siswa, Guru ...). File kelas CRUD, tetapi juga file API, halaman ke daftar / tambahkan / edit / hapus objek dan file SQL akan dihasilkan.
 ModuleBuilderDesc2=Jalur tempat modul dihasilkan / diedit (direktori pertama untuk modul eksternal didefinisikan menjadi %s):<strong>%s </strong>
@@ -40,7 +40,7 @@ PageForCreateEditView=Halaman PHP untuk membuat / mengedit / melihat catatan
 PageForAgendaTab=Halaman PHP untuk tab agenda
 PageForDocumentTab=Halaman PHP untuk tab dokumen
 PageForNoteTab=Halaman PHP untuk tab note
-PageForContactTab=PHP page for contact tab
+PageForContactTab=Halaman PHP untuk tab kontak
 PathToModulePackage=Path ke zip paket modul / aplikasi
 PathToModuleDocumentation=Path ke file modul / dokumentasi aplikasi (%s)
 SpaceOrSpecialCharAreNotAllowed=Spasi atau karakter khusus tidak diperbolehkan.
@@ -78,14 +78,14 @@ IsAMeasure=Adalah ukuran
 DirScanned=Direktori dipindai
 NoTrigger=Tidak ada pemicu
 NoWidget=Tidak ada widget
-GoToApiExplorer=API explorer
+GoToApiExplorer=Penjelajah API
 ListOfMenusEntries=Daftar entri menu
 ListOfDictionariesEntries=Daftar entri kamus
 ListOfPermissionsDefined=Daftar izin yang ditentukan
 SeeExamples=Lihat contoh di sini
 EnabledDesc=Ketentuan untuk mengaktifkan bidang ini (Contoh: 1 atau $ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=Apakah bidangnya terlihat? (Contoh: 0 = Tidak pernah terlihat, 1 = Terlihat pada daftar dan membuat / memperbarui / melihat formulir, 2 = Terlihat hanya pada daftar, 3 = Hanya terlihat pada formulir buat / perbarui / lihat (bukan daftar), 4 = Terlihat pada daftar dan perbarui / lihat saja form (bukan buat), 5 = Terlihat hanya pada form tampilan akhir daftar (bukan buat, bukan perbarui). <br> <br> Menggunakan nilai negatif berarti bidang tidak ditampilkan secara default pada daftar tetapi dapat dipilih untuk dilihat). <br> <br> Ini bisa berupa ekspresi, misalnya: <br> preg_match ('/ publik /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> (hak liburan-> mendefinisikan liburan-> hak):
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdfDesc=Tampilkan bidang ini pada dokumen PDF yang kompatibel, Anda dapat mengatur posisi dengan bidang "Posisi". <br> Saat ini, model PDF kompatibel yang dikenal adalah : eratosthene (pesanan), espadon (kapal), spons (faktur), cyan (propal/kutipan), cornas (pesanan pemasok) <br> <br> <strong> For document : </strong><br>0 = tidak tampil <br>1 = tampil <br> 2 = hanya ditampilkan jika tidak kosong <br><br><strong> Untuk baris dokumen : </strong><br>0 = tidak tampil <br>1 = tampilkan dalam kolom <br>3 = tampilkan di kolom baris deskripsi  setelah deskripsi <br>4 = tampilkan di kolom deskripsi setelah deskripsi hanya jika tidak kosong
 DisplayOnPdf=Tampilan di PDF
 IsAMeasureDesc=Bisakah nilai bidang diakumulasikan untuk mendapatkan total ke dalam daftar? (Contoh: 1 atau 0)
 SearchAllDesc=Apakah bidang yang digunakan untuk melakukan pencarian dari alat pencarian cepat? (Contoh: 1 atau 0)
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Menu yang disediakan oleh modul / aplikasi Anda didefinisika
 DictionariesDefDescTooltip=Kamus yang disediakan oleh modul / aplikasi Anda didefinisikan ke dalam array<strong>$ this-> kamus </strong> ke file deskriptor modul. Anda dapat mengedit file ini secara manual atau menggunakan editor yang disematkan. <br> <br> Catatan: Setelah ditentukan (dan modul diaktifkan kembali), kamus juga dapat dilihat di area pengaturan untuk pengguna administrator pada %s.
 PermissionsDefDescTooltip=Izin yang disediakan oleh modul / aplikasi Anda didefinisikan ke dalam array<strong>$ this-> rights </strong> ke file deskriptor modul. Anda dapat mengedit file ini secara manual atau menggunakan editor yang disematkan. <br> <br> Catatan: Setelah ditentukan (dan modul diaktifkan kembali), izin terlihat ke pengaturan izin default %s.
 HooksDefDesc=Definisikan di properti<b>module_parts ['hooks] </b>, dalam deskriptor modul, konteks kait yang ingin Anda kelola (daftar konteks dapat ditemukan dengan pencarian di'<b>initHooks (a04fbf07fbf0fbfbf0fbfbfbfbfbfbfbfjfbfjfjjfjfjjfjjfjjfjjfjfjjfjfjfjjfjfjjfjfjfjfjfjfjjfjjfjfjfjfjfjjfjjfjfjfjfjjfjfjfjfjjfjfjfjfjjfjfjfjfjjfjfjfjfjfjfjfjfjfjfjfjjfjfjjfj) file kait untuk menambahkan kode fungsi terkait Anda (fungsi hookable dapat ditemukan dengan pencarian di '<b> executeHooks </b>' dalam kode inti).
-TriggerDefDesc=Tentukan dalam file memicu kode yang ingin Anda jalankan untuk setiap agenda bisnis yang dijalankan.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Lihat ID yang digunakan dalam instalasi Anda
 SeeReservedIDsRangeHere=Lihat berbagai ID yang dipesan
 ToolkitForDevelopers=Toolkit untuk pengembang Dolibarr
@@ -106,7 +106,7 @@ TryToUseTheModuleBuilder=Jika Anda memiliki pengetahuan tentang SQL dan PHP, And
 SeeTopRightMenu=Lihat <span class="fa fa-bug"> </span> di menu kanan atas
 AddLanguageFile=Tambahkan file bahasa
 YouCanUseTranslationKey=Di sini Anda dapat menggunakan kunci yang merupakan kunci terjemahan yang ditemukan dalam file bahasa (lihat tab "Bahasa")
-DropTableIfEmpty=(Destroy table if empty)
+DropTableIfEmpty=(Hancurkan basis table jika kosong)
 TableDoesNotExists=Tabel %s tidak ada
 TableDropped=Tabel %s dihapus
 InitStructureFromExistingTable=Membangun string array struktur dari tabel yang ada
@@ -133,14 +133,15 @@ IncludeDocGeneration=Saya ingin menghasilkan beberapa dokumen dari objek
 IncludeDocGenerationHelp=Jika Anda mencentang ini, beberapa kode akan dibuat untuk menambahkan kotak "Hasilkan dokumen" pada catatan.
 ShowOnCombobox=Tunjukkan nilai ke dalam kotak kombo
 KeyForTooltip=Kunci untuk tooltip
-CSSClass=CSS for edit/create form
-CSSViewClass=CSS for read form
-CSSListClass=CSS for list
+CSSClass=CSS untuk mengedit/membuat formulir
+CSSViewClass=CSS untuk membaca formulir
+CSSListClass=CSS untuk daftar
 NotEditable=Tidak dapat diedit
 ForeignKey=Kunci asing
 TypeOfFieldsHelp=Jenis bidang: <br> varchar (99), ganda (24,8), real, teks, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' berarti kita menambahkan tombol + setelah kombo untuk membuat catatan, 'filter' dapat berupa 'status = 1 DAN fk_user = __USER_ID DAN entitas IN (__SHARED_ENTITIES__)' misalnya)
 AsciiToHtmlConverter=Pengonversi Ascii ke HTML
 AsciiToPdfConverter=Pengonversi ascii ke PDF
 TableNotEmptyDropCanceled=Meja tidak kosong. Drop telah dibatalkan.
-ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
-ImportExportProfiles=Import and export profiles
+ModuleBuilderNotAllowed=Pembuat modul tersedia tetapi tidak diizinkan untuk pengguna Anda.
+ImportExportProfiles=Impor dan ekspor profil
+ValidateModBuilderDesc=Masukkan 1 jika bidang ini perlu divalidasi dengan $this->validateField() atau 0 jika diperlukan validasi

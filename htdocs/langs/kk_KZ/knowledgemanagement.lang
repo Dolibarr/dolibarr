@@ -18,32 +18,33 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Білімді басқару жүйесі
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Білім менеджментін (KM) немесе анықтама үстелін басқарыңыз
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetup = Білімді басқару жүйесін орнату
+Settings = Параметрлер
+KnowledgeManagementSetupPage = Білімді басқару жүйесін орнату беті
 
 
 #
 # About page
 #
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+About = Туралы
+KnowledgeManagementAbout = Білімді басқару туралы
+KnowledgeManagementAboutPage = Беттер туралы білімді басқару
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+KnowledgeManagementArea = Білімді басқару
+MenuKnowledgeRecord = Білім қоры
+ListKnowledgeRecord = Мақалалар тізімі
+NewKnowledgeRecord = Жаңа мақала
+ValidateReply = Шешімді тексеру
+KnowledgeRecords = Мақалалар
+KnowledgeRecord = Мақала
+KnowledgeRecordExtraFields = Мақалаға арналған экстра өрістер
+GroupOfTicket=Билеттер тобы
+YouCanLinkArticleToATicketCategory=Сіз мақаланы билеттер тобына байланыстыра аласыз (сондықтан мақала жаңа билеттерді іріктеу кезінде ұсынылады)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

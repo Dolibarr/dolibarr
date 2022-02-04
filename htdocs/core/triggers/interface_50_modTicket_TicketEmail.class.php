@@ -157,7 +157,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						if (is_array($object->array_options) && count($object->array_options) > 0) {
 							foreach ($object->array_options as $key => $value) {
 								$key = substr($key, 8); // remove "options_"
-								$message_admin .= '<li>'.$langs->trans($extraFields->attributes[$object->element]['label'][$key]).' : '.$extraFields->showOutputField($key, $value).'</li>';
+								$message_admin .= '<li>'.$langs->trans($extraFields->attributes[$object->element]['label'][$key]).' : '.$extraFields->showOutputField($key, $value, '', $object->table_element).'</li>';
 							}
 						}
 						$message_admin .= '</ul>';

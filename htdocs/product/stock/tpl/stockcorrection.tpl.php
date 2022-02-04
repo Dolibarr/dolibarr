@@ -41,7 +41,7 @@ if (empty($id)) {
 	$id = $object->id;
 }
 
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			function init_price()
 			{
@@ -173,8 +173,14 @@ print '<td>'.$langs->trans("MovementLabel").'</td>';
 print '<td>';
 print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 print '</td>';
-print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+print '<td>'.$langs->trans("InventoryCode").'</td>';
+print '<td>';
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+print '</td>';
 print '</tr>';
+
+// Extrafield template
+include 'extrafields_add.tpl.php';
 
 print '</table>';
 

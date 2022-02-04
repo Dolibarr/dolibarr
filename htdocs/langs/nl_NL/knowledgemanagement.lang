@@ -47,3 +47,4 @@ KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extravelden voor Artikel
 GroupOfTicket=Groep van tickets
 YouCanLinkArticleToATicketCategory=Je kunt een artikel linken naar een ticket groep (dan wordt dit artikel als suggestie gegeven bij een nieuwe ticket)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

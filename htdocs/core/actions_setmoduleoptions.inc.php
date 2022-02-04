@@ -26,8 +26,16 @@
 // $arrayofparameters must be set for action 'update'
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
+// $formSetup may be defined
 
-if ($action == 'update' && is_array($arrayofparameters)) {
+
+if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
+	$formSetup->saveConfFromPost();
+	return;
+}
+
+
+if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {
@@ -64,8 +72,37 @@ if ($action == 'update' && is_array($arrayofparameters)) {
 	}
 }
 
+if ($action == 'deletefile' && $modulepart == 'doctemplates' && !empty($user->admin)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$keyforuploaddir = GETPOST('keyforuploaddir', 'aZ09');
+
+	$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString($keyforuploaddir))));
+	foreach ($listofdir as $key => $tmpdir) {
+		$tmpdir = preg_replace('/DOL_DATA_ROOT\/*/', '', $tmpdir);	// Clean string if we found a hardcoded DOL_DATA_ROOT
+		if (!$tmpdir) {
+			unset($listofdir[$key]);
+			continue;
+		}
+		$tmpdir = DOL_DATA_ROOT.'/'.$tmpdir;	// Complete with DOL_DATA_ROOT. Only files into DOL_DATA_ROOT can be reach/set
+		if (!is_dir($tmpdir)) {
+			if (empty($nomessageinsetmoduleoptions)) {
+				setEventMessages($langs->trans("ErrorDirNotFound", $tmpdir), null, 'warnings');
+			}
+		} else {
+			$upload_dir = $tmpdir;
+			break;	// So we take the first directory found into setup $conf->global->$keyforuploaddir
+		}
+	}
+
+	$filetodelete = $tmpdir.'/'.GETPOST('file');
+	$result = dol_delete_file($filetodelete);
+	if ($result > 0) {
+		setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+	}
+}
+
 // Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions') {
+if ($action == 'setModuleOptions' && !empty($user->admin)) {
 	$db->begin();
 
 	// Process common param fields
@@ -89,20 +126,22 @@ if ($action == 'setModuleOptions') {
 	if (GETPOST('upload', 'alpha') && GETPOST('keyforuploaddir', 'aZ09')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$keyforuploaddir = GETPOST('keyforuploaddir', 'aZ09');
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->$keyforuploaddir)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString($keyforuploaddir))));
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
-			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+			$tmpdir = preg_replace('/DOL_DATA_ROOT\/*/', '', $tmpdir);	// Clean string if we found a hardcoded DOL_DATA_ROOT
 			if (!$tmpdir) {
 				unset($listofdir[$key]);
 				continue;
 			}
+			$tmpdir = DOL_DATA_ROOT.'/'.$tmpdir;	// Complete with DOL_DATA_ROOT. Only files into DOL_DATA_ROOT can be reach/set
 			if (!is_dir($tmpdir)) {
 				if (empty($nomessageinsetmoduleoptions)) {
 					setEventMessages($langs->trans("ErrorDirNotFound", $tmpdir), null, 'warnings');
 				}
 			} else {
 				$upload_dir = $tmpdir;
+				break;	// So we take the first directory found into setup $conf->global->$keyforuploaddir
 			}
 		}
 		if ($upload_dir) {

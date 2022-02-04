@@ -124,6 +124,8 @@ SupplierOrderReceivedInDolibarr=Commande fournisseur %s réceptionné %s
 SupplierOrderSubmitedInDolibarr=Commande fournisseur %s soumise
 SupplierOrderClassifiedBilled=Commande fournisseur %s classée facturée
 OtherOrders=Autres commandes
+SupplierOrderValidatedAndApproved=Commande fournisseur validée et approuvée : %s
+SupplierOrderValidated=Commande fournisseur validée : %s
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable suivi commande client
 TypeContact_commande_internal_SHIPPING=Responsable envoi commande client
@@ -151,6 +153,7 @@ PDFEdisonDescription=Modèle de commande simple
 PDFProformaDescription=Un modèle de facture Proforma complet
 CreateInvoiceForThisCustomer=Facturer commandes
 CreateInvoiceForThisSupplier=Facturer commandes
+CreateInvoiceForThisReceptions=Facturer les réceptions
 NoOrdersToInvoice=Pas de commandes facturables
 CloseProcessedOrdersAutomatically=Classer automatiquement à "Traitées" les commandes sélectionnées.
 OrderCreation=Date de création

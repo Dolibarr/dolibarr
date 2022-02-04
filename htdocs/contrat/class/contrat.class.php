@@ -387,7 +387,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
-				$result = $contratline->active_line($user, $date_start, -1, $comment);
+				$result = $contratline->active_line($user, $date_start, -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
 					$this->error = $contratline->error;
@@ -913,10 +913,11 @@ class Contrat extends CommonObject
 			return -3;
 		}
 
+		// Now set the global properties on contract not stored into database.
 		$this->nbofservices = count($this->lines);
-		$this->total_ttc = price2num($total_ttc); // TODO For the moment value is false as value is not stored in database for line linked to products
-		$this->total_tva = price2num($total_vat); // TODO For the moment value is false as value is not stored in database for line linked to products
-		$this->total_ht = price2num($total_ht); // TODO For the moment value is false as value is not stored in database for line linked to products
+		$this->total_ttc = price2num($total_ttc);
+		$this->total_tva = price2num($total_vat);
+		$this->total_ht = price2num($total_ht);
 
 		return $this->lines;
 	}

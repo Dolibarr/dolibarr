@@ -140,7 +140,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				dol_print_error($this->db);
 			}
 			$stringtoshow = '<div class="div-table-responsive-no-min">';
-			$stringtoshow .= '<script type="text/javascript" language="javascript">
+			$stringtoshow .= '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#idsubimgDOLUSERCOOKIE_ticket_last_days").click(function() {
 						jQuery("#idfilterDOLUSERCOOKIE_ticket_last_days").toggle();

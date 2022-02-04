@@ -47,3 +47,4 @@ KnowledgeRecord = Artikkel
 KnowledgeRecordExtraFields = Ekstra felt for artikkel
 GroupOfTicket=Billettgrupper
 YouCanLinkArticleToATicketCategory=Du kan koble en artikkel til en billettgruppe (artikkelen vil bli foreslått under kvalifisering av nye billetter)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

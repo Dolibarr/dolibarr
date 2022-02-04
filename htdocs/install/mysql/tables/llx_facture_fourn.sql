@@ -83,7 +83,7 @@ create table llx_facture_fourn
   extraparams			varchar(255),					-- for stock other parameters with json format
   
   fk_multicurrency		integer,
-  multicurrency_code			varchar(255),
+  multicurrency_code			varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

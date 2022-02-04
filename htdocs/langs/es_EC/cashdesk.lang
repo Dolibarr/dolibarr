@@ -25,7 +25,6 @@ UserNeedPermissionToEditStockToUsePos=Solicita disminuir el stock en la creació
 DolibarrReceiptPrinter=Dolibarr Impresora de recibos
 PointOfSale=Punto de venta
 TakeposConnectorNecesary=Se requiere 'conector TakePOS'
-NotAvailableWithBrowserPrinter=Not available when printer for receipt is set to browser:
 Receipt=Recibo
 Header=Encabezado
 Footer=Pie de página

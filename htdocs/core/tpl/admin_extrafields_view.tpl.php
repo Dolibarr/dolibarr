@@ -41,7 +41,7 @@ $langs->load("modulebuilder");
 print '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", $textobject).'</span><br>'."\n";
 print '<br>';
 
-// Load attribute_label
+// Load $extrafields->attributes
 $extrafields->fetch_name_optionals_label($elementtype);
 
 print '<div class="div-table-responsive">';

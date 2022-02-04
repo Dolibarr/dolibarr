@@ -101,7 +101,7 @@ if ($action == 'add') {
 	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 
 	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
-		$expedition->entrepot_id = GETPOST('entrepot_id');
+		$expedition->entrepot_id = GETPOST('entrepot_id', 'int');
 	}
 
 	// We loop on each line of order to complete object delivery with qty to delivery
@@ -282,7 +282,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
-			print dol_get_fiche_head($head, 'delivery', $langs->trans("Shipment"), -1, 'sending');
+			print dol_get_fiche_head($head, 'delivery', $langs->trans("Shipment"), -1, 'dolly');
 
 			/*
 			 * Confirmation de la suppression

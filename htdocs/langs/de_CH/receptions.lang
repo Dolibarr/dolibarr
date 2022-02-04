@@ -28,7 +28,6 @@ StatsOnReceptionsOnlyValidated=Statistik der frei gegebenen Lieferungen nach ihr
 SendReceptionByEMail=Lieferung per E-Mail verschicken.
 SendReceptionRef=Lieferung %s einreichen
 ActionsOnReception=Verknüpfte Ereignisse zur Lieferung
-ReceptionCreationIsDoneFromOrder=Im Moment erzeugst du Lieferungen aus der Bestellung heraus.
 ReceptionLine=Lieferposition
 ProductQtyInReceptionAlreadySent=Bereits verschickte Artikel dieser Bestellung
 ProductQtyInSuppliersReceptionAlreadyRecevied=Bereits erhaltene Artikel dieser Lieferantenbestellung

@@ -43,12 +43,6 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array Array with type of element (for what object is the extrafield)
-	 * @deprecated
-	 */
-	public $attribute_elementtype;
-
-	/**
 	 * @var array Array with type of the extra field
 	 * @deprecated
 	 */
@@ -61,88 +55,10 @@ class ExtraFields
 	public $attribute_label;
 
 	/**
-	 * @var array Array with size of extra field
-	 * @deprecated
-	 */
-	public $attribute_size;
-
-	/**
 	 * @var array Array with list of possible values for some types of extra fields
 	 * @deprecated
 	 */
 	public $attribute_choice;
-
-	/**
-	 * @var array Array to store compute formula for computed fields
-	 * @deprecated
-	 */
-	public $attribute_computed;
-
-	/**
-	 * @var array Array to store default value
-	 * @deprecated
-	 */
-	public $attribute_default;
-
-	/**
-	 * @var array Array to store if attribute is unique or not
-	 * @deprecated
-	 */
-	public $attribute_unique;
-
-	/**
-	 * @var array Array to store if attribute is required or not
-	 * @deprecated
-	 */
-	public $attribute_required;
-
-	/**
-	 * @var array Array to store parameters of attribute (used in select type)
-	 * @deprecated
-	 */
-	public $attribute_param;
-
-	/**
-	 * @var array Array to store position of attribute
-	 * @deprecated
-	 */
-	public $attribute_pos;
-
-	/**
-	 * @var array Array to store if attribute is editable regardless of the document status
-	 * @deprecated
-	 */
-	public $attribute_alwayseditable;
-
-	/**
-	 * @var array Array to store permission to check
-	 * @deprecated
-	 */
-	public $attribute_perms;
-
-	/**
-	 * @var array Array to store language file to translate label of values
-	 * @deprecated
-	 */
-	public $attribute_langfile;
-
-	/**
-	 * @var array Array to store if field is visible by default on list
-	 * @deprecated
-	 */
-	public $attribute_list;
-
-	/**
-	 * @var array Array to store if field is summable
-	 * @deprecated
-	 */
-	public $attribute_totalizable;
-
-	/**
-	 * @var array Array to store entity id of extrafield
-	 * @deprecated
-	 */
-	public $attribute_entityid;
 
 
 	/**
@@ -203,17 +119,8 @@ class ExtraFields
 		$this->attributes = array();
 
 		// For old usage
-		$this->attribute_elementtype = array();
 		$this->attribute_type = array();
 		$this->attribute_label = array();
-		$this->attribute_size = array();
-		$this->attribute_computed = array();
-		$this->attribute_default = array();
-		$this->attribute_unique = array();
-		$this->attribute_required = array();
-		$this->attribute_perms = array();
-		$this->attribute_langfile = array();
-		$this->attribute_list = array();
 	}
 
 	/**
@@ -238,7 +145,7 @@ class ExtraFields
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
-	 *  @param  int             $printable        Is extrafield displayed on PDF
+	 *  @param  int             $printable          Is extrafield displayed on PDF
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
 	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
@@ -358,10 +265,10 @@ class ExtraFields
 				'default' => $default_value
 			);
 
-			$result = $this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+			$result = $this->db->DDLAddField($this->db->prefix().$table, $attrname, $field_desc);
 			if ($result > 0) {
 				if ($unique) {
-					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+					$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
 				return 1;
@@ -446,7 +353,7 @@ class ExtraFields
 				$params = '';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,";
 			$sql .= " label,";
 			$sql .= " type,";
@@ -540,7 +447,7 @@ class ExtraFields
 
 			if (!$error) {
 				$sql = "SELECT COUNT(rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql .= " FROM ".$this->db->prefix()."extrafields";
 				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
 				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
@@ -548,7 +455,7 @@ class ExtraFields
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->nb <= 0) {
-						$result = $this->db->DDLDropField(MAIN_DB_PREFIX.$table, $attrname); // This also drop the unique key
+						$result = $this->db->DDLDropField($this->db->prefix().$table, $attrname); // This also drop the unique key
 						if ($result < 0) {
 							$this->error = $this->db->lasterror();
 							$this->errors[] = $this->db->lasterror();
@@ -585,7 +492,7 @@ class ExtraFields
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+			$sql = "DELETE FROM ".$this->db->prefix()."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
 			$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
@@ -690,7 +597,7 @@ class ExtraFields
 			}
 
 			if ($type != 'separate') { // No table update when separate type
-				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
@@ -699,9 +606,9 @@ class ExtraFields
 				if ($result > 0) {
 					$sql = '';
 					if ($unique) {
-						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					} else {
-						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
@@ -792,20 +699,20 @@ class ExtraFields
 
 			if ($entity === '' || $entity != '0') {
 				// We dont want on all entities, we delete all and current
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
 				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			} else {
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity = 0";
 				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			}
 			$resql1 = $this->db->query($sql_del);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,"; // This is code
 			$sql .= " entity,";
 			$sql .= " label,";
@@ -873,7 +780,7 @@ class ExtraFields
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
+	 * 	Load array this->attributes (and some old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
@@ -897,15 +804,12 @@ class ExtraFields
 		if ($elementtype == 'order_supplier') {
 			$elementtype = 'commande_fournisseur';
 		}
-		if ($elementtype == 'stock_mouvement') {
-			$elementtype = 'movement';
-		}
 
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
 		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
-		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
@@ -932,20 +836,6 @@ class ExtraFields
 					// Old usage
 					$this->attribute_type[$tab->name] = $tab->type;
 					$this->attribute_label[$tab->name] = $tab->label;
-					$this->attribute_size[$tab->name] = $tab->size;
-					$this->attribute_elementtype[$tab->name] = $tab->elementtype;
-					$this->attribute_default[$tab->name] = $tab->fielddefault;
-					$this->attribute_computed[$tab->name] = $tab->fieldcomputed;
-					$this->attribute_unique[$tab->name] = $tab->fieldunique;
-					$this->attribute_required[$tab->name] = $tab->fieldrequired;
-					$this->attribute_param[$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
-					$this->attribute_pos[$tab->name] = $tab->pos;
-					$this->attribute_alwayseditable[$tab->name] = $tab->alwayseditable;
-					$this->attribute_perms[$tab->name] = (strlen($tab->perms) == 0 ? 1 : $tab->perms);
-					$this->attribute_langfile[$tab->name] = $tab->langs;
-					$this->attribute_list[$tab->name] = $tab->list;
-					$this->attribute_totalizable[$tab->name] = $tab->totalizable;
-					$this->attribute_entityid[$tab->name] = $tab->entity;
 
 					// New usage
 					$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
@@ -1028,20 +918,11 @@ class ExtraFields
 			$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
-		} else // Old usage
-		{
+		} else {
+			// Old usage
 			$label = $this->attribute_label[$key];
 			$type = $this->attribute_type[$key];
-			$size = $this->attribute_size[$key];
-			$elementtype = $this->attribute_elementtype[$key]; // Seems not used
-			$default = $this->attribute_default[$key];
-			$computed = $this->attribute_computed[$key];
-			$unique = $this->attribute_unique[$key];
-			$required = $this->attribute_required[$key];
-			$param = $this->attribute_param[$key];
-			$langfile = $this->attribute_langfile[$key];
 			$list = $this->attribute_list[$key];
-			$totalizable = $this->attribute_totalizable[$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
@@ -1255,7 +1136,7 @@ class ExtraFields
 
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use curent entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
@@ -1274,7 +1155,7 @@ class ExtraFields
 						}
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE ".$InfoFieldList[4];
@@ -1423,7 +1304,7 @@ class ExtraFields
 
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -1486,7 +1367,7 @@ class ExtraFields
 
 						// We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE ".$InfoFieldList[4];
@@ -1605,7 +1486,7 @@ class ExtraFields
 	 * @param   string	$key            		Key of attribute
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), function uses the new method to get extrafields data
+	 * @param	string	$extrafieldsobjectkey	Required (for example $object->table_element).
 	 * @return	string							Formated value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
@@ -1626,22 +1507,10 @@ class ExtraFields
 			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
-		} else // Old usage
-		{
-			//dol_syslog("Warning: parameter 'extrafieldsobjectkey' is missing", LOG_WARNING);
-			$label = $this->attribute_label[$key];
-			$type = $this->attribute_type[$key];
-			$size = $this->attribute_size[$key];
-			$default = $this->attribute_default[$key];
-			$computed = $this->attribute_computed[$key];
-			$unique = $this->attribute_unique[$key];
-			$required = $this->attribute_required[$key];
-			$param = $this->attribute_param[$key];
-			$perms = dol_eval($this->attribute_perms[$key], 1);
-			$langfile = $this->attribute_langfile[$key];
-			$list = dol_eval($this->attribute_list[$key], 1);
-			$help = ''; // Not supported with old syntax
-			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		} else {
+			// Old usage not allowed anymore
+			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_WARNING);
+			return '';
 		}
 
 		if ($hidden) {
@@ -1723,7 +1592,7 @@ class ExtraFields
 			}
 
 			$sql = "SELECT ".$keyList;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1827,7 +1696,7 @@ class ExtraFields
 			}
 
 			$sql = "SELECT ".$keyList;
-			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -2075,7 +1944,8 @@ class ExtraFields
 				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) {
 					continue;
 				}
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key)) {
+
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
 					continue;
 				}
 

@@ -37,13 +37,14 @@ About = Névjegy
 KnowledgeManagementAbout = About Knowledge Management
 KnowledgeManagementAboutPage = Knowledge Management about page
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
+KnowledgeManagementArea = Tudásmenedzsment
+MenuKnowledgeRecord = Tudásbázis
 ListKnowledgeRecord = List of articles
 NewKnowledgeRecord = New article
 ValidateReply = Validate solution
 KnowledgeRecords = Articles
 KnowledgeRecord = Árucikk
 KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
+GroupOfTicket=Jegyek csoportjai
 YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+SuggestedForTicketsInGroup=Suggested for tickets when group is
