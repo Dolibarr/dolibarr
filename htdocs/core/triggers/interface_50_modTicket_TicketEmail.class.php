@@ -279,7 +279,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						if ($mailfile->error) {
 							dol_syslog($mailfile->error, LOG_DEBUG);
 						} else {
-								  $result = $mailfile->sendfile();
+							$result = $mailfile->sendfile();
+							// update last_msg_sent date
+							$object->date_last_msg_sent = dol_now();
+							$object->update($user);
 						}
 						if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
