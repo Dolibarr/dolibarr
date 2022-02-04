@@ -1436,15 +1436,6 @@ if (empty($reshook)) {
 					if ($element == 'shipping') {
 						$element = $subelement = 'expedition';
 					}
-					// Easya 2022 - PR19832 - Create contract from invoice
-					// Code ajouté
-					if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
-						if ($element == 'invoice' || $element == 'facture') {
-							$element = 'compta/facture';
-							$subelement = 'facture';
-						}
-					}
-					// Easya 2022 - PR19832 - Fin
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -2695,13 +2686,6 @@ if (empty($reshook)) {
 				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'PropaleLigne';
 			}
-			// Easya 2022 - PR19832 - Create contract from invoice
-			// Code ajouté
-			elseif (($fromElement == 'facture' || $fromElement == 'invoice') && !empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
-				dol_include_once('/compta/'.$fromElement.'/class/'.$fromElement.'.class.php');
-				$lineClassName = 'FactureLigne';
-			}
-			// Easya 2022 - PR19832 - Fin
 			$nextRang = count($object->lines) + 1;
 			$importCount = 0;
 			$error = 0;
@@ -2932,15 +2916,6 @@ if ($action == 'create') {
 			if ($element == 'shipping') {
 				$element = $subelement = 'expedition';
 			}
-			// Easya 2022 - PR19832 - Create contract from invoice
-			// Code ajouté
-			if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
-				if ($element == 'invoice' || $element == 'facture') {
-					$element = 'compta/facture';
-					$subelement = 'facture';
-				}
-			}
-			// Easya 2022 - PR19832 - Fin
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -5347,8 +5322,6 @@ if ($action == 'create') {
 			}
 
 			// Create contract
-			// Easya 2022 - PR19832 - Create contract from invoice
-			// Code ajouté
 			if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
 				if ($conf->contrat->enabled && $object->statut == Facture::STATUS_VALIDATED) {
 					$langs->load("contracts");
@@ -5358,7 +5331,6 @@ if ($action == 'create') {
 					}
 				}
 			}
-			// Easya 2022 - PR19832 - Fin
 
 			// Validate
 			if ($object->statut == Facture::STATUS_DRAFT && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (!empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
