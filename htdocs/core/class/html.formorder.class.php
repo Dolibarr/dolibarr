@@ -87,7 +87,7 @@ class FormOrder extends Form
 		$listofmethods = array();
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_method";
+		$sql .= " FROM ".$this->db->prefix()."c_input_method";
 		$sql .= " WHERE active = 1";
 
 		dol_syslog(get_class($this)."::selectInputMethod", LOG_DEBUG);

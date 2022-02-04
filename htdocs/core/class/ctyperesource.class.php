@@ -99,7 +99,7 @@ class Ctyperesource
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
+		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
 
 		$sql .= 'code,';
 		$sql .= 'label';
@@ -125,7 +125,7 @@ class Ctyperesource
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action to call a trigger.
@@ -163,12 +163,12 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($id) {
 			$sql .= " WHERE t.id = ".((int) $id);
 		} elseif ($code) {
@@ -228,12 +228,12 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 
 		// Manage filter
 		$sqlwhere = array();
@@ -307,7 +307,7 @@ class Ctyperesource
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
 		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
@@ -376,7 +376,7 @@ class Ctyperesource
 		// If you need to delete child tables to, you can insert them here
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
+			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);

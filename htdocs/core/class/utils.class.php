@@ -241,8 +241,15 @@ class Utils
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli') {
-			$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
-
+			if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
+				$cmddump = $db->getPathOfDump();
+			} else {
+				$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
+			}
+			if (empty($cmddump)) {
+				$this->error = "Failed to detect command to use for mysqldump. Try a manual backup before to set path of command.";
+				return -1;
+			}
 
 			$outputfile = $outputdir.'/'.$file;
 			// for compression format, we add extension

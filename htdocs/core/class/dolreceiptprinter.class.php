@@ -242,9 +242,9 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$line = 0;
 		$obj = array();
-		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' WHERE entity = '.$conf->entity;
+		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
+		$sql .= " WHERE entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -310,9 +310,9 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$line = 0;
 		$obj = array();
-		$sql = 'SELECT rowid, name, template';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= ' WHERE entity = '.$conf->entity;
+		$sql = "SELECT rowid, name, template";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
+		$sql .= " WHERE entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -391,7 +391,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."printer_receipt";
+		$sql = "INSERT INTO ".$this->db->prefix()."printer_receipt";
 		$sql .= " (name, fk_type, fk_profile, parameter, entity)";
 		$sql .= " VALUES ('".$this->db->escape($name)."', ".((int) $type).", ".((int) $profile).", '".$this->db->escape($parameter)."', ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
@@ -417,7 +417,7 @@ class dolReceiptPrinter extends Printer
 		global $conf;
 		$error = 0;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."printer_receipt";
+		$sql = "UPDATE ".$this->db->prefix()."printer_receipt";
 		$sql .= " SET name='".$this->db->escape($name)."'";
 		$sql .= ", fk_type=".((int) $type);
 		$sql .= ", fk_profile=".((int) $profile);
@@ -442,7 +442,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt';
+		$sql = 'DELETE FROM '.$this->db->prefix().'printer_receipt';
 		$sql .= ' WHERE rowid='.((int) $printerid);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -463,7 +463,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template";
+		$sql = "INSERT INTO ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " (name, template, entity) VALUES ('".$this->db->escape($name)."'";
 		$sql .= ", '".$this->db->escape($template)."', ".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -484,7 +484,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
+		$sql = 'DELETE FROM '.$this->db->prefix().'printer_receipt_template';
 		$sql .= " WHERE rowid = ".((int) $templateid);
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
@@ -508,7 +508,7 @@ class dolReceiptPrinter extends Printer
 		global $conf;
 		$error = 0;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."printer_receipt_template";
+		$sql = "UPDATE ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " SET name='".$this->db->escape($name)."'";
 		$sql .= ", template='".$this->db->escape($template)."'";
 		$sql .= " WHERE rowid=".((int) $templateid);
@@ -807,8 +807,8 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_PAYMENT':
 						$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
 						$sql .= " cp.code";
-						$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+						$sql .= " FROM ".$this->db->prefix()."paiement_facture as pf, ".$this->db->prefix()."paiement as p";
+						$sql .= " LEFT JOIN ".$this->db->prefix()."c_paiement as cp ON p.fk_paiement = cp.id";
 						$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $object->id);
 						$sql .= " ORDER BY p.datep";
 						$resql = $this->db->query($sql);
@@ -834,7 +834,7 @@ class dolReceiptPrinter extends Printer
 						}
 						break;
 					case 'DOL_VALUE_PLACE':
-							$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
+							$sql = "SELECT floor, label FROM ".$this->db->prefix()."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
 							$resql = $this->db->query($sql);
 							$obj = $this->db->fetch_object($resql);
 						if ($obj) {
@@ -873,10 +873,10 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'SELECT template';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= ' WHERE rowid = '.((int) $templateid);
-		$sql .= ' AND entity = '.$conf->entity;
+		$sql = "SELECT template";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
+		$sql .= " WHERE rowid = ".((int) $templateid);
+		$sql .= " AND entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);
@@ -910,10 +910,10 @@ class dolReceiptPrinter extends Printer
 			return;
 		}
 		$error = 0;
-		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' WHERE rowid = '.((int) $printerid);
-		$sql .= ' AND entity = '.((int) $conf->entity);
+		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
+		$sql .= " WHERE rowid = ".((int) $printerid);
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);
