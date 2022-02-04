@@ -184,6 +184,9 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2010', '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2011', 'Ideell förening');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2012', 'Stiftelse');
 
+ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
+
+
 -- START  GRH/HRM MODULE
 
 
