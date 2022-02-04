@@ -570,7 +570,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME');
+	print ajax_constantonoff('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', array(), null, 0, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, $conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME);
