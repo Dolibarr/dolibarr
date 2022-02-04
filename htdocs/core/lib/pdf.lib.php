@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021		Anthony Berton       	<bertonanthony@gmail.com>
+ * Copyright (C) 2021-2022	Anthony Berton       	<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1416,8 +1416,14 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$prodser->get_sousproduits_arbo();
 		if (!empty($prodser->sousprods) && is_array($prodser->sousprods) && count($prodser->sousprods)) {
 			$tmparrayofsubproducts = reset($prodser->sousprods);
-			foreach ($tmparrayofsubproducts as $subprodval) {
-				$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')');
+			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) {
+				foreach ($tmparrayofsubproducts as $subprodval) {
+					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[3].' ('.$subprodval[1].')');
+				}
+			} else {
+				foreach ($tmparrayofsubproducts as $subprodval) {
+					$libelleproduitservice = dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3].' ('.$subprodval[1].')');
+				}
 			}
 		}
 	}
