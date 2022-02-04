@@ -288,7 +288,7 @@ if ($resql) {
 	if ($search_sale) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
-	if (!empty($search_categ) && $search_categ != '-1') {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
 	if ($toolowstock) {

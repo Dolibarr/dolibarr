@@ -2304,7 +2304,11 @@ abstract class CommonObject
 				// Triggers
 				if (!$error && !$notrigger) {
 					// Call triggers
-					$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+					if (get_class($this) == 'Commande') {
+						$result = $this->call_trigger('ORDER_MODIFY', $user);
+					} else {
+						$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+					}
 					if ($result < 0) {
 						$error++;
 					}
