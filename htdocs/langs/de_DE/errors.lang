@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=RSS-Feeds welche Fehler erhalten. Versuchen Sie die Kon
 ErrorForbidden=Zugriff verweigert.<br>Sie haben versucht eine Seite, Bereich oder Funktion aufzurufen die deaktiviert ist oder sie haben keine Berechtigung dazu.
 ErrorForbidden2=Die Zugriffsberechtigungen für diese Anmeldung kann Ihr Administrator unter %s->%s einstellen.
 ErrorForbidden3=Es scheint keine ordnungsgemäße Authentifizierung für das System vorzuliegen. Bitte werfen Sie einen Blick auf die Systemdokumentation um die entsprechenden Authentifizierungsoptionen zu verwalten (htaccess, mod_auth oder andere...)
+ErrorForbidden4=Hinweis: Löschen Sie Ihre Browser-Cookies, um bestehende Sitzungen für diese Anmeldung zu löschen.
 ErrorNoImagickReadimage=Imagick_readimage Funktion in dieser PHP-Version nicht vorhanden. Vorschaubilder sind nicht möglich. Administratoren können diese Registerkarte unter Einstellungen-Display ausblenden.
 ErrorRecordAlreadyExists=Datensatz bereits vorhanden
 ErrorLabelAlreadyExists=Dieses Label existiert schon
@@ -271,6 +272,8 @@ CheckVersionFail=Versionsprüfung fehlgeschlagen
 ErrorWrongFileName=Der Dateiname darf nicht __SOMETHING__ enthalten
 ErrorNotInDictionaryPaymentConditions=Nicht im Dictionary der Zahlungsbedingungen, bitte ändern.
 ErrorIsNotADraft=%s ist kein Entwurf
+ErrorExecIdFailed=Befehl "id" kann nicht ausgeführt werden
+ErrorBadCharIntoLoginName=Unzulässiges Zeichen im Login-Namen
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.

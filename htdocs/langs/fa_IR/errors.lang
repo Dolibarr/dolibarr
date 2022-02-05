@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=دریافت خوراک RSS ممکن نبود. در ص�
 ErrorForbidden=دسترسی بسته است. <br> شما در تلاشید به صفحه، بخش یا قابلیتی از یک واحد غیرفعال مراجعه نموده یا این‌که این تلاش برای دسترسی توسط یک نشست بدون مجوز که برای نام کاربری شما مجاز نیست انجام می‌شود.
 ErrorForbidden2=مجوزهای این کاربر از فهرست %s->%s از صفحۀ مدیر Dolibarr قابل تعیین کردن است.
 ErrorForbidden3=به نظر می‌رسد Dolibarr از طریق یک نشست تصدیق شده مورد استفاده قرار نگرفته است. نگاهی به مستندات راهنمای برپاسازی Dolibarr نموده تا چگونگی مدیریت تصدیق‌ها را بدانید (htaccess، mod_auth یا غیره...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=کلاس Imagick در این نسخۀ PHP یافت نشد. امکان ارائۀ پیش‌نمایش وجود ندارد. مدیران می‌توانند این زبانه را از فهرست برپاسازی - نمایش غیرفعال کنند.
 ErrorRecordAlreadyExists=این ردیف قبلا وجود داشته است
 ErrorLabelAlreadyExists=این برچسب قبلا وجود داشته است
@@ -271,6 +272,8 @@ CheckVersionFail=Version check fail
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

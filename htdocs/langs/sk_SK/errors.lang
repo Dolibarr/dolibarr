@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Nedokáže dostať RSS feed. Skúste pridať konštantn
 ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Povolenie pre toto prihlásenie môže byť definovaná správcom Dolibarr z ponuky %s-&gt; %s.
 ErrorForbidden3=Zdá sa, že Dolibarr nie je využitá prostredníctvom overené relácie. Pozrite sa na dokumentáciu k nastaveniu Dolibarr vedieť, ako riadiť autentizácia (htaccess, mod_auth alebo iné ...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Trieda Imagick nie je nájdený v tejto PHP. Náhľad nie je môžu byť k dispozícii. Správcovia môžu zakázať túto kartu z menu Nastavenie - Zobrazenie.
 ErrorRecordAlreadyExists=Záznam už existuje
 ErrorLabelAlreadyExists=This label already exists
@@ -271,6 +272,8 @@ CheckVersionFail=Version check fail
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

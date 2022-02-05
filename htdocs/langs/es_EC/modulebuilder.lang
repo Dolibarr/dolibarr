@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-ModuleBuilderDesc=Esta herramienta solo debe ser utilizada por usuarios o desarrolladores experimentados. Proporciona utilidades para construir o editar su propio módulo. La documentación para el desarrollo manual alternativo <a href="%s" target="_blank"> está aquí </a>.
 EnterNameOfModuleDesc=Introduzca el nombre del módulo/aplicación para crear sin espacios. Utilice mayúsculas para separar palabras (Por ejemplo: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Introduzca el nombre del objeto a crear sin espacios. Use mayúsculas para separar palabras (Por ejemplo: MyObject, Student, Teacher...). Se generará el archivo de clase CRUD, pero también archivos API, páginas para listar/agregar/editar/eliminar objetos y archivos SQL.
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definidos en %s): <strong> %s </strong>
@@ -64,7 +63,6 @@ MenusDefDescTooltip=Los menús proporcionados por su módulo / aplicación se de
 DictionariesDefDescTooltip=Los diccionarios proporcionados por su módulo / aplicación se definen en la matriz <strong>$this->dictionaries</strong> en el archivo descriptor del módulo. Puede editar este archivo manualmente o usar el editor incorporado. <br><br> Nota: Una vez definidos (y el módulo reactivado), los diccionarios también son visibles en el área de configuración para los usuarios administradores en %s.
 PermissionsDefDescTooltip=Los permisos proporcionados por su módulo / aplicación se definen en la matriz <strong>$this->rights</strong> en el archivo descriptor del módulo. Puede editar este archivo manualmente o usar el editor incorporado. <br><br> Nota: Una vez definidos (y el módulo reactivado), los permisos son visibles en la configuración de permisos predeterminada %s.
 HooksDefDesc=Defina en la propiedad <b>module_parts ['hooks'] </b>, en el descriptor de módulo, el contexto de los ganchos que desea administrar (puede encontrar una lista de contextos mediante una búsqueda en '<b>initHooks(</b>' en el código central) .<br> Edite el archivo gancho para agregar el código de sus funciones enganchadas (las funciones que se conectan se pueden encontrar mediante una búsqueda en '<b>executeHooks</b>' en el código central).
-TriggerDefDesc=Defina en el archivo de activación el código que desea ejecutar para cada evento empresarial ejecutado.
 SeeIDsInUse=Consulte ID en uso en su instalación.
 SeeReservedIDsRangeHere=Ver el rango de ID reservados
 ToolkitForDevelopers=Kit de herramientas para desarrolladores de Dolibarr

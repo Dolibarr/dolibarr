@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuration module Stripe
-StripeDesc=Ce module offre des pages pour autoriser les paiements par carte sur <a href="http://www.stripe.com" target="_blank">Stripe</a> par les clients. Elles peuvent êtres utilisées pour un paiement libre ou un paiement sur un objet particulier de Dolibarr (facture, commande, ... )
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Payez avec une carte bancaire ou Stripe
 FollowingUrlAreAvailableToMakePayments=Les URL suivantes sont disponibles pour permettre à un client de faire un paiement
 PaymentForm=Formulaire de paiement
@@ -28,7 +28,6 @@ AccountParameter=Paramètres du compte
 UsageParameter=Paramètres d'utilisation
 InformationToFindParameters=Informations pour trouver vos paramètres de compte %s
 STRIPE_CGI_URL_V2=URL du module CGI Stripe de paiement
-VendorName=Nom du vendeur
 CSSUrlForPaymentForm=URL feuille style css pour le formulaire de paiement
 NewStripePaymentReceived=Nouveau paiement Stripe reçu
 NewStripePaymentFailed=Nouveau paiement Stripe tenté mais en échec
@@ -69,4 +68,4 @@ ToOfferALinkForTestWebhook=Lien pour la configuration de Stripe WebHook pour app
 ToOfferALinkForLiveWebhook=Lien pour la configuration de Stripe WebHook pour appeler l'IPN (mode actif)
 PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la prochaine période.
 ClickHereToTryAgain=<a href="%s">Cliquez ici pour essayer à nouveau...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'Authentification Client Forte, la création d'une carte doit être effectuée à partir du backoffice de Stripe. Vous pouvez cliquer ici pour basculer sur la fiche client Stripe: %s

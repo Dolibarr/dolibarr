@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Ikke formår at få RSS-feed. Prøv at tilføje konstan
 ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Tilladelse til dette login kan defineres af din Dolibarr administrator fra menuen %s-> %s.
 ErrorForbidden3=Det ser ud til, at Dolibarr ikke bruges gennem en godkendt session. Se på Dolibarr installationsdokumentation for at vide mere om, hvordan man administrerer godkendelser (htaccess, mod_auth eller andet ...).
+ErrorForbidden4=Bemærk: Ryd dine browsercookies for at ødelægge eksisterende sessioner for dette login.
 ErrorNoImagickReadimage=Class Imagick findes ikke i dette PHP. Ingen forhåndsvisning kan være tilgængelig. Administratorer kan deaktivere denne fane fra menuen Setup - Display.
 ErrorRecordAlreadyExists=Optag allerede findes
 ErrorLabelAlreadyExists=Denne etiket eksisterer allerede
@@ -271,6 +272,8 @@ CheckVersionFail=Versionskontrol mislykkedes
 ErrorWrongFileName=Filens navn kan ikke indeholde __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Ikke i ordbogen om betalingsbetingelser, bedes du ændre.
 ErrorIsNotADraft=%s er ikke et udkast
+ErrorExecIdFailed=Kan ikke udføre kommandoen "id"
+ErrorBadCharIntoLoginName=Ikke godkendt tegn i login-navnet
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.

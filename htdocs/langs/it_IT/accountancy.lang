@@ -48,7 +48,7 @@ CountriesNotInEEC=Paesi al di fuori della CEE
 CountriesInEECExceptMe=Paesi nella CEE eccetto %s
 CountriesExceptMe=Tutti i paesi eccetto %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
@@ -286,7 +286,7 @@ ValidateMovements=Convalida i movimenti
 DescValidateMovements=Qualsiasi modifica o cancellazione di scrittura, lettura e cancellazione sarà vietata. Tutte le voci per un esercizio devono essere convalidate altrimenti la chiusura non sarà possibile
 
 ValidateHistory=Collega automaticamente
-AutomaticBindingDone=Collegamento automatico fatto
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Errore, non puoi cancellare la voce del piano dei conti perché è utilizzata
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
@@ -387,7 +387,8 @@ SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Vendita in CEE con IVA non nulla, quindi supponiamo che questa NON sia una vendita intracomunitaria e l'account suggerito sia l'account standard del prodotto.
 SaleEECWithoutVATNumber=La vendita nella CEE senza IVA ma la partita IVA di terzi non è definita. Eseguiamo il fallback sull'account del prodotto per le vendite standard. È possibile correggere l'ID IVA di terze parti o l'account del prodotto, se necessario.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Range of accounting account
 Calculated=Calcolato
@@ -404,6 +405,7 @@ NoJournalDefined=No journal defined
 Binded=Linee collegate
 ToBind=Linee da vincolare
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Accounting entries

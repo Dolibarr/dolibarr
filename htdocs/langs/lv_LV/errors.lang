@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Nespēj iegūt RSS barotni. Centieties, lai pievienotu 
 ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Atļaujas šajā lapā var definēt Dolibarr administrators no izvēlnes %s->%s.
 ErrorForbidden3=Šķiet, ka Dolibarr netiek izmantota, izmantojot autentiskums sesiju. Ieskatieties Dolibarr uzstādīšanas dokumentācijas zināt, kā pārvaldīt apstiprinājumi (Htaccess, mod_auth vai citu ...).
+ErrorForbidden4=Piezīme: notīriet pārlūkprogrammas sīkfailus, lai iznīcinātu esošās šī pieteikšanās sesijas.
 ErrorNoImagickReadimage=Klases Imagick nav atrodams šajā PHP. Priekšskatījums nav, var būt pieejamas. Administratori var atspējot šo uzlīmi no izvēlnes Setup - displejs.
 ErrorRecordAlreadyExists=Ieraksts jau eksistē
 ErrorLabelAlreadyExists=Šis nosaukums jau pastāv
@@ -271,6 +272,8 @@ CheckVersionFail=Versijas pārbaude neizdevās
 ErrorWrongFileName=Faila nosaukumā nedrīkst būt __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Nav Maksājumu nosacījumu vārdnīcā, lūdzu, modificējiet.
 ErrorIsNotADraft=%s nav melnraksts
+ErrorExecIdFailed=Nevar izpildīt komandu "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Jūsu PHP parametrs upload_max_filesize (%s) ir augstāks nekā PHP parametrs post_max_size (%s). Šī nav konsekventa iestatīšana.

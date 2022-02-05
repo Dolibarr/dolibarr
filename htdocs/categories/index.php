@@ -35,10 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-if (!$user->rights->categorie->lire) {
-	accessforbidden();
-}
-
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
@@ -51,6 +47,11 @@ if (is_numeric($type)) {
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categoryindex'));
+
+if (!$user->rights->categorie->lire) {
+	accessforbidden();
+}
+
 
 /*
  * View

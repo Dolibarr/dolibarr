@@ -136,7 +136,7 @@ if ($action != 'editlabel') {
 	$morehtmlref .= '</form>';
 }
 
-$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
 
 // Project
 if (!empty($conf->projet->enabled)) {

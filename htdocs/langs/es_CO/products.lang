@@ -239,4 +239,5 @@ ActionAvailableOnVariantProductOnly=Acción solo disponible en la variante de pr
 ProductsPricePerCustomer=Precios de productos por cliente
 ProductSupplierExtraFields=Atributos adicionales (precios de proveedores)
 DeleteLinkedProduct=Eliminar el producto secundario vinculado a la combinación
+AmountUsedToUpdateWAP=Cantidad a utilizar para actualizar el precio medio ponderado
 PMPValue=Precio promedio ponderado

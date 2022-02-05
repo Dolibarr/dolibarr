@@ -509,12 +509,14 @@ function getNumberInvoicesPieChart($mode)
 
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				/*$dataseries = array(array($langs->trans('InvoiceLate30Days'), $obj->nblate30)
+				/*
+				$dataseries = array(array($langs->trans('InvoiceLate30Days'), $obj->nblate30)
 									,array($langs->trans('InvoiceLate15Days'), $obj->nblate15 - $obj->nblate30)
 									,array($langs->trans('InvoiceLateMinus15Days'), $obj->nblatenow - $obj->nblate15)
 									,array($langs->trans('InvoiceNotLate'), $obj->nbnotlatenow - $obj->nbnotlate15)
 									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
-									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));*/
+									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
+				*/
 				$dataseries[$i]=array($langs->trans('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
 				$i++;
 			}
@@ -561,8 +563,9 @@ function getNumberInvoicesPieChart($mode)
 				$dolgraph->setShowLegend(2);
 				$dolgraph->setShowPercent(1);
 				$dolgraph->SetType(array('bars', 'bars', 'bars', 'bars', 'bars', 'bars'));
-				$dolgraph->setHeight('160');
-				$dolgraph->setWidth('400');
+				//$dolgraph->SetType(array('pie'));
+				$dolgraph->setHeight('160');	/* 160 min is required to show the 6 lines of legend */
+				$dolgraph->setWidth('450');
 				$dolgraph->setHideXValues(true);
 				if ($mode == 'customers') {
 					$dolgraph->draw('idgraphcustomerinvoices');
@@ -1193,11 +1196,6 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nobordernopadding nowrap">';
 					print $tmpinvoice->getNomUrl(1, '');
 					print '</td>';
-					print '<td width="20" class="nobordernopadding nowrap">';
-					if ($tmpinvoice->hasDelay()) {
-						print img_warning($langs->trans("Late"));
-					}
-					print '</td>';
 					print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 					$filename = dol_sanitizeFileName($obj->ref);
 					$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
@@ -1209,7 +1207,12 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nowrap tdoverflowmax100">';
 					print $societestatic->getNomUrl(1, 'customer');
 					print '</td>';
-					print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
+					print '<td class="right">';
+					print dol_print_date($db->jdate($obj->datelimite), 'day');
+					if ($tmpinvoice->hasDelay()) {
+						print img_warning($langs->trans("Late"));
+					}
+					print '</td>';
 					if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 						print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 					}

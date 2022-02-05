@@ -2,7 +2,7 @@
 Module64000Name=Impression en un clic
 Module64000Desc=Activer le système d'impression en 1 click
 PrintingSetup=Réglages du module Impression en 1 click
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
+PrintingDesc=Ce module ajoute un bouton Imprimer à divers modules pour permettre aux documents d'être imprimés directement sur une imprimante sans avoir besoin d'ouvrir le document dans une autre application.
 MenuDirectPrinting=Travaux d'impression en 1 clic
 DirectPrint=Imprimer en 1 clic
 PrintingDriverDesc=Paramètres de configuration pour le driver d'impression

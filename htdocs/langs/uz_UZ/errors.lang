@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=RSS tasmasini ololmadi. Xato xabarlari etarli ma'lumot 
 ErrorForbidden=Ruxsat yo'q. <br> Siz o'chirib qo'yilgan modulning sahifasiga, maydoniga yoki xususiyatiga yoki autentifikatsiya qilingan sessiyada bo'lmasdan yoki foydalanuvchingizga ruxsat berilmagan holda kirishga harakat qilasiz.
 ErrorForbidden2=Ushbu kirish uchun ruxsat sizning Dolibarr administratoringiz tomonidan %s-> %s menyusidan aniqlanishi mumkin.
 ErrorForbidden3=Dolibarr autentifikatsiya qilingan seans orqali ishlatilmaydi. Autentifikatsiyani qanday boshqarishni bilish uchun Dolibarrni sozlash bo'yicha hujjatlarni ko'rib chiqing (htaccess, mod_auth yoki boshqa ...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Imagick sinfi ushbu PHP-da mavjud emas. Hech qanday oldindan ko'rish mumkin emas. Administrator ushbu yorliqni O'rnatish - Displey menyusidan o'chirib qo'yishi mumkin.
 ErrorRecordAlreadyExists=Yozuv allaqachon mavjud
 ErrorLabelAlreadyExists=Ushbu yorliq allaqachon mavjud
@@ -271,6 +272,8 @@ CheckVersionFail=Versiyani tekshirib bo'lmadi
 ErrorWrongFileName=Fayl nomida __SOMETHING__ bo'lishi mumkin emas
 ErrorNotInDictionaryPaymentConditions=To'lov shartlari lug'atida yo'q, iltimos o'zgartiring.
 ErrorIsNotADraft=%s qoralama emas
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP parametringiz upload_max_filesize (%s) PHP post_max_size (%s) parametridan yuqori. Bu izchil o'rnatish emas.

@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Bemærk: eksisterende projekter
 SelectLinesOfTimeSpentToInvoice=Vælg tidslinjer, der ikke er faktureret, og masseforanstaltning "Generer faktura" for at fakturere dem
 ProjectTasksWithoutTimeSpent=Projektopgaver uden brugt tid
 FormForNewLeadDesc=Tak for at udfylde nedenstående formular for at kontakte os. Du kan også sende os en e -mail direkte til <b> %s </b>.
+StartDateCannotBeAfterEndDate=End date cannot be before start date

@@ -1,3 +1,0 @@
-# Dolibarr language file - Source file is en_US - admin
-AddRefInList=Display Customer/Vendor ref. info list (select list or combobox) and most of hyperlink.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
-AddAdressInList=Display Customer/Vendor adress info list (select list or combobox)<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".

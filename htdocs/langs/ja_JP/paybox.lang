@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBoxモジュールの設定
-PayBoxDesc=このモジュールは、上の支払いを可能にするためにページを提供して<a href="http://www.paybox.com" target="_blank">切符売り場</a>の顧客によって。これはフリーの支払いのためにまたは特定のDolibarrオブジェクトの支払いに用いることができる(請求書、発注、...)
+PayBoxDesc=このモジュールは、顧客による<a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox</a>での支払いを許可するページを提供する。これは、無料の支払いまたは特定のDolibarrオブジェクト（請求書、注文など）での支払いに使用できる。
 FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能 
 PaymentForm=支払い形態
 WelcomeOnPaymentPage=オンライン決済サービスへようこそ

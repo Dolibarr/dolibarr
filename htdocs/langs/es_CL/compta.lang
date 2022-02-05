@@ -126,7 +126,6 @@ AnnualByCompanies=Saldo de ingresos y gastos, por grupos predefinidos de cuenta
 AnnualByCompaniesDueDebtMode=Saldo de ingresos y gastos, detalle por grupos predefinidos, modo <b>%sReclamaciones-Deudas%s</b> escrito en <b>compromiso contable</b>
 AnnualByCompaniesInputOutputMode=Balance de ingresos y gastos, detalle por grupos predefinidos, modo <b>%sIngresos-Gastos%s</b> escrito en <b>contabilidad de efectivo</b>.
 RulesAmountWithTaxIncluded=- Las cantidades que se muestran son con todos los impuestos incluidos
-RulesResultInOut=- Incluye los pagos reales realizados en facturas, gastos, IVA y salarios. <br> - Se basa en las fechas de pago de las facturas, gastos, IVA y salarios. La fecha de donación para la donación.
 RulesCAIn=- Incluye todos los pagos efectivos de las facturas recibidas de los clientes. <br> - Se basa en la fecha de pago de estas facturas. <br>
 RulesCATotalSaleJournal=Incluye todas las líneas de crédito del diario Sale.
 RulesAmountOnInOutBookkeepingRecord=Incluye registro en su Libro mayor con cuentas de contabilidad que tiene el grupo "GASTOS" o "INGRESOS"

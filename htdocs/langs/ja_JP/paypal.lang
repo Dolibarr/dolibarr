@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=ペイパルモジュールの設定
-PaypalDesc=このモジュールでは、<a href="http://www.paypal.com" target="_blank"> PayPal</a>を介した顧客による支払いが可能。これは、アドホック支払いまたはDolibarrオブジェクト(請求書、注文など)に関連する支払いに使用できる。
+PaypalDesc=このモジュールでは、<a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal</a>を介した顧客による支払いが可能。これは、アドホック支払いまたはDolibarrオブジェクト（請求書、注文など）に関連する支払いに使用できる。
 PaypalOrCBDoPayment=PayPalで支払う(カードまたはPayPal)
 PaypalDoPayment=PayPalで支払う
 PAYPAL_API_SANDBOX=モード試験/サンドボックス

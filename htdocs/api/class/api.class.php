@@ -110,6 +110,8 @@ class DolibarrApi
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 		unset($object->table_rowid);
+		unset($object->pass);
+		unset($object->pass_indatabase);
 
 		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
@@ -292,48 +294,21 @@ class DolibarrApi
 	/**
 	 * Return if a $sqlfilters parameter is valid
 	 *
-	 * @param  string   $sqlfilters     sqlfilter string
-	 * @return boolean                  True if valid, False if not valid
+	 * @param  	string   		$sqlfilters     sqlfilter string
+	 * @param	string			$error			Error message
+	 * @return 	boolean|string   				True if valid, False if not valid
 	 */
-	protected function _checkFilters($sqlfilters)
+	protected function _checkFilters($sqlfilters, &$error = '')
 	{
 		// phpcs:enable
-		//$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-		//$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
-		$tmp = $sqlfilters;
-		$ok = 0;
-		$i = 0; $nb = strlen($tmp);
-		$counter = 0;
-		while ($i < $nb) {
-			if ($tmp[$i] == '(') {
-				$counter++;
-			}
-			if ($tmp[$i] == ')') {
-				$counter--;
 
-				// TODO: After a closing ), only a " or " or " and " or end of string is allowed.
-			}
-			if ($counter < 0) {
-				$error = "Bad sqlfilters (too many closing parenthesis) = ".$sqlfilters;
-				dol_syslog($error, LOG_WARNING);
-				return false;
-			}
-			$i++;
-		}
-
-		if ($counter > 0) {
-			$error = "Bad sqlfilters (too many opening parenthesis) = ".$sqlfilters;
-			dol_syslog($error, LOG_WARNING);
-			return false;
-		}
-
-		return true;
+		return dolCheckFilters($sqlfilters, $error);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Function to forge a SQL criteria
+	 * Function to forge a SQL criteria from a Generic filter string
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.
@@ -342,51 +317,6 @@ class DolibarrApi
 	 */
 	protected static function _forge_criteria_callback($matches)
 	{
-		// phpcs:enable
-		global $db;
-
-		//dol_syslog("Convert matches ".$matches[1]);
-		if (empty($matches[1])) {
-			return '';
-		}
-		$tmp = explode(':', $matches[1], 3);
-
-		if (count($tmp) < 3) {
-			return '';
-		}
-
-		// Sanitize operand
-		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
-
-		// Sanitize operator
-		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
-		// Only some operators are allowed.
-		if (! in_array($operator, array('LIKE', 'ULIKE', '<', '>', '<=', '>=', '=', '<>', 'IS', 'ISNOT', 'IN'))) {
-			return '';
-		}
-		if ($operator == 'ISNOT') {
-			$operator = 'IS NOT';
-		}
-
-		// Sanitize value
-		$tmpescaped = trim($tmp[2]);
-		$regbis = array();
-		if ($operator == 'IN') {
-			$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
-		} elseif (in_array($operator, array('<', '>', '<=', '>=', '=', '<>'))) {
-			if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {	// If 'YYYY-MM-DD HH:MM:SS+X'
-				$tmpescaped = "'".$db->escape($regbis[1])."'";
-			} else {
-				$tmpescaped = ((float) $tmpescaped);
-			}
-		} else {
-			if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-				$tmpescaped = "'".$db->escape($regbis[1])."'";
-			} else {
-				$tmpescaped = "'".$db->escape($tmpescaped)."'";
-			}
-		}
-
-		return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
+		return dolForgeCriteriaCallback($matches);
 	}
 }

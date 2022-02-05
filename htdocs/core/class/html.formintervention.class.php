@@ -64,15 +64,15 @@ class FormIntervention
 	public function select_interventions($socid = -1, $selected = '', $htmlname = 'interventionid', $maxlength = 16, $showempty = 1, $draftonly = false)
 	{
 		// phpcs:enable
-		global $db, $user, $conf, $langs;
+		global $user, $conf, $langs;
 
 		$out = '';
 
 		$hideunselectables = false;
 
 		// Search all contacts
-		$sql = 'SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter as f';
+		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut";
+		$sql .= " FROM ".$this->db->prefix()."fichinter as f";
 		$sql .= " WHERE f.entity = ".$conf->entity;
 		if ($socid != '') {
 			if ($socid == '0') {

@@ -47,11 +47,14 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 	$head[$h][2] = 'card';
 	$h++;
 
+	/*
 	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_contact.php?id='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("ContactsAddresses");
 	$head[$h][2] = 'contact';
 	$h++;
+	*/
 
+	/*
 	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?conforboothid='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("Attendees");
 	$head[$h][2] = 'attendees';
@@ -77,6 +80,7 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbAttendees.'</span>';
 	}
 	$h++;
+	*/
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -188,7 +192,7 @@ function conferenceorboothProjectPrepareHead($object)
  * @param	ConferenceOrBoothAttendee	$object		ConferenceOrBoothAttendee
  * @return 	array					Array of tabs
  */
-function conferenceorboothattendeePrepareHead($object)
+function conferenceorboothAttendeePrepareHead($object)
 {
 	global $db, $langs, $conf;
 

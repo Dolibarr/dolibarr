@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Obs: befintliga projekt med all
 SelectLinesOfTimeSpentToInvoice=Välj rader med tid som inte har fakturerats och sedan massåtgärden "Generera faktura" för att fakturera dem
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
+StartDateCannotBeAfterEndDate=Slutdatum kan inte vara före startdatum

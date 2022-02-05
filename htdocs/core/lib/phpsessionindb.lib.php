@@ -117,7 +117,7 @@ function dolSessionWrite($sess_id, $val)
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
-			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."')";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255))."')";
 
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
@@ -140,7 +140,7 @@ function dolSessionWrite($sess_id, $val)
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
-			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."')";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255)."')";
 			var_dump($insert_query);
 			$result = $dbsession->query($insert_query);
 			if (!$result) {

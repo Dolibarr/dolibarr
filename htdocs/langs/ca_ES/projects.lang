@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Nota: els projectes existents a
 SelectLinesOfTimeSpentToInvoice=Seleccioneu les línies de temps que no es facturen i, a continuació, feu una acció massiva "Genera factura" per facturar-les
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
+StartDateCannotBeAfterEndDate=La data de fi no pot ser anterior a la d'inici

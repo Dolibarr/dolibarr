@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Барои гирифтани RSS канал ноком
 ErrorForbidden=Дастраси манъ аст. <br> Шумо кӯшиши дастрасӣ ба саҳифа, минтақа ё хусусияти модули маъюб ё бидуни ҷаласаи тасдиқшуда ё ба корбари шумо иҷозат надоданро доред.
 ErrorForbidden2=Иҷозати ин вурудро мудири Dolibarr аз менюи %s-> %s муайян карда метавонад.
 ErrorForbidden3=Чунин ба назар мерасад, ки Dolibarr тавассути як ҷаласаи тасдиқшуда истифода намешавад. Ба ҳуҷҷатҳои танзимкунии Dolibarr нигаред, то бидонед, ки чӣ тавр идора кардани аутентификатсия (htaccess, mod_auth ё дигар ...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Синфи Imagick дар ин PHP ёфт намешавад. Ҳеҷ гуна пешнамоиш дастрас нест. Администраторҳо метавонанд ин ҷадвалро аз менюи Setup - Display намоиш диҳанд.
 ErrorRecordAlreadyExists=Сабт аллакай вуҷуд дорад
 ErrorLabelAlreadyExists=Ин нишона аллакай вуҷуд дорад
@@ -271,6 +272,8 @@ CheckVersionFail=Санҷиши версия ноком шуд
 ErrorWrongFileName=Номи файл наметавонад дар он __SOMETHING__ дошта бошад
 ErrorNotInDictionaryPaymentConditions=Дар луғати шартҳои пардохт нест, лутфан тағир диҳед.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Параметри PHP -и шумо upload_max_filesize (%s) аз параметрҳои PHP post_max_size (%s) баландтар аст. Ин танзимоти пайдарпай нест.

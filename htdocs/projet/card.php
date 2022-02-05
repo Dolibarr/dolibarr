@@ -287,7 +287,7 @@ if (empty($reshook)) {
 			$object->usage_organize_event = (GETPOST('usage_organize_event', 'alpha') == 'on' ? 1 : 0);
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -658,7 +658,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Opportunity status
 		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityStatus").'</td>';
 		print '<td class="maxwidthonsmartphone">';
-		print $formproject->selectOpportunityStatus('opp_status', GETPOST('opp_status') ?GETPOST('opp_status') : $object->opp_status, 1, 0, 0, 0, '', 0, 1);
+		print $formproject->selectOpportunityStatus('opp_status', GETPOSTISSET('opp_status') ? GETPOST('opp_status') : $object->opp_status, 1, 0, 0, 0, '', 0, 1);
 		print '</tr>';
 
 		// Opportunity probability
@@ -1090,14 +1090,14 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			   print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
 			}*/
 			if (strcmp($object->opp_amount, '')) {
-				print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
+				print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
 
 			// Opportunity Weighted Amount
 			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
 			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) {
-				print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
+				print '<span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
 		}
@@ -1117,7 +1117,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 		if (strcmp($object->budget_amount, '')) {
-			print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		print '</td></tr>';
 

@@ -668,7 +668,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	.row1withhead{
-		height: calc(45% - 100px);
+		height: unset;
 	}
 
 	div#moreinfo, div#infowarehouse {

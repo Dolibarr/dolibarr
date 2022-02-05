@@ -137,7 +137,11 @@ class Login
 		if (empty($tmpuser->api_key) || $reset) {
 			$tmpuser->getrights();
 			if (empty($tmpuser->rights->user->self->creer)) {
-				throw new RestException(403, 'User need write permission on itself to reset its API token');
+				if (empty($tmpuser->api_key)) {
+					throw new RestException(403, 'No API token set for this user and user need write permission on itself to reset its API token');
+				} else {
+					throw new RestException(403, 'User need write permission on itself to reset its API token');
+				}
 			}
 
 			// Generate token for user

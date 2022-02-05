@@ -27,4 +27,6 @@ InputPerDay=Eingang pro Tag
 InputPerWeek=Eingang pro Woche
 ResourceNotAssignedToProject=Zugewiesen zu Projekt
 ResourceNotAssignedToTheTask=Nicht der Aufgabe zugewiesen
+TimeSpentForIntervention=Zeitaufwände
 TimeSpentForInvoice=Zeitaufwände
+NewInter=Neuer Einsatz

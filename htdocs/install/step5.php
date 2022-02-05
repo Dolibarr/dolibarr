@@ -166,7 +166,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 		$objMod = new $modName($db);
 		$result = $objMod->init();
 		if (!$result) {
-			print 'ERROR in activating module file='.$file;
+			print "ERROR: failed to init module file = ".$file;
 		}
 
 		if ($db->connected) {
@@ -286,7 +286,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 
 						$res = activateModule($modtoactivatenew, 1);
 						if (!empty($res['errors'])) {
-							print 'ERROR in activating module file='.$file;
+							print 'ERROR: failed to activateModule() file='.$file;
 						}
 					}
 				}

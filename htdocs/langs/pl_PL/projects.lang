@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Uwaga: nie będzie to miało wp
 SelectLinesOfTimeSpentToInvoice=Wybierz wiersze spędzonego czasu, które nie zostały rozliczone, a następnie wykonaj zbiorcze działanie „Wygeneruj fakturę”, aby je rozliczyć
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
+StartDateCannotBeAfterEndDate=Data zakończenia nie może być wcześniejsza niż data rozpoczęcia

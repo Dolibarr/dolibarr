@@ -410,7 +410,13 @@ class Skill extends CommonObject
 		$skilldet = new Skilldet($this->db);
 		$this->lines = $skilldet->fetchAll('ASC', '', '', '', array('fk_skill' => $this->id), '');
 
-		return (count($this->lines) > 0 ) ? $this->lines : array();
+		if (is_array($this->lines)) {
+			return (count($this->lines) > 0) ? $this->lines : array();
+		} elseif ($this->lines < 0) {
+			$this->errors = array_merge($this->errors, $skilldet->errors);
+			$this->error = $skilldet->error;
+			return $this->lines;
+		}
 	}
 
 
@@ -972,7 +978,7 @@ class Skill extends CommonObject
 		$this->lines = array();
 
 		$objectline = new SkillLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_skill = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'rankorder', 0, 0, array('customsql'=>'fk_skill = '.$this->id));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

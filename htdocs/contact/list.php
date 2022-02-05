@@ -102,8 +102,11 @@ $search_roles = GETPOST("search_roles", 'array');
 $search_level = GETPOST("search_level", "array");
 $search_stcomm = GETPOST('search_stcomm', 'int');
 
-if ($search_status == '') {
+if ($search_status === '') {
 	$search_status = 1; // always display active customer first
+}
+if ($search_no_email === '') {
+	$search_no_email = -1;
 }
 
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -1166,7 +1169,7 @@ while ($i < min($num, $limit)) {
 	}
 	// EMail
 	if (!empty($arrayfields['p.email']['checked'])) {
-		print '<td class="nowraponall tdmaxoverflow300">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
+		print '<td class="nowraponall tdoverflowmax300">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

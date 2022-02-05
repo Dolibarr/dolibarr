@@ -236,7 +236,7 @@ class Evaluation extends CommonObject
 					$line = new Evaluationline($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
-					$line->required_rank = $required->rank;
+					$line->required_rank = $required->rankorder;
 					$line->fk_rank = 0;
 
 					$res = $line->create($user, $notrigger);

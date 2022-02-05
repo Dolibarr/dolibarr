@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=RSS beslemesi alınamıyor. Eğer hata mesajları yeter
 ErrorForbidden=Erişim reddedildi. <br>Devre dışı bir modül alanına ya da özelliğine veya kimlik doğrulaması yapmadan ya da kullanıcınızın izini olmadan bir sayfaya erişmek istediniz.
 ErrorForbidden2=Bu oturum açma için izin Dolibarr yöneticiniz tarafından %s->%s menüsünden tanımlanabilir.
 ErrorForbidden3=Dolibarr bir kimlik doğrulama oturumu üzerinden kullanılmamış gibi görünüyor. Kimlik doğrulama nasıl yönetileceğini öğrenmek Dolibarr kurulum belgelerine bir göz atın (htaccess, mod_auth veya diğer ...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Bu PHP Class Imagick yok. Önizleme kullanılır olmayabilir. Yöneticiler Kurulum - Ekran menüsünde bu sekmeyi devre dışı bırakabilir.
 ErrorRecordAlreadyExists=Kayıt zaten var
 ErrorLabelAlreadyExists=Bu etiket zaten var
@@ -271,6 +272,8 @@ CheckVersionFail=Version check fail
 ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP'nizdeki upload_max_filesize (%s) parametresi, post_max_size (%s) PHP parametresinden daha yüksek. Bu tutarlı bir kurulum değil.
