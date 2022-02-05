@@ -321,7 +321,7 @@ class FormSetup
 	 */
 	public function addItemsFromParamsArray($params)
 	{
-		if (!array($params)) { return false; }
+		if (!is_array($params) || empty($params)) { return false; }
 		foreach ($params as $confKey => $param) {
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
