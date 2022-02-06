@@ -280,6 +280,10 @@ if ($action == 'update') {
 
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
 
+	if (GETPOST('dol_resetcache')) {
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+	}
+
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".'&mode='.$mode.(GETPOSTISSET('page_y') ? '&page_y='.GETPOST('page_y', 'int') : ''));
 	exit;
 }
@@ -309,6 +313,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" id="mode" name="mode" value="'.dol_escape_htmltag($mode).'">';
+print '<input type="hidden" name="dol_resetcache" value="1">';
 
 $head = ihm_prepare_head();
 
@@ -649,6 +654,7 @@ if ($mode == 'login') {
 
 print '<div class="center">';
 print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
+print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 print '</div>';
 
 print '</form>';
