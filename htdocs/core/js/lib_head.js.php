@@ -562,7 +562,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 		value: value
 	},
 	function() {	/* handler for success of post */
-		console.log("url request success forcereload="+forcereload+" value="+value);
+		console.log("Ajax url request to set constant is a success. forcereload="+forcereload+" value="+value);
 		if (value == 0) {
 			$("#set_" + code).show();
 			$("#del_" + code).hide();
@@ -642,7 +642,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 		token: token
 	},
 	function() {
-		console.log("url request success forcereload="+forcereload);
+		console.log("Ajax url request to delete constant is success forcereload="+forcereload);
 		$("#del_" + code).hide();
 		$("#set_" + code).show();
 		$.each(input, function(type, data) {
