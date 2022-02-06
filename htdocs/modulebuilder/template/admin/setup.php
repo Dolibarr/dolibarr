@@ -95,7 +95,7 @@ $setupnotempty = 0;
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 0;
 // Convert arrayofparameter into a formSetup object
-if (!empty($arrayofparameters) && $useFormSetup && (float) DOL_VERSION >= 15) {
+if ($useFormSetup && (float) DOL_VERSION >= 15) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 	$formSetup = new FormSetup($db);
 
