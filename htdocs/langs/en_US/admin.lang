@@ -1917,6 +1917,7 @@ ConfFileMustContainCustom=Installing or building an external module from applica
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
 HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
+UseBorderOnTable=Active border on tables
 BtnActionColor=Color of the action button
 TextBtnActionColor=Text color of the action button
 TextTitleColor=Text color of Page title

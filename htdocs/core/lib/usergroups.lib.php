@@ -503,6 +503,25 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</tr>';
 	}
 
+	// BorderTableActive
+	if ($foruserprofile) {
+	} else {
+		$default = $langs->trans('No');
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("UseBorderOnTable").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		if ($edit) {
+			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1);
+			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
+		} else {
+			print yn($conf->global->THEME_ELDY_USEBORDERONTABLE);
+		}
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+		print '</td>';
+		print '</tr>';
+	}
+
 	// Background color THEME_ELDY_BACKBODY
 	if ($foruserprofile) {
 		/*
