@@ -2807,14 +2807,15 @@ class Ticket extends CommonObject
 
 								// altairis: dont try to send email when no recipient
 								if (!empty($sendto)) {
-									$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
+									$result = $this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
+									if ($result) {
+										// update last_msg_sent date
+										$object->fetch($object->id);
+										$object->date_last_msg_sent = dol_now();
+										$object->update($user);
+									}
 								}
 							}
-
-							// update last_msg_sent date
-							$object->fetch($object->id);
-							$object->date_last_msg_sent = dol_now();
-							$object->update($user);
 						}
 					}
 				}
@@ -2845,7 +2846,7 @@ class Ticket extends CommonObject
 	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
-	 * @return void
+	 * @return boolean     					True if mail sent to at least one receiver, false otherwise
 	 */
 	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
 	{
@@ -2853,7 +2854,7 @@ class Ticket extends CommonObject
 
 		if ($conf->global->TICKET_DISABLE_ALL_MAILS) {
 			dol_syslog(get_class($this).'::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
-			return '';
+			return false;
 		}
 
 		$langs->load("mails");
@@ -2872,6 +2873,7 @@ class Ticket extends CommonObject
 		}
 
 		$from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
+		$is_sent = false;
 		if (is_array($array_receiver) && count($array_receiver) > 0) {
 			foreach ($array_receiver as $key => $receiver) {
 				$deliveryreceipt = 0;
@@ -2893,6 +2895,7 @@ class Ticket extends CommonObject
 					$result = $mailfile->sendfile();
 					if ($result) {
 						setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($receiver, 2)), null, 'mesgs');
+						$is_sent = true;
 					} else {
 						$langs->load("other");
 						if ($mailfile->error) {
@@ -2911,6 +2914,7 @@ class Ticket extends CommonObject
 			$langs->load("other");
 			setEventMessages($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage'), null, 'warnings');
 		}
+		return $is_sent;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
