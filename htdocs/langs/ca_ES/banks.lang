@@ -181,4 +181,4 @@ BankColorizeMovementName2=Color de fons pel moviment de crèdit
 IfYouDontReconcileDisableProperty=Si no feu cap conciliació bancària en alguns comptes bancaris, desactiveu la propietat "%s" per a eliminar aquest advertiment.
 NoBankAccountDefined=No s'ha definit cap compte bancari
 NoRecordFoundIBankcAccount=No s'ha trobat cap registre al compte bancari. Normalment, això passa quan un registre s’ha suprimit manualment de la llista de transaccions del compte bancari (per exemple, durant una conciliació del compte bancari). Una altra raó és que el pagament es va registrar quan es va desactivar el mòdul "%s".
-AlreadyOneBankAccount=Already one bank account defined
+AlreadyOneBankAccount=Ja s'ha definit un compte bancari

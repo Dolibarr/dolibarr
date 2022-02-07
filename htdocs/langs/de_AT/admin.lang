@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Publisher=Hausgeber
 VersionProgram=Versionsnummer
 VersionLastInstall=Erstinstallationsversion
@@ -159,3 +161,5 @@ RESTRICT_ON_IP=Erlauben Sie nur den Zugriff auf eine Host-IP (Platzhalter nicht 
 FeatureNotAvailableWithReceptionModule=Funktion nicht verfügbar, wenn das Modul Empfang aktiviert ist
 EmailTemplate=Vorlage für E-Mail
 YouShouldDisablePHPFunctions=PHP Funktionen sollten deaktiviert werden
+IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
+IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax

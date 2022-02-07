@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Nadace
 Version=Verze
 Publisher=Vydavatel
@@ -343,7 +343,7 @@ StepNb=Krok %s
 FindPackageFromWebSite=Najděte balíček, který poskytuje funkce, které potřebujete (například na oficiálním webu %s).
 DownloadPackageFromWebSite=Stáhnout balíček (například z oficiálního webu %s).
 UnpackPackageInDolibarrRoot=Rozbalte soubor balíčku do adresáře, vyhrazenému pro externí moduly: <b>%s</b>
-UnpackPackageInModulesRoot=Chcete-li nasadit / nainstalovat externí modul, rozbalte / rozbalte zabalené soubory do adresáře serveru určeného pro externí moduly: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Zavedení modulu je dokončeno. Musíte však povolit a nastavit modul v aplikaci přejděte na moduly nastavení stránky: <a href="%s"> %s </a>.
 NotExistsDirect=Alternativní kořenový adresář není definován. <br>
 InfDirAlt=Od verze 3 je možné definovat alternativní kořenovou složku. To umožňuje ukládat na stejné místo plug-iny a vlastní šablony. <br> Stačí vytvořit adresář v kořenovém adresáři Dolibarr (např.: custom). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Instalace nebo sestavení externího modulu z aplikace
 HighlightLinesOnMouseHover=Zvýrazněte řádky tabulky, když pohyb myší projde
 HighlightLinesColor=Zvýrazněte barvu čáry, když myš přejde (použijte "ffffff"aby nebylo zvýrazněno)
 HighlightLinesChecked=Zvýrazněte barvu čáry, když je zaškrtnuta (pro zvýraznění použijte "ffffff")
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Barva textu titulku stránky
 LinkColor=Barva odkazů
 PressF5AfterChangingThis=Stisknutím klávesy CTRL + F5 na klávesnici nebo vymazat mezipaměť prohlížeče Po změně této hodnoty, aby bylo účinné
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

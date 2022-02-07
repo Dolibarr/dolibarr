@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Dự án được tạo bởi trình thu thập e
 TicketCreatedByEmailCollector=Vé được tạo bởi trình thu thập email từ email MSGID %s
 OpeningHoursFormatDesc=Sử dụng một - để tách giờ mở và đóng cửa. <br> Sử dụng một khoảng trắng để nhập các phạm vi khác nhau. <br> Ví dụ: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Khu vực xuất khẩu

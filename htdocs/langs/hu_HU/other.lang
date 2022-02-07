@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=A projektet létrehozva az e-mail gyűjtő által
 TicketCreatedByEmailCollector=A jegy létrehozva az e-mail gyűjtő által az MSGID %s e-mailből
 OpeningHoursFormatDesc=A nyitvatartási időket (-tól-ig) kötőjellel (-) válassza el. <br> Használjon szóközt a különböző idősávok megadásához. <br> Példa: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Az export területén

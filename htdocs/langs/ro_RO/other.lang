@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Proiect creat de colectorul de email-uri din emai
 TicketCreatedByEmailCollector=Tichet creat de colectorul de email-uri din email-ul cu MSGID %s
 OpeningHoursFormatDesc=Foloseşte un - pentru a separa orele de lucru.<br>Foloseşte un spaţiu pentru a introduce intervale oarare diferite.<br>Exemplu: 8-12 14-18
 SuffixSessionName=Sufix pentru numele sesiunii
+LoginWith=Autentificare cu %s
 
 ##### Export #####
 ExportsArea=Export date

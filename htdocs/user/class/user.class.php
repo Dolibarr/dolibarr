@@ -1434,7 +1434,7 @@ class User extends CommonObject
 				$this->db->free($resqltochecklogin);
 			}
 		}
-		if ($this->email !== '') {
+		if (!empty($this->email)) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -1823,7 +1823,7 @@ class User extends CommonObject
 				}
 			}
 		}
-		if (!empty($this->oldcopy) && $this->email !== '' && $this->oldcopy->email != $this->email) {
+		if (!empty($this->oldcopy) && !empty($this->email) && $this->oldcopy->email != $this->email) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {

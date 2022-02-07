@@ -24,4 +24,4 @@ SalariesStatistics=Statistiques
 SalariesAndPayments=Salaires et paiements
 ConfirmDeleteSalaryPayment=Voulez-vous supprimer ce paiement de salaire ?
 FillFieldFirst=Remplissez d'abord le champ de l'employé
-UpdateAmountWithLastSalary=Set amount with last salary
+UpdateAmountWithLastSalary=Fixer le montant avec le dernier salaire

@@ -13,6 +13,7 @@ ShowProject=Zeige Projekt
 SetProject=Projekt setzen
 TimeSpentByYou=Dein Zeitaufwand
 MyTimeSpent=Mein Zeitaufwand
+TaskDescription=Aufgaben-Beschreibung
 NewTask=Neue Aufgabe
 MyProjectsArea=Mein Projektbereich
 GoToListOfTimeConsumed=Zur Stundenaufwandsliste wechseln

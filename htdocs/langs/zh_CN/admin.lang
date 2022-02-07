@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=机构
 Version=版本
 Publisher=出版者
@@ -343,7 +343,7 @@ StepNb=第 %s 步
 FindPackageFromWebSite=Find a package that provides the features you need (for example on the official web site %s).
 DownloadPackageFromWebSite=Download package (for example from the official web site %s).
 UnpackPackageInDolibarrRoot=Unpack/unzip the packaged files into your Dolibarr server directory: <b>%s</b>
-UnpackPackageInModulesRoot=To deploy/install an external module, unpack/unzip the packaged files into the server directory dedicated to external modules:<br><b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Module deployment is finished. You must however enable and setup the module in your application by going to the page setup modules: <a href="%s">%s</a>.
 NotExistsDirect=未设置可选备用根目录。<br>
 InfDirAlt=自 v3 版本开始，Dolibarr 可以定义备用根目录地址。这令您可以将插件和自定义模板保存至同一位置。<br>您只需在Dolibarr的根目录下创建一个目录(例如custom)。<br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=从应用程序安装或构建外部模块需要将模
 HighlightLinesOnMouseHover=当鼠标经过表格明细时高亮显示
 HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
 HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=页面标题的文字颜色
 LinkColor=颜色链接
 PressF5AfterChangingThis=在键盘上按CTRL + F5或更改此值后清除浏览器缓存以使其生效
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

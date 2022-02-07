@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Қор
 Version=Нұсқа
 Publisher=Баспа
@@ -343,7 +343,7 @@ StepNb=%s қадамы
 FindPackageFromWebSite=Сізге қажет мүмкіндіктерді беретін пакетті табыңыз (мысалы, %s ресми веб -сайтында).
 DownloadPackageFromWebSite=Пакетті жүктеңіз (мысалы, %s ресми сайтынан).
 UnpackPackageInDolibarrRoot=Бумаланған файлдарды Dolibarr серверінің каталогына ашыңыз/ашыңыз: <b> %s </b>
-UnpackPackageInModulesRoot=Сыртқы модульді орналастыру/орнату үшін, оралған файлдарды сыртқы модульдерге арналған сервер каталогына ашыңыз/ашыңыз: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Модульді орналастыру аяқталды. Бетті орнату модульдеріне өту арқылы сіз қолданбадағы модульді қосуыңыз керек: <a href="%s"> %s </a>.
 NotExistsDirect=Балама түбірлік каталог бар каталогқа анықталмаған. <br>
 InfDirAlt=3 нұсқасынан бастап балама түбірлік каталогты анықтауға болады. Бұл арнайы каталогта, қосылатын модульдерде және реттелетін үлгілерді сақтауға мүмкіндік береді. <br> Dolibarr түбірінде каталог жасаңыз (мысалы: реттелетін). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Қолданбадан сыртқы модульді �
 HighlightLinesOnMouseHover=Тышқанды жылжыту кезінде кесте сызықтарын бөлектеңіз
 HighlightLinesColor=Тінтуір өткен кезде сызықтың түсін бөлектеңіз (ерекшелеу үшін 'ffffff' пайдаланыңыз)
 HighlightLinesChecked=Жолдың түсін тексерген кезде бөлектеңіз (ерекшелеу үшін 'ffffff' пайдаланыңыз)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Бет атауының мәтін түсі
 LinkColor=Сілтемелердің түсі
 PressF5AfterChangingThis=Бұл мәнді өзгерткеннен кейін пернетақтадағы CTRL+F5 пернелерін басыңыз немесе шолғыштың кэшін тазалаңыз
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash
