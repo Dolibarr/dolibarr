@@ -424,6 +424,33 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
+		if ($action == 'TICKET_CLOSE') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
+				$object->fetchObjectLinked($object->id, $object->element, null, 'fichinter');
+				if ($object->linkedObjectsIds) {
+					foreach ($object->linkedObjectsIds['fichinter'] as $fichinter_id) {
+						$fichinter = new Fichinter($this->db);
+						$fichinter->fetch($fichinter_id);
+						if ($fichinter->statut == Fichinter::STATUS_DRAFT) {
+							$result = $fichinter->setValid($user);
+							if (!$result) {
+								$this->errors[] = $fichinter->error;
+								$error++;
+							}
+						}
+						if ($fichinter->statut < Fichinter::STATUS_CLOSED) {
+							$result = $fichinter->setStatut(Fichinter::STATUS_CLOSED);
+							if (!$result) {
+								$this->errors[] = $fichinter->error;
+								$error++;
+							}
+						}
+					}
+				}
+			}
+		}
+
 		return 0;
 	}
 

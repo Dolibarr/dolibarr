@@ -1803,32 +1803,6 @@ class Ticket extends CommonObject
 			if ($resql) {
 				$error = 0;
 
-				// Valid and close fichinter linked
-				if (!empty($conf->ficheinter->enabled) && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
-					dol_syslog("We have closed the ticket, so we close all linked interventions");
-					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
-					if ($this->linkedObjectsIds) {
-						foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
-							$fichinter = new Fichinter($this->db);
-							$fichinter->fetch($fichinter_id);
-							if ($fichinter->statut == 0) {
-								$result = $fichinter->setValid($user);
-								if (!$result) {
-									$this->errors[] = $fichinter->error;
-									$error++;
-								}
-							}
-							if ($fichinter->statut < 3) {
-								$result = $fichinter->setStatut(3);
-								if (!$result) {
-									$this->errors[] = $fichinter->error;
-									$error++;
-								}
-							}
-						}
-					}
-				}
-
 				// Call trigger
 				$result = $this->call_trigger('TICKET_CLOSE', $user);
 				if ($result < 0) {
