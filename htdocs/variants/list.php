@@ -293,7 +293,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 
 $sql .= " GROUP BY ";
-foreach($object->fields as $key => $val) {
+foreach ($object->fields as $key => $val) {
 	$sql .= "t." . $key . ", ";
 }
 // Add fields from extrafields
@@ -654,9 +654,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	// Extra fields
-//	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-//	print '<td class="right">'.$attribute->countChildValues().'</td>';
-//	print '<td class="right">'.$attribute->countChildProducts().'</td>';
+	//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	$key = 'nb_of_values';
 	if (!empty($arrayfields[$key]['checked'])) {
 		print '<td class="center">';

@@ -981,9 +981,9 @@ class ProductAttribute extends CommonObject
 		if ($position > 1) {
 			$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int) $position);
 			$sql .= " WHERE entity IN (" . getEntity('product') . ")";
-			$sql .= " AND position = " . ((int)($position - 1));
+			$sql .= " AND position = " . ((int) ($position - 1));
 			if ($this->db->query($sql)) {
-				$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int)($position - 1));
+				$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int) ($position - 1));
 				$sql .= ' WHERE rowid = ' . ((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
@@ -1007,9 +1007,9 @@ class ProductAttribute extends CommonObject
 		if ($position < $max) {
 			$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int) $position);
 			$sql .= " WHERE entity IN (" . getEntity('product') . ")";
-			$sql .= " AND position = " . ((int)($position + 1));
+			$sql .= " AND position = " . ((int) ($position + 1));
 			if ($this->db->query($sql)) {
-				$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int)($position + 1));
+				$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int) ($position + 1));
 				$sql .= ' WHERE rowid = ' . ((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
