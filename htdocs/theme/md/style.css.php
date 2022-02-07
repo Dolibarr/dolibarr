@@ -4883,7 +4883,7 @@ tr.visible {
 
 .websiteformtoolbar {
 	position: sticky;
-	top: <?php echo $disableimages ? '36px' : '50px'; ?>;
+	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '36px' : '50px') : '0'; ?>;
 }
 
 .exampleapachesetup {
