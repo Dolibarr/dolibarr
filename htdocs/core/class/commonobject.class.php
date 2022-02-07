@@ -3127,9 +3127,9 @@ abstract class CommonObject
 
 			$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int) $rang);
 			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
-			$sql .= " AND " . $fieldposition . " = " . ((int)($rang - 1));
+			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
 			if ($this->db->query($sql)) {
-				$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int)($rang - 1));
+				$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int) ($rang - 1));
 				$sql .= ' WHERE rowid = ' . ((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
@@ -3158,9 +3158,9 @@ abstract class CommonObject
 
 			$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int) $rang);
 			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
-			$sql .= " AND " . $fieldposition . " = " . ((int)($rang + 1));
+			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang + 1));
 			if ($this->db->query($sql)) {
-				$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int)($rang + 1));
+				$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int) ($rang + 1));
 				$sql .= ' WHERE rowid = ' . ((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);

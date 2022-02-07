@@ -770,15 +770,15 @@ class ProductCombination
 			}
 
 			if ($forced_weightvar === false) {
-				$weight_impact += (float)price2num($variations[$currcombattr][$currcombval]['weight']);
+				$weight_impact += (float) price2num($variations[$currcombattr][$currcombval]['weight']);
 			}
 			if ($forced_pricevar === false) {
-				$price_impact[1] += (float)price2num($variations[$currcombattr][$currcombval]['price']);
+				$price_impact[1] += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 
 				// Manage Price levels
 				if ($conf->global->PRODUIT_MULTIPRICES) {
 					for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
-						$price_impact[$i] += (float)price2num($variations[$currcombattr][$currcombval]['price']);
+						$price_impact[$i] += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 					}
 				}
 			}
