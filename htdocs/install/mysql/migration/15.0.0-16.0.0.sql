@@ -96,3 +96,8 @@ CREATE TABLE llx_stock_mouvement_extrafields (
 )ENGINE=innodb;
 
 ALTER TABLE llx_mrp_mo ADD COLUMN fk_parent_line integer;
+
+ALTER TABLE llx_product_attribute_value MODIFY COLUMN ref VARCHAR(180) NOT NULL;
+ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NULL;
+ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NULL;
