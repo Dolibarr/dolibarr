@@ -71,6 +71,12 @@ $workflowcodes = array(
 		'enabled'=>(!empty($conf->commande->enabled) && !empty($conf->facture->enabled)),
 		'picto'=>'bill'
 	),
+	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
+		'family'=>'create',
+		'position'=>25,
+		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+		'picto'=>'bill'
+	),
 
 	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
 
@@ -161,6 +167,14 @@ $workflowcodes = array(
 		'position' => 90,
 		'enabled' => ! empty($conf->expedition->enabled) && ! empty($conf->facture->enabled),
 		'picto' => 'shipment'
+	),
+
+	// Automatic closing
+	'WORKFLOW_TICKET_CLOSE_INTERVENTION' => array (
+		'family'=>'close_ficheinter',
+		'position'=>100,
+		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+		'picto'=>'bill'
 	)
 );
 
@@ -236,6 +250,11 @@ foreach ($workflowcodes as $key => $params) {
 			}
 			if ($reg[1] == 'shipping') {
 				$header .= ' - '.$langs->trans('Shipment');
+			}
+		} elseif (preg_match('/close_(.*)/', $params['family'], $reg)) {
+			$header = $langs->trans("AutomaticClosing");
+			if ($reg[1] == 'ficheinter') {
+				$header .= ' - '.$langs->trans('Intervention');
 			}
 		} else {
 			$header = $langs->trans("Description");
