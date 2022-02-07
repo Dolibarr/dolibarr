@@ -562,7 +562,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 		value: value
 	},
 	function() {	/* handler for success of post */
-		console.log("url request success forcereload="+forcereload+" value="+value);
+		console.log("Ajax url request to set constant is a success. Make complementary actions and then forcereload="+forcereload+" value="+value);
 		if (value == 0) {
 			$("#set_" + code).show();
 			$("#del_" + code).hide();
@@ -615,9 +615,19 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 		});
 		if (forcereload) {
-			location.reload();
+			var url = window.location.href;
+			if (url.indexOf('dol_resetcache') < 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&dol_resetcache=1";
+				} else {
+					url = url + "?dol_resetcache=1";
+				}
+			}
+			window.location.href = url;
+			//location.reload();
+			return false;
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 }
 
 /*
@@ -642,7 +652,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 		token: token
 	},
 	function() {
-		console.log("url request success forcereload="+forcereload);
+		console.log("Ajax url request to delete constant is success. Make complementary actions and then forcereload="+forcereload);
 		$("#del_" + code).hide();
 		$("#set_" + code).show();
 		$.each(input, function(type, data) {
@@ -686,9 +696,19 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 		});
 		if (forcereload) {
-			location.reload();
+			var url = window.location.href;
+			if (url.indexOf('dol_resetcache') < 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&dol_resetcache=1";
+				} else {
+					url = url + "?dol_resetcache=1";
+				}
+			}
+			window.location.href = url;
+			//location.reload();
+			return false;
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 }
 
 /*
