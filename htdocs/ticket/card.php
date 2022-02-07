@@ -270,28 +270,6 @@ if (empty($reshook)) {
 						}
 					}
 				}
-
-				// Auto create fiche intervention
-				if (!empty($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE)) {
-					$fichinter = new Fichinter($db);
-					$fichinter->socid = $object->fk_soc;
-					$fichinter->fk_project = $projectid;
-					$fichinter->fk_contrat = $contractid;
-					$fichinter->author = $user->id;
-					$fichinter->model_pdf = 'soleil';
-					$fichinter->origin = $object->element;
-					$fichinter->origin_id = $object->id;
-
-					// Extrafields
-					$extrafields->fetch_name_optionals_label($fichinter->table_element);
-					$array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
-					$fichinter->array_options = $array_options;
-
-					$id = $fichinter->create($user);
-					if ($id <= 0) {
-						setEventMessages($fichinter->error, null, 'errors');
-					}
-				}
 			}
 
 			if (!$error) {
