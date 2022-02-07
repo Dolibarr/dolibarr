@@ -141,7 +141,7 @@ class FormProjets
 	public function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500')
 	{
 		// phpcs:enable
-		global $user, $conf, $langs;
+		global $user, $conf, $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -163,9 +163,13 @@ class FormProjets
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		}
 
+		$parameters = ['htmlname' => $htmlname];
+
 		// Search all projects
 		$sql = "SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias";
 		$sql .= " FROM ".$this->db->prefix()."projet as p LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = p.fk_soc";
+		$reshook = $hookmanager->executeHooks('selectForFormsListFrom', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		if ($projectsListId !== false) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
@@ -183,6 +187,8 @@ class FormProjets
 		if (!empty($filterkey)) {
 			$sql .= natural_search(array('p.title', 'p.ref'), $filterkey);
 		}
+		$reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY p.ref ASC";
 
 		$resql = $this->db->query($sql);

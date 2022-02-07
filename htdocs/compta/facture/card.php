@@ -4576,7 +4576,6 @@ if ($action == 'create') {
 	}
 
 
-
 	if (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 		$displayWarranty = true;
 		if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {

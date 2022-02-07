@@ -163,7 +163,7 @@ function propal_admin_prepare_head()
  */
 function getCustomerProposalPieChart($socid = 0)
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $db, $langs, $user, $hookmanager;
 
 	$result= '';
 
@@ -175,21 +175,28 @@ function getCustomerProposalPieChart($socid = 0)
 
 	$propalstatic = new Propal($db);
 
+	$tables = [ 'p' => 'propale', 's' => 'societe' ];
 	$sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."propal as p ON p.fk_soc = s.rowid";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		$tables['sc'] = 'societe_commerciaux';
 	}
+	$parameters = array('type' => 'customer_proposal_pie_chart', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
-	$sql .= " AND p.fk_soc = s.rowid";
 	if ($user->socid) {
 		$sql .= ' AND p.fk_soc = '.((int) $user->socid);
 	}
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
+	$parameters = array('alias' => ['type' => 'customer_proposal_pie_chart', 'tables' => $tables]);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY p.fk_statut";
 	$resql = $db->query($sql);
 	if ($resql) {

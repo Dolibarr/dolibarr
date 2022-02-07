@@ -182,7 +182,7 @@ function order_admin_prepare_head()
  */
 function getCustomerOrderPieChart($socid = 0)
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $db, $langs, $user, $hookmanager;
 
 	$result = '';
 
@@ -196,20 +196,27 @@ function getCustomerOrderPieChart($socid = 0)
 	 * Statistics
 	 */
 
+	$tables = [ 'c' => 'commande', 's' => 'societe' ];
 	$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande as c ON c.fk_soc = s.rowid";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		$tables['sc'] = 'societe_commerciaux';
 	}
-	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity('societe').")";
+	$parameters = array('type' => 'customer_order_pie_chart', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
+	$sql .= " WHERE c.entity IN (".getEntity('societe').")";
 	if ($user->socid) {
 		$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 	}
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
+	$parameters = array('type' => 'customer_order_pie_chart', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY c.fk_statut";
 
 	$resql = $db->query($sql);

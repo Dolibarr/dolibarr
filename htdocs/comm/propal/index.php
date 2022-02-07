@@ -80,19 +80,24 @@ if (!empty($conf->propal->enabled)) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc";
 	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 	}
+	$parameters = array('alias' => ['propal' => 'p']);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
-	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut =".Propal::STATUS_DRAFT;
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
+	$parameters = array('alias' => ['propal' => 'p']);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -154,19 +159,24 @@ print '<div class="fichetwothirdright">';
 $sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, date_cloture as datec";
 $sql .= ", s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
-$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
+$parameters = array('alias' => ['propal' => 'c']);
+$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
-$sql .= " AND c.fk_soc = s.rowid";
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
+$parameters = array('alias' => ['propal' => 'c']);
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 
@@ -230,19 +240,24 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."propal as p ON p.fk_soc = s.rowid";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 	}
-	$sql .= " WHERE p.fk_soc = s.rowid";
-	$sql .= " AND p.entity IN (".getEntity($propalstatic->element).")";
+	$parameters = array('alias' => ['propal' => 'p']);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
+	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_VALIDATED;
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
 	}
+	$parameters = array('alias' => ['propal' => 'p']);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY p.rowid DESC";
 
 	$resql = $db->query($sql);

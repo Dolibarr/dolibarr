@@ -1350,6 +1350,12 @@ if (empty($reshook)) {
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Set project
 		$object->setProject(GETPOST('projectid', 'int'));
+	} elseif ($action == 'updatethirdparty' && $usercancreate) {
+		// Set Thirdparty
+		//die('ici');
+		//Propal::replaceThirdparty($db, $object->socid, GETPOST('socid', 'int'));
+		$object->socid = GETPOST('socid', 'int');
+		$object->update($user);
 	} elseif ($action == 'setavailability' && $usercancreate) {
 		// Delivery time
 		$result = $object->set_availability($user, GETPOST('availability_id', 'int'));
@@ -1481,6 +1487,7 @@ if ($action == 'create') {
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$project;
 		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 			$element = $regs[1];
@@ -1489,6 +1496,13 @@ if ($action == 'create') {
 
 		if ($element == 'project') {
 			$projectid = $originid;
+
+			if (!empty($conf->global->PROPALE_COPY_EXTRAFIELDS_FROM_PROJECT)) {
+				$project = new Project($db);
+				$project->fetch($projectid);
+				$project->fetch_optionals();
+				$object->array_options = $project->array_options;
+			}
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1562,9 +1576,9 @@ if ($action == 'create') {
 	print '<form name="addprop" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="origin" value="'.$origin.'">';
+	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	if ($origin != 'project' && $originid) {
-		print '<input type="hidden" name="origin" value="'.$origin.'">';
-		print '<input type="hidden" name="originid" value="'.$originid.'">';
 	} elseif ($origin == 'project' && !empty($projectid)) {
 		print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 	}
@@ -1588,6 +1602,22 @@ if ($action == 'create') {
 	if ($socid > 0) {
 		print '<td>';
 		print $soc->getNomUrl(1);
+		if (empty($conf->global->PROPALE_ALLOW_CHANGE_CUSTOMER)) {
+			$url = preg_replace('/(\?|&)socid=\d+/', '', $_SERVER['REQUEST_URI']);
+			print '<a href="#" id="customer_change"><span class="fas fa-pencil-alt" style=" color: #444;" title="'.$langs->trans('CustomerEdit').'"></span></a>';
+			print '<script type="text/javascript">
+			$(document).ready(function() {
+				$("#customer_change").click(function() {
+					console.log("We have changed the company - Reload page");
+					$("input[name=socid]").val("");
+
+					// reload page
+					$("input[name=action]").val("create");
+					$("form[name=addprop]").attr("action", "'.$url.'").submit();
+				});
+			});
+			</script>';
+		}
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
@@ -1717,8 +1747,12 @@ if ($action == 'create') {
 		$langs->load("projects");
 		print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td><td>';
-		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
-		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+		if (empty($conf->global->PROPALE_COPY_EXTRAFIELDS_FROM_PROJECT) || $origin != 'project') {
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+			print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+		} else {
+			print $project->showOutputField($object->fields['fk_projet'], 'fk_projet', $projectid);
+		}
 		print '</td>';
 		print '</tr>';
 	}
@@ -1846,10 +1880,15 @@ if ($action == 'create') {
 
 		$sql = "SELECT p.rowid as id, p.ref, s.nom";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal p";
-		$sql .= ", ".MAIN_DB_PREFIX."societe s";
-		$sql .= " WHERE s.rowid = p.fk_soc";
-		$sql .= " AND p.entity IN (".getEntity('propal').")";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = p.fk_soc";
+		$parameters = array('alias' => ['propal' => 'p']);
+		$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+		$sql .= $hookmanager->resPrint;
+		$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 		$sql .= " AND p.fk_statut <> 0";
+		$parameters = array('alias' => ['propal' => 'p']);
+		$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY Id";
 
 		$resql = $db->query($sql);
@@ -2015,8 +2054,23 @@ if ($action == 'create') {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$object->thirdparty->getNomUrl(1, 'customer');
+	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>';
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+
+		if (!empty($conf->global->PROPALE_ALLOW_CHANGE_CUSTOMER) && $object->status == Propal::STATUS_DRAFT) {
+			if ($action != 'editthirdparty') {
+				$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer').' <a href="'.$_SERVER['PHP_SELF'].'?action=editthirdparty&token='.newToken().'&id='.$object->id.'" class="editfielda">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a>';
+			} else {
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="updatethirdparty">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= img_picto('', 'company').$form->select_company($object->socid, 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx', '');
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			}
+		} else {
+			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
+		}
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
@@ -2032,7 +2086,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1, 0, 'centpercent');
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {

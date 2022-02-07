@@ -88,25 +88,31 @@ if ($tmp) {
  * Draft orders
  */
 if (!empty($conf->commande->enabled)) {
+	$tables = [ 'c' => 'commande', 's' => 'societe' ];
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON  c.fk_soc = s.rowid";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		$tables['sc'] = 'societe_commerciaux';
 	}
-	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity('commande').")";
+	$parameters = array('type' => 'customer_draft_orders', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
+	$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = 0";
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
-
+	$parameters = array('type' => 'customer_draft_orders', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$resql = $db->query($sql);
 	if ($resql) {
 		print '<div class="div-table-responsive-no-min">';
@@ -154,26 +160,32 @@ $max = 5;
 /*
  * Lattest modified orders
  */
-
+$tables = [ 'c' => 'commande', 's' => 'societe' ];
 $sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
 $sql .= " s.nom as name, s.rowid as socid";
 $sql .= ", s.client";
 $sql .= ", s.code_client";
 $sql .= ", s.canvas";
-$sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
-$sql .= " ".MAIN_DB_PREFIX."societe as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+	$tables['sc'] = 'societe_commerciaux';
 }
-$sql .= " WHERE c.fk_soc = s.rowid";
-$sql .= " AND c.entity IN (".getEntity('commande').")";
+$parameters = array('type' => 'customer_latest_modified_orders', 'tables' => $tables);
+$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
+$parameters = array('type' => 'customer_latest_modified_orders', 'tables' => $tables);
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+$sql .= $hookmanager->resPrint;
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 
@@ -240,24 +252,31 @@ $max = 10;
  * Orders to process
  */
 if (!empty($conf->commande->enabled)) {
+	$tables = [ 'c' => 'commande', 's' => 'societe' ];
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		$tables['sc'] = 'societe_commerciaux';
 	}
-	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity('commande').")";
+	$parameters = array('type' => 'customer_orders_to_process', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
+	$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_VALIDATED;
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
+	$parameters = array('type' => 'customer_orders_to_process', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY c.rowid DESC";
 
 	$resql = $db->query($sql);
@@ -329,24 +348,31 @@ if (!empty($conf->commande->enabled)) {
  * Orders that are in process
  */
 if (!empty($conf->commande->enabled)) {
+	$tables = [ 'c' => 'commande', 's' => 'societe' ];
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		$tables['sc'] = 'societe_commerciaux';
 	}
-	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity('commande').")";
+	$parameters = array('type' => 'customer_orders_in_process', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListFrom', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
+	$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = ".((int) Commande::STATUS_ACCEPTED);
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (empty($user->rights->societe->client->voir) && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
+	$parameters = array('type' => 'customer_orders_in_process', 'tables' => $tables);
+	$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY c.rowid DESC";
 
 	$resql = $db->query($sql);
