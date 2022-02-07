@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Projekt vytvořený sběratelem e-mailů z e-mail
 TicketCreatedByEmailCollector=Lístek vytvořený sběratelem e-mailů z e-mailu MSGID %s
 OpeningHoursFormatDesc=Pomocí a - oddělte otevírací a zavírací dobu. <br> Pomocí mezery zadejte různé rozsahy. <br> Příklad: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Exportní plocha

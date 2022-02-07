@@ -410,3 +410,4 @@ DefaultBOMDesc=Bon de consum implicit recomandat pentru fabricarea acestui produ
 Rank=Rang
 SwitchOnSaleStatus=Comutare status vânzare
 SwitchOnPurchaseStatus=Comutare status achiziţie
+StockMouvementExtraFields= Câmpuri suplimentare (mişcare de stoc)

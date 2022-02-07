@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Stiftelse
 Version=Version
 Publisher=Utgivare
@@ -343,7 +343,7 @@ StepNb=Steg %s
 FindPackageFromWebSite=Hitta ett paket som innehåller de funktioner du behöver (till exempel på den officiella webbplatsen %s).
 DownloadPackageFromWebSite=Ladda ner paketet (till exempel från den officiella hemsidan %s).
 UnpackPackageInDolibarrRoot=Packa upp / packa upp de förpackade filerna i din Dolibarr-serverns katalog: <b> %s </b>
-UnpackPackageInModulesRoot=För att distribuera / installera en extern modul, packa upp / pakka ut de förpackade filerna i serverns katalog som är dedikerad till externa moduler: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Modulutbyggnad är klar. Du måste dock aktivera och konfigurera modulen i din applikation genom att gå till modulerna för inställning av sidor: <a href="%s"> %s </a>.
 NotExistsDirect=Den alternativa rotkatalogen är inte definierad till en befintlig katalog. <br>
 InfDirAlt=Sedan version 3 är det möjligt att definiera en alternativ rotkatalog. Detta gör att du kan lagra, till en dedikerad katalog, plugin-moduler och anpassade mallar. <br> Skapa bara en katalog i roten till Dolibarr (t ex: anpassad). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Installera eller bygga en extern modul från programme
 HighlightLinesOnMouseHover=Markera tabelllinjer när musen flytta passerar över
 HighlightLinesColor=Markera färg på linjen när musen passerar över (använd 'ffffff' för ingen höjdpunkt)
 HighlightLinesChecked=Markera färg på linjen när den är markerad (använd 'ffffff' för ingen höjdpunkt)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Textfärg på sidtitel
 LinkColor=Färg på länkar
 PressF5AfterChangingThis=Tryck CTRL + F5 på tangentbordet eller rensa webbläsarens cacheminne när du har ändrat det här värdet för att få det effektivt
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

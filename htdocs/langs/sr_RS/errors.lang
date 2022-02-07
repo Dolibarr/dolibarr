@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Kontakt je već definisan kao kontakt
 ErrorCashAccountAcceptsOnlyCashMoney=Ovaj bankovni raču je keš račun i prihvata samo keš uplate.
 ErrorFromToAccountsMustDiffers=Izvorni i ciljani bankovni račun moraju biti različiti.
 ErrorBadThirdPartyName=Bad value for third-party name
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s je obavezno
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Pogrešna sintaksa koda klijenta
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Kod klijenta je obavezan
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please mo
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

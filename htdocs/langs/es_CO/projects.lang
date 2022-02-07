@@ -201,3 +201,4 @@ ProfitIsCalculatedWith=La ganancia se calcula usando
 PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Nota: los proyectos existentes con todas las tareas en 100%% no se verán afectados: tendrá que cerrarlos manualmente. Esta opción solo afecta a proyectos abiertos.
 ProjectTasksWithoutTimeSpent=Proyecto de tareas sin tiempo invertido
 FormForNewLeadDesc=Gracias por llenar el siguiente formulario para contactarnos. También puede enviarnos un correo electrónico directamente a <b> %s </b>.
+StartDateCannotBeAfterEndDate=La fecha de finalización no puede ser anterior a la fecha de inicio

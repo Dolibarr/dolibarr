@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=இந்த தொகுதியின�
 OnlyNonValid=செல்லாதது
 TooManyRecordToScanRestrictFilters=ஸ்கேன்/பகுப்பாய்வு செய்ய பல பதிவுகள் உள்ளன. மேலும் கட்டுப்படுத்தப்பட்ட வடிப்பான்களுடன் பட்டியலைக் கட்டுப்படுத்தவும்.
 RestrictYearToExport=ஏற்றுமதி செய்ய மாதம் / வருடத்தை கட்டுப்படுத்தவும்
+BlockedLogEnabled=System to track events into unalterable logs has been enabled
+BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
+BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.

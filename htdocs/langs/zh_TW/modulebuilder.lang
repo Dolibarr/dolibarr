@@ -83,14 +83,14 @@ ListOfMenusEntries=選單條目清單
 ListOfDictionariesEntries=分類條目清單
 ListOfPermissionsDefined=已定義權限清單
 SeeExamples=在這裡查看範例
-EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+EnabledDesc=啟用此欄位的條件（範例：1 或 $conf->global->MYMODULE_MYOPTION）
+VisibleDesc=欄位是否顯示？ （範例：0=隱藏，1=在清單與建立/更新/查看表單上顯示，2=僅在清單上顯示，3=僅在建立/更新/查看表單上顯示（非清單），4=只在清單與更新/查看表單（非建立）顯示，5=僅在清單結尾視圖表單上顯示（非建立，非更新）。<br> <br> 使用負值表示預設情況下清單中不顯示欄位，但可以選擇查看）。 <br> <br> 可以是表達式，例如：<br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> ($user->rights->holiday->define_holiday ? 1 : 0)
 DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=以PDF顯示
 IsAMeasureDesc=可以將可累積欄位的值以總和放入清單中嗎？ （例如：1 或 0）
-SearchAllDesc=Is the field used to make a search from the quick search tool? (Examples: 1 or 0)
-SpecDefDesc=Enter here all documentation you want to provide with your module that is not already defined by other tabs. You can use .md or better, the rich .asciidoc syntax.
-LanguageDefDesc=Enter in this files, all the key and the translation for each language file.
+SearchAllDesc=欄位是否用於快速搜尋工具進行搜尋？ （範例：1 或 0）
+SpecDefDesc=在此處輸入您想與模組一起提供的所有尚未由其他分頁卡定義的文件。您可以使用 .md 或更好的豐富的 .asciidoc 語法。
+LanguageDefDesc=在此檔案中輸入每個語言檔案的所有密鑰和翻譯。
 MenusDefDesc=在此定義模組提供的選單
 DictionariesDefDesc=在此定義您模組提供的字典
 PermissionsDefDesc=在此定義模組提供的新權限
@@ -98,9 +98,9 @@ MenusDefDescTooltip=The menus provided by your module/application are defined in
 DictionariesDefDescTooltip=The dictionaries provided by your module/application are defined into the array <strong>$this->dictionaries</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), dictionaries are also visible into the setup area to administrator users on %s.
 PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
 HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module descriptor, the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
-SeeIDsInUse=See IDs in use in your installation
-SeeReservedIDsRangeHere=See range of reserved IDs
+TriggerDefDesc=在觸發器檔案中定義當執行模組外部的業務事件（由其他模組觸發的事件）時要執行的代碼。
+SeeIDsInUse=查看安裝中使用的 ID
+SeeReservedIDsRangeHere=查看保留 ID 的範圍
 ToolkitForDevelopers=Dolibarr 開發人員工具集
 TryToUseTheModuleBuilder=如果您具有SQL和PHP的知識，則可以使用本機模組建構器精靈。 <br>啟用模組<strong> %s </strong>並通過點擊右上方選單上的<span class="fa fa-bug"> </span>使用精靈。 <br>警告：這是高級開發人員功能，請<b>不要</b>在生產 網站上進行實驗！
 SeeTopRightMenu=請參閱右上方選單中的<span class="fa fa-bug"> </span>
@@ -132,7 +132,7 @@ IncludeRefGenerationHelp=如果要包含代碼以自動管理參考的產生成�
 IncludeDocGeneration=我想從項目產生一些文件
 IncludeDocGenerationHelp=如果選中此選項，將產生一些代碼以在記錄上增加“產生文件”框。
 ShowOnCombobox=在組合框中顯示數值
-KeyForTooltip=Key for tooltip
+KeyForTooltip=工具提示金鑰
 CSSClass=編輯/建立表單的 CSS
 CSSViewClass=讀取表單的 CSS
 CSSListClass=清單的 CSS
@@ -144,4 +144,4 @@ AsciiToPdfConverter=ASCII到PDF轉換器
 TableNotEmptyDropCanceled=表不為空。刪除已被取消。
 ModuleBuilderNotAllowed=模組建構器可使用，但不允許您的用戶使用。
 ImportExportProfiles=匯入和匯出設定檔
-ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required
+ValidateModBuilderDesc=如果需要使用 $this->validateField() 驗證此欄位，則輸入 1；如果需要驗證，則輸入 0

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Установа
 Version=Версія
 Publisher=Видавець
@@ -343,7 +343,7 @@ StepNb=Крок %s
 FindPackageFromWebSite=Знайдіть пакет, який надає необхідні функції (наприклад, на офіційному веб-сайті %s).
 DownloadPackageFromWebSite=Завантажте пакет (наприклад, з офіційного веб-сайту %s).
 UnpackPackageInDolibarrRoot=Розпакуйте/розархівуйте упаковані файли у каталог на сервері Dolibarr: <b> %s </b>
-UnpackPackageInModulesRoot=Щоб розгорнути/встановити зовнішній модуль, розпакуйте / розархівуйте його файли в каталог сервера, призначений для зовнішніх модулів: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Розгортання модуля закінчено. Однак ви повинні ввімкнути та налаштувати модуль у вашому додатку, перейшовши на сторінку налаштування модулів: <a href="%s"> %s </a>.
 NotExistsDirect=Альтернативний кореневий каталог не визначений для існуючого каталогу. <br>
 InfDirAlt=Починаючи з версії 3, можна визначити альтернативну кореневу директорію. Це дозволяє зберігати у спеціалізованому каталозі, плагіни та спеціальні шаблони. <br> Просто створіть каталог у корені Dolibarr (наприклад: custom). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Installing or building an external module from applica
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
 HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Text color of Page title
 LinkColor=Color of links
 PressF5AfterChangingThis=Press CTRL+F5 on keyboard or clear your browser cache after changing this value to have it effective
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

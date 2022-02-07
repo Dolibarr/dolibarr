@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=தயாரிப்பு வரவேற்பு அமைப்பு
+ReceptionDescription=Vendor reception management (Create reception documents)
+ReceptionsSetup=Vendor Reception setup
 RefReception=Ref. வரவேற்பு
 Reception=வரவேற்பு
 Receptions=வரவேற்புகள்

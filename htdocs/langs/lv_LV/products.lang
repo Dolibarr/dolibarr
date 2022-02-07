@@ -410,3 +410,4 @@ DefaultBOMDesc=Šī produkta ražošanai ieteicams izmantot noklusējuma BOM. Š
 Rank=Rangs
 SwitchOnSaleStatus=Ieslēgt pārdošanas statusu
 SwitchOnPurchaseStatus=Ieslēdziet pirkuma statusu
+StockMouvementExtraFields= Papildu lauki (akciju kustība)

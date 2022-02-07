@@ -48,3 +48,7 @@ KnowledgeRecordExtraFields = Майдони экзотикӣ барои мақо
 GroupOfTicket=Гурӯҳи чиптаҳо
 YouCanLinkArticleToATicketCategory=Шумо метавонед мақоларо ба гурӯҳи чиптаҳо пайваст кунед (аз ин рӯ мақола ҳангоми тахассуси чиптаҳои нав пешниҳод карда мешавад)
 SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

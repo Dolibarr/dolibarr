@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Alapítvány
 Version=Verzió
 Publisher=Szerző
@@ -343,7 +343,7 @@ StepNb=%s lépés
 FindPackageFromWebSite=Keressen egy csomagot, amely biztosítja a szükséges szolgáltatásokat (például az %s hivatalos webhelyen).
 DownloadPackageFromWebSite=Csomag letöltése (például az %s hivatalos webhelyről).
 UnpackPackageInDolibarrRoot=Csomagolja ki a becsomagolt fájlokat a Dolibarr kiszolgáló könyvtárába: <b> %s </b>
-UnpackPackageInModulesRoot=Külső modul telepítéséhez csomagolja ki a becsomagolt fájlokat a külső modulokhoz rendelt kiszolgáló könyvtárba: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=A modul telepítése befejeződött. Azonban engedélyeznie kell és be kell állítania a modult az alkalmazásban: <a href="%s"> %s </a>.
 NotExistsDirect=Az alternatív gyökérkönyvtár nincs definiálva egy meglévő könyvtárra. <br>
 InfDirAlt=A 3. verzió óta meghatározható egy alternatív gyökérkönyvtár. Ez lehetővé teszi a beépülő modulok és az egyedi sablonok tárolását egy dedikált könyvtárba. <br> Csak hozzon létre egy könyvtárat a Dolibarr gyökérkönyvtárában (pl .: egyedi). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Installing or building an external module from applica
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
 HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Text color of Page title
 LinkColor=Color of links
 PressF5AfterChangingThis=Press CTRL+F5 on keyboard or clear your browser cache after changing this value to have it effective
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
-Accountancy=Boekhouden
+Accountancy=Boekhouding
 Accounting=Boekhouding
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom separator voor export bestand
 ACCOUNTING_EXPORT_DATE=Datumnotatie voor exportbestand
@@ -10,7 +10,7 @@ ACCOUNTING_EXPORT_AMOUNT=Export bedrag
 ACCOUNTING_EXPORT_DEVISE=Export valuta
 Selectformat=Selecteer het formaat van het bestand
 ACCOUNTING_EXPORT_FORMAT=Selecteer het formaat van het bestand
-ACCOUNTING_EXPORT_ENDLINE=Selecteer nieuwe regel type
+ACCOUNTING_EXPORT_ENDLINE=Selecteer het nieuwe regel type 
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specificeer de prefix voor de bestandsnaam
 ThisService=Deze dienst
 ThisProduct=Dit product
@@ -18,13 +18,13 @@ DefaultForService=Standaard bij dienst
 DefaultForProduct=Standaard bij product
 ProductForThisThirdparty=Product voor deze relatie
 ServiceForThisThirdparty=Service voor deze relatie
-CantSuggest=Geen voorstel
-AccountancySetupDoneFromAccountancyMenu=Meeste instellingen boekhouding worden gedaan vanuit menu %s
+CantSuggest=Geen suggestie
+AccountancySetupDoneFromAccountancyMenu=De meeste instellingen boekhouding worden gedaan vanuit menu %s
 ConfigAccountingExpert=Configuratie van boekhoud-module (dubbel boekhouden)
-Journalization=Journaal
-Journals=Verkoopdagboek
+Journalization=Journalisatie
+Journals=Dagboeken
 JournalFinancial=Financiëel dagboek
-BackToChartofaccounts=Return chart of accounts
+BackToChartofaccounts=Rekeningschema retourneren
 Chartofaccounts=Rekeningschema
 ChartOfSubaccounts=Grafiek van individuele rekeningen
 ChartOfIndividualAccountsOfSubsidiaryLedger=Grafiek van individuele rekeningen van het subgrootboek
@@ -48,7 +48,7 @@ CountriesNotInEEC=Landen buiten de EU
 CountriesInEECExceptMe=EU landen behalve %s
 CountriesExceptMe=Alle landen behalve %s
 AccountantFiles=Bron-documenten exporteren
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp=Met deze tool kunt u de bron events (lijst in CSV en PDF) exporteren die zijn gebruikt om om uw boekhouding te genereren.
 ExportAccountingSourceDocHelp2=Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
 VueByAccountAccounting=Overzicht per grootboekrekening
 VueBySubAccountAccounting=Overzicht op volgorde subrekening
@@ -286,7 +286,7 @@ ValidateMovements=Valideer wijzigingen
 DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
 
 ValidateHistory=Automatisch boeken
-AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+AutomaticBindingDone=Automatische bindings uitgevoerd (%s) - Automatische binding was niet mogelijk voor record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fout. U kunt geen grootboekrekening verwijderen welke in gebruik is.
 MvtNotCorrectlyBalanced=Boeking is niet in balans. Debet = %s | Credit = %s
@@ -387,8 +387,8 @@ SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen de EU
 SaleEECWithVAT=Verkoop binnen de EU met een btw die niet nul is, dus we veronderstellen dat dit GEEN intracommunautaire verkoop is en de voorgestelde grootboekrekening het standaardproductaccount is.
 SaleEECWithoutVATNumber=Verkoop binnen de EU zonder btw, maar het btw-nummer van een derde partij is niet gedefinieerd. Voor standaardverkoop vallen we terug op het product-grootboekrekening. U kunt indien nodig het btw-nummer van een derde partij of het productaccount aanpassen.
-ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
-ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
+ForbiddenTransactionAlreadyExported=Niet toegestaan: De transactie is gevalideerd en/of geëxporteerd.
+ForbiddenTransactionAlreadyValidated=Niet toegestaan: De transactie is gevalideerd.
 ## Dictionary
 Range=Grootboeknummer van/tot
 Calculated=Berekend

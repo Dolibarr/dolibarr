@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Tổ chức
 Version=Phiên bản
 Publisher=Người xuất bản
@@ -343,7 +343,7 @@ StepNb=Bước %s
 FindPackageFromWebSite=Tìm gói cung cấp các tính năng bạn cần (ví dụ: trên trang web chính thức %s).
 DownloadPackageFromWebSite=Tải xuống gói (ví dụ từ trang web chính thức %s).
 UnpackPackageInDolibarrRoot=Unpack / unzip các tệp được đóng gói vào thư mục máy chủ Dolibarr:<b>%s</b>
-UnpackPackageInModulesRoot=Để triển khai / cài đặt một mô-đun bên ngoài, unpack/unzip các tệp được đóng gói vào thư mục máy chủ dành riêng cho các mô-đun bên ngoài: <br> <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Triển khai mô-đun kết thúc. Tuy nhiên, bạn phải bật và thiết lập mô-đun trong ứng dụng của mình bằng cách đi tới các mô-đun thiết lập trang: <a href="%s">%s</a> .
 NotExistsDirect=Thư mục gốc thay thế không được xác định cho một thư mục hiện có. <br>
 InfDirAlt=Kể từ phiên bản 3, có thể xác định một thư mục gốc thay thế. Điều này cho phép bạn lưu trữ, vào một thư mục chuyên dụng, các trình cắm và các mẫu tùy chỉnh. <br> Chỉ cần tạo một thư mục ở thư mục gốc của Dolibarr (ví dụ: tùy chỉnh). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Cài đặt hoặc xây dựng một mô-đun bên ngo
 HighlightLinesOnMouseHover=Tô sáng các dòng bảng khi chuột di chuyển qua
 HighlightLinesColor=Tô sáng màu của dòng khi chuột đi qua (sử dụng 'ffffff' để không làm nổi bật)
 HighlightLinesChecked=Tô sáng màu của dòng khi được chọn (sử dụng 'ffffff' để không tô sáng)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Màu văn bản của tiêu đề trang
 LinkColor=Màu của liên kết
 PressF5AfterChangingThis=Nhấn CTRL + F5 trên bàn phím hoặc xóa bộ nhớ cache của trình duyệt sau khi thay đổi giá trị này để có hiệu lực
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

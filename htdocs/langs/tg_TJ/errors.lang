@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Ин тамос аллакай ҳам
 ErrorCashAccountAcceptsOnlyCashMoney=Ин суратҳисоби бонкӣ суратҳисоби нақдӣ мебошад, аз ин рӯ он танҳо намудҳои пули нақдро қабул мекунад.
 ErrorFromToAccountsMustDiffers=Манбаъ ва ҳадафҳои суратҳисобҳои бонкӣ бояд гуногун бошанд.
 ErrorBadThirdPartyName=Арзиши бад барои номи шахси сеюм
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s ҳатмӣ аст
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Синтаксиси бад барои коди муштарӣ
 ErrorBadBarCodeSyntax=Синтаксиси бад барои штрих -код. Шояд шумо як намуди штрих -кодро муқаррар кардаед ё барои рақамгузорӣ ниқоби штрих -кодро муайян кардаед, ки ба арзиши сканшуда мувофиқат намекунад.
 ErrorCustomerCodeRequired=Рамзи муштарӣ лозим аст
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Дар луғати шартҳои пар�
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Параметри PHP -и шумо upload_max_filesize (%s) аз параметрҳои PHP post_max_size (%s) баландтар аст. Ин танзимоти пайдарпай нест.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

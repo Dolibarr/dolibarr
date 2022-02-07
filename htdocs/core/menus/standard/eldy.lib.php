@@ -1067,7 +1067,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 					$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_tovalid", $langs->trans("MenuToValid"), 2, $user->rights->facture->lire, '', $mainmenu, 'customer_bills_tovalid');
 				}
-				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_reports", $langs->trans("Reportings"), 2, $user->rights->facture->lire, '', $mainmenu, 'customers_bills_reports');
+				if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills/', $leftmenu)) {
+					$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_payment_report", $langs->trans("Reportings"), 2, $user->rights->facture->lire, '', $mainmenu, 'customers_bills_payment_report');
+				}
 
 				$newmenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"), 1, $user->rights->facture->lire, '', $mainmenu, 'customers_bills_stats');
 			}
@@ -1087,7 +1089,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				$newmenu->add("/fourn/paiement/list.php?leftmenu=suppliers_bills_payment", $langs->trans("Payments"), 1, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_payment');
 
-				$newmenu->add("/fourn/facture/rapport.php?leftmenu=suppliers_bills_report", $langs->trans("Reportings"), 2, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_report');
+				if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills/', $leftmenu)) {
+					$newmenu->add("/fourn/facture/rapport.php?leftmenu=suppliers_bills_payment_report", $langs->trans("Reportings"), 2, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_payment_report');
+				}
 
 				$newmenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"), 1, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_stats');
 			}

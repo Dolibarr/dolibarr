@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduloppsett
-PaypalDesc=Denne modulen tillater betaling av kunder via <a href="http://www.paypal.com" target="_blank"> PayPal </a>. Dette kan brukes til en ad-hoc-betaling eller for en betaling knyttet til et Dolibarr-objekt (faktura, ordre, ...)
+PaypalDesc=Denne modulen tillater betaling fra kunder via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Dette kan brukes for en ad-hoc betaling eller for en betaling knyttet til et Dolibarr-objekt (faktura, ordre, ...)
 PaypalOrCBDoPayment=Betal med PayPal (kort eller PayPal)
 PaypalDoPayment=Betal med PayPal
 PAYPAL_API_SANDBOX=Test-/sandkasse-modus
