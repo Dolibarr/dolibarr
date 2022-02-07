@@ -75,7 +75,7 @@ $workflowcodes = array(
 		'family'=>'create',
 		'position'=>25,
 		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
-		'picto'=>'bill'
+		'picto'=>'ticket'
 	),
 
 	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
@@ -174,7 +174,7 @@ $workflowcodes = array(
 		'family'=>'close_ficheinter',
 		'position'=>100,
 		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
-		'picto'=>'bill'
+		'picto'=>'ticket'
 	)
 );
 
