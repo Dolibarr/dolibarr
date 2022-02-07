@@ -1331,9 +1331,9 @@ class Mo extends CommonObject
 		print '<td class="center">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
-		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
+		print '<td class="center">'.$langs->trans('MoChildGenerate').'</td>';
 		//print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-		print '<td class="center"></td>';
+//		print '<td class="center"></td>';
 		print '</tr>';
 		$i = 0;
 

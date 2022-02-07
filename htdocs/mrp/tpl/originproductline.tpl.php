@@ -78,6 +78,11 @@ if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) {
 print '<td class="center">';
 //print '<input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'>';
 print '</td>';
+
+print '<td class="center">';
+print '<input type="checkbox" name="createofchildbom_'.$tmpproduct->id.'">';
+print '</td>';
+
 print '</tr>'."\n";
 
 // Select of all the sub-BOM lines
@@ -151,7 +156,6 @@ if ($resql) {
 			print '<td class="linecoldisablestockchange nowrap right" id="sub_bom_stock_change_'.$sub_bom_line->id.'">&nbsp;</td>';
 		}
 
-		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
 	}
