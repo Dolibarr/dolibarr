@@ -435,7 +435,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$number_contracts_found = 0;
 				foreach ($company_ids as $company_id) {
 					$contrat->socid = $company_id;
-
 					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
 					if (is_array($list) && !empty($list)) {
 						$number_contracts_found = count($list);
@@ -455,6 +454,28 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 				if ($number_contracts_found == 0) {
 					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+				}
+			}
+			// Automatically create intervention
+			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION) && !empty($object->fk_soc)) {
+				$fichinter = new Fichinter($this->db);
+				$fichinter->socid = $object->fk_soc;
+				$fichinter->fk_project = $projectid;
+				$fichinter->fk_contrat = (int) $object->fk_contract;
+				$fichinter->author = $user->id;
+				$fichinter->model_pdf = 'soleil';
+				$fichinter->origin = $object->element;
+				$fichinter->origin_id = $object->id;
+
+				// Extrafields
+				$extrafields = new ExtraFields($this->db);
+				$extrafields->fetch_name_optionals_label($fichinter->table_element);
+				$array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
+				$fichinter->array_options = $array_options;
+
+				$id = $fichinter->create($user);
+				if ($id <= 0) {
+					setEventMessages($fichinter->error, null, 'errors');
 				}
 			}
 		}
