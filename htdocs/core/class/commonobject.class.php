@@ -3232,7 +3232,6 @@ abstract class CommonObject
 		if (in_array($this->table_element, array('bom_bom', 'product_attribute'))) {
 			$positionfield = 'position';
 		}
-		$positionfield = $this->db->escape($positionfield);
 
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line) {
