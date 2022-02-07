@@ -134,7 +134,7 @@ class Fiscalyear extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_fiscalyear (";
+		$sql = "INSERT INTO ".$this->db->prefix()."accounting_fiscalyear (";
 		$sql .= "label";
 		$sql .= ", date_start";
 		$sql .= ", date_end";
@@ -155,7 +155,7 @@ class Fiscalyear extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_fiscalyear");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."accounting_fiscalyear");
 
 			$result = $this->update($user);
 			if ($result > 0) {
@@ -191,7 +191,7 @@ class Fiscalyear extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_fiscalyear";
+		$sql = "UPDATE ".$this->db->prefix()."accounting_fiscalyear";
 		$sql .= " SET label = '".$this->db->escape($this->label)."'";
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
@@ -221,7 +221,7 @@ class Fiscalyear extends CommonObject
 	public function fetch($id)
 	{
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
+		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear";
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -253,7 +253,7 @@ class Fiscalyear extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE rowid = ".((int) $id);
+		$sql = "DELETE FROM ".$this->db->prefix()."accounting_fiscalyear WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -414,10 +414,10 @@ class Fiscalyear extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,';
-		$sql .= ' fy.tms';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'accounting_fiscalyear as fy';
-		$sql .= ' WHERE fy.rowid = '.((int) $id);
+		$sql = "SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,";
+		$sql .= " fy.tms";
+		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear as fy";
+		$sql .= " WHERE fy.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -464,7 +464,7 @@ class Fiscalyear extends CommonObject
 		}
 
 		$sql = "SELECT count(DISTINCT piece_num) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping";
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
@@ -498,7 +498,7 @@ class Fiscalyear extends CommonObject
 		}
 
 		$sql = "SELECT count(rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ";
+		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping ";
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 

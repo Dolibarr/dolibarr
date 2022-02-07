@@ -1052,12 +1052,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps,PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Create tables and keys required by module:
-	 * - Files module.sql files with create table instructions
-	 * - Then files modules.key.sql with create keys instructions
+	 * - Files module.sql with create table instructions
+	 * - Then modules.key.sql with create keys instructions
 	 * - Then data_xxx.sql (usualy provided by external modules only)
 	 * - Then update_xxx.sql (usualy provided by external modules only)
 	 * Files must be stored in directory defined by reldir (Example: '/install/mysql/tables' or '/module/sql/')
-	 * This function is usually called by the this->init of module descriptors.
+	 * This function may also be called by :
+	 * - _load_tables('/install/mysql/tables/', 'modulename') into the this->init() of core module descriptors.
+	 * - _load_tables('/mymodule/sql/') into the this->init() of external module descriptors.
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/tables' or '/module/sql/'
 	 * @param	string	$onlywithsuffix		Only with the defined suffix
