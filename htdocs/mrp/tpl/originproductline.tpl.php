@@ -99,7 +99,7 @@ if ($resql) {
 		$sub_bom_line->fetch($obj->rowid);
 
 		//If hidden conf is set, we show directly all the sub-BOM lines
-		if (!empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)) {
+		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';

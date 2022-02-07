@@ -1312,6 +1312,13 @@ class Mo extends CommonObject
 		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
 
 		print '<tr class="liste_titre">';
+		// Product or sub-bom
+		print '<td class="linecoldescription">'.$langs->trans('Description');
+		if (!empty($conf->global->BOM_SUB_BOM)) {
+			print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
+			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
+		}
+		print '</td>';
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td class="right">'.$langs->trans('Qty');
 		if ($this->bom->bomtype == 0) {
