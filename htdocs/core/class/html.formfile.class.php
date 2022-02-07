@@ -359,7 +359,7 @@ class FormFile
 	 *      Return a string to show the box with list of available documents for object.
 	 *      This also set the property $this->numoffiles
 	 *
-	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:myobject', 'mymodule_temp', ...)
+	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:MyObject', 'mymodule_temp', ...)
 	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
 	 *      @param      string				$filedir            Directory to scan
 	 *      @param      string				$urlsource          Url of origin page (for return)
@@ -720,7 +720,7 @@ class FormFile
 				if (class_exists($class)) {
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);
 				} else {
-					dol_print_error($this->db, "Bad value for modulepart '".$modulepart."' in showdocuments");
+					dol_print_error($this->db, "Bad value for modulepart '".$modulepart."' in showdocuments (class ".$class." for Doc generation not found)");
 					return -1;
 				}
 			}
