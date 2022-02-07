@@ -424,6 +424,32 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
+		if ($action == 'TICKET_CREATE') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			// Automatically create intervention
+			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION) && !empty($object->fk_soc)) {
+				$fichinter = new Fichinter($this->db);
+				$fichinter->socid = $object->fk_soc;
+				$fichinter->fk_project = $projectid;
+				$fichinter->fk_contrat = $contractid;
+				$fichinter->author = $user->id;
+				$fichinter->model_pdf = 'soleil';
+				$fichinter->origin = $object->element;
+				$fichinter->origin_id = $object->id;
+
+				// Extrafields
+				$extrafields = new ExtraFields($this->db);
+				$extrafields->fetch_name_optionals_label($fichinter->table_element);
+				$array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
+				$fichinter->array_options = $array_options;
+
+				$id = $fichinter->create($user);
+				if ($id <= 0) {
+					setEventMessages($fichinter->error, null, 'errors');
+				}
+			}
+		}
+
 		return 0;
 	}
 
