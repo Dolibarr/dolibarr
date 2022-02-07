@@ -7,6 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer automatiquement une commande client 
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la signature d'une proposition commerciale (la facture sera du même montant que la proposition commerciale source)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la cloture d'un commande (la facture sera du même montant que la commande)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Créer automatiquement une intervention lors de l'ouverture d'un ticket depuis le backend.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source(s) facturée(s) au classement facturé de la commande (et si le montant de la commande est le même que le total des propositions liées)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source facturée(s) à la validation d'une facture client (et si le montant de la facture est le même que la somme des propositions liées)
@@ -26,5 +27,6 @@ descWORKFLOW_BILL_ON_RECEPTION=Classer les réceptions en "facturées" lorsqu'un
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Fermer toutes les interventions liées au ticket lorsqu'un ticket est fermé
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique
+AutomaticClosing=Clôture automatique
 # Autoclassify shipment
 descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classer l'expédition source liée comme fermée lorsque la facture client est validée
