@@ -238,7 +238,8 @@ elseif ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != '
 	// Confirmation to delete
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ProductAttributeDeleteDialog'), 'confirm_delete', '', 0, 1);
-	} // Confirmation to delete line
+	}
+	// Confirmation to delete line
 	elseif ($action == 'ask_deleteline') {
 		$object_value = new ProductAttributeValue($db);
 		if ($object_value->fetch($lineid) > 0) {

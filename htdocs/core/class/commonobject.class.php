@@ -2919,15 +2919,20 @@ abstract class CommonObject
 			return -1;
 		}
 
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		// Count number of lines to reorder (according to choice $renum)
 		$nl = 0;
 		$sql = "SELECT count(rowid) FROM " . $this->db->prefix() . $this->table_element_line;
-		$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
+		$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
 		if (!$renum) {
-			$sql .= ' AND rang = 0';
+			$sql .= ' AND ' . $fieldposition . ' = 0';
 		}
 		if ($renum) {
-			$sql .= ' AND rang <> 0';
+			$sql .= ' AND ' . $fieldposition . ' <> 0';
 		}
 
 		dol_syslog(get_class($this) . "::line_order", LOG_DEBUG);
@@ -2939,17 +2944,12 @@ abstract class CommonObject
 			dol_print_error($this->db);
 		}
 		if ($nl > 0) {
-			$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
-			if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
-				$fieldposition = 'position';
-			}
-
 			// The goal of this part is to reorder all lines, with all children lines sharing the same counter that parents.
 			$rows = array();
 
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = "SELECT rowid FROM " . $this->db->prefix() . $this->table_element_line;
-			$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
+			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
 			if ($fk_parent_line) {
 				$sql .= ' AND fk_parent_line IS NULL';
 			}
@@ -3002,8 +3002,8 @@ abstract class CommonObject
 		$rows = array();
 
 		$sql = "SELECT rowid FROM " . $this->db->prefix() . $this->table_element_line;
-		$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
-		$sql .= ' AND fk_parent_line = ' . ((int)$id);
+		$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
+		$sql .= ' AND fk_parent_line = ' . ((int) $id);
 		$sql .= ' ORDER BY ' . $fieldposition . ' ASC';
 
 		dol_syslog(get_class($this) . "::getChildrenOfLine search children lines for line " . $id, LOG_DEBUG);
@@ -3079,8 +3079,8 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int)$rang);
-		$sql .= ' WHERE rowid = ' . ((int)$rowid);
+		$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int) $rang);
+		$sql .= ' WHERE rowid = ' . ((int) $rowid);
 
 		dol_syslog(get_class($this) . "::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -3125,12 +3125,12 @@ abstract class CommonObject
 				$fieldposition = 'position';
 			}
 
-			$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int)$rang);
-			$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
+			$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int) $rang);
+			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
 			$sql .= " AND " . $fieldposition . " = " . ((int)($rang - 1));
 			if ($this->db->query($sql)) {
 				$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int)($rang - 1));
-				$sql .= ' WHERE rowid = ' . ((int)$rowid);
+				$sql .= ' WHERE rowid = ' . ((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -3156,12 +3156,12 @@ abstract class CommonObject
 				$fieldposition = 'position';
 			}
 
-			$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int)$rang);
-			$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
+			$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int) $rang);
+			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
 			$sql .= " AND " . $fieldposition . " = " . ((int)($rang + 1));
 			if ($this->db->query($sql)) {
 				$sql = "UPDATE " . $this->db->prefix() . $this->table_element_line . " SET " . $fieldposition . " = " . ((int)($rang + 1));
-				$sql .= ' WHERE rowid = ' . ((int)$rowid);
+				$sql .= ' WHERE rowid = ' . ((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -3185,7 +3185,7 @@ abstract class CommonObject
 		}
 
 		$sql = "SELECT " . $fieldposition . " FROM " . $this->db->prefix() . $this->table_element_line;
-		$sql .= " WHERE rowid = " . ((int)$rowid);
+		$sql .= " WHERE rowid = " . ((int) $rowid);
 
 		dol_syslog(get_class($this) . "::getRangOfLine", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3209,8 +3209,8 @@ abstract class CommonObject
 		}
 
 		$sql = "SELECT rowid FROM " . $this->db->prefix() . $this->table_element_line;
-		$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
-		$sql .= " AND " . $fieldposition . " = " . ((int)$rang);
+		$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
+		$sql .= " AND " . $fieldposition . " = " . ((int) $rang);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -3236,8 +3236,8 @@ abstract class CommonObject
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line) {
 			$sql = "SELECT max(" . $positionfield . ") FROM " . $this->db->prefix() . $this->table_element_line;
-			$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
-			$sql .= " AND fk_parent_line = " . ((int)$fk_parent_line);
+			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
+			$sql .= " AND fk_parent_line = " . ((int) $fk_parent_line);
 
 			dol_syslog(get_class($this) . "::line_max", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3252,7 +3252,7 @@ abstract class CommonObject
 		} else {
 			// If not, search the last rang of element
 			$sql = "SELECT max(" . $positionfield . ") FROM " . $this->db->prefix() . $this->table_element_line;
-			$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
+			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
 
 			dol_syslog(get_class($this) . "::line_max", LOG_DEBUG);
 			$resql = $this->db->query($sql);

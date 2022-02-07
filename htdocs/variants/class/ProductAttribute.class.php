@@ -193,15 +193,15 @@ class ProductAttribute extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
+		$sql = "INSERT INTO " . $this->db->prefix() . $this->table_element . " (";
 		$sql .= " ref, ref_ext, label, entity, position";
 		$sql .= ")";
 		$sql .= " VALUES (";
 		$sql .= "  '" . $this->db->escape($this->ref) . "'";
 		$sql .= ", '" . $this->db->escape($this->ref_ext) . "'";
 		$sql .= ", '" . $this->db->escape($this->label) . "'";
-		$sql .= ", " . ((int)$this->entity);
-		$sql .= ", " . ((int)$this->position);
+		$sql .= ", " . ((int) $this->entity);
+		$sql .= ", " . ((int) $this->position);
 		$sql .= ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -212,7 +212,7 @@ class ProductAttribute extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix() . $this->table_element);
 		}
 
 		if (!$error && !$notrigger) {
@@ -258,8 +258,8 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, ref_ext, label, position";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE rowid = " . ((int)$id);
+		$sql .= " FROM " . $this->db->prefix() . $this->table_element;
+		$sql .= " WHERE rowid = " . ((int) $id);
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -295,7 +295,7 @@ class ProductAttribute extends CommonObject
 		$return = array();
 
 		$sql = "SELECT rowid, ref, ref_ext, label, position";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql .= " FROM " . $this->db->prefix() . $this->table_element;
 		$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 		$sql .= $this->db->order('position', 'asc');
 
@@ -359,14 +359,14 @@ class ProductAttribute extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET";
+		$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET";
 
 		$sql .= "  ref = '" . $this->db->escape($this->ref) . "'";
 		$sql .= ", ref_ext = '" . $this->db->escape($this->ref_ext) . "'";
 		$sql .= ", label = '" . $this->db->escape($this->label) . "'";
-		$sql .= ", position = " . ((int)$this->position);
+		$sql .= ", position = " . ((int) $this->position);
 
-		$sql .= " WHERE rowid = " . ((int)$this->id);
+		$sql .= " WHERE rowid = " . ((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -439,8 +439,8 @@ class ProductAttribute extends CommonObject
 
 		if (!$error) {
 			// Delete values
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element_line;
-			$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
+			$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element_line;
+			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
 
 			dol_syslog(__METHOD__ . ' - Delete values', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -451,8 +451,8 @@ class ProductAttribute extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= " WHERE rowid = " . ((int)$this->id);
+			$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element;
+			$sql .= " WHERE rowid = " . ((int) $this->id);
 
 			dol_syslog(__METHOD__ . ' - Delete attribute', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -500,9 +500,9 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT td.rowid, td.fk_product_attribute, td.ref, td.value, td.position";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element_line . ' AS td';
-		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . $this->table_element . ' AS t ON t.rowid = td.' . $this->fk_element;
-		$sql .= " WHERE t.rowid = " . ((int)$this->id);
+		$sql .= " FROM " . $this->db->prefix() . $this->table_element_line . ' AS td';
+		$sql .= ' LEFT JOIN ' . $this->db->prefix() . $this->table_element . ' AS t ON t.rowid = td.' . $this->fk_element;
+		$sql .= " WHERE t.rowid = " . ((int) $this->id);
 		$sql .= " AND t.entity IN (" . getEntity('product') . ")";
 		if ($filters) {
 			$sql .= $filters;
@@ -721,8 +721,8 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT COUNT(*) AS count";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element_line;
-		$sql .= " WHERE " . $this->fk_element . " = " . ((int)$this->id);
+		$sql .= " FROM " . $this->db->prefix() . $this->table_element_line;
+		$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -764,9 +764,9 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT COUNT(*) AS count";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "product_attribute_combination2val AS pac2v";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination AS pac ON pac2v.fk_prod_combination = pac.rowid";
-		$sql .= " WHERE pac2v.fk_prod_attr = " . ((int)$this->id);
+		$sql .= " FROM " . $this->db->prefix() . "product_attribute_combination2val AS pac2v";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination AS pac ON pac2v.fk_prod_combination = pac.rowid";
+		$sql .= " WHERE pac2v.fk_prod_attr = " . ((int) $this->id);
 		$sql .= " AND pac.entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -807,7 +807,7 @@ class ProductAttribute extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT COUNT(*) AS nb FROM " . MAIN_DB_PREFIX . "product_attribute_combination2val WHERE fk_prod_attr = " . ((int)$this->id);
+		$sql = "SELECT COUNT(*) AS nb FROM " . $this->db->prefix() . "product_attribute_combination2val WHERE fk_prod_attr = " . ((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -836,7 +836,7 @@ class ProductAttribute extends CommonObject
 	{
 		// Count number of attributes to reorder (according to choice $renum)
 		$nl = 0;
-		$sql = "SELECT count(rowid) FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql = "SELECT count(rowid) FROM " . $this->db->prefix() . $this->table_element;
 		$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 		if (!$renum) {
 			$sql .= ' AND position = 0';
@@ -857,7 +857,7 @@ class ProductAttribute extends CommonObject
 			$rows = array();
 
 			// We first search all attributes
-			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element;
+			$sql = "SELECT rowid FROM " . $this->db->prefix() . $this->table_element;
 			$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 			$sql .= " ORDER BY position ASC, rowid " . $rowidorder;
 
@@ -896,8 +896,8 @@ class ProductAttribute extends CommonObject
 	{
 		global $hookmanager;
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET position = " . ((int)$position);
-		$sql .= ' WHERE rowid = ' . ((int)$rowid);
+		$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int) $position);
+		$sql .= ' WHERE rowid = ' . ((int) $rowid);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -919,7 +919,7 @@ class ProductAttribute extends CommonObject
 	 */
 	public function getPositionOfAttribute($rowid)
 	{
-		$sql = "SELECT position FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql = "SELECT position FROM " . $this->db->prefix() . $this->table_element;
 		$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -979,12 +979,12 @@ class ProductAttribute extends CommonObject
 	public function updateAttributePositionUp($rowid, $position)
 	{
 		if ($position > 1) {
-			$sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET position = " . ((int)$position);
+			$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int) $position);
 			$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 			$sql .= " AND position = " . ((int)($position - 1));
 			if ($this->db->query($sql)) {
-				$sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET position = " . ((int)($position - 1));
-				$sql .= ' WHERE rowid = ' . ((int)$rowid);
+				$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int)($position - 1));
+				$sql .= ' WHERE rowid = ' . ((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -1005,12 +1005,12 @@ class ProductAttribute extends CommonObject
 	public function updateAttributePositionDown($rowid, $position, $max)
 	{
 		if ($position < $max) {
-			$sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET position = " . ((int)$position);
+			$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int) $position);
 			$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 			$sql .= " AND position = " . ((int)($position + 1));
 			if ($this->db->query($sql)) {
-				$sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET position = " . ((int)($position + 1));
-				$sql .= ' WHERE rowid = ' . ((int)$rowid);
+				$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET position = " . ((int)($position + 1));
+				$sql .= ' WHERE rowid = ' . ((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -1028,7 +1028,7 @@ class ProductAttribute extends CommonObject
 	public function getMaxAttributesPosition()
 	{
 		// Search the last position of attributes
-		$sql = "SELECT max(position) FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql = "SELECT max(position) FROM " . $this->db->prefix() . $this->table_element;
 		$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
