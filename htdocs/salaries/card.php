@@ -25,6 +25,7 @@
  *  \ingroup    salaries
  *  \brief      Page of salaries payments
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -101,6 +103,10 @@ if ($user->socid) {
 }
 
 restrictedArea($user, 'salaries', $object->id, 'salary', '');
+
+$permissiontoread = $user->rights->salaries->read;
+$permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 
 /**
@@ -276,7 +282,7 @@ if ($action == 'add' && empty($cancel)) {
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
 			$paiement->paiementtype = $type_payment;
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note = GETPOST("note", 'none');
+			$paiement->note = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (int) GETPOST('closepaidsalary'));
@@ -433,12 +439,14 @@ if ($action == "update_extras" && !empty($user->rights->salaries->read)) {
  *	View
  */
 
+$form = new Form($db);
+$formfile = new FormFile($db);
+if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+
 $title = $langs->trans('Salary')." - ".$langs->trans('Card');
 $help_url = "";
 llxHeader("", $title, $help_url);
 
-$form = new Form($db);
-if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 if ($id > 0) {
 	$result = $object->fetch($id);
@@ -555,7 +563,8 @@ if ($action == 'create') {
 		$formproject = new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -690,6 +699,7 @@ if ($action == 'create') {
 
 if ($id) {
 	$head = salaries_prepare_head($object);
+	$formconfirm = '';
 
 	if ($action === 'clone') {
 		$formquestion = array(
@@ -700,23 +710,36 @@ if ($id) {
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
 	}
 
 	if ($action == 'paid') {
 		$text = $langs->trans('ConfirmPaySalary');
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySalary'), $text, "confirm_paid", '', '', 2);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySalary'), $text, "confirm_paid", '', '', 2);
 	}
 
 	if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteSalary');
-		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSalary'), $text, 'confirm_delete', '', '', 2);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSalary'), $text, 'confirm_delete', '', '', 2);
 	}
 
 	if ($action == 'edit') {
 		print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 	}
+
+	// Call Hook formConfirm
+	$parameters = array('formConfirm' => $formconfirm);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		$formconfirm .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$formconfirm = $hookmanager->resPrint;
+	}
+
+	// Print form confirm
+	print $formconfirm;
+
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary');
 
@@ -744,7 +767,7 @@ if ($id) {
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
 			if ($result > 0) {
-				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
 			}
 		} else {
 			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
@@ -753,7 +776,7 @@ if ($id) {
 				$userstatic = new User($db);
 				$result = $userstatic->fetch($object->fk_user);
 				if ($result > 0) {
-					$morehtmlref .= $userstatic->getNomUrl(1);
+					$morehtmlref .= $userstatic->getNomUrl(-1);
 				} else {
 					dol_print_error($db);
 					exit();
@@ -1011,6 +1034,7 @@ if ($id) {
 
 	$resteapayer = price2num($resteapayer, 'MT');
 
+
 	/*
 	 * Action bar
 	 */
@@ -1050,6 +1074,64 @@ if ($id) {
 		}
 	}
 	print "</div>";
+
+
+
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
+	if ($action != 'presend') {
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
+
+		$includedocgeneration = 1;
+
+		// Documents
+		if ($includedocgeneration) {
+			$objref = dol_sanitizeFileName($object->ref);
+			$relativepath = $objref.'/'.$objref.'.pdf';
+			$filedir = $conf->salaries->dir_output.'/'.$objref;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			//$genallowed = $permissiontoread; // If you can read, you can build the PDF to read content
+			$genallowed = 0; // If you can read, you can build the PDF to read content
+			$delallowed = $permissiontoadd; // If you can create/edit, you can remove a file on card
+			print $formfile->showdocuments('salaries', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+		}
+
+		// Show links to link elements
+		/*
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('salaries'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		*/
+
+		print '</div><div class="fichehalfright">';
+
+		$MAXEVENT = 10;
+
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		//$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+
+		print '</div></div>';
+	}
+
+	//Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
+	// Presend form
+	$modelmail = 'salary';
+	$defaulttopic = 'InformationMessage';
+	$diroutput = $conf->salaries->dir_output;
+	$trackid = 'salary'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

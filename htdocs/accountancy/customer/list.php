@@ -539,13 +539,14 @@ if ($result) {
 		$thirdpartystatic->client = $objp->client;
 		$thirdpartystatic->fournisseur = $objp->fournisseur;
 		$thirdpartystatic->code_client = $objp->code_client;
+		$thirdpartystatic->code_compta = $objp->code_compta_client;		// For backward compatibility
 		$thirdpartystatic->code_compta_client = $objp->code_compta_client;
 		$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 		$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 		$thirdpartystatic->email = $objp->email;
 		$thirdpartystatic->country_code = $objp->country_code;
 		$thirdpartystatic->tva_intra = $objp->tva_intra;
-		$thirdpartystatic->code_compta_company = $objp->company_code_sell;
+		$thirdpartystatic->code_compta_product = $objp->company_code_sell;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;

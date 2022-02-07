@@ -2,7 +2,6 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-
 /* <style type="text/css" > dont remove this line it's an ide hack */
 /*
  * Dropdown of user popup
@@ -10,6 +9,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 .bookmark-footer a.top-menu-dropdown-link {
 	white-space: normal;
+	word-break: break-word;
 }
 
 button.dropdown-item.global-search-item {
@@ -35,7 +35,8 @@ div#topmenu-bookmark-dropdown {
 }
 
 #topmenu-bookmark-dropdown .dropdown-menu {
-	width: 300px;
+	min-width: 300px;
+	max-width: 360px;
 }
 
 button.dropdown-item.global-search-item {
@@ -365,7 +366,7 @@ a.top-menu-dropdown-link {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	margin-right: 5px;
+	margin-<?php echo $right; ?>: 5px;
 	display: inline-block;
 	content: "\f0da";
 	color: rgba(0,0,0,0.3);

@@ -626,7 +626,7 @@ if ($id > 0 || !empty($ref)) {
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($object->budget_amount, '')) {
-		print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+		print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';
 
@@ -811,9 +811,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-	if ($optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -852,8 +850,8 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$moreforfilter = '';
 	if (count($tasksarray) > 0) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans("TasksAssignedTo").': ';
-		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', 1);
+		$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
+		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
 		$moreforfilter .= '</div>';
 	}
 	if ($moreforfilter) {

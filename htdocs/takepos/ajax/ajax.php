@@ -53,6 +53,8 @@ if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('takeposproductsearch'));
 
 /*
  * View
@@ -109,13 +111,30 @@ if ($action == 'getProducts') {
 		}
 	}
 
-	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price FROM '.MAIN_DB_PREFIX.'product as p';
+	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price' ;
+	// Add fields from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
+
+	// Add tables from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);    // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND tosell = 1';
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
+	// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$rows = array();

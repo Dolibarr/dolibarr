@@ -92,6 +92,7 @@ class ProductFournisseur extends Product
 	public $fk_availability;
 
 	public $fourn_unitprice;
+	public $fourn_unitprice_with_discount;	// not saved into database
 	public $fourn_tva_tx;
 	public $fourn_tva_npr;
 
@@ -817,8 +818,10 @@ class ProductFournisseur extends Product
 				$min = -1;
 				foreach ($record_array as $record) {
 					$fourn_price = $record["price"];
-					// discount calculated buy price
-					$fourn_unitprice = $record["unitprice"] * (1 - $record["remise_percent"] / 100) - $record["remise"];
+					// calculate unit price for quantity 1
+					$fourn_unitprice = $record["unitprice"];
+					$fourn_unitprice_with_discount = $record["unitprice"] * (1 - $record["remise_percent"] / 100);
+
 					if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
@@ -835,6 +838,7 @@ class ProductFournisseur extends Product
 							} else {
 								$fourn_unitprice = $fourn_price;
 							}
+							$fourn_unitprice_with_discount = $fourn_unitprice * (1 - $record["remise_percent"] / 100);
 						}
 					}
 					if ($fourn_unitprice < $min || $min == -1) {
@@ -847,6 +851,7 @@ class ProductFournisseur extends Product
 						$this->fourn_remise_percent     = $record["remise_percent"];
 						$this->fourn_remise             = $record["remise"];
 						$this->fourn_unitprice          = $fourn_unitprice;
+						$this->fourn_unitprice_with_discount = $fourn_unitprice_with_discount;
 						$this->fourn_charges            = $record["charges"]; // deprecated
 						$this->fourn_tva_tx             = $record["tva_tx"];
 						$this->fourn_id                 = $record["fourn_id"];

@@ -66,7 +66,6 @@ ContactForContracts=Contactpersoon contracten
 ContactForInvoices=Contactpersoon facturen
 NoContactForAnyOrderOrShipments=Dit contact is geen contact voor een bestelling of verzending
 NewContactAddress=Nieuw contact / adres
-VATIntraManualCheck=U kunt ook handmatig controleren op de website van de Europese Commissie <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Controle niet mogelijk. Controledienst wordt niet verleend door lidstaat (%s).
 ContactOthers=Ander
 OthersNotLinkedToThirdParty=Anderen, niet gebonden aan een Klant

@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Inte få RSS-flöde. Försök att lägga konstant MAIN_
 ErrorForbidden=Tillträde beviljas ej. <br> Du försöker komma åt en sida, ett område eller en funktion av en inaktiverad modul eller utan att vara i en autentiserad session eller det är inte tillåtet för din användare.
 ErrorForbidden2=Tillstånd för den här inloggningen kan definieras av din Dolibarr administratör från menyn %s-> %s.
 ErrorForbidden3=Det verkar som Dolibarr inte används genom en bestyrkt session. Ta en titt på Dolibarr inställning dokumentation för att veta hur man ska hantera verifieringar (htaccess, mod_auth eller andra ...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Funktion imagick_readimage finns inte i denna PHP. Ingen förhandsgranskning kan vara tillgängliga. Administratörer kan inaktivera den här fliken från menyn Setup - Display.
 ErrorRecordAlreadyExists=Record finns redan
 ErrorLabelAlreadyExists=Denna etikett finns redan
@@ -271,6 +272,8 @@ CheckVersionFail=Versionskontroll misslyckades
 ErrorWrongFileName=Filens namn kan inte innehålla __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Inte i ordningen för betalningsvillkor, ändra.
 ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) är högre än PHP-parameter post_max_size (%s). Detta är inte en konsekvent installation.

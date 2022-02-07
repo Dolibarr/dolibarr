@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -295,6 +294,56 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
+	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
+	if ($action == 'close') {
+		$text = $langs->trans('ConfirmCloseKM', $object->ref);
+		/*if (! empty($conf->notification->enabled))
+		 {
+		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+		 $notify = new Notify($db);
+		 $text .= '<br>';
+		 $text .= $notify->confirmMessage('MYOBJECT_CLOSE', $object->socid, $object);
+		 }*/
+
+		$formquestion = array();
+		/*
+		 $forcecombo=0;
+		 if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+		 $formquestion = array(
+		 // 'text' => $langs->trans("ConfirmClone"),
+		 // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+		 // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+		 // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+		 );
+		 */
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetObsolete'), $text, 'confirm_close', $formquestion, 0, 1, 220);
+	}
+
+	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
+	if ($action == 'reopen') {
+		$text = $langs->trans('ConfirmReopenKM', $object->ref);
+		/*if (! empty($conf->notification->enabled))
+		 {
+		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+		 $notify = new Notify($db);
+		 $text .= '<br>';
+		 $text .= $notify->confirmMessage('MYOBJECT_CLOSE', $object->socid, $object);
+		 }*/
+
+		$formquestion = array();
+		/*
+		 $forcecombo=0;
+		 if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+		 $formquestion = array(
+		 // 'text' => $langs->trans("ConfirmClone"),
+		 // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+		 // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+		 // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+		 );
+		 */
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Re-Open'), $text, 'confirm_reopen', $formquestion, 0, 1, 220);
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -428,14 +477,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
 				}
 			}
+			*/
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_VALIDATED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("SetObsolete").'</a>'."\n";
 				} else {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 				}
 			}
-			*/
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));

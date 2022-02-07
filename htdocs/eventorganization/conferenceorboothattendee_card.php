@@ -519,7 +519,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$moreparam .= '&fk_project='.((int) $fk_project);
 	}
 
-	$head = conferenceorboothattendeePrepareHead($object);
+	$head = conferenceorboothAttendeePrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
 
 	$formconfirm = '';

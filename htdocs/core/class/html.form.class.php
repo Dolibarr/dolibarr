@@ -204,7 +204,7 @@ class Form
 	 */
 	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id')
 	{
-		global $conf, $langs, $db;
+		global $conf, $langs;
 
 		$ret = '';
 
@@ -886,7 +886,7 @@ class Form
 		$atleastonefavorite = 0;
 
 		$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite, eec";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
+		$sql .= " FROM ".$this->db->prefix()."c_country";
 		$sql .= " WHERE active > 0";
 		//$sql.= " ORDER BY code ASC";
 
@@ -1009,7 +1009,7 @@ class Form
 		$incotermArray = array();
 
 		$sql = "SELECT rowid, code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_incoterms";
+		$sql .= " FROM ".$this->db->prefix()."c_incoterms";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY code ASC";
 
@@ -1088,7 +1088,7 @@ class Form
 	public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0)
 	{
 		// phpcs:enable
-		global $db, $langs, $user, $conf;
+		global $langs, $conf;
 
 		// If product & services are enabled or both disabled.
 		if ($forceall == 1 || (empty($forceall) && !empty($conf->product->enabled) && !empty($conf->service->enabled))
@@ -1155,7 +1155,7 @@ class Form
 		$langs->load("trips");
 
 		$sql = "SELECT c.code, c.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
+		$sql .= " FROM ".$this->db->prefix()."c_type_fees as c";
 		$sql .= " WHERE active > 0";
 
 		$resql = $this->db->query($sql);
@@ -1344,12 +1344,12 @@ class Form
 			$sql .= ", s.address, s.zip, s.town";
 			$sql .= ", dictp.code as country_code";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " FROM ".$this->db->prefix()."societe as s";
 		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 		if (!empty($user->socid)) {
@@ -1523,7 +1523,7 @@ class Form
 		// On recherche les remises
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql .= " re.description, re.fk_facture_source";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+		$sql .= " FROM ".$this->db->prefix()."societe_remise_except as re";
 		$sql .= " WHERE re.fk_soc = ".(int) $socid;
 		$sql .= " AND re.entity = ".$conf->entity;
 		if ($filter) {
@@ -1668,9 +1668,9 @@ class Form
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 			$sql .= ", s.nom as company, s.town AS company_town";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+		$sql .= " FROM ".$this->db->prefix()."socpeople as sp";
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
-			$sql .= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX."societe as s ON s.rowid=sp.fk_soc";
+			$sql .= " LEFT OUTER JOIN  ".$this->db->prefix()."societe as s ON s.rowid=sp.fk_soc";
 		}
 		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		if ($socid > 0 || $socid == -1) {
@@ -1690,11 +1690,16 @@ class Form
 				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
 
-			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) {
-				$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
-			}
-			if ($showempty == 2) {
-				$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
+			if ($showempty && ! is_numeric($showempty)) {
+				$textforempty = $showempty;
+				$out .= '<option class="optiongrey" value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'>'.$textforempty.'</option>';
+			} else {
+				if (($showempty == 1 || ($showempty == 3 && $num > 1)) && ! $multiple) {
+					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
+				}
+				if ($showempty == 2) {
+					$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
+				}
 			}
 
 			$i = 0;
@@ -1917,9 +1922,9 @@ class Form
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= ", e.label";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql .= " FROM ".$this->db->prefix()."user as u";
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid = u.entity";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."entity as e ON e.rowid = u.entity";
 			if ($force_entity) {
 				$sql .= " WHERE u.entity IN (0, ".$this->db->sanitize($force_entity).")";
 			} else {
@@ -1927,7 +1932,7 @@ class Form
 			}
 		} else {
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
+				$sql .= " LEFT JOIN ".$this->db->prefix()."usergroup_user as ug";
 				$sql .= " ON ug.fk_user = u.rowid";
 				$sql .= " WHERE ug.entity = ".$conf->entity;
 			} else {
@@ -2347,7 +2352,7 @@ class Form
 					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			$out .= '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out .= '<input type="text" class="minwidth100'.($morecss ? ' '.$morecss : '').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
@@ -2355,6 +2360,69 @@ class Form
 			$out .= $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
 		}
 
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Return list of BOM for customer in Ajax if Ajax activated or go to select_produits_list
+	 *
+	 * @param int $selected Preselected BOM id
+	 * @param string $htmlname Name of HTML select field (must be unique in page).
+	 * @param int $limit Limit on number of returned lines
+	 * @param int $status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
+	 * @param int $type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
+	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string $morecss Add more css on select
+	 * @param string $nooutput No print, return the output into a string
+	 * @param int $forcecombo Force to use combo box
+	 * @return        void|string
+	 */
+	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0)
+	{
+		// phpcs:enable
+		global $conf, $user, $langs, $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		$error = 0;
+		$out = '';
+
+		if (!$forcecombo) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("PRODUIT_USE_SEARCH_TO_SELECT"));
+		}
+
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+
+		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'bom_bom as b';
+		$sql.= ' WHERE b.entity IN ('.getEntity('bom').')';
+		if (!empty($status)) $sql.= ' AND status = '. (int) $status;
+		if (!empty($type)) $sql.= ' AND status = '. (int) $type;
+		if (!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($showempty)	{
+				$out .= '<option value="-1"';
+				if (empty($selected)) $out .= ' selected';
+				$out .= '>&nbsp;</option>';
+			}
+			while ($obj = $db->fetch_object($resql)) {
+				$product = new Product($db);
+				$res = $product->fetch($obj->fk_product);
+				if ($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $product->label .' - '.$obj->label.'</option>';
+				$out .= '<option value="'.$obj->rowid.'">'.$obj->ref.' - '.$product->label .' - '. $obj->label.'</option>';
+			}
+		} else {
+			$error++;
+			dol_print_error($db);
+		}
 		if (empty($nooutput)) {
 			print $out;
 		} else {
@@ -2390,7 +2458,7 @@ class Form
 	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '')
 	{
 		// phpcs:enable
-		global $langs, $conf, $user, $db;
+		global $langs, $conf;
 
 		$out = '';
 		$outarray = array();
@@ -2426,9 +2494,9 @@ class Form
 
 		if (!empty($conf->global->PRODUCT_SORT_BY_CATEGORY)) {
 			//Product category
-			$sql .= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
-						FROM ".MAIN_DB_PREFIX."categorie_product
-						WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid
+			$sql .= ", (SELECT ".$this->db->prefix()."categorie_product.fk_categorie
+						FROM ".$this->db->prefix()."categorie_product
+						WHERE ".$this->db->prefix()."categorie_product.fk_product=p.rowid
 						LIMIT 1
 				) AS categorie_product_id ";
 		}
@@ -2454,13 +2522,13 @@ class Form
 		}
 		// Price by quantity
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			$sql .= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
+			$sql .= ", (SELECT pp.rowid FROM ".$this->db->prefix()."product_price as pp WHERE pp.fk_product = p.rowid";
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 				$sql .= " AND price_level = ".((int) $price_level);
 			}
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1) as price_rowid";
-			$sql .= ", (SELECT pp.price_by_qty FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid"; // price_by_qty is 1 if some prices by qty exists in subtable
+			$sql .= ", (SELECT pp.price_by_qty FROM ".$this->db->prefix()."product_price as pp WHERE pp.fk_product = p.rowid"; // price_by_qty is 1 if some prices by qty exists in subtable
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 				$sql .= " AND price_level = ".((int) $price_level);
 			}
@@ -2468,45 +2536,45 @@ class Form
 			$sql .= " DESC LIMIT 1) as price_by_qty";
 			$selectFields .= ", price_rowid, price_by_qty";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+		$sql .= " FROM ".$this->db->prefix()."product as p";
 		if (count($warehouseStatusArray)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.fk_product = p.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
 			$sql .= ' AND e.statut IN ('.$this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 		}
 
 		// include search in supplier ref
 		if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		}
 
 		//Price by customer
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
-			$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".((int) $socid)." AND pcp.fk_product=p.rowid";
+			$sql .= " LEFT JOIN  ".$this->db->prefix()."product_customer_price as pcp ON pcp.fk_soc=".((int) $socid)." AND pcp.fk_product=p.rowid";
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_units u ON u.rowid = p.fk_unit";
 		}
 		// Multilang : we add translation
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid ";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_lang as pl ON pl.fk_product = p.rowid ";
 			if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && !empty($socid)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-				$soc = new Societe($db);
+				$soc = new Societe($this->db);
 				$result = $soc->fetch($socid);
 				if ($result > 0 && !empty($soc->default_lang)) {
-					$sql .= " AND pl.lang='" . $this->db->escape($soc->default_lang) . "'";
+					$sql .= " AND pl.lang = '".$this->db->escape($soc->default_lang)."'";
 				} else {
-					$sql .= " AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
+					$sql .= " AND pl.lang = '".$this->db->escape($langs->getDefaultLang())."'";
 				}
 			} else {
-				$sql .= " AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
+				$sql .= " AND pl.lang = '".$this->db->escape($langs->getDefaultLang())."'";
 			}
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 		}
 
 		$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -2634,7 +2702,7 @@ class Form
 
 				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
-					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+					$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
 					$sql .= " WHERE fk_product_price = ".((int) $objp->price_rowid);
 					$sql .= " ORDER BY quantity ASC";
 
@@ -2707,7 +2775,7 @@ class Form
 			}
 			return $outarray;
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -2728,7 +2796,7 @@ class Form
 	 */
 	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '', $novirtualstock = 0)
 	{
-		global $langs, $conf, $user, $db;
+		global $langs, $conf, $user;
 
 		$outkey = '';
 		$outval = '';
@@ -2874,7 +2942,7 @@ class Form
 		// If we need a particular price level (from 1 to n)
 		if (empty($hidepriceinlabel) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx, default_vat_code";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
+			$sql .= " FROM ".$this->db->prefix()."product_price";
 			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
 			$sql .= " AND price_level = ".((int) $price_level);
@@ -3105,7 +3173,7 @@ class Form
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
 		// phpcs:enable
-		global $langs, $conf, $db, $user;
+		global $langs, $conf, $user;
 
 		$out = '';
 		$outarray = array();
@@ -3120,7 +3188,7 @@ class Form
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
-		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
+		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.default_vat_code, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
 		// if we use supplier description of the products
 		if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
@@ -3135,15 +3203,15 @@ class Form
 		if (!empty($conf->barcode->enabled)) {
 			$sql .= ", pfp.barcode";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (".getEntity('product').") )";
+		$sql .= " FROM ".$this->db->prefix()."product as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (".getEntity('product').") )";
 		if ($socid > 0) {
 			$sql .= " AND pfp.fk_soc = ".((int) $socid);
 		}
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON pfp.fk_soc = s.rowid";
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		if ($statut != -1) {
@@ -3275,7 +3343,7 @@ class Form
 
 				$optlabel = $objp->ref;
 				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
-					$optlabel .= ' <span class=\'opacitymedium\'>('.$objp->ref_fourn.')</span>';
+					$optlabel .= ' <span class="opacitymedium">('.$objp->ref_fourn.')</span>';
 				}
 				if (!empty($conf->barcode->enabled) && !empty($objp->barcode)) {
 					$optlabel .= ' ('.$outbarcode.')';
@@ -3416,7 +3484,6 @@ class Form
 
 				$opt .= "</option>\n";
 
-
 				// Add new entry
 				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -3427,7 +3494,11 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'price_ht'=>price2num($objp->unitprice, 'MT'),
+						'price_qty_ht'=>price2num($objp->fprice, 'MU'),	// Keep higher resolution for price for the min qty
+						'price_unit_ht'=>price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
+						'price_ht'=>price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
+						'tva_tx'=>$objp->tva_tx,
+						'default_vat_code'=>$objp->default_vat_code,
 						'discount'=>$outdiscount,
 						'type'=>$outtype,
 						'duration_value'=>$outdurationvalue,
@@ -3482,9 +3553,9 @@ class Form
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, pfp.fk_soc,";
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
+		$sql .= " FROM ".$this->db->prefix()."product as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON pfp.fk_soc = s.rowid";
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND p.tobuy = 1";
 		$sql .= " AND s.fournisseur = 1";
@@ -3580,7 +3651,7 @@ class Form
 		// phpcs:enable
 		// looking for users
 		$sql = "SELECT a.rowid, a.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_address as a";
+		$sql .= " FROM ".$this->db->prefix()."societe_address as a";
 		$sql .= " WHERE a.fk_soc = ".((int) $socid);
 		$sql .= " ORDER BY a.label ASC";
 
@@ -3632,7 +3703,7 @@ class Form
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
+		$sql .= " FROM ".$this->db->prefix().'c_payment_term';
 		$sql .= " WHERE entity IN (".getEntity('c_payment_term').")";
 		$sql .= " AND active > 0";
 		$sql .= " ORDER BY sortorder";
@@ -3662,7 +3733,7 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge dans cache la liste des délais de livraison possibles
+	 *      Load int a cache property th elist of possible delivery delays.
 	 *
 	 *      @return     int             Nb of lines loaded, <0 if KO
 	 */
@@ -3671,7 +3742,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_availability);
+		$num = count($this->cache_availability);	// TODO Use $conf->cache['availability'] instead of $this->cache_availability
 		if ($num > 0) {
 			return 0; // Cache already loaded
 		}
@@ -3681,7 +3752,7 @@ class Form
 		$langs->load('propal');
 
 		$sql = "SELECT rowid, code, label, position";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_availability';
+		$sql .= " FROM ".$this->db->prefix().'c_availability';
 		$sql .= " WHERE active > 0";
 
 		$resql = $this->db->query($sql);
@@ -3755,13 +3826,13 @@ class Form
 	{
 		global $langs;
 
-		$num = count($this->cache_demand_reason);
+		$num = count($this->cache_demand_reason);	// TODO Use $conf->cache['input_reason'] instead of $this->cache_demand_reason
 		if ($num > 0) {
 			return 0; // Cache already loaded
 		}
 
 		$sql = "SELECT rowid, code, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
+		$sql .= " FROM ".$this->db->prefix().'c_input_reason';
 		$sql .= " WHERE active > 0";
 
 		$resql = $this->db->query($sql);
@@ -3851,7 +3922,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_types_paiements);
+		$num = count($this->cache_types_paiements);		// TODO Use $conf->cache['payment_mode'] instead of $this->cache_types_paiements
 		if ($num > 0) {
 			return $num; // Cache already loaded
 		}
@@ -3861,7 +3932,7 @@ class Form
 		$this->cache_types_paiements = array();
 
 		$sql = "SELECT id, code, libelle as label, type, active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_paiement";
+		$sql .= " FROM ".$this->db->prefix()."c_paiement";
 		$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
 
 		$resql = $this->db->query($sql);
@@ -3893,7 +3964,7 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Return list of payment modes.
+	 *      print list of payment modes.
 	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
 	 *      See instead to force the default value by the caller.
 	 *
@@ -3908,8 +3979,28 @@ class Form
 	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
 	{
 		// phpcs:enable
-		global $langs, $user, $conf;
+		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss);
+	}
 
+
+	/**
+	 *      Return list of payment modes.
+	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *      See instead to force the default value by the caller.
+	 *
+	 *      @param	int		$selected		Id of payment term to preselect by default
+	 *      @param	string	$htmlname		Nom de la zone select
+	 *      @param	int		$filtertype		Not used
+	 *		@param	int		$addempty		Add an empty entry
+	 * 		@param	int		$noinfoadmin	0=Add admin info, 1=Disable admin info
+	 * 		@param	string	$morecss		Add more CSS on select tag
+	 *		@return	void
+	 */
+	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
+	{
+
+		global $langs, $user, $conf;
+		$out = '';
 		dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
 		$this->load_cache_conditions_paiements();
@@ -3919,24 +4010,25 @@ class Form
 			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
 		}
 
-		print '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+		$out.=  '<select id="'.$htmlname.'" class="flat selectpaymentterms'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($addempty) {
-			print '<option value="0">&nbsp;</option>';
+			$out.=  '<option value="0">&nbsp;</option>';
 		}
 		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
 			if ($selected == $id) {
-				print '<option value="'.$id.'" selected>';
+				$out.=  '<option value="'.$id.'" selected>';
 			} else {
-				print '<option value="'.$id.'">';
+				$out.=  '<option value="'.$id.'">';
 			}
-			print $arrayconditions['label'];
-			print '</option>';
+			$out.=  $arrayconditions['label'];
+			$out.=  '</option>';
 		}
-		print '</select>';
+		$out.=  '</select>';
 		if ($user->admin && empty($noinfoadmin)) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out.=  info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print ajax_combobox($htmlname);
+		$out.=  ajax_combobox($htmlname);
+		return $out;
 	}
 
 
@@ -4092,7 +4184,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_transport_mode);
+		$num = count($this->cache_transport_mode);		// TODO Use $conf->cache['payment_mode'] instead of $this->cache_transport_mode
 		if ($num > 0) {
 			return $num; // Cache already loaded
 		}
@@ -4102,7 +4194,7 @@ class Form
 		$this->cache_transport_mode = array();
 
 		$sql = "SELECT rowid, code, label, active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
+		$sql .= " FROM ".$this->db->prefix()."c_transport_mode";
 		$sql .= " WHERE entity IN (".getEntity('c_transport_mode').")";
 
 		$resql = $this->db->query($sql);
@@ -4220,7 +4312,7 @@ class Form
 		$langs->load("deliveries");
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode";
+		$sql .= " FROM ".$this->db->prefix()."c_shipment_mode";
 		$sql .= " WHERE active > 0";
 		if ($filtre) {
 			$sql .= " AND ".$filtre;
@@ -4273,7 +4365,7 @@ class Form
 	 */
 	public function formSelectShippingMethod($page, $selected = '', $htmlname = 'shipping_method_id', $addempty = 0)
 	{
-		global $langs, $db;
+		global $langs;
 
 		$langs->load("deliveries");
 
@@ -4286,7 +4378,7 @@ class Form
 			print '</form>';
 		} else {
 			if ($selected) {
-				$code = $langs->getLabelFromKey($db, $selected, 'c_shipment_mode', 'rowid', 'code');
+				$code = $langs->getLabelFromKey($this->db, $selected, 'c_shipment_mode', 'rowid', 'code');
 				print $langs->trans("SendingMethod".strtoupper($code));
 			} else {
 				print "&nbsp;";
@@ -4308,9 +4400,9 @@ class Form
 
 		$langs->load('bills');
 
-		$opt = '<option value ="" selected></option>';
-		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture';
+		$opt = '<option value="" selected></option>';
+		$sql = "SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc";
+		$sql .= ' FROM '.$this->db->prefix().'facture';
 		$sql .= ' WHERE entity IN ('.getEntity('invoice').')';
 		$sql .= ' AND situation_counter >= 1';
 		$sql .= ' AND fk_soc = '.(int) $socid;
@@ -4365,7 +4457,7 @@ class Form
 
 		$return = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 
-		$sql = 'SELECT rowid, label, code from '.MAIN_DB_PREFIX.'c_units';
+		$sql = "SELECT rowid, label, code FROM ".$this->db->prefix()."c_units";
 		$sql .= ' WHERE active > 0';
 		if (!empty($unit_type)) {
 			$sql .= " AND unit_type = '".$this->db->escape($unit_type)."'";
@@ -4421,7 +4513,7 @@ class Form
 		$num = 0;
 
 		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql .= " FROM ".$this->db->prefix()."bank_account";
 		$sql .= " WHERE entity IN (".getEntity('bank_account').")";
 		if ($status != 2) {
 			$sql .= " AND clos = ".(int) $status;
@@ -4501,7 +4593,7 @@ class Form
 		$num = 0;
 
 		$sql = "SELECT rowid, name, fk_country, status, entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."establishment";
+		$sql .= " FROM ".$this->db->prefix()."establishment";
 		$sql .= " WHERE 1=1";
 		if ($status != 2) {
 			$sql .= " AND status = ".(int) $status;
@@ -4623,7 +4715,7 @@ class Form
 			// TODO Move this into common category feature
 			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
+			$sql .= " FROM ".$this->db->prefix()."bank_categ as c";
 			$sql .= " WHERE entity = ".$conf->entity;
 			$sql .= " ORDER BY c.label";
 			$result = $this->db->query($sql);
@@ -5707,13 +5799,13 @@ class Form
 	 */
 	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false)
 	{
-		global $db, $conf, $langs, $user;
+		global $conf, $langs;
 
 		$langs->loadCacheCurrencies(''); // Load ->cache_currencies
 
 		$TCurrency = array();
 
-		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
+		$sql = "SELECT code FROM ".$this->db->prefix()."multicurrency";
 		$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
 		if ($filter) {
 			$sql .= " AND ".$filter;
@@ -5778,7 +5870,7 @@ class Form
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT DISTINCT t.rowid, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
 		$sql .= " AND c.code IN (".$this->db->sanitize($country_code, 1).")";
@@ -6243,7 +6335,7 @@ class Form
 						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS)) {
 							$retstring .= "
 								showOn: 'button',	/* both has problem with autocompletion */
-								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
+								buttonImage: '".DOL_URL_ROOT."/theme/".dol_escape_js($conf->theme)."/img/object_calendarday.png',
 								buttonImageOnly: true";
 						}
 						$retstring .= "
@@ -6256,7 +6348,7 @@ class Form
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '');
-					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\''.dol_escape_js($prefix).'\',\''.dol_escape_js($langs->trans("FormatDateShortJavaInput")).'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
 
 					// Icone calendrier
@@ -6544,7 +6636,7 @@ class Form
 			unset($TDurationTypes[$value]);
 		}
 
-		$retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
+		$retstring = '<select class="flat minwidth75 maxwidth100" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
 		foreach ($TDurationTypes as $key => $typeduration) {
 			$retstring .= '<option value="'.$key.'"';
 			if ($key == $selected) {
@@ -6727,7 +6819,7 @@ class Form
 	 */
 	public function selectTicketsList($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
-		global $langs, $conf, $user, $db;
+		global $langs, $conf;
 
 		$out = '';
 		$outarray = array();
@@ -6736,7 +6828,7 @@ class Form
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
-		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
+		$sql .= " FROM ".$this->db->prefix()."ticket as p";
 		$sql .= ' WHERE p.entity IN ('.getEntity('ticket').')';
 
 		// Add criteria on ref/label
@@ -6811,7 +6903,7 @@ class Form
 			if (empty($outputmode)) return $out;
 			return $outarray;
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -6828,8 +6920,6 @@ class Form
 	 */
 	protected function constructTicketListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
 	{
-		global $langs, $conf, $user, $db;
-
 		$outkey = '';
 		$outval = '';
 		$outref = '';
@@ -6933,7 +7023,7 @@ class Form
 	 */
 	public function selectProjectsList($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
-		global $langs, $conf, $user, $db;
+		global $langs, $conf;
 
 		$out = '';
 		$outarray = array();
@@ -6942,7 +7032,7 @@ class Form
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " FROM ".$this->db->prefix()."projet as p";
 		$sql .= ' WHERE p.entity IN ('.getEntity('project').')';
 
 		// Add criteria on ref/label
@@ -7017,7 +7107,7 @@ class Form
 			if (empty($outputmode)) return $out;
 			return $outarray;
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -7034,8 +7124,6 @@ class Form
 	 */
 	protected function constructProjectListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
 	{
-		global $langs, $conf, $user, $db;
-
 		$outkey = '';
 		$outval = '';
 		$outref = '';
@@ -7058,7 +7146,7 @@ class Form
 		$outval .= $objRef;
 
 		$opt .= "</option>\n";
-		$optJson = array('key'=>$outkey, 'value'=>$outref, 'type'=>$outtypem);
+		$optJson = array('key'=>$outkey, 'value'=>$outref, 'type'=>$outtype);
 	}
 
 
@@ -7140,7 +7228,7 @@ class Form
 	 */
 	public function selectMembersList($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
-		global $langs, $conf, $user, $db;
+		global $langs, $conf;
 
 		$out = '';
 		$outarray = array();
@@ -7149,7 +7237,7 @@ class Form
 
 		$sql = "SELECT ";
 		$sql .= $selectFields;
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as p";
+		$sql .= " FROM ".$this->db->prefix()."adherent as p";
 		$sql .= ' WHERE p.entity IN ('.getEntity('adherent').')';
 
 		// Add criteria on ref/label
@@ -7224,7 +7312,7 @@ class Form
 			if (empty($outputmode)) return $out;
 			return $outarray;
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 	}
 
@@ -7241,8 +7329,6 @@ class Form
 	 */
 	protected function constructMemberListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
 	{
-		global $langs, $conf, $user, $db;
-
 		$outkey = '';
 		$outval = '';
 		$outref = '';
@@ -7265,7 +7351,7 @@ class Form
 		$outval .= $objRef;
 
 		$opt .= "</option>\n";
-		$optJson = array('key'=>$outkey, 'value'=>$outref, 'type'=>$outtypem);
+		$optJson = array('key'=>$outkey, 'value'=>$outref, 'type'=>$outtype);
 	}
 
 	/**
@@ -7451,15 +7537,15 @@ class Form
 		$num = 0;
 
 		// Search data
-		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
+		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".$this->db->prefix().$objecttmp->table_element." as t";
 		if (isset($objecttmp->ismultientitymanaged)) {
 			if (!is_numeric($objecttmp->ismultientitymanaged)) {
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
+				$sql .= " INNER JOIN ".$this->db->prefix().$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
 			}
 			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
 				if (empty($user->rights->societe->client->voir) && !$user->socid) {
-					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+					$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 				}
 			}
 		}
@@ -7990,6 +8076,31 @@ class Form
 			}
 		}
 
+		// Try also magic suggest
+		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
+		if (is_array($array) && !empty($array)) {
+			if ($value_as_key) {
+				$array = array_combine($array, $array);
+			}
+
+			if (!empty($array)) {
+				foreach ($array as $key => $value) {
+					$newval = ($translate ? $langs->trans($value) : $value);
+					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+
+					$out .= '<option value="'.$key.'"';
+					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
+						$out .= ' selected';
+					}
+					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
+					$out .= '>';
+					$out .= dol_htmlentitiesbr($newval);
+					$out .= '</option>'."\n";
+				}
+			}
+		}
+		$out .= '</select>'."\n";
+
 		// Add code for jquery to use multiselect
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->';
@@ -8043,31 +8154,6 @@ class Form
 			}
 			$out .= '</script>';
 		}
-
-		// Try also magic suggest
-		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss ? ' '.$morecss : '').'" multiple name="'.$htmlname.'[]"'.($moreattrib ? ' '.$moreattrib : '').($width ? ' style="width: '.(preg_match('/%/', $width) ? $width : $width.'px').'"' : '').'>'."\n";
-		if (is_array($array) && !empty($array)) {
-			if ($value_as_key) {
-				$array = array_combine($array, $array);
-			}
-
-			if (!empty($array)) {
-				foreach ($array as $key => $value) {
-					$newval = ($translate ? $langs->trans($value) : $value);
-					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-
-					$out .= '<option value="'.$key.'"';
-					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
-						$out .= ' selected';
-					}
-					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
-					$out .= '>';
-					$out .= dol_htmlentitiesbr($newval);
-					$out .= '</option>'."\n";
-				}
-			}
-		}
-		$out .= '</select>'."\n";
 
 		return $out;
 	}
@@ -8193,11 +8279,9 @@ class Form
 	 */
 	public function showCategories($id, $type, $rendermode = 0, $nolink = 0)
 	{
-		global $db;
-
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-		$cat = new Categorie($db);
+		$cat = new Categorie($this->db);
 		$categories = $cat->containing($id, $type);
 
 		if ($rendermode == 1) {
@@ -8208,7 +8292,7 @@ class Form
 					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.$way.'</li>';
 				}
 			}
-			return '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+			return '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
 
 		if ($rendermode == 0) {
@@ -8425,22 +8509,23 @@ class Form
 			}
 
 			$possiblelinks = array(
-				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
-				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
-				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
-				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
+				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
+				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
+				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
+				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'contrat'=>array(
 					'enabled'=>$conf->contrat->enabled,
 					'perms'=>1,
 					'label'=>'LinkToContract',
-					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t, ".MAIN_DB_PREFIX."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht
+							FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."contrat as t, ".$this->db->prefix()."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
 				),
-				'fichinter'=>array('enabled'=>!empty($conf->ficheinter->enabled) ? $conf->ficheinter->enabled : 0, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
-				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
-				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
-				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled, 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('facture_fourn').')'),
-				'ticket'=>array('enabled'=>$conf->ticket->enabled, 'perms'=>1, 'label'=>'LinkToTicket', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('ticket').')'),
-				'mo'=>array('enabled'=>$conf->mrp->enabled, 'perms'=>1, 'label'=>'LinkToMO', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".MAIN_DB_PREFIX."societe as s INNER JOIN ".MAIN_DB_PREFIX."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
+				'fichinter'=>array('enabled'=>!empty($conf->ficheinter->enabled) ? $conf->ficheinter->enabled : 0, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
+				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
+				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
+				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled, 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('facture_fourn').')'),
+				'ticket'=>array('enabled'=>$conf->ticket->enabled, 'perms'=>1, 'label'=>'LinkToTicket', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('ticket').')'),
+				'mo'=>array('enabled'=>$conf->mrp->enabled, 'perms'=>1, 'label'=>'LinkToMo', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix()."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
 			);
 		}
 
@@ -8646,7 +8731,7 @@ class Form
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
+		$sql .= " FROM ".$this->db->prefix()."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
 		$sql .= " ORDER BY rowid";
 		$result = $this->db->query($sql);
@@ -9164,9 +9249,9 @@ class Form
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= ", e.label";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+		$sql .= " FROM ".$this->db->prefix()."usergroup as ug ";
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=ug.entity";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."entity as e ON e.rowid=ug.entity";
 			if ($force_entity) {
 				$sql .= " WHERE ug.entity IN (0, ".$force_entity.")";
 			} else {
@@ -9328,24 +9413,24 @@ class Form
 	 */
 	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array(), $info_admin = 1)
 	{
-		global $db, $langs, $user;
+		global $langs, $user;
 
 		$out = '';
-		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
-		$sql .= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
+		$sql = "SELECT rowid, label FROM ".$this->db->prefix()."c_exp_tax_cat WHERE active = 1";
+		$sql .= " AND entity IN (0,".getEntity('exp_tax_cat').")";
 		if (!empty($excludeid)) {
-			$sql .= ' AND rowid NOT IN ('.$this->db->sanitize(implode(',', $excludeid)).')';
+			$sql .= " AND rowid NOT IN (".$this->db->sanitize(implode(',', $excludeid)).")";
 		}
-		$sql .= ' ORDER BY label';
+		$sql .= " ORDER BY label";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp maxwidth200">';
 			if ($useempty) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
 
-			while ($obj = $db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$out .= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.$langs->trans($obj->label).'</option>';
 			}
 			$out .= '</select>';
@@ -9356,11 +9441,11 @@ class Form
 			}
 
 			if (!empty($target)) {
-				$sql = "SELECT c.id FROM ".MAIN_DB_PREFIX."c_type_fees as c WHERE c.code = 'EX_KME' AND c.active = 1";
-				$resql = $db->query($sql);
+				$sql = "SELECT c.id FROM ".$this->db->prefix()."c_type_fees as c WHERE c.code = 'EX_KME' AND c.active = 1";
+				$resql = $this->db->query($sql);
 				if ($resql) {
-					if ($db->num_rows($resql) > 0) {
-						$obj = $db->fetch_object($resql);
+					if ($this->db->num_rows($resql) > 0) {
+						$obj = $this->db->fetch_object($resql);
 						$out .= '<script>
 							$(function() {
 								$("select[name='.$target.']").on("change", function() {
@@ -9402,7 +9487,7 @@ class Form
 				}
 			}
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		return $out;
@@ -9418,25 +9503,25 @@ class Form
 	 */
 	public function selectExpenseRanges($selected = '', $htmlname = 'fk_range', $useempty = 0)
 	{
-		global $db, $conf, $langs;
+		global $conf, $langs;
 
 		$out = '';
-		$sql = 'SELECT rowid, range_ik FROM '.MAIN_DB_PREFIX.'c_exp_tax_range';
-		$sql .= ' WHERE entity = '.$conf->entity.' AND active = 1';
+		$sql = "SELECT rowid, range_ik FROM ".$this->db->prefix()."c_exp_tax_range";
+		$sql .= " WHERE entity = ".$conf->entity." AND active = 1";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
 			if ($useempty) {
 				$out .= '<option value="0"></option>';
 			}
 
-			while ($obj = $db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$out .= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.price($obj->range_ik, 0, $langs, 1, 0).'</option>';
 			}
 			$out .= '</select>';
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		return $out;
@@ -9454,13 +9539,13 @@ class Form
 	 */
 	public function selectExpense($selected = '', $htmlname = 'fk_c_type_fees', $useempty = 0, $allchoice = 1, $useid = 0)
 	{
-		global $db, $langs;
+		global $langs;
 
 		$out = '';
-		$sql = 'SELECT id, code, label FROM '.MAIN_DB_PREFIX.'c_type_fees';
-		$sql .= ' WHERE active = 1';
+		$sql = "SELECT id, code, label FROM ".$this->db->prefix()."c_type_fees";
+		$sql .= " WHERE active = 1";
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
 			if ($useempty) {
@@ -9475,13 +9560,13 @@ class Form
 				$field = 'id';
 			}
 
-			while ($obj = $db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$key = $langs->trans($obj->code);
 				$out .= '<option '.($selected == $obj->{$field} ? 'selected="selected"' : '').' value="'.$obj->{$field}.'">'.($key != $obj->code ? $key : $obj->label).'</option>';
 			}
 			$out .= '</select>';
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		return $out;
@@ -9533,9 +9618,9 @@ class Form
 		$sql = "SELECT f.rowid, f.ref as fref, 'nolabel' as flabel, p.rowid as pid, f.ref,
             p.title, p.fk_soc, p.fk_statut, p.public,";
 		$sql .= ' s.nom as name';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
-		$sql .= ' '.MAIN_DB_PREFIX.'facture as f';
+		$sql .= ' FROM '.$this->db->prefix().'projet as p';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'societe as s ON s.rowid = p.fk_soc,';
+		$sql .= ' '.$this->db->prefix().'facture as f';
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		$sql .= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
@@ -9646,9 +9731,10 @@ class Form
 	 * @param	array		$arrayofcriterias			          Array of available search criterias. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
 	 * @param	array		$search_component_params	          Array of selected search criterias
 	 * @param   array       $arrayofinputfieldsalreadyoutput      Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
+	 * @param	string		$search_component_params_hidden		  String with $search_component_params criterias
 	 * @return	string									          HTML component for advanced search
 	 */
-	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array())
+	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '')
 	{
 		global $langs;
 
@@ -9666,7 +9752,12 @@ class Form
 
 		$ret .= '<div class="search_component inline-block valignmiddle">'.$texttoshow.'</div>';
 		$ret .= '</div>';
-		$ret .= '<input type="hidden" name="search_component_params_hidden" class="search_component_params_hidden" value="'.GETPOST("search_component_params_hidden").'">';
+		$ret .= "<!-- Syntax of Generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
+		if (GETPOST('show_search_component_params_hidden', 'int')) {
+			$ret .= '<input type="hidden" name="show_search_component_params_hidden" value="1">';
+		}
+		$ret .= '<input type="'.(GETPOST('show_search_component_params_hidden', 'int') ? 'text' : 'hidden').'" name="search_component_params_hidden" class="search_component_params_hidden marginleftonly" value="'.$search_component_params_hidden.'">';
+
 		// For compatibility with forms that show themself the search criteria in addition of this component, we output the fields
 		foreach ($arrayofcriterias as $criterias) {
 			foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
@@ -9707,14 +9798,14 @@ class Form
 	 */
 	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0)
 	{
-		global $langs, $db, $user;
+		global $langs, $user;
 
 		$retstring = '';
 
 		$TModels = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
+		$formmail = new FormMail($this->db);
 		$result = $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 
 		if ($default) {

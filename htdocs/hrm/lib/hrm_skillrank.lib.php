@@ -124,13 +124,13 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 	if (is_array($Lines) && !empty($Lines)) {
 		foreach ($Lines as $line) {
 			$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
-			if ($line->rank > $MaxNumberSkill) {
+			if ($line->rankorder > $MaxNumberSkill) {
 				continue;
 			}
 
 			$ret .= '<span title="' . $line->description . '" class="radio_js_bloc_number ' . $inputname . '_' . $line->fk_skill;
-			$ret .= $line->rank == $selected_rank ? ' selected' : '';
-			$ret .= '">' . $line->rank . '</span>';
+			$ret .= $line->rankorder == $selected_rank ? ' selected' : '';
+			$ret .= '">' . $line->rankorder . '</span>';
 		}
 
 		if ($mode == 'edit') {

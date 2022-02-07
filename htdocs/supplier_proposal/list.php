@@ -103,8 +103,8 @@ $mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
@@ -302,7 +302,7 @@ $sql .= " p.rowid as project_id, p.ref as project_ref,";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " sc.fk_soc, sc.fk_user,";
 }
-$sql .= " u.firstname, u.lastname, u.photo, u.login";
+$sql .= " u.firstname, u.lastname, u.photo, u.login, u.statut as status, u.admin, u.employee, u.email as uemail";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -364,7 +364,7 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_login) {
-	$sql .= natural_search('u.login', $search_login);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 }
 if ($search_montant_ht) {
 	$sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
@@ -1092,12 +1092,20 @@ if ($resql) {
 
 		$userstatic->id = $obj->fk_user_author;
 		$userstatic->login = $obj->login;
+		$userstatic->status = $obj->status;
+		$userstatic->lastname = $obj->name;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->photo = $obj->photo;
+		$userstatic->admin = $obj->admin;
+		$userstatic->ref = $obj->fk_user_author;
+		$userstatic->employee = $obj->employee;
+		$userstatic->email = $obj->uemail;
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="center">';
-			if ($userstatic->id) {
-				print $userstatic->getLoginUrl(1);
+			if ($userstatic->id > 0) {
+				print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 			} else {
 				print '&nbsp;';
 			}

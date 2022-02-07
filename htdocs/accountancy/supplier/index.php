@@ -118,6 +118,7 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 if ($action == 'validatehistory') {
 	$error = 0;
 	$nbbinddone = 0;
+	$notpossible = 0;
 
 	$db->begin();
 
@@ -154,7 +155,6 @@ if ($action == 'validatehistory') {
 	} else {
 		$sql .= " s.accountancy_code_buy as company_code_buy";
 	}
-
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
@@ -172,8 +172,7 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
-	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
-	$sql .= " AND l.product_type <= 2";
+	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0 AND l.product_type <= 2 AND f.entity = ".((int) $conf->entity);
 	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 	}
@@ -212,7 +211,7 @@ if ($action == 'validatehistory') {
 			$thirdpartystatic->email = $objp->email;
 			$thirdpartystatic->country_code = $objp->country_code;
 			$thirdpartystatic->tva_intra = $objp->tva_intra;
-			$thirdpartystatic->code_compta = $objp->company_code_sell;
+			$thirdpartystatic->code_compta_product = $objp->company_code_buy;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 			$product_static->ref = $objp->product_ref;
 			$product_static->id = $objp->product_id;
@@ -231,7 +230,7 @@ if ($action == 'validatehistory') {
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			$facture_static->type = $objp->ftype;
-			$facture_static->datef = $objp->datef;
+			$facture_static->date = $objp->datef;
 
 			$facture_static_det->id = $objp->rowid;
 			$facture_static_det->total_ht = $objp->total_ht;
@@ -278,9 +277,14 @@ if ($action == 'validatehistory') {
 				} else {
 					$nbbinddone++;
 				}
+			} else {
+				$notpossible++;
 			}
 
 			$i++;
+		}
+		if ($num_lines > 10000) {
+			$notpossible += ($num_lines - 10000);
 		}
 	}
 
@@ -288,7 +292,7 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, 'mesgs');
 	}
 }
 

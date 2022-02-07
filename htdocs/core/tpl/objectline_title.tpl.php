@@ -55,7 +55,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
 // Supplier ref
-if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier') {
+if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
 	print '<td class="linerefsupplier maxwidth125"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
 }
 

@@ -48,7 +48,7 @@ CountriesNotInEEC=Països no integrats a la CEE
 CountriesInEECExceptMe=Països a la CEE excepte %s
 CountriesExceptMe=Tots els països, excepte %s
 AccountantFiles=Exporta documents d'origen
-ExportAccountingSourceDocHelp=Amb aquesta eina, podeu exportar els esdeveniments d'origen (llista en format CSV i PDF) que s'han utilitzat per generar la vostra comptabilitat.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Per exportar les vostres revistes, utilitzeu l'entrada de menú %s - %s.
 VueByAccountAccounting=Veure per compte comptable
 VueBySubAccountAccounting=Veure-ho per subcomptes comptables
@@ -286,7 +286,7 @@ ValidateMovements=Valida moviments
 DescValidateMovements=Queda prohibida qualsevol modificació o supressió de registres. Totes les entrades d’un exercici s’han de validar, en cas contrari, el tancament no serà possible
 
 ValidateHistory=Comptabilitza automàticament
-AutomaticBindingDone=Comptabilització automàtica realitzada
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no pots eliminar aquest compte comptable perquè està en ús
 MvtNotCorrectlyBalanced=Assentament comptabilitzat incorrectament. Deure = %s | Haver = %s
@@ -387,7 +387,8 @@ SaleExport=Venda d’exportació
 SaleEEC=Venda en CEE
 SaleEECWithVAT=Venda a la CEE amb un IVA que no és nul, per la qual cosa suposem que NO es tracta d’una venda intracomunitària i el compte suggerit és el compte estàndard del producte.
 SaleEECWithoutVATNumber=Venda a la CEE sense IVA, però l’identificador d’IVA del tercer no està definit. S'ha emprat el compte del producte per a vendes estàndard. Podeu corregir l’identificador d’IVA del tercer o el compte del producte si cal.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Rang de compte comptable
 Calculated=Calculat
@@ -404,6 +405,7 @@ NoJournalDefined=Cap diari definit
 Binded=Línies comptabilitzades
 ToBind=Línies a comptabilitzar
 UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a href="%s"> %s </a> per a fer l'enllaç manualment
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat

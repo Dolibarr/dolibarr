@@ -16,8 +16,8 @@ ThisService=Tato služba
 ThisProduct=Tento výrobek
 DefaultForService=Výchozí nastavení pro službu
 DefaultForProduct=Výchozí produkt
-ProductForThisThirdparty=Product for this thirdparty
-ServiceForThisThirdparty=Service for this thirdparty
+ProductForThisThirdparty=Produkty pro tento subjekt
+ServiceForThisThirdparty=Služby pro tento subjekt
 CantSuggest=Nelze navrhnout
 AccountancySetupDoneFromAccountancyMenu=Většina nastavení účetnictví se provádí z nabídky %s
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
@@ -48,7 +48,7 @@ CountriesNotInEEC=Země, které nejsou v EHS
 CountriesInEECExceptMe=Země v EHS kromě %s
 CountriesExceptMe=Všechny země kromě %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
@@ -286,7 +286,7 @@ ValidateMovements=Ověřte pohyby
 DescValidateMovements=Jakékoli úpravy nebo vymazání písem, nápisů a vymazání budou zakázány. Všechny přihlášky na cvičení musí být validovány, jinak nebude možné uzavřít
 
 ValidateHistory=Ověřit automaticky
-AutomaticBindingDone=Automatické vázání provedeno
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
 MvtNotCorrectlyBalanced=Pohyb není správně vyvážený. Debit = %s | Úvěr = %s
@@ -387,7 +387,8 @@ SaleExport=Exportní prodej
 SaleEEC=Prodej v EHS
 SaleEECWithVAT=Prodej v EHS s nulovou DPH, takže předpokládáme, že se nejedná o intrakomunitní prodej a navrhovaný účet je standardní produktový účet.
 SaleEECWithoutVATNumber=Prodej v EHS bez DPH, ale DIČ třetí strany není definováno. Pro standardní prodej jsme upadli na produktový účet. V případě potřeby můžete opravit DIČ třetí strany nebo produktový účet.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Řada účetních účtu
 Calculated=počítáno
@@ -404,6 +405,7 @@ NoJournalDefined=Žádný deník nebyl definován
 Binded=linky vázané
 ToBind=Linky k vazbě
 UseMenuToSetBindindManualy=Řádky, které ještě nejsou vázány, použijte nabídku <a href="%s"> %s </a> k vytvoření vazby ručně
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Účetní zápisy

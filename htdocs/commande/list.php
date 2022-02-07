@@ -40,6 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (!empty($conf->margin->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -116,8 +119,8 @@ $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/ma
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
@@ -187,6 +190,10 @@ $arrayfields = array(
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
+	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
@@ -407,6 +414,10 @@ $now = dol_now();
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formmargin = null;
+if (!empty($conf->margin->enabled)) {
+	$formmargin = new FormMargin($db);
+}
 $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $projectstatic = new Project($db);
@@ -1193,6 +1204,22 @@ if ($resql) {
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
+	if (!empty($arrayfields['total_pa']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_margin']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_margin_rate']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_mark_rate']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -1354,6 +1381,18 @@ if ($resql) {
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['total_pa']['checked'])) {
+		print_liste_field_titre($arrayfields['total_pa']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_margin']['checked'])) {
+		print_liste_field_titre($arrayfields['total_margin']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_margin_rate']['checked'])) {
+		print_liste_field_titre($arrayfields['total_margin_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_mark_rate']['checked'])) {
+		print_liste_field_titre($arrayfields['total_mark_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
 
 	$totalarray = array(
 		'nbfield' => 0,
@@ -1413,6 +1452,18 @@ if ($resql) {
 	$generic_product = new Product($db);
 	$userstatic = new User($db);
 	$i = 0;
+
+	$with_margin_info = false;
+	if (!empty($conf->margin->enabled) && (
+			!empty($arrayfields['total_pa']['checked'])
+			|| !empty($arrayfields['total_margin']['checked'])
+			|| !empty($arrayfields['total_margin_rate']['checked'])
+			|| !empty($arrayfields['total_mark_rate']['checked'])
+		)
+	) {
+		$with_margin_info = true;
+	}
+
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -1455,17 +1506,18 @@ if ($resql) {
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
 
+		$marginInfo = array();
+		if ($with_margin_info === true) {
+			$generic_commande->fetch_lines();
+			$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
+		}
+
 		print '<tr class="oddeven">';
 
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="nowraponall">';
 			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
-
-			// Warning late icon and note
-			if ($generic_commande->hasDelay()) {
-				print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
-			}
 
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -1590,6 +1642,10 @@ if ($resql) {
 		if (!empty($arrayfields['c.date_commande']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_commande), 'day');
+			// Warning late icon and note
+			if ($generic_commande->hasDelay()) {
+				print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1792,6 +1848,39 @@ if ($resql) {
 			}
 		}
 
+		// Total buying or cost price
+		if (!empty($arrayfields['total_pa']['checked'])) {
+			print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Total margin
+		if (!empty($arrayfields['total_margin']['checked'])) {
+			print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+			}
+			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
+		}
+		// Total margin rate
+		if (!empty($arrayfields['total_margin_rate']['checked'])) {
+			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Total mark rate
+		if (!empty($arrayfields['total_mark_rate']['checked'])) {
+			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
@@ -1854,10 +1943,13 @@ if ($resql) {
 			print '<td class="center">';
 			if (!empty($show_shippable_command) && !empty($conf->stock->enabled)) {
 				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
-					$generic_commande->getLinesArray(); // This set ->lines
+					$generic_commande->getLinesArray(); 	// Load array ->lines
+					$generic_commande->loadExpeditions();	// Load array ->expeditions
 
 					$numlines = count($generic_commande->lines); // Loop on each line of order
 					for ($lig = 0; $lig < $numlines; $lig++) {
+						$reliquat = $generic_commande->lines[$lig]->qty - $generic_commande->expeditions[$generic_commande->lines[$lig]->id];
+
 						if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0) {  // If line is a product and not a service
 							$nbprod++; // order contains real products
 							$generic_product->id = $generic_commande->lines[$lig]->fk_product;
@@ -1872,15 +1964,15 @@ if ($resql) {
 								$generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
 							}
 
+							if ($reliquat > $generic_product->stock_reel) {
+								$notshippable++;
+							}
 							if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {  // Default code. Default should be this case.
-								$text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->product_ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+								$text_info .= $reliquat.' x '.$generic_commande->lines[$lig]->product_ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 20);
 								$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';
 								$text_info .= ' - '.$langs->trans("VirtualStock").': <span class="'.($generic_product->stock_theorique > 0 ? 'ok' : 'error').'">'.$generic_product->stock_theorique.'</span>';
+								$text_info .= ($reliquat != $generic_commande->lines[$lig]->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($generic_commande->lines[$lig]->qty - $reliquat).')</span>' : '');
 								$text_info .= '<br>';
-
-								if ($generic_commande->lines[$lig]->qty > $generic_product->stock_reel) {
-									$notshippable++;
-								}
 							} else {  // BUGGED CODE.
 								// DOES NOT TAKE INTO ACCOUNT MANUFACTURING. THIS CODE SHOULD BE USELESS. PREVIOUS CODE SEEMS COMPLETE.
 								// COUNT STOCK WHEN WE SHOULD ALREADY HAVE VALUE
@@ -1908,32 +2000,31 @@ if ($resql) {
 										$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
 									}
 								}
-								$text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
+								$text_info .= $reliquat.' x '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 20);
 								$text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
 								if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $generic_commande->lines[$lig]->qty)) {
 									$warning++;
 									$text_warning .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								}
-								if ($generic_product->stock_reel < $generic_commande->lines[$lig]->qty) {
-									$notshippable++;
+								if ($reliquat > $generic_product->stock_reel) {
 									$text_info .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								} else {
 									$text_info .= '<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								}
 								if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
-									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier.'<br>';
-								} else {
-									$text_info .= '<br>';
+									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier;
 								}
+								$text_info .= ($reliquat != $generic_commande->lines[$lig]->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($generic_commande->lines[$lig]->qty - $reliquat).')</span>' : '');
+								$text_info .= '<br>';
 							}
 						}
 					}
 					if ($notshippable == 0) {
 						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
-						$text_info = $langs->trans('Shippable').'<br>'.$text_info;
+						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
 					} else {
 						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
-						$text_info = $langs->trans('NonShippable').'<br>'.$text_info;
+						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}
 

@@ -121,12 +121,13 @@ print '
         display: none;
     }
 
-    a.alilevel0 {
+    a.alilevel0, span.spanlilevel0 {
         background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\') !important;
         background-repeat: no-repeat !important;
         background-position-x: 10px;
         background-position-y: 16px;
         padding: 1em 15px 1em 40px;
+		display: block;
     }
     li.lilevel0 font.vsmenudisabled {
         background-repeat: no-repeat !important;

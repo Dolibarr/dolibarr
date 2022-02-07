@@ -71,6 +71,7 @@ if (!$user->admin) {
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
@@ -88,42 +89,54 @@ $arrayofparameters = array(
 	//'MYMODULE_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
 );
 
+$error = 0;
+$setupnotempty = 0;
+
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 0;
 // Convert arrayofparameter into a formSetup object
-if (!empty($arrayofparameters) && $useFormSetup && (float) DOL_VERSION >= 15) {
+if ($useFormSetup && (float) DOL_VERSION >= 15) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 	$formSetup = new FormSetup($db);
 
-	foreach ($arrayofparameters as $key => $val) {
-		if ($val['enabled']) {
-			$item = $formSetup->newItem($key);
+	// you can use the param convertor
+	$formSetup->addItemsFromParamsArray($arrayofparameters);
 
-			if ($val['type'] == 'string') {
-				$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
-				$item->cssClass = $val['css'];
-			}
-			if ($val['type'] == 'thirdparty_type') {
-				$item->setAsThirdpartyType();
-			}
-			if ($val['type'] == 'yesno') {
-				$formSetup->newItem($key)->setAsYesNo();
-			}
-			if ($val['type'] == 'emailtemplate:thirdparty') {
-				$formSetup->newItem($key)->setAsEmailTemplate('thirdparty');
-			}
-			if ($val['type'] == 'securekey') {
-				$formSetup->newItem($key)->setAsSecureKey()->enabled = 0; // disabled
-			}
-			if ($val['type'] == 'product') {
-				$formSetup->newItem($key)->setAsProduct();
-			}
-		}
-	}
+	// or use the new system see exemple as follow (or use both because you can ;-) )
+
+	/*
+	// Hôte
+	$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+	$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+	$item->cssClass = 'minwidth500';
+
+	// Setup conf MYMODULE_MYPARAM1 as a simple string input
+	$item = $formSetup->newItem('MYMODULE_MYPARAM1');
+
+	// Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
+	$item = $formSetup->newItem('MYMODULE_MYPARAM2');
+	$item->nameText = $item->getNameText().' more html text ';
+
+	// Setup conf MYMODULE_MYPARAM3
+	$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+	$item->setAsThirdpartyType();
+
+	// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
+	$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+
+	// Setup conf MYMODULE_MYPARAM5
+	$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+
+	// Setup conf MYMODULE_MYPARAM6
+	$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+
+	// Setup conf MYMODULE_MYPARAM7
+	$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+	*/
+
+	$setupnotempty = count($formSetup->items);
 }
 
-$error = 0;
-$setupnotempty = 0;
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
@@ -135,11 +148,11 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'alpha');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskvalue = GETPOST('maskvalue', 'alpha');
 
-	if ($maskconstorder) {
-		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconst) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -258,13 +271,13 @@ echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><
 
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
-
 	if ($useFormSetup && (float) DOL_VERSION >= 15) {
 		print $formSetup->generateOutput(true);
 	} else {
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="update">';
+
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -350,18 +363,19 @@ if ($action == 'edit') {
 			}
 		}
 		print '</table>';
-	}
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
 
-	print '</form>';
+		print '<br><div class="center">';
+		print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
+		print '</div>';
+
+		print '</form>';
+	}
+
 	print '<br>';
 } else {
 	if ($useFormSetup && (float) DOL_VERSION >= 15) {
 		if (!empty($formSetup->items)) {
 			print $formSetup->generateOutput();
-			$setupnotempty = count($formSetup->items);
 		}
 	} else {
 		if (!empty($arrayofparameters)) {

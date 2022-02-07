@@ -295,7 +295,7 @@ print '</td></tr>';
 if (!empty($conf->banque->enabled)) {
 	if ($object->fk_account > 0) {
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
-			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
+			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 			$bordereau = new RemiseCheque($db);
 			$bordereau->fetch($bankline->fk_bordereau);
 

@@ -19,7 +19,7 @@
 ModulePartnershipName=Gestió de la col·laboració
 PartnershipDescription=Mòdul Gestió de la col·laboració
 PartnershipDescriptionLong= Mòdul Gestió de la col·laboració
-
+Partnership=Partnership
 AddPartnership=Afegiu associació
 CancelPartnershipForExpiredMembers=Associació: cancel·leu l'associació de membres amb subscripcions caducades
 PartnershipCheckBacklink=Associació: consulteu l'enllaç de retrocés de referència

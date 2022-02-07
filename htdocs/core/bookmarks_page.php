@@ -111,12 +111,20 @@ if (empty($conf->bookmark->enabled)) {
 		if ($i == 0) {
 			$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("NoBookmarks").'</span>';
 			$bookmarkList .= '<br><br>';
-
-			$newcardbutton = '';
-			$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
-
-			$bookmarkList .= '<center>'.$newcardbutton.'</center>';
 		}
+
+		$newcardbutton = '';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
+
+		// Url to list bookmark
+		$bookmarkList .= '<br>';
+		$bookmarkList .= '<a class="top-menu-dropdown-link" title="'.$langs->trans('Bookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
+		$bookmarkList .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
+		$bookmarkList .= '<br>';
+		$bookmarkList .= '<br>';
+
+		$bookmarkList .= '<center>'.$newcardbutton.'</center>';
+
 		$bookmarkList .= '</div>';
 
 

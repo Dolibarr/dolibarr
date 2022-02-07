@@ -45,6 +45,41 @@ class FormSetup
 	protected $maxItemRank;
 
 	/**
+	 * this is an html string display before output form
+	 * @var string
+	 */
+	public $htmlBeforeOutputForm = '';
+
+	/**
+	 * this is an html string display after output form
+	 * @var string
+	 */
+	public $htmlAfterOutputForm = '';
+
+	/**
+	 * this is an html string display on buttons zone
+	 * @var string
+	 */
+	public $htmlOutputMoreButton = '';
+
+
+	/**
+	 *
+	 * @var array
+	 */
+	public $formAttributes = array(
+		'action' => '', // set in __construct
+		'method' => 'POST'
+	);
+
+	/**
+	 * an list of hidden inputs used only in edit mode
+	 * @var array
+	 */
+	public $formHiddenInputs = array();
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -55,6 +90,11 @@ class FormSetup
 		global $langs;
 		$this->db = $db;
 		$this->form = new Form($this->db);
+		$this->formAttributes['action'] = $_SERVER["PHP_SELF"];
+
+		$this->formHiddenInputs['token'] = newToken();
+		$this->formHiddenInputs['action'] = 'update';
+
 
 		if ($outputLangs) {
 			$this->langs = $outputLangs;
@@ -64,8 +104,32 @@ class FormSetup
 	}
 
 	/**
-	 * @param bool $editMode true will display output on edit mod
-	 * @return string
+	 * Generate an attributes string form an input array
+	 *
+	 * @param 	array 	$attributes 	an array of attributes keys and values,
+	 * @return 	string					attribute string
+	 */
+	static public function generateAttributesStringFromArray($attributes)
+	{
+		$Aattr = array();
+		if (is_array($attributes)) {
+			foreach ($attributes as $attribute => $value) {
+				if (is_array($value) || is_object($value)) {
+					continue;
+				}
+				$Aattr[] = $attribute.'="'.dol_escape_htmltag($value).'"';
+			}
+		}
+
+		return !empty($Aattr)?implode(' ', $Aattr):'';
+	}
+
+
+	/**
+	 * generateOutput
+	 *
+	 * @param 	bool 	$editMode 	true will display output on edit mod
+	 * @return 	string				html output
 	 */
 	public function generateOutput($editMode = false)
 	{
@@ -83,15 +147,75 @@ class FormSetup
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		} else {
-			$out = '<input type="hidden" name="token" value="' . newToken() . '">';
+			$out = '<!-- Start generateOutput from FormSetup class  -->';
+			$out.= $this->htmlBeforeOutputForm;
+
 			if ($editMode) {
-				$out .= '<input type="hidden" name="action" value="update">';
+				$out.= '<form ' . self::generateAttributesStringFromArray($this->formAttributes) . ' >';
+
+				// generate hidden values from $this->formHiddenInputs
+				if (!empty($this->formHiddenInputs) && is_array($this->formHiddenInputs)) {
+					foreach ($this->formHiddenInputs as $hiddenKey => $hiddenValue) {
+						$out.= '<input type="hidden" name="'.dol_escape_htmltag($hiddenKey).'" value="' . dol_escape_htmltag($hiddenValue) . '">';
+					}
+				}
 			}
 
-			$out .= '<table class="noborder centpercent">';
+			// generate output table
+			$out .= $this->generateTableOutput($editMode);
+
+
+			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+
+			if ($reshook > 0) {
+				return $hookmanager->resPrint;
+			} elseif ($editMode) {
+				$out .= '<br>'; // Todo : remove this <br/> by adding style to form-setup-button-container css class in all themes
+				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
+				$out.= $this->htmlOutputMoreButton;
+				$out .= '<input class="button button-save" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
+				$out .= '</div>';
+			}
+
+			if ($editMode) {
+				$out .= '</form>';
+			}
+
+			$out.= $this->htmlAfterOutputForm;
+
+			return $out;
+		}
+	}
+
+	/**
+	 * generateTableOutput
+	 *
+	 * @param 	bool 	$editMode 	true will display output on edit mod
+	 * @return 	string				html output
+	 */
+	public function generateTableOutput($editMode = false)
+	{
+		global $hookmanager, $action;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+		$parameters = array(
+			'editMode' => $editMode
+		);
+		$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateTableOutput', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		} else {
+			$out = '<table class="noborder centpercent">';
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
-			$out .= '	<td class="titlefield">' . $this->langs->trans("Parameter") . '</td>';
+			$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
 			$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
 			$out .= '</tr>';
 			$out .= '</thead>';
@@ -111,12 +235,13 @@ class FormSetup
 	}
 
 	/**
-	 * @param bool $noMessageInUpdate display event message on errors and success
-	 * @return void|null
+	 * saveConfFromPost
+	 *
+	 * @param 	bool 		$noMessageInUpdate display event message on errors and success
+	 * @return 	void|null
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
-
 		if (empty($this->items)) {
 			return null;
 		}
@@ -147,9 +272,11 @@ class FormSetup
 	}
 
 	/**
-	 * @param FormSetupItem $item the setup item
-	 * @param bool $editMode Display as edit mod
-	 * @return string the html output for an setup item
+	 * generateLineOutput
+	 *
+	 * @param 	FormSetupItem 	$item 		the setup item
+	 * @param 	bool 			$editMode 	Display as edit mod
+	 * @return 	string 						the html output for an setup item
 	 */
 	public function generateLineOutput($item, $editMode = false)
 	{
@@ -187,13 +314,14 @@ class FormSetup
 
 
 	/**
-	 * @param array $params an array of arrays of params from old modulBuilder params
-	 * @deprecated was used to test  module builder convertion to this form usage
+	 * Method used to test  module builder convertion to this form usage
+	 *
+	 * @param array 	$params 	an array of arrays of params from old modulBuilder params
 	 * @return null
 	 */
 	public function addItemsFromParamsArray($params)
 	{
-		if (!array($params)) { return false; }
+		if (!is_array($params) || empty($params)) { return false; }
 		foreach ($params as $confKey => $param) {
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
@@ -202,10 +330,11 @@ class FormSetup
 
 	/**
 	 * From old
-	 * @param string $confKey the conf name to store
-	 * @param array $params an array of params from old modulBuilder params
-	 * @deprecated was used to test  module builder convertion to this form usage
-	 * @return bool
+	 * Method was used to test  module builder convertion to this form usage.
+	 *
+	 * @param 	string 	$confKey 	the conf name to store
+	 * @param 	array 	$params 	an array of params from old modulBuilder params
+	 * @return 	bool
 	 */
 	public function addItemFromParams($confKey, $params)
 	{
@@ -224,7 +353,8 @@ class FormSetup
 		 */
 
 		$item = new FormSetupItem($confKey);
-		$item->setTypeFromTypeString($params['type']);
+		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developper to use object oriented usage
+		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
 			$item->enabled = $params['enabled'];
@@ -240,14 +370,15 @@ class FormSetup
 	}
 
 	/**
-	 * used to export param array for /core/actions_setmoduleoptions.inc.php template
+	 * Used to export param array for /core/actions_setmoduleoptions.inc.php template
+	 * Method exists only for manage setup convertion
+	 *
 	 * @return array $arrayofparameters for /core/actions_setmoduleoptions.inc.php
-	 * @deprecated yes this method came deprecated because it exists only for manage setup convertion
 	 */
 	public function exportItemsAsParamsArray()
 	{
 		$arrayofparameters = array();
-		foreach ($this->items as $key => $item) {
+		foreach ($this->items as $item) {
 			$arrayofparameters[$item->confKey] = array(
 				'type' => $item->getType(),
 				'enabled' => $item->enabled
@@ -260,6 +391,7 @@ class FormSetup
 	/**
 	 * Reload for each item default conf
 	 * note: this will override custom configuration
+	 *
 	 * @return bool
 	 */
 	public function reloadConfs()
@@ -277,9 +409,10 @@ class FormSetup
 	/**
 	 * Create a new item
 	 * the tagret is useful with hooks : that allow externals modules to add setup items on good place
-	 * @param $confKey the conf key used in database
-	 * @param string		$targetItemKey    	target item used to place the new item beside
-	 * @param bool		$insertAfterTarget    	insert before or after target item ?
+	 *
+	 * @param string	$confKey 				the conf key used in database
+	 * @param string	$targetItemKey    		target item used to place the new item beside
+	 * @param bool		$insertAfterTarget		insert before or after target item ?
 	 * @return FormSetupItem the new setup item created
 	 */
 	public function newItem($confKey, $targetItemKey = false, $insertAfterTarget = false)
@@ -317,6 +450,7 @@ class FormSetup
 
 	/**
 	 * Sort items according to rank
+	 *
 	 * @return bool
 	 */
 	public function sortingItems()
@@ -326,6 +460,8 @@ class FormSetup
 	}
 
 	/**
+	 * getCurentItemMaxRank
+	 *
 	 * @param bool $cache To use cache or not
 	 * @return int
 	 */
@@ -350,8 +486,9 @@ class FormSetup
 
 	/**
 	 * set new max rank if needed
-	 * @param int $rank the item rank
-	 * @return int|void
+	 *
+	 * @param 	int 		$rank 	the item rank
+	 * @return 	int|void			new max rank
 	 */
 	public function setItemMaxRank($rank)
 	{
@@ -360,10 +497,10 @@ class FormSetup
 
 
 	/**
-	 *   	get item position rank from item key
+	 * get item position rank from item key
 	 *
-	 *   	@param	string		$itemKey    		the item key
-	 *      @return	int         rank on success and -1 on error
+	 * @param	string		$itemKey    	the item key
+	 * @return	int         				rank on success and -1 on error
 	 */
 	public function getLineRank($itemKey)
 	{
@@ -379,7 +516,7 @@ class FormSetup
 	 *
 	 *  @param	FormSetupItem	$a  formSetup item
 	 *  @param	FormSetupItem	$b  formSetup item
-	 *  @return	int				Return compare result
+	 *  @return	int					Return compare result
 	 */
 	public function itemSort(FormSetupItem $a, FormSetupItem $b)
 	{
@@ -424,13 +561,16 @@ class FormSetupItem
 	/** @var string $helpText  */
 	public $helpText = '';
 
-	/** @var string $value  */
+	/** @var string $fieldValue  */
 	public $fieldValue;
+
+	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
+	public $fieldAttr;
 
 	/** @var bool|string set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too */
 	public $fieldOverride = false;
 
-	/** @var bool|string set this var to override field output */
+	/** @var bool|string set this var to override field input */
 	public $fieldInputOverride = false;
 
 	/** @var bool|string set this var to override field output */
@@ -447,6 +587,7 @@ class FormSetupItem
 	/**
 	 * TODO each type must have setAs{type} method to help configuration
 	 *   And set var as protected when its done configuration must be done by method
+	 *   this is important for retrocompatibility of futures versions
 	 * @var string $type  'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 */
 	protected $type = 'string';
@@ -458,13 +599,19 @@ class FormSetupItem
 	/**
 	 * Constructor
 	 *
-	 * @param $confKey the conf key used in database
+	 * @param string $confKey the conf key used in database
 	 */
 	public function __construct($confKey)
 	{
-		global $langs, $db, $conf;
+		global $langs, $db, $conf, $form;
 		$this->db = $db;
-		$this->form = new Form($this->db);
+
+		if (!empty($form) && is_object($form) && get_class($form) == 'Form') { // the form class has a cache inside so I am using it to optimize
+			$this->form = $form;
+		} else {
+			$this->form = new Form($this->db);
+		}
+
 		$this->langs = $langs;
 		$this->entity = $conf->entity;
 
@@ -554,7 +701,7 @@ class FormSetupItem
 	 */
 	public function generateInputField()
 	{
-		global $conf, $user;
+		global $conf;
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
@@ -563,6 +710,10 @@ class FormSetupItem
 		if (!empty($this->fieldInputOverride)) {
 			return $this->fieldInputOverride;
 		}
+
+		$this->fieldAttr['name'] = $this->confKey;
+		$this->fieldAttr['id'] = 'setup-'.$this->confKey;
+		$this->fieldAttr['value'] = $this->fieldValue;
 
 		$out = '';
 
@@ -590,7 +741,9 @@ class FormSetupItem
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} else {
-			$out.= '<input name="'.$this->confKey.'"  class="flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass).'" value="'.$this->fieldValue.'">';
+			if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
+
+			$out.= '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 		}
 
 		return $out;

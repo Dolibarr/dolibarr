@@ -75,8 +75,8 @@ $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -489,7 +489,7 @@ if ($search_warehouse != '' && $search_warehouse != '-1') {
 	$sql .= natural_search('e.rowid', $search_warehouse, 2);
 }
 if (!empty($search_user)) {
-	$sql .= natural_search('u.login', $search_user);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 }
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);

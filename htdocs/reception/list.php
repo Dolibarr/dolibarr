@@ -75,7 +75,7 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage = 'receptionlist';
 
-$search_status = GETPOST('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 
 $object = new Reception($db);
 

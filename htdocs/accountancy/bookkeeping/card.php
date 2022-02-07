@@ -674,7 +674,7 @@ if ($action == 'create') {
 						$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
 						print '<td>';
 						if ($resultfetch > 0) {
-							$accountingaccount->getNomUrl(0, 1, 1, '', 0);
+							print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
 						} else {
 							print $line->numero_compte.' <span class="warning">('.$langs->trans("AccountRemovedFromCurrentChartOfAccount").')</span>';
 						}

@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=This contact is already defined as co
 ErrorCashAccountAcceptsOnlyCashMoney=This bank account is a cash account, so it accepts payments of type cash only.
 ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be different.
 ErrorBadThirdPartyName=Bad value for third-party name
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=The %s is mandatory
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
@@ -273,6 +275,8 @@ ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -314,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

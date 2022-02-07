@@ -64,8 +64,8 @@ if ($id > 0) {
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -194,11 +194,11 @@ if ($object->id > 0) {
 	}
 
 	// Full day event
-	print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-	if (!$object->fulldayevent) {
+	if (empty($object->fulldayevent)) {
 		print dol_print_date($object->datep, 'dayhour', 'tzuser');
 	} else {
 		print dol_print_date($object->datep, 'day', 'tzuser');
@@ -211,7 +211,7 @@ if ($object->id > 0) {
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-	if (!$object->fulldayevent) {
+	if (empty($object->fulldayevent)) {
 		print dol_print_date($object->datef, 'dayhour', 'tzuser');
 	} else {
 		print dol_print_date($object->datef, 'day', 'tzuser');

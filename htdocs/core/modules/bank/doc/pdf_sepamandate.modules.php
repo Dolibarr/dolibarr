@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
@@ -236,8 +238,15 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posY = $pdf->GetY();
 				$posY += 2;
 				$pdf->SetXY($this->marge_gauche, $posY);
+
 				$ics = '';
-				if (!empty($conf->global->PRELEVEMENT_ICS)) {
+				$idbankfordirectdebit = getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT');
+				if ($idbankfordirectdebit > 0) {
+					$tmpbankfordirectdebit = new Account($this->db);
+					$tmpbankfordirectdebit->fetch($idbankfordirectdebit);
+					$ics = $tmpbankfordirectdebit->ics;	// ICS for direct debit
+				}
+				if (empty($ics) && !empty($conf->global->PRELEVEMENT_ICS)) {
 					$ics = $conf->global->PRELEVEMENT_ICS;
 				}
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
@@ -251,7 +260,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posY += 1;
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("Address").' : ', 0, 'L');
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $mysoc->getFullAddress(), 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $mysoc->getFullAddress(1), 0, 'L');
 
 				$posY = $pdf->GetY();
 				$posY += 3;
@@ -304,7 +313,10 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$address = '______________________________________________';
 				if ($thirdparty->id > 0) {
-					$address = $thirdparty->getFullAddress();
+					$tmpaddresswithoutcountry = $thirdparty->getFullAddress();	// we test on address without country
+					if ($tmpaddresswithoutcountry) {
+						$address = $thirdparty->getFullAddress(1);	// full address
+					}
 				}
 				$posY = $pdf->GetY();
 				$posY += 1;
@@ -490,7 +502,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$pdf->SetXY($this->marge_gauche, $posy);
 		$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 		$pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', 0);
-		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress()), 0, 'L', 0);
+		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress(1)), 0, 'L', 0);
 		$posy = $pdf->GetY() + 2;
 
 		return $posy;

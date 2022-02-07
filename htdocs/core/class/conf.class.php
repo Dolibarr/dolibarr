@@ -258,7 +258,7 @@ class Conf
 			// Define all global constants into $this->global->key=value
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
-			$sql .= " FROM ".MAIN_DB_PREFIX."const";
+			$sql .= " FROM ".$db->prefix()."const";
 			$sql .= " WHERE entity IN (0,".$this->entity.")";
 			$sql .= " ORDER BY entity"; // This is to have entity 0 first, then entity 1 that overwrite.
 
@@ -887,10 +887,6 @@ class Conf
 
 			if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) {
 				$this->global->MAIN_SIZE_SHORTLIST_LIMIT = 3;
-			}
-
-			if (!isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) {
-				$this->global->THEME_HIDE_BORDER_ON_INPUT = 0;
 			}
 
 			// Save inconsistent option

@@ -111,6 +111,7 @@ ErrorFailedToLoadRSSFile=Error en la recuperació del flux RSS. Afegiu la consta
 ErrorForbidden=Accés denegat. <br> Intentes accedir a una pàgina, àrea o funcionalitat d'un mòdul amb desactivat o sense estar en una sessió autenticada o que no se li permet al seu usuari.
 ErrorForbidden2=Els permisos per a aquest usuari poden ser assignats per l'administrador Dolibarr mitjançant el menú  %s-> %s.
 ErrorForbidden3=Dolibarr no sembla funcionar en una sessió autentificada. Consulteu la documentació d'instal lació de Dolibarr per saber com administrar les autenticacions (htacces, mod_auth o altre ...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=No s'ha trobat la classe Imagick en aquesta instal lació PHP. La previsualització no està disponible. Els administradors poden deshabilitar aquesta pestanya en el menú Configuració - Entorn.
 ErrorRecordAlreadyExists=Registre ja existent
 ErrorLabelAlreadyExists=Aquesta etiqueta ja existeix
@@ -271,6 +272,8 @@ CheckVersionFail=Error de comprovació de versió
 ErrorWrongFileName=El nom del fitxer no pot contenir __COSA__
 ErrorNotInDictionaryPaymentConditions=No es troba al Diccionari de condicions de pagament, modifiqueu-lo.
 ErrorIsNotADraft=%s no és un esborrany
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El paràmetre PHP upload_max_filesize (%s) és superior al paràmetre PHP post_max_size (%s). No es tracta d’una configuració consistent.

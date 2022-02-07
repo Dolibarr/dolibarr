@@ -284,3 +284,4 @@ PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Piezīme: esošie projekti ar v
 SelectLinesOfTimeSpentToInvoice=Atlasiet pavadītās laika rindas, kas nav izrakstītas, un pēc tam veiciet lielapjoma darbību “Ģenerēt rēķinu”, lai par tām izrakstītu rēķinus
 ProjectTasksWithoutTimeSpent=Projekta uzdevumi bez pavadīta laika
 FormForNewLeadDesc=Paldies, ka aizpildījāt šo veidlapu, lai sazinātos ar mums. Varat arī nosūtīt mums e-pastu tieši uz <b> %s </b>.
+StartDateCannotBeAfterEndDate=Beigu datums nevar būt pirms sākuma datuma

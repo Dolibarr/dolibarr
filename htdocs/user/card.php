@@ -90,12 +90,10 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 $childids = $user->getAllChildIds(1);	// For later, test on salary visibility
 
 // Define value to know what current user can do on properties of edited user
-if ($id) {
+if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
-	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
-	|| (($user->id != $id) && $user->rights->user->user->creer));
-	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
-	|| (($user->id != $id) && $user->rights->user->user->password));
+	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer) || (($user->id != $id) && $user->rights->user->user->creer));
+	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password) || (($user->id != $id) && $user->rights->user->user->password));
 }
 
 // Security check
@@ -106,7 +104,7 @@ if ($user->socid > 0) {
 $feature2 = 'user';
 $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 
-if ($user->id <> $id && !$canreaduser) {
+if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
 
@@ -406,7 +404,7 @@ if (empty($reshook)) {
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
 				$object->login = GETPOST("login", 'alphanohtml');
 				$object->gender = GETPOST("gender", 'aZ09');
-				$object->pass = GETPOST("password", 'none');
+				$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
 				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
 				if (!empty($user->admin)) {
 					$object->admin = GETPOST("admin", "int"); // admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
@@ -507,6 +505,7 @@ if (empty($reshook)) {
 							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
 						} else {
 							setEventMessages($object->error, $object->errors, 'errors');
+							$action = 'edit';
 						}
 					}
 				}
@@ -617,7 +616,7 @@ if (empty($reshook)) {
 	) {
 		$object->fetch($id);
 
-		$newpassword = $object->setPassword($user, '');
+		$newpassword = $object->setPassword($user, '');	// This will generate a new password
 		if ($newpassword < 0) {
 			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
@@ -1855,14 +1854,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($conf->global->USER_PASSWORD_GENERATED != 'none') {
 					if ($object->statut == 0) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("ReinitPassword").'</a></div>';
-					} elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+					} elseif ($caneditpassword && $object->login && !$object->ldap_sid &&
 					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a></div>';
 					}
 
 					if ($object->statut == 0) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a></div>';
-					} elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+					} elseif ($caneditpassword && $object->login && !$object->ldap_sid &&
 					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
 						if ($object->email) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a></div>';

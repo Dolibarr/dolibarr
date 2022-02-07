@@ -95,7 +95,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_status = GETPOST('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
@@ -295,7 +295,7 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";

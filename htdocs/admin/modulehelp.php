@@ -330,7 +330,8 @@ if ($mode == 'desc') {
 
 	$textexternal = '';
 	if ($objMod->isCoreOrExternalModule() == 'external') {
-		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $dirofmodule);
+		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $dirofmodule);
+		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $tmpdirofmoduletoshow);
 
 		global $dolibarr_allow_download_external_modules;
 		if (!empty($dolibarr_allow_download_external_modules) && preg_match('/\/custom\//', $dirofmodule)) {

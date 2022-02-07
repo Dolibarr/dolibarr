@@ -40,6 +40,7 @@ CREATE TABLE llx_mrp_mo(
 	date_end_planned datetime, 
 	fk_bom integer, 
 	fk_project integer,
-	last_main_doc varchar(255)
-	-- END MODULEBUILDER FIELDS
+	last_main_doc varchar(255),
+    fk_parent_line integer
+    -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

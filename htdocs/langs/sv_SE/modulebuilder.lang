@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Detta verktyg får endast användas av erfarna användare eller utvecklare. Det ger verktyg för att bygga eller redigera din egen modul. Dokumentation för alternativ <a href="%s" target="_blank"> manuell utveckling finns här </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Ange namnet på modulen / programmet för att skapa utan mellanslag. Använd stor bokstav för att skilja ord (till exempel: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Ange namnet på objektet som ska skapas utan mellanslag. Använd stor bokstav för att skilja ord (till exempel: MyObject, Student, Lärare ...). CRUD klassfilen, men även API-filen, kommer sidor att lista / lägga till / redigera / ta bort objekt och SQL-filer genereras.
 ModuleBuilderDesc2=Vägen där moduler genereras / redigeras (första katalogen för externa moduler definierad i %s): <strong> %s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Menyerna som tillhandahålls av din modul / applikation defi
 DictionariesDefDescTooltip=Ordböckerna som tillhandahålls av din modul / applikation definieras i arrayen <strong> $ denna-> ordböcker </strong> i modulbeskrivningsfilen. Du kan redigera den här filen manuellt eller använda den inbäddade redigeraren. <br> <br> Obs: När de väl är definierade (och modulen har aktiverats igen) är ordböcker också synliga i installationsområdet för administratörsanvändare på %s.
 PermissionsDefDescTooltip=Behörigheterna från din modul / applikation definieras i arrayen <strong> $ this-> rights </strong> i modulbeskrivningsfilen. Du kan redigera den här filen manuellt eller använda den inbäddade redigeraren. <br> <br> Obs: När de väl är definierade (och modulen har aktiverats igen), visas behörigheterna i standardbehörighetsinställningen %s.
 HooksDefDesc=Definiera i egenskapen <b> modul_parts ['krokar'] </b> i modulbeskrivningen, kontexten av krokar som du vill hantera (kontextlista kan hittas med en sökning på '<b> initHooks (</b>' i kärnkoden). <br> Redigera krokfilen för att lägga till kod för dina anslutna funktioner (krokbara funktioner kan hittas genom en sökning på '<b> executeHooks </b>' i kärnkod).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Se ID-er som används i din installation
 SeeReservedIDsRangeHere=Se utbud av reserverade ID-skivor
 ToolkitForDevelopers=Verktygssats för Dolibarr-utvecklare

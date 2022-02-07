@@ -57,8 +57,8 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 	$filtert = $user->id;
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -683,10 +683,6 @@ if ($resql) {
 				$event->date_end_in_calendar = $datep;
 			}
 		}
-		// Define ponctual property
-		if ($event->date_start_in_calendar == $event->date_end_in_calendar) {
-			$event->ponctuel = 1;
-		}
 
 		// Check values
 		if ($event->date_end_in_calendar < $firstdaytoshow ||
@@ -1236,9 +1232,9 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			$color2 = '222222';
 		}
 		print '<table class="nobordernopadding" width="100%">';
-		print '<tr><td '.($color1 ? 'style="background: #'.$color1.';"' : '').'class="'.($style1 ? $style1.' ' : '').'onclickopenref'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
+		print '<tr><td '.($color1 ? 'style="background: #'.$color1.';"' : '').'class="'.($style1 ? $style1.' ' : '').'onclickopenref center'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
 		print $string1;
-		print '</td><td '.($color2 ? 'style="background: #'.$color2.';"' : '').'class="'.($style2 ? $style2.' ' : '').'onclickopenref'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
+		print '</td><td '.($color2 ? 'style="background: #'.$color2.';"' : '').'class="'.($style2 ? $style2.' ' : '').'onclickopenref center'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';

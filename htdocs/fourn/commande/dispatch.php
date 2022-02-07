@@ -622,10 +622,11 @@ if ($id > 0 || !empty($ref)) {
 	// if ($mesg) print $mesg;
 	print '<br>';
 
-	$disabled = 1;
+	/*$disabled = 1;
 	if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 		$disabled = 0;
-	}
+	}*/
+	$disabled = 0;	// This is used to disable or not the bulk selection of target warehouse. No reason to have it disabled so forced to 0.
 
 	// Line of orders
 	if ($object->statut <= CommandeFournisseur::STATUS_ACCEPTED || $object->statut >= CommandeFournisseur::STATUS_CANCELED) {

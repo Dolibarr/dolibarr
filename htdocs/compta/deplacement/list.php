@@ -45,8 +45,8 @@ $search_ref = GETPOST('search_ref', 'int');
 $search_name = GETPOST('search_name', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 // $search_amount=GETPOST('search_amount','alpha');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 if (empty($page) || $page == -1) {

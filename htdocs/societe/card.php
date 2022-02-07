@@ -453,6 +453,7 @@ if (empty($reshook)) {
 			}
 			$object->entity					= (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
 			$object->name_alias				= GETPOST('name_alias', 'alphanohtml');
+			$object->parent					= GETPOST('parent_company_id', 'int');
 			$object->address				= GETPOST('address', 'alphanohtml');
 			$object->zip					= GETPOST('zipcode', 'alphanohtml');
 			$object->town					= GETPOST('town', 'alphanohtml');
@@ -1312,6 +1313,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 		print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
+		// Parent company
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+			print '<tr>';
+			print '<td>'.$langs->trans('ParentCompany').'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print img_picto('', 'company', 'class="paddingrightonly"');
+			print $form->select_thirdparty_list('', 'parent_company_id', '', $langs->trans("ThirdParty"));
+			print '</td></tr>';
+		}
+
 		// Prospect/Customer
 		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -1765,10 +1776,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (GETPOSTISSET('name')) {
 				// We overwrite with values if posted
 				$object->name = GETPOST('name', 'alphanohtml');
-				$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
+				$object->name_alias = GETPOST('name_alias', 'alphanohtml');
+				$object->prefix_comm = GETPOST('prefix_comm', 'alphanohtml');
 				$object->client = GETPOST('client', 'int');
-				$object->code_client			= GETPOST('customer_code', 'alpha');
-				$object->fournisseur			= GETPOST('fournisseur', 'int');
+				$object->code_client = GETPOST('customer_code', 'alpha');
+				$object->fournisseur = GETPOST('fournisseur', 'int');
 				$object->code_fournisseur = GETPOST('supplier_code', 'alpha');
 				$object->address = GETPOST('address', 'alphanohtml');
 				$object->zip = GETPOST('zipcode', 'alphanohtml');
@@ -2541,7 +2553,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td>'.$idprof.'</td><td>';
 				$key = 'idprof'.$i;
-				print showValueWithClipboardCPButton(dol_escape_htmltag($object->$key));
+				print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
 				if ($object->$key) {
 					if ($object->id_prof_check($i, $object) > 0) {
 						print ' &nbsp; '.$object->id_prof_url($i, $object);
@@ -2654,7 +2666,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
 		if ($object->tva_intra) {
 			$s = '';
-			$s .= showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra));
+			$s .= dol_print_profids($object->tva_intra, 'VATIntra', $object->country_code, 1);
 			$s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
 			if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
