@@ -350,8 +350,8 @@ class modAccounting extends DolibarrModules
 			'b.fk_doc'=>'const-0',
 			'b.fk_docdet'=>'const-0',
 			'b.fk_user_author'=>'user->id',
-			'b.montant'=>'rule-computeMontant',
-			'b.sens'=>'rule-computeSens'
+			'b.montant'=>'rule-computeAmount',
+			'b.sens'=>'rule-computeDirection'
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r]=array(
 			'b.numero_compte'=>array('rule'=>'accountingaccount'),

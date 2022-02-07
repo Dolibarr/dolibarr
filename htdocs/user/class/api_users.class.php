@@ -82,9 +82,9 @@ class Users extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as t";
+		$sql .= " FROM ".$this->db->prefix()."user as t";
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_user as c";
+			$sql .= ", ".$this->db->prefix()."categorie_user as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if ($user_ids) {
@@ -536,7 +536,7 @@ class Users extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as t";
+		$sql .= " FROM ".$this->db->prefix()."usergroup as t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if ($group_ids) {
 			$sql .= " AND t.rowid IN (".$this->db->sanitize($group_ids).")";

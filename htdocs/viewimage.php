@@ -229,6 +229,11 @@ $original_file = str_replace('..\\', '/', $original_file);
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
 
+// Check that file is allowed for view with viewimage.php
+if (!dolIsAllowedForPreview($original_file)) {
+	accessforbidden('This file is not qualified for preview', 0, 0, 1);
+}
+
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart', 0, 0, 1);

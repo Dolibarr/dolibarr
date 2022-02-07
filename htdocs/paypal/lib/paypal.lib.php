@@ -498,8 +498,19 @@ function hash_call($methodName, $nvpStr)
 	// TLSv1 by default or change to TLSv1.2 in module configuration
 	curl_setopt($ch, CURLOPT_SSLVERSION, (empty($conf->global->PAYPAL_SSLVERSION) ? 1 : $conf->global->PAYPAL_SSLVERSION));
 
+	$ssl_verifypeer = -1;
+
+	// Turning on or off the ssl target certificate
+	if ($ssl_verifypeer < 0) {
+		global $dolibarr_main_prod;
+		$ssl_verifypeer =  ($dolibarr_main_prod ? true : false);
+	}
+	if (!empty($conf->global->MAIN_CURL_DISABLE_VERIFYPEER)) {
+		$ssl_verifypeer = 0;
+	}
+
 	//turning off the server and peer verification(TrustManager Concept).
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
