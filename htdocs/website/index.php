@@ -274,27 +274,27 @@ $manifestjsoncontentdefault .= '{
 	"background_color": "#fff",
 	"description": "A simple Web app.",
 	"icons": [{
-	"src": "images/'.$website->ref.'/homescreen48.png",
+	"src": "images/'.urlencode($website->ref).'/homescreen48.png",
 	"sizes": "48x48",
 	"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen72.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen72.png",
 		"sizes": "72x72",
 		"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen96.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen96.png",
 		"sizes": "96x96",
 		"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen144.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen144.png",
 		"sizes": "144x144",
 		"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen168.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen168.png",
 		"sizes": "168x168",
 		"type": "image/png"
 	}, {
-		"src": "image/'.$website->ref.'/homescreen192.png",
+		"src": "image/'.urlencode($website->ref).'/homescreen192.png",
 		"sizes": "192x192",
 		"type": "image/png"
 	}],
@@ -2477,7 +2477,7 @@ $formother = new FormOther($db);
 
 // Confirm generation of website sitemaps
 if ($action == 'confirmgeneratesitemaps') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.urlencode($website->ref), $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
 	$action = 'preview';
 }
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
@@ -2692,12 +2692,12 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
 
 			// Regenerate all pages
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
 
 			// Generate site map
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmgeneratesitemaps&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmgeneratesitemaps&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"></span></a>';
 
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=replacesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
 		}
 
 		print '</span>';
@@ -2705,11 +2705,11 @@ if (!GETPOST('hide_websitemenu')) {
 		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			print '<span class="websiteselection">';
 			//print '<a href="'.$_SERVER["PHP_SELF"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"></span></a>';
-			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.$website->ref, $disabled);
+			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.urlencode($website->ref).'&section_dir='.urlencode('image/'.$website->ref.'/'), $disabled);
 
 			if (!empty($conf->categorie->enabled)) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"></span></a>';
-				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.$website->ref, $disabled);
+				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.urlencode($website->ref), $disabled);
 			}
 
 			print '</span>';
@@ -2808,7 +2808,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>';
 
 		print '<span class="websiteselection hideonsmartphoneimp">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=createcontainer&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=createcontainer&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a>';
 		print '</span>';
 
 		//print '<span class="websiteselection">';
@@ -2823,7 +2823,7 @@ if (!GETPOST('hide_websitemenu')) {
 				$out .= $s;
 				$out .= '</span>';
 
-				$urltocreatenewpage = $_SERVER["PHP_SELF"].'?action=createcontainer&website='.$website->ref;
+				$urltocreatenewpage = $_SERVER["PHP_SELF"].'?action=createcontainer&website='.urlencode($website->ref);
 
 				if (!empty($conf->use_javascript_ajax)) {
 					$out .= '<script type="text/javascript">';
@@ -2833,7 +2833,7 @@ if (!GETPOST('hide_websitemenu')) {
 					$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
 					$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
 					$out .= '		} else {';
-					$out .= '  			window.location.href = "'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
+					$out .= '  			window.location.href = "'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&pageid="+jQuery("#pageid option:selected").val();';
 					$out .= '       }';
 					$out .= '   });';
 					$out .= '});';
@@ -3065,7 +3065,7 @@ if (!GETPOST('hide_websitemenu')) {
 				} else {
 					//$disabled='';
 					//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setashome&token='.newToken().'&website='.$website->ref.'&pageid='.$pageid.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"></span></a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setashome&token='.newToken().'&website='.urlencode($website->ref).'&pageid='.((int) $pageid).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"></span></a>';
 				}
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 				print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
@@ -3181,7 +3181,7 @@ if (!GETPOST('hide_websitemenu')) {
                                     field: \'editval_virtualhost\',
                                     element: \'website\',
                                     table_element: \'website\',
-                                    fk_element: '.$object->id.',
+                                    fk_element: '.((int) $object->id).',
                                     value: newurl,
                                 },
                                 context: document.body
@@ -4144,9 +4144,9 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print $langs->trans("SearchReplaceInto");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="checkbox" class="marginleftonly" id="checkboxoptioncontent" name="optioncontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09')) ? ' checked' : '').'> <label for="checkboxoptioncontent">'.$langs->trans("Content").'</label><br>';
-	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta">'.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
-	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionsitefiles" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionsitefiles">'.$langs->trans("GlobalCSSorJS").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptioncontent" name="optioncontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09')) ? ' checked' : '').'> <label for="checkboxoptioncontent" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Content").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionsitefiles" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionsitefiles" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("GlobalCSSorJS").'</label><br>';
 	print '</div>';
 	print '</div>';
 
@@ -4166,32 +4166,32 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print '<div class="tagtable">';
 
 	print '<div class="tagtr">';
-	print '<div class="tagtd paddingrightonly opacitymedium" style="padding-right: 10px !important">';
+	print '<div class="tagtd paddingrightonly opacitymedium tdoverflowmax100onsmartphone" style="padding-right: 10px !important">';
 	print $langs->trans("WEBSITE_TYPE_CONTAINER");
 	print '</div>';
 	print '<div class="tagtd">';
 	print img_picto('', 'object_technic', 'class="paddingrightonly"').' ';
-	$formwebsite->selectTypeOfContainer('optioncontainertype', (GETPOST('optioncontainertype', 'alpha') ? GETPOST('optioncontainertype', 'alpha') : ''), 1);
+	$formwebsite->selectTypeOfContainer('optioncontainertype', (GETPOST('optioncontainertype', 'alpha') ? GETPOST('optioncontainertype', 'alpha') : ''), 1, '', 1, 'minwidth125 maxwidth400 widthcentpercentminusx');
 	print '</div>';
 	print '</div>';
 
 	print '<div class="tagtr">';
-	print '<div class="tagtd paddingrightonly opacitymedium" style="padding-right: 10px !important">';
+	print '<div class="tagtd paddingrightonly opacitymedium tdoverflowmax100onsmartphone" style="padding-right: 10px !important">';
 	print $langs->trans("Language");
 	print '</div>';
 	print '<div class="tagtd">';
-	print img_picto('', 'language', 'class="paddingrightonly"').' '.$formadmin->select_language(GETPOSTISSET('optionlanguage') ? GETPOST('optionlanguage') : '', 'optionlanguage', 0, null, '1', 0, 0, 'minwidth300', 2, 0, 0, null, 1);
+	print img_picto('', 'language', 'class="paddingrightonly"').' '.$formadmin->select_language(GETPOSTISSET('optionlanguage') ? GETPOST('optionlanguage') : '', 'optionlanguage', 0, null, '1', 0, 0, 'minwidth125 maxwidth400 widthcentpercentminusx', 2, 0, 0, null, 1);
 	print '</div>';
 	print '</div>';
 
 	// Categories
 	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 		print '<div class="tagtr">';
-		print '<div class="tagtd paddingrightonly marginrightonly opacitymedium" style="padding-right: 10px !important">';
+		print '<div class="tagtd paddingrightonly marginrightonly opacitymedium tdoverflowmax100onsmartphone" style="padding-right: 10px !important">';
 		print $langs->trans("Category");
 		print '</div>';
 		print '<div class="tagtd">';
-		print img_picto('', 'category', 'class="paddingrightonly"').' '.$form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('optioncategory') ? GETPOST('optioncategory') : '', 'optioncategory', null, null);
+		print img_picto('', 'category', 'class="paddingrightonly"').' '.$form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('optioncategory') ? GETPOST('optioncategory') : '', 'optioncategory', 0, 0, 0, 0, 'minwidth125 maxwidth400 widthcentpercentminusx');
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 		print ajax_combobox('optioncategory');
 		print '</div>';
@@ -4200,7 +4200,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 	print '</div>';
 
-	print '<input type="submit" class="button" name="buttonreplacesitesearch" value="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="submit" class="button margintoponly" name="buttonreplacesitesearch" value="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 	print '</div></div>';
 
@@ -4432,7 +4432,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					// Container url and label
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].$param;
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&token='.newToken().'&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&token='.newToken().'&website='.urlencode($website->ref).'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 
 					// Language

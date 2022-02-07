@@ -281,9 +281,9 @@ class modZapier extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		$result = $this->_load_tables('/zapier/sql/');
+		$result = $this->_load_tables('/install/mysql/tables/', 'zapier');
 		if ($result < 0) {
-			return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
 
 		// Create extrafields
@@ -294,7 +294,9 @@ class modZapier extends DolibarrModules
 		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'zapier@zapier', '$conf->zapier->enabled');
 		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'zapier@zapier', '$conf->zapier->enabled');
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'zapier@zapier', '$conf->zapier->enabled');
+
 		$sql = array();
+
 		return $this->_init($sql, $options);
 	}
 

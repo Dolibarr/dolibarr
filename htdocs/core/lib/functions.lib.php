@@ -4851,6 +4851,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./", "", $field1))) {
 		$liste_titre = 'liste_titre_sel';
 	}
+
 	$out .= '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 	$out .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
@@ -4885,7 +4886,6 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		//$out .= (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 		$out .= '>';
 	}
-
 	if ($tooltip) {
 		// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 		$tmptooltip = explode(':', $tooltip);
@@ -9148,12 +9148,15 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
 						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ? ((float) trim($tmpcrit)) : '0');
 					} else {
-						$newres .= $field." LIKE '";
-
 						$tmpcrit = trim($tmpcrit);
 						$tmpcrit2 = $tmpcrit;
 						$tmpbefore = '%';
 						$tmpafter = '%';
+						if (preg_match('/^!/', $tmpcrit)) {
+							$newres .= $field." NOT LIKE '"; // ! as exclude character
+							$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
+						} else $newres .= $field." LIKE '";
+
 						if (preg_match('/^[\^\$]/', $tmpcrit)) {
 							$tmpbefore = '';
 							$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
@@ -9357,7 +9360,7 @@ function dolIsAllowedForPreview($file)
 
 
 /**
- *	Return mime type of a file
+ *	Return MIME type of a file from its name with extension.
  *
  *	@param	string	$file		Filename we looking for MIME type
  *  @param  string	$default    Default mime type if extension not found in known list
