@@ -239,12 +239,12 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
-$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
+$sql .= " FROM ".$db->prefix().$object->table_element." as t";
 //if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-//	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+//	$sql .= " LEFT JOIN ".$db->prefix().$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 //}
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val AS pac2v ON pac2v.fk_prod_attr = t.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_value AS pav ON pav.fk_product_attribute = t.rowid";
+$sql .= " LEFT JOIN ".$db->prefix()."product_attribute_combination2val AS pac2v ON pac2v.fk_prod_attr = t.rowid";
+$sql .= " LEFT JOIN ".$db->prefix()."product_attribute_value AS pav ON pav.fk_product_attribute = t.rowid";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook

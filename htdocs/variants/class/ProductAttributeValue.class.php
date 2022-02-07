@@ -166,15 +166,15 @@ class ProductAttributeValue extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
+		$sql = "INSERT INTO " . $this->db->prefix() . $this->table_element . " (";
 		$sql .= " fk_product_attribute, ref, value, entity, position";
 		$sql .= ")";
 		$sql .= " VALUES (";
-		$sql .= "  " . ((int)$this->fk_product_attribute);
+		$sql .= "  " . ((int) $this->fk_product_attribute);
 		$sql .= ", '" . $this->db->escape($this->ref) . "'";
 		$sql .= ", '" . $this->db->escape($this->value) . "'";
-		$sql .= ", " . ((int)$this->entity);
-		$sql .= ", " . ((int)$this->position);
+		$sql .= ", " . ((int) $this->entity);
+		$sql .= ", " . ((int) $this->position);
 		$sql .= ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -185,7 +185,7 @@ class ProductAttributeValue extends CommonObjectLine
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix() . $this->table_element);
 		}
 
 		if (!$error && !$notrigger) {
@@ -231,8 +231,8 @@ class ProductAttributeValue extends CommonObjectLine
 		}
 
 		$sql = "SELECT rowid, fk_product_attribute, ref, value";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE rowid = " . ((int)$id);
+		$sql .= " FROM " . $this->db->prefix() . $this->table_element;
+		$sql .= " WHERE rowid = " . ((int) $id);
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -274,15 +274,15 @@ class ProductAttributeValue extends CommonObjectLine
 			$sql .= 'DISTINCT ';
 		}
 
-		$sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM ' . MAIN_DB_PREFIX . 'product_attribute_value v ';
+		$sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM ' . $this->db->prefix() . 'product_attribute_value v ';
 
 		if ($only_used) {
-			$sql .= 'LEFT JOIN ' . MAIN_DB_PREFIX . 'product_attribute_combination2val c2v ON c2v.fk_prod_attr_val = v.rowid ';
-			$sql .= 'LEFT JOIN ' . MAIN_DB_PREFIX . 'product_attribute_combination c ON c.rowid = c2v.fk_prod_combination ';
-			$sql .= 'LEFT JOIN ' . MAIN_DB_PREFIX . 'product p ON p.rowid = c.fk_product_child ';
+			$sql .= 'LEFT JOIN ' . $this->db->prefix() . 'product_attribute_combination2val c2v ON c2v.fk_prod_attr_val = v.rowid ';
+			$sql .= 'LEFT JOIN ' . $this->db->prefix() . 'product_attribute_combination c ON c.rowid = c2v.fk_prod_combination ';
+			$sql .= 'LEFT JOIN ' . $this->db->prefix() . 'product p ON p.rowid = c.fk_product_child ';
 		}
 
-		$sql .= 'WHERE v.fk_product_attribute = ' . ((int)$prodattr_id);
+		$sql .= 'WHERE v.fk_product_attribute = ' . ((int) $prodattr_id);
 
 		if ($only_used) {
 			$sql .= ' AND c2v.rowid IS NOT NULL AND p.tosell = 1';
@@ -340,13 +340,13 @@ class ProductAttributeValue extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET";
+		$sql = "UPDATE " . $this->db->prefix() . $this->table_element . " SET";
 
-		$sql .= "  fk_product_attribute = " . ((int)$this->fk_product_attribute);
+		$sql .= "  fk_product_attribute = " . ((int) $this->fk_product_attribute);
 		$sql .= ", ref = '" . $this->db->escape($this->ref) . "'";
 		$sql .= ", value = '" . $this->db->escape($this->value) . "'";
 
-		$sql .= " WHERE rowid = " . ((int)$this->id);
+		$sql .= " WHERE rowid = " . ((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -418,7 +418,7 @@ class ProductAttributeValue extends CommonObjectLine
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element . " WHERE rowid = " . ((int)$this->id);
+			$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element . " WHERE rowid = " . ((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -460,7 +460,7 @@ class ProductAttributeValue extends CommonObjectLine
 			return -1;
 		}
 
-		$sql = "SELECT COUNT(*) AS nb FROM " . MAIN_DB_PREFIX . "product_attribute_combination2val WHERE fk_prod_attr_val = " . ((int)$this->id);
+		$sql = "SELECT COUNT(*) AS nb FROM " . $this->db->prefix() . "product_attribute_combination2val WHERE fk_prod_attr_val = " . ((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
