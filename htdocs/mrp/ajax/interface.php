@@ -33,8 +33,7 @@ $fk_product = GETPOST('product_id', 'int');
 $action = GETPOST('action', 'alphanohtml');
 $permissiontoproduce = GETPOST('permissiontoproduce', 'int');
 
-if($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
-
+if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	$TRes = array();
 
 	$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
@@ -54,8 +53,7 @@ if($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	}
 
 	print json_encode($TRes);
-} elseif($action == 'updateselectwarehousebybatch' && $permissiontoproduce){
-
+} elseif ($action == 'updateselectwarehousebybatch' && $permissiontoproduce) {
 	$res = 0;
 
 	$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, e.ref, pb.qty";
@@ -68,16 +66,12 @@ if($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 
 	$resql = $db->query($sql);
 
-	if($resql){
-			if($db->num_rows($resql) == 1){
-				$obj = $db->fetch_object($resql);
-				$res = $obj->fk_entrepot;
-			}
+	if ($resql) {
+		if ($db->num_rows($resql) == 1) {
+			$obj = $db->fetch_object($resql);
+			$res = $obj->fk_entrepot;
+		}
 	}
 
 	print json_encode($res);
-
 }
-
-
-
