@@ -655,13 +655,11 @@ class FormProduct
 		}
 
 		foreach ($productIdArray as $productId) {
-			if (array_key_exists($productId, $this->cache_lot)) {
-				foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
-					if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
-						$label = $arraytypes['entrepot_label'] . ' - ';
-						$label .= $arraytypes['batch'];
-						$out .= '<option>' . $arraytypes['batch'] . '</option>';
-					}
+			foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
+				if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
+					$label = $arraytypes['entrepot_label'] . ' - ';
+					$label .= $arraytypes['batch'];
+					$out .= '<option value="' . $arraytypes['batch'] . '">(' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
 				}
 			}
 		}

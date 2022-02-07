@@ -31,8 +31,9 @@ $warehouse_id = GETPOST('warehouse_id', 'int');
 $batch_id = GETPOST('batch_id', 'int');
 $fk_product = GETPOST('product_id', 'int');
 $action = GETPOST('action', 'alphanohtml');
+$permissiontoproduce = GETPOST('permissiontoproduce', 'int');
 
-if($action == 'updateselectbatchbywarehouse') {
+if($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 
 	$TRes = array();
 
@@ -53,7 +54,7 @@ if($action == 'updateselectbatchbywarehouse') {
 	}
 
 	print json_encode($TRes);
-} elseif($action == 'updateselectwarehousebybatch'){
+} elseif($action == 'updateselectwarehousebybatch' && $permissiontoproduce){
 
 	$res = 0;
 

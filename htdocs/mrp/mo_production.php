@@ -1364,6 +1364,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						url: "<?php echo DOL_URL_ROOT . '/mrp/ajax/interface.php'; ?>",
 						data: {
 							action: "updateselectbatchbywarehouse",
+							permissiontoproduce: <?php echo $permissiontoproduce ?>,
 							warehouse_id: $(this).val(),
 							product_id: $("input[name='" + product_element_name + "']").val()
 						}
@@ -1418,6 +1419,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						url: "<?php echo DOL_URL_ROOT . '/mrp/ajax/interface.php'; ?>",
 						data: {
 							action: "updateselectwarehousebybatch",
+							permissiontoproduce: <?php echo $permissiontoproduce ?>,
 							batch_id: $(this).val(),
 							product_id: $("input[name='" + product_element_name + "']").val()
 						}
