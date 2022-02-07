@@ -1,6 +1,7 @@
 <?php
 
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ class ProductCombination2ValuePair
         FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
         WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
 
-		$sql .= $this->db->order('c.rang', 'asc');
+		$sql .= $this->db->order('c.position', 'asc');
 
 		$query = $this->db->query($sql);
 
