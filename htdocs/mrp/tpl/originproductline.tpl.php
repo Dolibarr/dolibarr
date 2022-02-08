@@ -43,15 +43,14 @@ $res = $tmpbom->fetch($line->fk_bom_child);
 <?php
 print '<tr class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td>';
-if($res){
+if ($res) {
 	print $tmpproduct->getNomUrl(1);
 	print ' '.$langs->trans("or").' ';
 	print $tmpbom->getNomUrl(1);
 	print ' <a class="collapse_bom" id="collapse-'.$line->id.'" href="#">';
 	print (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? img_picto('', 'folder') : img_picto('', 'folder-open'));
 	print '</a>';
-
-} else{
+} else {
 	print $this->tpl['label'];
 }
 print '</td>';

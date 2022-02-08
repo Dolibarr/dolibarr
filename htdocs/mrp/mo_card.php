@@ -122,7 +122,7 @@ if (empty($reshook)) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
-			}  else {
+			} else {
 				$backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
@@ -137,7 +137,7 @@ if (empty($reshook)) {
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 
-	if($action == 'add' && empty($id)){
+	if ($action == 'add' && empty($id)) {
 		$noback = "";
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -146,15 +146,14 @@ if (empty($reshook)) {
 		$moline = new MoLine($db);
 		$objectbomchildline = new BOMLine($db);
 
-		foreach($TBomLineId as $id_bom_line){
-
+		foreach ($TBomLineId as $id_bom_line) {
 			$object = new Mo($db);
 
 			$objectbomchildline->fetch($id_bom_line);
 
 			$TMoLines = $moline->fetchAll('', '', '1', '', array('origin_id' => $id_bom_line));
 
-			foreach ($TMoLines as $moline){
+			foreach ($TMoLines as $moline) {
 				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
 				$_POST['fk_parent_line'] = $moline->id;
 				$_POST['qty'] = $moline->qty;
@@ -162,14 +161,12 @@ if (empty($reshook)) {
 			}
 
 			include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-
 		}
 
 		$noback = 0;
 
 		header("Location: ".$urltogo);
 		exit;
-
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
