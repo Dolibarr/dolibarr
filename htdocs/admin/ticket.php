@@ -568,10 +568,10 @@ if ($conf->use_javascript_ajax) {
 
 print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
 print '<td class="left">';
-	$form->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
-	if ($conf->use_javascript_ajax) {
-		print ajax_combobox('select_'.$htmlname);
-	}
+$form->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
+if ($conf->use_javascript_ajax) {
+	print ajax_combobox('select_'.$htmlname);
+}
 print '</td>';
 print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
