@@ -23,10 +23,15 @@ descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classer le bon de commande source
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classer le bon de commande source lié comme reçu lorsqu'une réception est clôturée (et si la quantité reçue par toutes les réceptions est la même que dans le bon de commande à mettre à jour)
 # Autoclassify purchase invoice
 descWORKFLOW_BILL_ON_RECEPTION=Classer les réceptions en "facturées" lorsqu'une commande fournisseur liée est validée
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=À la création d'un ticket, lier les contrats disponibles du tiers
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Chercher parmi les contrats des maisons-mères pour lier un ticket à contrat
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Fermer toutes les interventions liées au ticket lorsqu'un ticket est fermé
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classer l'expédition source liée comme fermée lorsque la facture client est validée
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique
 AutomaticClosing=Clôture automatique
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classer l'expédition source liée comme fermée lorsque la facture client est validée
+AutomaticLinking=Lien automatique
+
