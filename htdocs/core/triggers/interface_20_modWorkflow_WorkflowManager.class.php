@@ -433,7 +433,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$fichinter->fk_project = $projectid;
 				$fichinter->fk_contrat = $contractid;
 				$fichinter->author = $user->id;
-				$fichinter->model_pdf = 'soleil';
+				$fichinter->model_pdf = (!empty($conf->global->FICHEINTER_ADDON_PDF)) ? $conf->global->FICHEINTER_ADDON_PDF : 'soleil';
 				$fichinter->origin = $object->element;
 				$fichinter->origin_id = $object->id;
 
