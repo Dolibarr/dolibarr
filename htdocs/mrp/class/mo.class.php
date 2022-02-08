@@ -202,8 +202,11 @@ class Mo extends CommonObject
 	 */
 	public $lines = array();
 
-	public $fk_parent_line;
+	/**
+	 * @var integer	Mo parent line
+	 * */
 
+	public $fk_parent_line;
 
 
 	/**
@@ -1206,13 +1209,15 @@ class Mo extends CommonObject
 	 *
 	 * 	@return array|int		array of lines if OK, <0 if KO
 	 */
-	public function getLinesArray($role = '')
+	public function getLinesArray($rolefilter = '')
 	{
 		$this->lines = array();
 
 		$objectline = new MoLine($this->db);
-		if($role) $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id),'role' => $role));
-		else $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id)));
+
+		$TFilters = array('customsql'=>'fk_mo = '.((int) $this->id));
+		if(!empty($rolefilter)) $TFilters['role'] = $rolefilter;
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, $TFilters);
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

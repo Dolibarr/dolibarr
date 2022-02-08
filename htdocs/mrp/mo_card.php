@@ -47,8 +47,6 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $TBomLineId = GETPOST('bomlineid', 'array');
 //$lineid   = GETPOST('lineid', 'int');
 
-
-//var_dump($_POST); exit;
 // Initialize technical objects
 $object = new Mo($db);
 $objectbom = new BOM($db);

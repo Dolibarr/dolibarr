@@ -26,7 +26,7 @@
 // $object must be defined
 // $permissiontoadd must be defined
 // $permissiontodelete must be defined
-// $backurlforlist may be defined
+// $backurlforlist must be defined
 // $backtopage may be defined
 // $noback may be defined
 // $triggermodname may be defined
@@ -128,9 +128,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		}
 	}
 
-//	var_dump($object); exit;
 	if (!$error) {
-
 		$result = $object->create($user);
 		if ($result > 0) {
 			// Creation OK
