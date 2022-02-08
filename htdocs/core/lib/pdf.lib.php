@@ -1060,11 +1060,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string
+		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string or a float
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
-		} else {
-			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", $tmpamounttoshow, $outputlangs);
+		} elseif (!empty($fromcompany->capital)) {
+			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", $fromcompany->capital, $outputlangs);
 		}
 	}
 	// Prof Id 1
