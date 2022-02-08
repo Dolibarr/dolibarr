@@ -169,6 +169,20 @@ $workflowcodes = array(
 		'picto' => 'shipment'
 	),
 
+	// Automatic link ticket -> contract
+	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
+		'family' => 'link_ticket',
+		'position' => 75,
+		'enabled' => ! empty($conf->ticket->enabled) && ! empty($conf->contract->enabled),
+		'picto' => 'ticket'
+	),
+	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
+		'family' => 'link_ticket',
+		'position' => 76,
+		'enabled' => ! empty($conf->ticket->enabled) && ! empty($conf->contract->enabled),
+		'picto' => 'ticket'
+	),
+
 	// Automatic closing
 	'WORKFLOW_TICKET_CLOSE_INTERVENTION' => array (
 		'family'=>'close_ficheinter',
@@ -255,6 +269,11 @@ foreach ($workflowcodes as $key => $params) {
 			$header = $langs->trans("AutomaticClosing");
 			if ($reg[1] == 'ficheinter') {
 				$header .= ' - '.$langs->trans('Intervention');
+			}
+		} elseif (preg_match('/link_(.*)/', $params['family'], $reg)) {
+			$header = $langs->trans("AutomaticLinking");
+			if ($reg[1] == 'ticket') {
+				$header .= ' - '.$langs->trans('Ticket');
 			}
 		} else {
 			$header = $langs->trans("Description");
