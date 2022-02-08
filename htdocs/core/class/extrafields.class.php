@@ -703,6 +703,10 @@ class ExtraFields
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
+					if ($resql < 0) {
+						$this->error = $this->db->lasterror();
+						return -1;
+					}
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror();
