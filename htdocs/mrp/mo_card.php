@@ -44,8 +44,11 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$TBomLineId = GETPOST('bomlineid', 'array');
 //$lineid   = GETPOST('lineid', 'int');
 
+
+//var_dump($_POST); exit;
 // Initialize technical objects
 $object = new Mo($db);
 $objectbom = new BOM($db);
@@ -111,6 +114,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+
 if (empty($reshook)) {
 	$error = 0;
 
@@ -120,7 +124,7 @@ if (empty($reshook)) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
-			} else {
+			}  else {
 				$backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
@@ -129,10 +133,50 @@ if (empty($reshook)) {
 		$backtopage = $backtopageforcancel;
 	}
 
+
+
 	$triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
+
+	if($action == 'add' && empty($id)){
+		$noback = "";
+		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+		$mo_parent = $object;
+
+		$moline = new MoLine($db);
+		$objectbomchildline = new BOMLine($db);
+
+		foreach($TBomLineId as $id_bom_line){
+
+			$object = new Mo($db);
+
+			$objectbomchildline->fetch($id_bom_line);
+
+			$TMoLines = $moline->fetchAll('', '', '1', '', array('origin_id' => $id_bom_line));
+
+			foreach ($TMoLines as $moline){
+				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
+				$_POST['fk_parent_line'] = $moline->id;
+				$_POST['qty'] = $moline->qty;
+				$_POST['fk_product'] = $moline->fk_product;
+			}
+
+			include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+		}
+
+		$noback = 0;
+
+		header("Location: ".$urltogo);
+		exit;
+
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';

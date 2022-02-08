@@ -89,6 +89,7 @@ $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($
 $upload_dir = $conf->bom->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
+
 /*
  * Actions
  */

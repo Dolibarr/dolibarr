@@ -80,7 +80,7 @@ print '<td class="center">';
 print '</td>';
 
 print '<td class="center">';
-print '<input type="checkbox" name="createofchildbom_'.$tmpproduct->id.'">';
+print '<input type="checkbox" name="bomlineid[]" value="'.$line->id.'">';
 print '</td>';
 
 print '</tr>'."\n";
