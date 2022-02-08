@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Bu kişi zaten bu tür için kişi ol
 ErrorCashAccountAcceptsOnlyCashMoney=Bu banka hesabı kasa hesabı lduğundan yalnızca nakit ödemeleri kabul eder.
 ErrorFromToAccountsMustDiffers=Kaynak ve hedef banka hesapları farklı olmalıdır.
 ErrorBadThirdPartyName=Üçüncü parti adı için hatalı değer
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=Bu %s zorunludur
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Hatalı müşteri kodu
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Müşteri kodu gereklidir
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please mo
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP'nizdeki upload_max_filesize (%s) parametresi, post_max_size (%s) PHP parametresinden daha yüksek. Bu tutarlı bir kurulum değil.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

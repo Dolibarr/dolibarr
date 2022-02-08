@@ -48,3 +48,7 @@ KnowledgeRecordExtraFields = 文章的補充屬性
 GroupOfTicket=服務單群組
 YouCanLinkArticleToATicketCategory=您可以將文章連結至服務單群組（因此在新服務單的有效期間將建議該文章）
 SuggestedForTicketsInGroup=為此群組服務單建議
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

@@ -45,5 +45,5 @@ GenerateImgWebp=Duplica totes les imatges amb una altra versió amb format .webp
 ConfirmGenerateImgWebp=Si ho confirmeu, generareu una imatge en format .webp per a totes les imatges actualment en aquesta carpeta (no s’inclouen les subcarpetes) ...
 ConfirmImgWebpCreation=Confirmeu la duplicació de totes les imatges
 SucessConvertImgWebp=Les imatges s'han duplicat correctament
-ECMDirName=Dir name
-ECMParentDirectory=Parent directory
+ECMDirName=Dir nom
+ECMParentDirectory=Directori pare

@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建�
 TicketCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建立的服務單
 OpeningHoursFormatDesc=使用-分隔營業開始時間和營業結束時間。 <br>使用空格輸入不同的範圍。 <br>範例：8-12 14-18
 SuffixSessionName=程序名稱的後綴
+LoginWith=使用 %s 登入
 
 ##### Export #####
 ExportsArea=出口地區

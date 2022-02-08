@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Fundação
 Version=Versão
 Publisher=Editor
@@ -343,7 +343,7 @@ StepNb=Passo %s
 FindPackageFromWebSite=Encontre um pacote que forneça os recursos de que você precisa (por exemplo, no site oficial %s).
 DownloadPackageFromWebSite=Baixe o pacote (por exemplo, do site oficial %s).
 UnpackPackageInDolibarrRoot=Descompacte / descompacte os arquivos compactados no diretório do servidor Dolibarr: <b> %s </b>
-UnpackPackageInModulesRoot=Para implantar / instalar um módulo externo, descompacte / descompacte os arquivos empacotados no diretório do servidor dedicado aos módulos externos: <br> <b> %s </ b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=A implantação do módulo está concluída. No entanto, você deve ativar e configurar o módulo em seu aplicativo acessando os módulos de configuração de página: <a href="%s"> %s </a>.
 NotExistsDirect=O diretório raiz alternativo não está definido para um diretório existente.<br>
 InfDirAlt=Desde a versão 3 do Dolibarr que é possível definir um diretório raiz alternativo. Isto permite que você consiga armazenar plug-ins e templates, num diretório dedicado.<br>Para tal basta criar um dirétorio na raiz do Dolibarr (ex: dedicado). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Instalar ou construir um módulo externo do aplicativo
 HighlightLinesOnMouseHover=Realçar as linhas da tabela quando o rato passar sobre elas
 HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
 HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Cor do texto do título da página
 LinkColor=Cor dos links
 PressF5AfterChangingThis=Pressione CTRL+F5 no teclado ou limpe a cache do navegador depois de mudar este valor de forma a gravar as alterações
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

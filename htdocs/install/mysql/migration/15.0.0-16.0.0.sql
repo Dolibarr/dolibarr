@@ -87,6 +87,7 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_MODIFY','Expense report modified','Executed when an expense report is modified','expensereport',202);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_MODIFY','Expense report modified','Executed when an expense report is modified','expensereport',212);
 
+ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
 
 CREATE TABLE llx_stock_mouvement_extrafields (
     rowid integer AUTO_INCREMENT PRIMARY KEY,

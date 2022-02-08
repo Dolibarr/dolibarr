@@ -134,4 +134,6 @@ HolidaysToApprove=Праздники утвердить
 NobodyHasPermissionToValidateHolidays=Ни у кого нет разрешения подтверждать праздники
 HolidayBalanceMonthlyUpdate=Ежемесячное обновление праздничного баланса
 XIsAUsualNonWorkingDay=%s обычно НЕ рабочий день
+BlockHolidayIfNegative=Block if balance negative
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Leave request %s must be draft, canceled or refused to be deleted

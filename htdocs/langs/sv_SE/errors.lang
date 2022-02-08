@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Denna kontakt redan har definierats s
 ErrorCashAccountAcceptsOnlyCashMoney=Detta bankkonto är en kontant-konto, så det tar emot betalningar av typ kontanter endast.
 ErrorFromToAccountsMustDiffers=Källa och mål bankkonton måste vara olika.
 ErrorBadThirdPartyName=Dåligt värde för tredje parts namn
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s är obligatoriskt
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Dålig syntax för kundkod
 ErrorBadBarCodeSyntax=Dålig syntax för streckkod. Kan du ställa in en dålig streckkodstyp eller du definierade en streckkodsmask för numrering som inte matchar värdet skannat.
 ErrorCustomerCodeRequired=Kunden som erfordras
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Inte i ordningen för betalningsvillkor, �
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) är högre än PHP-parameter post_max_size (%s). Detta är inte en konsekvent installation.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

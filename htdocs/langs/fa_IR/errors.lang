@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=این طرف‌تماس قبلا ب�
 ErrorCashAccountAcceptsOnlyCashMoney=این حساب‌بانکی نقدی است و تنها پرداخت‌های نقدی را می‌پذیرد.
 ErrorFromToAccountsMustDiffers=مبدأ و مقصد حساب‌های بانکی باید متفاوت باشد.
 ErrorBadThirdPartyName=مقدار غیرقابل‌قبول برای نام شخص‌سوم
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=بخش %s الزامی است
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=روش‌درج برای کدمشتری اشتباه است
 ErrorBadBarCodeSyntax=روش درج بارکد اشتباه است. ممکناست یک نوع بارکد اشتباه تنظیم کرده باشید یا یک پوشش-ماسک بارکد برای عددهی انتخاب کرده‌اید که با مقدار اسکن شده همخوان نیست.
 ErrorCustomerCodeRequired=کدمشتری الزامی است
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please mo
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

@@ -321,4 +321,4 @@ BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
 BoxNewTicketVSClose=Nombre de nouveaux tickets par rapport aux tickets fermés (aujourd'hui)
 TicketCreatedToday=Ticket créé aujourd'hui
 TicketClosedToday=Ticket fermé aujourd'hui
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+KMFoundForTicketGroup=Nous avons trouvé des sujets et des FAQ pouvant répondre à votre question, merci de les consulter avant de soumettre le ticket

@@ -134,4 +134,6 @@ HolidaysToApprove=Urlaubstage zu genehmigen
 NobodyHasPermissionToValidateHolidays=Niemand hat die Erlaubnis, Urlaubstage zu bestätigen.
 HolidayBalanceMonthlyUpdate=Monatliche Aktualisierung des Urlaubsguthabens
 XIsAUsualNonWorkingDay=%s ist normalerweise KEIN Arbeitstag
+BlockHolidayIfNegative=Sperren bei negativem Saldo
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=Die Erstellung dieses Urlaubsantrags ist gesperrt, da Ihr Saldo negativ ist
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Urlaubsantrag %s muss im Status 'Entwurf', 'storniert' oder 'abgelehnt' sein, um gelöscht zu werden

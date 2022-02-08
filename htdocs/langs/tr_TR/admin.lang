@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Dernek
 Version=Sürüm
 Publisher=Yayıncı
@@ -343,7 +343,7 @@ StepNb=Adım %s
 FindPackageFromWebSite=İhtiyacınız olan özellikleri size sunan bir paket bulun (örneğin resmi web sitesinde: %s).
 DownloadPackageFromWebSite=Paketi indir (örneğin resmi web sitesinden %s).
 UnpackPackageInDolibarrRoot=Paketlenmiş dosyaları Dolibarr sunucu dizininizde açın/çıkarın: <b>%s</b>
-UnpackPackageInModulesRoot=Harici bir modülü almak/kurmak için sıkıştırılmış dosyaları harici modüller için ayrılmış olan sunucu dizininde açın/çıkarın: <br><b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Modül dağıtımı bitti. Bununla birlikte, <a href="%s">%s</a> modül ayar sayfasına giderek modülü uygulamanızda etkinleştirmeli ve kurmalısınız.
 NotExistsDirect=Alternatif kök dizin varolan bir dizine tanımlanmamış.<br>
 InfDirAlt=Sürüm 3 ten beri bir alternatif kök dizin tanımlanabiliyor. Bu sizin ayrılmış bir dizine, eklentiler ve özel şablonlar depolamanızı sağlar.<br>Yalnızca Dolibarr kökünde bir dizin oluşturun (örn. özel).<br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Uygulamadan harici bir modül kurmak veya oluşturmak,
 HighlightLinesOnMouseHover=Tablo satırlarını fare üzerine geldiğinde vurgula
 HighlightLinesColor=Fare üzerinden geçerken satırı vurgulama rengi (vurgulama rengi istemiyorsanız 'ffffff' kullanın)
 HighlightLinesChecked=Bir satır işaretlendiğinde bu satırı vurgulama rengi (vurgulama rengi istemiyorsanız 'ffffff' kullanın)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Sayfa başlığının metin rengi
 LinkColor=Bağlantıların rengi
 PressF5AfterChangingThis=Bu değeri değiştirdikten sonra geçerli olabilmesi için klavyede CTRL+F5 tuşlarına basın veya tarayıcınızın önbelleğini temizleyin
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

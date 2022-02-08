@@ -410,3 +410,4 @@ DefaultBOMDesc=この製品の製造に使用が推奨されるデフォルトBO
 Rank=ランク
 SwitchOnSaleStatus=販売ステータスをオンにする
 SwitchOnPurchaseStatus=購入ステータスをオンにする
+StockMouvementExtraFields= エクストラフィールド（在庫移動）

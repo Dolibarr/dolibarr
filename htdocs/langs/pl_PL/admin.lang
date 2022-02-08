@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Fundacja
 Version=Wersja
 Publisher=Wydawca
@@ -343,7 +343,7 @@ StepNb=Krok %s
 FindPackageFromWebSite=Znajdź pakiet zapewniający potrzebne funkcje (na przykład na oficjalnej stronie internetowej %s).
 DownloadPackageFromWebSite=Pobierz pakiet (na przykład z oficjalnej strony internetowej %s).
 UnpackPackageInDolibarrRoot=Rozpakuj / rozpakuj spakowane pliki do katalogu serwera Dolibarr: <b> %s </b>
-UnpackPackageInModulesRoot=By wdrożyć/zainstalować moduł zewnętrzny, rozpakuj dystrybucyjny plik modułu do serwerowego katalogu dla modułów zewnętrznych:<br><b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Wdrożenie modułu zostało zakończone. Teraz musisz go włączyć i skonfigurować. W tym celu przejdź do strony ustawień modułów: <a href="%s">%s</a>.
 NotExistsDirect=Alternatywny katalog główny nie jest zdefiniowany w istniejącym katalogu.<br>
 InfDirAlt=Od wersji 3 możliwe jest zdefiniowanie alternatywnego katalogu głównego. Pozwala to na przechowywanie w dedykowanym katalogu wtyczek oraz niestandardowych szablonów. <br>Wystarczy utworzyć katalog w lokalizacji plików Dolibarr (na przykład: niestandardowe).<br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Instalowanie lub budowanie modułu zewnętrznego z poz
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Podświetl kolor linii, gdy mysz przesuwa się nad linią (użyj „ffffff”, aby nie podświetlać)
 HighlightLinesChecked=Podświetl kolor linii, gdy ta jest zaznaczona (użyj „ffffff”, aby nie wyróżniać)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Kolor tekstu tytułu strony
 LinkColor=Kolor odnośników
 PressF5AfterChangingThis=Naciśnij CTRL+F5 na klawiaturze aby wyczyścić cache w przeglądarce po zmianie tej wartości, aby zobaczyć efekt tej zmiany
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

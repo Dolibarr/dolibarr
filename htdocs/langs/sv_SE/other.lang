@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Projekt skapat av e-post samlare från email MSGI
 TicketCreatedByEmailCollector=Biljett skapad av e-post samlare från email MSGID %s
 OpeningHoursFormatDesc=Använd "-" för att separera öppettider.<br>Använd mellanslag för flera tidpunkter.<br>Exempel: 8-12 14-18
 SuffixSessionName=Suffix för sessionens namn
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Export område

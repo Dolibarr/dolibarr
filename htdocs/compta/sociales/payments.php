@@ -66,7 +66,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Security check140px
+// Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }

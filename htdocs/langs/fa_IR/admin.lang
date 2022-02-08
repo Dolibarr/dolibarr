@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=موسسه
 Version=نسخه
 Publisher=ناشر
@@ -343,7 +343,7 @@ StepNb=گام %s
 FindPackageFromWebSite=بسته‌ای که متناسب با قابلیت‌های مورد نظر شماست بیابید (برای مثال روی وبگاه رسمی %s).
 DownloadPackageFromWebSite=دریافت بسته ( برای مثال از وبگاه رسمی %s ).
 UnpackPackageInDolibarrRoot=فایل‌های بسته‌بندی شده را در فهرست موجود در سرویس دهندۀ Dolibarr در نشانی: <b>%s</b> استخراج و بازگشائی unpack/unzip کنید.
-UnpackPackageInModulesRoot=برای استفاده/نصب یک واحد خارجی، فایل‌های فشرده/بسته‌بندی شده را در پوشۀ مربوط به واحد‌های خارجی در سرویس‌دهنده باز کنید: <br><b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=واحد مورد نظر مورد استفاده قرار گرفت. با این حال نیاز به تنظیم و برپاسازی در واحد مربوطه هنوز باقی است: <a href="%s">%s</a>.
 NotExistsDirect=پوشۀ جایگزین ریشه در پوشۀ موجود فعلی تعریف نشده است. <br>
 InfDirAlt=از نسخۀ 3، امکان تعریف یک پوشۀ جایگزین ریشه وجود دارد. این به شما امکان ذخیرۀ افزونه‌ها و قالب‌های دل‌خواه  را در یک پوشۀ اختصاصی می‌دهد. <br>فقط یک پوشه در ریشۀ Dolibarr بسازید (مثلا: custom).<br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=نصب یا ساخت یک واحد خارجی در ب�
 HighlightLinesOnMouseHover=برجسته‌کردن سطور جدول در هنگام عبور نشان‌گر موش
 HighlightLinesColor=برجسته‌کردن رنگ سطر در هنگام عبور موشواره از آن (از 'ffffff' برای عدم رنگ‌دهی)
 HighlightLinesChecked=روشن‌کردن زرنگ سطر در هنگامی که کادرتائید فشرده شده است ( از 'ffffff' برای عدم روشن کردن استفاده کنید)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=رنگ نوشتۀ عنوان صفحه
 LinkColor=رنگ پیوندها
 PressF5AfterChangingThis=کلیدهای CTRL+F5 را روی صفحه‌کلید برای پاک‌کردن میان‌گیری پس از تغییر بفشرید تا تاثیر مقداردهی دیده شود.
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

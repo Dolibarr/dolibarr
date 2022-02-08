@@ -1393,7 +1393,7 @@ class FormFile
 					print '</td>';
 
 					// Date
-					print '<td class="center" style="width: 140px">'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>'; // 140px = width for date with PM format
+					print '<td class="center nowraponall">'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>';
 
 					// Preview
 					if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {

@@ -61,5 +61,7 @@ MenuListTypeAssets = Listado
 #
 # Module
 #
+Asset=Activo
 NewAssetType=Nuevo tipo de activo
 NewAsset=Nuevo activo
+ConfirmDeleteAsset=¿Está seguro de que desea eliminar este activo?

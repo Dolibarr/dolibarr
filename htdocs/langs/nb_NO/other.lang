@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Prosjekt opprettet av e-post samler fra e-post MS
 TicketCreatedByEmailCollector=Supportseddel opprettet av e-post samler fra e-post MSGID %s
 OpeningHoursFormatDesc=Bruk en bindestrek for å skille åpning og stengetid. <br> Bruk et mellomrom for å angi forskjellige områder. <br> Eksempel: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Eksportområde

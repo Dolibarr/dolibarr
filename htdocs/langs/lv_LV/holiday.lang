@@ -134,4 +134,6 @@ HolidaysToApprove=Brīvdienas, kas jāapstiprina
 NobodyHasPermissionToValidateHolidays=Nevienam nav atļaujas apstiprināt brīvdienas
 HolidayBalanceMonthlyUpdate=Ikmēneša brīvdienu bilances atjauninājums
 XIsAUsualNonWorkingDay=%s parasti ir NAV darba diena
+BlockHolidayIfNegative=Block if balance negative
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Atstāšanas pieprasījumam %s jābūt melnrakstam, tas ir jāatceļ vai jāatsakās dzēst

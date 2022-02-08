@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Jamg'arma
 Version=Versiya
 Publisher=Nashriyotchi
@@ -343,7 +343,7 @@ StepNb=%s qadam
 FindPackageFromWebSite=Sizga kerakli xususiyatlarni taqdim etadigan paketni toping (masalan, rasmiy veb-sayt %s).
 DownloadPackageFromWebSite=To'plamni yuklab oling (masalan, rasmiy veb-sayt %s dan).
 UnpackPackageInDolibarrRoot=Paketlangan fayllarni Dolibarr server katalogiga oching / oching: <b> %s </b>
-UnpackPackageInModulesRoot=Tashqi modulni joylashtirish / o'rnatish uchun paketlangan fayllarni tashqi modullarga bag'ishlangan server katalogiga oching / oching: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Modulni joylashtirish tugallandi. Biroq, sahifani o'rnatish modullariga o'tib, sizning ilovangizdagi modulni yoqishingiz va sozlashingiz kerak: <a href="%s"> %s </a>.
 NotExistsDirect=Mavjud katalog uchun muqobil ildiz katalogi aniqlanmagan. <br>
 InfDirAlt=3-versiyadan boshlab muqobil ildiz katalogini aniqlash mumkin. Bu sizga maxsus katalog, plaginlar va maxsus andozalarni saqlashga imkon beradi. <br> Faqat Dolibarrning ildizida katalog yarating (masalan: maxsus). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Tashqi modulni dasturdan o'rnatish yoki yaratish uchun
 HighlightLinesOnMouseHover=Sichqoncha harakati o'tib ketganda jadval satrlarini ajratib ko'rsatish
 HighlightLinesColor=Sichqoncha o'tib ketganda chiziq rangini belgilang (ajratish uchun 'ffffff' dan foydalaning)
 HighlightLinesChecked=Tekshirilganda chiziq rangini ajratib ko'rsatish (ajratish uchun 'ffffff' dan foydalaning)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Sahifa sarlavhasining matni rangi
 LinkColor=Havolalarning rangi
 PressF5AfterChangingThis=Klaviaturada CTRL + F5 tugmachalarini bosing yoki ushbu qiymatni o'zgartirgandan so'ng brauzer keshini tozalang
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

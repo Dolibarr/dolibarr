@@ -44,7 +44,7 @@ if (empty($conf->variants->enabled)) {
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
-$result = restrictedArea($user, 'variant');
+$result = restrictedArea($user, 'variants');
 
 
 /*

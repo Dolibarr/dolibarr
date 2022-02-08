@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Ten kontakt jest już zdefiniowana ja
 ErrorCashAccountAcceptsOnlyCashMoney=To konto bankowe jest kontem gotówkowym, więc akceptuje jedynie płatności gotówkowe
 ErrorFromToAccountsMustDiffers=Konta źródłowe i docelowe muszą być inne
 ErrorBadThirdPartyName=Zła wartość dla nazwy kontrahenta
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s jest obowiązkowy
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Zła skadnia dla kodu klienta
 ErrorBadBarCodeSyntax=Zła składnia kodu kreskowego. Być może ustawiłeś zły typ kodu kreskowego lub zdefiniowałeś maskę kodu kreskowego dla numeracji, która nie pasuje do zeskanowanej wartości.
 ErrorCustomerCodeRequired=Wymagany kod klienta
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Nie w Słowniku terminów płatności, zmi
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Twój parametr PHP upload_max_filesize (%s) jest wyższy niż parametr PHP post_max_size (%s). To nie jest spójna konfiguracja.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)
