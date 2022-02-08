@@ -2143,7 +2143,7 @@ class Contrat extends CommonObject
 	 *	@param	array		$line_status			sort contracts where lines have these status
 	 *  @return array|int   						Array of contracts id or <0 if error
 	 */
-	public function getListOfContracts($option = 'all', $status = [], $product_categories = [], $line_status = [] )
+	public function getListOfContracts($option = 'all', $status = [], $product_categories = [], $line_status = [])
 	{
 		$tab = array();
 
