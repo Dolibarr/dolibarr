@@ -437,6 +437,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	/*justify-content: space-between;*/
 }
 
+.box-flex-grow-zero{
+	flex-grow: 0 !important;
+}
+
 .box-flex-item{
 	flex-grow : 1;
 	flex-shrink: 1;
