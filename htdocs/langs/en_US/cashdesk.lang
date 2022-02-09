@@ -134,3 +134,5 @@ PrintWithoutDetailsButton=Add "Print without details" button
 PrintWithoutDetailsLabelDefault=Line label by default on printing without details
 PrintWithoutDetails=Print without details
 YearNotDefined=Year is not defined
+TakeposBarcodeRuleToInsertProduct=Barcode rule to insert product
+TakeposBarcodeRuleToInsertProductDesc=Format rule "ref:NB+qu:NB+qd:NB+other:NB" where NB is the number of characters to compose a part of the barcode with : <ul><li><b>ref</b> : product reference</li><li><b>qu</b> : quantity (units)<l/i><li><b>qd</b> : quantity (decimals)</li><li><b>other</b> : others characters</li></ul>

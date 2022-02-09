@@ -505,6 +505,7 @@ if ($action == "addline") {
 
 	$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 
+	$qty = GETPOSTISSET('qty') ? GETPOST('qty', 'int') : 1;
 	$price = $datapriceofproduct['pu_ht'];
 	$price_ttc = $datapriceofproduct['pu_ttc'];
 	//$price_min = $datapriceofproduct['price_min'];
@@ -550,7 +551,7 @@ if ($action == "addline") {
 	}
 	if ($idoflineadded <= 0) {
 		$invoice->fetch_thirdparty();
-		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', 0, 100, '', null, 0);
+		$idoflineadded = $invoice->addline($prod->description, $price, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', 0, 100, '', null, 0);
 		if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 			$CUSTOMER_DISPLAY_line1 = $prod->label;
 			$CUSTOMER_DISPLAY_line2 = price($price_ttc);
