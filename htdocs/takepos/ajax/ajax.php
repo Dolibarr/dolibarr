@@ -98,6 +98,19 @@ if ($action == 'getProducts') {
 			exit;
 	}
 
+	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
+	$filteroncategids = '';
+	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
+		$object = new Categorie($db);
+		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
+		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
+		if (is_array($arrayofcateg) && count($arrayofcateg) > 0) {
+			foreach ($arrayofcateg as $val) {
+				$filteroncategids .= ($filteroncategids ? ', ' : '').$val['id'];
+			}
+		}
+	}
+
 	if (!empty($conf->barcode->enabled) && !empty($conf->global->TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT)) {
 		$barcode_rules = $conf->global->TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT;
 		$barcode_rules_list = array();
@@ -134,6 +147,10 @@ if ($action == 'getProducts') {
 				$sql .= " FROM " . $db->prefix() . "product as p";
 				$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 				$sql .= " AND ref = '" . $db->escape($barcode_value_list['ref']) . "'";
+				if ($filteroncategids) {
+					$sql .= " AND EXISTS (SELECT cp.fk_product FROM " . $db->prefix() . "categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN (".$db->sanitize($filteroncategids)."))";
+				}
+				$sql .= " AND tosell = 1";
 
 				$resql = $db->query($sql);
 				if ($resql && $db->num_rows($resql) == 1) {
@@ -186,19 +203,6 @@ if ($action == 'getProducts') {
 			if (count($rows) == 1) {
 				echo json_encode($rows);
 				exit();
-			}
-		}
-	}
-
-	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
-	$filteroncategids = '';
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
-		$object = new Categorie($db);
-		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
-		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
-		if (is_array($arrayofcateg) && count($arrayofcateg) > 0) {
-			foreach ($arrayofcateg as $val) {
-				$filteroncategids .= ($filteroncategids ? ', ' : '').$val['id'];
 			}
 		}
 	}
