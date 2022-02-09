@@ -281,8 +281,8 @@ a.btnTitle.btnTitleSelected {
 	display: block;
 }
 
-div.pagination li:first-child a.btnTitle{
-	margin-left: 10px;
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle {
+	margin-<?php echo $left; ?>: 10px;
 }
 
 .button-title-separator{
