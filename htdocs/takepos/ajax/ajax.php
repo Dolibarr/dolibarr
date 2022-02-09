@@ -128,7 +128,7 @@ if ($action == 'getProducts') {
 			if (isset($barcode_value_list['ref'])) {
 				//search product from reference
 				$sql  = "SELECT rowid, ref, label, tosell, tobuy, barcode, price";
-				$sql .= " FROM " . $db->prefix() . "product as p";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 				$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 				$sql .= " AND ref = '" . $db->escape($barcode_value_list['ref']) . "'";
 
