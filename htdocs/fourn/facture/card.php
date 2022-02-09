@@ -527,13 +527,14 @@ if (empty($reshook)) {
 			$i = 0;
 			foreach ($object->lines as $line) {
 				if ($line->product_type < 9 && $line->total_ht != 0) { // Remove lines with product_type greater than or equal to 9 and no need to create discount if amount is null
+					$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
 
-					$amount_ht[$line->tva_tx] += $line->total_ht;
-					$amount_tva[$line->tva_tx] += $line->total_tva;
-					$amount_ttc[$line->tva_tx] += $line->total_ttc;
-					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
-					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
-					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+					$amount_ht[$keyforvatrate] += $line->total_ht;
+					$amount_tva[$keyforvatrate] += $line->total_tva;
+					$amount_ttc[$keyforvatrate] += $line->total_ttc;
+					$multicurrency_amount_ht[$keyforvatrate] += $line->multicurrency_total_ht;
+					$multicurrency_amount_tva[$keyforvatrate] += $line->multicurrency_total_tva;
+					$multicurrency_amount_ttc[$keyforvatrate] += $line->multicurrency_total_ttc;
 					$i++;
 				}
 			}
