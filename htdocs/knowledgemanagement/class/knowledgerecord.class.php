@@ -459,7 +459,7 @@ class KnowledgeRecord extends CommonObject
 	public function delete(User $user, $notrigger = false)
 	{
 		$error = 0;
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".((int) $this->rowid);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement WHERE fk_knowledgemanagement = ".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
