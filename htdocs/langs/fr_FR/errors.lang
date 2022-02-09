@@ -9,7 +9,6 @@ ErrorBadMXDomain=L'email %s semble incorrect (domaine n'a pas d'enregistrement M
 ErrorBadUrl=L'URL '%s' est invalide
 ErrorBadValueForParamNotAString=Mauvaise valeur de paramètre. Ceci arrive lors d'une tentative de traduction d'une clé non renseignée.
 ErrorRefAlreadyExists=La référence <b>%s</b> existe déjà.
-ErrorTitleAlreadyExists=Le titre <b>%s</b> existe déjà.
 ErrorLoginAlreadyExists=L'identifiant %s existe déjà.
 ErrorGroupAlreadyExists=Le groupe %s existe déjà.
 ErrorEmailAlreadyExists=L'e-mail %s existe déjà.
