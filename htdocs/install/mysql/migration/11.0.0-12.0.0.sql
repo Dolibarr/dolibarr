@@ -353,3 +353,6 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active)
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (14,'MAINFREIGHT', 'Mainfreight', NULL, 'https://www.mainfreight.com/track?{TRACKID}', 0);
 
 
+UPDATE llx_menu SET perms = '$user->rights->societe->creer' WHERE titre = 'MenuNewThirdParty' AND url = '/societe/card.php?mainmenu=companies&amp;action=create';
+UPDATE llx_menu SET url = '/societe/list.php?mainmenu=companies&amp;leftmenu=thirdparties' WHERE titre = 'List' AND url = '/societe/list.php?mainmenu=companies&amp;action=create';
+

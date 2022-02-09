@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
@@ -439,33 +439,43 @@ class AccountancyExport
 	}
 
 	/**
-	 * Export format : CIEL
+	 * Export format : CIEL (Format XIMPORT)
+	 * Format since 2003 compatible CIEL version > 2002 / Sage50
+	 * Last review for this format : 2021/07/28 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 *
+	 * Help : https://sage50c.online-help.sage.fr/aide-technique/
+	 * In sage software | Use menu : "Exchange" > "Importing entries..."
+	 *
+	 * If you want to force filename to "XIMPORT.TXT" for automatically import file present in a directory :
+	 * use constant ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME
 	 *
 	 * @param array $TData data
 	 * @return void
 	 */
 	public function exportCiel(&$TData)
 	{
-		global $conf;
-
 		$end_line = "\r\n";
 
 		$i = 1;
-		$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
+
 		foreach ($TData as $data) {
-			$code_compta = $data->numero_compte;
-			if (!empty($data->subledger_account))
-				$code_compta = $data->subledger_account;
+			$code_compta = length_accountg($data->numero_compte);
+			if (!empty($data->subledger_account)) {
+                $code_compta = length_accounta($data->subledger_account);
+            }
+
+			$date_document = dol_print_date($data->doc_date, '%Y%m%d');
+			$date_echeance = dol_print_date($data->date_lim_reglement, '%Y%m%d');
 
 			$Tab = array();
-			$Tab['num_ecriture'] = str_pad($i, 5);
+			$Tab['num_ecriture'] = str_pad($data->piece_num, 5);
 			$Tab['code_journal'] = str_pad($data->code_journal, 2);
-			$Tab['date_ecriture'] = $date_ecriture;
-			$Tab['date_ope'] = dol_print_date($data->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
-			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 12), 12);
+			$Tab['date_ecriture'] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
+			$Tab['date_echeance'] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
+			$Tab['num_piece'] = str_pad(self::trunc($data->doc_ref, 12), 12);
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
 			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).dol_string_unaccent($data->label_operation), 25), 25);
-			$Tab['montant'] = str_pad(abs($data->montant), 13, ' ', STR_PAD_LEFT);
+			$Tab['montant'] = str_pad(price2fec(abs($data->montant)), 13, ' ', STR_PAD_LEFT);
 			$Tab['type_montant'] = str_pad($data->sens, 1);
 			$Tab['vide'] = str_repeat(' ', 18);
 			$Tab['intitule_compte'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 34), 34);

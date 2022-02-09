@@ -1058,7 +1058,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if ($search_note) $sql .= natural_search('t.note', $search_note);
 		if ($search_task_ref) $sql .= natural_search('pt.ref', $search_task_ref);
 		if ($search_task_label) $sql .= natural_search('pt.label', $search_task_label);
-		if ($search_user > 0) $sql .= natural_search('t.fk_user', $search_user);
+		if ($search_user > 0) $sql .= natural_search('t.fk_user', $search_user, 2);
 		if ($search_valuebilled == '1') $sql .= ' AND t.invoice_id > 0';
 		if ($search_valuebilled == '0') $sql .= ' AND (t.invoice_id = 0 OR t.invoice_id IS NULL)';
 		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
@@ -1069,6 +1069,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$resql = $db->query($sql);
+
+			if (! $resql) {
+				dol_print_error($db);
+				exit;
+			}
+
 			$nbtotalofrecords = $db->num_rows($resql);
 			if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
 			{
@@ -1374,7 +1380,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
         			print '</td>';
         			if (!$i) $totalarray['nbfield']++;
     			}
-            } else {
+            } elseif ($action !== 'createtime') {
             	print '<input type="hidden" name="taskid" value="'.$id.'">';
             }
 

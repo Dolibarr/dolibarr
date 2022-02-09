@@ -43,6 +43,14 @@ $ref = GETPOST("ref", 'alpha');
  * View
  */
 
+if (empty($object->id)) {
+	llxHeader();
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
+
 $form = new Form($db);
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');

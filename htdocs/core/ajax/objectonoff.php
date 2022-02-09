@@ -80,5 +80,9 @@ if (($action == 'set') && !empty($id)) {
 
 	$format = 'int';
 
+	$object->table_element = $tablename;
+	$object->id = $id;
+	$object->fields[$field] = array('type' => $format, 'enabled' => 1);
+
 	$object->setValueFrom($field, $value, $tablename, $id, $format, '', $user, $triggerkey);
 }

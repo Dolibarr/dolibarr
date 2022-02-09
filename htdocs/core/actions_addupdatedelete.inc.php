@@ -262,7 +262,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 // Remove a line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissiontoadd))
 {
-	if (method_exists('deleteline', $object)) {
+	if (method_exists($object, 'deleteline')) {
 		$result = $object->deleteline($user, $lineid);		// For backward compatibility
 	} else {
 		$result = $object->deleteLine($user, $lineid);

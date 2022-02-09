@@ -132,3 +132,4 @@ FreeLegalTextOnHolidays=Free text on PDF
 WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
 HolidaysToApprove=Holidays to approve
 NobodyHasPermissionToValidateHolidays=Nobody has permission to validate holidays
+ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Leave request %s must be draft, canceled or refused to be deleted

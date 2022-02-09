@@ -209,24 +209,6 @@ class MailingTargets // This can't be abstract as it is used for some method
 
         dol_syslog(__METHOD__.": mailing ".$j." targets added");
 
-        /*
-        //Update the status to show thirdparty mail that don't want to be contacted anymore'
-        $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-        $sql .= " SET statut=3";
-        $sql .= " WHERE fk_mailing=".$mailing_id." AND email in (SELECT email FROM ".MAIN_DB_PREFIX."societe where fk_stcomm=-1)";
-        $sql .= " AND source_type='thirdparty'";
-        dol_syslog(__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
-        $result=$this->db->query($sql);
-
-        //Update the status to show contact mail that don't want to be contacted anymore'
-        $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-        $sql .= " SET statut=3";
-        $sql .= " WHERE fk_mailing=".$mailing_id." AND source_type='contact' AND (email in (SELECT sc.email FROM ".MAIN_DB_PREFIX."socpeople AS sc ";
-        $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
-        dol_syslog(__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
-        $result=$this->db->query($sql);
-		*/
-
         $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " SET statut=3";
         $sql .= " WHERE fk_mailing=".$mailing_id." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";

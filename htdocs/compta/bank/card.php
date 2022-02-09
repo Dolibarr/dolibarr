@@ -246,7 +246,7 @@ if ($action == 'update')
 	if (!$error)
 	{
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 	}
 
 	if (!$error)

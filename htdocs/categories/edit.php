@@ -102,7 +102,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	}
 	if (!$error && empty($object->error))
 	{
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 		if ($ret < 0) $error++;
 
 		if (!$error && $object->update($user) > 0)

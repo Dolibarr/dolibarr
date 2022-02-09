@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2022 Ferran Marcet <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -728,6 +729,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$i = 0;
 	while ($i < ($limit ? min($num, $limit) : $num)) {
 		$objp = $db->fetch_object($resql);
+
+		// Multilangs
+		if (!empty($conf->global->MAIN_MULTILANGS))  // If multilang is enabled
+		{
+			$sql = "SELECT label";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+			$sql .= " WHERE fk_product=".$objp->rowid;
+			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " LIMIT 1";
+
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$objtp = $db->fetch_object($result);
+				if (!empty($objtp->label)) $objp->produit = $objtp->label;
+			}
+		}
 
 		$userstatic->id = $objp->fk_user_author;
 		$userstatic->login = $objp->login;
