@@ -304,7 +304,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 
 		foreach ($listofendpoints as $endpointrule) {
 			$tmparray = explode(':', $endpointrule);
-			if ($classfile == $tmparray[0] && $tmparray[1] == 1) {
+			if (($classfile == $tmparray[0] || $classfile.'api' == $tmparray[0]) && $tmparray[1] == 1) {
 				$endpointisallowed = true;
 				break;
 			}
