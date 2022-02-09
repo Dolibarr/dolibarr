@@ -3713,7 +3713,7 @@ div.refidno form {
 }
 
 div.pagination {
-	float: right;
+	float: <?php echo $right; ?>;
 }
 div.pagination a {
 	font-weight: normal;
