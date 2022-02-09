@@ -1085,6 +1085,7 @@ class BOM extends CommonObject
 					$res = $bom_child->fetch($line->fk_bom_child);
 					if ($res>0) {
 						$bom_child->calculateCosts();
+						$line->childBom[] = $bom_child;
 						$this->total_cost += $bom_child->total_cost;
 					} else {
 						$this->error = $bom_child->error;
@@ -1101,6 +1102,55 @@ class BOM extends CommonObject
 			}
 		}
 	}
+
+	/**
+	 * Get Net needs by product
+	 *
+	 * @param array $TNetNeeds
+	 * @param int   $qty
+	 * @return void
+	 */
+	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0) {
+		if(! empty($this->lines)) {
+			foreach($this->lines as $line) {
+				if(! empty($line->childBom)) {
+					foreach($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+				}
+				else {
+					$TNetNeeds[$line->fk_product] += $line->qty*$qty;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get Net needs Tree by product or bom
+	 *
+	 * @param array $TNetNeeds
+	 * @param int   $qty
+	 * @param int   $level
+	 * @return void
+	 */
+	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0) {
+		if(! empty($this->lines)) {
+			foreach($this->lines as $line) {
+				if(! empty($line->childBom)) {
+					foreach($line->childBom as $childBom) {
+						$TNetNeeds[$childBom->id]['bom'] = $childBom;
+						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
+						$TNetNeeds[$childBom->id]['qty'] = $line->qty*$qty;
+						$TNetNeeds[$childBom->id]['level'] = $level;
+						$childBom->getNetNeedsTree($TNetNeeds, $line->qty*$qty, $level+1);
+					}
+				}
+				else {
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
+				}
+			}
+		}
+	}
+
 }
 
 
@@ -1226,6 +1276,11 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $unit_cost = 0;
 
+
+	/**
+	 * @var Bom     array of Bom in line
+	 */
+	public $childBom = array();
 
 	/**
 	 * Constructor
