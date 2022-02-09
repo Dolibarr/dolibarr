@@ -934,7 +934,7 @@ if (!defined('NOLOGIN')) {
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				//var_dump($relativepathstring);
 
-				// We click on a link that leave a page we have to save search criteria, contextpage, limit and page. We save them from tmp to no tmp
+				// We click on a link that leave a page we have to save search criteria, contextpage, limit and page and mode. We save them from tmp to no tmp
 				if (!empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring])) {
 					$_SESSION['lastsearch_values_'.$relativepathstring] = $_SESSION['lastsearch_values_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
@@ -943,13 +943,17 @@ if (!defined('NOLOGIN')) {
 					$_SESSION['lastsearch_contextpage_'.$relativepathstring] = $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 				}
+				if (!empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit) {
+					$_SESSION['lastsearch_limit_'.$relativepathstring] = $_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
+					unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+				}
 				if (!empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 0) {
 					$_SESSION['lastsearch_page_'.$relativepathstring] = $_SESSION['lastsearch_page_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
 				}
-				if (!empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit) {
-					$_SESSION['lastsearch_limit_'.$relativepathstring] = $_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
-					unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+				if (!empty($_SESSION['lastsearch_mode_tmp_'.$relativepathstring])) {
+					$_SESSION['lastsearch_mode_'.$relativepathstring] = $_SESSION['lastsearch_mode_tmp_'.$relativepathstring];
+					unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 				}
 			}
 
@@ -3110,7 +3114,7 @@ if (!function_exists("llxFooter")) {
 	{
 		global $conf, $db, $langs, $user, $mysoc, $object, $hookmanager;
 		global $delayedhtmlcontent;
-		global $contextpage, $page, $limit;
+		global $contextpage, $page, $limit, $mode;
 		global $dolibarr_distrib;
 
 		$ext = 'layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
@@ -3150,6 +3154,7 @@ if (!function_exists("llxFooter")) {
 			unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 
 			if (!empty($contextpage)) {
 				$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring] = $contextpage;
@@ -3160,10 +3165,14 @@ if (!function_exists("llxFooter")) {
 			if (!empty($limit) && $limit != $conf->liste_limit) {
 				$_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
 			}
+			if (!empty($mode)) {
+				$_SESSION['lastsearch_mode_tmp_'.$relativepathstring] = $mode;
+			}
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_limit_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_mode_'.$relativepathstring]);
 		}
 
 		// Core error message
