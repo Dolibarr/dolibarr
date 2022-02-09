@@ -7379,7 +7379,11 @@ class Form
 
 		$objecttmp = null;
 
-		$InfoFieldList = explode(":", $objectdesc);
+		$InfoFieldList = explode(":", $objectdesc, 4);
+		$vartmp = $InfoFieldList[3];
+		$InfoFieldList[4] = preg_replace('/^.*:(\w*)$/', '\1', $vartmp);	// take the sort field
+		$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);			// take the filter field
+
 		$classname = $InfoFieldList[0];
 		$classpath = $InfoFieldList[1];
 		$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
