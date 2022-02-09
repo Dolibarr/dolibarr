@@ -9,7 +9,7 @@ use Egulias\EmailValidator\Validation\Error\RFCWarnings;
 class NoRFCWarningsValidation extends RFCValidation
 {
     /**
-     * @var InvalidEmail|null
+     * @var InvalidEmail
      */
     private $error;
 
@@ -22,7 +22,8 @@ class NoRFCWarningsValidation extends RFCValidation
             return false;
         }
 
-        if (empty($this->getWarnings())) {
+        $ret = $this->getWarnings();
+        if (empty($ret)) {
             return true;
         }
 

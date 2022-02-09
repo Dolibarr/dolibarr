@@ -17,6 +17,9 @@
  */
 class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilter
 {
+    /** The needle(s) to search for */
+    private $search;
+
     /** The replacement(s) to make */
     private $replace;
 
@@ -24,7 +27,7 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
     private $index;
 
     /** The Search Tree */
-    private $tree = [];
+    private $tree = array();
 
     /**  Gives the size of the largest search */
     private $treeMaxLen = 0;
@@ -39,25 +42,26 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
      */
     public function __construct($search, $replace)
     {
-        $this->index = [];
-        $this->tree = [];
-        $this->replace = [];
-        $this->repSize = [];
+        $this->search = $search;
+        $this->index = array();
+        $this->tree = array();
+        $this->replace = array();
+        $this->repSize = array();
 
         $tree = null;
         $i = null;
         $last_size = $size = 0;
         foreach ($search as $i => $search_element) {
-            if (null !== $tree) {
-                $tree[-1] = min(\count($replace) - 1, $i - 1);
+            if ($tree !== null) {
+                $tree[-1] = min(count($replace) - 1, $i - 1);
                 $tree[-2] = $last_size;
             }
             $tree = &$this->tree;
-            if (\is_array($search_element)) {
+            if (is_array($search_element)) {
                 foreach ($search_element as $k => $char) {
                     $this->index[$char] = true;
                     if (!isset($tree[$char])) {
-                        $tree[$char] = [];
+                        $tree[$char] = array();
                     }
                     $tree = &$tree[$char];
                 }
@@ -66,27 +70,27 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
             } else {
                 $last_size = 1;
                 if (!isset($tree[$search_element])) {
-                    $tree[$search_element] = [];
+                    $tree[$search_element] = array();
                 }
                 $tree = &$tree[$search_element];
                 $size = max($last_size, $size);
                 $this->index[$search_element] = true;
             }
         }
-        if (null !== $i) {
-            $tree[-1] = min(\count($replace) - 1, $i);
+        if ($i !== null) {
+            $tree[-1] = min(count($replace) - 1, $i);
             $tree[-2] = $last_size;
             $this->treeMaxLen = $size;
         }
         foreach ($replace as $rep) {
-            if (!\is_array($rep)) {
-                $rep = [$rep];
+            if (!is_array($rep)) {
+                $rep = array($rep);
             }
             $this->replace[] = $rep;
         }
-        for ($i = \count($this->replace) - 1; $i >= 0; --$i) {
+        for ($i = count($this->replace) - 1; $i >= 0; --$i) {
             $this->replace[$i] = $rep = $this->filter($this->replace[$i], $i);
-            $this->repSize[$i] = \count($rep);
+            $this->repSize[$i] = count($rep);
         }
     }
 
@@ -114,12 +118,12 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
      */
     public function filter($buffer, $minReplaces = -1)
     {
-        if (0 == $this->treeMaxLen) {
+        if ($this->treeMaxLen == 0) {
             return $buffer;
         }
 
-        $newBuffer = [];
-        $buf_size = \count($buffer);
+        $newBuffer = array();
+        $buf_size = count($buffer);
         $last_size = 0;
         for ($i = 0; $i < $buf_size; ++$i) {
             $search_pos = $this->tree;
@@ -137,7 +141,7 @@ class Swift_StreamFilters_ByteArrayReplacementFilter implements Swift_StreamFilt
                     }
                 }
                 // We got a complete pattern
-                elseif (PHP_INT_MAX !== $last_found) {
+                elseif ($last_found !== PHP_INT_MAX) {
                     // Adding replacement datas to output buffer
                     $rep_size = $this->repSize[$last_found];
                     for ($j = 0; $j < $rep_size; ++$j) {

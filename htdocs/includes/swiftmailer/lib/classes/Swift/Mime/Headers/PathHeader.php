@@ -32,18 +32,16 @@ class Swift_Mime_Headers_PathHeader extends Swift_Mime_Headers_AbstractHeader
      */
     private $emailValidator;
 
-    private $addressEncoder;
-
     /**
      * Creates a new PathHeader with the given $name.
      *
-     * @param string $name
+     * @param string         $name
+     * @param EmailValidator $emailValidator
      */
-    public function __construct($name, EmailValidator $emailValidator, Swift_AddressEncoder $addressEncoder = null)
+    public function __construct($name, EmailValidator $emailValidator)
     {
         $this->setFieldName($name);
         $this->emailValidator = $emailValidator;
-        $this->addressEncoder = $addressEncoder ?? new Swift_AddressEncoder_IdnAddressEncoder();
     }
 
     /**
@@ -129,8 +127,7 @@ class Swift_Mime_Headers_PathHeader extends Swift_Mime_Headers_AbstractHeader
     {
         if (!$this->getCachedValue()) {
             if (isset($this->address)) {
-                $address = $this->addressEncoder->encodeString($this->address);
-                $this->setCachedValue('<'.$address.'>');
+                $this->setCachedValue('<'.$this->address.'>');
             }
         }
 
@@ -147,7 +144,9 @@ class Swift_Mime_Headers_PathHeader extends Swift_Mime_Headers_AbstractHeader
     private function assertValidAddress($address)
     {
         if (!$this->emailValidator->isValid($address, new RFCValidation())) {
-            throw new Swift_RfcComplianceException('Address set in PathHeader does not comply with addr-spec of RFC 2822.');
+            throw new Swift_RfcComplianceException(
+                'Address set in PathHeader does not comply with addr-spec of RFC 2822.'
+            );
         }
     }
 }

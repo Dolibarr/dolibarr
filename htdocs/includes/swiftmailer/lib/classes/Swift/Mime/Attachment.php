@@ -16,14 +16,18 @@
 class Swift_Mime_Attachment extends Swift_Mime_SimpleMimeEntity
 {
     /** Recognized MIME types */
-    private $mimeTypes = [];
+    private $mimeTypes = array();
 
     /**
      * Create a new Attachment with $headers, $encoder and $cache.
      *
-     * @param array $mimeTypes
+     * @param Swift_Mime_SimpleHeaderSet $headers
+     * @param Swift_Mime_ContentEncoder  $encoder
+     * @param Swift_KeyCache             $cache
+     * @param Swift_IdGenerator          $idGenerator
+     * @param array                      $mimeTypes
      */
-    public function __construct(Swift_Mime_SimpleHeaderSet $headers, Swift_Mime_ContentEncoder $encoder, Swift_KeyCache $cache, Swift_IdGenerator $idGenerator, $mimeTypes = [])
+    public function __construct(Swift_Mime_SimpleHeaderSet $headers, Swift_Mime_ContentEncoder $encoder, Swift_KeyCache $cache, Swift_IdGenerator $idGenerator, $mimeTypes = array())
     {
         parent::__construct($headers, $encoder, $cache, $idGenerator);
         $this->setDisposition('attachment');
@@ -123,7 +127,8 @@ class Swift_Mime_Attachment extends Swift_Mime_SimpleMimeEntity
     /**
      * Set the file that this attachment is for.
      *
-     * @param string $contentType optional
+     * @param Swift_FileStream $file
+     * @param string           $contentType optional
      *
      * @return $this
      */
@@ -134,7 +139,7 @@ class Swift_Mime_Attachment extends Swift_Mime_SimpleMimeEntity
         if (!isset($contentType)) {
             $extension = strtolower(substr($file->getPath(), strrpos($file->getPath(), '.') + 1));
 
-            if (\array_key_exists($extension, $this->mimeTypes)) {
+            if (array_key_exists($extension, $this->mimeTypes)) {
                 $this->setContentType($this->mimeTypes[$extension]);
             }
         }

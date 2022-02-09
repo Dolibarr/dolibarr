@@ -41,12 +41,16 @@ interface Swift_Signers_HeaderSigner extends Swift_Signer, Swift_InputByteStream
     /**
      * Give the headers already given.
      *
+     * @param Swift_Mime_SimpleHeaderSet $headers
+     *
      * @return self
      */
     public function setHeaders(Swift_Mime_SimpleHeaderSet $headers);
 
     /**
      * Add the header(s) to the headerSet.
+     *
+     * @param Swift_Mime_SimpleHeaderSet $headers
      *
      * @return self
      */

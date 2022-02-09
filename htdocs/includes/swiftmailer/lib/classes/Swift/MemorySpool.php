@@ -15,7 +15,7 @@
  */
 class Swift_MemorySpool implements Swift_Spool
 {
-    protected $messages = [];
+    protected $messages = array();
     private $flushRetries = 3;
 
     /**

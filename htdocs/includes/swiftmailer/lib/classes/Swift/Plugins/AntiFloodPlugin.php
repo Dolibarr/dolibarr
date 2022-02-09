@@ -99,6 +99,8 @@ class Swift_Plugins_AntiFloodPlugin implements Swift_Events_SendListener, Swift_
 
     /**
      * Invoked immediately before the Message is sent.
+     *
+     * @param Swift_Events_SendEvent $evt
      */
     public function beforeSendPerformed(Swift_Events_SendEvent $evt)
     {
@@ -106,6 +108,8 @@ class Swift_Plugins_AntiFloodPlugin implements Swift_Events_SendListener, Swift_
 
     /**
      * Invoked immediately after the Message is sent.
+     *
+     * @param Swift_Events_SendEvent $evt
      */
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
