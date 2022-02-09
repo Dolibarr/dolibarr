@@ -147,7 +147,7 @@ if ($action == 'getProducts') {
 				if ($filteroncategids) {
 					$sql .= " AND EXISTS (SELECT cp.fk_product FROM ". MAIN_DB_PREFIX . "categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN (".$db->sanitize($filteroncategids)."))";
 				}
-				$sql .= ' AND tosell = 1';
+				$sql .= " AND tosell = 1";
 
 				$resql = $db->query($sql);
 				if ($resql && $db->num_rows($resql) == 1) {
