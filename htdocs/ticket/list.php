@@ -951,6 +951,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
+	$object->status = $object->fk_statut; // fk_statut is deprecated
 
 	// Show here line of result
 	print '<tr class="oddeven">';
