@@ -1336,6 +1336,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
+		// Add a product line
 		$db->begin();
 
 		$ret = $object->fetch($id);
@@ -1368,7 +1369,11 @@ if (empty($reshook)) {
 		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
 		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
