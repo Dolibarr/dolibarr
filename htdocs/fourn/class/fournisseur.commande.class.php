@@ -463,8 +463,9 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging, MAX(pfp.quantity) as max_qty";
     	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".$this->socid;
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.entity IN (".getEntity('product_fournisseur_price').") AND l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".((int) $this->socid);
+		}
     	$sql .= " WHERE l.fk_commande = ".$this->id;
     	if ($only_product) $sql .= ' AND p.fk_product_type = 0';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
