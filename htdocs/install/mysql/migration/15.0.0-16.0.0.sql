@@ -96,6 +96,8 @@ CREATE TABLE llx_stock_mouvement_extrafields (
     import_key varchar(14)
 )ENGINE=innodb;
 
+ALTER TABLE llx_stock_mouvement_extrafields ADD INDEX idx_stock_mouvement_extrafields (fk_object);
+
 
 -- Facture fourn rec
 CREATE TABLE llx_facture_fourn_rec
@@ -142,7 +144,6 @@ CREATE TABLE llx_facture_fourn_rec
     nb_gen_max                  integer DEFAULT NULL,
     auto_validate               integer DEFAULT 0,
     generate_pdf                integer DEFAULT 1
-
 )ENGINE=innodb;
 
 ALTER TABLE llx_facture_fourn_rec ADD UNIQUE INDEX uk_facture_fourn_rec_ref (titre, entity);
