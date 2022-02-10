@@ -259,7 +259,8 @@ input:invalid, select:invalid, input.--error , select.--error {
 
 section.setupsection {
 	padding: 20px;
-	background-color: var(--colorbacktitle1);
+	/* background-color: var(--colorbacktitle1); */
+	background-color: #f0f0f0;
 	border-radius: 5px;
 }
 
