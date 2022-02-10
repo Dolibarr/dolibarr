@@ -326,7 +326,7 @@ if ($action == 'create') {
 	if ($conf->use_javascript_ajax) {
 		print "\n".'<script type="text/javascript" language="javascript">';
 		print 'jQuery(document).ready(function () {
-                    jQuery("#selecttype").change(function() {
+                    jQuery("#type").change(function() {
                         document.formsoc.action.value="create";
                         document.formsoc.submit();
                     });
