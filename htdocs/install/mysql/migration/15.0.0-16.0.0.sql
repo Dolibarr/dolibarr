@@ -223,3 +223,8 @@ ALTER TABLE llx_facture_fourn_det_rec_extrafields ADD INDEX idx_facture_fourn_de
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_fac_rec_source integer;
 
 ALTER TABLE llx_mrp_mo ADD COLUMN fk_parent_line integer;
+
+ALTER TABLE llx_product_attribute_value MODIFY COLUMN ref VARCHAR(180) NOT NULL;
+ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NULL;
+ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NULL;
