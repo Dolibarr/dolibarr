@@ -47,6 +47,9 @@ $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $facid = GETPOST('facid', 'int');
 $socid = GETPOST('socid', 'int');
@@ -109,6 +112,18 @@ $arrayfields = array();
 /*
  * Actions
  */
+
+if ($cancel) {
+	if (!empty($backtopageforcancel)) {
+		header("Location: ".$backtopageforcancel);
+		exit;
+	} elseif (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+	header("Location: ".DOL_URL_ROOT.'/fourn/facture/list.php');
+	exit;
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
@@ -779,7 +794,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				print '<br><div class="center">';
 				print '<input type="checkbox" checked id="closepaidinvoices" name="closepaidinvoices"> <label for="closepaidinvoices">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
 				print '<input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
-				print ' &nbsp; <input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 			}
 
