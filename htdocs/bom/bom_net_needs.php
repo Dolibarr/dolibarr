@@ -128,36 +128,6 @@ $help_url ='EN:Module_BOM';
 llxHeader('', $title, $help_url);
 
 
-// Part to edit record
-if (($id || $ref) && $action == 'edit') {
-	print load_fiche_titre($langs->trans("BillOfMaterials"), '', 'cubes');
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-
-	print dol_get_fiche_head();
-
-	//$object->fields['keyfield']['disabled'] = 1;
-
-	print '<table class="border centpercent tableforfieldedit">'."\n";
-
-	// Common attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
-
-	// Other attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
-
-	print '</table>';
-
-	print dol_get_fiche_end();
-
-	print $form->buttonsSaveCancel("Create");
-
-	print '</form>';
-}
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
@@ -214,7 +184,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print dol_get_fiche_end();
 
+	$viewlink = dolGetButtonTitle($langs->trans('GroupByProduct'), '', 'fa fa-list-alt imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
+	$viewlink .= dolGetButtonTitle($langs->trans('TreeStructure'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
 
+	print load_fiche_titre($langs->trans("BillOfMaterials"), $viewlink, 'cubes');
 
 	/*
 	 * Lines
@@ -304,12 +277,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
-
-	if (empty($reshook)) {
-		if ($action != 'treeview') print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken().'">'.$langs->trans("DisplayInTreeStructure").'</a>'."\n";
-		else print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=view&token='.newToken().'">'.$langs->trans("BackToStandardView").'</a>'."\n";
-	}
-
 	print '</div>';
 
 

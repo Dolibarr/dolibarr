@@ -108,5 +108,5 @@ BOM=Bill Of Materials
 CollapseBOMHelp=You can define the default display of the details of the nomenclature in the configuration of the BOM module
 MOAndLines=Manufacturing Orders and lines
 BOMNetNeeds=Net Needs
-DisplayInTreeStructure=Display in tree structure
-BackToStandardView=Back to standard view
+TreeStructure=Tree structure
+GroupByProduct=Group by product
