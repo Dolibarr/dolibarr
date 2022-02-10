@@ -349,7 +349,7 @@ if ($action == 'create') {
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(GETPOST("ref") ?GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
+	print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $object->ref).'" maxlength="12" autofocus></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
@@ -358,7 +358,7 @@ if ($action == 'create') {
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td>';
-	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST("type") : Account::TYPE_CURRENT, "type");
+	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST("type", 'alpha') : Account::TYPE_CURRENT, "type");
 	print '</td></tr>';
 
 	// Currency
