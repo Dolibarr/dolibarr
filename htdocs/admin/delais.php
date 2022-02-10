@@ -448,11 +448,11 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 
 
 if ($action == 'edit') {
-	print '<br><div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
-	print '<br></form>';
+	print $form->buttonsSaveCancel("Save", '');
+	print '</form>';
 } else {
 	print '<br><div class="tabsAction">';
-	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
+	print '<a class="butAction" href="delais.php?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
 }
 
 // End of page

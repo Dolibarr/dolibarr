@@ -258,6 +258,10 @@ PassEncoding=Криптиране на парола
 PermissionsAdd=Правата са добавени
 PermissionsDelete=Правата са премахнати
 YourPasswordMustHaveAtLeastXChars=Вашата парола трябва да съдържа поне <strong>%s</strong> символа
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Вашата парола е успешно възстановена.
 ApplicantIpAddress=IP адрес на заявителя
 SMSSentTo=Изпратен е SMS на %s
@@ -268,6 +272,7 @@ ProjectCreatedByEmailCollector=Проектът е създаден, чрез и
 TicketCreatedByEmailCollector=Тикетът е създаден, чрез имейл колектор от имейл MSGID %s
 OpeningHoursFormatDesc=Използвайте средно тире '-' за разделяне на часовете на отваряне и затваряне.<br> Използвайте интервал, за да въведете различни диапазони.<br> Пример: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Секция с експортирания

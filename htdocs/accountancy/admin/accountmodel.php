@@ -78,7 +78,7 @@ $search_country_id = GETPOST('search_country_id', 'int');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->chartofaccount) {
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -495,7 +495,7 @@ if ($id) {
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
 				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+					print '<a href="'.$tabhelp[$id][$value].'">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				} elseif (!empty($tabhelp[$id][$value])) {
 					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
 				} else {
@@ -535,7 +535,7 @@ if ($id) {
 		}
 
 		print '<td colspan="3" class="right">';
-		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
 
@@ -553,16 +553,16 @@ if ($id) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		$param = '&id='.$id;
+		$param = '&id='.urlencode($id);
 		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.$search_country_id;
+			$param .= '&search_country_id='.urlencode($search_country_id);
 		}
 		$paramwithsearch = $param;
 		if ($sortorder) {
-			$paramwithsearch .= '&sortorder='.$sortorder;
+			$paramwithsearch .= '&sortorder='.urlencode($sortorder);
 		}
 		if ($sortfield) {
-			$paramwithsearch .= '&sortfield='.$sortfield;
+			$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 		}
 
 		// There is several pages
@@ -631,7 +631,7 @@ if ($id) {
 						fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'edit');
 					}
 
-					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				} else {
 					$tmpaction = 'view';

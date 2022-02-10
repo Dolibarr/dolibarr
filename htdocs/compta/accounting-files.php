@@ -499,7 +499,7 @@ if ($result && $action == "dl" && !$error) {
 		$zip->addFromString('transactions.csv', $log);
 		$zip->close();
 
-		///Then download the zipped file.
+		// Then download the zipped file.
 		header('Content-Type: application/zip');
 		header('Content-disposition: attachment; filename='.basename($zipname));
 		header('Content-Length: '.filesize($zipname));
@@ -578,7 +578,7 @@ print '<br>';
 
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
-		continue;		// list not qualified
+		continue; // list not qualified
 	}
 	$disabled = '';
 	if (empty($val['perms'])) {
@@ -588,7 +588,7 @@ foreach ($listofchoices as $choice => $val) {
 	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
 
-print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';
+print '<input type="submit" class="button" name="search" value="'.$langs->trans("Search").'">';
 
 print '</form>'."\n";
 
@@ -736,7 +736,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				print '<td>';
 				if (!empty($data['files'])) {
 					foreach ($data['files'] as $id => $filecursor) {
-						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
+						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
 					}
 				}
 				print "</td>\n";

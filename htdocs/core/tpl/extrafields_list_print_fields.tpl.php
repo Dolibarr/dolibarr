@@ -19,13 +19,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
-				$align = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
-				print '<td';
-				if ($align) {
-					print ' class="'.$align.'"';
-				}
-				print ' data-key="'.$key.'"';
-				print '>';
+				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
+
 				$tmpkey = 'options_'.$key;
 
 				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey)) {
@@ -47,9 +42,20 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					//var_dump($value);
 				}
 
-				print $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
+				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
+				$title = dol_string_nohtmltag($valuetoshow);
+
+				print '<td'.($cssclass ? ' class="'.$cssclass.'"' : '');	// TODO Add 'css' and 'cssview' and 'csslist' for extrafields and use here 'csslist'
+				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
+				print ($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print '>';
+				print $valuetoshow;
 				print '</td>';
+
 				if (!$i) {
+					if (empty($totalarray)) {
+						$totalarray['nbfield'] = 0;
+					}
 					$totalarray['nbfield']++;
 				}
 
@@ -62,7 +68,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
 					}
 				}
-				if (!empty($val['isameasure'])) {
+				if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
 					}

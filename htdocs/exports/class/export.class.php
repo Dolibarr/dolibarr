@@ -178,7 +178,7 @@ class Export
 									// Code du dataset export
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
-									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r];	// Add a key into the module
+									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
 									// Libelle du dataset export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
 									// Tableau des champ a exporter (cle=champ, valeur=libelle)
@@ -455,14 +455,14 @@ class Export
 				} else {
 					$keyList = 'rowid';
 				}
-				$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
+				$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3]." as code");
 				if ($InfoFieldList[1] == 'c_stcomm') {
-					$sql = 'SELECT id as id, '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
+					$sql = "SELECT id as id, ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3].' as code');
 				}
 				if ($InfoFieldList[1] == 'c_country') {
-					$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label, code as code';
+					$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label, code as code";
 				}
-				$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[1];
+				$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[1];
 				if (!empty($InfoFieldList[4])) {
 					$sql .= ' WHERE entity IN ('.getEntity($InfoFieldList[4]).')';
 				}

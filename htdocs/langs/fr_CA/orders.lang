@@ -7,7 +7,6 @@ OrderToProcess=Commander pour traiter
 NewOrder=nouvel ordre
 ToOrder=Faire une commande
 MakeOrder=Faire une commande
-SaleOrderLines=Sales order lines
 StatusOrderCanceledShort=Annulé
 StatusOrderProcessedShort=Traité
 StatusOrderDelivered=Livré

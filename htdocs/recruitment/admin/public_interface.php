@@ -167,7 +167,7 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	print '</table>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 }
 */
@@ -192,7 +192,7 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
 }
 */
 

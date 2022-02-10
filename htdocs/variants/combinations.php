@@ -194,14 +194,11 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$bulkaction = $massaction;
 	$error = 0;
 
-
-
 	$db->begin();
 
 	foreach ($toselect as $prodid) {
 		// need create new of Product to prevent rename dir behavior
 		$prodstatic = new Product($db);
-
 		if ($prodstatic->fetch($prodid) < 0) {
 			continue;
 		}
@@ -209,33 +206,50 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		if ($bulkaction == 'on_sell') {
 			$prodstatic->status = 1;
 			$res = $prodstatic->update($prodstatic->id, $user);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} elseif ($bulkaction == 'on_buy') {
 			$prodstatic->status_buy = 1;
 			$res = $prodstatic->update($prodstatic->id, $user);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} elseif ($bulkaction == 'not_sell') {
 			$prodstatic->status = 0;
 			$res = $prodstatic->update($prodstatic->id, $user);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} elseif ($bulkaction == 'not_buy') {
 			$prodstatic->status_buy = 0;
 			$res = $prodstatic->update($prodstatic->id, $user);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} elseif ($bulkaction == 'delete') {
 			$res = $prodstatic->delete($user, $prodstatic->id);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} else {
-			break;
-		}
-
-		if ($res <= 0) {
-			$error++;
 			break;
 		}
 	}
 
 	if ($error) {
 		$db->rollback();
-
-		if ($prodstatic->error) {
-			setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
-		} else {
+		if (empty($prodstatic->error)) {
 			setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 		}
 	} else {
@@ -587,7 +601,7 @@ if (!empty($id) || !empty($ref)) {
 
 			$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 			print $form->textwithpicto('', $htmltext);
-			/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
+			/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
 			print $langs->trans("Create");
 			print '</a>';*/
 
@@ -605,7 +619,7 @@ if (!empty($id) || !empty($ref)) {
 					$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 					print $form->textwithpicto('', $htmltext);
 					/*
-						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
+						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
 						print $langs->trans("Create");
 						print '</a>';
 					*/
@@ -834,7 +848,7 @@ if (!empty($id) || !empty($ref)) {
 			$aaa .= '	<option value="on_sell">'.$langs->trans('ProductStatusOnSell').'</option>';
 			$aaa .= '	<option value="delete">'.$langs->trans('Delete').'</option>';
 			$aaa .= '</select>';
-			$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button">';
+			$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button small">';
 		}
 		$massactionbutton = $aaa;
 
@@ -888,7 +902,7 @@ if (!empty($id) || !empty($ref)) {
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 0).'</td>';
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
 				print '<td class="right">';
-				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&valueid='.$currcomb->id.'">'.img_edit().'</a>';
+				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&valueid='.$currcomb->id.'">'.img_edit().'</a>';
 				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
 				print '<td class="nowrap center">';

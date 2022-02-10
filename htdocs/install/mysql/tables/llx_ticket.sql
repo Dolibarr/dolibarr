@@ -29,13 +29,14 @@ CREATE TABLE llx_ticket
 	message	text,
 	fk_statut integer,
 	resolution integer,
-	progress varchar(100),
+	progress integer DEFAULT 0,				-- progression 0 - 100 or null
 	timing varchar(20),
 	type_code varchar(32),
 	category_code varchar(32),
 	severity_code varchar(32),
 	datec datetime,
 	date_read datetime,
+	date_last_msg_sent datetime,
 	date_close datetime,
 	notify_tiers_at_create tinyint,
 	email_msgid varchar(255),				-- if ticket is created by email collector, we store here MSG ID

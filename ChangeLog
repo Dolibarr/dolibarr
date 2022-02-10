@@ -3,6 +3,164 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 15.0.0 compared to 14.0.0 *****
+
+For users:
+---------------
+
+NEW: Online proposal signature
+NEW: Can define some max limit on expense report (per period, per type or expense, ...)
+NEW: Allow the use of __NEWREF__ to get for example the new reference a draft order will get after validation.
+NEW: Add option to disable globaly some notifications emails.
+NEW: #18401 Add __NEWREF__ subtitute to get new object reference.
+NEW: #18403 Add __URL_SHIPMENT__ substitute to get the URL of a shipment
+NEW: #18689 REST API module: add api key generate / modify permission.
+NEW: #18663 Make "L'Annuaire des Entreprises" the default provider for SIREN verification for French thirdparties.
+NEW: #18046 Add tags on ticket/categories
+NEW: #18326 Workflow: Close order on shipment closing.
+NEW: #18770 Can enter the buying price (for Weighted Average Price update) on lines during the reception step
+NEW: #18814 Add legal form for Sweden
+NEW: #18820 Accountancy - Add product account in import/export of thirdparty (level 3)
+NEW: Accountancy - Format FEC/FEC2 - Add column NumFacture
+NEW: Add $dolibarr_main_db_readonly in conf.php for readonly access.
+NEW: add auto creation of agenda event on supplier_order cancellation
+NEW: Add a PDF document template for Manufacturing Orders
+NEW: Add budget field into task #18986
+NEW: add cancel button to `classify reception` form on supplier_orders
+NEW: Added address field into contacts list
+NEW: Added documents page and send mail possibility in payments
+NEW: Add edit option in propal
+NEW: Added linked files page and send mail possibility in payments
+NEW: Add field date from/to in customer and supplier payment list
+NEW: Add filter from date to date into action/evt list
+NEW: Add import / export of MO and BOMLines - Close #18499
+NEW: Adding accounting export model for iSuite Expert
+NEW: add link to an element by ref
+NEW: add missing printFieldListFrom hook call on several lists
+NEW: add MRP into Object Linked Box
+NEW: Add option to hide customer code on PDF documents
+NEW: Add param $nolog to avoid logging into dol_delete_recursive_dir()
+NEW: Add sale representative in order and invoice list
+NEW: add a setting to create PDF in PDF/A - 1b format #18990
+NEW: Add `SOCIETE_SHOW_VAT_IN_LIST` to display VAT number in combo list of thirdparties
+NEW: Add sortorder on units list
+NEW: Adds PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES to hide product label in supplier order lines
+NEW: Add STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE to hide unit price on some pages
+NEW: add support for zstd compression
+NEW: Allow drag and drop on kits
+NEW: Allow exporting supplier order validation date + validation user
+NEW: Allows product ref generation after the form is validated with PRODUCT_GENERATE_REF_AFTER_FORM
+NEW: autocomplete account group when editing an account card
+NEW: Auto create invoice for payment done on an order with online payment link of order
+NEW: Can edit fields of proposal when proposal is not yet signed
+NEW: Can edit the translation key of an overwrote translation key.
+NEW: can enable/disable external calendar by default
+NEW: Can hide sender name on PDF documents
+NEW: Can select lot from a combo list of existing batch numbers (in MRP consumtion)
+NEW: Can set the default BOM on a product
+NEW: Can set/unset the usual working day of the week (friday, saturday, sunday) 
+NEW: Can show progression of task into combo list of tasks
+NEW: can upload the odt file for the product doc template
+NEW: Contract - Add From/to input on search date
+NEW: Customer Display with TakePOS
+NEW: Split Sale in TakePOS
+NEW: Customer invoice template list - Add input date from/to
+NEW: date filter on project list and task list From->To
+NEW: display shipping method and tracking url on shipment list
+NEW: expense reports: conf to force amounts to be entered only including taxes
+NEW: expense reports: conf to pre-fill start/end dates with bounds of current month
+NEW: expense reports: show link to already existing overlapping expense report
+NEW: expense reports: can make project field mandatory on lines
+NEW: Expose bank account holder, label and number
+NEW: feature #18986
+NEW: field and behavior in product object
+NEW: generate intervention from time spent
+NEW: holiday: handle monthly balance updates with cronjob
+NEW: HRM integration, source code
+NEW: HRM admin - Add tabs
+NEW: HRM - Include more options to manage/custom dashboard
+NEW: Increase size of params of actions for emailcollector
+NEW: Invoice list - Use complete country select field with EEC or not
+NEW: mass action delete, no more break if at least one object has child
+NEW: mass action paid on customer invoice list
+NEW: massaction validate on supplier orders list
+NEW: Mass action send email to all attendees of an event.
+NEW: expense reports: conf to pre-fill start/end dates with bounds of current month
+NEW: Option "Add a link on the PDF to make the online payment"
+NEW: More options to generate PDF (show Frame option, width of picture option)
+NEW: Preview of pdf files of expense report lines
+NEW: print without details
+NEW: project time spent: conf to prevent recording time after X months
+NEW: rewrite bind accountancy code finding on customer and sales invoice
+NEW: Societe - Add perentity functionality on customer/supplier accountancy auxiliary account
+NEW: Survey - Add a clickable link in email send
+NEW: Social Contributions - Add from/to filter on list
+NEW: Supplier order and proposal - Add From/to input on search date
+NEW: Task - Add From/to input on search date
+NEW: Add theme option THEME_ELDY_USEBORDERONTABLE
+NEW: The Anti-CSRF protection MAIN_SECURITY_CSRF_WITH_TOKEN is on to value 1 by default
+NEW: Update SQL : install and migration
+NEW: Use an ajax call for the clicktodial feature instead of href link.
+NEW: when multiple order linked to facture, show list into note.
+NEW: when we delete several objects with massaction, if somes object has child we must see which objects are concerned and nevertheless delete objects which can be deleted
+NEW: Editing a page in website module keep old page with name .back
+NEW: External backups can be downloaded from the "About info page".
+NEW: Add massaction to switch status on sale / on purchase of a product.
+
+
+ Modules
+NEW: Stable module Knowledge Management
+NEW: Experimental module Event Organization Management
+NEW: Experimental module Workstations Management
+NEW: Development of module Partnership Management
+
+
+For developers:
+---------------
+
+NEW: Introduce method hasRight
+NEW: Can use textarea field into a confirm popup.
+NEW: Can use the result_mode of mysqli driver. Save memory for list count
+NEW: #18319 REST API - Shipment: Add 'close' action / endpoint / POST method.
+NEW: Add API /approve and /makeOrder for purchase orders. 
+NEW: add action trigger for member excluded
+NEW: add option MAIN_IBAN_IS_NEVER_MANDATORY, MAIN_IBAN_NOT_MANDATORY, PROPAL_NOT_BILLABLE, PROPAL_REOPEN_UNSIGNED_ONLY, PROPOSAL_ARE_NOT_BILLABLE, TICKETS_MESSAGE_FORCE_MAIL
+NEW: Add code codebar column on serial/lot structure
+NEW: Add date_valid and date_approve columns in the list of supplier orders
+NEW: add hook `beforeBodyClose`
+NEW: Add hook hookGetEntity.
+NEW: add hookmanager on note pages
+NEW: add hook 'menuLeftMenuItems' to filter the leftmenu items
+NEW: Add the property "copytoclipboard" in modulebuilder
+NEW: api for knowledgemanagement
+NEW: API get list of legal form of business
+NEW: API list of staff units
+NEW: hook after rank update
+NEW: printFieldListFrom hook call on several lists
+NEW: Use lang selector when using a field key 'lang' in modulebuilder
+NEW: we need to be able to put more filters on deleteByParentField() function
+NEW: make it easier to set the `keyword`, `keywords` and `description` attributes of an ecm file object
+NEW: Experimental feature to manage user sessions in database
+NEW: Hidden option API_DISABLE_COMPRESSION is now visible in API setup page.
+NEW: Add hook printUnderHeaderPDFline on invoice PDF templates (can be used for example to add a barcode or more information on header of invoices).
+ 
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* ALL EXTERNAL MODULES THAT WERE NOT CORRECTLY DEVELOPPED WILL NOT WORK ON V15 (All modules that forgot to manage the security token field 
+  into forms will be broken. The security token field is expected since Dolibarr v9 but a lot of external modules did not implement it).
+* Update hook 'printOriginObjectLine', removed check on product type and special code. Need now reshook.
+* Old deprecated module "SimplePOS" has been completely removed. Use module "TakePOS" is you need a Point Of Sale.
+* The method static ActionComm::getActions($db, ...) is no more static. Use $actioncomm->getActions(...) instead (without $db param). 
+* The 'action=delete&file=...' has been replaced with 'action=deletefile&file=...' to avoid confusion with deletion of object lines.
+* Method getDictvalue has been renamed into getDictionaryValue to match camel case rule.
+* To execute shell or command line command, your code must never use method like exec, shell_exec, popen, .. but must use the built-in 
+  method executeCLI() available into core/class/utils.class.php  
+* Class file expeditionbatch.class.php renamed to expeditionlinebatch.class.php
+* ExpeditionLineBatch::fetchAll is not static anymore and first parameter $db is removed
+* ExtraFields->showOutputField parameter 4 'extrafieldsobjectkey' is now required
+* CommonObject method add_object_linked now sets targettype to 'mymodule_myobject' instead of 'myobject', 
+  you can use hook 'setLinkedObjectSourceTargetType' to set your usual targettype
+
+
 ***** ChangeLog for 14.0.5 compared to 14.0.4 *****
 
 FIX: 13.0: printFieldListWhere called twice on same query
@@ -502,7 +660,7 @@ Following changes may create regressions for some external modules, but were nec
 * The ICS value for direct debit or credit transfer is now stored on each bank account instead of into the global setup.
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
 * Field "total" renamed into "total_ht"  for table llx_facture, llx_facture_rec for better field name consistency
-* Field "tva"   renamed into "total_tva" for table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
+* Field "tva"   renamed into "total_tva" for llx_facture, table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
 * Field "total" renamed into "total_ttc" for table llx_propal, llx_supplier_proposal for better field name consistency
 * If your database is PostgreSQL, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
 * If your database is MySQL or MariaDB, you need at least version 5.1
@@ -547,11 +705,11 @@ FIX: wrong users count in multicompany transverse mode
 ***** ChangeLog for 13.0.4 compared to 13.0.3 *****
 
 FIX: Allow disabling of a module (not a dangerous action) even if there is problem with token (due to bugged modules).
-FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling `ajax_autocompleter()`
-FIX: #17919 pictures in docs.
+FIX: 13.0 - fatal - missing inclusion of ajax.lib.php for calling 'ajax_autocompleter()'
+FIX: #17919 pictures in docs
 FIX: #18006
 FIX: Accountancy - if we define a date start, automatic binding try to continue to solve old binding
-FIX: Accoutancy Limit date payment not registered on purchases operations
+FIX: Accountancy - Limit date payment not registered on purchases operations
 FIX: Can't edit replacement invoice
 FIX: deposit can create credit note in payment conf
 FIX: division by zero on create
@@ -655,7 +813,7 @@ FIX: File attachment on lots/batches
 FIX: handling $heightforinfotot when he's superior to a page height on Supplier Invoice
 FIX: hourglass and hide button to pay
 FIX: massaction validate invoice do not regenerate PDF
-FIX: missing mp4 video mime
+FIX: #16627 fix missing mp4 video mime
 FIX: picto on shipment to reset qty to 0. Some quantities were not reset.
 FIX: Protection to avoid #16504
 FIX: rounding amount on card updating

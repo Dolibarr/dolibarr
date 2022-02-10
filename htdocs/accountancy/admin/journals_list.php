@@ -58,8 +58,8 @@ $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'int') > 0 ?GETPOST('listlimit', 'int') : 1000;
 $active = 1;
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -453,7 +453,7 @@ if ($id) {
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
 				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+					print '<a href="'.$tabhelp[$id][$value].'">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				} elseif (!empty($tabhelp[$id][$value])) {
 					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
 				} else {
@@ -494,7 +494,7 @@ if ($id) {
 		}
 
 		print '<td colspan="4" class="right">';
-		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
 
@@ -512,7 +512,7 @@ if ($id) {
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.$search_country_id;
+			$param .= '&search_country_id='.urlencode($search_country_id);
 		}
 		$paramwithsearch = $param;
 		if ($sortorder) {
@@ -606,13 +606,13 @@ if ($id) {
 					print '<td class="center" colspan="4">';
 					print '<input type="hidden" name="page" value="'.$page.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 					print '</td>';
 				} else {
 					$tmpaction = 'view';
-					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 					$error = $hookmanager->error; $errors = $hookmanager->errors;

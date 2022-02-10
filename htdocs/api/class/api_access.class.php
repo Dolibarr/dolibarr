@@ -152,6 +152,7 @@ class DolibarrApiAccess implements iAuthenticate
 
 			// Set the property $user to the $user of API
 			static::$user = $fuser;
+
 			// Set also the global variable $user to the $user of API
 			$user = $fuser;
 

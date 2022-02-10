@@ -24,6 +24,7 @@
  * \ingroup		Accountancy (Double entries)
  * \brief 		List operation of book keeping
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -526,23 +527,25 @@ $sqlwhere = array();
 if (count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		if ($key == 't.doc_date') {
-			$sqlwhere[] = $key.'=\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."='".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
-			$sqlwhere[] = $key.'\''.$db->escape($value).'\'';
+			$sqlwhere[] = $key."'".$db->escape($value)."'";
 		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-			$sqlwhere[] = $key.'='.$value;
+			$sqlwhere[] = $key.'='.((int) $value);
 		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-			$sqlwhere[] = $key.' LIKE \''.$db->escape($value).'%\'';
+			$sqlwhere[] = $key." LIKE '".$db->escape($value)."%'";
+		} elseif ($key == 't.subledger_account') {
+			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
@@ -606,7 +609,8 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 					}
 					$sql .= " WHERE rowid = ".((int) $movement->id);
 
-					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -689,9 +693,11 @@ if ($action == 'export_file') {
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
 }
+
 if ($action == 'delmouv') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num').$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.urlencode(GETPOST('mvt_num')).$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 }
+
 if ($action == 'delbookkeepingyear') {
 	$form_question = array();
 	$delyear = GETPOST('delyear', 'int');
@@ -712,6 +718,7 @@ if ($action == 'delbookkeepingyear') {
 		'type' => 'select',
 		'label' => $langs->trans('DelMonth'),
 		'values' => $month_array,
+		'morecss' => 'minwidth150',
 		'default' => ''
 	);
 	$form_question['delyear'] = array(
@@ -729,7 +736,7 @@ if ($action == 'delbookkeepingyear') {
 			'default' => $deljournal
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'delbookkeepingyearconfirm', $form_question, '', 1, 300);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'delbookkeepingyearconfirm', $form_question, '', 1, 320);
 }
 
 // Print form confirm
@@ -762,7 +769,7 @@ if (count($filter)) {
 }
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
@@ -1244,7 +1251,7 @@ while ($i < min($num, $limit)) {
 	}
 	if (empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->supprimer) {
-			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
+			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&token='.newToken().'&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
 		}
 	}
 	print '</td>';
@@ -1268,7 +1275,7 @@ print '</div>';
 // TODO Replace this with mass delete action
 if ($user->rights->accounting->mouvements->supprimer_tous) {
 	print '<div class="tabsAction tabsActionNoBottom">'."\n";
-	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
+	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear&token='.newToken().($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
 	print '</div>';
 }
 

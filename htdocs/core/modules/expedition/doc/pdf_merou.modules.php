@@ -282,8 +282,8 @@ class pdf_merou extends ModelePdfExpedition
 
 				$tab_top = 52;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter;
-				$tab_height_newpage = $this->page_hauteur - $tab_top_newpage - $heightforfooter;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Display notes
 				if (!empty($object->note_public)) {

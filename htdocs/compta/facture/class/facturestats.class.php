@@ -85,7 +85,7 @@ class FactureStats extends Stats
 
 		$this->where = " f.fk_statut >= 0";
 		$this->where .= " AND f.entity IN (".getEntity('invoice').")";
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($mode == 'customer') {
@@ -129,7 +129,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(f.datef,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -155,7 +155,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(f.datef,'%Y') as dm, COUNT(*), SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -180,7 +180,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -206,7 +206,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -229,7 +229,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%Y') as year, COUNT(*) as nb, SUM(f.".$this->field.") as total, AVG(f.".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -253,7 +253,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -265,5 +265,32 @@ class FactureStats extends Stats
 		//$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql, $limit);
+	}
+	/**
+	 *      Return the invoices amount by year for a number of past years
+	 *
+	 *      @param  int             $numberYears    Years to scan
+	 *      @param  int             $format         0=Label of abscissa is a translated text, 1=Label of abscissa is year, 2=Label of abscissa is last number of year
+	 *      @return array                           Array with amount by year
+	 */
+	public function getAmountByYear($numberYears, $format = 0)
+	{
+		global $user;
+
+		$endYear = date('Y');
+		$startYear = $endYear - $numberYears;
+		$sql = "SELECT date_format(datef,'%Y') as dm, SUM(f.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= $this->join;
+		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($startYear))."' AND '".$this->db->idate(dol_get_last_day($endYear))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'ASC');
+
+		$res = $this->_getAmountByYear($sql);
+		return $res;
 	}
 }

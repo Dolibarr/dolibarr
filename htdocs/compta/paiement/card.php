@@ -126,7 +126,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 			$sql .= ' WHERE pf.fk_facture = f.rowid';
 			$sql .= ' AND f.fk_soc = s.rowid';
 			$sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-			$sql .= ' AND pf.fk_paiement = '.$object->id;
+			$sql .= ' AND pf.fk_paiement = '.((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$i = 0;
@@ -295,7 +295,7 @@ print '</td></tr>';
 if (!empty($conf->banque->enabled)) {
 	if ($object->fk_account > 0) {
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
-			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
+			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 			$bordereau = new RemiseCheque($db);
 			$bordereau->fetch($bankline->fk_bordereau);
 
@@ -342,7 +342,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'factur
 $sql .= ' WHERE pf.fk_facture = f.rowid';
 $sql .= ' AND f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-$sql .= ' AND pf.fk_paiement = '.$object->id;
+$sql .= ' AND pf.fk_paiement = '.((int) $object->id);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -448,7 +448,7 @@ print '<div class="tabsAction">';
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '') {
 		if ($user->rights->facture->paiement) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&facid='.$objp->facid.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }
@@ -456,7 +456,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 if ($user->socid == 0 && $action == '') {
 	if ($user->rights->facture->paiement) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 		}

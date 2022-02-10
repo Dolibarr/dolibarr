@@ -676,10 +676,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolStringOnlyTheseHtmlAttributes()
 	{
+		$stringtotest = 'eée';
+		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
+		$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correclty with test 1');
+
 		$stringtotest = '<div onload="ee"><a href="123"><span class="abc">abc</span></a></div>';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
 		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
-		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 1');
+		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 2');
 
 		return 0;
 	}
@@ -791,6 +795,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		 $this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
 		 */
 
+		$url = 'http://192.0.0.192';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL but on an IP in blacklist
+		print __METHOD__." url=".$url." tmp['http_code'] = ".$tmp['http_code']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
+
 		return 0;
 	}
 
@@ -875,6 +884,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
 		$result=dol_eval('$a=exec("ls");', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a=exec ("ls")', 1, 1);
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 

@@ -345,11 +345,11 @@ $sql .= ' p.desiredstock, p.seuil_stock_alerte,';
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	$sql .= ' pse.desiredstock as desiredstockpse, pse.seuil_stock_alerte as seuil_stock_alertepse,';
 }
-$sql .= ' '.$sqldesiredtock.' as desiredstockcombined, '.$sqlalertstock.' as seuil_stock_alertecombined,';
+$sql .= " ".$sqldesiredtock." as desiredstockcombined, ".$sqlalertstock." as seuil_stock_alertecombined,";
 $sql .= ' s.fk_product,';
-$sql .= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
+$sql .= " SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
-	$sql .= ', SUM('.$db->ifsql("s.reel IS NULL OR s.fk_entrepot <> ".$fk_entrepot, "0", "s.reel").') as stock_real_warehouse';
+	$sql .= ", SUM(".$db->ifsql("s.reel IS NULL OR s.fk_entrepot <> ".$fk_entrepot, "0", "s.reel").') as stock_real_warehouse';
 }
 
 // Add fields from hooks
@@ -480,45 +480,45 @@ if ($usevirtualstock) {
 	}
 
 	$sql .= ' HAVING (';
-	$sql .= ' ('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
-	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.') + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.')))';
+	$sql .= " (".$sqldesiredtock." >= 0 AND (".$sqldesiredtock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql .= " - (".$sqlCommandesCli." - ".$sqlExpeditionsCli.") + (".$sqlCommandesFourn." - ".$sqlReceptionFourn.") + (".$sqlProductionToProduce." - ".$sqlProductionToConsume.")))";
 	$sql .= ' OR';
 	if ($includeproductswithoutdesiredqty == 'on') {
-		$sql .= ' (('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+		$sql .= " ((".$sqlalertstock." >= 0 OR ".$sqlalertstock." IS NULL) AND (".$db->ifsql($sqlalertstock." IS NULL", "0", $sqlalertstock)." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").")";
 	} else {
-		$sql .= ' ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+		$sql .= " (".$sqlalertstock." >= 0 AND (".$sqlalertstock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	}
-	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.') + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.')))';
-	$sql .= ')';
+	$sql .= " - (".$sqlCommandesCli." - ".$sqlExpeditionsCli.") + (".$sqlCommandesFourn." - ".$sqlReceptionFourn.") + (".$sqlProductionToProduce." - ".$sqlProductionToConsume.")))";
+	$sql .= ")";
 
 	if ($salert == 'on') {	// Option to see when stock is lower than alert
 		$sql .= ' AND (';
 		if ($includeproductswithoutdesiredqty == 'on') {
-			$sql .= '('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+			$sql .= "(".$sqlalertstock." >= 0 OR ".$sqlalertstock." IS NULL) AND (".$db->ifsql($sqlalertstock." IS NULL", "0", $sqlalertstock)." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").")";
 		} else {
-			$sql .= $sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+			$sql .= $sqlalertstock." >= 0 AND (".$sqlalertstock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").")";
 		}
-		$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')  + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.'))';
-		$sql .= ')';
+		$sql .= " - (".$sqlCommandesCli." - ".$sqlExpeditionsCli.") + (".$sqlCommandesFourn." - ".$sqlReceptionFourn.")  + (".$sqlProductionToProduce." - ".$sqlProductionToConsume."))";
+		$sql .= ")";
 		$alertchecked = 'checked';
 	}
 } else {
 	$sql .= ' HAVING (';
-	$sql .= '('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+	$sql .= "(".$sqldesiredtock." >= 0 AND (".$sqldesiredtock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").")))";
 	$sql .= ' OR';
 	if ($includeproductswithoutdesiredqty == 'on') {
-		$sql .= ' (('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+		$sql .= " ((".$sqlalertstock." >= 0 OR ".$sqlalertstock." IS NULL) AND (".$db->ifsql($sqlalertstock." IS NULL", "0", $sqlalertstock)." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
 	} else {
-		$sql .= ' ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+		$sql .= " (".$sqlalertstock." >= 0 AND (".$sqlalertstock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
 	}
 	$sql .= ')';
 
 	if ($salert == 'on') {	// Option to see when stock is lower than alert
-		$sql .= ' AND (';
+		$sql .= " AND (";
 		if ($includeproductswithoutdesiredqty == 'on') {
-			$sql .= ' ('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))';
+			$sql .= " (".$sqlalertstock." >= 0 OR ".$sqlalertstock." IS NULL) AND (".$db->ifsql($sqlalertstock." IS NULL", "0", $sqlalertstock)." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel")."))";
 		} else {
-			$sql .= ' '.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))';
+			$sql .= " ".$sqlalertstock." >= 0 AND (".$sqlalertstock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").'))';
 		}
 		$sql .= ')';
 		$alertchecked = 'checked';
@@ -623,7 +623,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input class="button" type="submit" name="valid" value="'.$langs->trans('ToFilter').'">';
+print '<input type="submit" class="button small" name="valid" value="'.$langs->trans('ToFilter').'">';
 print '</div>';
 
 print '</form>';
@@ -789,7 +789,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
 
 	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0) {
-		$prod->fetch($objp->rowid);
+		$result = $prod->fetch($objp->rowid);
+		if ($result < 0) {
+			dol_print_error($db);
+			exit;
+		}
+
 		$prod->load_stock('warehouseopen, warehouseinternal'.(!$usevirtualstock?', novirtual':''), $draftchecked);
 
 		// Multilangs
@@ -797,7 +802,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
 			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);
-			$sql .= ' AND lang = "'.$langs->getDefaultLang().'"';
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= ' LIMIT 1';
 
 			$resqlm = $db->query($sql);
@@ -953,7 +958,7 @@ print dol_get_fiche_end();
 
 
 $value = $langs->trans("CreateOrders");
-print '<div class="center"><input class="button" type="submit" name="valid" value="'.$value.'"></div>';
+print '<div class="center"><input type="submit" class="button" name="valid" value="'.$value.'"></div>';
 
 
 print '</form>';

@@ -43,6 +43,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'propal';
@@ -268,7 +270,7 @@ foreach ($dirmodels as $reldir) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}
@@ -278,7 +280,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->PROPALE_ADDON == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -402,13 +404,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print "<td align=\"center\">\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -417,7 +419,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->PROPALE_ADDON_PDF == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -483,7 +485,7 @@ print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
 print '<td align="right">';
 if (empty($conf->facture->enabled)) {
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 }
 print '</td>';
 print "</tr>\n";
@@ -587,7 +589,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
 print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
-print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
 
@@ -600,7 +602,7 @@ print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 */
@@ -627,7 +629,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
@@ -640,7 +642,7 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext,
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.$conf->global->PROPALE_DRAFT_WATERMARK.'">';
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
@@ -658,11 +660,11 @@ if ($conf->banque->enabled)
 	{
 		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL))
 		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 		}
 		else
 		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 		}
 	}
 	print '</td></tr>';

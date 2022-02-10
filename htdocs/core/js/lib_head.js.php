@@ -549,20 +549,27 @@ function hideMessage(fieldId,message) {
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
+ * @param	int		value       Value to set
  * @param   string  token       Token
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid, token) {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
 	var saved_url = url; /* avoid undefined url */
 	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
-		token: token
+		token: token,
+		value: value
 	},
 	function() {	/* handler for success of post */
-		console.log("url request success forcereload="+forcereload);
-		$("#set_" + code).hide();
-		$("#del_" + code).show();
+		console.log("Ajax url request to set constant is a success. Make complementary actions and then forcereload="+forcereload+" value="+value);
+		if (value == 0) {
+			$("#set_" + code).show();
+			$("#del_" + code).hide();
+		} else {
+			$("#set_" + code).hide();
+			$("#del_" + code).show();
+		}
 		$.each(input, function(type, data) {
 			// Enable another element
 			if (type == "disabled" && strict != 1) {
@@ -608,9 +615,19 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 		});
 		if (forcereload) {
-			location.reload();
+			var url = window.location.href;
+			if (url.indexOf('dol_resetcache') < 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&dol_resetcache=1";
+				} else {
+					url = url + "?dol_resetcache=1";
+				}
+			}
+			window.location.href = url;
+			//location.reload();
+			return false;
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
+	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 }
 
 /*
@@ -635,7 +652,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 		token: token
 	},
 	function() {
-		console.log("url request success forcereload="+forcereload);
+		console.log("Ajax url request to delete constant is success. Make complementary actions and then forcereload="+forcereload);
 		$("#del_" + code).hide();
 		$("#set_" + code).show();
 		$.each(input, function(type, data) {
@@ -679,9 +696,19 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 		});
 		if (forcereload) {
-			location.reload();
+			var url = window.location.href;
+			if (url.indexOf('dol_resetcache') < 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&dol_resetcache=1";
+				} else {
+					url = url + "?dol_resetcache=1";
+				}
+			}
+			window.location.href = url;
+			//location.reload();
+			return false;
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
+	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 }
 
 /*
@@ -716,7 +743,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 						text : yesButton,
 						click : function() {
 							if (action == "set") {
-								setConstant(url, code, input, entity, strict, 0, userid, token);
+								setConstant(url, code, input, entity, strict, 0, userid, token, 1);
 							} else if (action == "del") {
 								delConstant(url, code, input, entity, strict, 0, userid, token);
 							}

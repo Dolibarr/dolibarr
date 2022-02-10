@@ -100,7 +100,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'comment'=>"Reference of object"),
 		'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
@@ -119,7 +119,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>0,'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>0, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
 	);
 	public $rowid;
 	public $ref;
@@ -436,14 +436,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -567,7 +567,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			if (!empty($this->fields['fk_user_valid'])) {
 				$sql .= ", fk_user_valid = ".$user->id;
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -766,7 +766,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$label .= '<br><b>'.$langs->trans('DateOfRegistration').':</b> '.dol_print_date($this->date_subscription, 'dayhour');
 		$label .= '<br><b>'.$langs->trans('AmountPaid').':</b> '.$this->amount;
 
-		$url = dol_buildpath('/eventorganization/conferenceorboothattendee_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -787,7 +787,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			}
 
 			if ($option == 'conforboothidproject') {
-				$url .= '&conforboothid='.((int) $this->fk_actioncomm).'&withproject=1' ;
+				$url .= '&conforboothid='.((int) $this->fk_actioncomm).'&withproject=1';
 			}
 		}
 
@@ -980,28 +980,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
-	}
-
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new ConferenceOrBoothAttendeeLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorboothattendee = '.((int) $this->id)));
-
-		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
 	}
 
 	/**

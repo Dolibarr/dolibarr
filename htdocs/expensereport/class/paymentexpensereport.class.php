@@ -635,7 +635,16 @@ class PaymentExpenseReport extends CommonObject
 		if (empty($this->ref)) {
 			$this->ref = $this->label;
 		}
-		$label = $langs->trans("ShowPayment").': '.$this->ref;
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Payment").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
+		if (!empty($this->ref)) {
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		}
+		if (!empty($this->datep)) {
+			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhour');
+		}
 
 		if (!empty($this->id)) {
 			$link = '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';

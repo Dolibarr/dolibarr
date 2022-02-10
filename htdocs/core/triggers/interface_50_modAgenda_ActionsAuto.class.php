@@ -66,7 +66,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 *      $object->elementtype (->element of object to link action to)
 	 *      $object->module (if defined, elementtype in llx_actioncomm will be elementtype@module)
 	 *
-	 * @param string		$action		Event action code ('CONTRACT_MODIFY', 'RECRUITMENTCANDIDATURE_MODIFIY', ...)
+	 * @param string		$action		Event action code ('CONTRACT_MODIFY', 'RECRUITMENTCANDIDATURE_MODIFIY', or example by external module: 'SENTBYSMS'...)
 	 * @param Object		$object     Object
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
@@ -88,6 +88,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		//var_dump($action.' - '.$conf->global->$key);exit;
 
 		// Do not log events not enabled for this action
+		// GUI allow to set this option only if entry exists into table llx_c_action_trigger
 		if (empty($conf->global->$key)) {
 			return 0;
 		}
@@ -557,6 +558,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'ORDER_SUPPLIER_CANCEL') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "orders", "main"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("OrderCanceledInDolibarr", $object->ref);
+			}
+			$object->actionmsg = $langs->transnoentities("OrderCanceledInDolibarr", $object->ref);
+
+			if (!empty($object->cancel_note)) {
+				$object->actionmsg .= '<br>';
+				$object->actionmsg .= $langs->trans("Reason") . ': '.$object->cancel_note;
+			}
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_SUBMIT') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "orders"));
@@ -565,6 +581,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("SupplierOrderSubmitedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 			}
 			$object->actionmsg = $langs->transnoentities("SupplierOrderSubmitedInDolibarr", ($object->newref ? $object->newref : $object->ref));
+
+			if (!empty($object->context['comments'])) {
+				$object->actionmsg .= '<br>';
+				$object->actionmsg .= $langs->trans("Comment") . ': '.$object->context['comments'];
+			}
 
 			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_RECEIVE') {
@@ -867,8 +888,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		} else {
 			// TODO Merge all previous cases into this generic one
 			// $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
+			// Can also be a value defined by an external module like SENTBYSMS, COMPANY_SENTBYSMS, MEMBER_SENTBYSMS, ...
 			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
-			// Note that these key can be set in agenda setup, only if defined into c_action_trigger
+			// Note that these key can be set in agenda setup, only if defined into llx_c_action_trigger
 			// Load translation files required by the page
 			if (empty($object->actionmsg2)) {
 				$langs->loadLangs(array("agenda", "other"));

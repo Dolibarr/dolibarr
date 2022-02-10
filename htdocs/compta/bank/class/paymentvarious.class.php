@@ -467,11 +467,11 @@ class PaymentVarious extends CommonObject
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->accountancy_code)."'";
 		$sql .= ", '".$this->db->escape($this->subledger_account)."'";
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= ", ".$user->id;
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";	// Filled later
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -573,7 +573,7 @@ class PaymentVarious extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_various SET fk_bank = '.((int) $id_bank);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return 1;

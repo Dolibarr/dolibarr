@@ -142,7 +142,7 @@ if (version_compare(phpversion(), '7.0', '>=')) {
 
 if ($action == 'edit') {
 	if ($conf->use_javascript_ajax) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print 'jQuery(document).ready(function () {
                     function initfields()
                     {
@@ -232,7 +232,7 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common_ticket', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br>\n";
+	print "<br><br>\n";
 
 
 	clearstatcache();
@@ -380,18 +380,14 @@ if ($action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 } else {
 	print dol_get_fiche_head($head, 'common_ticket', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br>\n";
+	print "<br><br>\n";
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -483,7 +479,7 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 
 	if (!empty($conf->global->MAIN_MAIL_SENDMODE_TICKET) && $conf->global->MAIN_MAIL_SENDMODE_TICKET != 'default') {
 		if ($conf->global->MAIN_MAIL_SENDMODE_TICKET != 'mail' || !$linuxlike) {

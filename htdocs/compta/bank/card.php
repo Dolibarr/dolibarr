@@ -78,7 +78,26 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/compta/bank/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/compta/bank/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
 	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
 		$action = '';
 	}
 
@@ -324,7 +343,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
 	if ($conf->use_javascript_ajax) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print 'jQuery(document).ready(function () {
                     jQuery("#selecttype").change(function() {
                         document.formsoc.action.value="create";
@@ -410,7 +429,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("Web").'</td>';
 	print '<td>';
 	print img_picto('', 'globe', 'class="pictofixedwidth"');
-	print '<input class="minwidth300" type="text" class="flat" name="url" value="'.GETPOST("url").'">';
+	print '<input class="minwidth300 widthcentpercentminusx maxwidth500" type="text" class="flat" name="url" value="'.GETPOST("url").'">';
 	print '</td></tr>';
 
 	// Tags-Categories
@@ -565,11 +584,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateAccount").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateAccount");
 
 	print '</form>';
 } else {
@@ -683,7 +698,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -782,7 +796,6 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
 
 		print '<div class="clearboth"></div>';
 
@@ -818,7 +831,7 @@ if ($action == 'create') {
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {
                         jQuery("#selecttype").change(function() {
                             document.formsoc.action.value="edit";
@@ -1047,19 +1060,19 @@ if ($action == 'create') {
 
 			// IBAN
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.$object->iban.'"></td></tr>';
+			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOSTISSET('iban') ? GETPOST('iban',  'alphanohtml') : $object->iban).'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans($bickey).'</td>';
-			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.$object->bic.'"></td></tr>';
+			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOSTISSET('bic') ? GETPOST('bic',  'alphanohtml') : $object->bic).'"></td></tr>';
 
 			if ($conf->prelevement->enabled) {
 				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("StandingOrder").')</td>';
-				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.$object->ics.'"></td></tr>';
+				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.(GETPOSTISSET('ics') ? GETPOST('ics', 'alphanohtml') : $object->ics).'"></td></tr>';
 			}
 
 			if ($conf->paymentbybanktransfer->enabled) {
 				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
-				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.$object->ics_transfer.'"></td></tr>';
+				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
 			}
 
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
@@ -1081,11 +1094,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button button-cancel">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Modify");
 
 		print '</form>';
 	}

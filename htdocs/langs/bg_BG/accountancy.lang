@@ -48,7 +48,7 @@ CountriesNotInEEC=Държави извън ЕИО
 CountriesInEECExceptMe=Държави в ЕИО, с изключение на %s
 CountriesExceptMe=Всички държави с изключение на %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
@@ -286,7 +286,7 @@ ValidateMovements=Валидиране на движения
 DescValidateMovements=Всякакви промени или изтриване на написаното ще бъдат забранени. Всички записи за изпълнение трябва да бъдат валидирани, в противен случай приключването няма да е възможно.
 
 ValidateHistory=Автоматично свързване
-AutomaticBindingDone=Автоматичното свързване завърши
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Грешка, не може да изтриете тази счетоводна сметка, защото се използва.
 MvtNotCorrectlyBalanced=Движението не е правилно балансирано. Дебит = %s | Credit = %s
@@ -387,7 +387,8 @@ SaleExport=Експортна продажба
 SaleEEC=Вътреобщностна продажба
 SaleEECWithVAT=Продажба в ЕИО с ДДС различен от нула, за която се предполага, че НЕ е вътреобщностна продажба, поради тази причина се препоръчва стандартната сметка за продукти.
 SaleEECWithoutVATNumber=Продажба в ЕИО без ДДС, но идентификационният номер по ДДС на контрагента не е определен. Ще се използва стандартната сметка за продажба на продукти. Може да въведете идентификационен номер по ДДС на контрагента или сметка на продукта, ако е необходимо.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Обхват на счетоводна сметка
 Calculated=Изчислено
@@ -404,6 +405,7 @@ NoJournalDefined=Няма определен журнал
 Binded=Свързани редове
 ToBind=Редове за свързване
 UseMenuToSetBindindManualy=Редовете все още не са свързани, използвайте меню <a href="%s">%s</a>, за да направите връзката ръчно
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Счетоводни записи

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=输入要创建的模块/应用的名称，不含空格。使用大写字母分隔单词（例如：MyModule，EcommerceForShop，SyncWithMySystem ......）
 EnterNameOfObjectDesc=输入要创建的对象的名称，不包含空格。使用大写字母分隔单词（例如：MyObject，Student，Teacher ...）。将会生成包含CRUD方法的类文件，同时生成API文件，同时生成"列表/添加/编辑/删除"对象的页面和SQL文件。
 ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=The menus provided by your module/application are defined in
 DictionariesDefDescTooltip=The dictionaries provided by your module/application are defined into the array <strong>$this->dictionaries</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), dictionaries are also visible into the setup area to administrator users on %s.
 PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
 HooksDefDesc=在<b> module_parts ['hooks'] </b>属性中定义，在模块描述符中，您想要管理的钩子的上下文（上下文列表可以通过搜索'<b> initHooks找到（</b>'在核心代码中。）<br>编辑钩子文件以添加钩子函数的代码（可通过在核心代码中搜索'<b> executeHooks </b>'找到可钩子函数）。
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=查看安装中使用的ID
 SeeReservedIDsRangeHere=查看保留ID的范围
 ToolkitForDevelopers=Dolibarr开发人员工具包

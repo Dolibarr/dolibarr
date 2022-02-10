@@ -265,7 +265,6 @@ class modMultiCurrency extends DolibarrModules
 	{
 		$sql = array();
 
-		//$this->_load_tables('/multicurrency/sql/');
 		$res = $this->_init($sql, $options);
 
 		if ($res) {
@@ -300,10 +299,11 @@ class modMultiCurrency extends DolibarrModules
 	{
 		global $conf, $user, $langs;
 
-		if (!MultiCurrency::checkCodeAlreadyExists($conf->currency)) {
+		$multicurrency = new MultiCurrency($this->db);
+
+		if (!$multicurrency->checkCodeAlreadyExists($conf->currency)) {
 			$langs->loadCacheCurrencies('');
 
-			$multicurrency = new MultiCurrency($this->db);
 			$multicurrency->code = $conf->currency;
 			$multicurrency->name = $langs->cache_currencies[$conf->currency]['label'].' ('.$langs->getCurrencySymbol($conf->currency).')';
 			$r = $multicurrency->create($user);

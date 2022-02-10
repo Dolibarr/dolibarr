@@ -111,8 +111,8 @@ class Workstation extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>512, 'notnull'=>-1, 'visible'=>-2,),
 		'nb_operators_required' => array('type'=>'integer', 'label'=>'NbOperatorsRequired', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
-		'thm_operator_estimated' => array('type'=>'double', 'help'=>'THMEstimatedHelp','label'=>'THMOperatorEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
-		'thm_machine_estimated' => array('type'=>'double', 'help'=>'THMEstimatedHelp', 'label'=>'THMMachineEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'thm_operator_estimated' => array('type'=>'double', 'help'=>'THMOperatorEstimatedHelp','label'=>'THMOperatorEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right'),
+		'thm_machine_estimated' => array('type'=>'double', 'help'=>'THMMachineEstimatedHelp', 'label'=>'THMMachineEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right'),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Enabled'),),
 	);
 	public $rowid;
@@ -427,27 +427,27 @@ class Workstation extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -599,7 +599,7 @@ class Workstation extends CommonObject
 			if (!empty($this->fields['fk_user_valid'])) {
 				$sql .= ", fk_user_valid = ".$user->id;
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -850,13 +850,13 @@ class Workstation extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("workstation");
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		//if ($status == self::STATUS_CANCELED) $statusType = 'status6';
+		//if ($status == self::STATUS_DISABLED) $statusType = 'status6';
+		if ($status == self::STATUS_ENABLED) $statusType = 'status4';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}

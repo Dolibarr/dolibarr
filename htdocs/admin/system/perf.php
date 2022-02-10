@@ -165,7 +165,7 @@ if (ini_get('opcache.preload')) {
 print '<br>';
 
 // HTTPCacheStaticResources
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
   var getphpurl;
   var cachephpstring;

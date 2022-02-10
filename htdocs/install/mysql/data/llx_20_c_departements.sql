@@ -766,16 +766,16 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 
 
 -- Panama - 10 Provinces (id country=178)
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-1', 17801, '', 0, '', 'Bocas del Toro');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-2', 17801, '', 0, '', 'Coclé');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-3', 17801, '', 0, '', 'Colón');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-4', 17801, '', 0, '', 'Chiriquí');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-5', 17801, '', 0, '', 'Darién');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-6', 17801, '', 0, '', 'Herrera');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-7', 17801, '', 0, '', 'Los Santos');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-8', 17801, '', 0, '', 'Panamá');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-9', 17801, '', 0, '', 'Veraguas');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('PA-13', 17801, '', 0, '', 'Panamá Oeste');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-1',  '', 0, '', 'Bocas del Toro');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-2',  '', 0, '', 'Coclé');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-3',  '', 0, '', 'Colón');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-4',  '', 0, '', 'Chiriquí');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-5',  '', 0, '', 'Darién');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-6',  '', 0, '', 'Herrera');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-7',  '', 0, '', 'Los Santos');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-8',  '', 0, '', 'Panamá');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-9',  '', 0, '', 'Veraguas');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (17801, 'PA-13', '', 0, '', 'Panamá Oeste');
 
 
 -- Provinces Peru (id country=181)

@@ -204,7 +204,7 @@ class Members extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $typeid     ID of the type of member
-	 * @param  int    $category   Use this param to filter list by category
+	 * @param int    	$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
 	 * @return array                Array of member objects
@@ -237,8 +237,9 @@ class Members extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";

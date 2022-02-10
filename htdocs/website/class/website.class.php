@@ -297,8 +297,8 @@ class Website extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.position,";
@@ -313,12 +313,12 @@ class Website extends CommonObject
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.entity IN ('.getEntity('website').')';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " WHERE t.entity IN (".getEntity('website').")";
 		if (!empty($ref)) {
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= ' AND t.rowid = '.(int) $id;
+			$sql .= " AND t.rowid = ".(int) $id;
 		}
 
 		$resql = $this->db->query($sql);
@@ -395,8 +395,8 @@ class Website extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
@@ -409,24 +409,24 @@ class Website extends CommonObject
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.entity IN ('.getEntity('website').')';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " WHERE t.entity IN (".getEntity('website').")";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 		$this->records = array();
 
@@ -867,10 +867,10 @@ class Website extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 		}
 
 		$statusType = 'status5';
@@ -1031,7 +1031,7 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias, allowed_in_frames)';
 
 			$line .= " VALUES(";
 			$line .= $objectpageold->newid."__+MAX_llx_website_page__, ";
@@ -1076,9 +1076,11 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('="image/'.$website->ref.'/', '="image/__WEBSITE_KEY__/', $stringtoexport);
 
 			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
-			$line .= "'".$this->db->escape($objectpageold->author_alias)."'";
+			$line .= "'".$this->db->escape($objectpageold->author_alias)."', ";
+			$line .= "'".$this->db->escape($objectpageold->allowed_in_frames)."'";
 			$line .= ");";
 			$line .= "\n";
+
 			fputs($fp, $line);
 
 			// Add line to update home page id during import
@@ -1138,7 +1140,7 @@ class Website extends CommonObject
 			return -1;
 		}
 
-		dol_delete_dir_recursive($conf->website->dir_temp.'/'.$object->ref);
+		dol_delete_dir_recursive($conf->website->dir_temp."/".$object->ref);
 		dol_mkdir($conf->website->dir_temp.'/'.$object->ref);
 
 		$filename = basename($pathtofile);
@@ -1183,7 +1185,7 @@ class Website extends CommonObject
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1); // Medias can be shared, do not overwrite if exists
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1); // Medias can be shared, do not overwrite if exists
 
-		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
+		$sqlfile = $conf->website->dir_temp."/".$object->ref.'/website_pages.sql';
 
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
 
@@ -1252,7 +1254,7 @@ class Website extends CommonObject
 
 		// Read record of website that has been updated by the run_sql function previously called so we can get the
 		// value of fk_default_home that is ID of home page
-		$sql = 'SELECT fk_default_home FROM '.MAIN_DB_PREFIX.'website WHERE rowid = '.$object->id;
+		$sql = "SELECT fk_default_home FROM ".MAIN_DB_PREFIX."website WHERE rowid = ".((int) $object->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -1297,7 +1299,7 @@ class Website extends CommonObject
 
 		$objectpagestatic = new WebsitePage($this->db);
 
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page WHERE fk_website = '.((int) $this->id);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."website_page WHERE fk_website = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {

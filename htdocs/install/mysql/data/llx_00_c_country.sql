@@ -57,19 +57,19 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (25
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (26,'SA','SAU','Saudi Arabia',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (27,'MC','MCO','Monaco',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (28,'AU','AUS','Australia',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (29,'SG','SGP','Singapour',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (29,'SG','SGP','Singapore',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (30,'AF','AFG','Afghanistan',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (31,'AX','ALA','Iles Aland',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (31,'AX','ALA','Åland Island',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (32,'AL','ALB','Albania',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (33,'AS','ASM','Samoa américaines',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (33,'AS','ASM','American Samoa',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (34,'AD','AND','Andorra',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (35,'AO','AGO','Angola',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (36,'AI','AIA','Anguilla',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (37,'AQ','ATA','Antarctique',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (38,'AG','ATG','Antigua-et-Barbuda',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (37,'AQ','ATA','Antarctica',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (38,'AG','ATG','Antigua and Barbuda',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (39,'AM','ARM','Armenia',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (41,'AT','AUT','Austria',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (42,'AZ','AZE','Azerbaïdjan',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (42,'AZ','AZE','Azerbaijan',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (43,'BS','BHS','Bahamas',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (44,'BH','BHR','Bahreïn',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (45,'BD','BGD','Bangladesh',1,0);
@@ -279,5 +279,5 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (24
 
 
 -- Set field eec
-UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
+UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 

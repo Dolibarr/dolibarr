@@ -68,7 +68,7 @@ class box_members_by_type extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !($user->rights->adherent->lire);
+		$this->hidden = !(!empty($conf->adherent->enabled) && $user->rights->adherent->lire);
 	}
 
 	/**

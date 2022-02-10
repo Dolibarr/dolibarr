@@ -183,7 +183,7 @@ if ($action == 'edit') {
 	if (count($listofmethods)) {
 		print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, $conf->global->MAIN_SMS_SENDMODE, 1);
 	} else {
-		print '<font class="error">'.$langs->trans("None").'</font>';
+		print '<span class="error">'.$langs->trans("None").'</span>';
 	}
 	print '</td></tr>';
 

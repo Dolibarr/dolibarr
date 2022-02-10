@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Kreditkarten Moduleinstellungen
-StripeDesc=Bietet Kunden die Möglichkeit, eine Online Zahlungsseite mit Kredit/Debit-Kartenzahlungen via <a href="http://www.stripe.com" target="_blank">Stripe</a> anzubieten. Damit können Kunden Sofort-Zahlungen oder auf Module bezogene Zahlungen in Dolibarr (Rechnung, Auftrag, ...)  vornehmen
+StripeDesc=Bieten Sie Ihren Kunden eine Online-Zahlungsseite für Kredit/Debit-Kartenzahlungen via<a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a> an. Kunden können sowohl allgemeine Zahlungen als auch Zahlungen für ein spezifisches Dolibarr-Objekt  (Rechnung, Auftrag, ...)  vornehmen.
 StripeOrCBDoPayment=Zahlen mit Kreditkarte oder Stripe
 FollowingUrlAreAvailableToMakePayments=Für Kundenzahlungen stehen Ihnen die folgenden URLs zur Verfügung:
 PaymentForm=Zahlungsformular

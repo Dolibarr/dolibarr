@@ -25,7 +25,7 @@
 
 if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must ne renew the token.
 	if (!defined('NOTOKENRENEWAL')) {
-		define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+		define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 	}
 }
 
@@ -277,10 +277,10 @@ dol_htmloutput_errors($mesg);
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';		// The target is for brothers that open the file instead of downloading it
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'; // The target is for brothers that open the file instead of downloading it
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
-print '<input type="hidden" name="token" value="'.currentToken().'">';	// The page will not renew the token but force download of a file, so we must use here currentToken
+print '<input type="hidden" name="token" value="'.currentToken().'">'; // The page will not renew the token but force download of a file, so we must use here currentToken
 
 print '<div class="tagtable">';
 
@@ -315,7 +315,7 @@ print '<br>';
 
 
 // Add javascript to make choice dynamic
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	function init_selectors()
 	{
@@ -382,7 +382,7 @@ if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)
 	print '<br>';
 	print '<div class="showforproductselector">';
 	$form->select_produits(GETPOST('productid', 'int'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
-	print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+	print ' &nbsp; <input type="submit" class="button" id="submitproduct" name="submitproduct" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }
 
@@ -433,7 +433,7 @@ print '<br>';
 
 print '</div>';
 
-print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode")) ? '' : 'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
+print '<br><input type="submit" class="button" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode")) ? '' : 'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
 
 print '</form>';
 print '<br>';

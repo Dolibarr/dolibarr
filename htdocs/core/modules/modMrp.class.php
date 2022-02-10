@@ -263,31 +263,78 @@ class modMrp extends DolibarrModules
 		/* BEGIN MODULEBUILDER TOPMENU */
 		/* END MODULEBUILDER LEFTMENU MO */
 
+		$langs->loadLangs(array("mrp", "stocks"));
+
 		// Exports profiles provided by this module
 		$r = 1;
-		/* BEGIN MODULEBUILDER EXPORT MO */
-		/*
-		$langs->load("mrp");
+
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MoLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='mo@mrp';
-		$keyforclass = 'Mo'; $keyforclassfile='/mymobule/class/mo.class.php'; $keyforelement='mo';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='mo'; $keyforaliasextra='extra'; $keyforelement='mo';
+		$this->export_label[$r]='MOs';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r]='mrp';
+		$this->export_fields_array[$r] = array(
+			'm.rowid'=>"Id",
+			'm.ref'=>"Ref",
+			'm.label'=>"Label",
+			'm.fk_project'=>'Project',
+			'm.fk_bom'=>"Bom",
+			'm.date_start_planned'=>"DateStartPlanned",
+			'm.date_end_planned'=>"DateEndPlanned",
+			'm.fk_product'=>"Product",
+			'm.status'=>'Status',
+			'm.model_pdf'=>'Model',
+			'm.fk_user_valid'=>'ValidatedById',
+			'm.fk_user_modif'=>'ModifiedById',
+			'm.fk_user_creat'=>'CreatedById',
+			'm.date_valid'=>'DateValidation',
+			'm.note_private'=>'NotePrivate',
+			'm.note_public'=>'Note',
+			'm.fk_soc'=>'Tiers',
+			'e.rowid'=>'WarehouseId',
+			'e.ref'=>'WarehouseRef',
+			'm.qty'=>'Qty',
+			'm.date_creation'=>'DateCreation',
+			'm.tms'=>'DateModification'
+		);
+		$keyforselect = 'mrp_mo';
+		$keyforelement = 'mrp_mo';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mo as t';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('mo').')';
-		$r++; */
-		/* END MODULEBUILDER EXPORT MO */
+		$this->export_TypeFields_array[$r] = array(
+			'm.ref'=>"Text",
+			'm.label'=>"Text",
+			'm.fk_project'=>'Numeric',
+			'm.fk_bom'=>"Numeric",
+			'm.date_end_planned'=>"Date",
+			'm.date_start_planned'=>"Date",
+			'm.fk_product'=>"Numeric",
+			'm.status'=>'Numeric',
+			'm.model_pdf'=>'Text',
+			'm.fk_user_valid'=>'Numeric',
+			'm.fk_user_modif'=>'Numeric',
+			'm.fk_user_creat'=>'Numeric',
+			'm.date_valid'=>'Date',
+			'm.note_private'=>'Text',
+			'm.note_public'=>'Text',
+			'm.fk_soc'=>'Numeric',
+			'e.fk_warehouse'=>'Numeric',
+			'e.ref'=>'Text',
+			'm.qty'=>'Numeric',
+			'm.date_creation'=>'Date',
+			'm.tms'=>'Date'
+
+		);
+		$this->export_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'mrp_mo as m';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'mrp_mo_extrafields as extra ON m.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON e.rowid = m.fk_warehouse';
+		$this->export_sql_end[$r] .= ' WHERE m.entity IN ('.getEntity('mrp_mo').')'; // For product and service profile
 
 		// Imports profiles provided by this module
-		$r = 1;
+		$r = 0;
+		$langs->load("mrp");
 		/* BEGIN MODULEBUILDER IMPORT MO */
 		/*
-		 $langs->load("mrp");
 		 $this->export_code[$r]=$this->rights_class.'_'.$r;
 		 $this->export_label[$r]='MoLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		 $this->export_icon[$r]='mo@mrp';
@@ -302,6 +349,89 @@ class modMrp extends DolibarrModules
 		 $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('mo').')';
 		 $r++; */
 		/* END MODULEBUILDER IMPORT MO */
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]='MOs';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->import_icon[$r]='mrp';
+		$this->import_entities_array[$r] = array(); // We define here only fields that use a different icon from the one defined in import_icon
+		$this->import_tables_array[$r] = array('m'=>MAIN_DB_PREFIX.'mrp_mo', 'extra'=>MAIN_DB_PREFIX.'mrp_mo_extrafields');
+		$this->import_tables_creator_array[$r] = array('m'=>'fk_user_creat'); // Fields to store import user id
+		$this->import_fields_array[$r] = array(
+			'm.ref' => "Ref*",
+			'm.label' => "Label*",
+			'm.fk_project'=>'Project',
+			'm.fk_bom'=>"Bom",
+			'm.date_start_planned'=>"DateStartPlanned",
+			'm.date_end_planned'=>"DateEndPlanned",
+			'm.fk_product'=>"Product*",
+			'm.status'=>'Status',
+			'm.model_pdf'=>'Model',
+			'm.fk_user_valid'=>'ValidatedById',
+			'm.fk_user_modif'=>'ModifiedById',
+			'm.fk_user_creat'=>'CreatedById',
+			'm.date_valid'=>'DateValid',
+			'm.note_private'=>'NotePrivate',
+			'm.note_public'=>'Note',
+			'm.fk_soc'=>'Tiers',
+			'm.fk_warehouse'=>'Warehouse',
+			'm.qty'=>'Qty*',
+			'm.date_creation'=>'DateCreation',
+			'm.tms'=>'DateModification',
+		);
+		$import_sample = array();
+
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'mrp_mo' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'mrp_mo');
+		/*$this->import_regex_array[$r] = array(
+			'm.ref' => ''
+		);*/
+
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_updatekeys_array[$r] = array('m.ref' => 'Ref');
+		$this->import_convertvalue_array[$r] = array(
+			'm.fk_product' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/class/product.class.php',
+				'class'   => 'Product',
+				'method'  => 'fetch',
+				'element' => 'Product'
+			),
+			'm.fk_warehouse' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/stock/class/entrepot.class.php',
+				'class'   => 'Entrepot',
+				'method'  => 'fetch',
+				'element' => 'Warehouse'
+			),
+			'm.fk_user_valid' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			),
+			'm.fk_user_modif' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			),
+		);
 	}
 
 	/**
@@ -315,11 +445,6 @@ class modMrp extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
-
-		$result = $this->_load_tables('/mrp/sql/');
-		if ($result < 0) {
-			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
-		}
 
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -352,8 +477,8 @@ class modMrp extends DolibarrModules
 		}
 
 		$sql = array(
-			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".$conf->entity,
-			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".$conf->entity.")"
+			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".((int) $conf->entity),
+			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

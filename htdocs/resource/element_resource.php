@@ -76,6 +76,19 @@ if ($socid > 0) { // Special for thirdparty
 	$element = 'societe';
 }
 
+// Permission is not permission on resources. We just make link here on objects.
+if ($element == 'action') {
+	$result = restrictedArea($user, 'agenda', $element_id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+}
+if ($element == 'fichinter') {
+	$result = restrictedArea($user, 'ficheinter', $element_id, 'fichinter');
+}
+if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUCTS or RESOURCE_ON_SERVICES is set
+	$tmpobject = new Product($db);
+	$tmpobject->fetch($element_id);
+	$fieldtype = $tmpobject->type;
+	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', $fieldtype);
+}
 
 
 /*
@@ -106,7 +119,7 @@ if (empty($reshook)) {
 			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
-				$isFullDayEvent = intval($objstat->fulldayevent);
+				$isFullDayEvent = $objstat->fulldayevent;
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -181,7 +194,7 @@ if (empty($reshook)) {
 			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;
 				$eventDateEnd   = $object->objelement->datef;
-				$isFullDayEvent = intval($objstat->fulldayevent);
+				$isFullDayEvent = $objstat->fulldayevent;
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -310,18 +323,18 @@ if (!$ret) {
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
+			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list">'.$langs->trans("BackToList").'</a>';
 
 			// Link to other agenda views
 			$out = '';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
 			$linkback .= $out;
 
@@ -336,9 +349,7 @@ if (!$ret) {
 				if (!empty($act->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($act->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$act->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= ' - '.$proj->title;
 					}
@@ -365,14 +376,14 @@ if (!$ret) {
 			}
 
 			// Full day event
-			print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent, 3).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-			if (!$act->fulldayevent) {
-				print dol_print_date($act->datep, 'dayhour');
+			if (empty($act->fulldayevent)) {
+				print dol_print_date($act->datep, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datep, 'day');
+				print dol_print_date($act->datep, 'day', 'tzuser');
 			}
 			if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));
@@ -382,10 +393,10 @@ if (!$ret) {
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-			if (!$act->fulldayevent) {
-				print dol_print_date($act->datef, 'dayhour');
+			if (empty($act->fulldayevent)) {
+				print dol_print_date($act->datef, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datef, 'day');
+				print dol_print_date($act->datef, 'day', 'tzuser');
 			}
 			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));
@@ -502,7 +513,7 @@ if (!$ret) {
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->commande->creer) {
 					if ($action != 'classify') {
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 						$morehtmlref .= ' : ';
 					}
 					if ($action == 'classify') {
@@ -520,9 +531,10 @@ if (!$ret) {
 					if (!empty($fichinter->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($fichinter->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$fichinter->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}

@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Instalarea ta PHP nu suportă Curl.
 ErrorPHPDoesNotSupportCalendar=Versiunea ta de PHP nu suportă extensii calendar.
 ErrorPHPDoesNotSupportUTF8=Instalarea ta PHP nu suportă funcții UTF8. Sistemul nu poate funcționa corect. Rezolvați acest lucru înainte de a instala.
 ErrorPHPDoesNotSupportIntl=Versiunea ta de PHP nu suportă funcţii Intl.
+ErrorPHPDoesNotSupportMbstring=Configurarea PHP nu are suport pentru  funcţiile mbstring.
 ErrorPHPDoesNotSupportxDebug=Versiunea ta de PHP nu suportă funcţii de depanare extinse.
 ErrorPHPDoesNotSupport=Versiunea ta de PHP nu suportă funcţii %s.
 ErrorDirDoesNotExists=Directorul %s nu există.

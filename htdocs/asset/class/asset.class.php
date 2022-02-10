@@ -57,6 +57,7 @@ class Asset extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -95,7 +96,7 @@ class Asset extends CommonObject
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-2, 'enabled'=>1, 'position'=>510, 'notnull'=>1,),
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-2, 'enabled'=>1, 'position'=>511, 'notnull'=>-1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Active', '-1'=>'Cancel')),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Active', '9'=>'Cancel')),
 	);
 
 	/**
@@ -389,11 +390,11 @@ class Asset extends CommonObject
 
 		$langs->load("contracts");
 		$labelStatus = array();
-		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+		$labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 		$labelStatusShort = array();
-		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
-		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+		$labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 
 		$statusType = 'status0';
 		if ($status == self::STATUS_VALIDATED) {

@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Вашата PHP инсталация не поддъ
 ErrorPHPDoesNotSupportCalendar=Вашата PHP инсталация не поддържа разширения за календар.
 ErrorPHPDoesNotSupportUTF8=Вашата PHP инсталация не поддържа UTF8 функции. Dolibarr не може да работи правилно. Решете това преди да инсталирате Dolibarr.
 ErrorPHPDoesNotSupportIntl=Вашата PHP инсталация не поддържа Intl функции.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Вашата PHP инсталация не поддържа разширени функции за отстраняване на грешки.
 ErrorPHPDoesNotSupport=Вашата PHP инсталация не поддържа %s функции.
 ErrorDirDoesNotExists=Директорията %s не съществува.

@@ -169,6 +169,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$this->posxdesc = $this->marge_gauche + 1; // For module retrocompatibility support durring PDF transition: TODO remove this at the end
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -363,6 +364,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$tab_top = 90 + $top_shift;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
+
 				// Incoterm
 				if (!empty($conf->incoterm->enabled)) {
 					$desc_incoterms = $object->getIncotermsForPDF();
@@ -484,8 +487,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						}
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-					} else // No pagebreak
-					{
+					} else {
+						// No pagebreak
 						$pdf->commitTransaction();
 						$posyafter = $pdf->GetY();
 						$height_note = $posyafter - $tab_top;
@@ -672,7 +675,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if (!empty($object->lines[$i]->array_options)) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
 							if ($this->getColumnStatus($extrafieldColKey)) {
-								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
 								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
 								$nexY = max($pdf->GetY(), $nexY);
 							}
@@ -736,10 +739,17 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
+
+					// Fill $this->tva and $this->tva_array
 					if (!isset($this->tva[$vatrate])) {
 						$this->tva[$vatrate] = 0;
 					}
 					$this->tva[$vatrate] += $tvaligne;
+					$vatcode = $object->lines[$i]->vat_src_code;
+					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
+						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
+					}
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					if ($posYAfterImage > $posYAfterDescription) {
 						$nexY = $posYAfterImage;

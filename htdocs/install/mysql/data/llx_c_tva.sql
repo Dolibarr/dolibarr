@@ -330,7 +330,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (10
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10,   '15','0','VAT 12% Majoré à 25% (15%)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majoré à 25% (22.5%)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (107,10,    '6','0','VAT 6%', 1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active,localtax1,localtax1_type,localtax2,localtax2_type) values (107,10,'18.18','0','VAT 18%+FODEC', 1, 1, '4', 0, 0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active,localtax1,localtax1_type,localtax2,localtax2_type) values (108,10,'18.18','0','VAT 18%+FODEC', 1, 1, '4', 0, 0);
 
 -- UKRAINE (id country=226)
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2261,226,   '0','0','VAT rate 0',1);
