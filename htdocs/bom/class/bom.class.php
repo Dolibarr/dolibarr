@@ -1106,8 +1106,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array $TNetNeeds
-	 * @param int   $qty
+	 * @param array $TNetNeeds Array of ChildBom and infos linked to
+	 * @param int   $qty       qty needed
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1126,9 +1126,9 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs Tree by product or bom
 	 *
-	 * @param array $TNetNeeds
-	 * @param int   $qty
-	 * @param int   $level
+	 * @param array $TNetNeeds Array of ChildBom and infos linked to
+	 * @param int   $qty       qty needed
+	 * @param int   $level     level of recursivity
 	 * @return void
 	 */
 	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
