@@ -225,6 +225,8 @@ ALTER TABLE llx_facture_fourn ADD COLUMN fk_fac_rec_source integer;
 
 ALTER TABLE llx_mrp_mo ADD COLUMN fk_parent_line integer;
 
+ALTER TABLE llx_projet_task ADD COLUMN status integer DEFAULT 1 NOT NULL;
+
 ALTER TABLE llx_product_attribute_value MODIFY COLUMN ref VARCHAR(180) NOT NULL;
 ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NULL;
 ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
