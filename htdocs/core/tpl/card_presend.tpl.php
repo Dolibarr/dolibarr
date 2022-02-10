@@ -269,10 +269,10 @@ if ($action == 'presend') {
 
 	$contactarr = array();
 	$contactarr = $tmpobject->liste_contact(-1, 'external');
-	
-	if(!GETPOSTISSET("receiver")){
-		foreach($contactarr as $key => $value){
-			if($value["code"] == "CUSTOMER"){
+
+	if (!GETPOSTISSET("receiver")) {
+		foreach ($contactarr as $key => $value) {
+			if ($value["code"] == "CUSTOMER") {
 				$_GET["receiver"][] = $value["id"];
 			}
 		}
