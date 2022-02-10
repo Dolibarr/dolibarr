@@ -110,9 +110,8 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if($action == 'treeview') $object->getNetNeedsTree($TChildBom,1);
+	if ($action == 'treeview') $object->getNetNeedsTree($TChildBom, 1);
 	else $object->getNetNeeds($TChildBom, 1);
-
 }
 
 
@@ -234,7 +233,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print "<thead>\n";
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td class="linecoldescription">'.$langs->trans('Product');
-	if(! empty($conf->global->BOM_SUB_BOM)  && $action == 'treeview') {
+	if (! empty($conf->global->BOM_SUB_BOM)  && $action == 'treeview') {
 		print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
 		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 	}
@@ -243,12 +242,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td class="linecolstock">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
 	print '<td class="linecoltheoricalstock">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 	print  '</tr>';
-	if(! empty($TChildBom)) {
-		if($action == 'treeview') {
-			foreach($TChildBom as $fk_bom => $TProduct) {
+	if (! empty($TChildBom)) {
+		if ($action == 'treeview') {
+			foreach ($TChildBom as $fk_bom => $TProduct) {
 				$repeatChar = '&emsp;';
-				if(! empty($TProduct['bom'])) {
-					if($TProduct['parentid'] != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
+				if (! empty($TProduct['bom'])) {
+					if ($TProduct['parentid'] != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
 					else print '<tr class="oddeven">';
 					print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
 					print ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
@@ -260,13 +259,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td class="linecoltheoricalstock"></td>';
 					print '</tr>';
 				}
-				if(! empty($TProduct['product'])) {
-					foreach($TProduct['product'] as $fk_product => $TInfos) {
+				if (! empty($TProduct['product'])) {
+					foreach ($TProduct['product'] as $fk_product => $TInfos) {
 						$prod = new Product($db);
 						$prod->fetch($fk_product);
 						$prod->load_virtual_stock();
-						if(empty($prod->stock_reel)) $prod->stock_reel = 0;
-						if($fk_bom != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
+						if (empty($prod->stock_reel)) $prod->stock_reel = 0;
+						if ($fk_bom != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
 						else print '<tr class="oddeven">';
 						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
 						print '<td class="linecolqty">'.$TInfos['qty'].'</td>';
@@ -276,13 +275,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 				}
 			}
-		}
-		else {
-			foreach($TChildBom as $fk_product => $qty) {
+		} else {
+			foreach ($TChildBom as $fk_product => $qty) {
 				$prod = new Product($db);
 				$prod->fetch($fk_product);
 				$prod->load_virtual_stock();
-				if(empty($prod->stock_reel)) $prod->stock_reel = 0;
+				if (empty($prod->stock_reel)) $prod->stock_reel = 0;
 				print '<tr class="oddeven">';
 				print '<td class="linecoldescription">'.$prod->getNomUrl(1).'</td>';
 				print '<td class="linecolqty">'.$qty.'</td>';
@@ -297,18 +295,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 
-    /*
-     * ButAction
-     */
+	/*
+	 * ButAction
+	 */
 	print '<div class="tabsAction">'."\n";
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if($reshook < 0) {
+	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	if(empty($reshook)) {
-		if($action != 'treeview') print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken().'">'.$langs->trans("DisplayInTreeStructure").'</a>'."\n";
+	if (empty($reshook)) {
+		if ($action != 'treeview') print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken().'">'.$langs->trans("DisplayInTreeStructure").'</a>'."\n";
 		else print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=view&token='.newToken().'">'.$langs->trans("BackToStandardView").'</a>'."\n";
 	}
 
@@ -356,7 +354,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		</script>
 
 		<?php
-
 }
 
 // End of page

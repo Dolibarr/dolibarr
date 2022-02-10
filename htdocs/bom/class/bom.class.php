@@ -1110,13 +1110,13 @@ class BOM extends CommonObject
 	 * @param int   $qty
 	 * @return void
 	 */
-	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0) {
-		if(! empty($this->lines)) {
-			foreach($this->lines as $line) {
-				if(! empty($line->childBom)) {
-					foreach($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
-				}
-				else {
+	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
+	{
+		if (! empty($this->lines)) {
+			foreach ($this->lines as $line) {
+				if (! empty($line->childBom)) {
+					foreach ($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+				} else {
 					$TNetNeeds[$line->fk_product] += $line->qty*$qty;
 				}
 			}
@@ -1131,26 +1131,25 @@ class BOM extends CommonObject
 	 * @param int   $level
 	 * @return void
 	 */
-	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0) {
-		if(! empty($this->lines)) {
-			foreach($this->lines as $line) {
-				if(! empty($line->childBom)) {
-					foreach($line->childBom as $childBom) {
+	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
+	{
+		if (! empty($this->lines)) {
+			foreach ($this->lines as $line) {
+				if (! empty($line->childBom)) {
+					foreach ($line->childBom as $childBom) {
 						$TNetNeeds[$childBom->id]['bom'] = $childBom;
 						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
 						$TNetNeeds[$childBom->id]['qty'] = $line->qty*$qty;
 						$TNetNeeds[$childBom->id]['level'] = $level;
 						$childBom->getNetNeedsTree($TNetNeeds, $line->qty*$qty, $level+1);
 					}
-				}
-				else {
+				} else {
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
 				}
 			}
 		}
 	}
-
 }
 
 
