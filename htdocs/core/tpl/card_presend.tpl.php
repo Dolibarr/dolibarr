@@ -269,6 +269,14 @@ if ($action == 'presend') {
 
 	$contactarr = array();
 	$contactarr = $tmpobject->liste_contact(-1, 'external');
+	
+	if(!GETPOSTISSET("receiver")){
+		foreach($contactarr as $key => $value){
+			if($value["code"] == "CUSTOMER"){
+				$_GET["receiver"][] = $value["id"];
+			}
+		}
+	}
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
