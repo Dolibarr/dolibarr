@@ -231,3 +231,10 @@ ALTER TABLE llx_product_attribute_value MODIFY COLUMN ref VARCHAR(180) NOT NULL;
 ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NULL;
 ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NULL;
+
+
+ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
+
+ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
+
+

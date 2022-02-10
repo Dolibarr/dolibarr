@@ -17,7 +17,7 @@
 -- Table to setup advanced targeting for emailing
 -- ============================================================================
 
-CREATE TABLE llx_advtargetemailing
+CREATE TABLE llx_mailing_advtarget
 (
   rowid integer NOT NULL auto_increment PRIMARY KEY,
   name varchar(180) NOT NULL,

@@ -1,5 +1,5 @@
--- <Mailjet connector>
--- Copyright (C) 2013 Florian Henry florian.henry@open-concept.pro
+-- ===================================================================
+-- Copyright (C) 2018 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -13,5 +13,8 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
+--
+-- ===================================================================
 
-ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (name);
+
+ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
