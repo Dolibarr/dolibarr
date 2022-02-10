@@ -777,7 +777,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			// Save + Cancel Buttons
 			if ($action != 'add_paiement') {
 				print '<br><div class="center">';
-				print '<input type="checkbox" checked name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically").'<br>';
+				print '<input type="checkbox" checked id="closepaidinvoices" name="closepaidinvoices"> <label for="closepaidinvoices">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
 				print '<input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
 				print ' &nbsp; <input type="button" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
