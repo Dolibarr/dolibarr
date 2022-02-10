@@ -791,7 +791,7 @@ class FactureFournisseur extends CommonInvoice
 						$_facrec->lines[$i]->ref_supplier,
 						$_facrec->lines[$i]->special_code,
 						0,
-						0,
+						0
 					);
 					if ($result_insert < 0) {
 						$error++;
