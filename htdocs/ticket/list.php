@@ -939,6 +939,7 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	$langs->load("ticket");
+	$object->status = $object->fk_statut; // fk_statut is deprecated
 
 	// Show here line of result
 	print '<tr class="oddeven">';
