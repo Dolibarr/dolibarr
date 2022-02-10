@@ -460,13 +460,18 @@ class CommandeFournisseur extends CommonOrder
     	$sql .= " l.date_start, l.date_end,";
     	$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging";
+			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging, MAX(pfp.quantity) as max_qty";
     	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".$this->socid;
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.entity IN (".getEntity('product_fournisseur_price').") AND l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".((int) $this->socid);
+		}
     	$sql .= " WHERE l.fk_commande = ".$this->id;
     	if ($only_product) $sql .= ' AND p.fk_product_type = 0';
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+			$sql.= " AND l.qty >= pfp.quantity ";
+			$sql.= " GROUP BY l.rowid HAVING max_qty = MAX(pfp.quantity) ";
+		}
     	$sql .= " ORDER BY l.rang, l.rowid";
     	//print $sql;
 
@@ -3488,12 +3493,15 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging";
+			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging, MAX(pfp.quantity) as max_qty";
         $sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
         $sql .= ' WHERE cd.rowid = '.$rowid;
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+			$sql .= " AND cd.qty >= pfp.quantity GROUP BY cd.rowid HAVING max_qty = MAX(pfp.quantity)";
+		}
         $result = $this->db->query($sql);
         if ($result)
         {
