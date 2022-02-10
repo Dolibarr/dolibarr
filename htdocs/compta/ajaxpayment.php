@@ -56,19 +56,23 @@ $currentInvId = $_POST['imgClicked']; // from DOM elements : imgId (equals invoi
 $amountPayment = $amountPayment != '' ? (is_numeric(price2num($amountPayment)) ? price2num($amountPayment) : '') : ''; // keep void if not a valid entry
 
 // Clean checkamounts
-foreach ($amounts as $key => $value) {
-	$value = price2num($value);
-	$amounts[$key] = $value;
-	if (empty($value)) {
-		unset($amounts[$key]);
+if (is_array($amounts)) {
+	foreach ($amounts as $key => $value) {
+		$value = price2num($value);
+		$amounts[$key] = $value;
+		if (empty($value)) {
+			unset($amounts[$key]);
+		}
 	}
 }
 // Clean remains
-foreach ($remains as $key => $value) {
-	$value = price2num($value);
-	$remains[$key] = (($invoice_type) == 2 ?-1 : 1) * $value;
-	if (empty($value)) {
-		unset($remains[$key]);
+if (is_array($remains)) {
+	foreach ($remains as $key => $value) {
+		$value = price2num($value);
+		$remains[$key] = (($invoice_type) == 2 ?-1 : 1) * $value;
+		if (empty($value)) {
+			unset($remains[$key]);
+		}
 	}
 }
 
