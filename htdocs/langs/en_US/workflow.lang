@@ -24,7 +24,12 @@ descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classify linked source pur
 descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed 
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
 # Autoclassify shipment
 descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+
+#
+# Workflow categories
+#
+AutomaticCreation=Automatic creation
+AutomaticClassification=Automatic classification
+AutomaticClosing=Automatic closing
