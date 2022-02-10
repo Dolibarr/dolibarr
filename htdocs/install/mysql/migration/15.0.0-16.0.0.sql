@@ -117,6 +117,7 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
 
 UPDATE llx_const SET name = 'WORKFLOW_TICKET_LINK_CONTRACT' WHERE name = 'TICKET_AUTO_ASSIGN_CONTRACT_CREATE';
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
 
 CREATE TABLE llx_stock_mouvement_extrafields (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
