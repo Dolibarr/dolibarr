@@ -1120,12 +1120,12 @@ class FactureFournisseurRec extends CommonInvoice
 				$product_type = $product->type;
 			}
 
-			$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec SET ';
-			$sql .= 'fk_facture_fourn= ' . $facid;;
-			$sql .= ', fk_product=' . (! empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
-			$sql .= ", ref='" . $this->db->escape($ref) . "'";
-			$sql .= ", label='" . $this->db->escape($label) . "'";
-			$sql .= ", description='" . $this->db->escape($desc) . "'";
+			$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture_fourn_det_rec SET';
+			$sql .= ' fk_facture_fourn = ' . ((int) $facid);
+			$sql .= ', fk_product = ' . ($fk_product > 0 ? ((int) $fk_product) : 'null');
+			$sql .= ", ref = '" . $this->db->escape($ref) . "'";
+			$sql .= ", label = '" . $this->db->escape($label) . "'";
+			$sql .= ", description = '" . $this->db->escape($desc) . "'";
 			$sql .= ', pu_ht=' . price2num($pu_ht);
 			$sql .= ', qty=' . price2num($qty);
 			$sql .= ", remise_percent='" . price2num($remise_percent) . "'";
@@ -2123,20 +2123,20 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 		$sql .= ' fk_facture_fourn = ' . (int) $this->fk_facture_fourn;
 		$sql .= ', fk_parent_line = ' . (int) $this->fk_parent;
 		$sql .= ', fk_product = ' . (int) $this->fk_product;
-		$sql .= ', ref = ' . (! empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'null') . "'";
-		$sql .= ", label ='" . (! empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'null') . "'";
-		$sql .= ", description ='" . $this->db->escape($this->description) . "'";
-		$sql .= ', pu_ht =' . price2num($this->pu_ht);
-		$sql .= ', pu_ttc =' . price2num($this->pu_ttc);
-		$sql .= ', qty =' . price2num($this->qty);
-		$sql .= ", remise_percent ='" . price2num($this->remise_percent) . "'";
-		$sql .= ', fk_remise_except =' . (int) $this->fk_remise_except;
-		$sql .= ", vat_src_code ='" . $this->db->escape($this->vat_src_code) . "'";
+		$sql .= ', ref = ' . (! empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'null');
+		$sql .= ", label = " . (! empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'null');
+		$sql .= ", description = '" . $this->db->escape($this->description) . "'";
+		$sql .= ', pu_ht = ' . price2num($this->pu_ht);
+		$sql .= ', pu_ttc = ' . price2num($this->pu_ttc);
+		$sql .= ', qty = ' . price2num($this->qty);
+		$sql .= ", remise_percent = '" . price2num($this->remise_percent) . "'";
+		$sql .= ', fk_remise_except = ' . (int) $this->fk_remise_except;
+		$sql .= ", vat_src_code = '" . $this->db->escape($this->vat_src_code) . "'";
 		$sql .= ', tva_tx =' . price2num($this->tva_tx);
-		$sql .= ', localtax1_tx =' . price2num($this->localtax1_tx);
-		$sql .= ", localtax1_type ='" . $this->db->escape($this->localtax1_type) . "'";
-		$sql .= ', localtax2_tx =' . price2num($this->localtax2_tx);
-		$sql .= ", localtax2_type ='" . $this->db->escape($this->localtax2_type) . "'";
+		$sql .= ', localtax1_tx = ' . price2num($this->localtax1_tx);
+		$sql .= ", localtax1_type = '" . $this->db->escape($this->localtax1_type) . "'";
+		$sql .= ', localtax2_tx = ' . price2num($this->localtax2_tx);
+		$sql .= ", localtax2_type = '" . $this->db->escape($this->localtax2_type) . "'";
 		if (empty($this->skip_update_total)) {
 			$sql .= ', total_ht =' . price2num($this->total_ht);
 			$sql .= ', total_tva =' . price2num($this->total_tva);
