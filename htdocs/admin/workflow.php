@@ -72,10 +72,10 @@ $workflowcodes = array(
 		'picto'=>'bill'
 	),
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
-        'family'=>'create',
-        'position'=>25,
-        'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
-        'picto'=>'ticket'
+		'family'=>'create',
+		'position'=>25,
+		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+		'picto'=>'ticket'
 	),
 
 	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
