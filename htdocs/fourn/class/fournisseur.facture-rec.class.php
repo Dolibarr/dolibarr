@@ -228,10 +228,10 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *    Create a predefined supplier invoice
 	 *
-	 * @param User $user User object
-	 * @param int $facFournId
-	 * @param int $notrigger No trigger
-	 * @return        int                    <0 if KO, id of invoice created if OK
+	 * @param 	User 	$user 			User object
+	 * @param 	int 	$facFournId		Id invoice
+	 * @param 	int 	$notrigger 		No trigger
+	 * @return	int                    	<0 if KO, id of invoice created if OK
 	 */
 	public function create($user, $facFournId, $notrigger = 0)
 	{
@@ -833,26 +833,26 @@ class FactureFournisseurRec extends CommonInvoice
 	 *    Add a line to recursive supplier invoice
 	 *
 	 * @param int $fk_product Product/Service ID predefined
-	 * @param string $ref
-	 * @param string $label
-	 * @param string $desc Description de la ligne
-	 * @param double $pu_ht
-	 * @param int $pu_ttc
-	 * @param double $qty Quantite
-	 * @param int $remise_percent Percentage discount of the line
-	 * @param double $txtva Taux de tva force, sinon -1
-	 * @param int $txlocaltax1 Local tax 1 rate (deprecated)
-	 * @param int $txlocaltax2 Local tax 2 rate (deprecated)
+	 * @param string $ref			Ref
+	 * @param string $label			Label
+	 * @param string $desc 			Description de la ligne
+	 * @param double $pu_ht			Unit price
+	 * @param double $pu_ttc		Unit price with tax
+	 * @param double $qty 			Quantity
+	 * @param int $remise_percent 	Percentage discount of the line
+	 * @param double $txtva 		Taux de tva force, sinon -1
+	 * @param int $txlocaltax1 		Local tax 1 rate (deprecated)
+	 * @param int $txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string $price_base_type HT or TTC
-	 * @param int $type Type of line (0=product, 1=service)
-	 * @param int $date_start
-	 * @param int $date_end
-	 * @param int $info_bits VAT npr or not ?
-	 * @param int $special_code Special code
-	 * @param int $rang Position of line
-	 * @param string $fk_unit Unit
-	 * @param int $pu_ht_devise Unit price in currency
-	 * @return        int                            <0 if KO, Id of line if OK
+	 * @param int $type 			Type of line (0=product, 1=service)
+	 * @param int $date_start		Date start
+	 * @param int $date_end			Date end
+	 * @param int $info_bits 		VAT npr or not ?
+	 * @param int $special_code 	Special code
+	 * @param int $rang 			Position of line
+	 * @param string $fk_unit 		Unit
+	 * @param int $pu_ht_devise 	Unit price in currency
+	 * @return int                  <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function addline($fk_product, $ref, $label, $desc, $pu_ht, $pu_ttc, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
@@ -1020,27 +1020,27 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *    Update a line to supplier invoice template
 	 *
-	 * @param $rowid
-	 * @param int $fk_product Product/Service ID predefined
-	 * @param $ref
-	 * @param string $label Label of the line
-	 * @param string $desc Description de la ligne
-	 * @param double $pu_ht Prix unitaire HT (> 0 even for credit note)
-	 * @param double $qty Quantite
-	 * @param int $remise_percent Percentage discount of the line
-	 * @param double $txtva Taux de tva force, sinon -1
-	 * @param int $txlocaltax1 Local tax 1 rate (deprecated)
-	 * @param int $txlocaltax2 Local tax 2 rate (deprecated)
+	 * @param $rowid				ID
+	 * @param int $fk_product 		Product/Service ID predefined
+	 * @param $ref					Ref
+	 * @param string $label 		Label of the line
+	 * @param string $desc 			Description de la ligne
+	 * @param double $pu_ht 		Prix unitaire HT (> 0 even for credit note)
+	 * @param double $qty 			Quantity
+	 * @param int $remise_percent 	Percentage discount of the line
+	 * @param double $txtva 		Taux de tva force, sinon -1
+	 * @param int $txlocaltax1 		Local tax 1 rate (deprecated)
+	 * @param int $txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string $price_base_type HT or TTC
-	 * @param int $type Type of line (0=product, 1=service)
-	 * @param int $date_start
-	 * @param int $date_end
-	 * @param int $info_bits Bits of type of lines
-	 * @param int $special_code Special code
-	 * @param int $rang Position of line
-	 * @param string $fk_unit Unit
-	 * @param int $pu_ht_devise Unit price in currency
-	 * @return        int                            <0 if KO, Id of line if OK
+	 * @param int $type 			Type of line (0=product, 1=service)
+	 * @param int $date_start		Date start
+	 * @param int $date_end			Date end
+	 * @param int $info_bits 		Bits of type of lines
+	 * @param int $special_code 	Special code
+	 * @param int $rang 			Position of line
+	 * @param string $fk_unit 		Unit
+	 * @param int $pu_ht_devise 	Unit price in currency
+	 * @return int                  <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
