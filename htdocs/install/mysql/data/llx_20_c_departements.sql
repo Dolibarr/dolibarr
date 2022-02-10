@@ -586,7 +586,7 @@ insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (307, 'LT', NULL, NULL, NULL, 'LATINA');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (313, 'LE', NULL, NULL, NULL, 'LECCE');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (309, 'LC', NULL, NULL, NULL, 'LECCO');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (314, 'LI', NULL, NULL, NULL, 'LIVORNO');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (316, 'LI', NULL, NULL, NULL, 'LIVORNO');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (309, 'LO', NULL, NULL, NULL, 'LODI');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (316, 'LU', NULL, NULL, NULL, 'LUCCA');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (310, 'MC', NULL, NULL, NULL, 'MACERATA');
