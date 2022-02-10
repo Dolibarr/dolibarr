@@ -608,10 +608,14 @@ class ExtraFields
 					if ($unique) {
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					} else {
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX uk_".$table."_".$attrname;
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
+					/*if ($resql < 0) {
+						$this->error = $this->db->lasterror();
+						return -1;
+					}*/
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror();

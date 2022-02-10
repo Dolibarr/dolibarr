@@ -162,7 +162,11 @@ if (($line->info_bits & 2) == 2) {
 	}
 
 	// Show date range
-	if ($line->element == 'facturedetrec') {
+	if ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec') {
+		if ($line->element == 'invoice_supplier_det_rec' && $line->product_type != Product::TYPE_PRODUCT) {
+			$line->date_start_fill = $line->date_start;
+			$line->date_end_fill = $line->date_end;
+		}
 		if ($line->date_start_fill || $line->date_end_fill) {
 			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
 		}
@@ -202,6 +206,8 @@ if (($line->info_bits & 2) == 2) {
 	if ($line->fk_product > 0 && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
 		if ($line->element == 'facturedetrec') {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+		} elseif ($line->element == 'invoice_supplier_det_rec') {
+			print (!empty($line->description) && $line->description != $line->label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		} else {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		}
@@ -239,7 +245,7 @@ if (!empty($conf->accounting->enabled) && $line->fk_accounting_account > 0) {
 }
 
 print '</td>';
-if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 	print '<td class="linecolrefsupplier">';
 	print ($line->ref_fourn ? $line->ref_fourn : $line->ref_supplier);
 	print '</td>';

@@ -3385,7 +3385,7 @@ abstract class CommonObject
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		} elseif ($this->element == 'facture' || $this->element == 'invoice') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
-		} elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier') {
+		} elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
 		} elseif ($this->element == 'order_supplier' || $this->element == 'supplier_order') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
@@ -3428,6 +3428,9 @@ abstract class CommonObject
 		$fieldup = 'subprice';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			$fieldtva = 'tva';
+			$fieldup = 'pu_ht';
+		}
+		if ($this->element == 'invoice_supplier_rec') {
 			$fieldup = 'pu_ht';
 		}
 		if ($this->element == 'expensereport') {
@@ -3580,7 +3583,7 @@ abstract class CommonObject
 			if ($this->element == 'facture' || $this->element == 'facturerec') {
 				$fieldtva = 'total_tva';
 			}
-			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
+			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
 				$fieldtva = 'total_tva';
 			}
 			if ($this->element == 'propal') {
@@ -8043,6 +8046,8 @@ abstract class CommonObject
 		$element = $this->element;
 		if ($element == 'facturerec') {
 			$element = 'facture';
+		} elseif ($element == 'invoice_supplier_rec') {
+			return $user->rights->fournisseur->facture;
 		}
 
 		return $user->rights->{$element};
