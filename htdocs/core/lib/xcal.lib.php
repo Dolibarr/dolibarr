@@ -209,7 +209,10 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				// End date
 				if ($fulldayevent) {
 					if (empty($enddate)) {
-						$enddate = dol_time_plus_duree($startdate, 1, "d");		// We add 1 day needed for full day event (DTEND must be next day after event)
+						// We add 1 day needed for full day event (DTEND must be next day after event).
+						// This is mention in https://datatracker.ietf.org/doc/html/rfc5545:
+						// "The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event."
+						$enddate = dol_time_plus_duree($startdate, 1, "d");
 					}
 				} else {
 					if (empty($enddate)) {
@@ -222,7 +225,10 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 
 				if ($fulldayevent) {
 					$prefix   = ";VALUE=DATE";
-					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'gmt');	// We add 1 second so we reach the +1 day needed for full day event (DTEND must be next day after event)
+					// We add 1 second so we reach the +1 day needed for full day event (DTEND must be next day after event)
+					// This is mention in https://datatracker.ietf.org/doc/html/rfc5545:
+					// "The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event."
+					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'gmt');
 				}
 
 				fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");
