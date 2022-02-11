@@ -545,7 +545,8 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
 	$newparam .= '&month='.((int) $month).'&year='.((int) $tmpforcreatebutton['year']).'&mode='.urlencode($mode);
 
 	//$param='month='.$monthshown.'&year='.$year;
-	$hourminsec = '100000';
+	$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
+
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
 }
 
@@ -812,17 +813,17 @@ if ($resql) {
 
 		// event->datep and event->datef must be GMT date.
 		if ($event->fulldayevent) {
-			// TODO...
-			$event->datep = $db->jdate($obj->datep);
-			$event->datef = $db->jdate($obj->datep2);
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			$event->datep = $db->jdate($obj->datep, $tzforfullday ? 'tzuser' : 'tzserver');	// If saved in $tzforfullday = gmt, we must invert date to be in user tz
+			$event->datef = $db->jdate($obj->datep2, $tzforfullday ? 'tzuser' : 'tzserver');
 		} else {
 			// Example: $obj->datep = '1970-01-01 01:00:00', jdate will return 0 if TZ of PHP server is Europe/Berlin (+1)
-			$event->datep = $db->jdate($obj->datep);
-			$event->datef = $db->jdate($obj->datep2);
+			$event->datep = $db->jdate($obj->datep, 'tzserver');
+			$event->datef = $db->jdate($obj->datep2, 'tzserver');
 		}
 		//$event->datep_formated_gmt = dol_print_date($event->datep, 'dayhour', 'gmt');
-		//var_dump($obj->datep);
-		//var_dump($event->datep);
+		//var_dump($obj->id.' '.$obj->datep.' '.dol_print_date($obj->datep, 'dayhour', 'gmt'));
+		//var_dump($obj->id.' '.$event->datep.' '.dol_print_date($event->datep, 'dayhour', 'gmt'));
 
 		$event->type_code = $obj->type_code;
 		$event->type_label = $obj->type_label;
