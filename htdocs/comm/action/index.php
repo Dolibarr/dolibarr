@@ -808,8 +808,18 @@ if ($resql) {
 		$event->id = $obj->id;
 		$event->ref = $event->id;
 
-		$event->datep = $db->jdate($obj->datep); // datep and datef are GMT date. Example: 1970-01-01 01:00:00, jdate will return 0 if TZ of PHP server is Europe/Berlin
-		$event->datef = $db->jdate($obj->datep2);
+		$event->fulldayevent = $obj->fulldayevent;
+
+		// event->datep and event->datef must be GMT date.
+		if ($event->fulldayevent) {
+			// TODO...
+			$event->datep = $db->jdate($obj->datep);
+			$event->datef = $db->jdate($obj->datep2);
+		} else {
+			// Example: $obj->datep = '1970-01-01 01:00:00', jdate will return 0 if TZ of PHP server is Europe/Berlin (+1)
+			$event->datep = $db->jdate($obj->datep);
+			$event->datef = $db->jdate($obj->datep2);
+		}
 		//$event->datep_formated_gmt = dol_print_date($event->datep, 'dayhour', 'gmt');
 		//var_dump($obj->datep);
 		//var_dump($event->datep);
@@ -829,7 +839,6 @@ if ($resql) {
 		$event->fetch_userassigned(); // This load $event->userassigned
 
 		$event->priority = $obj->priority;
-		$event->fulldayevent = $obj->fulldayevent;
 		$event->location = $obj->location;
 		$event->transparency = $obj->transparency;
 		$event->fk_element = $obj->fk_element;
@@ -869,25 +878,43 @@ if ($resql) {
 			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
 			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
 			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+
+			$daycursorend = $event->date_end_in_calendar;
+			$anneeend = dol_print_date($daycursorend, '%Y', 'tzuserrel');
+			$moisend = dol_print_date($daycursorend, '%m', 'tzuserrel');
+			$jourend = dol_print_date($daycursorend, '%d', 'tzuserrel');
+
 			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));	// Hour at greenwich
 			//var_dump($annee.'-'.$mois.'-'.$jour);
+			//print 'annee='.$annee.' mois='.$mois.' jour='.$jour.'<br>';
 
 			// Loop on each day covered by action to prepare an index to show on calendar
 			$loop = true; $j = 0;
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');	// $mois, $jour, $annee has been set for user tz
+			$daykeyend = dol_mktime(0, 0, 0, $moisend, $jourend, $anneeend, 'gmt');	// $moisend, $jourend, $anneeend has been set for user tz
+			/*
+			print 'GMT '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt').'<br>';
+			print 'TZSERVER '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'tzserver').'<br>';
+			print 'TZUSERREL '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'tzuserrel').'<br>';
+			print 'GMT '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'gmt').'<br>';
+			print 'TZSERVER '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'tzserver').'<br>';
+			print 'TZUSER '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'tzuserrel').'<br>';
+			*/
 			do {
 				//if ($event->id==408)
-				//print 'daykey='.$daykey.' '.dol_print_date($daykey, 'dayhour', 'gmt').' '.$event->datep.' '.$event->datef.'<br>';
+				//print 'daykey='.$daykey.' daykeyend='.$daykeyend.' '.dol_print_date($daykey, 'dayhour', 'gmt').' - '.dol_print_date($event->datep, 'dayhour', 'gmt').' '.dol_print_date($event->datef, 'dayhour', 'gmt').'<br>';
+				//print 'daykey='.$daykey.' daykeyend='.$daykeyend.' '.dol_print_date($daykey, 'dayhour', 'tzuserrel').' - '.dol_print_date($event->datep, 'dayhour', 'tzuserrel').' '.dol_print_date($event->datef, 'dayhour', 'tzuserrel').'<br>';
 
 				$eventarray[$daykey][] = $event;
 				$j++;
 
 				$daykey += 60 * 60 * 24;
-				if ($daykey > $event->date_end_in_calendar) {
+				//if ($daykey > $event->date_end_in_calendar) {
+				if ($daykey > $daykeyend) {
 					$loop = false;
 				}
 			} while ($loop);
-
+			//var_dump($eventarray);
 			//print 'Event '.$i.' id='.$event->id.' (start='.dol_print_date($event->datep).'-end='.dol_print_date($event->datef);
 			//print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
 		}
@@ -1816,12 +1843,16 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$cssclass .= " unmovable";
 					} elseif ($event->type_code == 'ICALEVENT') {
 						$cssclass .= " unmovable";
-					} elseif ($event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
-						$tmpyearend    = date('Y', $event->date_end_in_calendar);
-						$tmpmonthend   = date('m', $event->date_end_in_calendar);
-						$tmpdayend     = date('d', $event->date_end_in_calendar);
+					} elseif ($event->date_start_in_calendar && $event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
+						// If the event is on several days
+						$tmpyearend = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
+						$tmpmonthend = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
+						$tmpdayend = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
+						//var_dump($tmpyearend.' '.$tmpmonthend.' '.$tmpdayend);
 						if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour) {
-							$cssclass .= " unmovable";
+							$cssclass .= " unmovable unmovable-mustusefirstdaytodrag";
+						} else {
+							$cssclass .= ' movable cursormove';
 						}
 					} else {
 						if ($user->rights->agenda->allactions->create ||
