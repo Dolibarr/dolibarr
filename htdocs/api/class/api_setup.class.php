@@ -239,7 +239,6 @@ class Setup extends DolibarrApi
 
 		return $list;
 	}
-
 	/**
 	 * Get the list of states/provinces.
 	 *
@@ -252,22 +251,29 @@ class Setup extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
-	 * @param string    $filter     To filter the countries by name
+	 * @param string    $country    To filter on country
+	 * @param string    $filter     To filter the states by name
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	 * @return array                List of countries
+	 * @return array                List of states
 	 *
 	 * @url     GET dictionary/states
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $sqlfilters = '')
+	public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $country = '', $filter = '', $sqlfilters = '')
 	{
 		$list = array();
 
 		// Note: The filter is not applied in the SQL request because it must
 		// be applied to the translated names, not to the names in database.
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_departements as t";
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."c_departements as t";
+		if ($country) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as d ON t.fk_region = d.code_region";
+		}
 		$sql .= " WHERE 1 = 1";
+		if ($country) {
+			$sql .= " AND d.fk_pays = '".$this->db->escape($country)."'";
+		}
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
