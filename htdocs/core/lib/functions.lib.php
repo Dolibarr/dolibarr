@@ -3723,7 +3723,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
-				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
+				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
 				'multicurrency',
@@ -3749,7 +3749,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'uncheck', 'user-cog', 'vat', 'website', 'workstation',
+				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
 			))) {
 			$fakey = $pictowithouttext;
