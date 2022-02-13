@@ -6039,6 +6039,10 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
   overflow: hidden;
 }
 
+span.select2.select2-container.select2-container--default {
+	text-align: initial;
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */
