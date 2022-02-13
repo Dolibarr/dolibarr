@@ -251,7 +251,7 @@ class Setup extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
-	 * @param string    $country    To filter on country
+	 * @param int    	$country    To filter on country
 	 * @param string    $filter     To filter the states by name
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array                List of states
@@ -260,7 +260,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $country = '', $filter = '', $sqlfilters = '')
+	public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $country = 0, $filter = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -272,7 +272,7 @@ class Setup extends DolibarrApi
 		}
 		$sql .= " WHERE 1 = 1";
 		if ($country) {
-			$sql .= " AND d.fk_pays = '".$this->db->escape($country)."'";
+			$sql .= " AND d.fk_pays = ".((int) $country);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
