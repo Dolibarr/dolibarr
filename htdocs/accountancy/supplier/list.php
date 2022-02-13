@@ -672,7 +672,7 @@ if ($result) {
 		print '</td>';
 
 		// VAT Num
-		print '<td class="tdoverflowmax75" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
+		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
 		// Found accounts
 		print '<td class="small">';
