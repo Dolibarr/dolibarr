@@ -171,7 +171,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 		print $s;
 		print "<br>\n";
 	}
-	if (!empty($conf->expensereport->enabled)) {  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
+	if (!empty($conf->expensereport->enabled)) {
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '{s}');
 		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong></a>', $s);

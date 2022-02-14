@@ -724,6 +724,9 @@ textarea.centpercent {
 	text-align: center;
 	margin: 0px auto;
 }
+.centerimp {
+	text-align: center !important;
+}
 .alignstart {
 	text-align: start;
 }
