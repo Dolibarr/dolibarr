@@ -253,9 +253,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation to delete
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteAsset'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	}
-	// Disposal
-	elseif ($action == 'disposal') {
+	} elseif ($action == 'disposal') {
+		// Disposal
 		$langs->load('bills');
 
 		$disposal_date = dol_mktime(12, 0, 0, GETPOST('disposal_datemonth', 'int'), GETPOST('disposal_dateday', 'int'), GETPOST('disposal_dateyear', 'int')); // for date without hour, we use gmt

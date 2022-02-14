@@ -80,6 +80,8 @@ class AssetAccountancyCodes extends CommonObject
 
 	/**
 	 *  Fill accountancy_codes property of object (using for data sent by forms)
+	 *
+	 *  @return	array					Array of values
 	 */
 	public function setAccountancyCodesFromPost()
 	{
@@ -104,7 +106,7 @@ class AssetAccountancyCodes extends CommonObject
 	public function fetchAccountancyCodes($asset_id = 0, $asset_model_id = 0)
 	{
 		global $langs, $hookmanager;
-		dol_syslog(__METHOD__ . " sset_id=$asset_id, asset_model_id=$asset_model_id");
+		dol_syslog(__METHOD__ . " asset_id=$asset_id, asset_model_id=$asset_model_id");
 
 		$error = 0;
 		$this->errors = array();

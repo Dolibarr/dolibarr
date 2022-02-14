@@ -221,8 +221,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation to delete
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteAssetModel'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	} // Clone confirmation
-	elseif ($action == 'clone') {
+	} elseif ($action == 'clone') {
+		// Clone confirmation
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);

@@ -121,10 +121,8 @@ if ($action == 'writebookkeeping') {
 	}
 
 	$reload = true;
-}
-
-// Export
-elseif ($action == 'exportcsv') {
+} elseif ($action == 'exportcsv') {
+	// Export CSV
 	$result = $object->exportCsv($journal_data, $date_end);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
