@@ -1,0 +1,53 @@
+# Copyright (C) 2021 Kuba admin <js@hands-on-technology.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRechnungExportName'
+ModuleRechnungExportName = RechnungExport
+# Module description 'ModuleRechnungExportDesc'
+ModuleRechnungExportDesc = RechnungExport description
+
+#
+# Admin page
+#
+RechnungExportSetup = RechnungExport setup
+Settings = Settings
+RechnungExportSetupPage = RechnungExport setup page
+RECHNUNGEXPORT_MYPARAM1 = My param 1
+RECHNUNGEXPORT_MYPARAM1Tooltip = My param 1 tooltip
+RECHNUNGEXPORT_MYPARAM2=My param 2
+RECHNUNGEXPORT_MYPARAM2Tooltip=My param 2 tooltip
+
+
+#
+# About page
+#
+About = About
+RechnungExportAbout = About RechnungExport
+RechnungExportAboutPage = RechnungExport about page
+
+#
+# Sample page
+#
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description

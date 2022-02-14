@@ -1,0 +1,428 @@
+ParseCSV 1.3.2
+-----------------------------------
+Date: 07-Nov-2021
+
+Bugfix:
+- Allow _guess_delimiter to work with a single
+  row of data. As a consequence, `$csv->auto()`
+  now works for files with just one row of data.
+  See issue #206.
+
+-----------------------------------
+
+
+ParseCSV 1.3.1
+-----------------------------------
+Date: 20-Jun-2021
+
+Bugfix:
+- `parseFile()` will now set `$csv->data`.
+  Until now, the parsed data was only returned.
+  This adds consistency with `$csv->parse()`
+  for the following operations on the object.
+
+-----------------------------------
+
+
+ParseCSV 1.3.0
+-----------------------------------
+Date: 14-Apr-2021
+
+Breaking changes:
+- Passing file paths to parse() or new Csv() is now deprecated
+  and will be removed in v2.0.0. Use ->parseFile() instead.
+
+  WARNING: It will call trigger_error() for now.
+  This may still break your application, depending on your
+  php.ini config. You can add E_USER_DEPRECATED to the
+  error_reporting mask to avoid breaking your application:
+
+  Example:
+
+  error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_USER_DEPRECATED
+
+  This change is to avoid security issues: see issue #198.
+
+Non-breaking deprecations:
+- The function load_data() is deprecated.
+  Call loadFile() or loadDataString() instead.
+- Supplying CSV data (file content) to auto() is deprecated.
+  Please use autoDetectionForDataString().
+
+  The motivation is to make subtle gotchas less likely: when the
+  file cannot be found or read by PHP (permissions), its file path
+  would be treated like CSV data.
+- Currently, there is code to parse .php: <?...?> tags are removed
+  before the remaining file content is treated like a .csv file.
+  This rarely-used functionality will be removed in v2.0.0.
+  You are only affected if you use ParseCsv to parse .php files.
+
+New features: none
+Bug fixes: none
+-----------------------------------
+
+
+ParseCSV 1.2.1
+-----------------------------------
+Date: 25-Apr-2020
+
+Breaking changes: none
+New features: none
+Bug fixes: none
+
+Code quality:
+- Switched from PHPUnit 4 to 6 to get rid of
+  wrappers. This will reduce friction for PhpStorm users,
+  because it gets rid of the "Multiple definitions" error
+  See issue #188. Thanks to @SharkMachine for the hint.
+-----------------------------------
+
+
+ParseCSV 1.2.0
+-----------------------------------
+Date: 07-Jan-2020
+
+Breaking changes: none
+
+New features:
+- Compatible with PHP 7.4. Thanks to @andreybolonin
+  @morrislaptop @martijnengler and @fjf2002.
+- unparse() now also understands $use_mb_convert_encoding.
+- Verbal condition operators are now allowed to contain
+  upper case letters, for example:
+  $csv->conditions = 'rating IS GREATER THAN 4';
+
+Bug fixes:
+-  All filter condition operators containing "is" or "equals"
+   were broken.
+
+Code quality:
+- Improved test coverage.
+-----------------------------------
+
+
+ParseCSV 1.1.1
+-----------------------------------
+Date: 2-Feb-2019
+
+Breaking changes: none
+
+New features: none
+
+Bug fixes:
+- Function load_data: check length of input, prevents E_NOTICE
+  if too long.
+- Fixed bugs in unparse().
+
+Code quality:
+- Improved test coverage.
+-----------------------------------
+
+
+ParseCSV 1.1.0
+-----------------------------------
+Date: 9-Aug-2018
+
+Breaking changes:
+- Ignore entirely empty lines at the end of files
+  See https://github.com/parsecsv/parsecsv-for-php/pull/142
+- Dropped support for PHP 5.4. Now, you need at leas PHP 5.5.
+- Fixed parse()'s return value: return true only if $data is useful.
+
+New features:
+- Added support for Laravel-style collections via the
+  new getCollection() function - see
+  https://github.com/parsecsv/parsecsv-for-php/pull/134
+- New function getTotalDataRowCount() - useful if
+  $limit is set - see pull request #122.
+- Added requires to keep Composer-free environments working.
+
+Bug fixes:
+- Better support for streams.
+  See https://github.com/parsecsv/parsecsv-for-php/pull/147
+- Fixed output() with custom header.
+  See https://github.com/parsecsv/parsecsv-for-php/issues/132
+- Fixed bug on _validate_fields_for_unparse() if titles property
+  is used instead of fields parameter for changing the titles for
+  unparsing.
+- Fixed bug in unparse() that caused incorrect column order
+  (Issue #41).
+
+
+Code quality:
+- Improved test coverage.
+-----------------------------------
+
+
+ParseCSV 1.0.0
+-----------------------------------
+Date: 3-March-2018
+
+- Renamed class from parseCSV to Csv and added name-
+  space "ParseCsv" for PSR compliance.
+
+- Added support for MS Excel's "sep=" to detect the
+  delimiter (Issue #60).
+
+- Added data type detection - function getDatatypes()
+  guesses the type of each column.
+
+- MIME: output() sends correct MIME type to browser
+  if the separator is a tab char (Issue #79).
+
+- Added support for mb_convert_encoding() instead of
+  iconv() - see issue #109.
+
+- A number of minor bug fixes - see GitHub issues.
+
+- Added many more unit tests.
+
+-----------------------------------
+
+
+parseCSV 0.4.3 beta
+-----------------------------------
+Date: 1-July-2008
+
+- Issue #4. Added an option for setting sorting
+  type behavior when sorting data.
+  Simply set $csv->sort_type to "regular", "numeric",
+  or "string".
+
+- Issue #6. Raw loaded file data is now cleared from
+  file_data property when it has been successfully
+  parsed to keep parseCSV's memory footprint to a
+  minimum. Specifically handy when using multiple
+  instances of parseCSV to process large files.
+
+-----------------------------------
+
+
+parseCSV 0.4.2 beta
+-----------------------------------
+Date: 31-May-2008
+
+- IMPORTANT! If you're using the output(),
+  method please note that the first parameter
+  has been completely removed as it was
+  technically just useless. Instead, the second
+  parameter (filename) doubles as its replacement.
+  Simply put, if filename is not set or null, the
+  output() method will not output a downloadable
+  file. Please update your existing code
+  when using 0.4.2 and later :)
+
+- Small fix to the headers sent by the output()
+  method.
+
+- Added a download example using the output()
+  method to the examples folder.
+
+-----------------------------------
+
+
+parseCSV 0.4.1 beta
+-----------------------------------
+Date: 29-May-2008
+
+- Fixed a small bug in how the output() method
+  handles input data.
+
+-----------------------------------
+
+
+parseCSV 0.4 beta
+-----------------------------------
+Date: 11-Apr-2008
+
+- Error reporting for files/data which is corrupt
+  or has formatting errors like using double
+  quotes in a field without enclosing quotes. Or
+  not escaping double quotes with a second one.
+
+- parse() method does not require input anymore
+  if the "$object->file" property has been set.
+
+I'm calling this a beta release due to the heavy
+modifications to the core parsing logic required
+for error reporting to work. I have tested the
+new code quite extensively, I'm fairly confident
+that it still parses exactly as it always has.
+
+The second reason I'm calling it a beta release
+is cause I'm sure the error reporting code will
+need more refinements and tweaks to detect more
+types of errors, as it's only picking two types
+or syntax errors right now. However, it seems
+these two are the most common errors that you
+would be likely to come across.
+
+-----------------------------------
+
+
+parseCSV 0.3.2
+-----------------------------------
+Date: 1-Apr-2008
+
+This is primarily a bug-fix release for a critical
+bug which was brought to my attention.
+
+- Fixed a critical bug in conditions parsing which
+  would generate corrupt matching patterns causing
+  the condition(s) to not work at all in some
+  situations.
+
+- Fixed a small code error which would cause PHP to
+  generate a invalid offset notice when zero length
+  values were fed into the unparse() method to
+  generate CSV data from an array.
+
+Notice: If you have been using the "parsecsv-stable"
+branch as an external in any of your projects,
+please use the "stable/parsecsv" branch from this
+point on as I will eventually remove the former due
+to it's stupid naming.
+
+-----------------------------------
+
+
+parseCSV 0.3.1
+-----------------------------------
+Date: 1-Sep-2007
+
+- Small change to default output settings to
+  conform with RFC 4180 (http://rfc.net/rfc4180.html).
+  Only the LF (line feed) character was used
+  by default to separate rows, rather than
+  CRLF (carriage return & line feed).
+
+-----------------------------------
+
+
+parseCSV 0.3.0
+-----------------------------------
+Date: 9-Aug-2007
+
+- Changed to the MIT license.
+
+- Added offset and limit options.
+
+- Added SQL-like conditions for quickly
+  filtering out entries. Documentation on the
+  condition syntax is forthcoming.
+
+- Small parsing modification to comply
+  with some recent changes to the specifications
+  outlined on Wikipedia's Comma-separated values
+  article.
+
+- Minor changes and optimizations, and a few
+  spelling corrections. Oops :)
+
+- Included more complex code examples in the
+  parseCSV download.
+
+-----------------------------------
+
+
+parseCSV 0.2.1
+-----------------------------------
+Date: 8-Aug-2007
+
+- Fixed stupid code which caused auto function
+  to not work in some situations.
+
+-----------------------------------
+
+
+parseCSV 0.2.0 beta
+-----------------------------------
+Date: 2-Jan-2007
+
+- Added auto() function to automatically detect
+  delimiter character.
+  Useful for user upload in case delimiter is
+  comma (,), tab, or semi-colon (;). Some
+  versions of MS Excel for Windows use
+  semi-colons instead of commas when saving to
+  CSV files.
+  It uses a process of elimination to eliminate
+  characters that can not be the delimiter,
+  so it should work on all CSV-structured files
+  almost no matter what the delimiter is.
+
+- Generally updated some of the core workings
+  to increase performance, and offer better
+  support for large (1MB and up) files.
+
+- Added code examples to header comment.
+
+-----------------------------------
+
+
+parseCSV 0.1.6 beta
+-----------------------------------
+Date: 22-Dec-2006
+
+- Updated output() function.
+
+-----------------------------------
+
+
+parseCSV 0.1.5 beta
+-----------------------------------
+Date: 22-Dec-2006
+
+- Added output() function for easy output to
+  browser, for downloading features for example.
+
+-----------------------------------
+
+
+parseCSV 0.1.4 beta
+-----------------------------------
+Date: 17-Dec-2006
+
+- Minor changes and fixes
+
+-----------------------------------
+
+
+parseCSV 0.1.3 beta
+-----------------------------------
+Date: 17-Dec-2006
+
+- Added GPL v2.0 license.
+
+-----------------------------------
+
+
+parseCSV 0.1.2 beta
+-----------------------------------
+Date: 17-Dec-2006
+
+- Added encoding() function for easier character
+  encoding configuration.
+
+-----------------------------------
+
+
+parseCSV 0.1.1 beta
+-----------------------------------
+Date: 24-Nov-2006
+
+- Added support for a PHP die command on first
+  line of csv files if they have a .php extension
+  to protect secure data from being displayed
+  directly to the browser.
+
+-----------------------------------
+
+
+parseCSV 0.1 beta
+-----------------------------------
+Date: 23-Nov-2006
+
+- Initial release
+
+-----------------------------------

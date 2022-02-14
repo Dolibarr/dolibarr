@@ -1,0 +1,53 @@
+# Copyright (C) 2021 admin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleMailLinkGeneratorName'
+ModuleMailLinkGeneratorName = E-Mailadressen extrahieren
+# Module description 'ModuleMailLinkGeneratorDesc'
+ModuleMailLinkGeneratorDesc = Gibt die E-Mailadressen aus einer Liste aus, sodass sie in ein Mailprogramm übertragen werden können
+
+#
+# Admin page
+#
+MailLinkGeneratorSetup = MailLinkGenerator setup
+Settings = Einstellungen
+MailLinkGeneratorSetupPage = MailLinkGenerator setup page
+MAILLINKGENERATOR_SHOWCC =Link zu CC
+MAILLINKGENERATOR_SHOWCCTooltip ="Empfänger in CC" - Link anzeigen
+MAILLINKGENERATOR_SHOWBCC=Link zu BCC
+MAILLINKGENERATOR_SHOWBCCTooltip="Empfänger in BCC" - Link anzeigen
+
+
+#
+# About page
+#
+About = About
+MailLinkGeneratorAbout = About MailLinkGenerator
+MailLinkGeneratorAboutPage = MailLinkGenerator about page
+
+#
+# Sample page
+#
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description

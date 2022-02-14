@@ -1,0 +1,7 @@
+*.bak
+/.idea
+/composer.lock
+/coverage_clover.xml
+/phive.xml
+/tools
+/vendor/

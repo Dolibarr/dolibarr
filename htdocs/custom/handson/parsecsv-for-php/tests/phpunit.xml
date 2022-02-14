@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+    bootstrap="Bootstrap.php"
+    colors="false"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    stopOnError="true"
+    stopOnFailure="true"
+    stopOnIncomplete="true"
+    stopOnSkipped="false">
+    <testsuites>
+        <testsuite name="parseCSV Test Suite">
+            <directory suffix="est.php">properties/</directory>
+            <directory suffix="est.php">methods/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

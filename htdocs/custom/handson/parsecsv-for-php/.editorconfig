@@ -1,0 +1,21 @@
+# @see http://editorconfig.org/
+
+# This is the top-most .editorconfig file; do not search in parent directories.
+root = true
+
+# All files.
+[*]
+indent_style = space
+indent_size = 4
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[composer.json]
+indent_size = 4
+
+[Makefile]
+indent_style = tab
+
+[*.yml,*.yaml]
+indent_size = 2

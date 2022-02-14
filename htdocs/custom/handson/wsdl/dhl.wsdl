@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Version: 3.1.8
+Date: 2021-06-11T16:16:13Z
+--><wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:cis="http://dhl.de/webservice/cisbase"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:bcs="http://dhl.de/webservices/businesscustomershipping/3.0"
+                  targetNamespace="http://dhl.de/webservices/businesscustomershipping/3.0">
+  <wsdl:types>
+      <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified">
+         <xs:import namespace="http://dhl.de/webservice/cisbase"
+                    schemaLocation="geschaeftskundenversand-api-3.1.8-schema-cis_base.xsd"/>
+         <xs:import namespace="http://dhl.de/webservices/businesscustomershipping/3.0"
+                    schemaLocation="geschaeftskundenversand-api-3.1.8-schema-bcs_base.xsd"/>
+      </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="AuthentificationHeaderMessage">
+      <wsdl:documentation>The authentication data.</wsdl:documentation>
+      <wsdl:part name="header" element="cis:Authentification"/>
+  </wsdl:message>
+  <wsdl:message name="createShipmentOrderMessage">
+      <wsdl:documentation>The shipmentdata for creating a shipment.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:CreateShipmentOrderRequest"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createShipmentOrderResponseMessage">
+      <wsdl:documentation>The status of the createShipment operation and the identifier for the
+      shipment.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:CreateShipmentOrderResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="validateShipmentMessage">
+      <wsdl:documentation>The shipmentdata for validating a shipment.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:ValidateShipmentOrderRequest"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="validateShipmentResponseMessage">
+      <wsdl:documentation>The status of the validateShipment operation and the identifier for the
+      shipment.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:ValidateShipmentResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteShipmentOrderMessage">
+      <wsdl:documentation>The identifier for the shipment which should be
+      deleted.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:DeleteShipmentOrderRequest"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteShipmentOrderResponseMessage">
+      <wsdl:documentation>The status of the deletion operation.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:DeleteShipmentOrderResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="doManifestMessage">
+      <wsdl:documentation>The identifier for the shipment which should be
+      manifested.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:DoManifestRequest"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="doManifestResponseMessage">
+      <wsdl:documentation>The status of the manifest operation.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:DoManifestResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getLabelMessage">
+      <wsdl:documentation>The identifier for the DD shipment for which the label url is
+      requested.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:GetLabelRequest"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getLabelResponseMessage">
+      <wsdl:documentation>The status of the operation and the label url (if
+      available).</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:GetLabelResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getVersionRequestMessage">
+      <wsdl:documentation>The version of webservice implementation.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:Version"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getVersionResponseMessage">
+      <wsdl:documentation>The version of webservice implementation.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:GetVersionResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getExportDocMessage">
+      <wsdl:documentation>The identifier for the DD shipment for which the label url is
+      requested.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:GetExportDocRequest"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getExportDocResponseMessage">
+      <wsdl:documentation>The status of the operation and the label url (if
+      available).</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:GetExportDocResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getManifestRequestMessage">
+      <wsdl:documentation>Request a manifest of the given date / date range.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:GetManifestRequest"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getManifestResponseMessage">
+      <wsdl:documentation>The status of the operation and the manifest url (if
+      available).</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:GetManifestResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateShipmentOrderRequestMessage">
+      <wsdl:documentation>Request a manifest of the given date / date range.</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:UpdateShipmentOrderRequest"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateShipmentOrderResponseMessage">
+      <wsdl:documentation>The status of the operation and the manifest url (if
+      available).</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:UpdateShipmentOrderResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="readShipmentOrderResponseMessage">
+      <wsdl:documentation>The status of the operation and the manifest url (if
+      available).</wsdl:documentation>
+      <wsdl:part name="part1" element="bcs:ReadShipmentOrderResponse"> </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="GKV3XAPIServicePortType">
+      <wsdl:operation name="createShipmentOrder">
+         <wsdl:documentation>Creates shipments.</wsdl:documentation>
+         <wsdl:input message="bcs:createShipmentOrderMessage">
+            <wsdl:documentation>The shipment data.</wsdl:documentation>
+         </wsdl:input>
+         <wsdl:output message="bcs:createShipmentOrderResponseMessage">
+            <wsdl:documentation>The status of the createShipment operation and the identifier for the
+          shipment.</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="validateShipment">
+         <wsdl:documentation>Creates shipments.</wsdl:documentation>
+         <wsdl:input message="bcs:validateShipmentMessage">
+            <wsdl:documentation>The shipment data.</wsdl:documentation>
+         </wsdl:input>
+         <wsdl:output message="bcs:validateShipmentResponseMessage">
+            <wsdl:documentation>The status of the validateShipment operation and the identifier for the
+          shipment.</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="deleteShipmentOrder">
+         <wsdl:documentation>Deletes the requested shipments.</wsdl:documentation>
+         <wsdl:input message="bcs:deleteShipmentOrderMessage">
+            <wsdl:documentation>The identifier for the shipment which should be
+          deleted.</wsdl:documentation>
+         </wsdl:input>
+         <wsdl:output message="bcs:deleteShipmentOrderResponseMessage">
+            <wsdl:documentation>The status of the deletion operation.</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="doManifest">
+         <wsdl:documentation>Manifest the requested DD shipments.</wsdl:documentation>
+         <wsdl:input message="bcs:doManifestMessage">
+            <wsdl:documentation>The identifier for the shipment which should be
+          manifested.</wsdl:documentation>
+         </wsdl:input>
+         <wsdl:output message="bcs:doManifestResponseMessage">
+            <wsdl:documentation>The status of the manifest operation.</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="getLabel">
+         <wsdl:documentation>Returns the request-url for getting a label.</wsdl:documentation>
+         <wsdl:input message="bcs:getLabelMessage">
+            <wsdl:documentation>The identifier for the shipment for which the label url is
+          requested.</wsdl:documentation>
+         </wsdl:input>
+         <wsdl:output message="bcs:getLabelResponseMessage">
+            <wsdl:documentation>The status of the operation and the label url (if
+          available).</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="getVersion">
+         <wsdl:documentation>Returns the actual version of the implementation of the whole ISService
+        webservice.</wsdl:documentation>
+         <wsdl:input message="bcs:getVersionRequestMessage"/>
+         <wsdl:output message="bcs:getVersionResponseMessage">
+            <wsdl:documentation>The version of webservice implementation.</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="getExportDoc">
+         <wsdl:documentation>Returns the request-url for getting a export
+        document.</wsdl:documentation>
+         <wsdl:input message="bcs:getExportDocMessage">
+            <wsdl:documentation>The identifier for the shipment for which the export document url is
+          requested.</wsdl:documentation>
+         </wsdl:input>
+         <wsdl:output message="bcs:getExportDocResponseMessage">
+            <wsdl:documentation>The status of the operation and the export document url (if
+          available).</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="getManifest">
+         <wsdl:documentation>Request the manifest.</wsdl:documentation>
+         <wsdl:input message="bcs:getManifestRequestMessage">
+            <wsdl:documentation>The request data.</wsdl:documentation>
+         </wsdl:input>
+         <wsdl:output message="bcs:getManifestResponseMessage">
+            <wsdl:documentation>The status of the getManifest operation and the manifest
+          url.</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="updateShipmentOrder">
+         <wsdl:documentation>Updates a shipment order.</wsdl:documentation>
+         <wsdl:input message="bcs:updateShipmentOrderRequestMessage">
+            <wsdl:documentation>The shipment data.</wsdl:documentation>
+         </wsdl:input>
+         <wsdl:output message="bcs:updateShipmentOrderResponseMessage">
+            <wsdl:documentation>The status of the updateShipment operation and the identifier for the
+          shipment.</wsdl:documentation>
+         </wsdl:output>
+      </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="GKV3XAPISOAP11Binding" type="bcs:GKV3XAPIServicePortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsdl:operation name="createShipmentOrder">
+         <wsdl:documentation>Creates shipments.</wsdl:documentation>
+         <soap:operation soapAction="urn:createShipmentOrder" style="document"/>
+         <wsdl:input>
+            <wsdl:documentation>The authentication data and the shipment data.</wsdl:documentation>
+            <soap:header message="bcs:AuthentificationHeaderMessage" part="header" use="literal"/>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The status of the operation and the shipment
+          identifier.</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="validateShipment">
+         <wsdl:documentation>Validates shipments.</wsdl:documentation>
+         <soap:operation soapAction="urn:validateShipment" style="document"/>
+         <wsdl:input>
+            <wsdl:documentation>The authentication data and the shipment data.</wsdl:documentation>
+            <soap:header message="bcs:AuthentificationHeaderMessage" part="header" use="literal"/>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The status of the operation and the shipment
+          identifier.</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="deleteShipmentOrder">
+         <wsdl:documentation>Deletes the requested shipments.</wsdl:documentation>
+         <soap:operation soapAction="urn:deleteShipmentOrder" style="document"/>
+         <wsdl:input>
+            <wsdl:documentation>The authentication data and the shipment
+          identifier.</wsdl:documentation>
+            <soap:header message="bcs:AuthentificationHeaderMessage" part="header" use="literal"/>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The status of the operation.</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="doManifest">
+         <wsdl:documentation>Manifest the requested shipments.</wsdl:documentation>
+         <soap:operation soapAction="urn:doManifest" style="document"/>
+         <wsdl:input>
+            <wsdl:documentation>The authentication data and the shipment
+          identifier.</wsdl:documentation>
+            <soap:header message="bcs:AuthentificationHeaderMessage" part="header" use="literal"/>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The status of the operation.</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="getLabel">
+         <wsdl:documentation>Returns the request-url for getting a label.</wsdl:documentation>
+         <soap:operation soapAction="urn:getLabel" style="document"/>
+         <wsdl:input>
+            <wsdl:documentation>The authentication data and the shipment
+          identifier.</wsdl:documentation>
+            <soap:header message="bcs:AuthentificationHeaderMessage" part="header" use="literal"/>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The status of the operation and the url for requesting the
+          label.</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="getVersion">
+         <wsdl:documentation>Returns the actual version of the implementation of the whole ISService
+        webservice.</wsdl:documentation>
+         <soap:operation soapAction="urn:getVersion" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The version of the implementation.</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="getExportDoc">
+         <wsdl:documentation>Returns the request-url for getting a export
+        document.</wsdl:documentation>
+         <soap:operation soapAction="urn:getExportDoc" style="document"/>
+         <wsdl:input>
+            <wsdl:documentation>The authentication data and the shipment
+          identifier.</wsdl:documentation>
+            <soap:header message="bcs:AuthentificationHeaderMessage" part="header" use="literal"/>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The status of the operation and the url for requesting the export
+          document.</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="getManifest">
+         <wsdl:documentation>Requests the manifest.</wsdl:documentation>
+         <soap:operation soapAction="urn:getManifest" style="document"/>
+         <wsdl:input>
+            <wsdl:documentation>The authentication data and the shipment data.</wsdl:documentation>
+            <soap:header message="bcs:AuthentificationHeaderMessage" part="header" use="literal"/>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The status of the operation and the manifest url.</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="updateShipmentOrder">
+         <wsdl:documentation>Updates a shipment order.</wsdl:documentation>
+         <soap:operation soapAction="urn:updateShipmentOrder" style="document"/>
+         <wsdl:input>
+            <wsdl:documentation>The authentication data and the shipment data.</wsdl:documentation>
+            <soap:header message="bcs:AuthentificationHeaderMessage" part="header" use="literal"/>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <wsdl:documentation>The status of the operation</wsdl:documentation>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="GVAPI_2_0_de">
+      <wsdl:port name="GKVAPISOAP11port0" binding="bcs:GKV3XAPISOAP11Binding">
+         <soap:address location="https://cig.dhl.de/services/production/soap"/>
+      </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
