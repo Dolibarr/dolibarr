@@ -40,7 +40,7 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product_batch as pb";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_stock as ps on ps.rowid = pb.fk_product_stock";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (" . getEntity('stock') . ")";
-	$sql .= " WHERE ps.fk_product = '" . $fk_product . "'";
+	$sql .= " WHERE ps.fk_product = " .((int) $fk_product);
 	if ($warehouse_id > 0) $sql .= " AND fk_entrepot = '" . $warehouse_id . "'";
 	$sql .= " ORDER BY e.ref, pb.batch";
 
