@@ -114,8 +114,8 @@ if (empty($reshook)) {
 			}
 
 			$more_class = '';
-            if (!empty($field_info['required']) || (isset($field_info['notnull']) && $field_info['notnull'] > 0)) {
-                $more_class .= ' fieldrequired';
+			if (!empty($field_info['required']) || (isset($field_info['notnull']) && $field_info['notnull'] > 0)) {
+				$more_class .= ' fieldrequired';
 			}
 			if (preg_match('/^(text|html)/', $val['type'])) {
 				$more_class .= ' tdtop';
@@ -146,7 +146,7 @@ if (empty($reshook)) {
 				}
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, $check) : $assetdepreciationoptions->$field_key;
 			} elseif ($field_info['type'] == 'price') {
-                $value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? dol_eval($field_info['default'], 1) : 0));
+				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? dol_eval($field_info['default'], 1) : 0));
 			} elseif ($field_key == 'lang') {
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'aZ09') : $assetdepreciationoptions->lang;
 			} else {
