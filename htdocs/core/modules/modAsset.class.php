@@ -58,9 +58,9 @@ class modAsset extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleAssetsName' not found (MyModue is name of module).
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleAssetsDesc' not found (MyModue is name of module).
-		$this->description = "Assets module";
+		$this->description = "Asset module";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "Assets module to manage assets module and depreciation charge on Dolibarr";
+		$this->descriptionlong = "Asset module to manage assets module and depreciation charge on Dolibarr";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'development';
@@ -193,12 +193,28 @@ class modAsset extends DolibarrModules
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
+		$this->rights[$r][0] = 51004; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read asset models'; // Permission label
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'model_advance'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+
+		$r++;
 		$this->rights[$r][0] = 51005; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Setup types of asset'; // Permission label
+		$this->rights[$r][1] = 'Create/Update asset models'; // Permission label
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'setup_advance'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
-		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][4] = 'model_advance'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+
+		$r++;
+		$this->rights[$r][0] = 51006; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete asset models'; // Permission label
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'model_advance'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		// Menus
 		//-------
