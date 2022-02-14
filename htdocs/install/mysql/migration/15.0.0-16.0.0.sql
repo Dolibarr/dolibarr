@@ -257,12 +257,12 @@ ALTER TABLE llx_asset ADD COLUMN date_start date NOT NULL AFTER date_acquisition
 ALTER TABLE llx_asset ADD COLUMN qty real DEFAULT 1 NOT NULL AFTER date_start;
 ALTER TABLE llx_asset ADD COLUMN acquisition_type smallint DEFAULT 0 NOT NULL AFTER qty;
 ALTER TABLE llx_asset ADD COLUMN asset_type smallint DEFAULT 0 NOT NULL AFTER acquisition_type;
-ALTER TABLE llx_asset ADD COLUMN not_depreciated integer(1) DEFAULT 0 AFTER asset_type;
+ALTER TABLE llx_asset ADD COLUMN not_depreciated integer DEFAULT 0 AFTER asset_type;
 ALTER TABLE llx_asset ADD COLUMN disposal_date date AFTER not_depreciated;
 ALTER TABLE llx_asset ADD COLUMN disposal_amount_ht double(24,8) AFTER disposal_date;
 ALTER TABLE llx_asset ADD COLUMN fk_disposal_type integer AFTER disposal_amount_ht;
-ALTER TABLE llx_asset ADD COLUMN disposal_depreciated integer(1) DEFAULT 0 AFTER fk_disposal_type;
-ALTER TABLE llx_asset ADD COLUMN disposal_subject_to_vat integer(1) DEFAULT 0 AFTER disposal_depreciated;
+ALTER TABLE llx_asset ADD COLUMN disposal_depreciated integer DEFAULT 0 AFTER fk_disposal_type;
+ALTER TABLE llx_asset ADD COLUMN disposal_subject_to_vat integer DEFAULT 0 AFTER disposal_depreciated;
 ALTER TABLE llx_asset ADD COLUMN last_main_doc varchar(255) AFTER fk_user_modif;
 ALTER TABLE llx_asset ADD COLUMN model_pdf varchar(255) AFTER import_key;
 
@@ -313,7 +313,7 @@ CREATE TABLE llx_asset_depreciation_options_economic(
     fk_asset_model						integer,
 
     depreciation_type					smallint		DEFAULT 0 NOT NULL,		-- 0:linear, 1:degressive, 2:exceptional
-    accelerated_depreciation_option		integer(1),								-- activate accelerated depreciation mode (fiscal)
+    accelerated_depreciation_option		integer,								-- activate accelerated depreciation mode (fiscal)
 
     degressive_coefficient				double(24,8),
     duration							smallint		NOT NULL,
