@@ -1,3 +1,4 @@
+-- ===================================================================
 -- Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -12,6 +13,7 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see https://www.gnu.org/licenses/.
+-- ===================================================================
 
 create table llx_asset_extrafields
 (
@@ -20,4 +22,3 @@ create table llx_asset_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
-
