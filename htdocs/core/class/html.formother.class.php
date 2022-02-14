@@ -460,7 +460,7 @@ class FormOther
 	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
 	 *  @param  User		$user           	Object user
 	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	int|string	$showempty			1=show also an empty value
+	 *  @param	int|string	$showempty			1=show also an empty value or text to show for empty
 	 *  @param	string		$morecss			More CSS
 	 *  @param	int			$norepresentative	Show also an entry "Not categorized"
 	 *  @return string							Html combo list code
@@ -489,11 +489,11 @@ class FormOther
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($showempty) {
 			$textforempty = ' ';
-			if (!empty($conf->use_javascript_ajax)) {
-				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-			}
 			if (!is_numeric($showempty)) {
 				$textforempty = $showempty;
+			}
+			if (!empty($conf->use_javascript_ajax) && $textforempty == ' ') {
+				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
 			}
 			$out .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
 		}
