@@ -414,7 +414,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 				}
 			}
 		}
-        print '</td>';
+		print '</td>';
 	}
 
 	print '<td class="linecoledit center">';
