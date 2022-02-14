@@ -290,7 +290,7 @@ CREATE TABLE llx_asset_accountancy_codes_economic(
     proceeds_from_sales			varchar(32),
     vat_collected				varchar(32),
     vat_deductible				varchar(32),
-    tms							timestamp,
+    tms                         timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_modif				integer
 ) ENGINE=innodb;
 
@@ -303,7 +303,7 @@ CREATE TABLE llx_asset_accountancy_codes_fiscal(
     endowment_accelerated_depreciation		varchar(32),
     provision_accelerated_depreciation		varchar(32),
 
-    tms										timestamp,
+    tms                                     timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_modif							integer
 ) ENGINE=innodb;
 
@@ -323,7 +323,7 @@ CREATE TABLE llx_asset_depreciation_options_economic(
 	amount_base_deductible_ht			double(24,8),
 	total_amount_last_depreciation_ht	double(24,8),
 
-	tms									timestamp,
+	tms                                 timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_modif						integer
 ) ENGINE=innodb;
 
@@ -342,7 +342,7 @@ CREATE TABLE llx_asset_depreciation_options_fiscal(
 	amount_base_deductible_ht			double(24,8),
 	total_amount_last_depreciation_ht	double(24,8),
 
-	tms									timestamp,
+	tms                                 timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_modif						integer
 ) ENGINE=innodb;
 
@@ -360,7 +360,7 @@ CREATE TABLE llx_asset_depreciation(
     accountancy_code_debit				varchar(32),
     accountancy_code_credit				varchar(32),
 
-	tms									timestamp,
+	tms                                 timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_modif						integer
 ) ENGINE=innodb;
 
@@ -376,7 +376,7 @@ CREATE TABLE llx_asset_model(
     note_public				text,
     note_private			text,
     date_creation			datetime		NOT NULL,
-    tms						timestamp,
+    tms                     timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_creat			integer			NOT NULL,
     fk_user_modif			integer,
     import_key				varchar(14),
@@ -385,9 +385,9 @@ CREATE TABLE llx_asset_model(
 
 CREATE TABLE llx_asset_model_extrafields
 (
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    fk_object                 integer NOT NULL,
+    rowid                     integer       AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object                 integer       NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
