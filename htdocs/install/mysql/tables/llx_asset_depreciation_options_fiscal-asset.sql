@@ -29,6 +29,6 @@ CREATE TABLE llx_asset_depreciation_options_fiscal(
 	amount_base_deductible_ht			double(24,8),
 	total_amount_last_depreciation_ht	double(24,8),
 
-	tms									timestamp,
+	tms                                 timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_modif						integer
 ) ENGINE=innodb;

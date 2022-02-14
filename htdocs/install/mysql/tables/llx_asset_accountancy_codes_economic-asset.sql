@@ -28,6 +28,6 @@ CREATE TABLE llx_asset_accountancy_codes_economic(
     proceeds_from_sales			varchar(32),
     vat_collected				varchar(32),
     vat_deductible				varchar(32),
-    tms							timestamp,
+    tms                         timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_modif				integer
 ) ENGINE=innodb;

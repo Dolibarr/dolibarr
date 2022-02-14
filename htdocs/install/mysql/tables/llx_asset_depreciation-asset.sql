@@ -29,6 +29,6 @@ CREATE TABLE llx_asset_depreciation(
     accountancy_code_debit          varchar(32),
     accountancy_code_credit         varchar(32),
 
-	tms                             timestamp,
+	tms                             timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_modif                   integer
 ) ENGINE=innodb;
