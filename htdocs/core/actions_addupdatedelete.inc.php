@@ -96,13 +96,21 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = ''; // This is an explicit foreign key field
 		}
 
+		if (preg_match('/^chkbxlst:/i', $object->fields[$key]['type'])) {
+			$res = '';
+			foreach($value as $val) {
+				$res .= $val.', ';
+			}
+			$value = substr($res, 0,-2);
+		}
+
 		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
 		$object->$key = $value;
 		if ($val['notnull'] > 0 && $object->$key == '' && !is_null($val['default']) && $val['default'] == '(PROV)') {
 			$object->$key = '(PROV)';
 		}
 		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
-			$error++;
+		    $error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 		}
 	}
@@ -198,7 +206,13 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
 		}
-
+		if (preg_match('/^chkbxlst:/i', $object->fields[$key]['type'])) {
+			$res = '';
+			foreach($value as $val) {
+				$res .= $val.', ';
+			}
+			$value = substr($res, 0,-2);
+		}
 		$object->$key = $value;
 		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
 			$error++;

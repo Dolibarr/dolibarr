@@ -414,6 +414,9 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$parameters=array('name' => GETPOST('name'), 'col' => 'nom');
+			$reshook=$hookmanager->executeHooks('findDupl',$parameters,$object,$action);
+
 			if ($action == 'update') {
 				$ret = $object->fetch($socid);
 				$object->oldcopy = clone $object;
@@ -434,7 +437,14 @@ if (empty($reshook)) {
 			}
 			$object->entity					= (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
 			$object->name_alias = GETPOST('name_alias', 'alphanohtml');
-			$object->address				= GETPOST('address', 'alphanohtml');
+
+			// HandsOn uses multiple fields for address
+            $object->address = GETPOST('strasse', 'alphanohtml').";".
+                GETPOST('nr', 'alphanohtml').";".
+                GETPOST('addr2', 'alphanohtml').";".
+                GETPOST('addr3', 'alphanohtml');
+            //$object->address = GETPOST('address', 'alphanohtml');
+
 			$object->zip = GETPOST('zipcode', 'alphanohtml');
 			$object->town = GETPOST('town', 'alphanohtml');
 			$object->country_id = GETPOST('country_id', 'int');
@@ -464,7 +474,7 @@ if (empty($reshook)) {
 			$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
 			$object->code_client			= GETPOSTISSET('customer_code') ?GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
 			$object->code_fournisseur = GETPOSTISSET('supplier_code') ?GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
-			$object->capital				= GETPOST('capital', 'alphanohtml');
+			//$object->capital				= GETPOST('capital', 'alphanohtml');
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
@@ -1022,7 +1032,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
 		}
 
-		$object->address = GETPOST('address', 'alphanohtml');
+        // HandsOn uses multiple fields for address
+        $object->address = GETPOST('strasse', 'alphanohtml').";".
+            GETPOST('nr', 'alphanohtml').";".
+            GETPOST('addr2', 'alphanohtml').";".
+            GETPOST('addr3', 'alphanohtml');
+        //$object->address = GETPOST('address', 'alphanohtml');
+
 		$object->zip = GETPOST('zipcode', 'alphanohtml');
 		$object->town = GETPOST('town', 'alphanohtml');
 		$object->state_id = GETPOST('state_id', 'int');
@@ -1042,7 +1058,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->fax				= GETPOST('fax', 'alpha');
 		$object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 		$object->url				= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-		$object->capital			= GETPOST('capital', 'alphanohtml');
+		//$object->capital			= GETPOST('capital', 'alphanohtml');
 		$object->barcode			= GETPOST('barcode', 'alphanohtml');
 		$object->idprof1			= GETPOST('idprof1', 'alphanohtml');
 		$object->idprof2			= GETPOST('idprof2', 'alphanohtml');
@@ -1294,8 +1310,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Alias names (commercial, trademark or alias names)
-		print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-		print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
+		//print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+		//print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
 		// Prospect/Customer
 		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
@@ -1325,13 +1341,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			|| (!empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->lire))) {
 			// Supplier
 			print '<tr>';
-			print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
+			/*print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
 			$default = -1;
 			if (!empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) {
 				$default = 1;
 			}
 			print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int') != '' ? GETPOST('fournisseur', 'int') : (GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0), 1);
-			print '</td>';
+			print '</td>';*/
+            print '<td></td><td></td>';
 
 
 			if ($conf->browser->layout == 'phone') {
@@ -1372,18 +1389,46 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		// Address
-		print '<tr><td class="tdtop">';
-		print $form->editfieldkey('Address', 'address', '', $object, 0);
-		print '</td>';
-		print '<td colspan="3">';
-		print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
-		print dol_escape_htmltag($object->address, 0, 1);
-		print '</textarea>';
-		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
-		print '</td></tr>';
+        // Address
+        /*print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+        print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+        print dol_escape_htmltag($object->address, 0, 1);
+        print '</textarea>';
+        print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
+        print '</td></tr>';*/
 
-		// Zip / Town
+        print '<tr><td><h2>Anschrift</h2></td></tr>';
+
+        $addr = explode(";", $object->address);
+        if(!array_key_exists(1, $addr)) $addr[1] = "";
+        if(!array_key_exists(2, $addr)) $addr[2] = "";
+        if(!array_key_exists(3, $addr)) $addr[3] = "";
+
+        //Straße
+        print '<tr><td class="tdtop">'.$form->editfieldkey('Straße', 'strasse', '', $object, 0).'</td>';
+        print '<td colspan="1"><input name="strasse" id="strasse" class="" value="'.dol_escape_htmltag($addr[0], 0, 1).'">';
+        print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', '');
+        print '</td>';
+
+        //Hausnummer
+        print '<td class="tdtop">'.$form->editfieldkey('Hausnummer', 'nr', '', $object, 0).'</td>';
+        print '<td colspan="1"><input name="nr" id="nr" class="quatrevingtpercent" value="'.dol_escape_htmltag($addr[1], 0, 1).'">';
+        print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', 'quatrevingtpercent');
+        print '</td></tr>';
+
+        //Adresszeile 2
+        print '<td class="">'.$form->editfieldkey('Adresszeile 2', 'addr2', '', $object, 0).'</td>';
+        print '<td colspan="1"><input name="addr2" id="addr2" class="" value="'.dol_escape_htmltag($addr[2], 0, 1).'">';
+        print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', '');
+        print '</td>';
+
+        //Adresszeile 3
+        print '<td style="width: 10%;">'.$form->editfieldkey('Adresszeile 3', 'addr3', '', $object, 0).'</td>';
+        print '<td colspan="1"><input name="addr3" id="addr3" class="" value="'.dol_escape_htmltag($addr[3], 0, 1).'">';
+        print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', 'quatrevingtpercent');
+        print '</td></tr>';
+
+        // Zip / Town
 		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 		print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 		print '</td>';
@@ -1396,13 +1441,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Country
-		print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+		print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="1" class="maxwidthonsmartphone">';
 		print img_picto('', 'country', 'class="paddingrightonly"');
-		print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
+		print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'maxwidth500');
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '</td></tr>';
+		print '</td>';
 
 		// State
 		if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
@@ -1420,6 +1465,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 			print '</td></tr>';
 		}
+
+        print '<tr><td><h2>Kontaktdaten</h2></td></tr>';
 
 		// Phone / Fax
 		print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
@@ -1462,6 +1509,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
+        print '<tr><td><h2>HandsOn</h2></td></tr>';
+
+        // Other attributes
+        $parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+        include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+        print '<tr><td><h2>Weitere Angaben</h2></td></tr>';
+
+		/* HoT doesn't need prof IDs
 		// Prof ids
 		$i = 1; $j = 0; $NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
 		while ($i <= 6) {
@@ -1488,6 +1544,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($NBCOLS > 1 && ($j % 2 == 1)) {
 			print '<td colspan="2"></td></tr>';
 		}
+		*/
 
 		// Vat is used
 		print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
@@ -1572,7 +1629,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Legal Form
-		print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
+		/*print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
 		if ($object->country_id) {
 			print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
@@ -1580,11 +1637,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $countrynotdefined;
 		}
 		print '</td></tr>';
+		*/
 
 		// Capital
-		print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-		print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
-		print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+		//print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
+		//print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
+		//print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
@@ -1638,10 +1696,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
 			print '</td></tr>';
 		}
-
-		// Other attributes
-		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		// Assign a sale representative
 		print '<tr>';
@@ -1763,7 +1817,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->code_client			= GETPOST('customer_code', 'alpha');
 				$object->fournisseur			= GETPOST('fournisseur', 'int');
 				$object->code_fournisseur = GETPOST('supplier_code', 'alpha');
-				$object->address = GETPOST('address', 'alphanohtml');
+
+                // HandsOn uses multiple fields for address
+                $object->address = GETPOST('strasse', 'alphanohtml').";".
+                    GETPOST('nr', 'alphanohtml').";".
+                    GETPOST('addr2', 'alphanohtml').";".
+                    GETPOST('addr3', 'alphanohtml');
+                //$object->address = GETPOST('address', 'alphanohtml');
+
 				$object->zip = GETPOST('zipcode', 'alphanohtml');
 				$object->town = GETPOST('town', 'alphanohtml');
 				$object->country_id = GETPOST('country_id') ?GETPOST('country_id', 'int') : $mysoc->country_id;
@@ -1784,7 +1845,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->fax					= GETPOST('fax', 'alpha');
 				$object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 				$object->url					= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-				$object->capital				= GETPOST('capital', 'alphanohtml');
+				//$object->capital				= GETPOST('capital', 'alphanohtml');
 				$object->idprof1				= GETPOST('idprof1', 'alphanohtml');
 				$object->idprof2				= GETPOST('idprof2', 'alphanohtml');
 				$object->idprof3				= GETPOST('idprof3', 'alphanohtml');
@@ -1962,8 +2023,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// Alias names (commercial, trademark or alias names)
-			print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-			print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
+			//print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+			//print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
 			// Prefix
 			if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
@@ -2015,10 +2076,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire)))
 				|| (!empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->lire))) {
 				print '<tr>';
-				print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td>';
+				/*print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
 				print $form->selectyesno("fournisseur", $object->fournisseur, 1, false, 0, 1);
-				print '</td>';
+				print '</td>';*/
+                print '<td></td><td></td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
 				}
@@ -2065,13 +2127,44 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
 
-			// Address
-			print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
-			print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
-			print dol_escape_htmltag($object->address, 0, 1);
-			print '</textarea>';
-			print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
-			print '</td></tr>';
+            // Address
+            /*print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+            print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+            print dol_escape_htmltag($object->address, 0, 1);
+            print '</textarea>';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
+            print '</td></tr>';*/
+
+            print '<tr><td><h2>Anschrift</h2></td></tr>';
+
+            $addr = explode(";", $object->address);
+            if(!array_key_exists(1, $addr)) $addr[1] = "";
+            if(!array_key_exists(2, $addr)) $addr[2] = "";
+            if(!array_key_exists(3, $addr)) $addr[3] = "";
+
+            //Straße
+            print '<tr><td class="tdtop">'.$form->editfieldkey('Straße', 'strasse', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="strasse" id="strasse" class="" value="'.dol_escape_htmltag($addr[0], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', '');
+            print '</td>';
+
+            //Hausnummer
+            print '<td class="tdtop">'.$form->editfieldkey('Hausnummer', 'nr', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="nr" id="nr" class="quatrevingtpercent" value="'.dol_escape_htmltag($addr[1], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', 'quatrevingtpercent');
+            print '</td></tr>';
+
+            //Adresszeile 2
+            print '<td class="">'.$form->editfieldkey('Adresszeile 2', 'addr2', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="addr2" id="addr2" class="" value="'.dol_escape_htmltag($addr[2], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', '');
+            print '</td>';
+
+            //Adresszeile 3
+            print '<td style="width: 10%;">'.$form->editfieldkey('Adresszeile 3', 'addr3', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="addr3" id="addr3" class="" value="'.dol_escape_htmltag($addr[3], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', 'quatrevingtpercent');
+            print '</td></tr>';
 
 			// Zip / Town
 			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
@@ -2092,7 +2185,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-			print '</td></tr>';
+			print '</td>';
 
 			// State
 			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
@@ -2106,6 +2199,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $formcompany->select_state($object->state_id, $object->country_code);
 				print '</td></tr>';
 			}
+
+            print '<tr><td><h2>Kontaktdaten</h2></td></tr>';
 
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
@@ -2140,6 +2235,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
+            print '<tr><td><h2>HandsOn</h2></td></tr>';
+
+            // Other attributes
+            $parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+
+            print '<tr><td><h2>Weitere Angaben</h2></td></tr>';
+
+			/* Hot doesn't need prof IDs
 			// Prof ids
 			$i = 1;
 			$j = 0;
@@ -2167,6 +2271,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($NBCOLS > 0 && $j % 2 == 1) {
 				print '<td colspan="2"></td></tr>';
 			}
+			*/
 
 			// VAT is used
 			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td><td colspan="3">';
@@ -2266,15 +2371,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// Juridical type
-			print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td><td class="maxwidthonsmartphone" colspan="3">';
-			print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
-			print '</td></tr>';
+			//print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td><td class="maxwidthonsmartphone" colspan="3">';
+			//print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
+			//print '</td></tr>';
 
 			// Capital
-			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-			print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
-			print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
-			print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
+			//print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
+			//print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
+			//print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
+			//print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
@@ -2332,10 +2437,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
 				print '</td></tr>';
 			}
-
-			// Other attributes
-			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 			// Webservices url/key
 			if (!empty($conf->syncsupplierwebservices->enabled)) {
@@ -2531,6 +2632,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 		}
 
+		/* Prof IDs not needed by HoT
 		// Prof ids
 		$i = 1; $j = 0;
 		while ($i <= 6) {
@@ -2557,6 +2659,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		//if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
 
+		*/
 
 		// This fields are used to know VAT to include in an invoice when the thirdparty is making a sale, so when it is a supplier.
 		// We don't need them into customer profile.
@@ -2753,6 +2856,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Legal
 		print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
+		/*
 		// Capital
 		print '<tr><td>'.$langs->trans('Capital').'</td><td>';
 		if ($object->capital) {
@@ -2761,6 +2865,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '&nbsp;';
 		}
 		print '</td></tr>';
+		*/
 
 		// Default language
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
@@ -2886,6 +2991,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
+		if($_GET['showDuplWarning'] == "1") {
+			echo "<script>showWarning();</script>";
+		}
 
 		/*
 		 *  Actions

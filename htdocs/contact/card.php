@@ -183,7 +183,14 @@ if (empty($reshook)) {
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
 		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
 		$object->poste = (string) GETPOST("poste", 'alpha');
-		$object->address = (string) GETPOST("address", 'alpha');
+
+        // HandsOn uses multiple fields for address
+        $object->address = GETPOST('strasse', 'alphanohtml').";".
+            GETPOST('nr', 'alphanohtml').";".
+            GETPOST('addr2', 'alphanohtml').";".
+            GETPOST('addr3', 'alphanohtml');
+        //$object->address = GETPOST('address', 'alphanohtml');
+
 		$object->zip = (string) GETPOST("zipcode", 'alpha');
 		$object->town = (string) GETPOST("town", 'alpha');
 		$object->country_id = (int) GETPOST("country_id", 'int');
@@ -388,7 +395,13 @@ if (empty($reshook)) {
 			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
 			$object->poste = (string) GETPOST("poste", 'alpha');
 
-			$object->address = (string) GETPOST("address", 'alpha');
+            // HandsOn uses multiple fields for address
+            $object->address = GETPOST('strasse', 'alphanohtml').";".
+                GETPOST('nr', 'alphanohtml').";".
+                GETPOST('addr2', 'alphanohtml').";".
+                GETPOST('addr3', 'alphanohtml');
+            //$object->address = GETPOST('address', 'alphanohtml');
+
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->state_id = GETPOST("state_id", 'int');
@@ -593,6 +606,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$tmparray = getCountry($object->country_id, 'all');
 				$object->country_code = $tmparray['code'];
 				$object->country      = $tmparray['label'];
+                $object->address = GETPOST('strasse', 'alphanohtml').";".
+                    GETPOST('nr', 'alphanohtml').";".
+                    GETPOST('addr2', 'alphanohtml').";".
+                    GETPOST('addr3', 'alphanohtml');
 			}
 
 			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
@@ -603,6 +620,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
 			if ($conf->use_javascript_ajax) {
+
+			    // for hot address
+                $addr = explode(";", $objsoc->address);
+
 				print "\n".'<script type="text/javascript" language="javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
@@ -611,7 +632,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							});
 
 							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
+								$(\'input[name="strasse"]\').val("'.dol_escape_js($addr[0]).'");
+								$(\'input[name="nr"]\').val("'.dol_escape_js($addr[1]).'");
+								$(\'input[name="addr2"]\').val("'.dol_escape_js($addr[2]).'");
+								$(\'input[name="addr3"]\').val("'.dol_escape_js($addr[3]).'");
 								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
 								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
 								console.log("Set state_id to '.dol_escape_js($objsoc->state_id).'");
@@ -672,17 +696,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
 			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="255" value="'.dol_escape_htmltag(GETPOSTISSET("poste") ?GETPOST("poste", 'alphanohtml') : $object->poste).'"></td>';
 
-			$colspan = 3;
+			$colspan = 1;
 			if ($conf->use_javascript_ajax && $socid > 0) {
 				$colspan = 2;
 			}
 
 			// Address
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) {
+			/*if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) {
 				$object->address = $objsoc->address; // Predefined with third party
 			}
-			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
-			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.(GETPOST("address", 'alpha') ?GETPOST("address", 'alpha') : $object->address).'</textarea></td>';
 
 			if ($conf->use_javascript_ajax && $socid > 0) {
 				$rowspan = 3;
@@ -694,7 +716,40 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
 				print '</td>';
 			}
-			print '</tr>';
+			print '</tr>';*/
+
+            print '<tr><td><h2>Anschrift</h2></td></tr>';
+            $addr = explode(";", $objsoc->address);
+            if(!array_key_exists(1, $addr)) $addr[1] = "";
+            if(!array_key_exists(2, $addr)) $addr[2] = "";
+            if(!array_key_exists(3, $addr)) $addr[3] = "";
+
+            if ($conf->use_javascript_ajax && $socid > 0) {
+                print '<a href="#" id="copyaddressfromsoc" class="button">'.$langs->trans('CopyAddressFromSoc').'</a>';
+            }
+            //Straße
+            print '<tr><td class="tdtop">'.$form->editfieldkey('Straße', 'strasse', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="strasse" id="strasse" class="" value="'.dol_escape_htmltag($addr[0], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', '');
+            print '</td>';
+
+            //Hausnummer
+            print '<td class="tdtop">'.$form->editfieldkey('Hausnummer', 'nr', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="nr" id="nr" class="quatrevingtpercent" value="'.dol_escape_htmltag($addr[1], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', 'quatrevingtpercent');
+            print '</td></tr>';
+
+            //Adresszeile 2
+            print '<td class="">'.$form->editfieldkey('Adresszeile 2', 'addr2', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="addr2" id="addr2" class="" value="'.dol_escape_htmltag($addr[2], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', '');
+            print '</td>';
+
+            //Adresszeile 3
+            print '<td style="width: 10%;">'.$form->editfieldkey('Adresszeile 3', 'addr3', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="addr3" id="addr3" class="" value="'.dol_escape_htmltag($addr[3], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', 'quatrevingtpercent');
+            print '</td></tr>';
 
 			// Zip / Town
 			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) {
@@ -715,14 +770,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-			print '</td></tr>';
+			print '</td>';
 
 			// State
 			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
-					print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+					print '<td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
 				} else {
-					print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+					print '<td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
 				}
 
 				if ($object->country_id) {
@@ -740,6 +795,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) {
 				$object->fax = $objsoc->fax; // Predefined with third party
 			}
+
+            print '<tr><td><h2>Kontaktdaten</h2></td></tr>';
 
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
@@ -825,6 +882,47 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 			}
+			// if (! empty($conf->socialnetworks->enabled))
+			// {
+			// 	// Jabber
+			// 	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+			// 	{
+			// 		print '<tr><td><label for="skype">'.$form->editfieldkey('Jabber', 'jabberid', '', $object, 0).'</label></td>';
+			// 		print '<td colspan="3"><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid", 'alpha'):$object->jabberid).'"></td></tr>';
+			// 	}
+			// 	// Skype
+			// 	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+			// 	{
+			// 		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
+			// 		print '<td colspan="3"><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype", 'alpha'):$object->skype).'"></td></tr>';
+			// 	}
+			// 	// Twitter
+			// 	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+			// 	{
+			// 		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
+			// 		print '<td colspan="3"><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter", 'alpha'):$object->twitter).'"></td></tr>';
+			// 	}
+			// 	// Facebook
+			// 	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+			// 	{
+			// 		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
+			// 		print '<td colspan="3"><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
+			// 	}
+			//     // LinkedIn
+			//     if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+			//     {
+			//         print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
+			//         print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
+			//     }
+			// }
+
+            print '<tr><td><h2>HandsOn</h2></td></tr>';
+
+            // Other attributes
+            $parameters = array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
+            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+            print '<tr><td><h2>Weitere Angaben</h2></td></tr>';
 
 			// Visibility
 			print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
@@ -848,10 +946,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->multiselectarray('roles', $contactType, array(), 0, 0, 'minwidth500');
 				print '</td></tr>';
 			}
-
-			// Other attributes
-			$parameters = array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3, 'colspanvalue' => 3);
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 			print "</table><br>";
 
@@ -907,6 +1001,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$tmparray = getCountry($object->country_id, 'all');
 				$object->country_code = $tmparray['code'];
 				$object->country      = $tmparray['label'];
+                $object->address = GETPOST('strasse', 'alphanohtml') . ";" .
+                GETPOST('nr', 'alphanohtml') . ";" .
+                GETPOST('addr2', 'alphanohtml') . ";" .
+                GETPOST('addr3', 'alphanohtml');
 			}
 
 			$objsoc = new Societe($db);
@@ -916,6 +1014,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
 			if ($conf->use_javascript_ajax) {
+                $addr = explode(";", $objsoc->address);
+
 				print "\n".'<script type="text/javascript" language="javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
@@ -924,7 +1024,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							});
 
 							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
+								$(\'input[name="strasse"]\').val("'.dol_escape_js($addr[0]).'");
+								$(\'input[name="nr"]\').val("'.dol_escape_js($addr[1]).'");
+								$(\'input[name="addr2"]\').val("'.dol_escape_js($addr[2]).'");
+								$(\'input[name="addr3"]\').val("'.dol_escape_js($addr[3]).'");
 								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
 								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
 								console.log("Set state_id to '.dol_escape_js($objsoc->state_id).'");
@@ -987,7 +1090,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
 			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="255" value="'.dol_escape_htmltag(GETPOSTISSET("poste") ? GETPOST("poste", 'alphanohtml') : $object->poste).'"></td></tr>';
 
-			// Address
+			/* Address
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
 			print '<td colspan="3">';
 			print '<div class="paddingrightonly valignmiddle inline-block quatrevingtpercent">';
@@ -997,7 +1100,41 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a><br>';
 			}
 			print '</div>';
-			print '</td>';
+			print '</td>';*/
+
+            print '<tr><td><h2>Anschrift</h2></td></tr>';
+            $addr = explode(";", $objsoc->address);
+            if(!array_key_exists(1, $addr)) $addr[1] = "";
+            if(!array_key_exists(2, $addr)) $addr[2] = "";
+            if(!array_key_exists(3, $addr)) $addr[3] = "";
+
+            if ($conf->use_javascript_ajax) {
+                print '<tr><td colspan="4" style="font-size: .85em;"><a href="#" id="copyaddressfromsoc" class="button" style="margin-left: 0;">'.$langs->trans('CopyAddressFromSoc').'</a><br></td></tr>';
+            }
+
+            //Straße
+            print '<tr><td class="tdtop">'.$form->editfieldkey('Straße', 'strasse', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="strasse" id="strasse" class="" value="'.dol_escape_htmltag($addr[0], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', '');
+            print '</td>';
+
+            //Hausnummer
+            print '<td class="tdtop">'.$form->editfieldkey('Hausnummer', 'nr', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="nr" id="nr" class="quatrevingtpercent" value="'.dol_escape_htmltag($addr[1], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', 'quatrevingtpercent');
+            print '</td></tr>';
+
+            //Adresszeile 2
+            print '<td class="">'.$form->editfieldkey('Adresszeile 2', 'addr2', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="addr2" id="addr2" class="" value="'.dol_escape_htmltag($addr[2], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', '');
+            print '</td>';
+
+            //Adresszeile 3
+            print '<td style="width: 10%;">'.$form->editfieldkey('Adresszeile 3', 'addr3', '', $object, 0).'</td>';
+            print '<td colspan="1"><input name="addr3" id="addr3" class="" value="'.dol_escape_htmltag($addr[3], 0, 1).'">';
+            print $form->widgetForTranslation("address", $object, $permissiontoadd, 'text', 'alphanohtml', 'quatrevingtpercent');
+            print '</td></tr>';
 
 			// Zip / Town
 			print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
@@ -1026,6 +1163,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
 				print '</td></tr>';
 			}
+
+            print '<tr><td><h2>Kontaktdaten</h2></td></tr>';
 
 			// Phone
 			print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', GETPOST('phone_pro', 'alpha'), $object, 0).'</td>';
@@ -1114,6 +1253,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
+            print '<tr><td><h2>HandsOn</h2></td></tr>';
+
+            // Other attributes
+            $parameters = array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
+            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+            print '<tr><td><h2>Weitere Angaben</h2></td></tr>';
+
 			// Visibility
 			print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
 			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
@@ -1159,10 +1306,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $formcompany->showRoles("roles", $object, 'edit', $object->roles);
 				print '</td></tr>';
 			}
-
-			// Other attributes
-			$parameters = array('colspan' => ' colspan="3"', 'cols'=> '3', 'colspanvalue'=> '3');
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 			$object->load_ref_elements();
 
