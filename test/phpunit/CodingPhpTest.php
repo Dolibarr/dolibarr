@@ -324,7 +324,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				$ok=false;
 				break;
 			}
-			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELET ".$myvar...');
+			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
 
 			// Check sql string VALUES ... , ".$xxx
 			//  with xxx that is not 'db-' (for $db->escape). It means we forget a ' if string, or an (int) if int, when forging sql request.
