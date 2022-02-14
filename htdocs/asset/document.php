@@ -142,9 +142,9 @@ if ($object->id) {
 
 	$modulepart = 'asset';
 	$permissiontoadd = $user->rights->asset->write;
-//	$permissiontoadd = 1;
+	//  $permissiontoadd = 1;
 	$permtoedit = $user->rights->asset->write;
-//	$permtoedit = 1;
+	//  $permtoedit = 1;
 	$param = '&id=' . $object->id;
 
 	//$relativepathwithnofile='asset/' . dol_sanitizeFileName($object->id).'/';

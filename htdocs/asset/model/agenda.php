@@ -181,35 +181,35 @@ if ($object->id > 0) {
 
 	print '<div class="tabsAction">';
 
-//	if (!empty($conf->agenda->enabled)) {
-//		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
-//			print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out . '">' . $langs->trans("AddAction") . '</a>';
-//		} else {
-//			print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AddAction") . '</a>';
-//		}
-//	}
+	//  if (!empty($conf->agenda->enabled)) {
+	//      if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
+	//          print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out . '">' . $langs->trans("AddAction") . '</a>';
+	//      } else {
+	//          print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AddAction") . '</a>';
+	//      }
+	//  }
 
 	print '</div>';
 
-//	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
-//		$param = '&id=' . $object->id . '&socid=' . $socid;
-//		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-//			$param .= '&contextpage=' . urlencode($contextpage);
-//		}
-//		if ($limit > 0 && $limit != $conf->liste_limit) {
-//			$param .= '&limit=' . urlencode($limit);
-//		}
-//
-//
-//		print load_fiche_titre($langs->trans("ActionsOnAssetModel"), '', '');
-//
-//		// List of all actions
-//		$filters = array();
-//		$filters['search_agenda_label'] = $search_agenda_label;
-//
-//		// TODO Replace this with same code than into list.php
-//		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
-//	}
+	//  if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	//      $param = '&id=' . $object->id . '&socid=' . $socid;
+	//      if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	//          $param .= '&contextpage=' . urlencode($contextpage);
+	//      }
+	//      if ($limit > 0 && $limit != $conf->liste_limit) {
+	//          $param .= '&limit=' . urlencode($limit);
+	//      }
+	//
+	//
+	//      print load_fiche_titre($langs->trans("ActionsOnAssetModel"), '', '');
+	//
+	//      // List of all actions
+	//      $filters = array();
+	//      $filters['search_agenda_label'] = $search_agenda_label;
+	//
+	//      // TODO Replace this with same code than into list.php
+	//      show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
+	//  }
 }
 
 // End of page

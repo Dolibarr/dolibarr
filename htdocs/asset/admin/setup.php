@@ -46,7 +46,7 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'asset';
 
 $arrayofparameters = array(
-    'ASSET_ACCOUNTANCY_CATEGORY'=>array('type'=>'accountancy_category', 'enabled'=>1),
+	'ASSET_ACCOUNTANCY_CATEGORY'=>array('type'=>'accountancy_category', 'enabled'=>1),
 	//'ASSET_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
 	//'ASSET_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'ASSET_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
@@ -548,29 +548,29 @@ if ($action == 'edit') {
 				} else {
 					print '<input name="' . $constname . '" class="maxwidth200" value="' . dol_escape_htmltag($selected) . '">';
 				}
-            } elseif ($val['type'] == 'accountancy_category') {
-                $selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-                if (!empty($conf->accounting->enabled)) {
-                    print '<input type="text" name="' . $constname . '" list="pcg_type_datalist" value="' . $selected . '">';
-                    // autosuggest from existing account types if found
-                    print '<datalist id="pcg_type_datalist">';
-                    require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancysystem.class.php';
-                    $accountsystem = new AccountancySystem($db);
-                    $accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
-                    $sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
-                    $sql .= " WHERE fk_pcg_version = '" . $db->escape($accountsystem->ref) . "'";
-                    $sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
-                    $sql .= ' LIMIT 50000'; // just as a sanity check
-                    $resql = $db->query($sql);
-                    if ($resql) {
-                        while ($obj = $db->fetch_object($resql)) {
-                            print '<option value="' . dol_escape_htmltag($obj->pcg_type) . '">';
-                        }
-                    }
-                    print '</datalist>';
-                } else {
-                    print '<input name="' . $constname . '" class="maxwidth200" value="' . dol_escape_htmltag($selected) . '">';
-                }
+			} elseif ($val['type'] == 'accountancy_category') {
+				$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+				if (!empty($conf->accounting->enabled)) {
+					print '<input type="text" name="' . $constname . '" list="pcg_type_datalist" value="' . $selected . '">';
+					// autosuggest from existing account types if found
+					print '<datalist id="pcg_type_datalist">';
+					require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancysystem.class.php';
+					$accountsystem = new AccountancySystem($db);
+					$accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
+					$sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
+					$sql .= " WHERE fk_pcg_version = '" . $db->escape($accountsystem->ref) . "'";
+					$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
+					$sql .= ' LIMIT 50000'; // just as a sanity check
+					$resql = $db->query($sql);
+					if ($resql) {
+						while ($obj = $db->fetch_object($resql)) {
+							print '<option value="' . dol_escape_htmltag($obj->pcg_type) . '">';
+						}
+					}
+					print '</datalist>';
+				} else {
+					print '<input name="' . $constname . '" class="maxwidth200" value="' . dol_escape_htmltag($selected) . '">';
+				}
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
