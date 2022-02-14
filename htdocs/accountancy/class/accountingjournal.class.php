@@ -394,12 +394,12 @@ class AccountingJournal extends CommonObject
 				case 1: // Various Journal
 					$data = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
 					break;
-//				case 2: // Sells Journal
-//				case 3: // Purchases Journal
-//				case 4: // Bank Journal
-//				case 5: // Expense reports Journal
-//				case 8: // Inventory Journal
-//				case 9: // hasnew Journal
+				//              case 2: // Sells Journal
+				//              case 3: // Purchases Journal
+				//              case 4: // Bank Journal
+				//              case 5: // Expense reports Journal
+				//              case 8: // Inventory Journal
+				//              case 9: // hasnew Journal
 			}
 		}
 
@@ -519,8 +519,8 @@ class AccountingJournal extends CommonObject
 		$journal_data = array();
 		foreach ($pre_data['elements'] as $pre_data_id => $pre_data_info) {
 			$element_static->id = $pre_data_id;
-			$element_static->ref = (string)$pre_data_info["ref"];
-			$element_static->label = (string)$pre_data_info["label"];
+			$element_static->ref = (string) $pre_data_info["ref"];
+			$element_static->label = (string) $pre_data_info["label"];
 			$element_static->acquisition_value_ht = $pre_data_info["acquisition_value_ht"];
 			$element_link = $element_static->getNomUrl(1, 'with_label');
 
@@ -655,7 +655,7 @@ class AccountingJournal extends CommonObject
 							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
 							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 
-							$disposal_amount_vat = $disposal_subject_to_vat ? (double)price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
+							$disposal_amount_vat = $disposal_subject_to_vat ? (double) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
 							$lines[1][$accountancy_code_receivable_on_assignment] = -($disposal_amount + $disposal_amount_vat);
 							if ($disposal_subject_to_vat) $lines[1][$accountancy_code_vat_collected] = $disposal_amount_vat;
 							$lines[1][$accountancy_code_proceeds_from_sales] = $disposal_amount;
@@ -739,39 +739,39 @@ class AccountingJournal extends CommonObject
 	 * @param	User		$user				User who write in the bookkeeping
 	 * @param	array		$journal_data		Journal data to write in the bookkeeping
 	 * 											$journal_data = array(
-	 * 												id_element => array(
-	 * 													'ref' => 'ref',
-	 * 													'error' => '',
-	 * 													'blocks' => array(
-	 * 														pos_block => array(
-	 * 															num_line => array(
-	 * 																'doc_date' => '',
-	 * 																'date_lim_reglement' => '',
-	 * 																'doc_ref' => '',
-	 * 																'date_creation' => '',
-	 * 																'doc_type' => '',
-	 * 																'fk_doc' => '',
-	 * 																'fk_docdet' => '',
-	 * 																'thirdparty_code' => '',
-	 * 																'subledger_account' => '',
-	 * 																'subledger_label' => '',
-	 * 																'numero_compte' => '',
-	 * 																'label_compte' => '',
-	 * 																'label_operation' => '',
-	 * 																'montant' => '',
-	 * 																'sens' => '',
-	 * 																'debit' => '',
-	 * 																'credit' => '',
-	 * 																'code_journal' => '',
-	 * 																'journal_label' => '',
-	 * 																'piece_num' => '',
-	 * 																'import_key' => '',
-	 * 																'fk_user_author' => '',
-	 * 																'entity' => '',
-	 * 															),
-	 * 														),
-	 * 													),
-	 * 												),
+	 *                                          id_element => array(
+	 *                                          'ref' => 'ref',
+	 *                                          'error' => '',
+	 *                                          'blocks' => array(
+	 *                                          pos_block => array(
+	 *                                          num_line => array(
+	 *                                          'doc_date' => '',
+	 *                                          'date_lim_reglement' => '',
+	 *                                          'doc_ref' => '',
+	 *                                          'date_creation' => '',
+	 *                                          'doc_type' => '',
+	 *                                          'fk_doc' => '',
+	 *                                          'fk_docdet' => '',
+	 *                                          'thirdparty_code' => '',
+	 *                                          'subledger_account' => '',
+	 *                                          'subledger_label' => '',
+	 *                                          'numero_compte' => '',
+	 *                                          'label_compte' => '',
+	 *                                          'label_operation' => '',
+	 *                                          'montant' => '',
+	 *                                          'sens' => '',
+	 *                                          'debit' => '',
+	 *                                          'credit' => '',
+	 *                                          'code_journal' => '',
+	 *                                          'journal_label' => '',
+	 *                                          'piece_num' => '',
+	 *                                          'import_key' => '',
+	 *                                          'fk_user_author' => '',
+	 *                                          'entity' => '',
+	 *                                          ),
+	 *                                          ),
+	 *                                          ),
+	 *                                          ),
 	 * 											);
 	 * @param	int		$max_nb_errors			Nb error authorized before stop the process
 	 * @return 	int								<0 if KO, >0 if OK
@@ -857,19 +857,19 @@ class AccountingJournal extends CommonObject
 									$this->errors[] = $bookkeeping->errorsToString();
 								}
 							}
-//
-//							if (!$error_for_line && !empty($conf->asset->enabled) && $this->nature == 1 && $bookkeeping->fk_doc > 0) {
-//								// Set last cumulative depreciation
-//								require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
-//								$asset = new Asset($this->db);
-//								$result = $asset->setLastCumulativeDepreciation($bookkeeping->fk_doc);
-//								if ($result < 0) {
-//									$error++;
-//									$error_for_line++;
-//									$journal_data[$element_id]['error'] = 'other';
-//									$this->errors[] = $asset->errorsToString();
-//								}
-//							}
+							//
+							//                          if (!$error_for_line && !empty($conf->asset->enabled) && $this->nature == 1 && $bookkeeping->fk_doc > 0) {
+							//                              // Set last cumulative depreciation
+							//                              require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
+							//                              $asset = new Asset($this->db);
+							//                              $result = $asset->setLastCumulativeDepreciation($bookkeeping->fk_doc);
+							//                              if ($result < 0) {
+							//                                  $error++;
+							//                                  $error_for_line++;
+							//                                  $journal_data[$element_id]['error'] = 'other';
+							//                                  $this->errors[] = $asset->errorsToString();
+							//                              }
+							//                          }
 						}
 
 						if ($error_for_line) {
@@ -908,16 +908,16 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param	array			$journal_data			Journal data to write in the bookkeeping
 	 * 													$journal_data = array(
-	 * 														id_element => array(
-	 * 															'continue' => false,
-	 * 															'blocks' => array(
-	 * 																pos_block => array(
-	 * 																	num_line => array(
-	 * 																		data to write in the CSV line
-	 * 																	),
-	 * 																),
-	 * 															),
-	 * 														),
+	 *                                                  id_element => array(
+	 *                                                  'continue' => false,
+	 *                                                  'blocks' => array(
+	 *                                                  pos_block => array(
+	 *                                                  num_line => array(
+	 *                                                  data to write in the CSV line
+	 *                                                  ),
+	 *                                                  ),
+	 *                                                  ),
+	 *                                                  ),
 	 * 													);
 	 * @param	int				$search_date_end		Search date end
 	 * @param	string			$sep					CSV separator
@@ -1002,7 +1002,8 @@ class AccountingJournal extends CommonObject
 	 * @param string	$account	Accounting account number
 	 * @return array				Accounting account infos
 	 */
-	function getAccountingAccountInfos($account) {
+	function getAccountingAccountInfos($account)
+	{
 		if (!isset(self::$accounting_account_cached[$account])) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
