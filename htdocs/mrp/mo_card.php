@@ -122,7 +122,7 @@ if (empty($reshook)) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
-			}  else {
+			} else {
 				$backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
@@ -131,12 +131,13 @@ if (empty($reshook)) {
 		$backtopage = $backtopageforcancel;
 	}
 
+
+
 	$triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 
-	if($action == 'add' && empty($id)){
-
+	if ($action == 'add' && empty($id)) {
 		$noback = "";
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -145,15 +146,14 @@ if (empty($reshook)) {
 		$moline = new MoLine($db);
 		$objectbomchildline = new BOMLine($db);
 
-		foreach($TBomLineId as $id_bom_line){
-
+		foreach ($TBomLineId as $id_bom_line) {
 			$object = new Mo($db);
 
 			$objectbomchildline->fetch($id_bom_line);
 
 			$TMoLines = $moline->fetchAll('', '', '1', '', array('origin_id' => $id_bom_line));
 
-			foreach ($TMoLines as $moline){
+			foreach ($TMoLines as $moline) {
 				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
 				$_POST['fk_parent_line'] = $moline->id;
 				$_POST['qty'] = $moline->qty;
@@ -169,10 +169,11 @@ if (empty($reshook)) {
 
 		header("Location: ".$urltogo);
 		exit;
-
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
@@ -461,7 +462,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($ref == 'PROV') {
 			$object->fetch_product();
 			$numref = $object->getNextNumRef($object->fk_product);
-
 		} else {
 			$numref = $object->ref;
 		}
@@ -773,7 +773,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object,'',  array('mo'));
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

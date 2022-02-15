@@ -1216,7 +1216,7 @@ class Mo extends CommonObject
 		$objectline = new MoLine($this->db);
 
 		$TFilters = array('customsql'=>'fk_mo = '.((int) $this->id));
-		if(!empty($rolefilter)) $TFilters['role'] = $rolefilter;
+		if (!empty($rolefilter)) $TFilters['role'] = $rolefilter;
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, $TFilters);
 
 		if (is_numeric($result)) {
@@ -1343,7 +1343,7 @@ class Mo extends CommonObject
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
 		print '<td class="center">'.$langs->trans('MoChildGenerate').'</td>';
 		//print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-//		print '<td class="center"></td>';
+		//      print '<td class="center"></td>';
 		print '</tr>';
 		$i = 0;
 
