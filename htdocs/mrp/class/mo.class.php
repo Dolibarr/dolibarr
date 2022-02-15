@@ -675,7 +675,6 @@ class Mo extends CommonObject
 			}
 
 			$resultline = $moline->create($user, false); // Never use triggers here
-
 			if ($resultline <= 0) {
 				$error++;
 				$this->error = $moline->error;
@@ -1206,7 +1205,7 @@ class Mo extends CommonObject
 
 	/**
 	 * 	Create an array of lines
-	 *
+	 * 	@param string $rolefilter
 	 * 	@return array|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray($rolefilter = '')
@@ -1694,9 +1693,7 @@ class MoLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-
 			$i = 0;
-
 			while ($i < ($limit ? min($limit, $num) : $num)) {
 				$obj = $this->db->fetch_object($resql);
 

@@ -29,7 +29,6 @@ print "<!-- BEGIN PHP TEMPLATE mrp/tpl/linkedopjectblock.tpl.php -->\n";
 global $user, $db;
 global $noMoreLinkedObjectBlockAfter;
 
-//var_dump($object); exit;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $object = $GLOBALS['object'];

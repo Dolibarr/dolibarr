@@ -131,3 +131,55 @@ function bomPrepareHead($object)
 
 	return $head;
 }
+
+/**
+ * Manage collapse bom display
+ *
+ * @return void
+ */
+function mrpCollapseBomManagement(){
+	?>
+
+	<script type="text/javascript" language="javascript">
+
+		$(document).ready(function () {
+			// When clicking on collapse
+			$(".collapse_bom").click(function() {
+				console.log("We click on collapse");
+				var id_bom_line = $(this).attr('id').replace('collapse-', '');
+				console.log($(this).html().indexOf('folder-open'));
+				if($(this).html().indexOf('folder-open') <= 0) {
+					$('[parentid="'+ id_bom_line +'"]').show();
+					$(this).html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+				}
+				else {
+					$('[parentid="'+ id_bom_line +'"]').hide();
+					$(this).html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+				}
+
+				return false;
+			});
+
+			// To Show all the sub bom lines
+			$("#show_all").click(function() {
+				console.log("We click on show all");
+				$("[class^=sub_bom_lines]").show();
+				$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+				return false;
+			});
+
+			// To Hide all the sub bom lines
+			$("#hide_all").click(function() {
+				console.log("We click on hide all");
+				$("[class^=sub_bom_lines]").hide();
+				$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+				return false;
+			});
+		});
+
+	</script>
+
+	<?php
+
+}
+

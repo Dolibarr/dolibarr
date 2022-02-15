@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -112,7 +114,6 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-
 if (empty($reshook)) {
 	$error = 0;
 
@@ -130,14 +131,11 @@ if (empty($reshook)) {
 	if ($cancel && !empty($backtopageforcancel)) {
 		$backtopage = $backtopageforcancel;
 	}
-
-
-
 	$triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 
-	if ($action == 'add' && empty($id)) {
+	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
 		$noback = "";
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -281,48 +279,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
+	print mrpCollapseBomManagement();
+
 	?>
 	<script>
 		 $(document).ready(function () {
-
-
-			 /*TODO : DUPLICATA, factoriser le code : bom_card.php line 589**/
-
-			 // When clicking on collapse
-			 $(".collapse_bom").click(function() {
-				 console.log("We click on collapse");
-				 var id_bom_line = $(this).attr('id').replace('collapse-', '');
-				 console.log($(this).html().indexOf('folder-open'));
-				 if($(this).html().indexOf('folder-open') <= 0) {
-					 $('[parentid="'+ id_bom_line +'"]').show();
-					 $(this).html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
-				 }
-				 else {
-					 $('[parentid="'+ id_bom_line +'"]').hide();
-					 $(this).html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
-				 }
-
-				 return false;
-			 });
-
-			 // To Show all the sub bom lines
-			 $("#show_all").click(function() {
-				 console.log("We click on show all");
-				 $("[class^=sub_bom_lines]").show();
-				 $("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
-				 return false;
-			 });
-
-			 // To Hide all the sub bom lines
-			 $("#hide_all").click(function() {
-				 console.log("We click on hide all");
-				 $("[class^=sub_bom_lines]").hide();
-				 $("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
-				 return false;
-			 });
-
-			 /*TODO : DUPLICATA, factoriser le code**/
-
 			 jQuery('#fk_bom').change(function() {
 				console.log('We change value of BOM with BOM of id '+jQuery('#fk_bom').val());
 				if (jQuery('#fk_bom').val() > 0)
