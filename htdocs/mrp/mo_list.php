@@ -247,7 +247,7 @@ foreach ($search as $key => $val) {
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
-		if($key == 'fk_parent_line'){
+		if ($key == 'fk_parent_line') {
 			$sql .= natural_search('moparent.ref', $search[$key], 0);
 			continue;
 		}
@@ -468,7 +468,7 @@ foreach ($object->fields as $key => $val) {
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		if($key == 'fk_parent_line'){
+		if ($key == 'fk_parent_line') {
 			print '<input type="text" class="flat maxwidth75" name="search_fk_parent_line">';
 			print '</td>';
 			continue;
