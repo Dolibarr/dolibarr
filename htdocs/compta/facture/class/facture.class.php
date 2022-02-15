@@ -755,6 +755,9 @@ class Facture extends CommonInvoice
 				foreach ($this->lines as $i => $val)
 				{
 					$newinvoiceline = $this->lines[$i];
+
+					$newinvoiceline->context = $this->context;
+
 					$newinvoiceline->fk_facture = $this->id;
 
 					$newinvoiceline->origin = $this->lines[$i]->element;
