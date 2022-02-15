@@ -118,6 +118,17 @@ foreach ($object->fields as $key => $val) {
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
 	}
+
+	if($key == 'fk_parent_line'){
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields['t.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=> isset($val['help']) ? $val['help'] : ''
+		);
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -439,6 +450,8 @@ foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
+	} elseif ($key == 'fk_parent_line') {
+		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
@@ -448,6 +461,9 @@ foreach ($object->fields as $key => $val) {
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
+//		if($key == 'fk_parent_line'){
+//			print '<input type="text" class="flat maxwidth75" name="search_fk_parent_line" value="">';
+//		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
@@ -486,6 +502,8 @@ print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
+		$cssforfield .= ($cssforfield ? ' ' : '').'center';
+	} elseif ($key == 'fk_parent_line') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -543,6 +561,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		} elseif ($key == 'status') {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
 		}
+		elseif ($key == 'fk_parent_line') {
+			$cssforfield .= ($cssforfield ? ' ' : '').'center';
+		}
 
 		if (in_array($val['type'], array('timestamp'))) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
@@ -558,6 +579,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
+			} elseif ($key == 'fk_parent_line') {
+				$moparent = $object->getMoParent();
+				if(is_object($moparent)) print $moparent->getNomUrl(1);
 			} elseif ($key == 'rowid') {
 				print $object->showOutputField($val, $key, $object->id, '');
 			} else {
