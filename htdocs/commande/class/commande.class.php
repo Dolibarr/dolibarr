@@ -3662,7 +3662,7 @@ class Commande extends CommonOrder
 	 *  @param		string		$target			  		  attribute target for link
 	 *	@return     string          			          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '_self')
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0, $target = '')
 	{
 		global $conf, $langs, $user;
 
