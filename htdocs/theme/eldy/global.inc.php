@@ -205,6 +205,7 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 .divadvancedsearchfieldcompinput {
 	background: #fff;
 	border-bottom: solid 1px var(--inputbordercolor);
+	border-radius: 3px;
 }
 input[name=duration_value], input[name=durationhour]
 {
@@ -1040,6 +1041,7 @@ div.divsearchfield {
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
 	height: 24px;
+	border-radius: 3px;
 }
 .search_component_searchtext {
 	padding-top: 2px;

@@ -9753,8 +9753,8 @@ class Form
 
 		$ret .= '<div class="divadvancedsearchfieldcomp inline-block">';
 		//$ret .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
-		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor paddingright">';
-		$ret .= '<span class="fas fa-filter linkobject boxfilter" title="'.dol_escape_htmltag($langs->trans("Filters")).'" id="idsubimgproductdistribution"></span>';
+		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
+		$ret .= '<span class="fas fa-filter linkobject boxfilter pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Filters")).'" id="idsubimgproductdistribution"></span>';
 		//$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
 
