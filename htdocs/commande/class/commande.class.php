@@ -11,7 +11,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2022  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3764,6 +3764,15 @@ class Commande extends CommonOrder
 			}
 		}
 
+		global $action;
+		$hookmanager->initHooks(array('orderdao'));
+		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
