@@ -1085,7 +1085,7 @@ class BOM extends CommonObject
 					$res = $bom_child->fetch($line->fk_bom_child);
 					if ($res>0) {
 						$bom_child->calculateCosts();
-						$this->total_cost += $bom_child->total_cost;
+						$this->total_cost += $bom_child->total_cost  * $line->qty;
 					} else {
 						$this->error = $bom_child->error;
 						return -2;
