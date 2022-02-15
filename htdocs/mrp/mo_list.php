@@ -119,7 +119,7 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 
-	if($key == 'fk_parent_line'){
+	if ($key == 'fk_parent_line') {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
@@ -461,9 +461,9 @@ foreach ($object->fields as $key => $val) {
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-//		if($key == 'fk_parent_line'){
-//			print '<input type="text" class="flat maxwidth75" name="search_fk_parent_line" value="">';
-//		}
+		//      if($key == 'fk_parent_line'){
+		//          print '<input type="text" class="flat maxwidth75" name="search_fk_parent_line" value="">';
+		//      }
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
@@ -581,7 +581,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print $object->getLibStatut(5);
 			} elseif ($key == 'fk_parent_line') {
 				$moparent = $object->getMoParent();
-				if(is_object($moparent)) print $moparent->getNomUrl(1);
+				if (is_object($moparent)) print $moparent->getNomUrl(1);
 			} elseif ($key == 'rowid') {
 				print $object->showOutputField($val, $key, $object->id, '');
 			} else {
