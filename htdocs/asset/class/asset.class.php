@@ -307,7 +307,7 @@ class Asset extends CommonObject
 	{
 		global $db, $conf, $langs, $hookmanager;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager, $hookmanager;
+		global $menumanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
