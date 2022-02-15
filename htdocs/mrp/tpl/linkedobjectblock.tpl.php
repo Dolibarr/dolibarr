@@ -45,7 +45,6 @@ $res = $mo_static->fetch($object->id);
 $TMoChilds = $mo_static->getMoChilds();
 
 foreach ($TMoChilds as $key => $objectlink) {
-
 	$ilink++;
 
 	$trclass = 'oddeven';
@@ -59,7 +58,7 @@ foreach ($TMoChilds as $key => $objectlink) {
 	echo '<td class="linkedcol-name nowraponall" >'.$objectlink->getNomUrl(1).'</td>';
 
 	echo '<td class="linkedcol-ref" align="center">';
-//	$result = $product_static->fetch($objectlink->fk_product);
+	//  $result = $product_static->fetch($objectlink->fk_product);
 	print '</td>';
 	echo '<td class="linkedcol-date" align="center">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">-</td>';
