@@ -151,7 +151,7 @@ if (empty($reshook)) {
 
 			$objectbomchildline->fetch($id_bom_line);
 
-			$TMoLines = $moline->fetchAll('', '', '1', '', array('origin_id' => $id_bom_line));
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', '1', '', array('origin_id' => $id_bom_line));
 
 			foreach ($TMoLines as $moline) {
 				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
