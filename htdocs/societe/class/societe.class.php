@@ -2532,7 +2532,7 @@ class Societe extends CommonObject
 	 *      @param	string	$target			  		  add attribute target
 	 *		@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '_self')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '')
 	{
 		global $conf, $langs, $hookmanager;
 
