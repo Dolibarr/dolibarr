@@ -790,7 +790,7 @@ class Facture extends CommonInvoice
 						$result = $newinvoiceline->insert();
 
 						// Defined the new fk_parent_line
-						if ($result > 0 && $newinvoiceline->product_type == 9) {
+						if ($result > 0) {
 							$fk_parent_line = $result;
 						}
 					}
