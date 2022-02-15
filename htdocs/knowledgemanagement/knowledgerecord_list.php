@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class
 
 // for other modules
 if (!empty($conf->categorie->enabled)) {
-	dol_include_once('/categories/class/categorie.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
