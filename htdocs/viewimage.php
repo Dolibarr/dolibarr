@@ -230,7 +230,7 @@ $original_file = str_replace('..\\', '/', $original_file);
 $refname = basename(dirname($original_file)."/");
 
 // Check that file is allowed for view with viewimage.php
-if (!dolIsAllowedForPreview($original_file)) {
+if (!empty($original_file) && !dolIsAllowedForPreview($original_file)) {
 	accessforbidden('This file is not qualified for preview', 0, 0, 1);
 }
 
