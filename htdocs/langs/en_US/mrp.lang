@@ -108,3 +108,4 @@ BOM=Bill Of Materials
 CollapseBOMHelp=You can define the default display of the details of the nomenclature in the configuration of the BOM module
 MOAndLines=Manufacturing Orders and lines
 MoChildGenerate=Generate Child Mo
+ParentMo=MO Parent

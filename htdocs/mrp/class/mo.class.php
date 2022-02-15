@@ -1205,7 +1205,7 @@ class Mo extends CommonObject
 
 	/**
 	 * 	Create an array of lines
-	 * 	@param string $rolefilter
+	 * 	@param string $rolefilter string lines role filter
 	 * 	@return array|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray($rolefilter = '')

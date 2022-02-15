@@ -133,10 +133,9 @@ if (empty($reshook)) {
 	}
 	$triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-
+	//Create MO with Childs
 	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
-		$noback = "";
+		$noback = 0;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 		$mo_parent = $object;
@@ -163,15 +162,12 @@ if (empty($reshook)) {
 			$res = $object->add_object_linked('mo', $mo_parent->id);
 		}
 
-		$noback = 0;
-
-		header("Location: ".$urltogo);
+		header("Location: ".dol_buildpath('/mrp/mo_list.php', 1));
 		exit;
 	}
 
+	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-
-
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
@@ -531,7 +527,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$mo_parent = $object->getMoParent();
 	if (is_object($mo_parent)) {
 		print '<tr class="field_fk_mo_parent">';
-		print '<td class="titlefield fieldname_fk_mo_parent">' . $langs->trans('MOParent') . '</td>';
+		print '<td class="titlefield fieldname_fk_mo_parent">' . $langs->trans('ParentMo') . '</td>';
 		print '<td class="valuefield fieldname_fk_mo_parent">' .$mo_parent->getNomUrl(1).'</td>';
 		print '</tr>';
 	}
