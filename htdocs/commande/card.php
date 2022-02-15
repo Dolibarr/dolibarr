@@ -401,7 +401,7 @@ if (empty($reshook))
 								}
 
 								// Defined the new fk_parent_line
-								if ($result > 0 && $lines[$i]->product_type == 9) {
+								if ($result > 0) {
 									$fk_parent_line = $result;
 								}
 							}
