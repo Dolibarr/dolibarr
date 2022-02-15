@@ -10,7 +10,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1639,6 +1639,15 @@ class Categorie extends CommonObject
 		}
 		if ($withpicto != 2) {
 			$result .= $link.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
+		}
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 		return $result;
 	}
