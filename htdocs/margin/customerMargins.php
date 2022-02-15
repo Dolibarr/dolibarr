@@ -129,8 +129,8 @@ if ($socid > 0) {
 	print '</td></tr>';
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "ASC";
 }

@@ -1178,7 +1178,7 @@ if ($step == 4 && $datatoimport) {
 
 
 	if ($conf->use_javascript_ajax) {
-		print '<script type="text/javascript" language="javascript">';
+		print '<script type="text/javascript">';
 		print 'jQuery(function() {
                     jQuery("#left, #right").sortable({
                         /* placeholder: \'ui-state-highlight\', */

@@ -34,17 +34,21 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files required by the page
 $langs->load("companies");
 
-// Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
+
+// Security check
+if ($user->socid > 0) {
+	if ($object->fk_soc > 0 && $object->fk_soc != $user->socid) {
+		accessforbidden();
+	}
+}
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
 
 $permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -92,7 +96,11 @@ if ($id > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<div class="refidno">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	$morehtmlref .= '<div class="refidno">';
 	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);

@@ -491,7 +491,7 @@ print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="pho
 print '<span class="opacitymedium paddingleft">'.$langs->trans("Everybody").'</span>';
 print '</span>';
 print '</td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</td>';
 
 foreach ($TWeek as $week_number) {
 	print '<td width="6%" align="center" class="bold hide">'.$langs->trans("Week").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</td>';

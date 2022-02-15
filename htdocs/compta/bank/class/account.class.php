@@ -132,10 +132,18 @@ class Account extends CommonObject
 	public $bic;
 
 	/**
-	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database
+	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database (TODO Rename field in database)
 	 * @var string
 	 */
 	public $iban;
+
+	/**
+	 * IBAN number
+	 *
+	 * @var string
+	 * @deprecated see $iban
+	 */
+	public $iban_prefix;
 
 	/**
 	 * Name of account holder

@@ -23,5 +23,5 @@ ALTER TABLE llx_hrm_skillrank ADD CONSTRAINT llx_hrm_skillrank_fk_user_creat FOR
 
 --ALTER TABLE llx_hrm_skillrank ADD UNIQUE INDEX uk_hrm_skillrank_fieldxy(fieldx, fieldy);
 
---ALTER TABLE llx_hrm_skillrank ADD CONSTRAINT llx_hrm_skillrank_fk_field FOREIGN KEY (fk_field) REFERENCES llx_hrm_myotherobject(rowid);
+ALTER TABLE llx_hrm_skillrank ADD CONSTRAINT llx_hrm_skillrank_fk_skill FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill(rowid);
 

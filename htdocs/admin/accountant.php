@@ -85,7 +85,7 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'accountant', $langs->trans("Company"), -1, 'company');
+print dol_get_fiche_head($head, 'accountant', '', -1, '');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -100,7 +100,7 @@ print "<br><br>\n";
  * Edit parameters
  */
 if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
 			document.form_index.action.value="updateedit";
@@ -119,7 +119,7 @@ print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->
 
 // Name
 print '<tr class="oddeven"><td><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="nom" id="name" class="minwidth200" value="'.(GETPOSTISSET('nom') ? GETPOST('nom', 'nohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_NAME) ? $conf->global->MAIN_INFO_ACCOUNTANT_NAME : '')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
+print '<input name="nom" id="name" class="minwidth200" autofocus value="'.(GETPOSTISSET('nom') ? GETPOST('nom', 'nohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_NAME) ? $conf->global->MAIN_INFO_ACCOUNTANT_NAME : '')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
@@ -157,7 +157,7 @@ print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
 print img_picto('', 'object_email', '', false, 0, 0, '', 'pictofixedwidth');
-print '<input name="mail" id="email" class="maxwidth150 widthcentpercentminusx" value="'.(GETPOSTISSET('mail') ? GETPOST('mail', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_MAIL) ? $conf->global->MAIN_INFO_ACCOUNTANT_MAIL : '')).'"></td></tr>';
+print '<input name="mail" id="email" class="maxwidth300 widthcentpercentminusx" value="'.(GETPOSTISSET('mail') ? GETPOST('mail', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_MAIL) ? $conf->global->MAIN_INFO_ACCOUNTANT_MAIL : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web

@@ -353,6 +353,13 @@ class Don extends CommonObject
 		$this->town = ($this->town > 0 ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->country = ($this->country ? $this->country : $this->country);
+		$this->amount = price2num($this->amount);
+
+		// Check parameters
+		if ($this->amount < 0) {
+			$this->error = $langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv("Amount"));
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -382,7 +389,7 @@ class Don extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".((int) $conf->entity);
-		$sql .= ", ".price2num($this->amount);
+		$sql .= ", ".((float) $this->amount);
 		$sql .= ", ".($this->modepaymentid ? $this->modepaymentid : "null");
 		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
 		$sql .= ", '".$this->db->escape($this->firstname)."'";
@@ -464,29 +471,36 @@ class Don extends CommonObject
 		$this->town = ($this->town > 0 ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->country = ($this->country ? $this->country : $this->country);
+		$this->amount = price2num($this->amount);
+
+		// Check parameters
+		if ($this->amount < 0) {
+			$this->error = $langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv("Amount"));
+			return -1;
+		}
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
-		$sql .= "amount = ".price2num($this->amount);
-		$sql .= ",fk_payment = ".($this->modepaymentid ? $this->modepaymentid : "null");
-		$sql .= ",firstname = '".$this->db->escape($this->firstname)."'";
-		$sql .= ",lastname='".$this->db->escape($this->lastname)."'";
-		$sql .= ",societe='".$this->db->escape($this->societe)."'";
-		$sql .= ",address='".$this->db->escape($this->address)."'";
-		$sql .= ",zip='".$this->db->escape($this->zip)."'";
-		$sql .= ",town='".$this->db->escape($this->town)."'";
-		$sql .= ",fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
-		$sql .= ",public=".((int) $this->public);
-		$sql .= ",fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
-		$sql .= ",note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
-		$sql .= ",note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
-		$sql .= ",datedon='".$this->db->idate($this->date)."'";
-		$sql .= ",date_valid=".($this->date_valid ? "'".$this->db->idate($this->date)."'" : "null");
-		$sql .= ",email='".$this->db->escape(trim($this->email))."'";
-		$sql .= ",phone='".$this->db->escape(trim($this->phone))."'";
-		$sql .= ",phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
-		$sql .= ",fk_statut=".((int) $this->statut);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET";
+		$sql .= " amount = ".((float) $this->amount);
+		$sql .= ", fk_payment = ".($this->modepaymentid ? $this->modepaymentid : "null");
+		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
+		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
+		$sql .= ", societe='".$this->db->escape($this->societe)."'";
+		$sql .= ", address='".$this->db->escape($this->address)."'";
+		$sql .= ", zip='".$this->db->escape($this->zip)."'";
+		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
+		$sql .= ", public=".((int) $this->public);
+		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
+		$sql .= ", note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
+		$sql .= ", note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
+		$sql .= ", datedon='".$this->db->idate($this->date)."'";
+		$sql .= ", date_valid=".($this->date_valid ? "'".$this->db->idate($this->date)."'" : "null");
+		$sql .= ", email='".$this->db->escape(trim($this->email))."'";
+		$sql .= ", phone='".$this->db->escape(trim($this->phone))."'";
+		$sql .= ", phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
+		$sql .= ", fk_statut=".((int) $this->statut);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::Update", LOG_DEBUG);

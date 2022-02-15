@@ -363,7 +363,7 @@ if ($resql) {
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans("New"), $langs->trans("Addanaccount"), 'fa fa-plus-circle', './card.php?action=create');
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'accounting_account', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Box to select active chart of account
 	print $langs->trans("Selectchartofaccounts")." : ";
@@ -403,6 +403,11 @@ if ($resql) {
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	$moreforfilter = '';
+
+	$accountstatic = new AccountingAccount($db);
+	$accountparent = new AccountingAccount($db);
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -465,11 +470,6 @@ if ($resql) {
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
-
-	$accountstatic = new AccountingAccount($db);
-	$accountparent = new AccountingAccount($db);
-	$totalarray = array();
-	$totalarray['nbfield'] = 0;
 
 	$i = 0;
 	while ($i < min($num, $limit)) {
@@ -615,8 +615,13 @@ if ($resql) {
 	}
 
 	if ($num == 0) {
-		$totalarray['nbfield']++;
-		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	print "</table>";

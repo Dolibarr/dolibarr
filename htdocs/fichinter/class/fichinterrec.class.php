@@ -279,9 +279,9 @@ class FichinterRec extends Fichinter
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter_rec as f';
 		if ($rowid > 0) {
-			$sql .= ' WHERE f.rowid='.$rowid;
+			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		} elseif ($ref) {
-			$sql .= " WHERE f.titre='".$this->db->escape($ref)."'";
+			$sql .= " WHERE f.titre = '".$this->db->escape($ref)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);

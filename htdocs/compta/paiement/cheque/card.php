@@ -409,7 +409,7 @@ if ($action == 'new') {
 
 	foreach ($accounts as $bid => $account_label) {
 		print '
-        <script language="javascript" type="text/javascript">
+        <script type="text/javascript">
         jQuery(document).ready(function()
         {
             jQuery("#checkall_'.$bid.'").click(function()

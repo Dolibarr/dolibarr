@@ -67,6 +67,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 $type = $object->type;
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -86,9 +87,10 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'confirm_delete') {
+		$savtype = $object->type;
 		$res = $object->delete($user);
 		if ($res > 0) {
-			if ($object->type == 'bank-transfer') {
+			if ($savtype == 'bank-transfer') {
 				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
 			} else {
 				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
@@ -97,22 +99,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Seems to no be used and replaced with $action == 'infocredit'
-	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes') {
-		if ($object->statut == 2) {
-			$res = -1;
-			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
-		} else {
-			$res = $object->set_credite();
-		}
-
-		if ($res >= 0) {
-			header("Location: card.php?id=".$id);
-			exit;
-		}
-	}
-
-	if ($action == 'infotrans' && $user->rights->prelevement->bons->send) {
+	if ($action == 'infotrans' && (($user->rights->prelevement->bons->send && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->send && $object->type == 'bank-transfer'))) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -145,10 +132,10 @@ if (empty($reshook)) {
 	}
 
 	// Set direct debit order to credited, create payment and close invoices
-	if ($action == 'infocredit' && $user->rights->prelevement->bons->credit) {
+	if ($action == 'infocredit' && (($user->rights->prelevement->bons->credit && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->debit && $object->type == 'bank-transfer'))) {
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-		if ($object->statut == 2) {
+		if (($object->type != 'bank-transfer' && $object->statut == BonPrelevement::STATUS_CREDITED) || ($object->type == 'bank-transfer' && $object->statut == BonPrelevement::STATUS_DEBITED)) {
 			$error = 1;
 			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
 		} else {
@@ -178,12 +165,6 @@ if ($id > 0 || $ref) {
 	if (GETPOST('error', 'alpha') != '') {
 		print '<div class="error">'.$object->getErrorString(GETPOST('error', 'alpha')).'</div>';
 	}
-
-	/*if ($action == 'credite')
-	{
-		print $form->formconfirm("card.php?id=".$object->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
-
-	}*/
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
@@ -301,6 +282,7 @@ if ($id > 0 || $ref) {
 	}
 
 	if (!empty($object->date_trans) && $object->date_credit == 0 && $user->rights->prelevement->bons->credit && $action == 'setcredited') {
+		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infocredit">';
@@ -308,29 +290,31 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->selectDate('', '', '', '', '', "infocredit", 1, 1);
+		print $form->selectDate(-1, '', '', '', '', "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';
-		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'"></div>';
+		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($btnLabel).'"></div>';
 		print '</form>';
 		print '<br>';
 	}
-
 
 	// Actions
 	if ($action != 'settransmitted' && $action != 'setcredited') {
 		print "\n".'<div class="tabsAction">'."\n";
 
-		if (empty($object->date_trans) && $user->rights->prelevement->bons->send) {
-			print '<a class="butAction" href="card.php?action=settransmitted&token='.newToken().'&id='.$object->id.'">'.$langs->trans("SetToStatusSent").'</a>';
+		if (empty($object->date_trans)) {
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->send);
+			else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->send);
 		}
 
 		if (!empty($object->date_trans) && $object->date_credit == 0) {
-			print '<a class="butAction" href="card.php?action=setcredited&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ClassCredited").'</a>';
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->debit);
+			else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->credit);
 		}
 
-		print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+		if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->create);
+		else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->creer);
 
 		print '</div>';
 	}
@@ -376,6 +360,9 @@ if ($id > 0 || $ref) {
 		$i = 0;
 
 		$urladd = "&id=".urlencode($id);
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$urladd .= '&limit='.urlencode($limit);
+		}
 
 		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
 		print '<input type="hidden" name="id" value="'.$id.'"/>';
@@ -385,6 +372,12 @@ if ($id > 0 || $ref) {
 		}
 		if (!empty($limit)) {
 			print '<input type="hidden" name="limit" value="'.$limit.'"/>';
+		}
+		if (!empty($sortfield)) {
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+		}
+		if (!empty($sortorder)) {
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
@@ -446,6 +439,8 @@ if ($id > 0 || $ref) {
 		}
 
 		if ($num > 0) {
+			$total = price2num($total, 'MT');
+
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';

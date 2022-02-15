@@ -40,7 +40,6 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 		$objecttype = 'thirdparty';
 	}
 
-	$search_filters = GETPOST('search_filters', 'array');
 	$search_measures = GETPOST('search_measures', 'array');
 
 	//$search_xaxis = GETPOST('search_xaxis', 'array');
@@ -57,7 +56,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 
 	$search_yaxis = GETPOST('search_yaxis', 'array');
-	$search_graph = GETPOST('search_graph', 'none');
+	$search_graph = GETPOST('search_graph', 'restricthtml');
 
 	// Load variable for pagination
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -100,7 +99,8 @@ $arrayoftype = array(
 	'order' => array('label' => 'Orders', 'ObjectClassName' => 'Commande', 'enabled' => $conf->commande->enabled, 'ClassPath' => "/commande/class/commande.class.php"),
 	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/facture/class/facture.class.php"),
 	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
-	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contract'),
+	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
+	'contractdet' => array('label' => 'ContractLines', 'ObjectClassName' => 'ContratLigne', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
 	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
 	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mrp->enabled, 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
@@ -158,6 +158,12 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $search_component_params = array('');
+$search_component_params_hidden = GETPOST('search_component_params_hidden', 'alphanohtml');
+
+// For the case we enter a criteria manually, the search_component_params_input will be defined and must be used in priority
+if (GETPOST('search_component_params_input', 'alphanohtml')) {
+	$search_component_params_hidden = GETPOST('search_component_params_input', 'alphanohtml');
+}
 
 $MAXUNIQUEVALFORGROUP = 20;
 $MAXMEASURESINBARGRAPH = 20;
@@ -175,14 +181,21 @@ $arrayofgroupby = array();
 $arrayofyaxis = array();
 $arrayofvaluesforgroupby = array();
 
-$result = restrictedArea($user, $object->element, 0, '');
+$features = $object->element;
+if (!empty($object->element_for_permission)) {
+	$features = $object->element_for_permission;
+}
+
+restrictedArea($user, $features, 0, '');
+
+$error = 0;
 
 
 /*
  * Actions
  */
 
-
+// None
 
 
 
@@ -245,8 +258,19 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		} else {
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
 		}
-		// TODO Add the where here
-		// ...
+
+		// Add the where here
+		/*
+		$sqlfilters = GETPOST('search_component_params_hidden', 'alphanohtml');
+		if ($sqlfilters) {
+			$errormessage = '';
+			if (dolCheckFilters($sqlfilters, $errormessage)) {
+				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+				$sql .= " WHERE (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
+			} else {
+				print $errormessage;
+			}
+		}*/
 
 		$sql .= ' LIMIT '.($MAXUNIQUEVALFORGROUP + 1);
 
@@ -333,6 +357,24 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="viewgraph">';
 print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
 
+$viewmode = '';
+
+$viewmode .= '<div class="divadvancedsearchfield">';
+$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
+$viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
+$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, 'minwidth100', 1);
+$viewmode .= '</div>';
+
+$num = 0;
+$massactionbutton = '';
+$nav = '';
+$newcardbutton = '';
+$limit = 0;
+
+print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+
+
+
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 
 // Select object
@@ -349,22 +391,23 @@ foreach ($arrayoftype as $key => $val) {
 }
 print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
 if (empty($conf->use_javascript_ajax)) {
-	print '<input type="submit" class="button buttongen button-save" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
+	print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 } else {
-	print '<script type="text/javascript" language="javascript">
+	print '<!-- js code to reload page with good object type -->
+	<script type="text/javascript">
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
         		console.log("Reload for "+jQuery("#objecttype").val());
-                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily ? '&tabfamily='.$tabfamily : '').'";
+                location.href = "'.$_SERVER["PHP_SELF"].'?objecttype="+jQuery("#objecttype").val()+"'.($tabfamily ? '&tabfamily='.urlencode($tabfamily) : '').(GETPOST('show_search_component_params_hidden', 'int') ? '&show_search_component_params_hidden='.((int) GETPOST('show_search_component_params_hidden', 'int')) : '').'";
         	});
         });
     </script>';
 }
 print '</div><div class="clearboth"></div>';
 
-// Add Filter
+// Add Filter (you can use param &show_search_component_params_hidden=1 for debug)
 print '<div class="divadvancedsearchfield quatrevingtpercent">';
-print $form->searchComponent(array($object->element => $object->fields), $search_component_params);
+print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
 print '</div>';
 
 // Add measures into array
@@ -388,22 +431,22 @@ if ($object->isextrafieldmanaged) {
 		}
 	}
 }
-print '<div class="inline-block"><span class="fas fa-chart-line paddingright" title="'.$langs->trans("Measures").'"></span>'.$langs->trans("Measures").'</div> ';
-print $form->multiselectarray('search_measures', $arrayofmesures, $search_measures, 0, 0, 'minwidth400', 1);
-print '</div>';
-
-
-// Group by
-print '<div class="divadvancedsearchfield">';
-print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("GroupBy").'"></span>'.$langs->trans("GroupBy").'</div> ';
-print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby);
+print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright" title="'.$langs->trans("Measures").'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span>'.$langs->trans("Measures").'</div> ';
+print $form->multiselectarray('search_measures', $arrayofmesures, $search_measures, 0, 0, 'minwidth400', 1);	// Fill the array $arrayofmeasures with possible fields
 print '</div>';
 
 
 // XAxis
 print '<div class="divadvancedsearchfield">';
-print '<div class="inline-block"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("XAxis").'"></span>'.$langs->trans("XAxis").'</div> ';
-print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis);
+print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div> ';
+print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"));	// Fill the array $arrayofxaxis with possible fields
+print '</div>';
+
+
+// Group by
+print '<div class="divadvancedsearchfield">';
+print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div> ';
+print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth200 maxwidth250', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
 print '</div>';
 
 
@@ -449,14 +492,11 @@ if ($mode == 'grid') {
 }
 
 if ($mode == 'graph') {
-	print '<div class="divadvancedsearchfield">';
-	$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
-	print '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-	print $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, 'minwidth100', 1);
-	print '</div>';
+	//
 }
+
 print '<div class="divadvancedsearchfield">';
-print '<input type="submit" class="button buttongen button-save" value="'.$langs->trans("Refresh").'">';
+print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
 print '</div>';
 print '</div>';
 print '</form>';
@@ -531,8 +571,16 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	if ($object->ismultientitymanaged == 1) {
 		$sql .= ' AND entity IN ('.getEntity($object->element).')';
 	}
-	foreach ($search_filters as $key => $val) {
-		// TODO Add the where here
+	// Add the where here
+	$sqlfilters = $search_component_params_hidden;
+	if ($sqlfilters) {
+		$errormessage = '';
+		if (dolCheckFilters($sqlfilters, $errormessage)) {
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $sqlfilters).")";
+		} else {
+			print $errormessage;
+		}
 	}
 	$sql .= ' GROUP BY ';
 	foreach ($search_xaxis as $key => $val) {

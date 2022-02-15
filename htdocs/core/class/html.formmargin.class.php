@@ -213,7 +213,7 @@ class FormMargin
 
 		$marginInfo = $this->getMarginInfosArray($object, $force_price);
 
-		$parameters=array('marginInfo'=>$marginInfo);
+		$parameters=array('marginInfo'=>&$marginInfo);
 		$reshook = $hookmanager->executeHooks('displayMarginInfos', $parameters, $object, $action);
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

@@ -387,7 +387,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
-				$result = $contratline->active_line($user, $date_start, -1, $comment);
+				$result = $contratline->active_line($user, $date_start, -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
 					$this->error = $contratline->error;
@@ -913,10 +913,11 @@ class Contrat extends CommonObject
 			return -3;
 		}
 
+		// Now set the global properties on contract not stored into database.
 		$this->nbofservices = count($this->lines);
-		$this->total_ttc = price2num($total_ttc); // TODO For the moment value is false as value is not stored in database for line linked to products
-		$this->total_tva = price2num($total_vat); // TODO For the moment value is false as value is not stored in database for line linked to products
-		$this->total_ht = price2num($total_ht); // TODO For the moment value is false as value is not stored in database for line linked to products
+		$this->total_ttc = price2num($total_ttc);
+		$this->total_tva = price2num($total_vat);
+		$this->total_ht = price2num($total_ht);
 
 		return $this->lines;
 	}
@@ -2607,6 +2608,12 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $table_element = 'contratdet';
 
+
+	/**
+	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea()
+	 */
+	public $element_for_permission = 'contrat';
+
 	/**
 	 * @var int ID
 	 */
@@ -2738,6 +2745,34 @@ class ContratLigne extends CommonObjectLine
 	const STATUS_OPEN = 4;
 	const STATUS_CLOSED = 5;
 
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>30, 'index'=>1),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
+		'qty' =>array('type'=>'integer', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35, 'isameasure'=>1),
+		'total_ht' =>array('type'=>'integer', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>36, 'isameasure'=>1),
+		'total_tva' =>array('type'=>'integer', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>37, 'isameasure'=>1),
+		'total_ttc' =>array('type'=>'integer', 'label'=>'AmountTTC', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>38, 'isameasure'=>1),
+		//'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		//'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_contrat' =>array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'Contract', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_product' =>array('type'=>'integer:Product:product/class/product.class.php:1', 'label'=>'Product', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		//'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
+		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
+		//'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'fk_user_ouverture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserOpen', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCloture', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 4=>'Open', 5=>'Closed'))
+	);
+	// END MODULEBUILDER PROPERTIES
 
 
 	/**

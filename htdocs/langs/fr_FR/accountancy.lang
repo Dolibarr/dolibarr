@@ -48,7 +48,7 @@ CountriesNotInEEC=Pays hors CEE
 CountriesInEECExceptMe=Pays de la CEE sauf %s
 CountriesExceptMe=Tous les pays sauf %s
 AccountantFiles=Exporter les documents sources
-ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événements sources (liste en CSV et PDF) qui ont servi à générer votre comptabilité.
+ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événements sources (liste en CSV et PDF) qui servent à générer votre comptabilité.
 ExportAccountingSourceDocHelp2=Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
@@ -286,7 +286,7 @@ ValidateMovements=Valider les mouvements
 DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
 
 ValidateHistory=Lier automatiquement
-AutomaticBindingDone=Liaison automatique faite
+AutomaticBindingDone=Liaisons automatiques effectuées (%s) - Liaison automatique impossible pour certains enregistrements (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crédit = %s
@@ -329,7 +329,7 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert e
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
 
 ## Export
-NotifiedExportDate=Date d'exportation notifiée sur les lignes exportées (la modification des enregistrements ne sera pas possible)
+NotifiedExportDate=Marquer les lignes comme exportées (la modification des enregistrements ne sera pas possible)
 NotifiedValidationDate=Validation des enregistrements (la modification ou la suppression des enregistrements ne sera pas possible)
 ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
@@ -387,7 +387,8 @@ SaleExport=Vente export
 SaleEEC=Vente dans la CEE
 SaleEECWithVAT=Vente dans la CEE avec un taux de TVA non nul, on considère qu'il s'agit d'une vente intracommunutaire à un assujetti à la TVA et le compte comptable suggéré est le compte comptable de vente classique.
 SaleEECWithoutVATNumber=Vente dans la CEE avec un taux de TVA nul mais sans numéro de TVA intracommunutaire renseigné dans la fiche du tiers. Nous forçons ainsi le compte comptable de vente classique. Il est nécessaire de renseigner le numéro de TVA intracommunautaire dans la fiche du tiers ou changer le compte comptable de vente si nécessaire.
-
+ForbiddenTransactionAlreadyExported=Interdit : La transaction a été validée et/ou exportée.
+ForbiddenTransactionAlreadyValidated=Interdit : La transaction a été validée.
 ## Dictionary
 Range=Plage de comptes
 Calculated=Calculé
@@ -404,6 +405,7 @@ NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
 UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement.
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Désolé ce module n'est pas compatible avec la fonctionnalité expérimentale des factures de situation
 
 ## Import
 ImportAccountingEntries=Écritures comptables

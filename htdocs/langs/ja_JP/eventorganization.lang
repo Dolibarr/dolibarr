@@ -44,10 +44,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = 会議の提案を受け取った後
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = ブースの提案を受けて送信するメールのテンプレート。
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = ブースへの登録が支払われた後に送信する電子メールのテンプレート。
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = イベントへの登録が支払われた後に送信する電子メールのテンプレート。
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = 出席する大虐殺の電子メールのテンプレート
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 話者への虐待の電子メールのテンプレート
-EVENTORGANIZATION_FILTERATTENDEES_CAT = 参加者作成カード/フォームで取引先の選択リストをカテゴリでフィルタリングする
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = 顧客タイプを使用して、参加者作成カード/フォームで取引先の選択リストをフィルタリングする
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Massaction「Sendemails」からスピーカーにメールを送信するときに使用するメールのテンプレート
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 参加者リストの大衆活動「メール送信」からメールを送信するときに使用するメールのテンプレート
+EVENTORGANIZATION_FILTERATTENDEES_CAT = 出席者を作成/追加するフォームで、サードパーティのリストをカテゴリ内のサードパーティに制限する
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = 出席者を作成/追加するフォームで、サードパーティのリストを性質のあるサードパーティに制限する
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = ブースのお支払い
 EventOrganizationEmailRegistrationPayment = イベントへの登録
 EventOrganizationMassEmailAttendees = 参加者へのコミュニケーション
 EventOrganizationMassEmailSpeakers = 話者とのコミュニケーション
+ToSpeakers=スピーカーへ
 
 #
 # Event
@@ -83,21 +84,21 @@ PriceOfRegistration=登録価格
 PriceOfRegistrationHelp=イベントの登録または参加に支払う価格
 PriceOfBooth=ブース立ちのサブスクリプション価格
 PriceOfBoothHelp=ブース出展用サブスクリプション価格
-EventOrganizationICSLink=イベントのICSをリンクする
+EventOrganizationICSLink=会議用のリンクICS
 ConferenceOrBoothInformation=会議またはブース情報
 Attendees=参加者
 ListOfAttendeesOfEvent=イベントプロジェクトの参加者リスト
 DownloadICSLink = ICS リンクをダウンロード
-EVENTORGANIZATION_SECUREKEY = 会議への公開登録リンクのセキュアキー
+EVENTORGANIZATION_SECUREKEY = 会議を提案するための公開登録ページのキーを確保するためのシード
 SERVICE_BOOTH_LOCATION = ブースの場所に関する請求書の行に使用されるサービス
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 会議への参加者のサブスクリプションに関する請求書の行に使用されるサービス
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = イベントへの参加者のサブスクリプションに関する請求書の行に使用されるサービス
 NbVotes=投票数
 #
 # Status
 #
 EvntOrgDraft = 下書き
 EvntOrgSuggested = 提案済
-EvntOrgConfirmed = 確認済み
+EvntOrgConfirmed = 確定済み
 EvntOrgNotQualified = 資格なし
 EvntOrgDone = 済
 EvntOrgCancelled = キャンセル
@@ -125,7 +126,7 @@ BoothLocationFee = イベントのブース位置: '%s' で %s から %s まで
 EventType = イベント種別
 LabelOfBooth=ブースラベル
 LabelOfconference=会議ラベル
-ConferenceIsNotConfirmed=登録できません。会議はまだ確認されていない
+ConferenceIsNotConfirmed=登録できません。会議はまだ確定されていない
 DateMustBeBeforeThan=%sは必ず%sの前
 DateMustBeAfterThan=%sは必ず%sの後
 
@@ -153,7 +154,7 @@ AlreadyVoted = あなたはすでにこのイベントに投票している。
 VoteError = 投票中にエラーが発生した。もう一度やり直し願う。
 
 SubscriptionOk = 登録が検証された
-ConfAttendeeSubscriptionConfirmation = イベントへのサブスクリプションの確認
+ConfAttendeeSubscriptionConfirmation = イベントへのサブスクリプションの確定
 Attendee = 参加者
 PaymentConferenceAttendee = 会議参加者の支払い
 PaymentBoothLocation = ブースの場所の支払い

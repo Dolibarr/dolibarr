@@ -1013,7 +1013,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.'='.((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
@@ -2114,15 +2114,26 @@ class BookKeepingLine
 	public $montant;
 
 	/**
-	 * @var float Amount
+	 * @var float 	Amount
 	 */
 	public $amount;
+
+	/**
+	 * @var float 	Multicurrency amount
+	 */
+	public $multicurrency_amount;
+
+	/**
+	 * @var float 	Multicurrency code
+	 */
+	public $multicurrency_code;
 
 	/**
 	 * @var string Sens
 	 */
 	public $sens;
 	public $lettering_code;
+	public $date_lettering;
 
 	/**
 	 * @var int ID
@@ -2153,4 +2164,9 @@ class BookKeepingLine
 	 * @var integer|string $date_validation;
 	 */
 	public $date_validation;
+
+	/**
+	 * @var integer|string $date_lim_reglement;
+	 */
+	public $date_lim_reglement;
 }

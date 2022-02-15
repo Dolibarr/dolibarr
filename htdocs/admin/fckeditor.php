@@ -159,11 +159,12 @@ if (empty($conf->use_javascript_ajax)) {
 			continue;
 		}
 
+		$constante = 'FCKEDITOR_ENABLE_'.$const;
+		print '<!-- constant = '.$constante.' -->'."\n";
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_object("", $picto[$const]).'</td>';
 		print '<td>'.$langs->trans($desc).'</td>';
 		print '<td class="center" width="100">';
-		$constante = 'FCKEDITOR_ENABLE_'.$const;
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -192,7 +193,7 @@ if (empty($conf->use_javascript_ajax)) {
 		if ($linkstomode) {
 			$linkstomode .= ' - ';
 		}
-		$linkstomode .= '<a href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
+		$linkstomode .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
 		if ($mode == $newmode) {
 			$linkstomode .= '<strong>';
 		}
@@ -222,7 +223,7 @@ if (empty($conf->use_javascript_ajax)) {
 	// Add env of ckeditor
 	// This is to show how CKEditor detect browser to understand why editor is disabled or not. To help debug.
 	/*
-		print '<br><script language="javascript">
+		print '<br><script type="text/javascript">
 		function jsdump(obj, id) {
 			var out = \'\';
 			for (var i in obj) {

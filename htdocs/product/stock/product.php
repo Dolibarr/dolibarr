@@ -552,7 +552,7 @@ if ($id > 0 || $ref) {
 
 	if (!empty($conf->use_javascript_ajax)) {
 		?>
-		<script type="text/javascript" language="javascript">
+		<script type="text/javascript">
 			$(document).ready(function() {
 				$(".collapse_batch").click(function() {
 					console.log("We click on collapse_batch");

@@ -282,18 +282,21 @@ $dolibarr_nocsrfcheck='0';
 // If set to 1, you will be able to define some command line in the internale Job scheduler module.
 // Default value: '0'
 // Examples: '1'
+//
 $dolibarr_cron_allow_cli='0';
 
 // dolibarr_mailing_limit_sendbyweb
-// Can set a limit for mailing send by web. This overwrite database value. Can be used to restrict on OS level.
+// Can set a limit for mailing send by web. This overwrite database value. Can be used to restrict on system level.
 // Default value: '25'
 // Examples: '-1' (sending by web is forbidden)
+//
 // $dolibarr_mailing_limit_sendbyweb='25';
 
 // dolibarr_mailing_limit_sendbycli
-// Can set a limit for mailing send by cli. This overwrite database value. Can be used to restrict on OS level.
+// Can set a limit for mailing send by cli. This overwrite database value. Can be used to restrict on system level.
 // Default value: '0' (no hard limit, use soft database value if exists)
 // Examples: '-1' (sending by cli is forbidden)
+//
 // $dolibarr_mailing_limit_sendbycli='0';
 
 // MAIN_ANTIVIRUS_COMMAND (as a constant)
@@ -307,6 +310,17 @@ $dolibarr_cron_allow_cli='0';
 // Default value: ''
 // Example: '--fdpass';
 // define('MAIN_ANTIVIRUS_PARAM', '--fdpass');
+
+// php_session_save_handler
+// Try to use the Dolibarr internal session handler that uses a database instead of the PHP handler (experimental).
+// If you enable this feature to 'db', you may also want to enable the following constants:
+//  $dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass
+//  $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_type = $dolibarr_main_db_port
+// Default value: ''
+// Example: 'db';
+//
+// $php_session_save_handler='';
+
 
 
 //##################

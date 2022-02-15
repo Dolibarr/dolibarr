@@ -152,8 +152,8 @@ class box_members_last_subscriptions extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right" width="18"',
-						'text' => '<span class="amount">'.price($obj->subscription).'</span>',
+						'td' => 'class="nowraponall right amount" width="18"',
+						'text' => price($obj->subscription),
 					);
 
 					$this->info_box_contents[$line][] = array(
