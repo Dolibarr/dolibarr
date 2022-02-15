@@ -1427,6 +1427,79 @@ class Mo extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+
+	/**
+	 * Function used to return childs of Mo
+	 *
+	 * @return array if OK, -1 if KO
+	 */
+	public function getMoChilds(){
+
+		$TMoChilds = array();
+		$error = 0;
+
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_mo as mo_child";
+		$sql.= " WHERE fk_parent_line IN ";
+		$sql.= " (SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_production as line_parent";
+		$sql.= " WHERE fk_mo=".((int)$this->id).")";
+
+		$resql = $this->db->query($sql);
+
+		if($resql){
+			if($this->db->num_rows($resql) > 0){
+				while($obj = $this->db->fetch_object($resql)){
+					$MoChild = new Mo($this->db);
+					$res = $MoChild->fetch($obj->rowid);
+					if($res > 0) $TMoChilds[$MoChild->id] = $MoChild;
+					else $error++;
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if($error){
+			return -1;
+		} else {
+			return $TMoChilds;
+		}
+	}
+
+	/**
+	 * Function used to return childs of Mo
+	 *
+	 * @return object Mo if OK, -1 if KO, 0 if not exist
+	 */
+	public function getMoParent(){
+
+		$MoParent = new Mo($this->db);
+		$error = 0;
+
+		$sql = "SELECT lineparent.fk_mo as id_moparent FROM ".MAIN_DB_PREFIX."mrp_mo as mo";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production lineparent ON mo.fk_parent_line = lineparent.rowid";
+		$sql.= " WHERE mo.rowid = ".((int)$this->id);
+
+		$resql = $this->db->query($sql);
+
+		if($resql){
+			if($this->db->num_rows($resql) > 0){
+				$obj = $this->db->fetch_object($resql);
+				$res = $MoParent->fetch($obj->id_moparent);
+				if($res < 0) $error++;
+			} else {
+				return 0;
+			}
+		} else {
+			$error++;
+		}
+
+		if($error){
+			return -1;
+		} else {
+			return $MoParent;
+		}
+	}
 }
 
 /**
@@ -1666,93 +1739,5 @@ class MoLine extends CommonObjectLine
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
-	}
-
-	/**
-	 *  Return a link to the object card (with optionaly the picto)
-	 *
-	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *  @param  string  $option                     On what the link point to ('nolink', '', 'production', ...)
-	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
-	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return	string                              String with URL
-	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
-	{
-		global $conf, $langs, $hookmanager;
-
-		if (!empty($conf->dol_no_mouse_hover)) {
-			$notooltip = 1; // Force disable tooltips
-		}
-
-		$result = '';
-
-		$moparent = new Mo($this->db);
-		$moparent->fetch($this->fk_mo);
-
-		$label = img_picto('', $moparent->picto).' <u class="paddingrightonly">'.$langs->trans("ManufacturingOrder").'</u>';
-		if (isset($moparent->status)) {
-			$label .= ' '.$moparent->getLibStatut(5);
-		}
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$moparent->ref;
-		if (isset($moparent->label)) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$moparent->label;
-		}
-
-		$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$moparent->id;
-		if ($option == 'production') {
-			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$moparent->id;
-		}
-
-		if ($option != 'nolink') {
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-				$add_save_lastsearch_values = 1;
-			}
-			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
-			}
-		}
-
-		$linkclose = '';
-		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$label = $langs->trans("ShowMo");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else {
-			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
-		}
-
-		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= $linkclose.'>';
-		$linkend = '</a>';
-
-		$result .= $linkstart;
-		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($moparent->picto ? $moparent->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		}
-		if ($withpicto != 2) {
-			$result .= $moparent->ref;
-		}
-		$result .= $linkend;
-		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
-
-		global $action, $hookmanager;
-		$hookmanager->initHooks(array('modao'));
-		$parameters = array('id'=>$moparent->id, 'getnomurl'=>$result);
-		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $moparent, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) {
-			$result = $hookmanager->resPrint;
-		} else {
-			$result .= $hookmanager->resPrint;
-		}
-
-		return $result;
 	}
 }

@@ -107,3 +107,4 @@ THMEstimatedHelp=Ce taux permet de définir un coût prévisionnel de l'article
 BOM=Nomenclature
 CollapseBOMHelp=You can define the default display of the details of the nomenclature in the configuration of the BOM module
 MOAndLines=Ordres de fabrication et lignes
+MOParent=Ordre de fabrication parent

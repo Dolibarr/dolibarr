@@ -8406,11 +8406,6 @@ class Form
 					if (empty($conf->expedition->enabled)) {
 						continue; // Do not show if module disabled
 					}
-				} elseif ($objecttype == 'mo') {
-					$tplpath = 'mrp/mo';
-					if (empty($conf->mrp->enabled)) {
-						continue; // Do not show if module disabled
-					}
 				} elseif ($objecttype == 'ficheinter') {
 					$tplpath = 'fichinter';
 					if (empty($conf->ficheinter->enabled)) {
@@ -8447,6 +8442,7 @@ class Form
 					}
 
 					$res = @include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
+
 					if ($res) {
 						$nboftypesoutput++;
 						break;
@@ -8507,6 +8503,7 @@ class Form
 				}
 				unset($tmpproject);
 			}
+
 
 			$possiblelinks = array(
 				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
@@ -8574,6 +8571,7 @@ class Form
 				$sql = $possiblelink['sql'];
 
 				$resqllist = $this->db->query($sql);
+
 				if ($resqllist) {
 					$num = $this->db->num_rows($resqllist);
 					$i = 0;
