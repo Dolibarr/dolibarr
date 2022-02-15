@@ -137,7 +137,8 @@ function bomPrepareHead($object)
  *
  * @return void
  */
-function mrpCollapseBomManagement(){
+function mrpCollapseBomManagement()
+{
 	?>
 
 	<script type="text/javascript" language="javascript">
@@ -180,6 +181,5 @@ function mrpCollapseBomManagement(){
 	</script>
 
 	<?php
-
 }
 
