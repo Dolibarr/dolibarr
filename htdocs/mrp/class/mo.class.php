@@ -1434,7 +1434,8 @@ class Mo extends CommonObject
 	 *
 	 * @return array if OK, -1 if KO
 	 */
-	public function getMoChilds(){
+	public function getMoChilds()
+	{
 
 		$TMoChilds = array();
 		$error = 0;
@@ -1442,16 +1443,16 @@ class Mo extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_mo as mo_child";
 		$sql.= " WHERE fk_parent_line IN ";
 		$sql.= " (SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_production as line_parent";
-		$sql.= " WHERE fk_mo=".((int)$this->id).")";
+		$sql.= " WHERE fk_mo=".((int) $this->id).")";
 
 		$resql = $this->db->query($sql);
 
-		if($resql){
-			if($this->db->num_rows($resql) > 0){
-				while($obj = $this->db->fetch_object($resql)){
+		if ($resql) {
+			if ($this->db->num_rows($resql) > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
 					$MoChild = new Mo($this->db);
 					$res = $MoChild->fetch($obj->rowid);
-					if($res > 0) $TMoChilds[$MoChild->id] = $MoChild;
+					if ($res > 0) $TMoChilds[$MoChild->id] = $MoChild;
 					else $error++;
 				}
 			}
@@ -1459,7 +1460,7 @@ class Mo extends CommonObject
 			$error++;
 		}
 
-		if($error){
+		if ($error) {
 			return -1;
 		} else {
 			return $TMoChilds;
@@ -1471,22 +1472,23 @@ class Mo extends CommonObject
 	 *
 	 * @return object Mo if OK, -1 if KO, 0 if not exist
 	 */
-	public function getMoParent(){
+	public function getMoParent()
+	{
 
 		$MoParent = new Mo($this->db);
 		$error = 0;
 
 		$sql = "SELECT lineparent.fk_mo as id_moparent FROM ".MAIN_DB_PREFIX."mrp_mo as mo";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production lineparent ON mo.fk_parent_line = lineparent.rowid";
-		$sql.= " WHERE mo.rowid = ".((int)$this->id);
+		$sql.= " WHERE mo.rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 
-		if($resql){
-			if($this->db->num_rows($resql) > 0){
+		if ($resql) {
+			if ($this->db->num_rows($resql) > 0) {
 				$obj = $this->db->fetch_object($resql);
 				$res = $MoParent->fetch($obj->id_moparent);
-				if($res < 0) $error++;
+				if ($res < 0) $error++;
 			} else {
 				return 0;
 			}
@@ -1494,7 +1496,7 @@ class Mo extends CommonObject
 			$error++;
 		}
 
-		if($error){
+		if ($error) {
 			return -1;
 		} else {
 			return $MoParent;

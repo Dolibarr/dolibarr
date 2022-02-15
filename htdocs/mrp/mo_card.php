@@ -568,7 +568,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	//Mo Parent
 	$mo_parent = $object->getMoParent();
-	if(is_object($mo_parent)) {
+	if (is_object($mo_parent)) {
 		print '<tr class="field_fk_mo_parent">';
 		print '<td class="titlefield fieldname_fk_mo_parent">' . $langs->trans('MOParent') . '</td>';
 		print '<td class="valuefield fieldname_fk_mo_parent">' .$mo_parent->getNomUrl(1).'</td>';
