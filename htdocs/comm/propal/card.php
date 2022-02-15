@@ -2056,7 +2056,6 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>';
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-
 		if (!empty($conf->global->PROPALE_ALLOW_CHANGE_CUSTOMER) && $object->status == Propal::STATUS_DRAFT) {
 			if ($action != 'editthirdparty') {
 				$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer').' <a href="'.$_SERVER['PHP_SELF'].'?action=editthirdparty&token='.newToken().'&id='.$object->id.'" class="editfielda">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a>';
