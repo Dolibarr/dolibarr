@@ -725,7 +725,7 @@ class Delivery extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -757,6 +757,16 @@ class Delivery extends CommonObject
 			$result .= ' ';
 		}
 		$result .= $linkstart.$this->ref.$linkend;
+
+		global $action;
+		$hookmanager->initHooks(array('deliverydao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
