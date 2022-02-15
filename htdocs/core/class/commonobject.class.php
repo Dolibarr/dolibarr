@@ -7586,10 +7586,20 @@ abstract class CommonObject
      * @return string
      */
     public
-    function getFieldList($prefix = '')
+    function getFieldList($alias = '')
     {
-        $keys = array_keys($this->fields);
-        return implode($prefix == '' ? ', ' : ', ' . $prefix . '.', $keys);
+		$keys = array_keys($this->fields);
+		if (!empty($alias)) {
+			$keys_with_alias = array();
+			foreach ($keys as $fieldname) {
+				$keys_with_alias[] = $alias . '.' . $fieldname;
+			}
+			return implode(',', $keys_with_alias);
+		} else {
+			return implode(',', $keys);
+		}
+    	//$keys = array_keys($this->fields);
+        //return implode($prefix == '' ? ', ' : ', ' . $prefix . '.', $keys);
     }
 
     /**

@@ -904,6 +904,13 @@ while ($i < min($num, $limit))
 		print '<td class="tdoverflowmax100">'.$obj->poste.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
+	// Address
+	if (!empty($arrayfields['s.address']['checked']))
+	{
+		$obj->address = preg_replace("/;/", " ", $obj->address);
+		print '<td>'.$obj->address.'</td>';
+		if (!$i) $totalarray['nbfield']++;
+	}
 	// Zip
 	if (!empty($arrayfields['p.zip']['checked']))
 	{

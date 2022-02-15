@@ -3585,7 +3585,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
                 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
                 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
                 'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
-                'multicurrency',
+                'multicurrency','envelope',
                 'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
                 'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
                 'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
