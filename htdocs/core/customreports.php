@@ -99,7 +99,8 @@ $arrayoftype = array(
 	'order' => array('label' => 'Orders', 'ObjectClassName' => 'Commande', 'enabled' => $conf->commande->enabled, 'ClassPath' => "/commande/class/commande.class.php"),
 	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/facture/class/facture.class.php"),
 	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
-	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contract'),
+	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
+	'contractdet' => array('label' => 'ContractLines', 'ObjectClassName' => 'ContratLigne', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
 	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
 	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mrp->enabled, 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
@@ -159,6 +160,11 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $search_component_params = array('');
 $search_component_params_hidden = GETPOST('search_component_params_hidden', 'alphanohtml');
 
+// For the case we enter a criteria manually, the search_component_params_input will be defined and must be used in priority
+if (GETPOST('search_component_params_input', 'alphanohtml')) {
+	$search_component_params_hidden = GETPOST('search_component_params_input', 'alphanohtml');
+}
+
 $MAXUNIQUEVALFORGROUP = 20;
 $MAXMEASURESINBARGRAPH = 20;
 
@@ -175,7 +181,12 @@ $arrayofgroupby = array();
 $arrayofyaxis = array();
 $arrayofvaluesforgroupby = array();
 
-restrictedArea($user, $object->element, 0, '');
+$features = $object->element;
+if (!empty($object->element_for_permission)) {
+	$features = $object->element_for_permission;
+}
+
+restrictedArea($user, $features, 0, '');
 
 $error = 0;
 
@@ -420,22 +431,22 @@ if ($object->isextrafieldmanaged) {
 		}
 	}
 }
-print '<div class="inline-block"><span class="fas fa-chart-line paddingright" title="'.$langs->trans("Measures").'"></span>'.$langs->trans("Measures").'</div> ';
-print $form->multiselectarray('search_measures', $arrayofmesures, $search_measures, 0, 0, 'minwidth400', 1);
+print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright" title="'.$langs->trans("Measures").'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span>'.$langs->trans("Measures").'</div> ';
+print $form->multiselectarray('search_measures', $arrayofmesures, $search_measures, 0, 0, 'minwidth400', 1);	// Fill the array $arrayofmeasures with possible fields
 print '</div>';
 
 
 // XAxis
 print '<div class="divadvancedsearchfield">';
-print '<div class="inline-block"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("XAxis").'"></span>'.$langs->trans("XAxis").'</div> ';
-print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis);
+print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div> ';
+print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"));	// Fill the array $arrayofxaxis with possible fields
 print '</div>';
 
 
 // Group by
 print '<div class="divadvancedsearchfield">';
-print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("GroupBy").'"></span>'.$langs->trans("GroupBy").'</div> ';
-print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby);
+print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div> ';
+print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth200 maxwidth250', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
 print '</div>';
 
 
@@ -561,7 +572,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		$sql .= ' AND entity IN ('.getEntity($object->element).')';
 	}
 	// Add the where here
-	$sqlfilters = GETPOST('search_component_params_hidden', 'alphanohtml');
+	$sqlfilters = $search_component_params_hidden;
 	if ($sqlfilters) {
 		$errormessage = '';
 		if (dolCheckFilters($sqlfilters, $errormessage)) {

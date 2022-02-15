@@ -189,7 +189,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	/* padding: 5px; */
 }
-.pageplusone,
+.pageplusone, .divadvancedsearchfieldcompinput,
 div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
@@ -201,6 +201,10 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 		<?php
 	}
 	?>
+}
+.divadvancedsearchfieldcompinput {
+	background: #fff;
+	border-bottom: solid 1px var(--inputbordercolor);
 }
 input[name=duration_value], input[name=durationhour]
 {
@@ -269,7 +273,7 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input), select:focus, .select2-container--open .select2-selection--single {
+input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input), select:focus, .select2-container--open .select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -1032,8 +1036,8 @@ div.divsearchfield {
 	background: #fff;
 	padding-top: 3px;
 	padding-bottom: 3px;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-<?php echo $left; ?>: 0;
+	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
 	height: 24px;
 }
@@ -1045,6 +1049,32 @@ div.divsearchfield {
 	width: auto;
 	margin: 0 !important;
 	padding: 3px;
+}
+.tagsearch {
+	padding: 2px;
+	padding-right: 4px;
+	padding-bottom: 3px;
+	background: #ddd;
+	border-radius: 4px;
+}
+.tagsearchdelete {
+	color: #999;
+	cursor: pointer;
+	display: inline-block;
+	font-weight: bold;
+	margin-right: 2px;
+	padding-left: 4px;
+}
+
+.caretleftaxis {
+	margin-left: -13px;
+	margin-top: -1px;
+	position: absolute;
+}
+.caretdownaxis {
+	margin-left: -12px;
+	margin-top: 0;
+	position: absolute;
 }
 
 .a-filter, .a-mesure {

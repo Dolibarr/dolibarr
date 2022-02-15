@@ -9744,24 +9744,45 @@ class Form
 
 		$ret = '';
 
-		$ret .= '<div class="nowrap centpercent">';
+		$ret .= '<div class="divadvancedsearchfieldcomp inline-block">';
 		//$ret .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor paddingright">';
-		$ret .= '<span class="fas fa-filter linkobject boxfilter" title="Filter" id="idsubimgproductdistribution"></span>';
-		$ret .= $langs->trans("Filters");
+		$ret .= '<span class="fas fa-filter linkobject boxfilter" title="'.dol_escape_htmltag($langs->trans("Filters")).'" id="idsubimgproductdistribution"></span>';
+		//$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
-		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500 maxwidth300onsmartphone valignmiddle">';
-		$texttoshow = '<div class="opacitymedium inline-block search_component_searchtext">'.$langs->trans("Search").'</div>';
 
-		$ret .= '<div class="search_component inline-block valignmiddle">'.$texttoshow.'</div>';
-		$ret .= '</div>';
-		$ret .= "<!-- Syntax of Generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
-		if (GETPOST('show_search_component_params_hidden', 'int')) {
+		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
+
+		// Show select fields as tags.
+		$ret .= '<div name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
+
+		if ($search_component_params_hidden) {
+			if (!preg_match('/^\(.*\)$/', $search_component_params_hidden)) {	// If $search_component_params_hidden does not start and end with ()
+				$search_component_params_hidden .= '('.$search_component_params_hidden.')';
+			}
+			$errormessage = '';
+			if (!dolCheckFilters($search_component_params_hidden, $errormessage)) {
+				print 'ERROR in parsing search string';
+			}
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+			//var_dump($search_component_params_hidden);
+			$htmltags = preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $search_component_params_hidden);
+			//var_dump($htmltags);
+			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.$htmltags.'</span>';
+		}
+
+		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+
+		//$ret .= search_component_params
+		//$texttoshow = '<div class="opacitymedium inline-block search_component_searchtext">'.$langs->trans("Search").'</div>';
+		//$ret .= '<div class="search_component inline-block valignmiddle">'.$texttoshow.'</div>';
+
+		$show_search_component_params_hidden = 1;
+		if ($show_search_component_params_hidden) {
 			$ret .= '<input type="hidden" name="show_search_component_params_hidden" value="1">';
 		}
-		$ret .= '<input type="'.(GETPOST('show_search_component_params_hidden', 'int') ? 'text' : 'hidden').'" name="search_component_params_hidden" class="search_component_params_hidden marginleftonly" value="'.$search_component_params_hidden.'">';
-
+		$ret .= "<!-- We store the full search string into this field. For example: (t.ref:like:'SO-%') and ((t.ref:like:'CO-%') or (t.ref:like:'AA%')) -->";
+		$ret .= '<input type="hidden" name="search_component_params_hidden" value="'.dol_escape_htmltag($search_component_params_hidden).'">';
 		// For compatibility with forms that show themself the search criteria in addition of this component, we output the fields
 		foreach ($arrayofcriterias as $criterias) {
 			foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
@@ -9785,8 +9806,14 @@ class Form
 				}
 			}
 		}
+
 		$ret .= '</div>';
 
+		$ret .= "<!-- Syntax of Generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
+		$ret .= '<input type="text" placeholder="'.$langs->trans("Search").'" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
+
+		$ret .= '</div>';
+		$ret .= '</div>';
 
 		return $ret;
 	}
