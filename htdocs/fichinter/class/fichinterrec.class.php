@@ -628,7 +628,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '')
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 		$label = $langs->trans("ShowInterventionModel").': '.$this->ref;

@@ -1388,7 +1388,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 

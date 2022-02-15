@@ -1612,7 +1612,7 @@ class Categorie extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '')
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 		$label = $langs->trans("ShowCategory").': '.($this->ref ? $this->ref : $this->label);
