@@ -8126,8 +8126,15 @@ class Form
 				}
 				$out .= '};'."\n";
 				$out .= '$(document).ready(function () {
-							$(\'#'.$htmlname.'\').'.$tmpplugin.'({
-								dir: \'ltr\',
+							$(\'#'.$htmlname.'\').'.$tmpplugin.'({';
+				if ($placeholder) {
+					$out .= '
+								placeholder: {
+								    id: \'-1\',
+								    text: \''.dol_escape_js($placeholder).'\'
+								  },';
+				}
+				$out .= '		dir: \'ltr\',
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 							 	templateResult: formatResult,		/* For 4.0 */

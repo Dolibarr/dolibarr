@@ -431,8 +431,8 @@ if ($object->isextrafieldmanaged) {
 		}
 	}
 }
-print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright" title="'.$langs->trans("Measures").'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span>'.$langs->trans("Measures").'</div> ';
-print $form->multiselectarray('search_measures', $arrayofmesures, $search_measures, 0, 0, 'minwidth400', 1);	// Fill the array $arrayofmeasures with possible fields
+print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div> ';
+print $form->multiselectarray('search_measures', $arrayofmesures, $search_measures, 0, 0, 'minwidth400', 1, 0, '', '', $langs->trans("Measures"));	// Fill the array $arrayofmeasures with possible fields
 print '</div>';
 
 

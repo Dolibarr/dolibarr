@@ -1197,6 +1197,17 @@ div.divsearchfield {
 	padding-left: 4px;
 }
 
+.caretleftaxis {
+	margin-left: -13px;
+	margin-top: -1px;
+	position: absolute;
+}
+.caretdownaxis {
+	margin-left: -12px;
+	margin-top: 0;
+	position: absolute;
+}
+
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
@@ -5843,6 +5854,10 @@ input.select2-input {
 	color: #FFF !important;
 }
 
+.select2-container .select2-selection--multiple {
+	min-height: 28px !important;
+}
+
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	border: 1px solid #e4e4e4;
 }
@@ -5919,6 +5934,9 @@ input.select2-input {
 	border-left: none;
 	border-right: none;
 	border-radius: 0 !important;
+}
+.select2-selection--multiple input.select2-search__field {
+	border-bottom: none !important;
 }
 .select2-search__field
 {
