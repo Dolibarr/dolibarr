@@ -113,7 +113,7 @@ print '<div class="fichecenter"><div class="fichehalfleft">';
 
 if (!empty($conf->handson->enabled) && $user->rights->handson->label->read) {
 
-	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "handson_label as c";
+	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "handson_label as c ORDER BY date_creation DESC";
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -124,7 +124,9 @@ if (!empty($conf->handson->enabled) && $user->rights->handson->label->read) {
 		print '<tr class="liste_titre">';
 		print '<th colspan="1">' . $langs->trans("Sendungsnummer") . '</th>';
 		print '<th colspan="1">' . $langs->trans("EmpfängerIn") . '</th>';
-		print '<th colspan="3">' . $langs->trans("Erstellungsdatum") . '</th></tr>';
+		print '<th colspan="1">' . $langs->trans("Erstellungsdatum") . '</th>';
+		print '<th colspan="1">' . $langs->trans("Bestätigungsmail") . '</th>';
+		print '<th></th></tr>';
 
 
 		$var = true;
@@ -152,6 +154,9 @@ if (!empty($conf->handson->enabled) && $user->rights->handson->label->read) {
 				print '</td>';
 				print '<td class="nowrap">';
 				print $labelstatic->showOutputField($labelstatic->fields['date_creation'], 'date_creation', $obj->date_creation);
+				print '</td>';
+				print '<td>';
+				print $obj->mail_sent == 1 ? img_picto('gesendet', 'check') : img_picto('nicht gesendet', 'envelope');
 				print '</td>';
 				print '<td>';
 				if (labelIsEditable($obj->date_creation)) {

@@ -287,7 +287,7 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = 'SELECT t.';
+$sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
 
 // Some dolibarr problems; otherwise fields are ambiguous
@@ -297,6 +297,7 @@ $sql .= $object->getFieldList('t');
 
 // select team fields
 $sql .= ', te.ref, te.label, te.coach';
+
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -675,8 +676,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td' . ($cssforfield ? ' class="' . $cssforfield . '"' : '') . '>';
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
-			} elseif ($key == 'label') {
-				print $object->getNomUrl(0, '', 0, '', -1, 1);
+			} elseif ($key == 'lastname') {
+				//print $object->getNomUrl(0, '', 0, '', -1, 1);
+				print '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->id.'">'.$object->lastname.'</a>';
 			} elseif ($key == 'rowid') {
 				print $object->showOutputField($val, $key, $object->id, '');
 			} else {

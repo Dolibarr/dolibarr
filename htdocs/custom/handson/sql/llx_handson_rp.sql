@@ -31,6 +31,8 @@ CREATE TABLE llx_handson_rp(
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	last_main_doc varchar(255), 
+	url varchar(255), 
+	note_public text, 
 	import_key varchar(14), 
 	model_pdf varchar(255)
 	-- END MODULEBUILDER FIELDS

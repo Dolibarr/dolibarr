@@ -1,5 +1,8 @@
 # CHANGELOG HANDSON FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
+#### 2.0.10.2
+Bug fix Coaches Table
+
 ### 2.0.7
 DHL Label works now
 

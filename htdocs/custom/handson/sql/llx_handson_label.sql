@@ -19,6 +19,7 @@ CREATE TABLE llx_handson_label(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) NOT NULL, 
 	contact integer, 
+	mail_sent bool, 
 	editable bool, 
 	date_creation datetime NOT NULL, 
 	tms timestamp, 

@@ -143,6 +143,9 @@ function getDataFromForm (data, address) {
 			case 'shipdate':
 				data[7] = $(e.target).val();
 				break;
+			case 'sendmail':
+				data[8] = $(e.target).val();
+				break;
 		}
 		addButtons(data, address);
 	});
@@ -239,6 +242,7 @@ function checkCreateShipmentLabel(datastring, addrstring) {
 			'</div>' +
 			'<div>Referenz <input type="text" id="reference" value="' + data[6] + '" size="6" ></div>' +
 			'<div>Versanddatum <input type="text" id="shipdate" value="' + data[7] + '" size="6" ></div>' +
+			'<div>Automatische E-Mail an Empfänger <input type="checkbox" id="sendmail"></div>' +
 			'<div id="statusMessage"></div>' +
 			'</form>');
 

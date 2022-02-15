@@ -18,6 +18,7 @@
 ALTER TABLE llx_handson_label ADD INDEX idx_handson_label_rowid (rowid);
 ALTER TABLE llx_handson_label ADD INDEX idx_handson_label_ref (ref);
 ALTER TABLE llx_handson_label ADD INDEX idx_handson_label_contact (contact);
+ALTER TABLE llx_handson_label ADD INDEX idx_handson_label_mail_sent (mail_sent);
 ALTER TABLE llx_handson_label ADD INDEX idx_handson_label_editable (editable);
 ALTER TABLE llx_handson_label ADD CONSTRAINT llx_handson_label_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 -- END MODULEBUILDER INDEXES
