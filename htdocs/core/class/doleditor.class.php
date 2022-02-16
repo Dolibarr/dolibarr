@@ -121,9 +121,11 @@ class DolEditor
 	 *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
 	 *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
 	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
+	 *  @param	string	$moreparams			Add extra tags to the textarea
+	 *  @param	string	$morecss			Add extra css to the textarea
 	 *  @return	void|string
 	 */
-	public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '')
+	public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '', $moreparam = '', $morecss = '')
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -141,7 +143,7 @@ class DolEditor
 			//$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
 			// TODO We do not put the 'disabled' tag because on a read form, it change style with grey.
 			//print $this->content;
-			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"').' class="flat">';
+			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"').' '.($moreparam ? $moreparam : '').' class="flat '.$morecss.'">';
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 
