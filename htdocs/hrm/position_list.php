@@ -270,6 +270,10 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
+$vacant = GETPOST('vacant', 'alphanohtml') === 'on';
+if($vacant) {
+    $sql .= ' AND t.fk_user = 0';
+}
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }

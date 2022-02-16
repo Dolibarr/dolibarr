@@ -79,3 +79,5 @@ NoEval=Aucune évaluation effectuée pour cet employé
 HowManyUserWithThisMaxNote=Nombre d'employés avec ce niveau
 HighestRank=Plus haut niveau
 SkillComparison=Comparaison des compétences
+VacantPosition=Poste vacant
+VacantCheckboxHelper=Cocher cette option affichera le(s) poste(s) comme non pourvu(s)
