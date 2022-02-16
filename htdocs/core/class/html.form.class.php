@@ -2219,9 +2219,10 @@ class Form
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		string		$nooutput				No print, return the output into a string
+	 *  @param		int			$status_purchase		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
 	 *  @return		void|string
 	 */
-	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0)
+	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2261,7 +2262,7 @@ class Form
 				}
 			}
 			// mode=1 means customers products
-			$urloption = 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
+			$urloption = 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&status_purchase='.$status_purchase.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
 			//Price by customer
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 				$urloption .= '&socid='.$socid;
@@ -2357,7 +2358,7 @@ class Form
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
 		} else {
-			$out .= $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
+			$out .= $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus, $status_purchase);
 		}
 
 		if (empty($nooutput)) {
@@ -2453,9 +2454,10 @@ class Form
 	 *										    'warehouseopen' = count products from open warehouses,
 	 *										    'warehouseclosed' = count products from closed warehouses,
 	 *										    'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 *  @param		int		$status_purchase	Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
 	 *  @return     array    				    Array of keys for json
 	 */
-	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '')
+	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2592,6 +2594,9 @@ class Form
 			}
 		} elseif ($status >= 0) {
 			$sql .= " AND p.tosell = ".((int) $status);
+		}
+		if ($status_purchase >= 0) {
+			$sql .= " AND p.tobuy = ".((int) $status_purchase);
 		}
 		// Filter by product type
 		if (strval($filtertype) != '') {
