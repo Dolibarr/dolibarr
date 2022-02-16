@@ -1141,7 +1141,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobjectline.class.php';
 class PositionLine extends CommonObjectLine
 {
 	// To complete with content of an object PositionLine
-	// We should have a field rowid, fk_position and position
+	// We should have a field rowid , fk_position and position
 
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
