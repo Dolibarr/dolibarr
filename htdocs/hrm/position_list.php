@@ -270,7 +270,7 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
-$vacant = GETPOST('vacant', 'alphanohtml') === 'on';
+$vacant = GETPOST('search_fk_uservacant', 'alphanohtml') === 'on';
 if($vacant) {
     $sql .= ' AND t.fk_user = 0';
 }
