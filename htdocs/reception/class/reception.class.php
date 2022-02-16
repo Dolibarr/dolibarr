@@ -723,7 +723,7 @@ class Reception extends CommonObject
 	/**
 	 * Get status from all dispatched lines
 	 *
-	 * @return		int		                        <0 if KO, >0 if OK
+	 * @return		int		                        <0 if KO, Status of reception if OK
 	 */
 	public function getStatusDispatch()
 	{
