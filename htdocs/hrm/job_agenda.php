@@ -217,6 +217,6 @@ if ($object->id > 0) {
 	}
 }
 
-//End of page
+// End of page
 llxFooter();
 $db->close();
