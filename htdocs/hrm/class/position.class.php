@@ -855,22 +855,20 @@ class Position extends CommonObject
      * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
      * @return string
      */
-    public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
-    {
+    public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0) {
         global $langs;
 
-        if($key == 'fk_user')
-        {
+        if($key == 'fk_user') {
             $vacantId = $keyprefix.$key.'vacant'.$keysuffix;
 
             $out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
-            $out.= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;' . $langs->trans("Vacant") . '</label>';
+            $out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>';
 
             ?>
             <script type="text/javascript">
-                $(document).ready(function() {
-                    var checkbox = $('#<?php print $vacantId; ?>')
-                    var searchfkuser = $('#<?php print $keyprefix.$key.$keysuffix; ?>')
+                $(document).ready(function () {
+                    var checkbox = $('#<?php print $vacantId; ?>');
+                    var searchfkuser = $('#<?php print $keyprefix.$key.$keysuffix; ?>');
                     checkbox.click(function () {
                         if (checkbox.prop('checked')) {
                             searchfkuser.val(0).trigger('change');
@@ -878,12 +876,12 @@ class Position extends CommonObject
                         } else {
                             searchfkuser.prop('disabled', 0);
                         }
-                    })
-                })
+                    });
+                });
             </script>
             <?php
         }
-        else{
+        else {
             $out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
         }
 
@@ -903,12 +901,10 @@ class Position extends CommonObject
      * @param  mixed   $morecss        Value for css to define size. May also be a numeric.
      * @return string
      */
-    public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
-    {
+    public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '') {
         global $langs;
 
-        if($key == 'fk_user' && $this->fk_user == 0)
-        {
+        if($key == 'fk_user' && $this->fk_user == 0) {
             return $langs->trans("VacantPosition");
         }
         return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
