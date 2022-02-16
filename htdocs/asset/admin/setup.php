@@ -47,7 +47,7 @@ $type = 'asset';
 
 $arrayofparameters = array(
 	'ASSET_ACCOUNTANCY_CATEGORY'=>array('type'=>'accountancy_category', 'enabled'=>1),
-	//'ASSET_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
+	'ASSET_DEPRECIATION_DURATION_PER_YEAR'=>array('type'=>'string', 'css'=>'minwidth200', 'enabled'=>1),
 	//'ASSET_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'ASSET_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	//'ASSET_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),

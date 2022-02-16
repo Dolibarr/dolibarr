@@ -103,6 +103,15 @@ class modAsset extends DolibarrModules
 		//                             1=>array('ASSETS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array();
+		$this->const[1] = array(
+			"ASSET_DEPRECIATION_DURATION_PER_YEAR",
+			"chaine",
+			"365",
+			"Duration per year to calculate depreciation. In some case, can be 360 days",
+			0,
+			'current',
+			1
+		);
 
 
 		if (!isset($conf->asset) || !isset($conf->asset->enabled)) {
