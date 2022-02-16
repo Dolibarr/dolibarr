@@ -1094,7 +1094,7 @@ class Asset extends CommonObject
 		//-----------------------------------------------------
 		$sql = "SELECT fk_asset, depreciation_mode, cumulative_depreciation_ht";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation";
-		$sql .= " WHERE rowid = " . $asset_depreciation_id;
+		$sql .= " WHERE rowid = " . (int) $asset_depreciation_id;
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->errors[] = $langs->trans('AssetErrorFetchCumulativeDepreciation') . ': ' . $this->db->lasterror();
@@ -1105,7 +1105,7 @@ class Asset extends CommonObject
 				if (!empty($options->deprecation_options_fields[$mode_key])) {
 					$sql = "UPDATE " . MAIN_DB_PREFIX . $options->deprecation_options_fields[$mode_key]['table'];
 					$sql .= " SET total_amount_last_depreciation_ht = " . $obj->cumulative_depreciation_ht;
-					$sql .= " WHERE fk_asset = " . $obj->fk_asset;
+					$sql .= " WHERE fk_asset = " . (int) $obj->fk_asset;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$this->errors[] = $langs->trans('AssetErrorSetLastCumulativeDepreciation') . ': ' . $this->db->lasterror();
