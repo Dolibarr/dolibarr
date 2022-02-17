@@ -77,7 +77,6 @@ if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
 }
 
-
 $res = 0;
 if (!$res && file_exists("../main.inc.php")) {
 	$res = include '../main.inc.php';
