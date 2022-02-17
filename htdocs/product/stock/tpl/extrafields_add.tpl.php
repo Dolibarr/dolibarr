@@ -37,13 +37,13 @@ if (empty($conf) || !is_object($conf)) {
 
 // Other attributes
 if (!isset($parameters)) $parameters = array();
-
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $movement, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (empty($reshook)) {
 	$params = array();
 	if (isset($tpl_context)) $params['tpl_context'] = $tpl_context;
 	$params['cols'] = $parameters['colspanvalue'];
+    var_dump($movement);
 	print $movement->showOptionals($extrafields, 'create', $params);
 }
 

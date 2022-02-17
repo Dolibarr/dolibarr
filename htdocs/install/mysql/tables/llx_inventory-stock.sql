@@ -30,7 +30,8 @@ CREATE TABLE llx_inventory
   fk_warehouse integer DEFAULT NULL, 
   fk_product integer DEFAULT NULL, 
   status integer DEFAULT 0, 
-  title varchar(255) NOT NULL, 
+  title varchar(255) NOT NULL,
+  include_sub_warehouse boolean NOT NULL DEFAULT FALSE,
   date_inventory datetime DEFAULT NULL,
   date_validation datetime DEFAULT NULL,
   import_key               varchar(14)       	-- import key
