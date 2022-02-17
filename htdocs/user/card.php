@@ -1375,6 +1375,30 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		/*
+		 * Switch User
+		 */
+		if ($action == 'switchuser') {
+			if ($user->entity != 0) {
+				setEventMessage($langs->trans('NotSuperAdmin'));
+			} else {
+				$u = new User($db);
+				$res = $u->fetch(GETPOST('id', 'int'));
+				if ($res) {
+					//Check if user is active
+					if ($u->statut == 1) {
+						$_SESSION["dol_login"] = $u->login;
+						header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+						exit;
+					} else {
+						setEventMessage('ErrorUserNotActive');
+					}
+				} else {
+					setEventMessage('ErrorFetchUser');
+				}
+			}
+		}
+
+		/*
 		 * Fiche en mode visu
 		 */
 		if ($action != 'edit') {
@@ -1824,6 +1848,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
+
+				//Switch User
+				if ($user->entity == 0) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=switchuser">'.$langs->trans('SwitchUser').'</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoSwitchUser")).'">'.$langs->trans('NoSwitchUser').'</a></div>';
+				}
+
 				if (empty($user->socid)) {
 					if (!empty($object->email)) {
 						$langs->load("mails");
