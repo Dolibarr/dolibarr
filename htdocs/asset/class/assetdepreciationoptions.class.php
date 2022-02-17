@@ -474,7 +474,7 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			// Delete old accountancy codes
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $mode_info['table'];
-			$sql .= " WHERE " . ($asset_id > 0 ? " fk_asset = " . $asset_id : " fk_asset_model = " . $asset_model_id);
+			$sql .= " WHERE " . ($asset_id > 0 ? " fk_asset = " . (int) $asset_id : " fk_asset_model = " . (int) $asset_model_id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->errors[] = $langs->trans('AssetErrorDeleteDepreciationOptionsForMode', $mode_key) . ': ' . $this->db->lasterror();
