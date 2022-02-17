@@ -84,6 +84,11 @@ abstract class CommonObject
 	public $element;
 
 	/**
+	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea(). Undefined means same value than $element.
+	 */
+	public $element_for_permission;
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element;
