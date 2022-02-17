@@ -2011,7 +2011,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 
 			if (empty($phototoshow)) {      // Show No photo link (picto of object)
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action') {
 					$width = 80;
 					$cssclass = 'photorefcenter';
@@ -2029,8 +2028,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
 				$morehtmlleft .= $nophoto;
 				$morehtmlleft .= '</div></div>';
-
-				$morehtmlleft .= '</div>';
 			}
 		}
 	}
