@@ -1059,7 +1059,7 @@ class Setup extends DolibarrApi
 	 * @param int       $page       Page number (starting from zero)
 	 * @param string    $zipcode    To filter on zipcode
 	 * @param string    $town       To filter on city name
-	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	 * @param int       $active     Town is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of towns
 	 *
@@ -1073,7 +1073,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid AS id, zip, town, fk_county, fk_pays AS fk_country";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ziptown as t";
-		$sql .= " AND t.active = ".((int) $active);
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($zipcode) {
 			$sql .= " AND t.zip LIKE '%".$this->db->escape($zipcode)."%'";
 		}
@@ -1780,7 +1780,7 @@ class Setup extends DolibarrApi
 
 		$result = $establishment->fetch($id);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving state : '.$establishment->error);
+			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->error);
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Establishment not found');
 		}

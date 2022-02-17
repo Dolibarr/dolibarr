@@ -500,6 +500,7 @@ if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
+$sql .= ' ORDER BY aa.account_number';
 
 dol_syslog('htdocs/accountancy/customer/index.php');
 $resql = $db->query($sql);
