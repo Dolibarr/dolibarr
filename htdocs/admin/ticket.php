@@ -478,7 +478,7 @@ if (!$conf->use_javascript_ajax) {
 	print '<input type="hidden" name="action" value="setvarworkflow">';
 }
 
-print load_fiche_titre($langs->trans("Workflow"), '', '');
+print load_fiche_titre($langs->trans("Other"), '', '');
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
