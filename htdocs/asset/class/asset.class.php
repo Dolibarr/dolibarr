@@ -659,7 +659,7 @@ class Asset extends CommonObject
 		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
-		$sql .= " WHERE ad.fk_asset = " . $this->id;
+		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " ORDER BY ad.depreciation_date ASC";
 
 		$resql = $this->db->query($sql);
@@ -714,7 +714,7 @@ class Asset extends CommonObject
 		$sql .= "SELECT COUNT(*) AS has_bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
-		$sql .= " WHERE ad.fk_asset = " . $this->id;
+		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " AND iab.fk_docdet IS NOT NULL";
 
 		$resql = $this->db->query($sql);
@@ -838,7 +838,7 @@ class Asset extends CommonObject
 			$modes[$mode_key] = $this->db->escape($mode_key);
 		}
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
-		$sql .= " WHERE fk_asset = " . $this->id;
+		$sql .= " WHERE fk_asset = " . (int) $this->id;
 		$sql .= " AND depreciation_mode NOT IN ('" . implode("', '", $modes) . "')";
 
 		$resql = $this->db->query($sql);
@@ -872,7 +872,7 @@ class Asset extends CommonObject
 				$sql .= "SELECT ad.depreciation_date, ad.cumulative_depreciation_ht";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 				$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
-				$sql .= " WHERE ad.fk_asset = " . $this->id;
+				$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 				$sql .= " AND ad.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
 				$sql .= " AND iab.fk_docdet IS NOT NULL";
 				$sql .= " ORDER BY ad.depreciation_date DESC";
@@ -893,7 +893,7 @@ class Asset extends CommonObject
 				// Set last cumulative depreciation
 				$sql = "UPDATE " . MAIN_DB_PREFIX . $options->deprecation_options_fields[$mode_key]['table'];
 				$sql .= " SET total_amount_last_depreciation_ht = " . (empty($last_cumulative_depreciation_ht) ? 0 : $last_cumulative_depreciation_ht);
-				$sql .= " WHERE fk_asset = " . $this->id;
+				$sql .= " WHERE fk_asset = " . (int) $this->id;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = $langs->trans('AssetErrorSetLastCumulativeDepreciation') . ': ' . $this->db->lasterror();
@@ -904,7 +904,7 @@ class Asset extends CommonObject
 				// Delete old lines
 				$sql = "DELETE " . MAIN_DB_PREFIX . "asset_depreciation FROM " . MAIN_DB_PREFIX . "asset_depreciation";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab ON ab.doc_type = 'asset' AND ab.fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid";
-				$sql .= " WHERE " . MAIN_DB_PREFIX . "asset_depreciation.fk_asset = " . $this->id;
+				$sql .= " WHERE " . MAIN_DB_PREFIX . "asset_depreciation.fk_asset = " . (int) $this->id;
 				$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
 				$sql .= " AND ab.fk_docdet IS NULL";
 				if ($last_depreciation_date !== "") $sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
