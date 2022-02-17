@@ -1774,7 +1774,7 @@ class Setup extends DolibarrApi
 
 		$result = $establishment->fetch($id);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving state : '.$establishment->error);
+			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->error);
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Establishment not found');
 		}
