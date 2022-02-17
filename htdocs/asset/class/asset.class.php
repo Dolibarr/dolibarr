@@ -839,7 +839,7 @@ class Asset extends CommonObject
 		}
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
 		$sql .= " WHERE fk_asset = " . (int) $this->id;
-		$sql .= " AND depreciation_mode NOT IN ('" . implode("', '", $modes) . "')";
+		$sql .= " AND depreciation_mode NOT IN ('" . $this->db->sanitize(implode("', '", $modes)) . "')";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
