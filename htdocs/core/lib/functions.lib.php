@@ -10801,7 +10801,7 @@ function dolForgeCriteriaCallback($matches)
 {
 	global $db;
 
-	//dol_syslog("Convert matches ".$matches[1]);
+	dol_syslog("Convert matches ".$matches[1]);
 	if (empty($matches[1])) {
 		return '';
 	}

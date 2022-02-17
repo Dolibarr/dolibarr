@@ -20,6 +20,7 @@ ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts
 Contract=Contract
 ContractLine=Contract line
+ContractLines=Contract lines
 Closing=Closing
 NoContracts=No contracts
 MenuServices=Services

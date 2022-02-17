@@ -173,6 +173,7 @@ class DolibarrApi
 		unset($object->stats_mrptoproduce);
 
 		unset($object->element);
+		unset($object->element_for_permission);
 		unset($object->fk_element);
 		unset($object->table_element);
 		unset($object->table_element_line);
