@@ -192,9 +192,9 @@ if ($resql) {
 		$sub_bom_product->fetch($obj->fk_product);
 
 		$sub_bom = new BOM($object->db);
-        if(!empty($obj->fk_bom_child)){
+		if (!empty($obj->fk_bom_child)) {
 			$sub_bom->fetch($obj->fk_bom_child);
-        }
+		}
 
 		$sub_bom_line = new BOMLine($object->db);
 		$sub_bom_line->fetch($obj->rowid);
@@ -236,11 +236,11 @@ if ($resql) {
 		// Efficiency
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
 
-        if(!empty($sub_bom->id)){
-            $sub_bom->calculateCosts();
-            print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom->total_cost * $sub_bom_line->qty * $line->qty).'</td>';
+		if (!empty($sub_bom->id)) {
+			$sub_bom->calculateCosts();
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom->total_cost * $sub_bom_line->qty * $line->qty).'</td>';
 			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
-        } elseif ($sub_bom_product->cost_price > 0) {
+		} elseif ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty).'</td>';
 			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
