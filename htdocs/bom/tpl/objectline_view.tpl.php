@@ -180,6 +180,7 @@ if ($action == 'selectlines') {
 print '</tr>';
 
 // Select of all the sub-BOM lines
+// From this pont to the end of the file, we only take care of sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
 $sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);
@@ -191,7 +192,9 @@ if ($resql) {
 		$sub_bom_product->fetch($obj->fk_product);
 
 		$sub_bom = new BOM($object->db);
-		$sub_bom->fetch($obj->fk_bom_child);
+		if (!empty($obj->fk_bom_child)) {
+			$sub_bom->fetch($obj->fk_bom_child);
+		}
 
 		$sub_bom_line = new BOMLine($object->db);
 		$sub_bom_line->fetch($obj->rowid);
@@ -233,20 +236,23 @@ if ($resql) {
 		// Efficiency
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
 
-		// Cost price if it's defined
-		if ($sub_bom_product->cost_price > 0) {
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $line->qty).'</td>';
-			$total_cost+= $sub_bom_product->cost_price * $line->qty;
+		if (!empty($sub_bom->id)) {
+			$sub_bom->calculateCosts();
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom->total_cost * $sub_bom_line->qty * $line->qty).'</td>';
+			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
+		} elseif ($sub_bom_product->cost_price > 0) {
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty).'</td>';
+			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $line->qty).'</td>';
-			$total_cost.= $sub_bom_product->pmp * $line->qty;
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty).'</td>';
+			$total_cost.= $sub_bom_product->pmp * $sub_bom_line->qty * $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
 			$sql_supplier_price.= ' WHERE fk_product = '. (int) $sub_bom_product->id;
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
-				$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty;
+				$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
 
 				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($line_cost).'</td>';
 				$total_cost+= $line_cost;
