@@ -358,7 +358,7 @@ if ($action == 'create') {
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td>';
-	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST('type', 'alpha') : Account::TYPE_CURRENT, 'type');
+	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST('type', 'int') : Account::TYPE_CURRENT, 'type');
 	print '</td></tr>';
 
 	// Currency
@@ -471,7 +471,7 @@ if ($action == 'create') {
 	print '</table>';
 	print '<br>';
 
-	$type = GETPOST('type');
+	$type = (GETPOSTISSET("type") ? GETPOST('type', 'int') : Account::TYPE_CURRENT); // add default value
 	if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 		print '<table class="border centpercent">';
 
@@ -857,7 +857,7 @@ if ($action == 'create') {
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		$formbank->selectTypeOfBankAccount((GETPOSTISSET('type') ? GETPOST('type', 'alpha') : $object->type), 'type');
+		$formbank->selectTypeOfBankAccount((GETPOSTISSET('type') ? GETPOST('type', 'int') : $object->type), 'type');
 		print '</td></tr>';
 
 		// Currency
@@ -1002,7 +1002,8 @@ if ($action == 'create') {
 
 		print '</table>';
 
-		if (GETPOST("type") == Account::TYPE_SAVINGS || GETPOST("type") == Account::TYPE_CURRENT) {
+		$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : $object->type); // add default current value
+		if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 			print '<br>';
 
 			//print '<div class="underbanner clearboth"></div>';
