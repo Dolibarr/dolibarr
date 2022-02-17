@@ -101,6 +101,7 @@ class Inventory extends CommonObject
 		'entity'         => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'title'          => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax200'),
 		'fk_warehouse'   => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
+		'include_sub_warehouse'    => array('type'=>'boolean', 'label'=>'IncludeSubWarehouse', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'index'=>0, 'position'=>31),
 		'fk_product'     => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
 		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>'$conf->global->STOCK_INVENTORY_ADD_A_VALUE_DATE', 'position'=>35),	// This date is not used so disabled by default.
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
@@ -691,6 +692,30 @@ class Inventory extends CommonObject
 		$this->initAsSpecimenCommon();
 		$this->title = '';
 	}
+
+
+	/**
+	 * Return the child warehouse of the current one
+	 *
+	 * @return int | array             <0 if KO, >0 if OK
+	 */
+	public function getchildWarehouse()
+	{
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'entrepot';
+		$sql.= ' WHERE fk_parent='.$this->id;
+		$sql.= ' ORDER BY rowid';
+		$resql = $this->db->query($sql);
+		if($resql && $this->db->num_rows($resql)>0){
+			$TChildWarehouse = array();
+			while ($obj = $this->db->fetch_object($resql)){
+				$TChildWarehouse[] = $obj->rowid;
+			}
+			return $TChildWarehouse;
+		} else {
+			return -1;
+		}
+	}
+
 }
 
 /**
