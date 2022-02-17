@@ -211,7 +211,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 				$message .= ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody'))."\n\n";
 				$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket')."\n";
 
-				$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket', 2)).'/view.php?track_id='.$object->track_id;
+				$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
 				$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'">'.$object->track_id.'</a>')."\n";
 				$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl')."\n\n";
 
