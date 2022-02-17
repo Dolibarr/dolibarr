@@ -31,7 +31,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 // DDOS protection
-$size = (int) !empty($_SERVER['CONTENT_LENGTH'])?$_SERVER['CONTENT_LENGTH']:0;
+$size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
 if ($size > 10000) {
 	http_response_code(413);
 	$langs->loadLangs(array("errors", "install"));
