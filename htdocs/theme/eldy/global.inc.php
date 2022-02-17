@@ -264,7 +264,8 @@ input:invalid, select:invalid, input.--error , select.--error {
 
 section.setupsection {
 	padding: 20px;
-	background-color: var(--colorbacktitle1);
+	/* background-color: var(--colorbacktitle1); */
+	background-color: #f0f0f0;
 	border-radius: 5px;
 }
 
@@ -727,6 +728,9 @@ textarea.centpercent {
 .center {
 	text-align: center;
 	margin: 0px auto;
+}
+.centerimp {
+	text-align: center !important;
 }
 .alignstart {
 	text-align: start;
@@ -5917,6 +5921,7 @@ span#select2-taskid-container[title^='--'] {
 }
 
 span.select2.select2-container.select2-container--default {
+	text-align: initial;
 	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
 	border-left: none;
 	border-top: none;

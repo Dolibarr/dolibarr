@@ -621,10 +621,10 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 foreach ($search as $key => $val) {
-	if (is_array($search[$key]) && count($search[$key])) {
-		foreach ($search[$key] as $skey) {
+	if (is_array($val) && count($val)) {
+		foreach ($val as $skey) {
 			if ($skey != '') {
-				$param .= '&search_'.$key.'[]='.urlencode($skey);
+				$param .= (!empty($val)) ? '&search_'.$key.'[]='.urlencode($skey) : "";
 			}
 		}
 	} elseif ($search[$key] != '') {

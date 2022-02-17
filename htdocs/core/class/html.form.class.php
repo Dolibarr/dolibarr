@@ -1106,13 +1106,13 @@ class Form
 			}
 
 			print '<option value="0"';
-			if (0 == $selected) {
+			if (0 == $selected || ($selected == -1 && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT') == 'product')) {
 				print ' selected';
 			}
 			print '>'.$langs->trans("Product");
 
 			print '<option value="1"';
-			if (1 == $selected) {
+			if (1 == $selected || ($selected == -1 && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT') == 'service')) {
 				print ' selected';
 			}
 			print '>'.$langs->trans("Service");

@@ -244,6 +244,7 @@ class box_members_by_type extends ModeleBoxes
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total"',
 						'td' => 'class="liste_total"',
 						'text' => $langs->trans("Total")
 					);

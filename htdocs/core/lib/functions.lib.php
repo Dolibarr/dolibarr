@@ -2573,11 +2573,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
-	//print 'gm:'.$gm.' gm==auto:'.($gm == 'auto').'<br>';
 
 	if ($gm === 'auto') {
 		$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
+	//print 'gm:'.$gm.' gm === auto:'.($gm === 'auto').'<br>';exit;
 
 	// Clean parameters
 	if ($hour == -1 || empty($hour)) {

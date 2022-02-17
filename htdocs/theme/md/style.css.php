@@ -885,6 +885,9 @@ textarea.centpercent {
 	text-align: center;
 	margin: 0px auto;
 }
+.centerimp {
+	text-align: center !important;
+}
 .alignstart {
 	text-align: start;
 }
@@ -6108,6 +6111,10 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
   position: relative;
   cursor: text;
   overflow: hidden;
+}
+
+span.select2.select2-container.select2-container--default {
+	text-align: initial;
 }
 
 
