@@ -45,7 +45,7 @@ print '<tr class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabl
 print '<td>';
 if ($res) {
 	print $tmpproduct->getNomUrl(1);
-	if($tmpbom->id) {
+	if ($tmpbom->id) {
 		print ' ' . $langs->trans("or") . ' ';
 		print $tmpbom->getNomUrl(1);
 		print ' <a class="collapse_bom" id="collapse-' . $line->id . '" href="#">';
@@ -94,7 +94,6 @@ $resql = $this->db->query($sql);
 if ($resql) {
 	// Loop on all the sub-BOM lines if they exist
 	while ($obj = $this->db->fetch_object($resql)) {
-
 		$sub_bom_product = new Product($this->db);
 		$sub_bom_product->fetch($obj->fk_product);
 		$sub_bom_product->load_stock();
