@@ -1270,7 +1270,7 @@ if (empty($reshook)) {
 							$object->lines[] = $line; // insert new line in current object
 
 							// Defined the new fk_parent_line
-							if ($result > 0 && $line->product_type == 9) {
+							if ($result > 0) {
 								$fk_parent_line = $result;
 							}
 						}
@@ -1781,7 +1781,7 @@ if (empty($reshook)) {
 										}
 
 										// Defined the new fk_parent_line
-										if ($result > 0 && $lines[$i]->product_type == 9) {
+										if ($result > 0) {
 											$fk_parent_line = $result;
 										}
 									}
@@ -4951,14 +4951,14 @@ if ($action == 'create') {
 	// List of payments already done
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder paymenttable" width="100%">';
+	print '<table class="noborder paymenttable centpercent">';
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">'.($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 	print '<td class="liste_titre">'.$langs->trans('Date').'</td>';
 	print '<td class="liste_titre">'.$langs->trans('Type').'</td>';
 	if (!empty($conf->banque->enabled)) {
-		print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
+		print '<td class="liste_titre">'.$langs->trans('BankAccount').'</td>';
 	}
 	print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
 	print '<td class="liste_titre" width="18">&nbsp;</td>';

@@ -205,6 +205,8 @@ with
 with
 	foreach ($value[1] as $k => $v) {
 
+
+
 JSGANTT:
 --------
 * Replace in function JSGantt.taskLink
@@ -233,9 +235,11 @@ JCROP:
 * Remove analytics tag into file index.html
 
 
+
 JQUERYFILETREE:
 ---------------
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
+
 
 
 RESTLER:

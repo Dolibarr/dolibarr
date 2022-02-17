@@ -847,7 +847,7 @@ class BOM extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('bomdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1086,7 +1086,7 @@ class BOM extends CommonObject
 					if ($res>0) {
 						$bom_child->calculateCosts();
 						$line->childBom[] = $bom_child;
-						$this->total_cost += $bom_child->total_cost;
+						$this->total_cost += $bom_child->total_cost  * $line->qty;
 					} else {
 						$this->error = $bom_child->error;
 						return -2;
@@ -1521,7 +1521,7 @@ class BOMLine extends CommonObjectLine
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('bomlinedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

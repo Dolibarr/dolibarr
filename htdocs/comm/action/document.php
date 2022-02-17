@@ -201,7 +201,8 @@ if ($object->id > 0) {
 	if (empty($object->fulldayevent)) {
 		print dol_print_date($object->datep, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datep, 'day', 'tzuser');
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+		print dol_print_date($object->datep, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 	}
 	if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));
@@ -214,7 +215,8 @@ if ($object->id > 0) {
 	if (empty($object->fulldayevent)) {
 		print dol_print_date($object->datef, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datef, 'day', 'tzuser');
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+		print dol_print_date($object->datef, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 	}
 	if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));

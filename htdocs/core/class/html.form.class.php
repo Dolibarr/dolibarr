@@ -1106,13 +1106,13 @@ class Form
 			}
 
 			print '<option value="0"';
-			if (0 == $selected) {
+			if (0 == $selected || ($selected == -1 && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT') == 'product')) {
 				print ' selected';
 			}
 			print '>'.$langs->trans("Product");
 
 			print '<option value="1"';
-			if (1 == $selected) {
+			if (1 == $selected || ($selected == -1 && getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT') == 'service')) {
 				print ' selected';
 			}
 			print '>'.$langs->trans("Service");
@@ -2219,9 +2219,10 @@ class Form
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		string		$nooutput				No print, return the output into a string
+	 *  @param		int			$status_purchase		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
 	 *  @return		void|string
 	 */
-	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0)
+	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2261,7 +2262,7 @@ class Form
 				}
 			}
 			// mode=1 means customers products
-			$urloption = 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
+			$urloption = 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&status_purchase='.$status_purchase.'&finished='.$finished.'&hidepriceinlabel='.$hidepriceinlabel.'&warehousestatus='.$warehouseStatus;
 			//Price by customer
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 				$urloption .= '&socid='.$socid;
@@ -2357,7 +2358,7 @@ class Form
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
 		} else {
-			$out .= $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
+			$out .= $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus, $status_purchase);
 		}
 
 		if (empty($nooutput)) {
@@ -2453,9 +2454,10 @@ class Form
 	 *										    'warehouseopen' = count products from open warehouses,
 	 *										    'warehouseclosed' = count products from closed warehouses,
 	 *										    'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 *  @param		int		$status_purchase	Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
 	 *  @return     array    				    Array of keys for json
 	 */
-	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '')
+	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2592,6 +2594,9 @@ class Form
 			}
 		} elseif ($status >= 0) {
 			$sql .= " AND p.tosell = ".((int) $status);
+		}
+		if ($status_purchase >= 0) {
+			$sql .= " AND p.tobuy = ".((int) $status_purchase);
 		}
 		// Filter by product type
 		if (strval($filtertype) != '') {
@@ -7379,7 +7384,18 @@ class Form
 
 		$objecttmp = null;
 
-		$InfoFieldList = explode(":", $objectdesc);
+		// Example of value for $objectdec:
+		// Bom:bom/class/bom.class.php:0:t.status=1
+		// Bom:bom/class/bom.class.php:0:t.status=1:ref
+		// Bom:bom/class/bom.class.php:0:(t.status:=:1):ref
+		$InfoFieldList = explode(":", $objectdesc, 4);
+		$vartmp = $InfoFieldList[3];
+		$reg = array();
+		if (preg_match('/^.*:(\w*)$/', $vartmp, $reg)) {
+			$InfoFieldList[4] = $reg[1];	// take the sort field
+		}
+		$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);	// take the filter field
+
 		$classname = $InfoFieldList[0];
 		$classpath = $InfoFieldList[1];
 		$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
@@ -8122,8 +8138,15 @@ class Form
 				}
 				$out .= '};'."\n";
 				$out .= '$(document).ready(function () {
-							$(\'#'.$htmlname.'\').'.$tmpplugin.'({
-								dir: \'ltr\',
+							$(\'#'.$htmlname.'\').'.$tmpplugin.'({';
+				if ($placeholder) {
+					$out .= '
+								placeholder: {
+								    id: \'-1\',
+								    text: \''.dol_escape_js($placeholder).'\'
+								  },';
+				}
+				$out .= '		dir: \'ltr\',
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 							 	templateResult: formatResult,		/* For 4.0 */
@@ -9740,24 +9763,45 @@ class Form
 
 		$ret = '';
 
-		$ret .= '<div class="nowrap centpercent">';
+		$ret .= '<div class="divadvancedsearchfieldcomp inline-block">';
 		//$ret .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
-		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor paddingright">';
-		$ret .= '<span class="fas fa-filter linkobject boxfilter" title="Filter" id="idsubimgproductdistribution"></span>';
-		$ret .= $langs->trans("Filters");
+		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
+		$ret .= '<span class="fas fa-filter linkobject boxfilter pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Filters")).'" id="idsubimgproductdistribution"></span>';
+		//$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
-		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500 maxwidth300onsmartphone valignmiddle">';
-		$texttoshow = '<div class="opacitymedium inline-block search_component_searchtext">'.$langs->trans("Search").'</div>';
 
-		$ret .= '<div class="search_component inline-block valignmiddle">'.$texttoshow.'</div>';
-		$ret .= '</div>';
-		$ret .= "<!-- Syntax of Generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
-		if (GETPOST('show_search_component_params_hidden', 'int')) {
+		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
+
+		// Show select fields as tags.
+		$ret .= '<div name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
+
+		if ($search_component_params_hidden) {
+			if (!preg_match('/^\(.*\)$/', $search_component_params_hidden)) {	// If $search_component_params_hidden does not start and end with ()
+				$search_component_params_hidden .= '('.$search_component_params_hidden.')';
+			}
+			$errormessage = '';
+			if (!dolCheckFilters($search_component_params_hidden, $errormessage)) {
+				print 'ERROR in parsing search string';
+			}
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
+			//var_dump($search_component_params_hidden);
+			$htmltags = preg_replace_callback('/'.$regexstring.'/', 'dolForgeCriteriaCallback', $search_component_params_hidden);
+			//var_dump($htmltags);
+			$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch"><span class="tagsearchdelete select2-selection__choice__remove">x</span> '.$htmltags.'</span>';
+		}
+
+		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+
+		//$ret .= search_component_params
+		//$texttoshow = '<div class="opacitymedium inline-block search_component_searchtext">'.$langs->trans("Search").'</div>';
+		//$ret .= '<div class="search_component inline-block valignmiddle">'.$texttoshow.'</div>';
+
+		$show_search_component_params_hidden = 1;
+		if ($show_search_component_params_hidden) {
 			$ret .= '<input type="hidden" name="show_search_component_params_hidden" value="1">';
 		}
-		$ret .= '<input type="'.(GETPOST('show_search_component_params_hidden', 'int') ? 'text' : 'hidden').'" name="search_component_params_hidden" class="search_component_params_hidden marginleftonly" value="'.$search_component_params_hidden.'">';
-
+		$ret .= "<!-- We store the full search string into this field. For example: (t.ref:like:'SO-%') and ((t.ref:like:'CO-%') or (t.ref:like:'AA%')) -->";
+		$ret .= '<input type="hidden" name="search_component_params_hidden" value="'.dol_escape_htmltag($search_component_params_hidden).'">';
 		// For compatibility with forms that show themself the search criteria in addition of this component, we output the fields
 		foreach ($arrayofcriterias as $criterias) {
 			foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
@@ -9781,8 +9825,14 @@ class Form
 				}
 			}
 		}
+
 		$ret .= '</div>';
 
+		$ret .= "<!-- Syntax of Generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
+		$ret .= '<input type="text" placeholder="'.$langs->trans("Search").'" name="search_component_params_input" class="noborderbottom search_component_input" value="">';
+
+		$ret .= '</div>';
+		$ret .= '</div>';
 
 		return $ret;
 	}
