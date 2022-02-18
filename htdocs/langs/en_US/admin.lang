@@ -2222,3 +2222,4 @@ EachTerminalHasItsOwnCounter=Each terminal use its own counter.
 FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
 PreviousHash=Previous hash
 LateWarningAfter="Late" warning after
+TemplateforBusinessCards=Template for a business card in different size

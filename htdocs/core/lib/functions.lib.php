@@ -10501,6 +10501,7 @@ function newToken()
 
 /**
  * Return the value of token currently saved into session with name 'token'.
+ * For ajax call, you must use this token as a parameter of the call into the js calling script (the called ajax php page must also set constant NOTOKENRENEWAL).
  *
  * @return  string
  */

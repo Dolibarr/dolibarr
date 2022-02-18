@@ -3234,6 +3234,7 @@ if (!function_exists("llxFooter")) {
 									id:<?php echo $object->id; ?>
 									, element:'<?php echo $object->element ?>'
 									, action:'DOC_PREVIEW'
+									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
@@ -3243,6 +3244,7 @@ if (!function_exists("llxFooter")) {
 									id:<?php echo $object->id; ?>
 									, element:'<?php echo $object->element ?>'
 									, action:'DOC_DOWNLOAD'
+									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
