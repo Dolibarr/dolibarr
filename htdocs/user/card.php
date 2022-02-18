@@ -678,6 +678,26 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Impersonate
+	if ($action == 'impersonate') {
+
+		if ($user->admin && (!empty($conf->multicompany->enabled) && empty($user->entity)) || empty($conf->multicompany->enabled)) {
+			$object->fetch($id);
+			//Check if user is active
+			if ($object->statut == 1) {
+				$_SESSION["dol_login"] = $object->login;
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
+				exit;
+			} else {
+				setEventMessage('ErrorUserNotActive','errors');
+				$action='';
+			}
+		} else {
+			setEventMessage($langs->trans('NotSuperAdmin'));
+			$action='';
+		}
+	}
+
 	// Actions to send emails
 	$triggersendname = 'USER_SENTBYMAIL';
 	$paramname = 'id'; // Name of param key to open the card
@@ -1375,30 +1395,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		/*
-		 * Switch User
-		 */
-		if ($action == 'switchuser') {
-			if ($user->entity != 0) {
-				setEventMessage($langs->trans('NotSuperAdmin'));
-			} else {
-				$u = new User($db);
-				$res = $u->fetch(GETPOST('id', 'int'));
-				if ($res) {
-					//Check if user is active
-					if ($u->statut == 1) {
-						$_SESSION["dol_login"] = $u->login;
-						header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-						exit;
-					} else {
-						setEventMessage('ErrorUserNotActive');
-					}
-				} else {
-					setEventMessage('ErrorFetchUser');
-				}
-			}
-		}
-
-		/*
 		 * Fiche en mode visu
 		 */
 		if ($action != 'edit') {
@@ -1849,11 +1845,29 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 
-				//Switch User
-				if ($user->entity == 0) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=switchuser">'.$langs->trans('SwitchUser').'</a></div>';
-				} else {
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoSwitchUser")).'">'.$langs->trans('NoSwitchUser').'</a></div>';
+				// Impersonate button
+				if (!empty($user->admin)) {
+					$canImpersonate = false;
+					$params = array(
+						'attr' => array(
+							'title' => $langs->trans('ImpersonateButtonDescription'),
+							'class' => 'classfortooltip'
+						)
+					);
+
+					if(((!empty($conf->multicompany->enabled) && empty($user->entity)) || empty($conf->multicompany->enabled))
+						&& $object->statut == 1
+						&& $user->admin // not needed at this point but... in case of ...
+					){
+						$canImpersonate = true;
+					}
+					elseif(!empty($conf->multicompany->enabled) && !empty($user->entity)){
+						$params['attr']['title'] = $langs->trans('NotSuperAdmin');
+					}elseif($object->statut != 1){
+						$params['attr']['title'] = $langs->trans('ErrorUserNotActive');
+					}
+
+					print dolGetButtonAction($langs->trans('Impersonate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=impersonate&token='.newToken(), '', $canImpersonate, $params);
 				}
 
 				if (empty($user->socid)) {
