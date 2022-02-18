@@ -688,7 +688,7 @@ if (empty($reshook)) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
 				exit;
 			} else {
-				setEventMessage('ErrorUserNotActive','errors');
+				setEventMessage('ErrorUserNotActive', 'errors');
 				$action = '';
 			}
 		} else {
@@ -1857,7 +1857,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if (((!empty($conf->multicompany->enabled) && empty($user->entity)) || empty($conf->multicompany->enabled))
 						&& $object->statut == 1
 						&& $user->admin // not needed at this point but... in case of ...
-					){
+					) {
 						$canImpersonate = true;
 					}
 					elseif (!empty($conf->multicompany->enabled) && !empty($user->entity)) {
