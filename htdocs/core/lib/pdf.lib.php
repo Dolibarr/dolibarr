@@ -1154,8 +1154,6 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		}
 	}
 
-	$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
-
 	// For customize footer
 	if (is_object($hookmanager)) {
 		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs'=>$outputlangs);
@@ -1171,7 +1169,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			// Option for footer background color (without freetext zone)
 			if (!empty($conf->global->PDF_FOOTER_BACKGROUND_COLOR)) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', '', $fill_color = array($r, $g, $b));
+				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 			}
 
 			if ($line) {	// Free text
@@ -1196,7 +1196,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				$posy -= $conf->global->PDF_FOOTER_TOP_MARGIN;
 			} else { $posy--; }
 
+			if ($conf->global->PDF_FOOTER_DISABLE_PAGEBREAK === '1') { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
 			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
+			if ($conf->global->PDF_FOOTER_DISABLE_PAGEBREAK === '1') { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$posy -= $mycustomfooterheight - 3;
 		} else {
@@ -1207,7 +1209,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			// Option for footer background color (without freetext zone)
 			if (!empty($conf->global->PDF_FOOTER_BACKGROUND_COLOR)) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', '', $fill_color = array($r, $g, $b));
+				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 			}
 
 			if ($line) {	// Free text
@@ -1266,8 +1270,6 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
 		$pdf->MultiCell(15, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
 	}
-
-	$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 
 	return $marginwithfooter;
 }
