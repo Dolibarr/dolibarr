@@ -1859,8 +1859,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						&& $user->admin // not needed at this point but... in case of ...
 					) {
 						$canImpersonate = true;
-					}
-					elseif (!empty($conf->multicompany->enabled) && !empty($user->entity)) {
+					} elseif (!empty($conf->multicompany->enabled) && !empty($user->entity)) {
 						$params['attr']['title'] = $langs->trans('NotSuperAdmin');
 					} elseif ($object->statut != 1) {
 						$params['attr']['title'] = $langs->trans('ErrorUserNotActive');
