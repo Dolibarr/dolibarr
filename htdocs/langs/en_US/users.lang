@@ -127,4 +127,4 @@ WarningNotLangOfInterface=Warning, this is the main language the user speak, not
 Impersonate=Impersonate this user
 NotSuperAdmin=You are not a Super Admin
 ErrorUserNotActive=This user is not active
-ImpersonateButtonDescription=Enable to switch to this user
+ImpersonateButtonDescription=Impersonate this user. You will be logout and login as this user. Then, you will have to manually disconnect to login with your original account
