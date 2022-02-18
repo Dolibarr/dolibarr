@@ -626,11 +626,24 @@ class Reception extends CommonObject
 			}
 		}
 
-		// Change status of order to "reception in process"
-		$ret = $this->setStatut(4, $this->origin_id, 'commande_fournisseur');
-
-		if (!$ret) {
+		// Change status of order to "reception in process" or "totally received"
+		$status = $this->getStatusDispatch();
+		if ($status < 0) {
 			$error++;
+		} else {
+			$trigger_key = '';
+			if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
+				$ret = $this->commandeFournisseur->Livraison($user, dol_now(), 'tot', '');
+				if ($ret < 0) {
+					$error++;
+					$this->errors = array_merge($this->errors, $this->commandeFournisseur->errors);
+				}
+			} else {
+				$ret = $this->setStatut($status, $this->origin_id, 'commande_fournisseur', $trigger_key);
+				if ($ret < 0) {
+					$error++;
+				}
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -698,7 +711,92 @@ class Reception extends CommonObject
 		}
 	}
 
+	/**
+	 * Get status from all dispatched lines
+	 *
+	 * @return		int		                        <0 if KO, >0 if OK
+	 */
+	public function getStatusDispatch()
+	{
+		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+
+		$status = CommandeFournisseur::STATUS_RECEIVED_PARTIALLY;
+
+		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'order_supplier' || $this->origin == 'commandeFournisseur')) {
+			if (empty($this->commandeFournisseur)) {
+				$this->commandeFournisseur = null;
+				$this->fetch_origin();
+				if (empty($this->commandeFournisseur->lines)) {
+					$res = $this->commandeFournisseur->fetch_lines();
+					if ($res < 0)	return $res;
+				}
+			}
+
+			$qty_received = array();
+			$qty_wished = array();
+
+			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
+			$filter = array('t.fk_commande'=>$this->origin_id);
+			if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+				$filter['t.status'] = 1; // Restrict to lines with status validated
+			}
+
+			$ret = $supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
+			if ($ret < 0) {
+				$this->error = $supplierorderdispatch->error;
+				$this->errors = $supplierorderdispatch->errors;
+				return $ret;
+			} else {
+				// build array with quantity received by product in all supplier orders (origin)
+				foreach ($supplierorderdispatch->lines as $dispatch_line) {
+					$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
+				}
+
+				// qty wished in order supplier (origin)
+				foreach ($this->commandeFournisseur->lines as $origin_line) {
+					// exclude lines not qualified for reception
+					if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $origin_line->product_type > 0) {
+						continue;
+					}
+
+					$qty_wished[$origin_line->fk_product] += $origin_line->qty;
+				}
+
+				// compare array
+				$diff_array = array_diff_assoc($qty_received, $qty_wished); // Warning: $diff_array is done only on common keys.
+				$keys_in_wished_not_in_received = array_diff(array_keys($qty_wished), array_keys($qty_received));
+				$keys_in_received_not_in_wished = array_diff(array_keys($qty_received), array_keys($qty_wished));
+
+				if (count($diff_array) == 0 && count($keys_in_wished_not_in_received) == 0 && count($keys_in_received_not_in_wished) == 0) { // no diff => mean everything is received
+					$status = CommandeFournisseur::STATUS_RECEIVED_COMPLETELY;
+				} elseif (!empty($conf->global->SUPPLIER_ORDER_MORE_THAN_WISHED)) {
+					// set totally received if more products received than ordered
+					$close = 0;
+
+					if (count($diff_array) > 0) {
+						// there are some difference between the two arrays
+						// scan the array of results
+						foreach ($diff_array as $key => $value) {
+							// if the quantity delivered is greater or equal to ordered quantity
+							if ($qty_received[$key] >= $qty_wished[$key]) {
+								$close++;
+							}
+						}
+					}
+
+					if ($close == count($diff_array)) {
+						// all the products are received equal or more than the ordered quantity
+						$status = CommandeFournisseur::STATUS_RECEIVED_COMPLETELY;
+					}
+				}
+			}
+		}
+
+		return $status;
+	}
 
 	/**
 	 * Add an reception line.
