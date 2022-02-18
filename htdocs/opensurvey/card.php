@@ -54,6 +54,9 @@ if ($result <= 0) {
 	exit;
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('surveycard', 'globalcard'));
+
 $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
 
@@ -337,6 +340,11 @@ if ($action != 'edit') {
 }
 
 print '</td></tr>';
+
+// Other attributes
+$parameters = array();
+$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print '</table>';
 print '</div>';
