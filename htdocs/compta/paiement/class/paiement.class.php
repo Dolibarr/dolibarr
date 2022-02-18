@@ -613,7 +613,7 @@ class Paiement extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datepaye,
-				$this->paiementid, // Payment mode id or code ("CHQ or VIR for example")
+				$this->paiementcode ? $this->paiementcode : $this->paiementid, // Payment mode code ('CB', 'CHQ' or 'VIR' for example). Use payment id if not defined for backward compatibility.
 				$label,
 				$totalamount, // Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
 				$this->num_payment,
