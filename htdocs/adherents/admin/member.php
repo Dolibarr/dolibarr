@@ -429,6 +429,14 @@ print '</table>';
 print '</div>';
 
 
+
+/*
+TODO Use a global form instead of embeded form into table
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateall">';
+*/
+
 /*
  * Edit info of model document
  */
@@ -467,6 +475,7 @@ $helptext .= '__YEAR__, __MONTH__, __DAY__';
 
 form_constantes($constantes, 0, $helptext);
 
+//print '</form>';
 
 print "<br>";
 

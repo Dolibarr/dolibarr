@@ -1627,6 +1627,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			if (empty($strictw3c)) {
 				print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="page_y" value="'.newToken().'">';
 			}
 
 			print '<tr class="oddeven">';
@@ -1733,7 +1734,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			// Submit
 			if (empty($strictw3c)) {
 				print '<td class="center">';
-				print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+				print '<input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update">';
 				print "</td>";
 			}
 
@@ -1748,7 +1749,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 	print '</div>';
 
 	if (!empty($strictw3c) && $strictw3c == 1) {
-		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+		print '<div align="center"><input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update"></div>';
 		print "</form>\n";
 	}
 }

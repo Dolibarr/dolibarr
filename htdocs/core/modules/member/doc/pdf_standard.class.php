@@ -50,14 +50,14 @@ class pdf_standard extends CommonStickerGenerator
 		global $conf, $langs, $mysoc;
 
 		// Translations
-		$langs->loadLangs(array("main", "bills"));
+		$langs->loadLangs(array("main", "admin"));
 
 		$this->db = $db;
 		$this->name = "standard";
-		$this->description = $langs->trans('PDFStandard');
+		$this->description = $langs->trans('TemplateforBusinessCards');
 		//$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
-		$this->type = 'html';
+		$this->type = 'pdf-various-sizes';
 	}
 
 	/**
