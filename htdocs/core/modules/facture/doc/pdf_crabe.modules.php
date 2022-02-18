@@ -366,7 +366,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfInvoiceTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($mysoc->name.($user->id > 0 ? ' - '.$outputlangs->convToOutputCharset($user->getFullName($outputlangs)) : ''));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
 					$pdf->SetCompression(false);
@@ -374,9 +374,13 @@ class pdf_crabe extends ModelePDFFactures
 
 				// Set certificate
 				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
+				$certprivate = empty($user->conf->CERTIFICATE_CRT_PRIVATE) ? '' : $user->conf->CERTIFICATE_CRT_PRIVATE;
 				// If user has no certificate, we try to take the company one
 				if (!$cert) {
 					$cert = empty($conf->global->CERTIFICATE_CRT) ? '' : $conf->global->CERTIFICATE_CRT;
+				}
+				if (!$certprivate) {
+					$certprivate = empty($conf->global->CERTIFICATE_CRT_PRIVATE) ? '' : $conf->global->CERTIFICATE_CRT_PRIVATE;
 				}
 				// If a certificate is found
 				if ($cert) {
@@ -386,7 +390,7 @@ class pdf_crabe extends ModelePDFFactures
 						'Reason' => 'INVOICE',
 						'ContactInfo' => $this->emetteur->email
 					);
-					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
+					$pdf->setSignature($cert, $certprivate, $this->emetteur->name, '', 2, $info);
 				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
@@ -814,6 +818,7 @@ class pdf_crabe extends ModelePDFFactures
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
+				dol_syslog("bottomlasttab=".$bottomlasttab." this->page_hauteur=".$this->page_hauteur." heightforinfotot=".$heightforinfotot." heightforfreetext=".$heightforfreetext." heightforfooter=".$heightforfooter);
 
 				// Display info area
 				$posy = $this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs, $outputlangsbis);
