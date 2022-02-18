@@ -44,7 +44,7 @@ if (empty($reshook)) {
 	$params = array();
 	if (isset($tpl_context)) $params['tpl_context'] = $tpl_context;
 	$params['cols'] = $parameters['colspanvalue'];
-	print $movement->showOptionals($extrafields, 'create', $params);
+//	print $movement->showOptionals($extrafields, 'create', $params);
 }
 
 ?>

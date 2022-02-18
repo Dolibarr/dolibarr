@@ -411,3 +411,7 @@ Rank=Rank
 SwitchOnSaleStatus=Switch on sale status
 SwitchOnPurchaseStatus=Switch on purchase status
 StockMouvementExtraFields= Extra Fields (stock mouvement)
+PMPExpected=Expected PMP
+ExpectedValuation=Expected Valuation
+PMPReal=Real PMP
+RealValuation=Real Valuation
