@@ -347,7 +347,7 @@ class DolibarrApi
 
 		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
-		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+		$operator = strtoupper(preg_replace('/[^a-z<>=\s]/i', '', trim($tmp[1])));
 
 		$tmpescaped = trim($tmp[2]);
 		$regbis = array();
