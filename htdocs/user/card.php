@@ -680,7 +680,6 @@ if (empty($reshook)) {
 
 	// Impersonate
 	if ($action == 'impersonate') {
-
 		if ($user->admin && (!empty($conf->multicompany->enabled) && empty($user->entity)) || empty($conf->multicompany->enabled)) {
 			$object->fetch($id);
 			//Check if user is active
@@ -690,11 +689,11 @@ if (empty($reshook)) {
 				exit;
 			} else {
 				setEventMessage('ErrorUserNotActive','errors');
-				$action='';
+				$action = '';
 			}
 		} else {
 			setEventMessage($langs->trans('NotSuperAdmin'));
-			$action='';
+			$action = '';
 		}
 	}
 
@@ -1855,15 +1854,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 						)
 					);
 
-					if(((!empty($conf->multicompany->enabled) && empty($user->entity)) || empty($conf->multicompany->enabled))
+					if (((!empty($conf->multicompany->enabled) && empty($user->entity)) || empty($conf->multicompany->enabled))
 						&& $object->statut == 1
 						&& $user->admin // not needed at this point but... in case of ...
 					){
 						$canImpersonate = true;
 					}
-					elseif(!empty($conf->multicompany->enabled) && !empty($user->entity)){
+					elseif (!empty($conf->multicompany->enabled) && !empty($user->entity)) {
 						$params['attr']['title'] = $langs->trans('NotSuperAdmin');
-					}elseif($object->statut != 1){
+					} elseif ($object->statut != 1) {
 						$params['attr']['title'] = $langs->trans('ErrorUserNotActive');
 					}
 
