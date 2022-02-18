@@ -1016,20 +1016,15 @@ if ($object->id > 0) {
 					print '</td>';
 					//PMP Real
 					print '<td class="right">';
-					print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty reposition marginrightonly" title="'.dol_escape_htmltag($langs->trans("Clear")).'">';
-					print img_picto('', 'eraser', 'class="opacitymedium"');
-					print '</a>';
+
 
 					if(! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
 					else $pmp_real = $product_static->pmp;
 					$pmp_valuation_real = $pmp_real * $qty_view;
-					print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.price2num($pmp_real).'">';
+					print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->fk_product.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
 					print '</td>';
 					print '<td class="right">';
-					print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty reposition marginrightonly" title="'.dol_escape_htmltag($langs->trans("Clear")).'">';
-					print img_picto('', 'eraser', 'class="opacitymedium"');
-					print '</a>';
-					print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$pmp_real * $qty_view.'">';
+					print '<input type="text" class="maxwidth75 right realvaluation'.$obj->fk_product.'" name="realvaluation_'.$obj->fk_product.'" id="id_'.$obj->rowid.'_input_real_valuation" value="'.$pmp_real * $qty_view.'">';
 					print '</td>';
 
 					$totalExpectedValuation += $pmp_valuation;
@@ -1089,7 +1084,7 @@ if ($object->id > 0) {
 		print '<tr class="liste_total">';
 		print '<td colspan="5">'.$langs->trans("Total").'</td>';
 		print '<td class="right" colspan="2">'.price($totalExpectedValuation).'</td>';
-		print '<td class="right" colspan="2">'.price($totalRealValuation).'</td>';
+		print '<td class="right" id="totalRealValuation" colspan="2">'.price($totalRealValuation).'</td>';
 		print '<td></td>';
 		print '</tr>';
 	}
@@ -1115,6 +1110,69 @@ if ($object->id > 0) {
 				</script>';
 	}
 	print '</form>';
+
+
+	if(! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+		?>
+		<script type="text/javascript">
+            $('.realqty').on('change', function () {
+                let realqty = $(this).closest('tr').find('.realqty').val();
+                let inputPmp = $(this).closest('tr').find('input[name^=realpmp]');
+                let realpmp = $(inputPmp).val();
+                if (!isNaN(realqty) && !isNaN(realpmp) && realpmp !== '' && realqty !== '') {
+                    let realval = realqty * realpmp;
+                    $(this).closest('tr').find('input[name^=realvaluation]').val(realval.toFixed(2));
+                }
+                updateTotalValuation();
+            });
+
+            $('input[name^=realpmp]').on('change', function () {
+                let inputQtyReal = $(this).closest('tr').find('.realqty');
+                let realqty = $(inputQtyReal).val();
+                let inputPmp = $(this).closest('tr').find('input[name^=realpmp]');
+                let realPmpClassname = $(inputPmp).attr('class').match(/[\w-]*realpmp[\w-]*/g)[0];
+                let realpmp = $(inputPmp).val();
+                if (!isNaN(realpmp) && realpmp !== '') {
+                    $('.'+realPmpClassname).val(realpmp); //For batch case if pmp is changed we change it everywhere it's same product and calc back everything
+
+                    if (!isNaN(realqty) && realqty !== '') {
+                        let realval = realqty * realpmp;
+                        $(this).closest('tr').find('input[name^=realvaluation]').val(realval.toFixed(2));
+                    }
+                    $('.realqty').trigger('change');
+                    updateTotalValuation();
+                }
+            });
+
+            $('input[name^=realvaluation]').on('change', function () {
+                let inputQtyReal = $(this).closest('tr').find('.realqty');
+                let realqty = $(inputQtyReal).val();
+                let inputPmp = $(this).closest('tr').find('input[name^=realpmp]');
+                let inputRealValuation = $(this).closest('tr').find('input[name^=realvaluation]');
+                let realPmpClassname = $(inputPmp).attr('class').match(/[\w-]*realpmp[\w-]*/g)[0];
+                let realvaluation = $(inputRealValuation).val();
+                if (!isNaN(realvaluation) && !isNaN(realqty) && realvaluation !== '' && realqty !== '' && realqty !== 0) {
+                    let realpmp = realvaluation / realqty
+                    $('.'+realPmpClassname).val(realpmp); //For batch case if pmp is changed we change it everywhere it's same product and calc back everything
+                    $('.realqty').trigger('change');
+                    updateTotalValuation();
+                }
+            });
+
+            function updateTotalValuation() {
+                let total = 0;
+                $('input[name^=realvaluation]').each(function( index ) {
+                    let val = $(this).val();
+                    if(!isNaN(val)) total += parseFloat($(this).val());
+                });
+                $('#totalRealValuation').html(total.toLocaleString('fr-FR', {
+                    style: 'currency', currency: 'EUR'
+                }));
+            }
+
+		</script>
+		<?php
+	}
 }
 
 // End of page
