@@ -309,7 +309,7 @@ class AssetDepreciationOptions extends CommonObject
 	public function fetchDeprecationOptions($asset_id = 0, $asset_model_id = 0)
 	{
 		global $langs, $hookmanager;
-		dol_syslog(__METHOD__ . " sset_id=$asset_id, asset_model_id=$asset_model_id");
+		dol_syslog(__METHOD__ . " asset_id=$asset_id, asset_model_id=$asset_model_id");
 
 		$error = 0;
 		$this->errors = array();
@@ -346,7 +346,7 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			$this->setInfosForMode($mode_key, $class_type);
 
-			$result = $this->fetchCommon(0, '', " AND " . ($asset_id > 0 ? " fk_asset = " . $asset_id : " fk_asset_model = " . $asset_model_id));
+			$result = $this->fetchCommon(0, '', " AND " . ($asset_id > 0 ? " fk_asset = " . (int) $asset_id : " fk_asset_model = " . (int) $asset_model_id));
 			if ($result < 0) {
 				$this->errors = array_merge(array($langs->trans('AssetErrorFetchDepreciationOptionsForMode', $mode_key) . ':'), $this->errors);
 				$error++;
