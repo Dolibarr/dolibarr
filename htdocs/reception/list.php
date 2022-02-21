@@ -491,6 +491,9 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
 if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
 if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
@@ -976,6 +979,9 @@ while ($i < min($num, $limit)) {
 		{
 		}*/
 		print "</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
@@ -1070,6 +1076,13 @@ if ($num == 0) {
 	}
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
+
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print "</table>";
 print "</div>";
