@@ -1827,10 +1827,20 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (empty($user->socid)) {
 					if (!empty($object->email)) {
 						$langs->load("mails");
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+						// TODO Replace div with dolGetButtonAction
+						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle', '');
+						//print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 					} else {
 						$langs->load("mails");
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+						// TODO Replace div with dolGetButtonAction
+						//$params = array(
+						//	'attr' => array(
+						//		'title' => $langs->trans('ImpersonateButtonDescription'),
+						//		'class' => 'classfortooltip'
+						//	)
+						//);
+						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle', '', $permissiontoadd, $params);
+						//print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
 					}
 				}
 
