@@ -43,7 +43,7 @@ if (empty($reshook)) {
 	$params = array();
 	if (isset($tpl_context)) $params['tpl_context'] = $tpl_context;
 	$params['cols'] = $parameters['colspanvalue'];
-    var_dump($movement);
+
 	print $movement->showOptionals($extrafields, 'create', $params);
 }
 

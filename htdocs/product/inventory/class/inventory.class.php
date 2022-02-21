@@ -290,8 +290,15 @@ class Inventory extends CommonObject
 				$sql .= " AND ps.fk_product = ".((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= " AND ps.fk_entrepot = ".((int) $this->fk_warehouse);
+				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
 			}
+			if($this->include_sub_warehouse>0 && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE){
+				$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
+				foreach ($TChildWarehouses as $childWarehouse){
+					$sql .= " OR ps.fk_entrepot = ".((int) $childWarehouse);
+				}
+			}
+			$sql .= ')';
 
 			$inventoryline = new InventoryLine($this->db);
 
@@ -699,18 +706,19 @@ class Inventory extends CommonObject
 	 *
 	 * @return int | array             <0 if KO, >0 if OK
 	 */
-	public function getchildWarehouse()
+	public function getchildWarehouse($id, &$TChildWarehouse)
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'entrepot';
-		$sql.= ' WHERE fk_parent='.$this->id;
+		$sql.= ' WHERE fk_parent='.$id;
 		$sql.= ' ORDER BY rowid';
 		$resql = $this->db->query($sql);
 		if($resql && $this->db->num_rows($resql)>0){
-			$TChildWarehouse = array();
 			while ($obj = $this->db->fetch_object($resql)){
+
 				$TChildWarehouse[] = $obj->rowid;
+				$this->getchildWarehouse($obj->rowid, $TChildWarehouse);
 			}
-			return $TChildWarehouse;
+			return 1;
 		} else {
 			return -1;
 		}
