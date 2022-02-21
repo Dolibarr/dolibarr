@@ -6117,6 +6117,10 @@ span.select2.select2-container.select2-container--default {
 	text-align: initial;
 }
 
+ul.select2-results__options li {
+	font-size: 0.95em;
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */
