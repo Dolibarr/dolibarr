@@ -96,7 +96,6 @@ $resql = $db->query($sql);
 if ($resql) {
 	// Loop on all the sub-BOM lines if they exist
 	while ($obj = $db->fetch_object($resql)) {
-
 		$sub_bom_product = new Product($db);
 		$sub_bom_product->fetch($obj->fk_product);
 		$sub_bom_product->load_stock();
