@@ -1407,175 +1407,245 @@ if ($action == 'updatecss' && $usercanedit) {
 
 
 			// Html header file
-			$htmlheadercontent = '';
+			$phpfullcodestringold = '';
+			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_HTML_HEADER', 'none'));
 
-			/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
-			$htmlheadercontent.= "<?php // BEGIN PHP\n";
-			$htmlheadercontent.= '$websitekey=basename(__DIR__);'."\n";
-			$htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
-			$htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-			$htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-			$htmlheadercontent.= "ob_start();\n";
-			// $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
-			$htmlheadercontent.= "// END PHP ?>\n";*/
+			// Security analysis
+			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
-			$htmlheadercontent .= preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), GETPOST('WEBSITE_HTML_HEADER', 'none'));
+			if (!$errorphpcheck) {
+				$htmlheadercontent = '';
 
-			/*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
-			$htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-			$htmlheadercontent.= "// END PHP ?>"."\n";*/
+				/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
+				$htmlheadercontent.= "<?php // BEGIN PHP\n";
+				$htmlheadercontent.= '$websitekey=basename(__DIR__);'."\n";
+				$htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
+				$htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+				$htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+				$htmlheadercontent.= "ob_start();\n";
+				// $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
+				$htmlheadercontent.= "// END PHP ?>\n";*/
 
-			$htmlheadercontent = trim($htmlheadercontent)."\n";
+				$htmlheadercontent .= preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), GETPOST('WEBSITE_HTML_HEADER', 'none'));
 
-			$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
-			if (!$result) {
+				/*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
+				$htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+				$htmlheadercontent.= "// END PHP ?>"."\n";*/
+
+				$htmlheadercontent = trim($htmlheadercontent)."\n";
+
+				$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
+				if (!$result) {
+					$error++;
+					setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
+				}
+			} else {
 				$error++;
-				setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
 			}
 
 
 			// Css file
-			$csscontent = '';
+			$phpfullcodestringold = '';
+			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_CSS_INLINE', 'none'));
 
-			$csscontent .= "<?php // BEGIN PHP\n";
-			$csscontent .= '$websitekey=basename(__DIR__);'."\n";
-			$csscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-			$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-			$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-			$csscontent .= "ob_start();\n";
-			$csscontent .= "if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ \n";
-			$csscontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-			$csscontent .= "header('Content-type: text/css');\n";
-			$csscontent .= "}\n";
-			$csscontent .= "// END PHP ?>\n";
+			// Security analysis
+			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
-			$csscontent .= trim(GETPOST('WEBSITE_CSS_INLINE', 'none'))."\n";
+			if (!$errorphpcheck) {
+				$csscontent = '';
 
-			$csscontent .= '<?php // BEGIN PHP'."\n";
-			$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
-			$csscontent .= "// END PHP ?>\n";
+				$csscontent .= "<?php // BEGIN PHP\n";
+				$csscontent .= '$websitekey=basename(__DIR__);'."\n";
+				$csscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
+				$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+				$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+				$csscontent .= "ob_start();\n";
+				$csscontent .= "if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ \n";
+				$csscontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+				$csscontent .= "header('Content-type: text/css');\n";
+				$csscontent .= "}\n";
+				$csscontent .= "// END PHP ?>\n";
 
-			dol_syslog("Save css content into ".$filecss);
+				$csscontent .= trim(GETPOST('WEBSITE_CSS_INLINE', 'none'))."\n";
 
-			$result = dolSaveCssFile($filecss, $csscontent);
-			if (!$result) {
+				$csscontent .= '<?php // BEGIN PHP'."\n";
+				$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
+				$csscontent .= "// END PHP ?>\n";
+
+				dol_syslog("Save css content into ".$filecss);
+
+				$result = dolSaveCssFile($filecss, $csscontent);
+				if (!$result) {
+					$error++;
+					setEventMessages('Failed to write file '.$filecss, null, 'errors');
+				}
+			} else {
 				$error++;
-				setEventMessages('Failed to write file '.$filecss, null, 'errors');
 			}
 
 
 			// Js file
-			$jscontent = '';
+			$phpfullcodestringold = '';
+			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_JS_INLINE', 'none'));
 
-			$jscontent .= "<?php // BEGIN PHP\n";
-			$jscontent .= '$websitekey=basename(__DIR__);'."\n";
-			$jscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-			$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-			$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-			$jscontent .= "ob_start();\n";
-			$jscontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-			$jscontent .= "header('Content-type: application/javascript');\n";
-			$jscontent .= "// END PHP ?>\n";
+			// Security analysis
+			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
-			$jscontent .= trim(GETPOST('WEBSITE_JS_INLINE', 'none'))."\n";
+			if (!$errorphpcheck) {
+				$jscontent = '';
 
-			$jscontent .= '<?php // BEGIN PHP'."\n";
-			$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
-			$jscontent .= "// END PHP ?>\n";
+				$jscontent .= "<?php // BEGIN PHP\n";
+				$jscontent .= '$websitekey=basename(__DIR__);'."\n";
+				$jscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
+				$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+				$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+				$jscontent .= "ob_start();\n";
+				$jscontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+				$jscontent .= "header('Content-type: application/javascript');\n";
+				$jscontent .= "// END PHP ?>\n";
 
-			$result = dolSaveJsFile($filejs, $jscontent);
-			if (!$result) {
+				$jscontent .= trim(GETPOST('WEBSITE_JS_INLINE', 'none'))."\n";
+
+				$jscontent .= '<?php // BEGIN PHP'."\n";
+				$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
+				$jscontent .= "// END PHP ?>\n";
+
+				$result = dolSaveJsFile($filejs, $jscontent);
+				if (!$result) {
+					$error++;
+					setEventMessages('Failed to write file '.$filejs, null, 'errors');
+				}
+			} else {
 				$error++;
-				setEventMessages('Failed to write file '.$filejs, null, 'errors');
 			}
 
 
 			// Robot file
-			$robotcontent = '';
+			$phpfullcodestringold = '';
+			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_ROBOT', 'restricthtml'));
 
-			/*$robotcontent.= "<?php // BEGIN PHP\n";
-			$robotcontent.= '$websitekey=basename(__DIR__);'."\n";
-			$robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
-			$robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-			$robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-			$robotcontent.= "ob_start();\n";
-			$robotcontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-			$robotcontent.= "header('Content-type: text/css');\n";
-			$robotcontent.= "// END PHP ?>\n";*/
+			// Security analysis
+			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
-			$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
+			if (!$errorphpcheck) {
+				$robotcontent = '';
 
-			/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
-			$robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
-			$robotcontent.= "// END PHP ?>"."\n";*/
+				/*$robotcontent.= "<?php // BEGIN PHP\n";
+				$robotcontent.= '$websitekey=basename(__DIR__);'."\n";
+				$robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
+				$robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+				$robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+				$robotcontent.= "ob_start();\n";
+				$robotcontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+				$robotcontent.= "header('Content-type: text/css');\n";
+				$robotcontent.= "// END PHP ?>\n";*/
 
-			$result = dolSaveRobotFile($filerobot, $robotcontent);
-			if (!$result) {
+				$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
+
+				/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
+				$robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
+				$robotcontent.= "// END PHP ?>"."\n";*/
+
+				$result = dolSaveRobotFile($filerobot, $robotcontent);
+				if (!$result) {
+					$error++;
+					setEventMessages('Failed to write file '.$filerobot, null, 'errors');
+				}
+			} else {
 				$error++;
-				setEventMessages('Failed to write file '.$filerobot, null, 'errors');
 			}
 
 
 			// Htaccess file
-			$htaccesscontent = '';
-			$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
+			$phpfullcodestringold = '';
+			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_HTACCESS', 'restricthtml'));
 
-			$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
-			if (!$result) {
+			// Security analysis
+			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
+
+			if (!$errorphpcheck) {
+				$htaccesscontent = '';
+				$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
+
+				$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
+				if (!$result) {
+					$error++;
+					setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+				}
+			} else {
 				$error++;
-				setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
 			}
 
 
-			// manifest.json file
-			$manifestjsoncontent = '';
+			// Manifest.json file
+			$phpfullcodestringold = '';
+			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_MANIFEST_JSON', 'none'));
 
-			$manifestjsoncontent .= "<?php // BEGIN PHP\n";
-			$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
-			$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-			$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-			$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-			$manifestjsoncontent .= "ob_start();\n";
-			$manifestjsoncontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-			$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
-			$manifestjsoncontent .= "// END PHP ?>\n";
+			// Security analysis
+			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
-			$manifestjsoncontent .= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
+			if (!$errorphpcheck) {
+				$manifestjsoncontent = '';
 
-			$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
-			$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-			$manifestjsoncontent .= "// END PHP ?>\n";
+				$manifestjsoncontent .= "<?php // BEGIN PHP\n";
+				$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
+				$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
+				$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+				$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+				$manifestjsoncontent .= "ob_start();\n";
+				$manifestjsoncontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+				$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
+				$manifestjsoncontent .= "// END PHP ?>\n";
 
-			$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
-			if (!$result) {
+				$manifestjsoncontent .= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
+
+				$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
+				$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
+				$manifestjsoncontent .= "// END PHP ?>\n";
+
+				$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
+				if (!$result) {
+					$error++;
+					setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
+				}
+			} else {
 				$error++;
-				setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
 			}
 
 
 			// README.md file
-			$readmecontent = '';
+			$phpfullcodestringold = '';
+			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_README', 'restricthtml'));
 
-			/*$readmecontent.= "<?php // BEGIN PHP\n";
-			   $readmecontent.= '$websitekey=basename(__DIR__);'."\n";
-			   $readmecontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
-			   $readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-			   $readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-			   $readmecontent.= "ob_start();\n";
-			   $readmecontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-			   $readmecontent.= "header('Content-type: application/manifest+json');\n";
-			   $readmecontent.= "// END PHP ?>\n";*/
+			// Security analysis
+			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
-			$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
+			if (!$errorphpcheck) {
+				$readmecontent = '';
 
-			/*$readmecontent.= '<?php // BEGIN PHP'."\n";
-			   $readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-			   $readmecontent.= "// END PHP ?>"."\n";*/
+				/*$readmecontent.= "<?php // BEGIN PHP\n";
+				   $readmecontent.= '$websitekey=basename(__DIR__);'."\n";
+				   $readmecontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+				   $readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+				   $readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+				   $readmecontent.= "ob_start();\n";
+				   $readmecontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+				   $readmecontent.= "header('Content-type: application/manifest+json');\n";
+				   $readmecontent.= "// END PHP ?>\n";*/
 
-			$result = dolSaveReadme($filereadme, $readmecontent);
-			if (!$result) {
+				$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
+
+				/*$readmecontent.= '<?php // BEGIN PHP'."\n";
+				   $readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
+				   $readmecontent.= "// END PHP ?>"."\n";*/
+
+				$result = dolSaveReadme($filereadme, $readmecontent);
+				if (!$result) {
+					$error++;
+					setEventMessages('Failed to write file '.$filereadme, null, 'errors');
+				}
+			} else {
 				$error++;
-				setEventMessages('Failed to write file '.$filereadme, null, 'errors');
 			}
 
 
@@ -1999,57 +2069,17 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 
 			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');
 
-			// Security analysis
 			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
 
-			// First check forbidden commands
-			$forbiddenphpcommands = array();
-			if (empty($conf->global->WEBSITE_PHP_ALLOW_EXEC)) {    // If option is not on, we disallow functions to execute commands
-				$forbiddenphpcommands = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
-			}
-			if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
-				$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
-			}
-			foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
-				if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring)) {
-					$error++;
-					setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
-					if ($action == 'updatesource') {
-						$action = 'editsource';
-					}
-					if ($action == 'updatecontent') {
-						$action = 'editcontent';
-					}
-				}
-			}
-			// This char can be used to execute RCE for example using with echo `ls`
-			$forbiddenphpchars = array();
-			if (empty($conf->global->WEBSITE_PHP_ALLOW_DANGEROUS_CHARS)) {    // If option is not on, we disallow functions to execute commands
-				$forbiddenphpchars = array("`");
-			}
-			foreach ($forbiddenphpchars as $forbiddenphpchar) {
-				if (preg_match('/'.$forbiddenphpchar.'/ms', $phpfullcodestring)) {
-					$error++;
-					setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpchar), null, 'errors');
-					if ($action == 'updatesource') {
-						$action = 'editsource';
-					}
-					if ($action == 'updatecontent') {
-						$action = 'editcontent';
-					}
-				}
-			}
+			// Security analysis
+			$error = checkPHPCode($phpfullcodestringold, $phpfullcodestring);
 
-			if (empty($user->rights->website->writephp)) {
-				if ($phpfullcodestringold != $phpfullcodestring) {
-					$error++;
-					setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
-					if ($action == 'updatesource') {
-						$action = 'editsource';
-					}
-					if ($action == 'updatecontent') {
-						$action = 'editcontent';
-					}
+			if ($error) {
+				if ($action == 'updatesource') {
+					$action = 'editsource';
+				}
+				if ($action == 'updatecontent') {
+					$action = 'editcontent';
 				}
 			}
 
