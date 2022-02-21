@@ -353,12 +353,14 @@ function GETPOSTISSET($paramname)
 				}
 			}
 		}
-		// If there is saved contextpage, page or limit
+		// If there is saved contextpage, limit, page or mode
 		if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring])) {
+			$isset = true;
+		} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
 			$isset = true;
 		} elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring])) {
 			$isset = true;
-		} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
+		} elseif ($paramname == 'mode' && !empty($_SESSION['lastsearch_mode_'.$relativepathstring])) {
 			$isset = true;
 		}
 	} else {
@@ -448,10 +450,12 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			// If there is saved contextpage, page or limit
 			if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring])) {
 				$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
-			} elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring])) {
-				$out = $_SESSION['lastsearch_page_'.$relativepathstring];
 			} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
 				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
+			} elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring])) {
+				$out = $_SESSION['lastsearch_page_'.$relativepathstring];
+			} elseif ($paramname == 'mode' && !empty($_SESSION['lastsearch_mode_'.$relativepathstring])) {
+				$out = $_SESSION['lastsearch_mode_'.$relativepathstring];
 			}
 		} elseif (!isset($_GET['sortfield'])) {
 			// Else, retrieve default values if we are not doing a sort
@@ -2016,7 +2020,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 
 			if (empty($phototoshow)) {      // Show No photo link (picto of object)
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action') {
 					$width = 80;
 					$cssclass = 'photorefcenter';
@@ -2038,8 +2041,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
 				$morehtmlleft .= $nophoto;
 				$morehtmlleft .= '</div></div>';
-
-				$morehtmlleft .= '</div>';
 			}
 		}
 	}
@@ -2569,11 +2570,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
-	//print 'gm:'.$gm.' gm==auto:'.($gm == 'auto').'<br>';
 
 	if ($gm === 'auto') {
 		$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
+	//print 'gm:'.$gm.' gm === auto:'.($gm === 'auto').'<br>';exit;
 
 	// Clean parameters
 	if ($hour == -1 || empty($hour)) {
@@ -3719,7 +3720,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
-				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
+				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
 				'multicurrency',
@@ -3745,7 +3746,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'uncheck', 'user-cog', 'vat', 'website', 'workstation',
+				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
 			))) {
 			$fakey = $pictowithouttext;
@@ -10500,6 +10501,7 @@ function newToken()
 
 /**
  * Return the value of token currently saved into session with name 'token'.
+ * For ajax call, you must use this token as a parameter of the call into the js calling script (the called ajax php page must also set constant NOTOKENRENEWAL).
  *
  * @return  string
  */
@@ -10797,7 +10799,7 @@ function dolForgeCriteriaCallback($matches)
 {
 	global $db;
 
-	//dol_syslog("Convert matches ".$matches[1]);
+	dol_syslog("Convert matches ".$matches[1]);
 	if (empty($matches[1])) {
 		return '';
 	}

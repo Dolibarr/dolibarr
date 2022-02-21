@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=PDF 中的粗體參考和句點
-BoldLabelOnPDF=PDF 中的粗體標籤
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=基金會
 Version=版本
 Publisher=發佈者
@@ -343,7 +343,7 @@ StepNb=步驟 %s
 FindPackageFromWebSite=尋找所需功能的軟體包（例如在官方網站%s上）。
 DownloadPackageFromWebSite=下載軟體包（例如從官方網站%s）。
 UnpackPackageInDolibarrRoot=將打包的文件解開/解壓縮到您的Dolibarr伺服器資料夾中： <b>%s</b>
-UnpackPackageInModulesRoot=要部署/安裝外部模組，請將打包的檔案解開/解壓縮到專用於外部模組的伺服器資料夾中： <br> <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=模組部署完成。但是，您必須轉到頁面設定模組<a href="%s">%s</a>來啟用和設定應用程式中的模組。
 NotExistsDirect=替代根資料夾的資訊沒有定義到已存在的資料夾中。<br>
 InfDirAlt=從第3版起，可定義替代根資料夾。此允許您儲存到指定資料夾、插件及客製化範本。<br>只要在 dolibarr 的根資料夾內建立資料夾(例如: 客戶)。<br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=從應用程式安裝或建構外部模組需要將模
 HighlightLinesOnMouseHover=滑鼠經過時會顯示表格行
 HighlightLinesColor=滑鼠經過時突出顯示行的顏色（使用“ ffffff”表示沒有突出顯示）
 HighlightLinesChecked=選中時突出顯示行的顏色（使用"ffffff"表示不突出顯示）
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=頁面標題的文字顏色
 LinkColor=連結的顏色
 PressF5AfterChangingThis=更改此值使其生效後，按鍵盤上的CTRL + F5或清除瀏覽器暫存。
@@ -2216,3 +2218,5 @@ NativeModules=原生模組
 NoDeployedModulesFoundWithThisSearchCriteria=未找到符合這些搜索條件的模組
 API_DISABLE_COMPRESSION=停用API回應壓縮
 EachTerminalHasItsOwnCounter=每個終端機使用自己的櫃台。
+FillAndSaveAccountIdAndSecret=先填寫並保存帳號ID和密碼
+PreviousHash=Previous hash

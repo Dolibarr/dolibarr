@@ -143,6 +143,20 @@ if ($action == 'updateMask') {
 	}
 }
 
+if ($action == 'setvarworkflow') {
+	$param_auto_read = GETPOST('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', $param_auto_read, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+}
+
 if ($action == 'setvarother') {
 	$param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
@@ -174,12 +188,6 @@ if ($action == 'setvarother') {
 
 	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -467,7 +475,7 @@ print '</div><br>';
 if (!$conf->use_javascript_ajax) {
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="setvarother">';
+	print '<input type="hidden" name="action" value="setvarworkflow">';
 }
 
 print load_fiche_titre($langs->trans("Other"), '', '');
@@ -478,6 +486,21 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td></td>';
 print '<td></td>';
 print "</tr>\n";
+
+// Auto mark ticket read when created from backoffice
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoReadTicket").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
 
 // Auto assign ticket at user who created it
 print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=پی ڈی ایف میں بولڈ حوالہ اور مدت
-BoldLabelOnPDF=پی ڈی ایف میں بولڈ لیبل
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=فاؤنڈیشن
 Version=ورژن
 Publisher=پبلشر
@@ -343,7 +343,7 @@ StepNb=مرحلہ %s
 FindPackageFromWebSite=ایک ایسا پیکیج تلاش کریں جو آپ کو مطلوبہ خصوصیات فراہم کرتا ہو (مثال کے طور پر سرکاری ویب سائٹ %s پر)۔
 DownloadPackageFromWebSite=پیکیج ڈاؤن لوڈ کریں (مثال کے طور پر سرکاری ویب سائٹ %s سے)۔
 UnpackPackageInDolibarrRoot=پیک شدہ فائلوں کو اپنی ڈولیبر سرور ڈائرکٹری میں کھولیں/ان زپ کریں: <b> %s </b>
-UnpackPackageInModulesRoot=بیرونی ماڈیول کو تعینات کرنے/انسٹال کرنے کے لیے، پیک شدہ فائلوں کو بیرونی ماڈیولز کے لیے وقف سرور ڈائرکٹری میں کھولیں/ان زپ کریں: <br> <b> %s a09a4b78010
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=ماڈیول کی تعیناتی ختم ہو گئی ہے۔ تاہم آپ کو صفحہ سیٹ اپ ماڈیولز: <a href="%s"> %s </a> پر جا کر اپنی درخواست میں ماڈیول کو فعال اور سیٹ اپ کرنا ہوگا۔
 NotExistsDirect=متبادل روٹ ڈائرکٹری موجودہ ڈائرکٹری سے متعین نہیں ہے۔ <br>
 InfDirAlt=ورژن 3 کے بعد سے، متبادل روٹ ڈائریکٹری کی وضاحت ممکن ہے۔ یہ آپ کو ایک وقف شدہ ڈائرکٹری، پلگ ان اور حسب ضرورت ٹیمپلیٹس میں ذخیرہ کرنے کی اجازت دیتا ہے۔ <br> بس Dolibarr کے روٹ پر ایک ڈائرکٹری بنائیں (جیسے: کسٹم)۔ <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=ایپلیکیشن سے کسی بیرونی ماڈیو
 HighlightLinesOnMouseHover=جب ماؤس کی حرکت گزر جاتی ہے تو ٹیبل لائنوں کو نمایاں کریں۔
 HighlightLinesColor=ماؤس کے اوپر سے گزرنے پر لائن کا رنگ نمایاں کریں (کسی ہائی لائٹ کے لیے 'ffffff' استعمال کریں)
 HighlightLinesChecked=جب لائن کو چیک کیا جائے تو اس کے رنگ کو ہائی لائٹ کریں (کسی ہائی لائٹ کے لیے 'ffffff' استعمال کریں)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=صفحہ کے عنوان کا متن کا رنگ
 LinkColor=لنکس کا رنگ
 PressF5AfterChangingThis=کی بورڈ پر CTRL+F5 دبائیں یا اس قدر کو تبدیل کرنے کے بعد اپنا براؤزر کیش صاف کریں تاکہ اسے موثر بنایا جاسکے
@@ -2216,3 +2218,5 @@ NativeModules=مقامی ماڈیولز
 NoDeployedModulesFoundWithThisSearchCriteria=تلاش کے ان معیارات کے لیے کوئی ماڈیول نہیں ملا
 API_DISABLE_COMPRESSION=API جوابات کے کمپریشن کو غیر فعال کریں۔
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

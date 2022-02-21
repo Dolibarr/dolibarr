@@ -180,7 +180,7 @@ SizeUnitinch=インチ
 SizeUnitfoot=フィート
 SizeUnitpoint=ポイント
 BugTracker=バグトラッカー
-SendNewPasswordDesc=このフォームでは、新規パスワードをリクエストできる。それはあなたのメールアドレスに送られる。 <br>メール内の確認リンクをクリックすると、変更が有効になる。 <br>受信トレイを確認すること。
+SendNewPasswordDesc=このフォームでは、新規パスワードをリクエストできる。それはあなたのメールアドレスに送られる。 <br>メール内の確定リンクをクリックすると、変更が有効になる。 <br>受信トレイを確定すること。
 BackToLoginPage=ログインページに戻る
 AuthenticationDoesNotAllowSendNewPassword=認証モードは<b>%s</b> 。 <br>このモードではDolibarr上でパスワードの表示も変更もできません。 <br>パスワードを変更したい場合はシステム管理者に連絡して下さい。
 EnableGDLibraryDesc=このオプションを使用するには、PHPインストールでGDライブラリをインストールまたは有効にする。
@@ -249,7 +249,7 @@ NewKeyIs=これはログインするための新規キー
 NewKeyWillBe=ソフトウェアにログインするための新規キーは次のようになる
 ClickHereToGoTo=%sに移動するには、ここをクリックすること
 YouMustClickToChange=ただし、このパスワードの変更を検証するには、最初に次のリンクをクリックする必要がある
-ConfirmPasswordChange=パスワードの変更を確認する
+ConfirmPasswordChange=パスワードの変更を確定する
 ForgetIfNothing=この変更をリクエストしなかった場合は、このメールを忘れてください。あなたの資格情報は安全に保たれる。
 IfAmountHigherThan=<strong> %s</strong>よりも多い場合
 SourcesRepository=ソースのリポジトリ
@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=メールMSGID%sからメールコレクターに
 TicketCreatedByEmailCollector=メールMSGID%sからメールコレクターによって作成されたチケット
 OpeningHoursFormatDesc=-を使用して、営業時間と営業時間を区切る。 <br>スペースを使用してさまざまな範囲を入力する。 <br>例：8-12 14-18
 SuffixSessionName=セッション名のサフィックス
+LoginWith=%sでログインする
 
 ##### Export #####
 ExportsArea=輸出地域
@@ -300,5 +301,5 @@ NbOfQtyInOrders=注文数量
 SelectTheTypeOfObjectToAnalyze=オブジェクトを選択してその統計を表示する...
 
 ConfirmBtnCommonContent = 「%s」を実行してもよいか？
-ConfirmBtnCommonTitle = アクションを確認する
+ConfirmBtnCommonTitle = アクションを確定する
 CloseDialog = 閉じる

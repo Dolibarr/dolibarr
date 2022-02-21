@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Denne kontaktperson er allerede defin
 ErrorCashAccountAcceptsOnlyCashMoney=Denne bankkonto er et kontant-konto, så det accepterer betaling af type cash only.
 ErrorFromToAccountsMustDiffers=Kilde og mål bankkonti skal være anderledes.
 ErrorBadThirdPartyName=Dårlig værdi for tredjeparts navn
+ForbiddenBySetupRules=Forbudt ifølge opsætnings regler
 ErrorProdIdIsMandatory=The %s is mandatory
+ErrorAccountancyCodeCustomerIsMandatory=Regnskabskoden for kunden %s er obligatorisk
 ErrorBadCustomerCodeSyntax=Bad syntaks for kunde-kode
 ErrorBadBarCodeSyntax=Dårlig syntaks til stregkode. Måske angiver du en dårlig stregkodetype, eller definerer du en stregkodemaske til nummerering, der ikke svarer til den scannede værdi.
 ErrorCustomerCodeRequired=Kundekode kræves
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Ikke i ordbogen om betalingsbetingelser, b
 ErrorIsNotADraft=%s er ikke et udkast
 ErrorExecIdFailed=Kan ikke udføre kommandoen "id"
 ErrorBadCharIntoLoginName=Ikke godkendt tegn i login-navnet
+ErrorRequestTooLarge=Fejl, anmodningen er for stor
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Kræver mindst %s karakter (er)
 RequireXStringMax = Kræver maks. Tegn på %s
 RequireAtLeastXDigits = Kræver mindst %s ciffer (er)
 RequireXDigitsMax = Kræver %s ciffer (er) maks
+RequireValidNumeric = Kræver en numerisk værdi
 RequireValidEmail = E -mailadressen er ikke gyldig
 RequireMaxLength = Længden skal være mindre end %s tegn
 RequireMinLength = Længden skal være mere end %s char (s)

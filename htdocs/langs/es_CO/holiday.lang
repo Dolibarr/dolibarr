@@ -105,3 +105,4 @@ FreeLegalTextOnHolidays=Texto libre en PDF
 WatermarkOnDraftHolidayCards=Marcas de agua en solicitudes de licencia de borrador
 HolidaysToApprove=Días festivos para aprobar
 NobodyHasPermissionToValidateHolidays=Nadie tiene permiso para validar las vacaciones.
+ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=La solicitud de licencia %s debe ser borrador, cancelada o rechazada para ser eliminada

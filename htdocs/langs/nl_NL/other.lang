@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Project gemaakt door e-mailverzamelaar uit e-mail
 TicketCreatedByEmailCollector=Ticket gemaakt door e-mailverzamelaar vanuit e-mail MSGID %s
 OpeningHoursFormatDesc=Gebruik a - om de openings- en sluitingsuren te scheiden. <br> Gebruik een spatie om verschillende bereiken in te voeren. <br> Voorbeeld: 8-12 14-18
 SuffixSessionName=Achtervoegsel voor sessienaam
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Uitvoeroverzicht

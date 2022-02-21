@@ -460,7 +460,7 @@ class FormOther
 	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
 	 *  @param  User		$user           	Object user
 	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	int|string	$showempty			1=show also an empty value
+	 *  @param	int|string	$showempty			1=show also an empty value or text to show for empty
 	 *  @param	string		$morecss			More CSS
 	 *  @param	int			$norepresentative	Show also an entry "Not categorized"
 	 *  @return string							Html combo list code
@@ -489,11 +489,11 @@ class FormOther
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($showempty) {
 			$textforempty = ' ';
-			if (!empty($conf->use_javascript_ajax)) {
-				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-			}
 			if (!is_numeric($showempty)) {
 				$textforempty = $showempty;
+			}
+			if (!empty($conf->use_javascript_ajax) && $textforempty == ' ') {
+				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
 			}
 			$out .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
 		}
@@ -1479,9 +1479,10 @@ class FormOther
 	 * @param	array	$search_groupby		Array of preselected fields
 	 * @param	array	$arrayofgroupby		Array of groupby to fill
 	 * @param	string	$morecss			More CSS
+	 * @param	string  $showempty          '1' or 'text'
 	 * @return string						HTML string component
 	 */
-	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250')
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
 		global $langs, $extrafields, $form;
 
@@ -1493,7 +1494,7 @@ class FormOther
 		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
 
 		foreach ($object->fields as $key => $val) {
-			if (!$val['measure']) {
+			if (!$val['isameasure']) {
 				if (in_array($key, array(
 					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
 					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
@@ -1541,7 +1542,7 @@ class FormOther
 		foreach ($arrayofgroupby as $key => $val) {
 			$arrayofgroupbylabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}
@@ -1552,9 +1553,10 @@ class FormOther
 	 * @param 	mixed	$object				Object analyzed
 	 * @param	array	$search_xaxis		Array of preselected fields
 	 * @param	array	$arrayofxaxis		Array of groupby to fill
-	 * @return string						HTML string component
+	 * @param	string  $showempty          '1' or 'text'
+	 * @return 	string						HTML string component
 	 */
-	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis)
+	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1')
 	{
 		global $langs, $extrafields, $form;
 
@@ -1589,9 +1591,9 @@ class FormOther
 					continue;
 				}
 				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
-					$arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
-					$arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+					$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => $val['position'].'-y');
+					$arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => $val['position'].'-m');
+					$arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => $val['position'].'-d');
 				} else {
 					$arrayofxaxis['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
 				}
@@ -1617,7 +1619,7 @@ class FormOther
 		foreach ($arrayofxaxis as $key => $val) {
 			$arrayofxaxislabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
 
 		return $result;
 	}

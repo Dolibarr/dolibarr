@@ -608,10 +608,14 @@ class ExtraFields
 					if ($unique) {
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					} else {
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX uk_".$table."_".$attrname;
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
+					/*if ($resql < 0) {
+						$this->error = $this->db->lasterror();
+						return -1;
+					}*/
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror();
@@ -1554,7 +1558,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $langs, 0, 0, -1);
+				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$langs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');

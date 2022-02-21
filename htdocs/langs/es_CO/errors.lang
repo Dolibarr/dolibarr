@@ -236,6 +236,7 @@ WarningFailedToAddFileIntoDatabaseIndex=Advertencia, no se pudo agregar la entra
 WarningAvailableOnlyForHTTPSServers=Disponible solo si se usa una conexión segura HTTPS.
 RequireAtLeastXString =Requiere al menos %s carácter (s)
 RequireXStringMax =Requiere %s caracter(es) como máximo
+RequireValidNumeric =Requiere un valor numérico
 RequireValidEmail =La dirección de correo electrónico no es válida
 RequireMaxLength =La longitud debe ser menor que %s caracteres
 RequireValidUrl =Requerir URL válida

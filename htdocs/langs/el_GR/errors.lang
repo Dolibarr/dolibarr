@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Η επαφή αυτή έχει ήδ�
 ErrorCashAccountAcceptsOnlyCashMoney=Αυτό τραπεζικός λογαριασμός είναι ένας λογαριασμός σε μετρητά, έτσι ώστε να δέχεται πληρωμές σε μετρητά τύπου μόνο.
 ErrorFromToAccountsMustDiffers=Πηγή και τους στόχους των τραπεζικών λογαριασμών πρέπει να είναι διαφορετικό.
 ErrorBadThirdPartyName=Κακή τιμή για όνομα τρίτου μέρους
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=Το %s είναι υποχρεωτικό
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Λάθος σύνταξη για τον κωδικό πελάτη
 ErrorBadBarCodeSyntax=Κακή σύνταξη για τον γραμμωτό κώδικα. Μπορεί να ορίσετε έναν κακό τύπο γραμμωτού κώδικα ή έχετε ορίσει μια μάσκα γραμμωτού κώδικα για την αρίθμηση που δεν ταιριάζει με την τιμή που σαρώθηκε.
 ErrorCustomerCodeRequired=Κωδικός πελάτη απαιτείται
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please mo
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτό δεν είναι μια σταθερή ρύθμιση.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

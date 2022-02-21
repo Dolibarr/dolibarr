@@ -2543,7 +2543,7 @@ if ($action == 'create') {
 				if (($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
 					|| ($object->statut == Propal::STATUS_DRAFT && !empty($conf->global->PROPAL_ENABLE_NEGATIVE) && count($object->lines) > 0)) {
 					if ($usercanvalidate) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans('Validate').'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
 					}
@@ -2555,7 +2555,7 @@ if ($action == 'create') {
 				}*/
 				// Edit
 				if ($object->statut == Propal::STATUS_VALIDATED && $usercancreate) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=modif&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 				}
 
 				// ReOpen
@@ -2578,7 +2578,7 @@ if ($action == 'create') {
 				// Create a sale order
 				if (!empty($conf->commande->enabled) && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 					}
 				}
 
@@ -2586,7 +2586,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_PROPOSAL)) {
 					if ($object->statut == Propal::STATUS_SIGNED && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled))) {
 						if ($usercancreatepurchaseorder) {
-							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddPurchaseOrder").'</a>';
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddPurchaseOrder").'</a>';
 						}
 					}
 				}
@@ -2595,7 +2595,7 @@ if ($action == 'create') {
 				if (!empty($conf->service->enabled) && !empty($conf->ficheinter->enabled) && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateintervention) {
 						$langs->load("interventions");
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';
 					}
 				}
 
@@ -2604,14 +2604,14 @@ if ($action == 'create') {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
 					}
 				}
 
 				// Create an invoice and classify billed
 				if ($object->statut == Propal::STATUS_SIGNED && empty($conf->global->PROPOSAL_ARE_NOT_BILLABLE)) {
 					if (!empty($conf->facture->enabled) && $usercancreateinvoice) {
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
 
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();

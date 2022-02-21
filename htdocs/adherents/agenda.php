@@ -65,6 +65,9 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$objcanvas = null;
+
 // Security check
 $result = restrictedArea($user, 'adherent', $id);
 

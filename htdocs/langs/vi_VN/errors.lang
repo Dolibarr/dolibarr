@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Liên hệ này đã được xác đ
 ErrorCashAccountAcceptsOnlyCashMoney=Tài khoản ngân hàng Đây là một tài khoản tiền mặt, vì vậy nó chấp nhận thanh toán các loại chỉ tiền mặt.
 ErrorFromToAccountsMustDiffers=Nguồn tài khoản ngân hàng và các mục tiêu phải khác.
 ErrorBadThirdPartyName=Giá trị xấu cho tên của bên thứ ba
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=% S là bắt buộc
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad cú pháp cho mã khách hàng
 ErrorBadBarCodeSyntax=Cú pháp tồi cho mã vạch. Có thể bạn đặt loại mã vạch tồi hoặc bạn đã định nghĩa mặt nạ mã vạch để đánh số không khớp với giá trị được quét.
 ErrorCustomerCodeRequired=Mã khách hàng yêu cầu
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please mo
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Tham số PHP của bạn upload_max_filesize (%s) cao hơn tham số PHP post_max_size (%s). Đây không phải là một thiết lập phù hợp.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

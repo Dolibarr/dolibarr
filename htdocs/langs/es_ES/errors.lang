@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto ya está definido como 
 ErrorCashAccountAcceptsOnlyCashMoney=Esta cuenta bancaria es de tipo caja y sólo acepta pagos en efectivo.
 ErrorFromToAccountsMustDiffers=La cuenta origen y destino deben ser diferentes.
 ErrorBadThirdPartyName=Nombre de tercero incorrecto
+ForbiddenBySetupRules=Prohibido por las reglas de la configuración
 ErrorProdIdIsMandatory=El %s es obligatorio
+ErrorAccountancyCodeCustomerIsMandatory=El código contable del cliente %s es obligatorio
 ErrorBadCustomerCodeSyntax=La sintaxis del código cliente es incorrecta
 ErrorBadBarCodeSyntax=Sintaxis errónea para el código de barras. Es posible que haya asignado un tipo de código de barras o definido una máscara de código de barras para numerar que no coincide con el valor escaneado
 ErrorCustomerCodeRequired=Código cliente obligatorio
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=No está en el Diccionario de términos de
 ErrorIsNotADraft=%s no es un borrador
 ErrorExecIdFailed=No se puede ejecutar el comando "id"
 ErrorBadCharIntoLoginName=Carácter no autorizado en el nombre de inicio de sesión
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requiere al menos %s carácter(es)
 RequireXStringMax = Requiere %s carácter(es) como máximo
 RequireAtLeastXDigits = Requiere al menos %s dígito(s)
 RequireXDigitsMax = Requiere %s dígito(s) máx.
+RequireValidNumeric = Se requiere un valor numérico
 RequireValidEmail = La dirección de e-mail no es válida
 RequireMaxLength = La longitud debe ser menor que %s carácter(es)
 RequireMinLength = La longitud debe ser superior a %s char (s)

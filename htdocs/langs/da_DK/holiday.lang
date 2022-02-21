@@ -134,4 +134,6 @@ HolidaysToApprove=Ferie til at godkende
 NobodyHasPermissionToValidateHolidays=Ingen har tilladelse til at validere helligdage
 HolidayBalanceMonthlyUpdate=Månedlig opdatering af feriesaldo
 XIsAUsualNonWorkingDay=%s er sædvanligvis en IKKE arbejdsdag
+BlockHolidayIfNegative=Bloker hvis saldoen er negativ
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=Oprettelsen af denne orlovsanmodning er blokeret, fordi din saldo er negativ
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Efter lad spørgsmål %s skal være udkast, annulleret eller nægtet at blive slettet

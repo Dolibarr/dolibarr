@@ -475,7 +475,9 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions and mass actions are processed as sensitive.
-		$sensitiveget = true;
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'file_manager'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
+			$sensitiveget = true;
+		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
 		// Few GET actions coded with a &token into url are processed as sensitive.
 		$arrayofactiontoforcetokencheck = array(
@@ -508,6 +510,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 				print $langs->trans("ErrorGoBackAndCorrectParameters");
 				die;
 			} else {
+				http_response_code(403);
 				if (defined('CSRFCHECK_WITH_TOKEN')) {
 					dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (CSRFCHECK_WITH_TOKEN protection) in main.inc.php. Token not provided.", LOG_WARNING);
 					print "Access to a page that needs a token (constant CSRFCHECK_WITH_TOKEN is defined) is refused by CSRF protection in main.inc.php. Token not provided.\n";
@@ -934,7 +937,7 @@ if (!defined('NOLOGIN')) {
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				//var_dump($relativepathstring);
 
-				// We click on a link that leave a page we have to save search criteria, contextpage, limit and page. We save them from tmp to no tmp
+				// We click on a link that leave a page we have to save search criteria, contextpage, limit and page and mode. We save them from tmp to no tmp
 				if (!empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring])) {
 					$_SESSION['lastsearch_values_'.$relativepathstring] = $_SESSION['lastsearch_values_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
@@ -943,13 +946,17 @@ if (!defined('NOLOGIN')) {
 					$_SESSION['lastsearch_contextpage_'.$relativepathstring] = $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 				}
+				if (!empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit) {
+					$_SESSION['lastsearch_limit_'.$relativepathstring] = $_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
+					unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+				}
 				if (!empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 0) {
 					$_SESSION['lastsearch_page_'.$relativepathstring] = $_SESSION['lastsearch_page_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
 				}
-				if (!empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit) {
-					$_SESSION['lastsearch_limit_'.$relativepathstring] = $_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
-					unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+				if (!empty($_SESSION['lastsearch_mode_tmp_'.$relativepathstring])) {
+					$_SESSION['lastsearch_mode_'.$relativepathstring] = $_SESSION['lastsearch_mode_tmp_'.$relativepathstring];
+					unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 				}
 			}
 
@@ -3110,7 +3117,7 @@ if (!function_exists("llxFooter")) {
 	{
 		global $conf, $db, $langs, $user, $mysoc, $object, $hookmanager;
 		global $delayedhtmlcontent;
-		global $contextpage, $page, $limit;
+		global $contextpage, $page, $limit, $mode;
 		global $dolibarr_distrib;
 
 		$ext = 'layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
@@ -3150,6 +3157,7 @@ if (!function_exists("llxFooter")) {
 			unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 
 			if (!empty($contextpage)) {
 				$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring] = $contextpage;
@@ -3160,10 +3168,14 @@ if (!function_exists("llxFooter")) {
 			if (!empty($limit) && $limit != $conf->liste_limit) {
 				$_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
 			}
+			if (!empty($mode)) {
+				$_SESSION['lastsearch_mode_tmp_'.$relativepathstring] = $mode;
+			}
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_limit_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_mode_'.$relativepathstring]);
 		}
 
 		// Core error message
@@ -3222,6 +3234,7 @@ if (!function_exists("llxFooter")) {
 									id:<?php echo $object->id; ?>
 									, element:'<?php echo $object->element ?>'
 									, action:'DOC_PREVIEW'
+									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
@@ -3231,6 +3244,7 @@ if (!function_exists("llxFooter")) {
 									id:<?php echo $object->id; ?>
 									, element:'<?php echo $object->element ?>'
 									, action:'DOC_DOWNLOAD'
+									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});

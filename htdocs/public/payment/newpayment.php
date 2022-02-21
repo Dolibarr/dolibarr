@@ -481,7 +481,7 @@ if ($action == 'dopayment') {
 
 
 // Called when choosing Stripe mode.
-// When using the Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
+// When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
 if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$amountstripe = $amount;
@@ -728,7 +728,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		}
 	}
 
-	// When using the PaymentIntent API architecture
+	// When using the PaymentIntent API architecture (mode set on by default into conf.class.php)
 	if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -793,8 +793,8 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$remoteip = getUserRemoteIP();
 
 	$_SESSION["onlinetoken"] = $stripeToken;
-	$_SESSION["FinalPaymentAmt"] = $amount;
-	$_SESSION["currencyCodeType"] = $currency;
+	$_SESSION["FinalPaymentAmt"] = $amount;			// amount really paid (coming from Stripe). Will be used for check in paymentok.php.
+	$_SESSION["currencyCodeType"] = $currency;		// currency really used for payment (coming from Stripe). Will be used for check in paymentok.php.
 	$_SESSION["paymentType"] = '';
 	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
 	$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';

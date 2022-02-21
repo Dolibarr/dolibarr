@@ -521,7 +521,7 @@ if ($result) {
 		}
 		print '</td>';
 
-		print '<td>'.$objp->tva_intra.'</td>';
+		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
 		print '<td>';
 		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);

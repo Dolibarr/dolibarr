@@ -181,4 +181,4 @@ BankColorizeMovementName2=Achtergrondkleur voor creditmutatie
 IfYouDontReconcileDisableProperty=Als u op sommige bankrekeningen geen bankafstemmingen uitvoert, schakelt u de eigenschap "%s" uit om deze waarschuwing te verwijderen.
 NoBankAccountDefined=Geen bankrekening gedefinieerd
 NoRecordFoundIBankcAccount=Geen record gevonden in de bankrekening. Vaak gebeurt dit wanneer een record handmatig is verwijderd uit de lijst van banktransacties (bijvoorbeeld tijdens een reconciliatie van de bankrekening). Een andere reden is dat de betaling was vastgelegd terwijl module "%s" was uitgeschakeld.
-AlreadyOneBankAccount=Already one bank account defined
+AlreadyOneBankAccount=Er is al een bankrekening gedefineerd

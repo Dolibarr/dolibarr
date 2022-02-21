@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=یہ رابطہ پہلے ہی اس ق
 ErrorCashAccountAcceptsOnlyCashMoney=یہ بینک اکاؤنٹ ایک کیش اکاؤنٹ ہے، اس لیے یہ صرف قسم کی نقدی کی ادائیگی قبول کرتا ہے۔
 ErrorFromToAccountsMustDiffers=ذرائع اور اہداف کے بینک اکاؤنٹس مختلف ہونے چاہئیں۔
 ErrorBadThirdPartyName=فریق ثالث کے نام کی خراب قدر
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s لازمی ہے۔
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=کسٹمر کوڈ کے لیے خراب نحو
 ErrorBadBarCodeSyntax=بارکوڈ کے لیے خراب نحو۔ ہوسکتا ہے کہ آپ نے برا کوڈ کی قسم سیٹ کی ہو یا آپ نے نمبرنگ کے لیے بارکوڈ ماسک کی وضاحت کی ہو جو اسکین کردہ ویلیو سے مماثل نہ ہو۔
 ErrorCustomerCodeRequired=کسٹمر کوڈ درکار ہے۔
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=ادائیگی کی شرائط ڈکشنر�
 ErrorIsNotADraft=%s ڈرافٹ نہیں ہے۔
 ErrorExecIdFailed=کمانڈ "id" پر عمل نہیں کیا جا سکتا
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=آپ کا پی ایچ پی پیرامیٹر upload_max_filesize (%s) PHP پیرامیٹر post_max_size (%s) سے زیادہ ہے۔ یہ ایک مستقل سیٹ اپ نہیں ہے۔
@@ -315,6 +318,7 @@ RequireAtLeastXString = کم از کم %s حروف کی ضرورت ہے
 RequireXStringMax = زیادہ سے زیادہ %s حروف کی ضرورت ہے۔
 RequireAtLeastXDigits = کم از کم %s ہندسوں کی ضرورت ہے
 RequireXDigitsMax = زیادہ سے زیادہ %s ہندسوں کی ضرورت ہے۔
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = ای میل ایڈریس درست نہیں ہے۔
 RequireMaxLength = لمبائی %s حروف سے کم ہونی چاہیے۔
 RequireMinLength = لمبائی %s char(s) سے زیادہ ہونی چاہیے

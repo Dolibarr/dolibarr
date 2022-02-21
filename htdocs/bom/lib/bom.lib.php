@@ -84,6 +84,11 @@ function bomPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/bom/bom_net_needs.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("BOMNetNeeds");
+	$head[$h][2] = 'net_needs';
+	$h++;
+
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {

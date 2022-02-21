@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=PDF இல் தடித்த குறிப்பு மற்றும் காலம்
-BoldLabelOnPDF=PDF இல் தடிமனான லேபிள்
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=அறக்கட்டளை
 Version=பதிப்பு
 Publisher=பதிப்பகத்தார்
@@ -343,7 +343,7 @@ StepNb=படி %s
 FindPackageFromWebSite=உங்களுக்குத் தேவையான அம்சங்களை வழங்கும் தொகுப்பைக் கண்டறியவும் (உதாரணமாக %s என்ற அதிகாரப்பூர்வ இணையதளத்தில்).
 DownloadPackageFromWebSite=தொகுப்பைப் பதிவிறக்கவும் (உதாரணமாக %s அதிகாரப்பூர்வ இணையதளத்தில் இருந்து).
 UnpackPackageInDolibarrRoot=தொகுக்கப்பட்ட கோப்புகளை உங்கள் Dolibarr சர்வர் கோப்பகத்தில் திறக்கவும்/அன்சிப் செய்யவும்: <b> %s </b>
-UnpackPackageInModulesRoot=வெளிப்புற தொகுதிகளை வரிசைப்படுத்த/நிறுவ, வெளிப்புற தொகுதிகளுக்கு அர்ப்பணிக்கப்பட்ட சர்வர் கோப்பகத்தில் தொகுக்கப்பட்ட கோப்புகளை திறக்க/அன்சிப் செய்யவும்: <br> <b> %s a09a4b730f17f17
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=தொகுதி வரிசைப்படுத்தல் முடிந்தது. இருப்பினும் பக்க அமைவு தொகுதிகளுக்குச் சென்று உங்கள் பயன்பாட்டில் தொகுதியை இயக்கி அமைக்க வேண்டும்: <a href="%s"> %s </a> .
 NotExistsDirect=மாற்று ரூட் அடைவு ஏற்கனவே உள்ள கோப்பகத்திற்கு வரையறுக்கப்படவில்லை. <br>
 InfDirAlt=பதிப்பு 3 இல் இருந்து, ஒரு மாற்று ரூட் கோப்பகத்தை வரையறுக்க முடியும். இது ஒரு பிரத்யேக கோப்பகம், செருகுநிரல்கள் மற்றும் தனிப்பயன் டெம்ப்ளேட்டுகளில் சேமிக்க உங்களை அனுமதிக்கிறது. <br> Dolibarrன் மூலத்தில் ஒரு கோப்பகத்தை உருவாக்கவும் (எ.கா: தனிப்பயன்). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=பயன்பாட்டிலிருந்து
 HighlightLinesOnMouseHover=மவுஸ் நகர்த்தும்போது அட்டவணை வரிகளை முன்னிலைப்படுத்தவும்
 HighlightLinesColor=மவுஸ் கடந்து செல்லும் போது கோட்டின் நிறத்தை முன்னிலைப்படுத்தவும் (சிறப்பம்சமாக இல்லாமல் 'ffffff' ஐப் பயன்படுத்தவும்)
 HighlightLinesChecked=கோட்டின் நிறத்தை தேர்வு செய்யும்போது அதைத் தனிப்படுத்தவும் (சிறப்பம்சமாக இல்லாமல் 'ffffff' ஐப் பயன்படுத்தவும்)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=பக்க தலைப்பின் உரை நிறம்
 LinkColor=இணைப்புகளின் நிறம்
 PressF5AfterChangingThis=விசைப்பலகையில் CTRL+F5 ஐ அழுத்தவும் அல்லது இந்த மதிப்பை மாற்றிய பின் உங்கள் உலாவி தற்காலிக சேமிப்பை அழிக்கவும்
@@ -2216,3 +2218,5 @@ NativeModules=சொந்த தொகுதிகள்
 NoDeployedModulesFoundWithThisSearchCriteria=இந்தத் தேடல் அளவுகோல்களுக்கான தொகுதிகள் எதுவும் இல்லை
 API_DISABLE_COMPRESSION=API பதில்களின் சுருக்கத்தை முடக்கு
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

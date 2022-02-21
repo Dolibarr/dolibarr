@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Proyek dibuat oleh kolektor email dari email MSGI
 TicketCreatedByEmailCollector=Tiket dibuat oleh kolektor email dari email MSGID %s
 OpeningHoursFormatDesc=Gunakan a - untuk memisahkan jam buka dan tutup. <br> Gunakan spasi untuk memasukkan rentang yang berbeda. <br> Contoh: 8-12 14-18
 SuffixSessionName=Akhiran untuk nama sesi
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Area ekspor

@@ -82,6 +82,7 @@ PaymentsAlreadyDone=Bereits getätigte Zahlungen
 PaymentsBackAlreadyDone=Rückerstattungen bereits erledigt
 PaymentRule=Zahlungsregel
 PaymentMode=Zahlungsart
+PaymentModes=Zahlungsarten
 DefaultPaymentMode=Standardzahlungsart
 DefaultBankAccount=Standardbankkonto
 IdPaymentMode=Zahlungsart (ID)

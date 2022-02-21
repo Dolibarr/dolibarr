@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -544,9 +545,9 @@ if (empty($reshook)) {
 				if ($line->product_type < 9 && $line->total_ht != 0) { // Remove lines with product_type greater than or equal to 9 and no need to create discount if amount is null
 					$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
 
-					$amount_ht[$line->tva_tx] += $line->total_ht;
-					$amount_tva[$line->tva_tx] += $line->total_tva;
-					$amount_ttc[$line->tva_tx] += $line->total_ttc;
+					$amount_ht[$keyforvatrate] += $line->total_ht;
+					$amount_tva[$keyforvatrate] += $line->total_tva;
+					$amount_ttc[$keyforvatrate] += $line->total_ttc;
 					$multicurrency_amount_ht[$keyforvatrate] += $line->multicurrency_total_ht;
 					$multicurrency_amount_tva[$keyforvatrate] += $line->multicurrency_total_tva;
 					$multicurrency_amount_ttc[$keyforvatrate] += $line->multicurrency_total_ttc;
@@ -883,8 +884,52 @@ if (empty($reshook)) {
 			}
 		}
 
+		// Standard invoice or Deposit invoice, created from a Predefined template invoice
+		if ((GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0) {
+			if (empty($dateinvoice)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+				$action = 'create';
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+				$error++;
+				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
+				$action = 'create';
+			}
+
+			if (!$error) {
+				$object->socid = GETPOST('socid', 'int');
+				$object->type            = GETPOST('type');
+				$object->ref             = GETPOST('ref');
+				$object->date            = $dateinvoice;
+				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
+				$object->note_private    = trim(GETPOST('note_private', 'restricthtml'));
+				$object->ref_client      = GETPOST('ref_client');
+				$object->model_pdf = GETPOST('model');
+				$object->fk_project = GETPOST('projectid', 'int');
+				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
+				$object->fk_account = GETPOST('fk_account', 'int');
+				$object->amount = price2num(GETPOST('amount'));
+				$object->remise_absolue		= price2num(GETPOST('remise_absolue'), 'MU');
+				$object->remise_percent		= price2num(GETPOST('remise_percent'), '', 2);
+				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+
+				// Source facture
+				$object->fac_rec = GETPOST('fac_rec', 'int');
+				$fac_rec = new FactureFournisseurRec($db);
+				$fac_rec->fetch($object->fac_rec);
+				$fac_rec->fetch_lines();
+				$object->lines = $fac_rec->lines;
+
+				$id = $object->create($user); // This include recopy of links from recurring invoice and recurring invoice lines
+			}
+		}
+
 		// Standard invoice or Deposit invoice, not from a Predefined template invoice
-		if (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT) {
+		if (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && GETPOST('fac_rec') <= 0) {
 			if (GETPOST('socid', 'int') < 1) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
 				$action = 'create';
@@ -1336,6 +1381,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
+		// Add a product line
 		$db->begin();
 
 		$ret = $object->fetch($id);
@@ -1368,7 +1414,11 @@ if (empty($reshook)) {
 		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
 		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1957,11 +2007,17 @@ if ($action == 'create') {
 	// Ref
 	print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
+	$exampletemplateinvoice = new FactureFournisseurRec($db);
+	$invoice_predefined = new FactureFournisseurRec($db);
+	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0) {
+		$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+	}
+
 	// Third party
 	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
 	print '<td>';
 
-	if ($societe->id > 0) {
+	if ($societe->id > 0 && (!GETPOST('fac_rec', 'int') || !empty($invoice_predefined->frequency))) {
 		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
@@ -1973,15 +2029,85 @@ if ($action == 'create') {
 			$(document).ready(function() {
 				$("#socid").change(function() {
 					var socid = $(this).val();
-					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+                    var fac_rec = $(\'#fac_rec\').val();
+        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
 				});
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+		if (!GETPOST('fac_rec', 'int')) {
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+		}
 	}
 	print '</td></tr>';
+
+	// Overwrite some values if creation of invoice is from a predefined invoice
+	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0) {
+		$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+
+		$dateinvoice = $invoice_predefined->date_when; // To use next gen date by default later
+		if (empty($projectid)) {
+			$projectid = $invoice_predefined->fk_project;
+		}
+		$cond_reglement_id = $invoice_predefined->cond_reglement_id;
+		$mode_reglement_id = $invoice_predefined->mode_reglement_id;
+		$fk_account = $invoice_predefined->fk_account;
+		$note_public = $invoice_predefined->note_public;
+		$note_private = $invoice_predefined->note_private;
+
+		if (!empty($invoice_predefined->multicurrency_code)) {
+			$currency_code = $invoice_predefined->multicurrency_code;
+		}
+		if (!empty($invoice_predefined->multicurrency_tx)) {
+			$currency_tx = $invoice_predefined->multicurrency_tx;
+		}
+
+		$sql = 'SELECT r.rowid, r.titre as title, r.total_ttc';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_rec as r';
+		$sql .= ' WHERE r.fk_soc = '. (int) $invoice_predefined->socid;
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+
+			if ($num > 0) {
+				print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td>';
+				//print '<input type="hidden" name="fac_rec" id="fac_rec" value="'.GETPOST('fac_rec', 'int').'">';
+				print '<select class="flat" id="fac_rec" name="fac_rec">'; // We may want to change the template to use
+				print '<option value="0" selected></option>';
+				while ($i < $num) {
+					$objp = $db->fetch_object($resql);
+					print '<option value="'.$objp->rowid.'"';
+					if (GETPOST('fac_rec', 'int') == $objp->rowid) {
+						print ' selected';
+						$exampletemplateinvoice->fetch(GETPOST('fac_rec', 'int'));
+					}
+					print '>'.$objp->title.' ('.price($objp->total_ttc).' '.$langs->trans("TTC").')</option>';
+					$i++;
+				}
+				print '</select>';
+				// Option to reload page to retrieve customer informations. Note, this clear other input
+				if (empty($conf->global->RELOAD_PAGE_ON_TEMPLATE_CHANGE_DISABLED)) {
+					print '<script type="text/javascript">
+        			$(document).ready(function() {
+        				$("#fac_rec").change(function() {
+							console.log("We have changed the template invoice - Reload page");
+        					var fac_rec = $(this).val();
+        			        var socid = $(\'#socid\').val();
+        					// For template invoice change, we must reuse data of template, not input already done, so we call a GET with action=create, not a POST submit.
+        					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+        				});
+        			});
+        			</script>';
+				}
+				print '</td></tr>';
+			}
+			$db->free($resql);
+		} else {
+			dol_print_error($db);
+		}
+	}
 
 	// Ref supplier
 	print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier']) ? $_POST['ref_supplier'] : $objectsrc->ref_supplier).'" type="text"';
@@ -2286,6 +2412,34 @@ if ($action == 'create') {
 		print '<td class="maxwidthonsmartphone">';
 		print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ?GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
 		print '</td></tr>';
+	}
+
+	// Help of substitution key
+	$htmltext = '';
+	if (GETPOST('fac_rec', 'int') > 0) {
+		$dateexample = $newdateinvoice ? $newdateinvoice : $dateinvoice;
+		if (empty($dateexample)) {
+			$dateexample = dol_now();
+		}
+		$substitutionarray = array(
+			'__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ht).')',
+			'__TOTAL_TTC__' =>  $langs->trans("AmountTTC").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ttc).')',
+			'__INVOICE_PREVIOUS_MONTH__' => $langs->trans("PreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'), '%m').')',
+			'__INVOICE_MONTH__' =>  $langs->trans("MonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample, '%m').')',
+			'__INVOICE_NEXT_MONTH__' => $langs->trans("NextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%m').')',
+			'__INVOICE_PREVIOUS_MONTH_TEXT__' => $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'), '%B').')',
+			'__INVOICE_MONTH_TEXT__' =>  $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample, '%B').')',
+			'__INVOICE_NEXT_MONTH_TEXT__' => $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%B').')',
+			'__INVOICE_PREVIOUS_YEAR__' => $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'), '%Y').')',
+			'__INVOICE_YEAR__' =>  $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample, '%Y').')',
+			'__INVOICE_NEXT_YEAR__' => $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'), '%Y').')'
+		);
+
+		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+		foreach ($substitutionarray as $key => $val) {
+			$htmltext .= $key.' = '.$langs->trans($val).'<br>';
+		}
+		$htmltext .= '</i>';
 	}
 
 	// Intracomm report
@@ -2774,6 +2928,19 @@ if ($action == 'create') {
 				$s = str_replace('{s2}', $discount->getNomUrl(1, 'discount'), $s);
 				print $s;
 				print '</span><br>';
+			}
+		}
+
+		if ($object->fk_fac_rec_source > 0) {
+			$tmptemplate = new FactureFournisseurRec($db);
+			$result = $tmptemplate->fetch($object->fk_fac_rec_source);
+			if ($result > 0) {
+				print ' <span class="opacitymediumbycolor paddingleft">';
+				$link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card-rec.php?facid='.$tmptemplate->id.'">'.dol_escape_htmltag($tmptemplate->titre).'</a>';
+				$s = $langs->transnoentities("GeneratedFromSupplierTemplate", $link);
+
+				print $s;
+				print '</span>';
 			}
 		}
 		print '</td></tr>';
@@ -3557,6 +3724,13 @@ if ($action == 'create') {
 				// Clone
 				if ($action != 'edit' && $usercancreate) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=clone&amp;socid='.$object->socid.'">'.$langs->trans('ToClone').'</a>';
+				}
+
+				// Clone as predefined / Create template
+				if (($object->type ==  FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_DEPOSIT) && $object->statut == 0 && $usercancreate) {
+					if (!$objectidnext && count($object->lines) > 0) {
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card-rec.php?facid='.$object->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+					}
 				}
 
 				// Delete

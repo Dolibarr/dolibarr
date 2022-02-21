@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=此聯絡人已被定義為以下類�
 ErrorCashAccountAcceptsOnlyCashMoney=這是一個現金帳戶的銀行帳戶，所以只接受現金支付的類型。
 ErrorFromToAccountsMustDiffers=來源和目標的銀行帳戶必須是不同的。
 ErrorBadThirdPartyName=合作方名稱的值不正確
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s是強制性的
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=客戶代碼語法錯誤
 ErrorBadBarCodeSyntax=條碼語法錯誤。可能是您設定了錯誤的條碼類型，或者您定義了與掃描值不匹配的條碼遮罩編號。
 ErrorCustomerCodeRequired=需要客戶代碼
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=不在支付條款類別中，請修改。
 ErrorIsNotADraft=%s 不是草案狀態
 ErrorExecIdFailed=無法執行命令“id”
 ErrorBadCharIntoLoginName=登錄名稱中的未核准字元
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=您的PHP參數upload_max_filesize（%s）高於PHP參數post_max_size（%s）。這不是相同的設定。
@@ -315,6 +318,7 @@ RequireAtLeastXString = 至少需要%s個字元
 RequireXStringMax = 最多 %s 個字元
 RequireAtLeastXDigits = 需要至少%s位數
 RequireXDigitsMax = 最多%s位數
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = 電子郵件地址無效
 RequireMaxLength = 長度需要小於%s個字元
 RequireMinLength = 長度必須大於%s個字元

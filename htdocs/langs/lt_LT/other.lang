@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Project created by email collector from email MSG
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
 OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Eksporto sritis

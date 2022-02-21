@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Έργο που δημιουργήθηκε από
 TicketCreatedByEmailCollector=Εισιτήριο που δημιουργήθηκε από τον συλλέκτη ηλεκτρονικού ταχυδρομείου από το ηλεκτρονικό ταχυδρομείο MSGID %s
 OpeningHoursFormatDesc=Χρησιμοποιήστε το "-" για να διαχωρίσετε τις ώρες ανοίγματος και κλεισίματος. <br> Χρησιμοποιήστε "κενό" για να εισάγετε διαφορετικές περιοχές. <br> Παράδειγμα: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Exports area

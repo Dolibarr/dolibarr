@@ -42,6 +42,7 @@
 //if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
 //if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 //if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
+//if (! defined('NOSESSION'))     		     define('NOSESSION', '1');				    // Disable session
 
 // Load Dolibarr environment
 $res = 0;

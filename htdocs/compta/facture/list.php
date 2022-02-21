@@ -178,6 +178,7 @@ $diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user-
 $object = new Facture($db);
 
 $now = dol_now();
+$error = 0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Facture($db);
@@ -376,61 +377,78 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'makepayment_confirm' && $user->rights->facture->paiement) {
+if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 	if (!empty($arrayofselected)) {
 		$bankid = GETPOST('bankid', 'int');
 		$paiementid = GETPOST('paiementid', 'int');
 		$paiementdate = dol_mktime(12, 0, 0, GETPOST('datepaimentmonth', 'int'), GETPOST('datepaimentday', 'int'), GETPOST('datepaimentyear', 'year'));
-		foreach ($arrayofselected as $toselectid) {
-			$errorpayment = 0;
-			$facture = new Facture($db);
-			$result = $facture->fetch($toselectid);
-			if ($result < 0) {
-				setEventMessage($facture->error, 'errors');
-				$errorpayment++;
-			} else {
-				if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->statut == 1 && $facture->paye == 0) {
-					$paiementAmount = $facture->getSommePaiement();
-					$totalcreditnotes = $facture->getSumCreditNotesUsed();
-					$totaldeposits = $facture->getSumDepositsUsed();
-					$totalpay = $paiementAmount + $totalcreditnotes + $totaldeposits;
-					$remaintopay = price2num($facture->total_ttc - $totalpay);
-					if ($remaintopay != 0) {
-						$resultBank = $facture->setBankAccount($bankid);
-						if ($resultBank < 0) {
-							setEventMessage($facture->error, 'errors');
-							$errorpayment++;
-						} else {
-							$paiement = new Paiement($db);
-							$paiement->datepaye = $paiementdate;
-							$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
-							$paiement->multicurrency_amounts[$facture->id] = $remaintopay;
-							$paiement->paiementid = $paiementid;
-							$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
-							if ($paiement_id < 0) {
-								setEventMessage($facture->ref.' '.$paiement->error, 'errors');
+		if (empty($paiementdate)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+			$error++;
+			$action = 'makepayment';
+		}
+
+		if (!$error) {
+			foreach ($arrayofselected as $toselectid) {
+				$errorpayment = 0;
+				$facture = new Facture($db);
+				$result = $facture->fetch($toselectid);
+
+				$db->begin();
+
+				if ($result < 0) {
+					setEventMessage($facture->error, 'errors');
+					$errorpayment++;
+				} else {
+					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->statut == Facture::STATUS_VALIDATED && $facture->paye == 0) {
+						$paiementAmount = $facture->getSommePaiement();
+						$totalcreditnotes = $facture->getSumCreditNotesUsed();
+						$totaldeposits = $facture->getSumDepositsUsed();
+						$totalpay = $paiementAmount + $totalcreditnotes + $totaldeposits;
+						$remaintopay = price2num($facture->total_ttc - $totalpay);
+						if ($remaintopay != 0) {
+							$resultBank = $facture->setBankAccount($bankid);
+							if ($resultBank < 0) {
+								setEventMessages($facture->error, null, 'errors');
 								$errorpayment++;
 							} else {
-								$result = $paiement->addPaymentToBank($user, 'payment', '', $bankid, '', '');
-								if ($result < 0) {
-									setEventMessages($facture->ref.' '.$paiement->error, $paiement->errors, 'errors');
+								$paiement = new Paiement($db);
+								$paiement->datepaye = $paiementdate;
+								$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
+								$paiement->multicurrency_amounts[$facture->id] = $remaintopay;
+								$paiement->paiementid = $paiementid;
+								$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
+								if ($paiement_id < 0) {
+									$langs->load("errors");
+									setEventMessages($facture->ref.' '.$langs->trans($paiement->error), $paiement->errors, 'errors');
 									$errorpayment++;
+								} else {
+									$result = $paiement->addPaymentToBank($user, 'payment', '', $bankid, '', '');
+									if ($result < 0) {
+										$langs->load("errors");
+										setEventMessages($facture->ref.' '.$langs->trans($paiement->error), $paiement->errors, 'errors');
+										$errorpayment++;
+									}
 								}
 							}
+						} else {
+							setEventMessage($langs->trans('NoPaymentAvailable', $facture->ref), 'warnings');
+							$errorpayment++;
 						}
 					} else {
-						setEventMessage($langs->trans('NoPaymentAvailable', $facture->ref), 'warnings');
+						setEventMessage($langs->trans('BulkPaymentNotPossibleForInvoice', $facture->ref), 'warnings');
 						$errorpayment++;
 					}
-				} else {
-					setEventMessage($langs->trans('NoPaymentAvailable', $facture->ref), 'warnings');
-					$errorpayment++;
 				}
-			}
-			if (empty($errorpayment)) {
-				setEventMessage($langs->trans('PaymentRegisteredAndInvoiceSetToPaid', $facture->ref));
+
+				if (empty($errorpayment)) {
+					setEventMessage($langs->trans('PaymentRegisteredAndInvoiceSetToPaid', $facture->ref));
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
 			}
 		}
 	}
@@ -1039,8 +1057,9 @@ if ($resql) {
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
-	if ($user->rights->facture->paiement) {
-		$arrayofmassactions['makepayment'] = $langs->trans("RegisterPaymentAndClasiffiedPayed");
+
+	if (!empty($user->rights->facture->paiement)) {
+		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
 	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
@@ -1097,12 +1116,12 @@ if ($resql) {
 			// 'text' => $langs->trans("ConfirmClone"),
 			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			array('type' => 'date', 'name' => 'datepaiment', 'label' => $langs->trans("Date")),
+			array('type' => 'date', 'name' => 'datepaiment', 'label' => $langs->trans("Date"), 'datenow' => 1),
 			array('type' => 'other', 'name' => 'paiementid', 'label' => $langs->trans("PaymentMode"), 'value' => $form->select_types_paiements(GETPOST('search_paymentmode'), 'paiementid', '', 0, 0, 1, 0, 1, '', 1)),
 			array('type' => 'other', 'name' => 'bankid', 'label' => $langs->trans("BankAccount"), 'value'=>$form->select_comptes('', 'bankid', 0, '', 0, '', 0, '', 1)),
 			//array('type' => 'other', 'name' => 'invoicesid', 'label' => '', 'value'=>'<input type="hidden" id="invoicesid" name="invoicesid" value="'.implode('#',GETPOST('toselect','array')).'">'),
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('RegisterPaymentAndClasiffiedPayed'), $langs->trans('RegisterPaymentAndClasiffiedPayed', $object->ref), 'makepayment_confirm', $formquestion, 1, 0, 200, 500, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('MakePaymentAndClassifyPayed'), $langs->trans('EnterPaymentReceivedFromCustomer'), 'makepayment_confirm', $formquestion, 1, 0, 200, 500, 1);
 		print $formconfirm;
 	}
 
@@ -1632,8 +1651,11 @@ if ($resql) {
 		) {
 			$with_margin_info = true;
 		}
+		$total_ht = 0;
+		$total_margin = 0;
 
-		while ($i < min($num, $limit)) {
+		$last_num = min($num, $limit);
+		while ($i < $last_num) {
 			$obj = $db->fetch_object($resql);
 
 			$datelimit = $db->jdate($obj->datelimite);
@@ -1721,6 +1743,8 @@ if ($resql) {
 			if ($with_margin_info === true) {
 				$facturestatic->fetch_lines();
 				$marginInfo = $formmargin->getMarginInfosArray($facturestatic);
+				$total_ht += $obj->total_ht;
+				$total_margin += $marginInfo['total_margin'];
 			}
 
 			print '<tr class="oddeven"';
@@ -2211,6 +2235,16 @@ if ($resql) {
 				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
+				}
+				if (!$i) {
+					$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+				}
+				if ($i >= $last_num - 1) {
+					if (!empty($total_ht)) {
+						$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+					} else {
+						$totalarray['val']['total_mark_rate'] = '';
+					}
 				}
 			}
 

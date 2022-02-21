@@ -19,7 +19,7 @@
 ModulePartnershipName=Håndtering av partnerskap
 PartnershipDescription=Modul for Partnerskapshåndtering
 PartnershipDescriptionLong= Modul for Partnerskapshåndtering
-Partnership=Partnership
+Partnership=Partnerskap
 AddPartnership=Add partnership
 CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
 PartnershipCheckBacklink=Partnership: Check referring backlink
