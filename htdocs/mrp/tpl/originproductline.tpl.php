@@ -28,7 +28,6 @@ if (!is_object($form)) {
 	$form = new Form($db);
 }
 
-
 $qtytoconsumeforline = $this->tpl['qty'] / ( ! empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1 );
 /*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
 	$qtytoconsumeforline = $qtytoconsumeforline / $this->tpl['qty_bom'];
@@ -48,7 +47,7 @@ print '<tr class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabl
 print '<td>';
 if ($res) {
 	print $tmpproduct->getNomUrl(1);
-	if($tmpbom->id) {
+	if ($tmpbom->id) {
 		print ' ' . $langs->trans("or") . ' ';
 		print $tmpbom->getNomUrl(1);
 		print ' <a class="collapse_bom" id="collapse-' . $line->id . '" href="#">';
