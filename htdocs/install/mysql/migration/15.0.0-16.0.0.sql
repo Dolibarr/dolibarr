@@ -238,5 +238,5 @@ ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
 
 ALTER TABLE llx_inventorydet ADD COLUMN pmp_real double DEFAULT NULL;
-ALTER TABLE llx_inventorydet ADD COLUMN valuation_real double DEFAULT NULL;
+ALTER TABLE llx_inventorydet ADD COLUMN pmp_expected double DEFAULT NULL;
 
