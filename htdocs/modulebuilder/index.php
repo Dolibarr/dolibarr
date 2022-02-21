@@ -1309,7 +1309,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 		}
 	}
 
-	if (!$error) {
+	if (!$error && !GETPOST('regenerateclasssql')&& !GETPOST('regeneratemissing')) {
 		$addfieldentry = array(
 			'name'=>GETPOST('propname', 'aZ09'),
 			'label'=>GETPOST('proplabel', 'alpha'),
@@ -1335,6 +1335,8 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 		if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
 			$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
 		}
+	} else {
+		$addfieldentry = array();
 	}
 
 	/*if (GETPOST('regeneratemissing'))
