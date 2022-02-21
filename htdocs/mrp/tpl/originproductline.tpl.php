@@ -82,9 +82,13 @@ print '<td class="center">';
 //print '<input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'>';
 print '</td>';
 
-print '<td class="center">';
-print '<input type="checkbox" name="bomlineid[]" value="'.$line->id.'">';
-print '</td>';
+if($tmpbom->id) {
+	print '<td class="center">';
+	print '<input type="checkbox" name="bomlineid[]" value="' . $line->id . '">';
+	print '</td>';
+} else {
+	print '<td class="center">&nbsp;</td>';
+}
 
 print '</tr>'."\n";
 
