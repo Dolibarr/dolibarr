@@ -22,9 +22,12 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+global $db;
+
 if (!is_object($form)) {
 	$form = new Form($db);
 }
+
 
 $qtytoconsumeforline = $this->tpl['qty'] / ( ! empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1 );
 /*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
@@ -32,9 +35,9 @@ $qtytoconsumeforline = $this->tpl['qty'] / ( ! empty($this->tpl['efficiency']) ?
 }*/
 $qtytoconsumeforline = price2num($qtytoconsumeforline, 'MS');
 
-$tmpproduct = new Product($this->db);
+$tmpproduct = new Product($db);
 $tmpproduct->fetch($line->fk_product);
-$tmpbom = new BOM($this->db);
+$tmpbom = new BOM($db);
 $res = $tmpbom->fetch($line->fk_bom_child);
 
 ?>
@@ -89,20 +92,20 @@ print '</tr>'."\n";
 // Select of all the sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
 $sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
-$resql = $this->db->query($sql);
+$resql = $db->query($sql);
 
 if ($resql) {
 	// Loop on all the sub-BOM lines if they exist
-	while ($obj = $this->db->fetch_object($resql)) {
+	while ($obj = $db->fetch_object($resql)) {
 
-		$sub_bom_product = new Product($this->db);
+		$sub_bom_product = new Product($db);
 		$sub_bom_product->fetch($obj->fk_product);
 		$sub_bom_product->load_stock();
 
-		$sub_bom = new BOM($this->db);
+		$sub_bom = new BOM($db);
 		$sub_bom->fetch($obj->fk_bom_child);
 
-		$sub_bom_line = new BOMLine($this->db);
+		$sub_bom_line = new BOMLine($db);
 		$sub_bom_line->fetch($obj->rowid);
 
 		//If hidden conf is set, we show directly all the sub-BOM lines
