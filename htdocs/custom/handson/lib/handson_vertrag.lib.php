@@ -107,6 +107,8 @@ function show_vertraege($conf, $langs, $db, $object, $backtopage = '')
 	$search_poste = GETPOST("search_poste", 'alpha');
 	$search_roles = GETPOST("search_roles", 'array');
 
+	$socid = explode('socid=', $backtopage)[1];
+
 	$socialnetworks = getArrayOfSocialNetworks();
 
 	$searchAddressPhoneDBFields = array(
@@ -261,7 +263,7 @@ function show_vertraege($conf, $langs, $db, $object, $backtopage = '')
 	}*/
 	$sql .= " FROM " . MAIN_DB_PREFIX . "handson_vertrag as t";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "handson_vertrag_extrafields as ef on (t.rowid = ef.fk_object)";
-	$sql .= " WHERE t.fk_soc = " . $object->id;
+	$sql .= " WHERE t.fk_soc = " . $socid;
 
 	dol_syslog('core/lib/company.lib.php :: show_contacts', LOG_DEBUG);
 	$result = $db->query($sql);

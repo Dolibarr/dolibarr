@@ -94,8 +94,60 @@ function labelPrepareHead($object)
 function labelIsEditable($date_creation)
 {
 	$date_creation = explode(' ', $date_creation);
-	$fromtoday = strtotime($date_creation[0]) == strtotime(date('d-m-Y'));
-	$date = new DateTime(date('H:i'), new DateTimeZone('CET'));
-	$before18 = strtotime($date_creation[0].' '.$date_creation[1]) < $date->getTimestamp();
-	return $fromtoday && $before18;
+	$day = new DateTime($date_creation[0], new DateTimeZone('Europe/Berlin'));
+	$time = new DateTime($date_creation[1], new DateTimeZone('Europe/Berlin'));
+	$evening = new DateTime('18:00', new DateTimeZone('Europe/Berlin'));
+
+	if (date('Y-m-d') == $day->format('Y-m-d') && (date('H:i') < $evening->format('H:i') || $time->format('H:i') >= $evening->format('H:i'))) {
+		return true;
+	} elseif (date('Y-m-d') == $day->add(DateInterval::createFromDateString('1 day'))->format('Y-m-d') && $time->format('H:i') >= $evening->format('H:i') && date('H:i') < $evening->format('H:i')) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function printDate($tms)
+{
+	$date = new DateTime($tms, new DateTimeZone('Europe/Berlin'));
+	return $date->format('d.m.Y H:i');
+}
+
+function sendShipmentConfirmation($subs_arr, $to, $cc = '', $bcc = '', $from = 'HANDS on TECHNOLOGY e.V.<info@hands-on-technology.org>')
+{
+
+	global $db, $langs, $conf;
+
+	dol_include_once('/core/class/CMailFile.class.php');
+
+	$sql = "SELECT topic, content, joinfiles FROM llx_c_email_templates WHERE label='AutoMailDhlShipment'";
+	$result = $db->query($sql)->fetch_array(MYSQLI_ASSOC);
+
+	if ($result['joinfiles'] == '1') {
+		$file = '';
+		$mime = '';
+		$filenames = '';
+		//$file = ($foerd == "1") ? array() : array(DOL_DATA_ROOT . '/commande/' . $order->ref . '/' . $order->ref . '.pdf');
+		//$mime = ($foerd == "1") ? array() : array('application/pdf');
+		//$filenames = ($foerd == "1") ? array() : array($order->ref . '.pdf');
+	} else {
+		$file = '';
+		$mime = '';
+		$filenames = '';
+	}
+
+	$content = $result['content'];
+	getCommonSubstitutionArray();
+	/*$content = str_replace('__NAME__', $subs_arr['name'], $content);
+	$content = str_replace('__SHIPNUMLINK__', 'https://www.dhl.de/de/privatkunden.html?piececode=' . $subs_arr['shipnum'], $content);
+	$content = str_replace('__SHIPNUM__', $subs_arr['shipnum'], $content);*/
+
+	$mailfile = new CMailFile($result['topic'], $to, $from, $content, $file, $mime, $filenames, $cc, $bcc, 0, 1, '', '', '', '', 'mail');
+
+	if ($mailfile->sendfile()) {
+		$sql = "UPDATE llx_handson_label SET mail_sent = 1 WHERE ref LIKE '" . $subs_arr['shipnum'] . "'";
+		$db->query($sql);
+	} else {
+		$error = $langs->trans("ErrorFailedToSendMail", $from, $this->email) . '. ' . $mailfile->error;
+	}
 }

@@ -78,7 +78,7 @@ if (empty($dolibarr_nocache)) {
 }
 
 div.mainmenu.handson::before {
-	content: "€";
+	content: "H";
     font-family: HandsOn;
     font-weight: unset;
     font-size: 2.6em;
@@ -90,10 +90,10 @@ div.mainmenu.handson {
 
 div.mainmenu.fll::before {
 	content: "F";
-	/*font-family: HandsOn;
+	font-family: HandsOn;
 	font-weight: unset;
 	font-size: 2.6em;
-	line-height: 26px;*/
+	line-height: 26px;
 }
 div.mainmenu.fll {
 	background-image: none;

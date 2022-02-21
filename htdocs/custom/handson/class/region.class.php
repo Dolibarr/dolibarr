@@ -101,8 +101,14 @@ class Region extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Systemname', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Systembezeichnung ohne Leerzeichen"),
-		'label' => array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>'1', 'position'=>11, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Für Menschen lesbarer Name"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Systemname', 'enabled'=>'1', 'position'=>9, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Systembezeichnung ohne Leerzeichen"),
+		'label' => array('type'=>'varchar(128)', 'label'=>'Name de', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Für Menschen lesbarer Name"),
+		'label_en' => array('type'=>'varchar(128)', 'label'=>'Name en', 'enabled'=>'1', 'position'=>11, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Für Menschen lesbarer Name"),
+		'type' => array('type'=>'integer', 'arrayofkeyval'=>array('32'=>'Regionalwettbewerb', '64'=>'Semifinale', '128'=>'Finale', '256'=>'Abmeldungen', '31'=>'Sonderwettbewerb'), 'label'=>'Typ', 'enabled'=>'1', 'position'=>12, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Kapazität Teams"),
+		'capacity' => array('type'=>'int', 'size'=>4, 'label'=>'Kapazität', 'enabled'=>'1', 'position'=>13, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Kapazität Teams"),
+		'num_quali' => array('type'=>'int', 'size'=>4, 'label'=>'Anzahl Qualifikationen', 'enabled'=>'1', 'position'=>14, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Anzahl Teams, die weiterkommen"),
+		'fk_season' => array('type'=>'integer:Saison:custom/handson/class/saison.class.php', 'size'=>4, 'label'=>'Saison', 'enabled'=>'1', 'position'=>15, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"Saison"),
+		'pid' => array('type'=>'int', 'size'=>4, 'label'=>'PID', 'enabled'=>'1', 'position'=>16, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'help'=>"PID"),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),

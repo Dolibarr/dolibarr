@@ -296,7 +296,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$head = regionPrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("Region"), -1, $object->picto);
-echo "hey";
+
 	$formconfirm = '';
 
 	// Confirmation to delete

@@ -135,12 +135,12 @@ $help_url = '';
 llxHeader('', $langs->trans('RP'), $help_url);
 
 
-$head = rpPrepareHead($object);
+$head = rpPrepareHead($object, $id);
 
 print dol_get_fiche_head($head, 'vertrag', 'Verträge', -1, $object->picto);
 dol_banner_tab($object, 'label', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-show_vertraege($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
+show_vertraege($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$id);
 
 print dol_get_fiche_end();
 

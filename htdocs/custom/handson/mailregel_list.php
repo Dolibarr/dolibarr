@@ -261,7 +261,7 @@ $sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) $sql .= " WHERE t.entity IN (".getEntity($object->element).")";
 else $sql .= " WHERE 1 = 1";
 foreach ($search as $key => $val) {
-	if (in_array($key, $object->fields)) {
+	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) continue;
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if (strpos($object->fields[$key]['type'], 'integer:') === 0) {

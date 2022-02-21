@@ -94,36 +94,40 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><th colspan="2">' . $langs->trans("RP Partner in aktueller Saison") . '</th></tr>';
 print '<tr class="oddeven"><td class="center" colspan="2">';
-$sql = "SELECT nom, season";
-$sql .= " FROM " . MAIN_DB_PREFIX . "societe";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_extrafields ON 1";
-//$sql .= " WHERE season = '1,2'";
-//$sql .= " AND c.entity IN (".getEntity('category').")";
-$sql .= " GROUP BY season";
+$sql = "SELECT r.season";
+$sql .= " FROM " . MAIN_DB_PREFIX . "handson_rp AS r";
 $total = 0;
 $result = $db->query($sql);
-echo "kommt";
-var_dump($result);
+
 if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 	if (!empty($conf->use_javascript_ajax)) {
-		$dataseries = array();
+		$dataseries = array('ja' => array('Dabei',0),  'nein' => array('Nicht daebi',0));
 		$rest = 0;
 		$nbmax = 10;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
-			if ($i < $nbmax) {
-				$dataseries[] = array($obj->label, round($obj->nb));
+			/*if ($i < $nbmax) {
+				$dataseries[] = array($obj->ref_rp, round($obj->nb));
 			} else {
 				$rest += $obj->nb;
 			}
-			$total += $obj->nb;
+			$total += $obj->nb;*/
+
+			if(preg_match('/(2)/', $obj->season)) {
+				$dataseries['ja'][1] += 1;
+			} else {
+				$dataseries['nein'][1] += 1;
+			}
+
 			$i++;
 		}
-		if ($i > $nbmax) {
+		/*if ($i > $nbmax) {
 			$dataseries[] = array($langs->trans("Other"), round($rest));
-		}
+		}*/
+
+		$total = 5;
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
 		$dolgraph = new DolGraph();
@@ -137,12 +141,13 @@ if ($result) {
 	} else {
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
-			print '<tr><td>' . $obj->nom . '</td><td>' . $obj->season . '</td></tr>';
+			print '<tr><td>' . $obj->ref_rp . '</td><td>' . $obj->saison . '</td></tr>';
 			$total += $obj->nb;
 			$i++;
 		}
 	}
 }
+else print $db->error();
 
 print '</td></tr>';
 print '<tr class="liste_total"><td>' . $langs->trans("Total") . '</td><td class="right">';

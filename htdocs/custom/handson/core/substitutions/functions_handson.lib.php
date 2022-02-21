@@ -12,8 +12,15 @@ function handson_completesubstitutionarray(&$substitutionarray, $langs, $object)
 {
     global $conf, $db;
 
-    $vertragID = '42';
-    $substitutionarray['__VERTRAG__'] = $vertragID;
+    dol_include_once('/contact/class/contact.class.php');
+    $contact = new Contact($db);
+
+    // Mail an RP
+    $substitutionarray['__RP_NAME__'] = $object->ref;
+	$contact->fetch($object->shipping);
+	$substitutionarray['__RP_LIEFER_NAME__'] = $contact->firstname . ' ' . $contact->lastname;
+	$contact->fetch($object->contract_adr);
+	$substitutionarray['__RP_VERTRAG_NAME__'] = $contact->firstname . ' ' . $contact->lastname;
 }
 
 ?>

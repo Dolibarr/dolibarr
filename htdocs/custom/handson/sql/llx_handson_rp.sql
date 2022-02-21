@@ -18,8 +18,7 @@ CREATE TABLE llx_handson_rp(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) NOT NULL, 
-	contact1 integer NOT NULL, 
-	contact2 integer, 
+	contacts varchar(255), 
 	season varchar(255), 
 	program varchar(255), 
 	region varchar(255), 

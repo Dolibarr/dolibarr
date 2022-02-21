@@ -102,10 +102,11 @@ class Label extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Sendungsnummer', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'1', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Sendungsnummer"),
-		'contact' => array('type'=>'integer:Contact:contact/class/contact.class.php', 'label'=>'Contact', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'noteditable'=>'1', 'index'=>1, 'help'=>"LinkToThirparty",),
+		'pdf' => array('type'=>'text', 'label'=>'PDF', 'enabled'=>'1', 'position'=>20, 'notnull'=>-1, 'visible'=>-1, 'noteditable'=>'1', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"PDF"),
+		'contact' => array('type'=>'integer:Contact:contact/class/contact.class.php', 'label'=>'Contact', 'enabled'=>'1', 'noteditable'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
 		'mail_sent' => array('type'=>'bool', 'label'=>'Bestätigungsmail verschickt', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>0, 'index'=>1,),
 		'editable' => array('type'=>'bool', 'label'=>'Editable', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>0, 'index'=>1,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
+		//'tms_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
@@ -113,8 +114,6 @@ class Label extends CommonObject
 	public $rowid;
 	public $ref;
 	public $contact;
-	public $mail_sent;
-	public $editable;
 	public $date_creation;
 	public $tms;
 	public $fk_user_creat;

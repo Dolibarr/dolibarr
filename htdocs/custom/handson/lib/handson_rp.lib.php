@@ -27,16 +27,19 @@
  * @param	RP	$object		RP
  * @return 	array					Array of tabs
  */
-function rpPrepareHead($object)
+function rpPrepareHead($object, $id = null)
 {
 	global $db, $langs, $conf;
+
+	// If used in vertragsliste.php, a different ID is needed
+	$backtosocid = $id == null ? $object->id : $id;
 
 	$langs->load("handson@handson");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/handson/rp_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/handson/rp_card.php", 1).'?id=' . $backtosocid;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;

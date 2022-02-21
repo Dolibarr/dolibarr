@@ -17,8 +17,7 @@
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_handson_rp ADD INDEX idx_handson_rp_rowid (rowid);
 ALTER TABLE llx_handson_rp ADD INDEX idx_handson_rp_ref (ref);
-ALTER TABLE llx_handson_rp ADD INDEX idx_handson_rp_contact1 (contact1);
-ALTER TABLE llx_handson_rp ADD INDEX idx_handson_rp_contact2 (contact2);
+ALTER TABLE llx_handson_rp ADD INDEX idx_handson_rp_contacts (contacts);
 ALTER TABLE llx_handson_rp ADD INDEX idx_handson_rp_season (season);
 ALTER TABLE llx_handson_rp ADD INDEX idx_handson_rp_program (program);
 ALTER TABLE llx_handson_rp ADD INDEX idx_handson_rp_region (region);

@@ -136,7 +136,9 @@ if (!$sortorder) {
 // Initialize array of search criterias
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
+
 foreach ($object->fields as $key => $val) {
+	//var_dump(GETPOST('search_'.$key, 'alpha')[0]);
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
@@ -287,32 +289,77 @@ if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE 1 = 1";
 }
 foreach ($search as $key => $val) {
-	if (array_key_exists($key, $object->fields)) {
-		if ($key == 'status' && $search[$key] == -1) {
-			continue;
-		}
-		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
-			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
-				$search[$key] = '';
+	if(!is_array($search[$key])) {
+		if (array_key_exists($key, $object->fields)) {
+			if ($key == 'status' && $search[$key] == -1) {
+				continue;
 			}
-			$mode_search = 2;
-		}
-		if ($search[$key] != '') {
-			$sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
+			if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
+				if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
+					$search[$key] = '';
+				}
+				$mode_search = 2;
+			}
+			if ($search[$key] != '') {
+				$sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
+				//var_dump(natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search)));
+			}
+		} else {
+			if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
+				$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
+				if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
+					if (preg_match('/_dtstart$/', $key)) {
+						$sql .= " AND t." . $columnName . " >= '" . $db->idate($search[$key]) . "'";
+					}
+					if (preg_match('/_dtend$/', $key)) {
+						$sql .= " AND t." . $columnName . " <= '" . $db->idate($search[$key]) . "'";
+					}
+				}
+			}
 		}
 	} else {
-		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
-			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
-			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
-				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$columnName." >= '".$db->idate($search[$key])."'";
-				}
-				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t." . $columnName . " <= '" . $db->idate($search[$key]) . "'";
+		$tmp_sao = $search_array_options;
+		$search_array_options = $search[$key];
+		$crit = $val;
+		$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
+		$typ = $extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey];
+
+		if ($crit != '' && in_array($typ, array('date', 'datetime', 'timestamp')))
+		{
+			if (is_numeric($crit)) {
+				$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
+			} elseif (is_array($crit)) {
+				if ($crit['start'] !== '' && $crit['end'] !== '') {
+					$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
+				} elseif ($crit['start'] !== '') {
+					$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey." >= '". $db->idate($crit['start'])."')";
+				} elseif ($crit['end'] !== '') {
+					$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey." <= '". $db->idate($crit['end'])."')";
 				}
 			}
+		} elseif (in_array($typ, array('boolean')))
+		{
+			if ($crit !== '-1' && $crit !== '') {
+				$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." = '".$db->escape($crit)."'";
+				if ($crit == '0') $sql .= " OR ".$extrafieldsobjectprefix.$tmpkey." IS NULL";
+				$sql .= ")";
+			}
+		} elseif ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1'))
+		{
+			$mode_search = 0;
+			if (in_array($typ, array('int', 'double', 'real', 'price'))) $mode_search = 1; // Search on a numeric
+			if (in_array($typ, array('sellist', 'link')) && $crit != '0' && $crit != '-1') $mode_search = 2; // Search on a foreign key int
+			if (in_array($typ, array('sellist')) && !is_numeric($crit)) $mode_search = 0;// Search on a foreign key string
+			if (in_array($typ, array('chkbxlst', 'checkbox'))) $mode_search = 4; // Search on a multiselect field with sql type = text
+			if (is_array($crit)) $crit = implode(' ', $crit); // natural_search() expects a string
+			elseif ($typ === 'select' and is_string($crit) and strpos($crit, ' ') === false) {
+				$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey.' = "'.$db->escape($crit).'")';
+				continue;
+			}
+			$sql .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);
 		}
+		$search_array_options = $tmp_sao;
 	}
 }
 if ($search_all) {
@@ -320,7 +367,7 @@ if ($search_all) {
 }
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -411,6 +458,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
+
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
 		foreach ($search[$key] as $skey) {
@@ -524,6 +572,8 @@ foreach ($object->fields as $key => $val) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
+		} elseif(preg_match('/^(link|sellist|text|html|chkbxlst|contactlist)/', $val['type'])) {
+			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -619,6 +669,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if (in_array($val['type'], array('timestamp'))) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 		} elseif ($key == 'ref') {
+			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		}
+
+		if (in_array($val['type'], array('contactlist'))) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 		}
 

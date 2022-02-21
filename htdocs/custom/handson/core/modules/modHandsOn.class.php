@@ -72,7 +72,7 @@ class modHandsOn extends DolibarrModules
 		$this->editor_url = 'https://jakub.st';
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = '2.0.10.3';
+		$this->version = '2.4.3';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -121,7 +121,9 @@ class modHandsOn extends DolibarrModules
 					   'thirdpartylist',
 					   'expeditioncard',
 					   'contactcard',
-					   'rpcard'
+					   'rpcard',
+					   'emailtemplates',
+					   'membercard'
 				   ),
 				   'entity' => '1',
 			),
@@ -162,7 +164,7 @@ class modHandsOn extends DolibarrModules
 		// Example: $this->const=array(1 => array('HANDSON_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('HANDSON_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array(1 => array('KUBA', 'chaine', '42', 'Vertrags-ID', 1));
+		$this->const = array(1 => array('KUBA', 'chaine', '48', 'Vertrags-ID', 1));
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
@@ -371,36 +373,10 @@ class modHandsOn extends DolibarrModules
 		);
 
 		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=companies',
+			'fk_menu'=>'fk_mainmenu=handson',
 			'type'=>'left',
-			'titre'=>'Alle Verträge',
-			'leftmenu'=>'handson_vertrag',
-			'url'=>'/handson/vertrag_list.php',
-			'langs'=>'handson@handson',
-			'position'=>1100+$r,
-			'enabled'=>'$conf->handson->enabled',
-			'perms'=>'1',
-			'target'=>'',
-			'user'=>2,
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=companies,fk_leftmenu=handson_vertrag',
-			'type'=>'left',
-			'titre'=>'Neuer Vertrag',
-			'url'=>'/handson/vertrag_card.php?action=create',
-			'langs'=>'handson@handson',
-			'position'=>1100+$r,
-			'enabled'=>'$conf->handson->enabled',
-			'perms'=>'1',
-			'target'=>'',
-			'user'=>2
-		);
-
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=companies,fk_leftmenu=handson_vertrag',
-			'type'=>'left',
-			'titre'=>'Verträge zur Erneuerung',
-			'url'=>'/handson/vertragindex.php',
+			'titre'=>'DHL Label',
+			'url'=>'/handson/dhl_label_list.php',
 			'langs'=>'handson@handson',
 			'position'=>1100+$r,
 			'enabled'=>'$conf->handson->enabled',
@@ -412,7 +388,7 @@ class modHandsOn extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=handson',
 			'type'=>'left',
-			'titre'=>'E-Mail-Bestätigungen',
+			'titre'=>'E-Mail-Versand',
 			'leftmenu'=>'handson_email',
 			'langs'=>'handson@handson',
 			'position'=>1100+$r,
@@ -421,7 +397,7 @@ class modHandsOn extends DolibarrModules
 			'target'=>'',
 			'user'=>2
 		);
-		$this->menu[$r++]=array(
+		/*$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=handson,fk_leftmenu=handson_email',
 			'type'=>'left',
 			'titre'=>'Bestätigung triggern',
@@ -433,9 +409,10 @@ class modHandsOn extends DolibarrModules
 			'perms'=>'1',
 			'target'=>'',
 			'user'=>2
-		);
+		);*/
+
 		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=handson,fk_leftmenu=handson_email_trig',
+			'fk_menu'=>'fk_mainmenu=handson,fk_leftmenu=handson_email',
 			'type'=>'left',
 			'titre'=>'Vorlagen bearbeiten',
 			'url'=>'/admin/mails_templates.php?fk_mainmenu=handson',
@@ -446,7 +423,8 @@ class modHandsOn extends DolibarrModules
 			'target'=>'',
 			'user'=>2
 		);
-		$this->menu[$r++]=array(
+
+		/*$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=handson,fk_leftmenu=handson_email',
 			'type'=>'left',
 			'titre'=>'Regeln für Mailversand',
@@ -458,7 +436,8 @@ class modHandsOn extends DolibarrModules
 			'perms'=>'1',
 			'target'=>'',
 			'user'=>2
-		);
+		);*/
+		/*
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=handson,fk_leftmenu=handson_email',
 			'type'=>'left',
@@ -471,7 +450,7 @@ class modHandsOn extends DolibarrModules
 			'target'=>'',
 			'user'=>2
 		);
-
+		*/
         $this->menu[$r++]=array(
             'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=orders',
             'type'=>'left',
@@ -505,19 +484,6 @@ class modHandsOn extends DolibarrModules
 			'url'=>'/handson/liste_volunteers.php',
 			'langs'=>'handson@handson',
 			'position'=>1000+$r,
-			'enabled'=>'$conf->handson->enabled',
-			'perms'=>'1',
-			'target'=>'',
-			'user'=>2
-		);
-
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=handson',
-			'type'=>'left',
-			'titre'=>'DHL Label',
-			'url'=>'/handson/dhl_label_list.php',
-			'langs'=>'handson@handson',
-			'position'=>1100+$r,
 			'enabled'=>'$conf->handson->enabled',
 			'perms'=>'1',
 			'target'=>'',
@@ -909,6 +875,45 @@ class modHandsOn extends DolibarrModules
 			'perms'=>'1',
 			'target'=>'',
 			'user'=>2,
+		);
+
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=companies',
+			'type'=>'left',
+			'titre'=>'Alle Verträge',
+			'leftmenu'=>'handson_vertrag',
+			'url'=>'/handson/vertrag_list.php',
+			'langs'=>'handson@handson',
+			'position'=>1100+$r,
+			'enabled'=>'$conf->handson->enabled',
+			'perms'=>'1',
+			'target'=>'',
+			'user'=>2,
+		);
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=companies,fk_leftmenu=handson_vertrag',
+			'type'=>'left',
+			'titre'=>'Neuer Vertrag',
+			'url'=>'/handson/vertrag_card.php?action=create',
+			'langs'=>'handson@handson',
+			'position'=>1100+$r,
+			'enabled'=>'$conf->handson->enabled',
+			'perms'=>'1',
+			'target'=>'',
+			'user'=>2
+		);
+
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=companies,fk_leftmenu=handson_vertrag',
+			'type'=>'left',
+			'titre'=>'Verträge zur Erneuerung',
+			'url'=>'/handson/vertragindex.php',
+			'langs'=>'handson@handson',
+			'position'=>1100+$r,
+			'enabled'=>'$conf->handson->enabled',
+			'perms'=>'1',
+			'target'=>'',
+			'user'=>2
 		);
 
 

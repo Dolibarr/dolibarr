@@ -201,51 +201,21 @@ if ($action == 'create') {
 		if ($shipNum[0] != '') {
 			dol_include_once('/custom/handson/class/label.class.php');
 			$label = new Label($db);
-			$mail_sent = 0;
-
-			if($data[8] == 'on') {
-				dol_include_once('/core/class/CMailFile.class.php');
-
-				$to = $address[8];
-				$cc = '';
-				$bcc = '';
-				$from = 'HANDS on TECHNOLOGY e.V.<info@hands-on-technology.org>';
-
-
-				$sql = "SELECT topic, content, joinfiles FROM llx_c_email_templates WHERE label='AutoMailDhlShipment'";
-				$result = $db->query($sql)->fetch_array(MYSQLI_ASSOC);
-
-				if ($result['joinfiles'] == '1') {
-					$file = '';
-					$mime = '';
-					$filenames = '';
-					//$file = ($foerd == "1") ? array() : array(DOL_DATA_ROOT . '/commande/' . $order->ref . '/' . $order->ref . '.pdf');
-					//$mime = ($foerd == "1") ? array() : array('application/pdf');
-					//$filenames = ($foerd == "1") ? array() : array($order->ref . '.pdf');
-				} else {
-					$file = '';
-					$mime = '';
-					$filenames = '';
-				}
-
-				$content = $result['content'];
-				$content = str_replace('__NAME__', $address[0] . ' ' . $address[1], $content);
-				$content = str_replace('__SHIPNUMLINK__', 'https://www.dhl.de/de/privatkunden.html?piececode='.$shipNum[0], $content);
-				$content = str_replace('__SHIPNUM__', $shipNum[0], $content);
-
-				$mailfile = new CMailFile($result['topic'], $to, $from, $content, $file, $mime, $filenames, $cc, $bcc, 0, 1);
-				if ($mailfile->sendfile()) {
-					$mail_sent = 1;
-				} else {
-					$error = $langs->trans("ErrorFailedToSendMail", $from, $this->email) . '. ' . $mailfile->error;
-				}
-			}
 
 			$label->ref = $shipNum[0];
+			$label->pdf = $pdfEnc[0];
 			$label->contact = $address[11];
-			$label->date_creation = dol_now('tzref');
-			$label->mail_sent = $mail_sent;
+			$now = new DateTime(date('Y-m-d H:i'), new DateTimeZone('Europe/Berlin'));
+			//$label->tms_creation = '25';//$now->format('Y-m-d H:i');
 			$label->create($user);
+
+			if($data[8] == 'on') {
+				dol_include_once('/custom/handson/lib/handson_label.lib.php');
+				sendShipmentConfirmation(array(
+					"name" => $address[0] . " " . $address[1],
+					"shipnum" => $shipNum[0]
+				), $address[8]);
+			}
 
 			header('Content-Type: application/pdf', 'charset: utf-8');
 			echo base64_decode($pdfEnc[0]);
@@ -266,6 +236,22 @@ if ($action == 'create') {
 
 		print $statusCode[0] . ';' . $response;
 	}
+} elseif ($action == 'sendConf') {
+	dol_include_once('/custom/handson/lib/handson_label.lib.php');
+	$shipNum = GETPOST('shipnum', 'int');
+	$sql = "SELECT firstname, lastname, email FROM llx_socpeople AS s LEFT JOIN llx_handson_label AS l ON l.contact=s.rowid WHERE l.ref=".$shipNum;
+	$result = $db->query($sql)->fetch_array(MYSQLI_ASSOC);
+	sendShipmentConfirmation(array(
+		"name" => $result['firstname'] . " " . $result['lastname'],
+		"shipnum" => $shipNum
+	), $result['email']);
+
+	header('Location: dhl_label_list.php');
+} elseif ($action == 'printLabel') {
+	$sql = "SELECT pdf FROM llx_handson_label WHERE ref=".GETPOST('shipnum', 'int');
+	$result = $db->query($sql)->fetch_array(MYSQLI_ASSOC);
+	header('Content-Type: application/pdf', 'charset: utf-8');
+	echo base64_decode($result['pdf']);
 }
 // app-id (user) draht_1
 // token (pw) x2neeNdsOjjWa3K3fRdzB9L69QdaYq

@@ -326,11 +326,14 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+
+$sql .= " AND ef.funktion=8";
+
 if (GETPOST('program', 'alphanohtml') != '-1') {
 	$search_array_options['program'] = GETPOST('program', 'alphanohtml');
 }
 
-$search_array_options['funktion'] = 7;
+//$search_array_options['funktion'] = 8;
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {

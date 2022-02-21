@@ -93,9 +93,9 @@ function exportListDHL() {
 		height=800`);
 }
 
-function getDataFromForm (data, address) {
-	$('#shipConfForm input, #shipConfForm select').change(function (e) {
-		switch(e.target.id) {
+function getDataFromForm(data, address) {
+	$('#shipConfForm input').on('keyup', function (e) {
+		switch (e.target.id) {
 			case 'name':
 				let name = $(e.target).val().split(' ');
 				address[0] = name[0];
@@ -146,13 +146,22 @@ function getDataFromForm (data, address) {
 			case 'sendmail':
 				data[8] = $(e.target).val();
 				break;
+
+
 		}
 		addButtons(data, address);
+		validateLabelCreation(btoa(data), btoa(address));
+	});
+	$('#shipConfForm select').change(function (e) {
+		data[5] = $(e.target).val();
+		addButtons(data, address);
+		validateLabelCreation(btoa(data), btoa(address));
 	});
 	addButtons(data, address);
 }
 
 function createShipmentLabel(data, address) {
+	console.log(atob(data));
 	window.open('/custom/handson/createshipment.php?action=create&data=' + data + '&address=' + address, 'targetWindow',
 		`toolbar=no,
 		location=no,
@@ -165,17 +174,23 @@ function createShipmentLabel(data, address) {
 }
 
 function validateLabelCreation(data, address) {
-	console.log(address);
 	$.ajax({
 		url: '/custom/handson/createshipment.php?action=validate&data=' + data + '&address=' + address,
 		type: 'GET',
 		success: function (response) {
 			let arr = response.split(';');
-			$('#statusMessage').empty();
-			if(arr[0] == 0) {
-				$('#statusMessage').append('Das sieht gut aus!');
+			let msgfield = $('#messages');
+			msgfield.empty();
+			$('#msgIcon').empty();
+			if (arr[0] == 0) {
+				$('#msgIcon').append("\u2714 ").css({'border': '2px solid green', 'color': 'green'});
+				msgfield.append('Das sieht gut aus!');
 			} else {
-				$('#statusMessage').append('DHL sagt: ' + arr[1]);
+				$('#msgIcon').append("\u2716 ").css({'border': '2px solid red', 'color': 'red'})
+				let msg = arr[1].split('statusMessage');
+				for (let i = 1; i < msg.length; i += 2) {
+					msgfield.append('<span>-> ' + msg[i].replace(/[^a-z\s]/ig, '') + '</span>');
+				}
 			}
 		}
 	});
@@ -202,7 +217,6 @@ function addButtons(data, address) {
 function checkCreateShipmentLabel(datastring, addrstring) {
 	let data = atob(datastring).split(';');
 	let address = atob(addrstring).split(';');
-	console.log(address);
 
 	$('#mainbody')
 		.append('<div role="dialog" class="hotPopUp ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons ui-draggable" aria-describedby="dialog-confirm" aria-labelledby="ui-id-1" id="shipLabelConfirm">')
@@ -243,23 +257,42 @@ function checkCreateShipmentLabel(datastring, addrstring) {
 			'<div>Referenz <input type="text" id="reference" value="' + data[6] + '" size="6" ></div>' +
 			'<div>Versanddatum <input type="text" id="shipdate" value="' + data[7] + '" size="6" ></div>' +
 			'<div>Automatische E-Mail an Empfänger <input type="checkbox" id="sendmail"></div>' +
-			'<div id="statusMessage"></div>' +
+			'<div id="statusMessage"><div id="msgIcon"></div><div id="messages"></div></div>' +
 			'</form>');
 
 	getDataFromForm(data, address);
 
+	/*window.setInterval(function () {
+		validateLabelCreation(btoa(data), btoa(address));
+	}, 1000);*/
+
 	$('#shipConfForm').css({'display': 'flex', 'flex-direction': 'column'});
 	$('#shipConfForm>div').css({'display': 'grid', 'grid-template-columns': '10em auto auto'});
+
+	$('#statusMessage').css({'display': 'grid', 'grid-template-columns': '10em auto', 'margin-top': '1em'});
+	$('#messages').css({'display': 'flex', 'flex-direction': 'column'});
+	$('#msgIcon').css({
+		'display': 'flex',
+		'flex-direction': 'column',
+		'justify-content': 'center',
+		'align-items': 'center',
+		'font-size': '3.2em',
+		'color': 'green',
+		'border': '1px solid white',
+		'border-radius': '2em',
+		'width': '2em',
+		'height': '2em',
+	});
 
 	$('#overlay').click(e => {
 		$('#shipLabelConfirm').remove();
 		$('#overlay').remove();
 	});
 
-	$('#shipLabelTitle').on('mousedown', function () {
+	$('#shipConfTitle').on('mousedown', function () {
 		$('#shipLabelConfirm').draggable({disabled: false});
 	});
-	$('#shipLabelTitle').on('mouseleave', function () {
+	$('#shipConfTitle').on('mouseleave', function () {
 		$('#shipLabelConfirm').draggable({disabled: true});
 	});
 }

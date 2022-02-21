@@ -87,7 +87,7 @@ $teamstatic = new Team($db);
 
 llxHeader("", $langs->trans("HandsOnArea"));
 
-print load_fiche_titre($langs->trans("FLL-Bereich"), '', 'handson.png@handson');
+print load_fiche_titre($langs->trans("FLL-Bereich"), '', 'first.png@handson');
 
 
 print '<div class="fichecenter"><div class="fichehalfleft">';

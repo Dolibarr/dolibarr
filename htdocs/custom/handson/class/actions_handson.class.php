@@ -368,6 +368,20 @@ class ActionsHandsOn
 				} else {
 					$err++;
 				}
+			} elseif ($parameters['currentcontext'] == 'membercard') {
+				$datastring = base64_encode(
+					$object->id
+					. ';5'
+					. ';80'
+					. ';40'
+					. ';50'
+					. ';' . $costcenter
+					. ';' . $reference
+					. ';' . date('Y-m-d')
+				);
+				$sql = 'SELECT s.rowid, firstname, lastname, address, phone, email, zip, town, country, c.rowid as pays_id, c.code FROM ' . MAIN_DB_PREFIX . 'adherent AS s ';
+				$sql .= 'LEFT JOIN ' . MAIN_DB_PREFIX . 'c_country AS c ON country=c.rowid ';
+				$sql .= 'WHERE s.rowid=' . $object->id;
 			} else {
 				$datastring = base64_encode(
 					$object->id
@@ -407,5 +421,14 @@ class ActionsHandsOn
 			}
 		}
 		return 0;
+	}
+
+	/**
+	 * Enhance E-Mail template possibilities
+	 */
+	public function emailElementlist($parameters, &$object, &$action, &$hookmanager) {
+		$this->results['rp'] = img_picto('', 'object_project').' RPs';
+		$this->results['team'] = img_picto('', 'group').' Teams';
+		$this->results['contact'] = img_picto('', 'member').' Kontakte';
 	}
 }

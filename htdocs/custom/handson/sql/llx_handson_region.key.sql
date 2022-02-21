@@ -18,6 +18,12 @@
 ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_rowid (rowid);
 ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_ref (ref);
 ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_label (label);
+ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_label_en (label_en);
+ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_type (type);
+ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_capacity (capacity);
+ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_num_quali (num_quali);
+ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_fk_season (fk_season);
+ALTER TABLE llx_handson_region ADD INDEX idx_handson_region_pid (pid);
 ALTER TABLE llx_handson_region ADD CONSTRAINT llx_handson_region_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 -- END MODULEBUILDER INDEXES
 

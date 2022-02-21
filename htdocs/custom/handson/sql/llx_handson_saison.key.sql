@@ -17,7 +17,16 @@
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_rowid (rowid);
 ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_ref (ref);
-ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_jahr (jahr);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_season_start (season_start);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_season_end (season_end);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_register_start (register_start);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_register_end (register_end);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_edit_end (edit_end);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_assignment_start (assignment_start);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_players_age_min (players_age_min);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_players_age_max (players_age_max);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_players_count_min (players_count_min);
+ALTER TABLE llx_handson_saison ADD INDEX idx_handson_saison_players_count_max (players_count_max);
 ALTER TABLE llx_handson_saison ADD CONSTRAINT llx_handson_saison_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 -- END MODULEBUILDER INDEXES
 

@@ -62,15 +62,16 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOST('rowid', 'alpha');
 
-// Actions
+llxHeader();
 
+// Actions
 if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
 	$soapxmlstring = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cis=\"http://dhl.de/webservice/cisbase\" xmlns:ns=\"http://dhl.de/webservices/businesscustomershipping/3.0\">
    <soapenv:Header>
       <cis:Authentification>
-         <cis:user>2222222222_01</cis:user>
-         <cis:signature>pass</cis:signature>
+         <cis:user>".$conf->global->DHL_USER."</cis:user>
+         <cis:signature>".$conf->global->DHL_SIGNATURE."</cis:signature>
       </cis:Authentification>
    </soapenv:Header>
    <soapenv:Body>
@@ -79,41 +80,85 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
             <majorRelease>3</majorRelease>
             <minorRelease>2</minorRelease>
         </ns:Version>
-		<shipmentNumber>" . GETPOST('shipnum', 'int') . "</shipmentNumber>
+		<cis:shipmentNumber>" . GETPOST('shipnum', 'int') . "</cis:shipmentNumber>
       </ns:DeleteShipmentOrderRequest>
    </soapenv:Body>
 </soapenv:Envelope>";
 
-	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "handson_label WHERE rowid=" . ((int)$rowid);
+	$auth = base64_encode($conf->global->DHL_APP_ID . ':' . $conf->global->DHL_APP_TOKEN);
 
-	dol_syslog("delete", LOG_DEBUG);
-	$result = $db->query($sql);
-	if (!$result) {
-		if ($db->errno() == 'DB_ERROR_CHILD_EXISTS') {
-			setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
-		} else {
-			dol_print_error($db);
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+			CURLOPT_URL => $conf->global->DHL_SEND_SOAP_ENDPOINT,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => $soapxmlstring,
+			CURLOPT_HTTPHEADER => array(
+				"content-type: text/xml; charset=utf-8",
+				'authorization: Basic ' . $auth,
+				"SOAPAction: urn:deleteShipmentOrder",
+			)
+		)
+	);
+
+	$response = curl_exec($curl);
+	$err = curl_error($curl);
+	curl_close($curl);
+
+	$statusCode[0] = -1;
+	$statusCode = explode('<statusCode>', $response);
+	$statusCode = explode('</statusCode>', $statusCode[1]);
+
+	if($statusCode[0] == '0') {
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "handson_label WHERE rowid=" . ((int)$rowid);
+
+		dol_syslog("delete", LOG_DEBUG);
+		$result = $db->query($sql);
+		if (!$result) {
+			if ($db->errno() == 'DB_ERROR_CHILD_EXISTS') {
+				setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
+			} else {
+				dol_print_error($db);
+			}
 		}
+	} else {
+		print $form->formconfirm('dhl_label_list.php', 'Fehler', 'Versandlabel konnte nicht storniert werden. Bitte im Geschäftskundenportal prüfen.', '', '', '', 1);
 	}
 }
 
-llxHeader();
+
 
 if ($action == 'delete') {
-	$page = 'custom/handson&/dhl_label_list.php';
+	$page = 'custom/handson/dhl_label_list.php';
 	$shipnum = GETPOST('shipnum', 'int');
-	print $form->formconfirm($_SERVER["PHP_SELF"] . '?' . ($page ? 'page=' . $page . '&' : '') . '&shipnum=' . $shipnum . '&rowid=' . $rowid, $langs->trans('Versandlabel löschen'), $langs->trans('Möchtest du dieses Versandlabel wirklich löschen?'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"] . '?' . ($page ? 'page=' . $page . '&' : '') . 'shipnum=' . $shipnum . '&rowid=' . $rowid, $langs->trans('Versandlabel löschen'), $langs->trans('Möchtest du dieses Versandlabel wirklich löschen?'), 'confirm_delete', '', 0, 1);
 }
+
+if ($action == 'sendConf') {
+	$shipnum = GETPOST('shipnum', 'int');
+	print $form->formconfirm('createshipment.php?shipnum=' . $shipnum, $langs->trans('Bestätigungsmail'), $langs->trans('Bestätigungsmail jetzt senden?'), 'sendConf', '', 0, 1);
+}
+
 
 
 print load_fiche_titre($langs->trans("DHL Versandlabel Verwaltung"), '', 'stock');
 
-
+print "<script>function openPrintLabel(shipnum) {
+    window.open('createshipment.php?action=printLabel&shipnum=' + shipnum, 'targetWindow',
+		`toolbar=no,
+		location=no,
+		status=no,
+		menubar=no,
+		scrollbars=no,
+		resizable=no,
+		width=800,
+		height=800`);
+		}</script>";
 print '<div class="fichecenter"><div class="fichehalfleft">';
 
 if (!empty($conf->handson->enabled) && $user->rights->handson->label->read) {
 
-	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "handson_label as c ORDER BY date_creation DESC";
+	$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "handson_label as c ORDER BY tms DESC";
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -122,12 +167,12 @@ if (!empty($conf->handson->enabled) && $user->rights->handson->label->read) {
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="1">' . $langs->trans("Sendungsnummer") . '</th>';
-		print '<th colspan="1">' . $langs->trans("EmpfängerIn") . '</th>';
-		print '<th colspan="1">' . $langs->trans("Erstellungsdatum") . '</th>';
-		print '<th colspan="1">' . $langs->trans("Bestätigungsmail") . '</th>';
-		print '<th></th></tr>';
-
+		print '<th>' . $langs->trans("Sendungsnummer") . '</th>';
+		print '<th>' . $langs->trans("EmpfängerIn") . '</th>';
+		print '<th colspan="4">' . $langs->trans("Erstellungsdatum") . '</th>';
+		//print '<th class="center">' . $langs->trans("Bestätigung") . '</th>';
+		//print '<th>' . $langs->trans("Label erneut herunterladen") . '</th>';
+		print '</tr>';
 
 		$var = true;
 		if ($num > 0) {
@@ -146,24 +191,26 @@ if (!empty($conf->handson->enabled) && $user->rights->handson->label->read) {
 				$labelstatic->ref = $obj->ref;
 				$obj->total_ttc = 25;
 
-
-				print $labelstatic->ref;
+				print '<a href="https://www.dhl.com/de-de/home/sendungsverfolgung.html?tracking-id='.$labelstatic->ref.'" target="_blank">'.$labelstatic->ref.'</a>';
 				print '</td>';
 				print '<td class="nowrap">';
 				print $labelstatic->showOutputField($labelstatic->fields['contact'], 'contact', $obj->contact);
 				print '</td>';
 				print '<td class="nowrap">';
-				print $labelstatic->showOutputField($labelstatic->fields['date_creation'], 'date_creation', $obj->date_creation);
+				print printDate($obj->tms);
 				print '</td>';
-				print '<td>';
-				print $obj->mail_sent == 1 ? img_picto('gesendet', 'check') : img_picto('nicht gesendet', 'envelope');
+				print '<td class="center">';
+				print $obj->mail_sent == 1 ? img_picto('Bestätigungs E-Mail gesendet', 'check') : '<a href="dhl_label_list.php?action=sendConf&shipnum='.$obj->ref.'">'.img_picto('Bestätigungs E-Mail jetzt senden', 'envelope').'</a>';
 				print '</td>';
-				print '<td>';
-				if (labelIsEditable($obj->date_creation)) {
-					print '<a class="reposition editfielda" href="' . $url . 'action=edit&token=' . newToken() . '">' . img_edit() . '</a>';
-					print '<a class="marginleftonly" href="' . $url . 'action=delete&shipnum=' . $labelstatic->ref . '&token=' . newToken() . '">' . img_delete() . '</a>';
+				print '<td class="center">';
+				print '<a href="#" onclick="openPrintLabel(\''.$labelstatic->ref.'\')">'.img_picto('Label erneut herunterladen', 'download').'</a>';
+				print '</td>';
+				print '<td class="center">';
+				if (labelIsEditable($obj->tms)) {
+					//print '<a class="reposition editfielda" href="' . $url . 'action=edit&token=' . newToken() . '">' . img_edit() . '</a>';
+					print '<a href="' . $url . 'action=delete&shipnum=' . $labelstatic->ref . '&token=' . newToken() . '">' . img_delete('Sendung löschen/stornieren') . '</a>';
 				} else {
-					print img_edit_remove();
+					print img_edit_remove('zu spät für Storno');
 				}
 				print '</td>';
 				print '</tr>';

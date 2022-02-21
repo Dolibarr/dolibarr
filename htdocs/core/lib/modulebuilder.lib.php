@@ -63,7 +63,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			return -2;
 		}
-		if (!preg_match('/^(integer|price|sellist|varchar|chkbxlst|double|text|html|duration)/', $addfieldentry['type'])
+		if (!preg_match('/^(integer|price|sellist|varchar|chkbxlst|contactlist|double|text|html|duration)/', $addfieldentry['type'])
 			&& !preg_match('/^(boolean|real|date|datetime|timestamp)$/', $addfieldentry['type']))
 		{
 			setEventMessages($langs->trans('BadValueForType', $objectname), null, 'errors');
@@ -271,7 +271,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			if ($type == 'html') $type = 'text'; // html modulebuilder type is a text type in database
 			elseif ($type == 'price') $type = 'double'; // html modulebuilder type is a text type in database
 			elseif (in_array($type, array('link', 'sellist', 'duration',))) $type = 'integer';
-			elseif ($type == 'chkbxlst') $type = 'varchar(255)';
+			elseif ($type == 'chkbxlst' || $type == 'contactlist') $type = 'varchar(255)';
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid')  $texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
 			if ($key == 'entity') $texttoinsert .= ' DEFAULT 1';
