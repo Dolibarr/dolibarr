@@ -1187,9 +1187,10 @@ class Utils
 	 *	@param 	string	$subject             Topic/Subject of mail
 	 *	@param 	string	$message             Message
 	 *	@param 	string	$filename		     List of files to attach (full path of filename on file system)
+	 * 	@param 	string	$filter			     Filter file send
 	 *  @return	int						     0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendDumpDatabase($sendto = '', $from = '', $subject = '', $message = '', $filename = '')
+	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '')
 	{
 		global $conf, $langs;
 
@@ -1205,6 +1206,8 @@ class Utils
 
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
+		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
 		} else {
 			$error++;
 		}
@@ -1225,7 +1228,7 @@ class Utils
 				$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filename);
 			}
 		} else {
-			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup');
+			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
 		}
 		if ($tmpfiles) {
 			foreach ($tmpfiles as $key => $val) {
