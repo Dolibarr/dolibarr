@@ -78,7 +78,7 @@ llxHeader('', $langs->trans("InventorySetup"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("InventorySetup"), $linkback, 'title_setup');
 
 
 $head = stock_admin_prepare_head();
