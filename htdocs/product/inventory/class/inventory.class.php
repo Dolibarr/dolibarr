@@ -700,11 +700,11 @@ class Inventory extends CommonObject
 		$this->title = '';
 	}
 
-
 	/**
 	 * Return the child warehouse of the current one
-	 *
-	 * @return int | array             <0 if KO, >0 if OK
+	 * @param int $id Id of warehouse
+	 * @param $TChildWarehouse  child warehouses
+	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function getchildWarehouse($id, &$TChildWarehouse)
 	{
