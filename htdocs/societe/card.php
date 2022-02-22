@@ -2948,7 +2948,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				if ($user->rights->societe->creer) {
 					//TODO MODIFIER OK
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd,$params);
+					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 				}
 
 				if (!empty($conf->adherent->enabled)) {
@@ -2961,12 +2961,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				if ($user->rights->societe->supprimer) {
 					//TODO FUSIONNER OK
-					print dolGetButtonAction($langs->trans('MergeThirdparties'), '', 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontoadd, $params);
+					print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontoadd);
 
 
 				}
 				//TODO SUPPRIMER OK
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->supprimer,$params);
+				print dolGetButtonAction('', $langs->trans('Delete'),'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->supprimer);
 			}
 
 			print '</div>'."\n";
