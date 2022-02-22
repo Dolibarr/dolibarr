@@ -8339,7 +8339,7 @@ class Form
 	 *  @param  array           $compatibleImportElementsList  Array of compatibles elements object for "import from" action
 	 *  @return	int							      <0 if KO, >=0 if OK
 	 */
-	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false)
+	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false, $title='RelatedObjects')
 	{
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
@@ -8358,7 +8358,7 @@ class Form
 			$nbofdifferenttypes = count($object->linkedObjects);
 
 			print '<!-- showLinkedObjectBlock -->';
-			print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
+			print load_fiche_titre($langs->trans($title), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
 
 
 			print '<div class="div-table-responsive-no-min">';

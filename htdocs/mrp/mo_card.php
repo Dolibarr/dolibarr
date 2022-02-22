@@ -731,7 +731,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, false, 'MOChild');
 
 
 		print '</div><div class="fichehalfright">';
