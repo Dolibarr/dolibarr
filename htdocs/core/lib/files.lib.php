@@ -2424,10 +2424,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'holiday') && !empty($conf->holiday->dir_output)) {
-		if ($fuser->rights->holiday->{$read} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->rights->holiday->{$read} || !empty($fuser->rights->holiday->readall) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of holiday, call checkUserAccessToObject to check permission on properties and hierarchy of leave request
-			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+			if ($refname && empty($fuser->rights->holiday->readall) && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$tmpholiday = new Holiday($db);
 				$tmpholiday->fetch('', $refname);
@@ -2436,10 +2436,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
-		if ($fuser->rights->expensereport->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->rights->expensereport->{$lire} || !empty($fuser->rights->expensereport->readall) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of expensereport, call checkUserAccessToObject to check permission on properties and hierarchy of expense report
-			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+			if ($refname && empty($fuser->rights->expensereport->readall) && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$tmpexpensereport = new ExpenseReport($db);
 				$tmpexpensereport->fetch('', $refname);
