@@ -79,3 +79,6 @@ NoEval=No evaluation done for this employee
 HowManyUserWithThisMaxNote=Number of users with this rank
 HighestRank=Highest rank
 SkillComparison=Skill comparison
+ActionsOnJob=Events on this job
+VacantPosition=job vacancy
+VacantCheckboxHelper=Checking this option will show unfilled positions (job vacancy)

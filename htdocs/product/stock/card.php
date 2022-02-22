@@ -159,6 +159,8 @@ if (empty($reshook)) {
 					$categories = GETPOST('categories', 'array');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
+						
+						$backtopage = str_replace("__ID__", $id, $backtopage);
 						header("Location: ".$backtopage);
 						exit;
 					} else {

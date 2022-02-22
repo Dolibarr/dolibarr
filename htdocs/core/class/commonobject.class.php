@@ -5310,8 +5310,7 @@ abstract class CommonObject
 				$sav_charset_output = $outputlangs->charset_output;
 
 				if (in_array(get_class($this), array('Adherent'))) {
-					$arrayofrecords = array(); // The write_file of templates of adherent class need this var
-					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
+					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 				} else {
 					 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 				}
