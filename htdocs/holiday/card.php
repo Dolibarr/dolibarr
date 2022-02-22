@@ -113,7 +113,7 @@ if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write &&
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'holiday', $object->id, 'holiday','','','rowid',$object->statut);
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday', '', '', 'rowid', $object->statut);
 
 
 /*
