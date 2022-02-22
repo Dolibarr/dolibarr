@@ -1026,11 +1026,11 @@ while ($i < min($num, $limit)) {
 				$is_open = ($object->status != Ticket::STATUS_CLOSED && $object->status != Ticket::STATUS_CANCELED );
 				$should_show_warning = (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) || !empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE));
 				if ($is_open && $should_show_warning) {
-					$date_last_msg_sent = (int) $object->date_last_msg_sent;
+					$date_last_msg_sent = (int) $db->jdate($object->date_last_msg_sent);
 					$hour_diff = ($now - $date_last_msg_sent) / 3600 ;
 
 					if (!empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE && $date_last_msg_sent == 0)) {
-						$creation_date =  $object->datec;
+						$creation_date =  (int) $db->jdate($object->datec);
 						$hour_diff_creation = ($now - $creation_date) / 3600 ;
 						if ($hour_diff_creation > $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE) {
 							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE), 'warning', 'style="color: red;"', false, 0, 0, '', '');
