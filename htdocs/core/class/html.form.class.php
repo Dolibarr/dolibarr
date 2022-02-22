@@ -8339,7 +8339,7 @@ class Form
 	 *  @param  array           $compatibleImportElementsList  Array of compatibles elements object for "import from" action
 	 *  @return	int							      <0 if KO, >=0 if OK
 	 */
-	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false, $title='RelatedObjects')
+	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false, $title = 'RelatedObjects')
 	{
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
