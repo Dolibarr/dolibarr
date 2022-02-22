@@ -292,9 +292,9 @@ class Inventory extends CommonObject
 			if ($this->fk_warehouse > 0) {
 				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
 			}
-			if($this->include_sub_warehouse>0 && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE){
+			if ($this->include_sub_warehouse>0 && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE) {
 				$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
-				foreach ($TChildWarehouses as $childWarehouse){
+				foreach ($TChildWarehouses as $childWarehouse) {
 					$sql .= " OR ps.fk_entrepot = ".((int) $childWarehouse);
 				}
 			}
@@ -712,9 +712,8 @@ class Inventory extends CommonObject
 		$sql.= ' WHERE fk_parent='.(int) $id;
 		$sql.= ' ORDER BY rowid';
 		$resql = $this->db->query($sql);
-		if($resql && $this->db->num_rows($resql)>0){
-			while ($obj = $this->db->fetch_object($resql)){
-
+		if ($resql && $this->db->num_rows($resql)>0) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$TChildWarehouse[] = $obj->rowid;
 				$this->getchildWarehouse($obj->rowid, $TChildWarehouse);
 			}
@@ -723,7 +722,6 @@ class Inventory extends CommonObject
 			return -1;
 		}
 	}
-
 }
 
 /**
