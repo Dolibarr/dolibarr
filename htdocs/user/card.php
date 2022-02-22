@@ -1900,9 +1900,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($user->id <> $id && $candisableuser &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
-						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '');
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a></div>';
+						$params = array(
+							'attr' => array(
+								'title' => $langs->trans('MustBeAdminToDeleteOtherAdmin'),
+								'class' => 'classfortooltip'
+							)
+						);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', false);
 					}
 				}
 			}
