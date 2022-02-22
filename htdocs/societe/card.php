@@ -2929,14 +2929,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (empty($user->socid)) {
 					if (!empty($object->email) || $at_least_one_email_contact) {
 						$langs->load("mails");
-						//TODO replace to dolGetButtonAction
+						//TODO ENVOYER EMAIL
 						$params = array(
 							'attr' => array(
 								'title' => ''
 							)
 						);
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
-						print dolGetButtonAction($langs->trans('SendMaiAl'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '',true,$params);
+						//print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '',true,$params);
 					} else {
 						$langs->load("mails");
 						//TODO replace to dolGetButtonAction
@@ -2947,7 +2947,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				if ($user->rights->societe->creer) {
 					//TODO MODIFIER OK
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd,$params);
 				}
 
 				if (!empty($conf->adherent->enabled)) {
@@ -2965,7 +2965,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				}
 				//TODO SUPPRIMER OK
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->supprimer);
+				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->supprimer,$params);
 			}
 
 			print '</div>'."\n";
