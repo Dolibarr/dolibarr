@@ -2941,7 +2941,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$langs->load("mails");
 						//TODO replace to dolGetButtonAction
 						//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>'."\n";
-						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle'.newToken(), '',false);
+						$params['attr']['title'] = $langs->trans('NoEMail');
+						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle'.newToken(), '',false,$params);
 					}
 				}
 
