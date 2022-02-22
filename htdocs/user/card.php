@@ -1844,13 +1844,31 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 				if ($caneditfield && (empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
 					if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
-					} else {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
-					}
+						$params = array(
+							'attr' => array(
+								'title' => $langs->trans('DisabledInMonoUserMode'),
+								'class' => 'classfortooltip'
+							)
+						);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
+						} else {
+						$params = array(
+							'attr' => array(
+								'title' => '',
+								'class' => 'classfortooltip'
+							)
+						);
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit', '', true, $params);
+						}
 				} elseif ($caneditpassword && !$object->ldap_sid &&
 				(empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a></div>';
+					$params = array(
+						'attr' => array(
+							'title' => '',
+							'class' => 'classfortooltip'
+						)
+					);
+					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit', '', true, $params);
 				}
 
 				// Si on a un gestionnaire de generation de mot de passe actif
