@@ -2940,8 +2940,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					} else {
 						$langs->load("mails");
 						//TODO replace to dolGetButtonAction
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>'."\n";
-						print dolGetButtonAction($langs->trans('SendMaiAl'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle'.newToken(), '',false);
+						//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>'."\n";
+						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle'.newToken(), '',false);
 					}
 				}
 
@@ -2960,7 +2960,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				if ($user->rights->societe->supprimer) {
 					//TODO FUSIONNER OK
-					print dolGetButtonAction($langs->trans('MergeThirdparties'), '', 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('MergeThirdparties'), '', 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontoadd, $params);
 
 
 				}
