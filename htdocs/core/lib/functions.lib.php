@@ -9965,6 +9965,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	if (empty($html)) {
 		$html = $label;
+		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
 		$attr['aria-label'] = $label;
 	}
