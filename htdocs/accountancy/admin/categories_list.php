@@ -148,10 +148,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if ($value == 'formula' && !GETPOST('formula')) {
 			continue;
 		}
-		if ($value == 'range_account' && empty($_POST['range_account'])) {
+		if ($value == 'range_account' && !GETPOST('range_account')) {
 			continue;
 		}
-		if (($value == 'country' || $value == 'country_id') && (!empty($_POST['country_id']))) {
+		if (($value == 'country' || $value == 'country_id') && GETPOST('country_id')) {
 			continue;
 		}
 		if (!GETPOSTISSET($value) || GETPOST($value) == '') {
@@ -283,8 +283,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
-			if ($field == 'fk_country' && $_POST['country'] > 0) {
-				$_POST[$listfieldvalue[$i]] = $_POST['country'];
+			if ($field == 'fk_country' && GETPOST('country') > 0) {
+				$_POST[$listfieldvalue[$i]] = GETPOST('country');
 			} elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
@@ -292,10 +292,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$sql .= ",";
 			}
 			$sql .= $field."=";
-			if ($_POST[$listfieldvalue[$i]] == '' && !$listfieldvalue[$i] == 'range_account') {
+			if (GETPOST($listfieldvalue[$i]) == '' && !$listfieldvalue[$i] == 'range_account') {
 				$sql .= "null"; // For range_account, we want/accept code = ''
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
