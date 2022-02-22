@@ -3517,7 +3517,7 @@ if ($action == 'createsite') {
 
 	$siteref = $sitedesc = $sitelang = $siteotherlang = '';
 	if (GETPOST('WEBSITE_REF')) {
-		$siteref = GETPOST('WEBSITE_REF', 'alpha');
+		$siteref = GETPOST('WEBSITE_REF', 'aZ09');
 	}
 	if (GETPOST('WEBSITE_DESCRIPTION')) {
 		$sitedesc = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
