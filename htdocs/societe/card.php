@@ -2444,9 +2444,28 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$formconfirm = '';
 
 		// Confirm delete third party
-		if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
+//		if ($action == 'delete' ) {
+//			var_dump("dlzk,dmz,kdml,zdzd");
+//
+//
+//			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
+//			print $formconfirm;
+//		}
+
+
+		if ($action == 'delete') {
+			$formquestion = array(
+				array(
+					'label' => $langs->trans('M456465645y'),
+					'value' => 'yes',
+				)
+			);
+
+			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteThirdParty'), $langs->trans('ConfirmDeleteCompany'), 'confirm_delete', '', 0, 2);
 		}
+
+
+
 
 		if ($action == 'merge') {
 			$formquestion = array(
@@ -2910,15 +2929,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (empty($user->socid)) {
 					if (!empty($object->email) || $at_least_one_email_contact) {
 						$langs->load("mails");
+						//TODO replace to dolGetButtonAction
+						$params = array(
+							'attr' => array(
+								'title' => ''
+							)
+						);
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+						print dolGetButtonAction($langs->trans('SendMaiAl'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '',true,$params);
 					} else {
 						$langs->load("mails");
+						//TODO replace to dolGetButtonAction
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>'."\n";
+						print dolGetButtonAction($langs->trans('SendMaiAl'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle'.newToken(), '',false);
 					}
 				}
 
 				if ($user->rights->societe->creer) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
+					//TODO MODIFIER OK
+					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 				}
 
 				if (!empty($conf->adherent->enabled)) {
@@ -2930,16 +2959,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				if ($user->rights->societe->supprimer) {
-					print '<a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a>'."\n";
-				}
+					//TODO FUSIONNER OK
+					print dolGetButtonAction($langs->trans('MergeThirdparties'), '', 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontoadd);
 
-				if ($user->rights->societe->supprimer) {
-					if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
-						print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
-					} else {
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
-					}
+
 				}
+				//TODO SUPPRIMER OK
+				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->supprimer);
 			}
 
 			print '</div>'."\n";
