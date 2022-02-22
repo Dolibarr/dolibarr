@@ -1463,8 +1463,11 @@ if ($resql) {
 	) {
 		$with_margin_info = true;
 	}
+	$total_ht = 0;
+	$total_margin = 0;
 
-	while ($i < min($num, $limit)) {
+	$last_num = min($num, $limit);
+	while ($i < $last_num) {
 		$obj = $db->fetch_object($resql);
 
 		$notshippable = 0;
@@ -1510,6 +1513,8 @@ if ($resql) {
 		if ($with_margin_info === true) {
 			$generic_commande->fetch_lines();
 			$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
+			$total_ht += $obj->total_ht;
+			$total_margin += $marginInfo['total_margin'];
 		}
 
 		print '<tr class="oddeven">';
@@ -1878,6 +1883,16 @@ if ($resql) {
 			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+			}
+			if ($i >= $last_num - 1) {
+				if (!empty($total_ht)) {
+					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+				} else {
+					$totalarray['val']['total_mark_rate'] = '';
+				}
 			}
 		}
 

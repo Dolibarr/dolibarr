@@ -693,7 +693,7 @@ $tmpforcreatebutton = dol_getdate(dol_now(), true);
 $newparam = '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 //$param='month='.$monthshown.'&year='.$year;
-$hourminsec = '100000';
+$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
 
 $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 $url .= '&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec;
@@ -953,7 +953,12 @@ while ($i < min($num, $limit)) {
 	// Start date
 	if (!empty($arrayfields['a.datep']['checked'])) {
 		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
+		if (empty($obj->fulldayevent)) {
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
+		} else {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuser'));
+		}
 		$late = 0;
 		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
 			$late = 1;
@@ -967,7 +972,12 @@ while ($i < min($num, $limit)) {
 	// End date
 	if (!empty($arrayfields['a.datep2']['checked'])) {
 		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuser');
+		if (empty($obj->fulldayevent)) {
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuser');
+		} else {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuser'));
+		}
 		print '</td>';
 	}
 

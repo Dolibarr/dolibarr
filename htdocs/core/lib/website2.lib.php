@@ -601,3 +601,59 @@ function showWebsiteTemplates(Website $website)
 	print '</td></tr>';
 	print '</table>';
 }
+
+
+/**
+ * checkPHPCode
+ *
+ * @param	string		$phpfullcodestringold		PHP old string
+ * @param	string		$phpfullcodestring			PHP new string
+ * @return	int										Error or not
+ */
+function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
+{
+	global $conf, $langs, $user;
+
+	$error = 0;
+
+	if (empty($phpfullcodestringold) && empty($phpfullcodestring)) {
+		return 0;
+	}
+
+	// First check forbidden commands
+	$forbiddenphpcommands = array();
+	if (empty($conf->global->WEBSITE_PHP_ALLOW_EXEC)) {    // If option is not on, we disallow functions to execute commands
+		$forbiddenphpcommands = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
+	}
+	if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
+		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+	}
+	foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
+		if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring)) {
+			$error++;
+			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+			break;
+		}
+	}
+	// This char can be used to execute RCE for example using with echo `ls`
+	$forbiddenphpchars = array();
+	if (empty($conf->global->WEBSITE_PHP_ALLOW_DANGEROUS_CHARS)) {    // If option is not on, we disallow functions to execute commands
+		$forbiddenphpchars = array("`");
+	}
+	foreach ($forbiddenphpchars as $forbiddenphpchar) {
+		if (preg_match('/'.$forbiddenphpchar.'/ms', $phpfullcodestring)) {
+			$error++;
+			setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpchar), null, 'errors');
+			break;
+		}
+	}
+
+	if (!$error && empty($user->rights->website->writephp)) {
+		if ($phpfullcodestringold != $phpfullcodestring) {
+			$error++;
+			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
+		}
+	}
+
+	return $error;
+}

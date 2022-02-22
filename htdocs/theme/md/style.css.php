@@ -885,6 +885,9 @@ textarea.centpercent {
 	text-align: center;
 	margin: 0px auto;
 }
+.centerimp {
+	text-align: center !important;
+}
 .alignstart {
 	text-align: start;
 }
@@ -1195,6 +1198,17 @@ div.divsearchfield {
 	font-weight: bold;
 	margin-right: 2px;
 	padding-left: 4px;
+}
+
+.caretleftaxis {
+	margin-left: -13px;
+	margin-top: -1px;
+	position: absolute;
+}
+.caretdownaxis {
+	margin-left: -12px;
+	margin-top: 0;
+	position: absolute;
 }
 
 <?php
@@ -5843,6 +5857,10 @@ input.select2-input {
 	color: #FFF !important;
 }
 
+.select2-container .select2-selection--multiple {
+	min-height: 28px !important;
+}
+
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	border: 1px solid #e4e4e4;
 }
@@ -5919,6 +5937,9 @@ input.select2-input {
 	border-left: none;
 	border-right: none;
 	border-radius: 0 !important;
+}
+.select2-selection--multiple input.select2-search__field {
+	border-bottom: none !important;
 }
 .select2-search__field
 {
@@ -6090,6 +6111,14 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
   position: relative;
   cursor: text;
   overflow: hidden;
+}
+
+span.select2.select2-container.select2-container--default {
+	text-align: initial;
+}
+
+ul.select2-results__options li {
+	font-size: 0.95em;
 }
 
 

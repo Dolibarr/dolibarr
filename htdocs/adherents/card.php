@@ -55,6 +55,7 @@ $id = GETPOST('id') ?GETPOST('id', 'int') : $rowid;
 $typeid = GETPOST('typeid', 'int');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
+$ref = GETPOST('ref', 'alpha');
 
 if (!empty($conf->mailmanspip->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';

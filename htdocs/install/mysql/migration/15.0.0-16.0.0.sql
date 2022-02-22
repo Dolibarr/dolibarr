@@ -237,4 +237,11 @@ ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 
 ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
 
-
+create table llx_inventory_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_inventory_extrafields ADD INDEX idx_inventory_extrafields (fk_object);

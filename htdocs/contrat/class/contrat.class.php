@@ -2042,7 +2042,7 @@ class Contrat extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('contractdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -2607,7 +2607,6 @@ class ContratLigne extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'contratdet';
-
 
 	/**
 	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea()

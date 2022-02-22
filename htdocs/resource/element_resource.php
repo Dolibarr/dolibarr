@@ -383,7 +383,8 @@ if (!$ret) {
 			if (empty($act->fulldayevent)) {
 				print dol_print_date($act->datep, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datep, 'day', 'tzuser');
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				print dol_print_date($act->datep, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 			}
 			if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));
@@ -396,7 +397,8 @@ if (!$ret) {
 			if (empty($act->fulldayevent)) {
 				print dol_print_date($act->datef, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datef, 'day', 'tzuser');
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				print dol_print_date($act->datef, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 			}
 			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));

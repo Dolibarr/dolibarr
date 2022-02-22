@@ -205,6 +205,7 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 .divadvancedsearchfieldcompinput {
 	background: #fff;
 	border-bottom: solid 1px var(--inputbordercolor);
+	border-radius: 3px;
 }
 input[name=duration_value], input[name=durationhour]
 {
@@ -263,7 +264,8 @@ input:invalid, select:invalid, input.--error , select.--error {
 
 section.setupsection {
 	padding: 20px;
-	background-color: var(--colorbacktitle1);
+	/* background-color: var(--colorbacktitle1); */
+	background-color: #f0f0f0;
 	border-radius: 5px;
 }
 
@@ -727,6 +729,9 @@ textarea.centpercent {
 	text-align: center;
 	margin: 0px auto;
 }
+.centerimp {
+	text-align: center !important;
+}
 .alignstart {
 	text-align: start;
 }
@@ -1040,6 +1045,7 @@ div.divsearchfield {
 	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
 	height: 24px;
+	border-radius: 3px;
 }
 .search_component_searchtext {
 	padding-top: 2px;
@@ -5915,6 +5921,7 @@ span#select2-taskid-container[title^='--'] {
 }
 
 span.select2.select2-container.select2-container--default {
+	text-align: initial;
 	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
 	border-left: none;
 	border-top: none;
@@ -5932,7 +5939,7 @@ input.select2-input {
 	color: #FFF !important;
 }
 .select2-container .select2-selection--multiple {
-	min-height: 30px !important;
+	min-height: 28px !important;
 }
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	margin-top: 5px !important;
@@ -6044,6 +6051,9 @@ input.select2-input {
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	background-color: #ddd;
 	margin-top: 4px !important;
+}
+.select2-selection--multiple input.select2-search__field {
+	border-bottom: none !important;
 }
 
 .select2-search__field
@@ -6227,6 +6237,10 @@ span#select2-boxbookmark-container {
   position: relative;
   cursor: text;
   overflow: hidden;
+}
+
+ul.select2-results__options li {
+	font-size: 0.95em;
 }
 
 
