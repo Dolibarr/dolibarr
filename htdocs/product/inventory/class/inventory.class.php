@@ -709,7 +709,7 @@ class Inventory extends CommonObject
 	public function getchildWarehouse($id, &$TChildWarehouse)
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'entrepot';
-		$sql.= ' WHERE fk_parent='.$id;
+		$sql.= ' WHERE fk_parent='.(int) $id;
 		$sql.= ' ORDER BY rowid';
 		$resql = $this->db->query($sql);
 		if($resql && $this->db->num_rows($resql)>0){
