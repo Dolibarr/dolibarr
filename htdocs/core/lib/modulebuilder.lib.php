@@ -311,7 +311,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			if ($key == 'entity') {
 				$texttoinsert .= ' DEFAULT 1';
 			} else {
-				if (!empty($val['default']) && $val['default'] != '') {
+				if (!empty($val['default'])) {
 					if (preg_match('/^null$/i', $val['default'])) {
 						$texttoinsert .= " DEFAULT NULL";
 					} elseif (preg_match('/varchar/', $type)) {
