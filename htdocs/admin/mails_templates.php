@@ -308,7 +308,7 @@ if (empty($reshook)) {
 
 			// Rename some POST variables into a generic name
 			if (GETPOST('actionmodify', 'alpha') && $value == 'topic') {
-				$_POST['topic'] = $_POST['topic-'.$rowid];
+				$_POST['topic'] = GETPOST('topic-'.$rowid);
 			}
 
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '' || GETPOST($value) == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position') {

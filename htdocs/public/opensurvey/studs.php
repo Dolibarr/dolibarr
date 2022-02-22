@@ -202,7 +202,6 @@ for ($i = 0; $i < $nblines; $i++) {
 }
 
 if ($testmodifier) {
-	//var_dump($_POST);exit;
 	$nouveauchoix = '';
 	for ($i = 0; $i < $nbcolonnes; $i++) {
 		if (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '1') {
