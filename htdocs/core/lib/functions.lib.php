@@ -1105,6 +1105,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
 
@@ -1128,6 +1129,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
 
