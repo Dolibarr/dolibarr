@@ -852,7 +852,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// parent user
-			$nbcchilds = count($object->childs_array_objects());
+			$nbcchilds = count($object->childsArrayObjects());
 			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
 				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 				print img_picto('', 'object_contact');
@@ -1140,7 +1140,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// parent user
-			$nbcchilds = count($object->childs_array_objects());
+			$nbcchilds = count($object->childsArrayObjects());
 			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
 				$parent = $object->parent;
 				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
@@ -1366,7 +1366,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// parent user
-		$nbcchilds = count($object->childs_array_objects());
+		$nbcchilds = count($object->childsArrayObjects());
 		if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
 			print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 			if ($object->parent > 0) {
