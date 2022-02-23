@@ -9954,7 +9954,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
-		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
+		if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(
