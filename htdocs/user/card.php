@@ -1833,7 +1833,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					$canSendMail = false;
 					$params = array(
 						'attr' => array(
-							'title' => $langs->trans('SendMail'),
+							'title' => '',
 							'class' => 'classfortooltip'
 						)
 					);
