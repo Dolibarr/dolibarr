@@ -2083,65 +2083,97 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
  */
 function dol_uncompress($inputfile, $outputdir)
 {
-	global $conf, $langs;
+	global $conf, $langs, $db;
 
-	if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS)) {
-		dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
-		include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
-		$archive = new PclZip($inputfile);
+	include_once DOL_DOCUMENT_ROOT."/core/class/utils.class.php";
+	$utils = new Utils($db);
+	$fileinfo = pathinfo($inputfile);
+	if ($fileinfo["extension"] == "zip") {
+		if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS)) {
+			dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
+			include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
+			$archive = new PclZip($inputfile);
 
-		// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
-		$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+			// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+			$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
 
-		if (!is_array($result) && $result <= 0) {
-			return array('error'=>$archive->errorInfo(true));
-		} else {
-			$ok = 1;
-			$errmsg = '';
-			// Loop on each file to check result for unzipping file
-			foreach ($result as $key => $val) {
-				if ($val['status'] == 'path_creation_fail') {
-					$langs->load("errors");
-					$ok = 0;
-					$errmsg = $langs->trans("ErrorFailToCreateDir", $val['filename']);
-					break;
+			if (!is_array($result) && $result <= 0) {
+				return array('error'=>$archive->errorInfo(true));
+			} else {
+				$ok = 1;
+				$errmsg = '';
+				// Loop on each file to check result for unzipping file
+				foreach ($result as $key => $val) {
+					if ($val['status'] == 'path_creation_fail') {
+						$langs->load("errors");
+						$ok = 0;
+						$errmsg = $langs->trans("ErrorFailToCreateDir", $val['filename']);
+						break;
+					}
+				}
+
+				if ($ok) {
+					return array();
+				} else {
+					return array('error'=>$errmsg);
 				}
 			}
+		}
 
-			if ($ok) {
+		if (class_exists('ZipArchive')) {	// Must install php-zip to have it
+			dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
+			$zip = new ZipArchive;
+			$res = $zip->open($inputfile);
+			if ($res === true) {
+				//$zip->extractTo($outputdir.'/');
+				// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
+				// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
+				// with -l is the range of dot to go back in path.
+				// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
+				for ($i = 0; $i < $zip->numFiles; $i++) {
+					if (preg_match('/\.\./', $zip->getNameIndex($i))) {
+						dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
+						continue; // Discard the file
+					}
+					$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
+				}
+
+				$zip->close();
 				return array();
 			} else {
-				return array('error'=>$errmsg);
+				return array('error'=>'ErrUnzipFails');
 			}
 		}
-	}
 
-	if (class_exists('ZipArchive')) {	// Must install php-zip to have it
-		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
-		$zip = new ZipArchive;
-		$res = $zip->open($inputfile);
-		if ($res === true) {
-			//$zip->extractTo($outputdir.'/');
-			// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
-			// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
-			// with -l is the range of dot to go back in path.
-			// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
-			for ($i = 0; $i < $zip->numFiles; $i++) {
-				if (preg_match('/\.\./', $zip->getNameIndex($i))) {
-					dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
-					continue; // Discard the file
-				}
-				$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
-			}
-
-			$zip->close();
-			return array();
+		return array('error'=>'ErrNoZipEngine');
+	} elseif ($fileinfo["extension"] == "gz" || $fileinfo["extension"] == "bz2") {
+		$extension = pathinfo($fileinfo["filename"], PATHINFO_EXTENSION);
+		if ($extension == "tar") {
+			$cmd = "tar -C ".$outputdir." -xvf ".$fileinfo["dirname"]."/".$fileinfo["basename"];
+			$resarray = $utils->executeCLI($cmd, $outputdir);
 		} else {
-			return array('error'=>'ErrUnzipFails');
+			$program = "";
+			if ($fileinfo["extension"] == "gz") {
+				$program = "gzip";
+			} elseif ($fileinfo["extension"] == "bz2") {
+				$program = "bzip2";
+			} else {
+				return array('error'=>'ErrFileExtension');
+			}
+			$cmd = $program." -dc ".$fileinfo["dirname"]."/".$fileinfo["basename"];
+			$outputfilename = $outputdir."/".$fileinfo["filename"];
+			$resarray = $utils->executeCLI($cmd, $outputfilename, 0, $outputfilename);
+			if ($resarray["output"] == 2) {
+				$resarray["error"] = "ErrFilePermOrFileNotFound";
+			}
+			if ($resarray["output"] == 1) {
+				$resarray["error"] = "Error";
+			}
 		}
+		return $resarray["output"] != 0 ? $resarray["error"] : array();
 	}
 
-	return array('error'=>'ErrNoZipEngine');
+	return array('error'=>'ErrFileExtension');
 }
 
 
