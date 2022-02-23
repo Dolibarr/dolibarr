@@ -2444,15 +2444,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$formconfirm = '';
 
 		// Confirm delete third party
-//		if ($action == 'delete' ) {
-//			var_dump("dlzk,dmz,kdml,zdzd");
-//
-//
-//			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
-//			print $formconfirm;
-//		}
-
-
 		if ($action == 'delete') {
 			$formquestion = array(
 				array(
@@ -2929,25 +2920,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (empty($user->socid)) {
 					if (!empty($object->email) || $at_least_one_email_contact) {
 						$langs->load("mails");
-						//TODO ENVOYER EMAIL
 						$params = array(
 							'attr' => array(
 								'title' => ''
 							)
 						);
-						//print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
-						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '',true,$params);
+						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
 					} else {
 						$langs->load("mails");
-						//TODO replace to dolGetButtonAction
-						//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>'."\n";
 						$params['attr']['title'] = $langs->trans('NoEMail');
-						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle'.newToken(), '',false,$params);
+						print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle'.newToken(), '', false, $params);
 					}
 				}
 
 				if ($user->rights->societe->creer) {
-					//TODO MODIFIER OK
 					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 				}
 
@@ -2960,13 +2946,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				if ($user->rights->societe->supprimer) {
-					//TODO FUSIONNER OK
 					print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontoadd);
-
-
 				}
-				//TODO SUPPRIMER OK
-				print dolGetButtonAction('', $langs->trans('Delete'),'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->supprimer);
+				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->supprimer);
 			}
 
 			print '</div>'."\n";
