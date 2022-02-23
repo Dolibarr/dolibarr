@@ -1823,7 +1823,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			/*
 			 * Buttons actions
 			 */
-
 			print '<div class="tabsAction">';
 
 			$parameters = array();
