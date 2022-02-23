@@ -1938,7 +1938,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 
 
-			//Select mail models is same action as presend
+			// Select mail models is same action as presend
 			if (GETPOST('modelselected')) {
 				$action = 'presend';
 			}
