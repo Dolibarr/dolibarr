@@ -611,7 +611,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 
 if (!empty($conf->salaries->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
-		$column = 'p.datev';
+		$column = 'b.datev';
 	}
 	if ($modecompta == "RECETTES-DEPENSES") {
 		$column = 'p.datep';
@@ -621,6 +621,7 @@ if (!empty($conf->salaries->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 	$subtotal_ttc = 0;
 	$sql = "SELECT p.label as nom, date_format(".$column.",'%Y-%m') as dm, sum(p.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank=b.rowid";
 	$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
 	if (!empty($date_start) && !empty($date_end)) {
 		$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
