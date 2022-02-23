@@ -32,6 +32,10 @@
     vertical-align: middle;
 }
 
+.right {
+	text-align: right;
+}
+
 .opacitymedium {
 	opacity: 0.5;
 }

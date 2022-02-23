@@ -235,8 +235,12 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	// Force l'affichage de la progression
 	if ($ok) {
-		print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'</td></tr>';
+		print '<tr><td colspan="2"><span class="opacitymedium messagebepatient">'.$langs->trans("PleaseBePatient").'</span></td></tr>';
+		print '</table>';
+
 		flush();
+
+		print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 	}
 
 
@@ -400,6 +404,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		$db->close();
 	}
 }
+
 
 if (empty($actiondone)) {
 	print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
