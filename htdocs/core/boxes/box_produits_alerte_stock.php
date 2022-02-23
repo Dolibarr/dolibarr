@@ -94,12 +94,12 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
-			$sql .= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
+			$sql .= " AND p.seuil_stock_alerte > 0";
 			if (empty($user->rights->produit->lire)) {
-				$sql .= ' AND p.fk_product_type != 0';
+				$sql .= ' AND p.fk_product_type <> 0';
 			}
 			if (empty($user->rights->service->lire)) {
-				$sql .= ' AND p.fk_product_type != 1';
+				$sql .= ' AND p.fk_product_type <> 1';
 			}
 			// Add where from hooks
 			if (is_object($hookmanager)) {
@@ -163,7 +163,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'td' => 'class="tdoverflowmax100 maxwidth150onsmartphone"',
 						'text' => $objp->label,
 					);
 
@@ -186,18 +186,13 @@ class box_produits_alerte_stock extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
-						'text' => $price,
-					);
+					/*$this->info_box_contents[$line][] = array(
+						'td' => 'class="nowraponall right amount"',
+						'text' => $price.' '.$price_base_type,
+					);*/
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => $price_base_type,
-					);
-
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center"',
+						'td' => 'class="center nowraponall"',
 						'text' => price2num($objp->total_stock, 'MS').' / '.$objp->seuil_stock_alerte,
 						'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
 					);
@@ -210,7 +205,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'</span>',
+						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 1).'</span>',
 						'asis' => 1
 					);
 

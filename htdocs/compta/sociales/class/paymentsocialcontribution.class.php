@@ -600,7 +600,7 @@ class PaymentSocialContribution extends CommonObject
 							$result = $acc->add_url_line(
 								$bank_line_id,
 								$socialcontrib->fk_user,
-								DOL_URL_ROOT . '/user/card.php?id=',
+								DOL_URL_ROOT.'/user/card.php?id=',
 								$fuser->getFullName($langs),
 								'user'
 							);

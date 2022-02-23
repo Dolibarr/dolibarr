@@ -41,6 +41,8 @@ $langs->loadLangs(array('admin', 'other', 'agenda', 'users'));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $param = GETPOST('param', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -83,27 +85,29 @@ if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 
 	$defaultValues = new DefaultValues($db);
-	$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page'=>'comm/action/card.php', 't.param'=>'complete','t.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
-	if (!is_array($result) && $result<0) {
+	$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page'=>'comm/action/card.php', 't.param'=>'complete', 't.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
+	if (!is_array($result) && $result < 0) {
 		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
-	} elseif (count($result)>0) {
+	} elseif (count($result) > 0) {
 		foreach ($result as $defval) {
-			$defaultValues->id=$defval->id;
+			$defaultValues->id = $defval->id;
 			$resultDel = $defaultValues->delete($user);
-			if ($resultDel<0) {
+			if ($resultDel < 0) {
 				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 			}
 		}
 	}
-	$defaultValues->type='createform';
-	$defaultValues->entity=$conf->entity;
-	$defaultValues->user_id=0;
-	$defaultValues->page='comm/action/card.php';
-	$defaultValues->param='complete';
-	$defaultValues->value=GETPOST('AGENDA_EVENT_DEFAULT_STATUS');
-	$resultCreat=$defaultValues->create($user);
-	if ($resultCreat<0) {
+	$defaultValues->type = 'createform';
+	$defaultValues->entity = $conf->entity;
+	$defaultValues->user_id = 0;
+	$defaultValues->page = 'comm/action/card.php';
+	$defaultValues->param = 'complete';
+	$defaultValues->value = GETPOST('AGENDA_EVENT_DEFAULT_STATUS');
+	$resultCreat = $defaultValues->create($user);
+	if ($resultCreat < 0) {
 		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
+	} else {
+		setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 	}
 } elseif ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
@@ -260,7 +264,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 						if (in_array($name, $def)) {
 							print '<td class="center">'."\n";
 							if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name") {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'&type=action">';
 								print img_picto($langs->trans("Enabled"), 'switch_on');
 								print '</a>';
 							} else {
@@ -269,7 +273,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 							print "</td>";
 						} else {
 							print '<td class="center">'."\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'&type=action">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							print "</td>";
 						}
 
@@ -278,7 +282,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 						if ($conf->global->ACTION_EVENT_ADDON_PDF == "$name") {
 							print img_picto($langs->trans("Default"), 'on');
 						} else {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&amp;scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 						}
 						print '</td>';
 
@@ -316,6 +320,16 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
+// AGENDA_DEFAULT_VIEW
+print '<tr class="oddeven">'."\n";
+$htmltext = $langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
+print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
+print '</td></tr>'."\n";
+
 // Manual or automatic
 
 print '<tr class="oddeven">'."\n";
@@ -324,9 +338,9 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 //print ajax_constantonoff('AGENDA_USE_EVENT_TYPE');	Do not use ajax here, we need to reload page to change other combo list
 if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_EVENT_TYPE&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_EVENT_TYPE&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 } else {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_EVENT_TYPE&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_EVENT_TYPE&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print '</td></tr>'."\n";
 
@@ -340,28 +354,18 @@ if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 	print '</td></tr>'."\n";
 }
 
-// AGENDA_DEFAULT_VIEW
-print '<tr class="oddeven">'."\n";
-$htmltext = $langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
-print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
-print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'."\n";
-$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
-print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
-print '</td></tr>'."\n";
-
 // AGENDA_EVENT_DEFAULT_STATUS
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_EVENT_DEFAULT_STATUS").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowrap">'."\n";
-$defval='na';
+$defval = 'na';
 $defaultValues = new DefaultValues($db);
-$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page'=>'comm/action/card.php', 't.param'=>'complete','t.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
-if (!is_array($result) && $result<0) {
+$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page'=>'comm/action/card.php', 't.param'=>'complete', 't.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
+if (!is_array($result) && $result < 0) {
 	setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
-} elseif (count($result)>0) {
-	$defval=reset($result)->value;
+} elseif (count($result) > 0) {
+	$defval = reset($result)->value;
 }
 $formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200');
 print '</td></tr>'."\n";

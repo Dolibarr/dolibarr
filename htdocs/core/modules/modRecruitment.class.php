@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  * 	\defgroup   recruitment     Module Recruitment
  *  \brief      Recruitment module descriptor.
  *
- *  \file       htdocs/recruitment/core/modules/modRecruitment.class.php
+ *  \file       htdocs/core/modules/modRecruitment.class.php
  *  \ingroup    recruitment
  *  \brief      Description and activation file for the module Recruitment
  */
@@ -403,7 +403,7 @@ class modRecruitment extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		$result = $this->_load_tables('/recruitment/sql/');
+		$result = $this->_load_tables('/install/mysql/tables/', 'recruitment');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

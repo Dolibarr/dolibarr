@@ -87,7 +87,7 @@ class Productbatch extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_batch (";
+		$sql = "INSERT INTO ".$this->db->prefix()."product_batch (";
 		$sql .= "fk_product_stock,";
 		$sql .= "sellby,";				// no more used
 		$sql .= "eatby,";				// no more used
@@ -111,7 +111,7 @@ class Productbatch extends CommonObject
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().self::$_table_element);
 		}
 
 		// Commit or rollback
@@ -149,8 +149,8 @@ class Productbatch extends CommonObject
 		$sql .= " pl.eatby,";
 		$sql .= " pl.sellby";
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock = w.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
+		$sql .= " FROM ".$this->db->prefix()."product_batch as t INNER JOIN ".$this->db->prefix()."product_stock w on t.fk_product_stock = w.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -199,7 +199,7 @@ class Productbatch extends CommonObject
 		}
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.self::$_table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().self::$_table_element." SET";
 		$sql .= " fk_product_stock=".(isset($this->fk_product_stock) ? $this->fk_product_stock : "null").",";
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
@@ -245,7 +245,7 @@ class Productbatch extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
+			$sql = "DELETE FROM ".$this->db->prefix().self::$_table_element."";
 			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -383,7 +383,7 @@ class Productbatch extends CommonObject
 		$sql .= " t.batch,";
 		$sql .= " t.qty,";
 		$sql .= " t.import_key";
-		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
+		$sql .= " FROM ".$this->db->prefix().self::$_table_element." as t";
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 
 		if (!empty($eatby)) {
@@ -436,7 +436,8 @@ class Productbatch extends CommonObject
 	 */
 	public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
-		global $langs, $conf;
+		global $conf;
+
 		$ret = array();
 
 		$sql = "SELECT";
@@ -452,9 +453,9 @@ class Productbatch extends CommonObject
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
 			// TODO May add extrafields to ?
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t";
+		$sql .= " FROM ".$db->prefix()."product_batch as t";
 		if ($fk_product > 0) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
+			$sql .= " LEFT JOIN ".$db->prefix()."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
@@ -525,10 +526,10 @@ class Productbatch extends CommonObject
 		$sql .= ", pl.sellby";
 		$sql .= ", pl.eatby";
 		$sql .= ", pb.qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_lot as pl";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pl.fk_product";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch AS pb ON pl.batch = pb.batch";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " FROM ".$db->prefix()."product_lot as pl";
+		$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = pl.fk_product";
+		$sql .= " LEFT JOIN ".$db->prefix()."product_batch AS pb ON pl.batch = pb.batch";
+		$sql .= " LEFT JOIN ".$db->prefix()."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		$sql .= " AND pl.fk_product = ".((int) $fk_product);
 		if ($fk_warehouse > 0) {

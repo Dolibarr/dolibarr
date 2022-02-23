@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Šo rīku izmanto tikai pieredzējuši lietotāji vai izstrādātāji. Tas nodrošina komunālo pakalpojumu, lai izveidotu vai rediģētu savu moduli. Šeit ir dokumentācija alternatīvai <a href="%s" target="_blank">manuālai izstrādei</a> .
+ModuleBuilderDesc=Šo rīku drīkst izmantot tikai pieredzējuši lietotāji vai izstrādātāji. Tas nodrošina utilītas, lai izveidotu vai rediģētu savu moduli. Dokumentācija alternatīvai <a href="%s" target="_blank" rel="noopener noreferrer"> manuālai izstrādei ir pieejama šeit </a>.
 EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Ceļš, kurā tiek ģenerēti / rediģēti moduļi (pirmais ārējo moduļu katalogs, kas definēts %s): <strong> %s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Jūsu moduļa / lietojumprogrammas piedāvātās izvēlnes i
 DictionariesDefDescTooltip=Jūsu moduļa / lietojumprogrammas piedāvātās vārdnīcas tiek definētas masīvā <strong>$ this-&gt; vārdnīcas</strong> moduļa deskriptora failā. Šo failu var rediģēt manuāli vai izmantot iegulto redaktoru. <br><br> Piezīme. Pēc definēšanas (un moduļa atkārtotas aktivizēšanas) vārdnīcas ir redzamas arī iestatīšanas apgabalā administratora lietotājiem vietnē %s.
 PermissionsDefDescTooltip=Jūsu moduļa / lietojumprogrammas piešķirtās atļaujas ir definētas masīva <strong>$ this-&gt; tiesību elementos</strong> moduļa deskriptora failā. Šo failu var rediģēt manuāli vai izmantot iegulto redaktoru. <br><br> Piezīme. Pēc definīcijas (un moduļa atkārtotas aktivizēšanas) atļaujas ir redzamas noklusējuma atļauju iestatījumā %s.
 HooksDefDesc=Modu deskriptorā <b> module_parts ['āķi'] </b>definējiet āķu kontekstu, kuru vēlaties pārvaldīt (konteksta sarakstu var atrast, veicot meklēšanu ar <b> initHooks (</b>'galvenajā kodā). <br> Rediģējiet āķa failu, lai pievienotu savu āķa funkciju kodu (kontaktu funkcijas var atrast, veicot meklēšanu ar kodu <b> executeHooks </b> ').
-TriggerDefDesc=Sprūda failā definējiet kodu, kuru vēlaties izpildīt katram notikušajam notikumam.
+TriggerDefDesc=Sprūda failā definējiet kodu, kuru vēlaties izpildīt, kad tiek izpildīts biznesa notikums ārpus jūsu moduļa (notikumi, ko aktivizē citi moduļi).
 SeeIDsInUse=Skatiet jūsu instalācijā izmantotos ID
 SeeReservedIDsRangeHere=Skatiet rezervēto ID diapazonu
 ToolkitForDevelopers=Dolibarr izstrādātāju rīks
@@ -144,3 +144,4 @@ AsciiToPdfConverter=Ascii uz PDF pārveidotāju
 TableNotEmptyDropCanceled=Tabula nav tukša. Dzēšana tika atcelta.
 ModuleBuilderNotAllowed=Moduļu veidotājs ir pieejams, bet nav atļauts jūsu lietotājam.
 ImportExportProfiles=Importēt un eksportēt profilus
+ValidateModBuilderDesc=Ievietojiet 1, ja šis lauks jāapstiprina ar $ this-> validateField () vai 0, ja nepieciešama validācija

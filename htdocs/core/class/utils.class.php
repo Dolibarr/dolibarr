@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2016 Destailleur Laurent <eldy@users.sourceforge.net>
+/* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +203,7 @@ class Utils
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		// Check compression parameter
-		if (!in_array($compression, array('none', 'gz', 'bz', 'zip'))) {
+		if (!in_array($compression, array('none', 'gz', 'bz', 'zip', 'zstd'))) {
 			$langs->load("errors");
 			$this->error = $langs->transnoentitiesnoconv("ErrorBadValueForParameter", $compression, "Compression");
 			return -1;
@@ -240,17 +241,25 @@ class Utils
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli') {
-			$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
-
+			if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
+				$cmddump = $db->getPathOfDump();
+			} else {
+				$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
+			}
+			if (empty($cmddump)) {
+				$this->error = "Failed to detect command to use for mysqldump. Try a manual backup before to set path of command.";
+				return -1;
+			}
 
 			$outputfile = $outputdir.'/'.$file;
 			// for compression format, we add extension
 			$compression = $compression ? $compression : 'none';
 			if ($compression == 'gz') {
 				$outputfile .= '.gz';
-			}
-			if ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$outputfile .= '.bz2';
+			} elseif ($compression == 'zstd') {
+				$outputfile .= '.zst';
 			}
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
@@ -337,12 +346,12 @@ class Utils
 			$fullcommandclear = $command." ".$paramclear." 2>&1";
 			if ($compression == 'none') {
 				$handle = fopen($outputfile, 'w');
-			}
-			if ($compression == 'gz') {
+			} elseif ($compression == 'gz') {
 				$handle = gzopen($outputfile, 'w');
-			}
-			if ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'w');
+			} elseif ($compression == 'zstd') {
+				$handle = fopen($outputfile, 'w');
 			}
 
 			$ok = 0;
@@ -356,10 +365,19 @@ class Utils
 
 				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_INFO);
 
+
+				/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */
+				$MemoryLimit = getDolGlobalString('MAIN_MEMORY_LIMIT_DUMP');
+				if (!empty($MemoryLimit)) {
+					@ini_set('memory_limit', $MemoryLimit);
+				}
+
+
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
+
 					exec($fullcommandclear, $output_arr, $retval);
 
 					if ($retval != 0) {
@@ -388,32 +406,34 @@ class Utils
 				if ($execmethod == 2) {	// With this method, there is no way to get the return code, only output
 					$handlein = popen($fullcommandclear, 'r');
 					$i = 0;
-					while (!feof($handlein)) {
-						$i++; // output line number
-						$read = fgets($handlein);
-						// Exclude warning line we don't want
-						if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
-							continue;
+					if ($handlein) {
+						while (!feof($handlein)) {
+							$i++; // output line number
+							$read = fgets($handlein);
+							// Exclude warning line we don't want
+							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
+								continue;
+							}
+							fwrite($handle, $read);
+							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
+								$ok = 1;
+							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
+								$ok = 1;
+							}
 						}
-						fwrite($handle, $read);
-						if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
-							$ok = 1;
-						} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
-							$ok = 1;
-						}
+						pclose($handlein);
 					}
-					pclose($handlein);
 				}
 
 
 				if ($compression == 'none') {
 					fclose($handle);
-				}
-				if ($compression == 'gz') {
+				} elseif ($compression == 'gz') {
 					gzclose($handle);
-				}
-				if ($compression == 'bz') {
+				} elseif ($compression == 'bz') {
 					bzclose($handle);
+				} elseif ($compression == 'zstd') {
+					fclose($handle);
 				}
 
 				if (!empty($conf->global->MAIN_UMASK)) {
@@ -428,12 +448,12 @@ class Utils
 			// Get errorstring
 			if ($compression == 'none') {
 				$handle = fopen($outputfile, 'r');
-			}
-			if ($compression == 'gz') {
+			} elseif ($compression == 'gz') {
 				$handle = gzopen($outputfile, 'r');
-			}
-			if ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'r');
+			} elseif ($compression == 'zstd') {
+				$handle = fopen($outputfile, 'r');
 			}
 			if ($handle) {
 				// Get 2048 first chars of error message.
@@ -443,12 +463,12 @@ class Utils
 				// Close file
 				if ($compression == 'none') {
 					fclose($handle);
-				}
-				if ($compression == 'gz') {
+				} elseif ($compression == 'gz') {
 					gzclose($handle);
-				}
-				if ($compression == 'bz') {
+				} elseif ($compression == 'bz') {
 					bzclose($handle);
+				} elseif ($compression == 'zstd') {
+					fclose($handle);
 				}
 				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
 					$errormsg = '';
@@ -625,7 +645,6 @@ class Utils
 			$execmethod = 1;
 		}
 		//$execmethod=1;
-
 		dol_syslog("Utils::executeCLI execmethod=".$execmethod." system:".$command, LOG_DEBUG);
 		$output_arr = array();
 

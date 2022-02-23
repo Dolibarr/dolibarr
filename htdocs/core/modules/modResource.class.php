@@ -268,7 +268,7 @@ class modResource extends DolibarrModules
 		$this->import_tables_array[$r] = array('r'=>MAIN_DB_PREFIX.'resource', 'extra'=>MAIN_DB_PREFIX.'resource_extrafields'); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array('r.ref'=>"ResourceFormLabel_ref*", 'r.fk_code_type_resource'=>'ResourceTypeCode', 'r.description'=>'ResourceFormLabel_description', 'r.note_private'=>"NotePrivate", 'r.note_public'=>"NotePublic", 'r.asset_number'=>'AssetNumber', 'r.datec'=>'DateCreation');
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -301,21 +301,6 @@ class modResource extends DolibarrModules
 	{
 		$sql = array();
 
-		$result = $this->loadTables();
-
 		return $this->_init($sql, $options);
-	}
-
-	/**
-	 * Create tables, keys and data required by module
-	 * Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-	 * and create data commands must be stored in directory /resource/sql/
-	 * This function is called by this->init
-	 *
-	 * 	@return		int		<=0 if KO, >0 if OK
-	 */
-	protected function loadTables()
-	{
-		return $this->_load_tables('/resource/sql/');
 	}
 }

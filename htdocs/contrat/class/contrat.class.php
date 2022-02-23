@@ -387,7 +387,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
-				$result = $contratline->active_line($user, $date_start, -1, $comment);
+				$result = $contratline->active_line($user, $date_start, -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
 					$this->error = $contratline->error;
@@ -913,10 +913,11 @@ class Contrat extends CommonObject
 			return -3;
 		}
 
+		// Now set the global properties on contract not stored into database.
 		$this->nbofservices = count($this->lines);
-		$this->total_ttc = price2num($total_ttc); // TODO For the moment value is false as value is not stored in database for line linked to products
-		$this->total_tva = price2num($total_vat); // TODO For the moment value is false as value is not stored in database for line linked to products
-		$this->total_ht = price2num($total_ht); // TODO For the moment value is false as value is not stored in database for line linked to products
+		$this->total_ttc = price2num($total_ttc);
+		$this->total_tva = price2num($total_vat);
+		$this->total_ht = price2num($total_ht);
 
 		return $this->lines;
 	}
@@ -1729,85 +1730,77 @@ class Contrat extends CommonObject
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".$this->db->escape($desc)."'";
-		$sql .= ",price_ht='".price2num($price)."'";
-		$sql .= ",subprice='".price2num($subprice)."'";
-		$sql .= ",remise='".price2num($remise)."'";
-		$sql .= ",remise_percent='".price2num($remise_percent)."'";
-		$sql .= ",qty='".$qty."'";
-		$sql .= ",tva_tx='".price2num($tvatx)."'";
-		$sql .= ",localtax1_tx='".price2num($localtax1tx)."'";
-		$sql .= ",localtax2_tx='".price2num($localtax2tx)."'";
-		$sql .= ",localtax1_type='".$this->db->escape($localtax1_type)."'";
-		$sql .= ",localtax2_type='".$this->db->escape($localtax2_type)."'";
-		$sql .= ", total_ht='".price2num($total_ht)."'";
-		$sql .= ", total_tva='".price2num($total_tva)."'";
-		$sql .= ", total_localtax1='".price2num($total_localtax1)."'";
-		$sql .= ", total_localtax2='".price2num($total_localtax2)."'";
-		$sql .= ", total_ttc='".price2num($total_ttc)."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description = '".$this->db->escape($desc)."'";
+		$sql .= ",price_ht = ".((float) price2num($price));
+		$sql .= ",subprice = ".((float) price2num($subprice));
+		$sql .= ",remise = ".((float) price2num($remise));
+		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
+		$sql .= ",qty = ".((float) $qty);
+		$sql .= ",tva_tx = ".((float) price2num($tvatx));
+		$sql .= ",localtax1_tx = ".((float) price2num($localtax1tx));
+		$sql .= ",localtax2_tx = ".((float) price2num($localtax2tx));
+		$sql .= ",localtax1_type='".$this->db->escape($localtax1_type);
+		$sql .= ",localtax2_type='".$this->db->escape($localtax2_type);
+		$sql .= ", total_ht = ".((float) price2num($total_ht));
+		$sql .= ", total_tva = ".((float) price2num($total_tva));
+		$sql .= ", total_localtax1 = ".((float) price2num($total_localtax1));
+		$sql .= ", total_localtax2 = ".((float) price2num($total_localtax2));
+		$sql .= ", total_ttc = ".((float) price2num($total_ttc));
 		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : "null");
-		$sql .= ", buy_price_ht='".price2num($pa_ht)."'";
+		$sql .= ", buy_price_ht = ".((float) price2num($pa_ht));
 		if ($date_start > 0) {
-			$sql .= ",date_ouverture_prevue='".$this->db->idate($date_start)."'";
+			$sql .= ",date_ouverture_prevue = '".$this->db->idate($date_start)."'";
 		} else {
-			$sql .= ",date_ouverture_prevue=null";
+			$sql .= ",date_ouverture_prevue = null";
 		}
 		if ($date_end > 0) {
-			$sql .= ",date_fin_validite='".$this->db->idate($date_end)."'";
+			$sql .= ",date_fin_validite = '".$this->db->idate($date_end)."'";
 		} else {
-			$sql .= ",date_fin_validite=null";
+			$sql .= ",date_fin_validite = null";
 		}
 		if ($date_debut_reel > 0) {
-			$sql .= ",date_ouverture='".$this->db->idate($date_debut_reel)."'";
+			$sql .= ",date_ouverture = '".$this->db->idate($date_debut_reel)."'";
 		} else {
-			$sql .= ",date_ouverture=null";
+			$sql .= ",date_ouverture = null";
 		}
 		if ($date_fin_reel > 0) {
-			$sql .= ",date_cloture='".$this->db->idate($date_fin_reel)."'";
+			$sql .= ",date_cloture = '".$this->db->idate($date_fin_reel)."'";
 		} else {
-			$sql .= ",date_cloture=null";
+			$sql .= ",date_cloture = null";
 		}
-		$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
+		$sql .= ", fk_unit = ".($fk_unit > 0 ? ((int) $fk_unit) : "null");
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$result = $this->update_statut($user);
-			if ($result >= 0) {
-				if (is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
-					$contractline = new ContratLigne($this->db);
-					$contractline->fetch($rowid);
-					$contractline->fetch_optionals();
+			if (is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+				$contractline = new ContratLigne($this->db);
+				$contractline->fetch($rowid);
 
-					// We replace values in $contractline->array_options only for entries defined into $array_options
-					foreach ($array_options as $key => $value) {
-						$contractline->array_options[$key] = $array_options[$key];
-					}
-
-					$result = $contractline->insertExtraFields();
-					if ($result < 0) {
-						$this->error[] = $contractline->error;
-						$error++;
-					}
+				// We replace values in $contractline->array_options only for entries defined into $array_options
+				foreach ($array_options as $key => $value) {
+					$contractline->array_options[$key] = $array_options[$key];
 				}
 
-				if (empty($error)) {
-					// Call trigger
-					$result = $this->call_trigger('LINECONTRACT_UPDATE', $user);
-					if ($result < 0) {
-						$this->db->rollback();
-						return -3;
-					}
-					// End call triggers
-
-					$this->db->commit();
-					return 1;
+				$result = $contractline->insertExtraFields();
+				if ($result < 0) {
+					$this->error[] = $contractline->error;
+					$error++;
 				}
-			} else {
-				$this->db->rollback();
-				dol_syslog(get_class($this)."::updateline Erreur -2");
-				return -2;
+			}
+
+			if (empty($error)) {
+				// Call trigger
+				$result = $this->call_trigger('LINECONTRACT_UPDATE', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -3;
+				}
+				// End call triggers
+
+				$this->db->commit();
+				return 1;
 			}
 		} else {
 			$this->db->rollback();
@@ -2049,7 +2042,7 @@ class Contrat extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('contractdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -2187,7 +2180,7 @@ class Contrat extends CommonObject
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from .= ", ".MAIN_DB_PREFIX."contratdet as cd";
 		$this->from .= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$this->from .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
@@ -2218,7 +2211,7 @@ class Contrat extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
@@ -2286,7 +2279,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -2545,7 +2538,7 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			foreach ($this->lines as $line) {
-				$result = $clonedObj->addline($line->desc, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_ouverture, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit);
+				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_ouverture, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit);
 				if ($result < 0) {
 					$error++;
 					$this->error = $clonedObj->error;
@@ -2597,6 +2590,11 @@ class ContratLigne extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'contratdet';
+
+	/**
+	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea()
+	 */
+	public $element_for_permission = 'contrat';
 
 	/**
 	 * @var int ID
@@ -2730,6 +2728,34 @@ class ContratLigne extends CommonObjectLine
 	const STATUS_CLOSED = 5;
 
 
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>30, 'index'=>1),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
+		'qty' =>array('type'=>'integer', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35, 'isameasure'=>1),
+		'total_ht' =>array('type'=>'integer', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>36, 'isameasure'=>1),
+		'total_tva' =>array('type'=>'integer', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>37, 'isameasure'=>1),
+		'total_ttc' =>array('type'=>'integer', 'label'=>'AmountTTC', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>38, 'isameasure'=>1),
+		//'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		//'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_contrat' =>array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'Contract', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_product' =>array('type'=>'integer:Product:product/class/product.class.php:1', 'label'=>'Product', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		//'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
+		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
+		//'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'fk_user_ouverture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserOpen', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCloture', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 4=>'Open', 5=>'Closed'))
+	);
+	// END MODULEBUILDER PROPERTIES
+
 
 	/**
 	 *  Constructor
@@ -2770,20 +2796,20 @@ class ContratLigne extends CommonObjectLine
 		$langs->load("contracts");
 
 		if ($status == self::STATUS_INITIAL) {
-			$labelStatus = $langs->trans("ServiceStatusInitial");
-			$labelStatusShort = $langs->trans("ServiceStatusInitial");
+			$labelStatus = $langs->transnoentities("ServiceStatusInitial");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusInitial");
 		} elseif ($status == self::STATUS_OPEN && $expired == -1) {
-			$labelStatus = $langs->trans("ServiceStatusRunning");
-			$labelStatusShort = $langs->trans("ServiceStatusRunning");
+			$labelStatus = $langs->transnoentities("ServiceStatusRunning");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusRunning");
 		} elseif ($status == self::STATUS_OPEN && $expired == 0) {
-			$labelStatus = $langs->trans("ServiceStatusNotLate");
-			$labelStatusShort = $langs->trans("ServiceStatusNotLateShort");
+			$labelStatus = $langs->transnoentities("ServiceStatusNotLate");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusNotLateShort");
 		} elseif ($status == self::STATUS_OPEN && $expired == 1) {
-			$labelStatus = $langs->trans("ServiceStatusLate");
-			$labelStatusShort = $langs->trans("ServiceStatusLateShort");
+			$labelStatus = $langs->transnoentities("ServiceStatusLate");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusLateShort");
 		} elseif ($status == self::STATUS_CLOSED) {
-			$labelStatus = $langs->trans("ServiceStatusClosed");
-			$labelStatusShort = $langs->trans("ServiceStatusClosed");
+			$labelStatus = $langs->transnoentities("ServiceStatusClosed");
+			$labelStatusShort = $langs->transnoentities("ServiceStatusClosed");
 		}
 
 		$statusType = 'status'.$status;

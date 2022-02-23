@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Direct afdrukken
-Module64000Desc=Direct afdruksysteem inschakelen
-PrintingSetup=Installatie van Direct Printing System
-PrintingDesc=Deze module voegt een afdrukknop toe aan verschillende modules zodat documenten rechtstreeks naar een printer kunnen worden afgedrukt zonder dat het document in een andere toepassing hoeft te worden geopend.
-MenuDirectPrinting=Directe print opdrachten
-DirectPrint=Direct afdrukken
+Module64000Name=One click Printing
+Module64000Desc=Enable One click Printing System
+PrintingSetup=Setup of One click Printing System
+PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
+MenuDirectPrinting=One click Printing jobs
+DirectPrint=One click Print
 PrintingDriverDesc=Configuratievariabelen voor printerdriver.
 ListDrivers=Lijst met stuurprogramma's
 PrintTestDesc=Lijst met printers.

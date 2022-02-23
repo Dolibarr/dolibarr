@@ -65,4 +65,4 @@ InterLineDesc=干預行描述
 RepeatableIntervention=干預模板
 ToCreateAPredefinedIntervention=要創建預定義或定期干預，請創建一個通用乾預並將其轉換為乾預模板
 ConfirmReopenIntervention=您確定要打開干預<b> %s </b>嗎？
-GenerateInter=Generate intervention
+GenerateInter=產生干預

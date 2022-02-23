@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
-/* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ class PriceGlobalVariable
 		$this->checkParameters();
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 		$sql .= "code, description, value";
 		$sql .= ") VALUES (";
 		$sql .= " ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
@@ -105,7 +105,7 @@ class PriceGlobalVariable
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -142,7 +142,7 @@ class PriceGlobalVariable
 	public function fetch($id)
 	{
 		$sql = "SELECT code, description, value";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__);
@@ -179,7 +179,7 @@ class PriceGlobalVariable
 		$this->checkParameters();
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
 		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
 		$sql .= " value = ".((float) $this->value);
@@ -249,7 +249,7 @@ class PriceGlobalVariable
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
 			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(__METHOD__);
@@ -316,7 +316,7 @@ class PriceGlobalVariable
 	public function listGlobalVariables()
 	{
 		$sql = "SELECT rowid, code, description, value";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " ORDER BY code";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);

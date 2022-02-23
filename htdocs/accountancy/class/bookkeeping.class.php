@@ -331,7 +331,7 @@ class BookKeeping extends CommonObject
 				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
 					$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-					$sqlnum .= " WHERE entity = ".$conf->entity; // Do not use getEntity for accounting features
+					$sqlnum .= " WHERE entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 					$resqlnum = $this->db->query($sqlnum);
 					if ($resqlnum) {
@@ -382,9 +382,9 @@ class BookKeeping extends CommonObject
 				$sql .= ", '".$this->db->escape($this->numero_compte)."'";
 				$sql .= ", ".(!empty($this->label_compte) ? ("'".$this->db->escape($this->label_compte)."'") : "NULL");
 				$sql .= ", '".$this->db->escape($this->label_operation)."'";
-				$sql .= ", ".$this->debit;
-				$sql .= ", ".$this->credit;
-				$sql .= ", ".$this->montant;
+				$sql .= ", ".((float) $this->debit);
+				$sql .= ", ".((float) $this->credit);
+				$sql .= ", ".((float) $this->montant);
 				$sql .= ", ".(!empty($this->sens) ? ("'".$this->db->escape($this->sens)."'") : "NULL");
 				$sql .= ", '".$this->db->escape($this->fk_user_author)."'";
 				$sql .= ", '".$this->db->idate($now)."'";
@@ -460,7 +460,7 @@ class BookKeeping extends CommonObject
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $menumanager, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -512,6 +512,15 @@ class BookKeeping extends CommonObject
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -736,7 +745,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.$mode.' as t';
 		$sql .= ' WHERE 1 = 1';
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
+		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (null !== $ref) {
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
@@ -881,21 +890,21 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
+		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (count($sqlwhere) > 0) {
 			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
 		}
 		// Affichage par compte comptable
 		if (!empty($option)) {
 			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' ORDER BY t.subledger_account ASC';
+			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
-			$sql .= ' ORDER BY t.numero_compte ASC';
+			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
 
-		if (!empty($sortfield)) {
-			$sql .= ", ".$sortfield." ".$sortorder;
-		}
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
@@ -937,7 +946,6 @@ class BookKeeping extends CommonObject
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_export = $this->db->jdate($obj->date_export);
-				$line->date_validation = $this->db->jdate($obj->date_validated);
 				$line->date_validation = $this->db->jdate($obj->date_validation);
 
 				$this->lines[] = $line;
@@ -1014,7 +1022,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.'='.((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
@@ -1038,7 +1046,7 @@ class BookKeeping extends CommonObject
 				}
 			}
 		}
-		$sql .= ' WHERE t.entity IN ('.getEntity('accountancy').')';
+		$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if ($showAlreadyExportMovements == 0) {
 			$sql .= " AND t.date_export IS NULL";
 		}
@@ -1090,7 +1098,6 @@ class BookKeeping extends CommonObject
 				$line->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 				$line->date_export = $this->db->jdate($obj->date_export);
-				$line->date_validation = $this->db->jdate($obj->date_validated);
 				$line->date_validation = $this->db->jdate($obj->date_validation);
 
 				$this->lines[] = $line;
@@ -1159,7 +1166,7 @@ class BookKeeping extends CommonObject
 				}
 			}
 		}
-		$sql .= ' WHERE entity IN ('.getEntity('accountancy').')';
+		$sql .= ' WHERE entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (count($sqlwhere) > 0) {
 			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
 		}
@@ -1457,7 +1464,7 @@ class BookKeeping extends CommonObject
 	 */
 	public function deleteByYearAndJournal($delyear = 0, $journal = '', $mode = '', $delmonth = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		if (empty($delyear) && empty($journal)) {
 			$this->error = 'ErrorOneFieldRequired';
@@ -1478,7 +1485,7 @@ class BookKeeping extends CommonObject
 		if (!empty($journal)) {
 			$sql .= " AND code_journal = '".$this->db->escape($journal)."'";
 		}
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
+		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		// Exclusion of validated entries at the time of deletion
 		$sql .= " AND date_validated IS NULL";
 
@@ -1517,7 +1524,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE piece_num = ".(int) $piecenum;
 		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
+		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 		$resql = $this->db->query($sql);
 
@@ -1639,7 +1646,7 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".((int) $piecenum);
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
+		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1677,9 +1684,10 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$sql = "SELECT MAX(piece_num)+1 as max FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
-		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
+		$sql .= " WHERE entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
-		dol_syslog(get_class($this)."getNextNumMvt", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getNextNumMvt", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 
 		if ($result) {
@@ -1720,7 +1728,7 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".((int) $piecenum);
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
+		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1752,7 +1760,6 @@ class BookKeeping extends CommonObject
 				$line->date_creation = $obj->date_creation;
 				$line->date_modification = $obj->date_modification;
 				$line->date_export = $obj->date_export;
-				$line->date_validation = $obj->date_validated;
 				$line->date_validation = $obj->date_validation;
 
 				$this->linesmvt[] = $line;
@@ -1784,7 +1791,7 @@ class BookKeeping extends CommonObject
 		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, piece_num,";
 		$sql .= " date_validated as date_validation";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
+		$sql .= " WHERE entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 		dol_syslog(get_class($this)."::export_bookkeeping", LOG_DEBUG);
 
@@ -1817,7 +1824,6 @@ class BookKeeping extends CommonObject
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
-				$line->date_validation = $obj->date_validated;
 				$line->date_validation = $obj->date_validation;
 
 				$this->linesexport[] = $line;
@@ -1841,6 +1847,8 @@ class BookKeeping extends CommonObject
 	 */
 	public function transformTransaction($direction = 0, $piece_num = '')
 	{
+		global $conf;
+
 		$error = 0;
 
 		$this->db->begin();
@@ -1860,14 +1868,14 @@ class BookKeeping extends CommonObject
 			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.((int) $next_piecenum).", '".$this->db->idate($now)."'";
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
+			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -1875,7 +1883,7 @@ class BookKeeping extends CommonObject
 				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
 		} elseif ($direction == 1) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -1890,14 +1898,14 @@ class BookKeeping extends CommonObject
 			$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE piece_num = '.((int) $piece_num);
+			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -1952,7 +1960,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND aa.active = 1";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = ".((int) $pcgver);
-		$sql .= " AND ab.entity IN (".getEntity('accountancy').")";
+		$sql .= " AND ab.entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		$sql .= " ORDER BY account_number ASC";
 
 		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
@@ -2016,7 +2024,7 @@ class BookKeeping extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as parent ON aa.account_parent = parent.rowid AND parent.active = 1";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as root ON parent.account_parent = root.rowid AND root.active = 1";
 		$sql .= " WHERE aa.account_number = '".$this->db->escape($account)."'";
-		$sql .= " AND aa.entity IN (".getEntity('accountancy').")";
+		$sql .= " AND aa.entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2056,7 +2064,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND asy.rowid = ".((int) $pcgver);
 		$sql .= " AND aa.active = 1";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as cat ON aa.fk_accounting_category = cat.rowid";
-		$sql .= " WHERE aa.entity IN (".getEntity('accountancy').")";
+		$sql .= " WHERE aa.entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2118,15 +2126,26 @@ class BookKeepingLine
 	public $montant;
 
 	/**
-	 * @var float Amount
+	 * @var float 	Amount
 	 */
 	public $amount;
+
+	/**
+	 * @var float 	Multicurrency amount
+	 */
+	public $multicurrency_amount;
+
+	/**
+	 * @var float 	Multicurrency code
+	 */
+	public $multicurrency_code;
 
 	/**
 	 * @var string Sens
 	 */
 	public $sens;
 	public $lettering_code;
+	public $date_lettering;
 
 	/**
 	 * @var int ID
@@ -2157,4 +2176,9 @@ class BookKeepingLine
 	 * @var integer|string $date_validation;
 	 */
 	public $date_validation;
+
+	/**
+	 * @var integer|string $date_lim_reglement;
+	 */
+	public $date_lim_reglement;
 }

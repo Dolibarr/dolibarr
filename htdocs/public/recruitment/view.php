@@ -192,8 +192,6 @@ print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
 print '<!-- Form to view job -->'."\n";
 
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
-
 // Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
 // Define logo and logosmall
 $logosmall = $mysoc->logo_small;
@@ -233,6 +231,9 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
+
+
+print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Output introduction text
 $text = '';

@@ -87,9 +87,9 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		// Option to enable custom masks per product
 		$texte .= '<td class="right">';
 		if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) {
-			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		} else {
-			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		}
 		$texte .= ' '.$langs->trans('CustomMasks')."\n";
 		$texte .= '</td>';

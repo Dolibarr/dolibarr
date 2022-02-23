@@ -388,7 +388,7 @@ function dolRotateImage($file_path)
  * Add exif orientation correction for image
  *
  * @param string $fileSource Full path to source image to rotate
- * @param string $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
+ * @param string|bool $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
  * @param int $quality output image quality
  * @return bool : true on success or false on failure or gd img if $fileDest is false.
  */
@@ -630,7 +630,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		}
 
 		// replace image with good orientation
-		if (!empty($rotated)) {
+		if (!empty($rotated) && isset($trueImgWidth) && isset($trueImgHeight)) {
 			$img = $rotated;
 			$imgWidth = $trueImgWidth;
 			$imgHeight = $trueImgHeight;

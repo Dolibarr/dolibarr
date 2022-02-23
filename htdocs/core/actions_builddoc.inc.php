@@ -102,12 +102,12 @@ if ($action == 'builddoc' && $permissiontoadd) {
 			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
 				setEventMessages($langs->trans("FileGenerated"), null);
 
-				$urltoredirect = $_SERVER['REQUEST_URI'];
+				/*$urltoredirect = $_SERVER['REQUEST_URI'];
 				$urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
 				$urltoredirect = preg_replace('/action=builddoc&?/', '', $urltoredirect); // To avoid infinite loop
 
 				header('Location: '.$urltoredirect.'#builddoc');
-				exit;
+				exit;*/
 			}
 		}
 	}
@@ -127,8 +127,23 @@ if ($action == 'remove_file' && $permissiontoadd) {
 		$langs->load("other");
 		$filetodelete = GETPOST('file', 'alpha');
 		$file = $upload_dir.'/'.$filetodelete;
+		$dirthumb = dirname($file).'/thumbs/'; // Chemin du dossier contenant la vignette (if file is an image)
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
 		if ($ret) {
+			// If it exists, remove thumb.
+			$regs = array();
+			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
+				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
+				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
+					dol_delete_file($dirthumb.$photo_vignette);
+				}
+
+				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
+				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
+					dol_delete_file($dirthumb.$photo_vignette);
+				}
+			}
+
 			setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');

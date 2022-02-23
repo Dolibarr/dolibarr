@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normalny
 TicketSeverityShortHIGH=Wysoki
 TicketSeverityShortBLOCKING=Krytyczny, blokujący
 
+TicketCategoryShortOTHER=Inne
+
 ErrorBadEmailAddress=Pole „%s” jest nieprawidłowe
 MenuTicketMyAssign=Moje bilety
 MenuTicketMyAssignNonClosed=Moje otwarte bilety
@@ -180,7 +182,7 @@ MessageSuccessfullyAdded=Dodano bilet
 TicketMessageSuccessfullyAdded=Wiadomość została pomyślnie dodana
 TicketMessagesList=Lista wiadomości
 NoMsgForThisTicket=Brak wiadomości dla tego biletu
-Properties=Klasyfikacja
+TicketProperties=Classification
 LatestNewTickets=Najnowsze %s Najnowsze bilety (nieprzeczytane)
 TicketSeverity=Priorytet
 ShowTicket=Zobacz bilet
@@ -316,6 +318,7 @@ BoxTicketLastXDays=Liczba nowych biletów według dni w ostatnich dniach %s
 BoxTicketLastXDayswidget = Liczba nowych biletów według dni ostatnich X dni
 BoxNoTicketLastXDays=Brak nowych biletów w ciągu ostatnich %s dni
 BoxNumberOfTicketByDay=Liczba nowych biletów w ciągu dnia
-BoxNewTicketVSClose=Liczba dzisiejszych nowych biletów w porównaniu z dzisiejszymi zamkniętymi biletami
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Bilet utworzony dzisiaj
 TicketClosedToday=Bilet dzisiaj zamknięty
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

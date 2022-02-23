@@ -252,9 +252,8 @@ if ($resql) {
 		print '<tr class="liste_titre">';
 		print "<td>".$langs->trans("RSS")." ".($i + 1)."</td>";
 		print '<td class="right">';
-		print '<input type="submit" class="button buttongen" name="modify" value="'.$langs->trans("Modify").'">';
-		print " &nbsp; ";
-		print '<input type="submit" class="button buttongen" name="delete" value="'.$langs->trans("Delete").'">';
+		print '<input type="submit" class="button buttongen button-save" name="modify" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button buttongen button-cancel" name="delete" value="'.$langs->trans("Delete").'">';
 		print '<input type="hidden" name="norss" value="'.$idrss.'">';
 		print '</td>';
 		print '</tr>'."\n";
@@ -276,9 +275,9 @@ if ($resql) {
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
 		if ($result > 0 && empty($rss->error)) {
-			print '<font class="ok">'.$langs->trans("Online").'</div>';
+			print '<span class="ok">'.$langs->trans("Online").'</div>';
 		} else {
-			print '<font class="error">'.$langs->trans("Offline");
+			print '<span class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
 			if ($rssparser->error) {
 				print ' - '.$langs->trans($rssparser->error);

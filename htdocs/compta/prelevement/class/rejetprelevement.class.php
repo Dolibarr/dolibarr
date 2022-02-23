@@ -100,7 +100,7 @@ class RejetPrelevement
 		$facs = $this->getListInvoices(1);
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
-		$lipre = new LignePrelevement($this->db, $user);
+		$lipre = new LignePrelevement($this->db);
 		$lipre->fetch($id);
 
 		$this->db->begin();
@@ -114,12 +114,12 @@ class RejetPrelevement
 		$sql .= ", date_creation";
 		$sql .= ", afacturer";
 		$sql .= ") VALUES (";
-		$sql .= $id;
+		$sql .= ((int) $id);
 		$sql .= ", '".$this->db->idate($date_rejet)."'";
-		$sql .= ", ".$motif;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $motif);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$facturation;
+		$sql .= ", ".((int) $facturation);
 		$sql .= ")";
 
 		$result = $this->db->query($sql);

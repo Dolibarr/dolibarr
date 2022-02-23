@@ -27,7 +27,7 @@ JournalFinancial=Jurnale financiare
 BackToChartofaccounts=Înapoi la planul de conturi
 Chartofaccounts=Plan de conturi
 ChartOfSubaccounts=Diagrama conturilor contabile individuale
-ChartOfIndividualAccountsOfSubsidiaryLedger=Diagrama conturilor contabile individuale ale registrului filialei
+ChartOfIndividualAccountsOfSubsidiaryLedger=Diagrama conturilor contabile individuale ale registrului jurnal al filialei-surcursalei
 CurrentDedicatedAccountingAccount=Cont curent dedicat
 AssignDedicatedAccountingAccount=Cont nou pentru alocare
 InvoiceLabel=Etichetă de factură
@@ -37,8 +37,8 @@ OtherInfo=Alte informații
 DeleteCptCategory=Eliminați contul contabil din grup
 ConfirmDeleteCptCategory=Sigur doriți să eliminați acest cont contabil din grupul de conturi?
 JournalizationInLedgerStatus=Stare jurnalizare
-AlreadyInGeneralLedger=Transferat deja în jurnale și registrele contabile
-NotYetInGeneralLedger=Netransferat încă în jurnale și registrele contabile
+AlreadyInGeneralLedger=Transferat deja în jurnalele contabile secundare şi Registrul jurnal
+NotYetInGeneralLedger=Netransferat încă în jurnalele secundare contabile şi Registrul Jurnal
 GroupIsEmptyCheckSetup=Grupul este gol, verificați configurarea grupului personalizat de conturi
 DetailByAccount=Afișați detalii după cont
 AccountWithNonZeroValues=Conturi cu valori nenule
@@ -48,7 +48,7 @@ CountriesNotInEEC=Țări care nu se află în CEE
 CountriesInEECExceptMe=Țările din CEE, cu excepția celor din %s
 CountriesExceptMe=Toate țările, cu excepția %s
 AccountantFiles=Export documente sursă
-ExportAccountingSourceDocHelp=Cu acest instrument, poți exporta evenimentele sursă (listă CSV și PDF) care au fost utilizate pentru generarea înregistrărilor contabile.
+ExportAccountingSourceDocHelp=Cu acest instrument, poți exporta evenimentele sursă (listă în CSV și PDF) care sunt utilizate pentru a genera operaţiunile de contabilitate.
 ExportAccountingSourceDocHelp2=Pentru export jurnale, foloseşte meniul %s - %s.
 VueByAccountAccounting=Vizualizare după contul contabil
 VueBySubAccountAccounting=Vizualizați după subcont contabil
@@ -82,7 +82,7 @@ AccountancyAreaDescBank=PASUL %s: Definire conturi contabile și codul de jurnal
 AccountancyAreaDescProd=STEP %s: Definire conturi contabile pentru produse/ servicii. Pentru aceasta, utilizați intrarea în meniu %s.
 
 AccountancyAreaDescBind=PASUL %s: Verifică dacă asocierea între liniile %s existente și contul contabil este făcută, astfel încât aplicația să poate scrie tranzacțiile în Cartea Mare cu un singur clic. Completați asocierile lipsă. Pentru aceasta, utilizați intrarea în meniu %s.
-AccountancyAreaDescWriteRecords=PASUL %s: Scrie tranzacţii in Cartea Mare. Pentru aceasta, accesează meniul <strong>%s</strong>, apoi fă clic pe butonul <strong>%s</strong>.
+AccountancyAreaDescWriteRecords=PASUL %s: Scriere tranzacţii în Registrul jurnal. Pentru aceasta, accesează meniul <strong>%s</strong>, apoi fă clic pe butonul <strong>%s</strong>.
 AccountancyAreaDescAnalyze=PASUL %s: Adaugă sau modifică tranzacțiile existente și generează rapoarte și exporturi.
 
 AccountancyAreaDescClosePeriod=PASUL %s: Închide perioada, astfel încât să nu se poată modifica în viitor.
@@ -93,11 +93,11 @@ ChangeAndLoad=Schimbați și încărcați
 Addanaccount=Adaugă un cont contabil
 AccountAccounting=Cont contabil
 AccountAccountingShort=Cont
-SubledgerAccount=Cont de subregistru
-SubledgerAccountLabel=Eticheta contului registrului contabil
+SubledgerAccount=Cont de jurnal secundar
+SubledgerAccountLabel=Etichetă cont jurnal contabil
 ShowAccountingAccount=Afișați contul contabil
 ShowAccountingJournal=Afişare jurnal contabil
-ShowAccountingAccountInLedger=Afişare cont contabil în registru
+ShowAccountingAccountInLedger=Afişare cont contabil în registrul jurnal
 ShowAccountingAccountInJournals=Afişează conturile contabile în jurnale
 AccountAccountingSuggest=Conturi contabile sugerate
 MenuDefaultAccounts=Conturi implicite
@@ -121,8 +121,8 @@ CreateMvts=Creați o tranzacție nouă
 UpdateMvts=Modificarea unei tranzacții
 ValidTransaction=Tranzacție validată
 WriteBookKeeping=Înregistrare tranzacţii în contabilitate
-Bookkeeping=Cartea mare
-BookkeepingSubAccount=Registru analitic
+Bookkeeping=Registru jurnal
+BookkeepingSubAccount=Registru jurnal secundar
 AccountBalance=Sold cont
 ObjectsRef=Referinţă obiect sursă
 CAHTF=Total achiziţii de la furnizor înainte de taxare
@@ -201,7 +201,7 @@ Doctype=Tipul documentului
 Docdate=Data documentului
 Docref=Referinţă
 LabelAccount=Etichetă cont
-LabelOperation=Etichetă operaţie
+LabelOperation=Etichetă operaţiune
 Sens=Direcţie
 AccountingDirectionHelp=Pentru un cont contabil de client, utilizează Credit pentru a înregistra o plată pe care ai primit-o<br> Pentru un cont contabil de furnizor, utilizează Debit pentru a înregistra o plată efectuată 
 LetteringCode=Codul de numerotare
@@ -211,8 +211,8 @@ JournalLabel=Eticheta jurnalului
 NumPiece=Număr notă contabilă
 TransactionNumShort=Nr. tranzacţie
 AccountingCategory=Grupă personalizată
-GroupByAccountAccounting=Grupare după cont registru
-GroupBySubAccountAccounting=Grupare după cont de subregistru
+GroupByAccountAccounting=Grupare după cont din registrul jurnal
+GroupBySubAccountAccounting=Grupare după cont de jurnal secundar
 AccountingAccountGroupsDesc=Puteți defini aici câteva grupe de conturi contabile. Acestea vor fi utilizate pentru rapoarte contabile personalizate.
 ByAccounts=După conturi
 ByPredefinedAccountGroups=După grupe predefinite
@@ -223,12 +223,12 @@ DeleteMvt=Ștergeți câteva linii operate din contabilitate
 DelMonth=Luna care se şterge
 DelYear=An de șters
 DelJournal=Jurnal de șters
-ConfirmDeleteMvt=Aceasta va șterge toate liniile operate în contabilitate pentru anul/luna și/sau pentru un jurnal specific (este necesar cel puțin un criteriu). Va trebui să refolosiți caracteristica '%s' pentru a înregistra înregistrarea ștearsă în registru. 
+ConfirmDeleteMvt=Aceasta va șterge toate liniile operate în contabilitate pentru anul/luna și/sau pentru un registru jurnal specific (este necesar cel puțin un criteriu). Va trebui să refolosiți caracteristica '%s' pentru a înregistra tranzacţia ștearsă din registrul jurnal.
 ConfirmDeleteMvtPartial=Aceasta va șterge tranzacția din contabilitate (toate liniile de operațiuni legate de aceeași tranzacție vor fi șterse)
 FinanceJournal=Jurnal Bancă
 ExpenseReportsJournal=Jurnalul rapoartelor de cheltuieli
 DescFinanceJournal=Jurnal financiar bancar, include toate tipurile de plăți efectuate prin conturile bancare
-DescJournalOnlyBindedVisible=Aceasta este o vedere a înregistrării care este legată de un cont contabil și poate fi înregistrată în Jurnale și contabilitate.
+DescJournalOnlyBindedVisible=Aceasta este o vedere a înregistrării care este legată de un cont contabil și poate fi înregistrată în jurnale și Registrul jurnal.
 VATAccountNotDefined=Contul contabil de TVA nu a fost definit
 ThirdpartyAccountNotDefined=Contul pentru terț nu este definit
 ProductAccountNotDefined=Contul pentru produs nu este definit
@@ -286,21 +286,21 @@ ValidateMovements=Vallidare trasferuri
 DescValidateMovements= Orice modificare sau ștergere a înregistrărilor va fi interzisă. Toate intrările pentru un exercițiu financiar trebuie validate, altfel închiderea nu va fi posibilă
 
 ValidateHistory=Asociază automat
-AutomaticBindingDone=Asociere automată finalizată
+AutomaticBindingDone=Asicierea automată a fost efectuată (%s) - Asocierea automată nu este posibilă pentru unele înregistrări (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
 MvtNotCorrectlyBalanced=Contarea nu este corect echilibrată. Debit = %s | Credit = %s
 Balancing=în balanţă
 FicheVentilation=Fişă asociere
-GeneralLedgerIsWritten=Tranzacțiile sunt scrise în Cartea Mare
+GeneralLedgerIsWritten=Tranzacțiile sunt scrise în Registrul jurnal
 GeneralLedgerSomeRecordWasNotRecorded=Unele tranzacții nu au putut fi înregistrate în jurnal. Dacă nu există niciun alt mesaj de eroare, acest lucru se datorează, probabil, faptului că au fost deja înregistrate în jurnal.
 NoNewRecordSaved=Nu se mai înregistrează nicio intrare în jurnal.
 ListOfProductsWithoutAccountingAccount=Lista produselor care nu sunt asociate unui cont contabil
 ChangeBinding=Schimbați asocierea
-Accounted=Contabilizat în jurnal - Cartea Mare
-NotYetAccounted=Nu este încă înregistrat în jurnalul contabil 
+Accounted=Contabilizat în Registrul Jurnal
+NotYetAccounted=Netransferat încă în contabilitate
 ShowTutorial=Arată tutorial
-NotReconciled=Nu este decontat
+NotReconciled=Ne-reconciliat
 WarningRecordWithoutSubledgerAreExcluded=Atenție, toate operațiunile fără cont de subregistru definit sunt filtrate și excluse din această vizualizare
 
 ## Admin
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Dezactivați legarea și transferul în 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Dezactivați legarea și transferul în contabilitate pentru rapoartele de cheltuieli (rapoartele de cheltuieli nu vor fi luate în considerare în contabilitate)
 
 ## Export
-NotifiedExportDate=Dată notificare export (modificarea înregistrărilor nu va fi posibilă)
-NotifiedValidationDate=Validare intrări (modificarea sau ștergerea intrărilor nu va fi posibilă)
+NotifiedExportDate=Marcaţi liniile ca exportate (modificarea liniilor nu va fi posibilă)
+NotifiedValidationDate=Validați intrările exportate (modificarea sau ștergerea liniilor nu va fi posibilă)
 ConfirmExportFile=Confirmare generare fișier de export contabil?
 ExportDraftJournal=Export jurnal schiţă
 Modelcsv=Model export
@@ -343,7 +343,7 @@ Modelcsv_ciel=Export pentru Sage50, Ciel Compta sau Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Export pentru Quadratus QuadraCompta
 Modelcsv_ebp=Export pentru EBP
 Modelcsv_cogilog=Export pentru Cogilog
-Modelcsv_agiris=Export pentru Agiris
+Modelcsv_agiris=Export pentru Agiris Isacompta
 Modelcsv_LDCompta=Export pentru LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export pentru LD Compta (v10 & mai nou)
 Modelcsv_openconcerto=Export pentru OpenConcerto (Test)
@@ -351,9 +351,10 @@ Modelcsv_configurable=Exportați CSV configurabil
 Modelcsv_FEC=Exportă fişier FEC
 Modelcsv_FEC2=Export FEC (cu scriere de date generate/document inversat)
 Modelcsv_Sage50_Swiss=Export pentru Sage 50 Switzerland
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export pentru Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export pentru Gestinum (v3)
-Modelcsv_Gestinumv5Export pentru Gestinum (v5)
+Modelcsv_Gestinumv5=Export pentru Gestinum (v5)
+Modelcsv_charlemagne=Export pentru Aplim Charlemagne
 ChartofaccountsId=Id plan de conturi
 
 ## Tools - Init accounting account on product / service
@@ -386,7 +387,8 @@ SaleExport=Vânzare la export
 SaleEEC=Vânzări în CEE
 SaleEECWithVAT=Vânzarea în CEE cu cota TVA diferită de zero, deci presupunem că aceasta NU este o vânzare intracomunitară, iar contul contabil este cel standard al produsului. 
 SaleEECWithoutVATNumber=Vânzare în CEE fără TVA, dar codul TVA al terțului nu este definit. Se va utiliza contul contabil de produs pentru vânzările standard. Completaţi codul de TVA al terțului sau contul contabil aferent produsului.
-
+ForbiddenTransactionAlreadyExported=Interzis: Tranzacţia a fost validată şi/sau exportată.
+ForbiddenTransactionAlreadyValidated=Interzis: Tranzacţia a fost validată.
 ## Dictionary
 Range=Interval cont contabil
 Calculated=Calculat 
@@ -403,6 +405,7 @@ NoJournalDefined=Nici un jurnal nu a fost definit
 Binded=Linii asociate
 ToBind=Linii de asociat
 UseMenuToSetBindindManualy=Linii care nu sunt încă asociate, utilizează meniul <a href="%s">%s</a> pentru a face asocierea manual
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Ne pare rău, acest modul nu este compatibil cu caracteristica experimentală a facturilor de situație
 
 ## Import
 ImportAccountingEntries=Intrări contabile
@@ -413,8 +416,8 @@ FECFormatEntryNum=Număr notă contabilă (EcritureNum)
 FECFormatEntryDate=Dată notă contabilă (EcritureDate)
 FECFormatGeneralAccountNumber=Număr cont general (CompteNum)
 FECFormatGeneralAccountLabel=Etichetă cont general (CompteLib)
-FECFormatSubledgerAccountNumber=Număr cont subregistru (CompAuxNum)
-FECFormatSubledgerAccountLabel=Număr cont subregistru (CompAuxLib)
+FECFormatSubledgerAccountNumber=Număr cont registru jurnal secundar (CompAuxNum)
+FECFormatSubledgerAccountLabel=Număr cont registru jurnal secundar (CompAuxLib)
 FECFormatPieceRef=Ref notă contabilă (PieceRef)
 FECFormatPieceDate=Dată creare notă contabilă (PieceDate)
 FECFormatLabelOperation=Etichetă operaţiune (EcritureLib)
@@ -427,7 +430,7 @@ FECFormatMulticurrencyAmount=Sumă multi-monedă (Montantdevise)
 FECFormatMulticurrencyCode=Cod multi-monedă (Idevise)
 
 DateExport=Dată export
-WarningReportNotReliable=Atenție, acest raport nu se bazează pe registrul contabil, deci nu conține o tranzacție modificată manual în registru contabil. Dacă jurnalele sunt actualizate, vizualizarea contabilă este mai precisă.
+WarningReportNotReliable=Atenție, acest raport nu se bazează pe registrul jurnal contabil, deci nu conține o tranzacție modificată manual în registrul contabil. Dacă jurnalele sunt actualizate, vizualizarea contabilă este mai precisă.
 ExpenseReportJournal=Jurnalul raportului de cheltuieli
 InventoryJournal=Jurnal inventar
 

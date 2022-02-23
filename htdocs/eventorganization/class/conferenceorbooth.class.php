@@ -24,7 +24,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
@@ -73,7 +73,7 @@ class ConferenceOrBooth extends ActionComm
 
 
 	/**
-	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
@@ -102,14 +102,14 @@ class ConferenceOrBooth extends ActionComm
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'id' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'integer', 'label'=>'Ref', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"Help text", 'showoncombobox'=>'1',),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1::eventorganization', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty", 'picto'=>'company', 'css'=>'tdoverflowmax150 maxwidth500'),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:t.usage_organize_event=1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'tdoverflowmax150 maxwidth500'),
 		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1),
-		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1,),
+		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'css'=>'width300'),
 		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'2',),
 		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'3',),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -135,7 +135,8 @@ class ConferenceOrBooth extends ActionComm
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
-	public $pubregister;
+	//public $pubregister;
+
 
 	/**
 	 * Constructor
@@ -195,11 +196,11 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function setPercentageFromStatus()
 	{
-		if ($this->status==self::STATUS_DONE) {
-			$this->percentage=100;
+		if ($this->status == self::STATUS_DONE) {
+			$this->percentage = 100;
 		}
-		if ($this->status==self::STATUS_DRAFT) {
-			$this->percentage=0;
+		if ($this->status == self::STATUS_DRAFT) {
+			$this->percentage = 0;
 		}
 	}
 
@@ -211,12 +212,12 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function setActionCommFields(User $user)
 	{
-		$this->userownerid=$user->id;
-		$this->type_id=$this->fk_action;
-		$this->socid=$this->fk_soc;
-		$this->datef=$this->datep2;
-		$this->note_private=$this->note;
-		$this->fk_user_author=$this->fk_user_author;
+		$this->userownerid = $user->id;
+		$this->type_id = $this->fk_action;
+		$this->socid = $this->fk_soc;
+		$this->datef = $this->datep2;
+		$this->note_private = $this->note;
+		$this->fk_user_author = $this->fk_user_author;
 	}
 
 	/**
@@ -226,9 +227,9 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function getActionCommFields()
 	{
-		$this->fk_action=$this->type_id;
-		$this->fk_soc=$this->socid;
-		$this->datep2=$this->datef;
+		$this->fk_action = $this->type_id;
+		$this->fk_soc = $this->socid;
+		$this->datep2 = $this->datef;
 	}
 
 	/**
@@ -238,21 +239,22 @@ class ConferenceOrBooth extends ActionComm
 	 * @param string $ref  Ref
 	 * @param  string	$ref_ext		Ref ext to get
 	 * @param	string	$email_msgid	Email msgid
+	 * @param int 		$loadresources	1=Load also resources
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '')
+	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
-		global $dolibarr_main_url_root, $dolibarr_main_instance_unique_id, $conf, $langs;
+		global $dolibarr_main_url_root, $conf, $langs;
 
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
 
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$id;
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode($id).'&type=conf';
 
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
-		$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
-		$this->pubregister = $link_subscription;
+		/*$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
+		$this->pubregister = $link_subscription;*/
 
 		$this->getActionCommFields();
 		return $result;
@@ -271,7 +273,6 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
-
 		//TODO set percent according status
 		global $conf;
 
@@ -306,7 +307,7 @@ class ConferenceOrBooth extends ActionComm
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
@@ -383,7 +384,7 @@ class ConferenceOrBooth extends ActionComm
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_CONFIRMED) {
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -408,48 +409,14 @@ class ConferenceOrBooth extends ActionComm
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CONFERENCEORBOOTH_VALIDATE', $user);
-			if ($result < 0) $error++;
-			// End call triggers
-		}
-
-		if (!$error) {
-			$this->oldref = $this->ref;
-
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
-				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'conferenceorbooth/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'conferenceorbooth/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
-
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$oldref;
-				$dirdest = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref;
-				if (!$error && file_exists($dirsource)) {
-					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
-
-					if (@rename($dirsource, $dirdest)) {
-						dol_syslog("Rename ok");
-						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry) {
-							$dirsource = $fileentry['name'];
-							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-							$dirsource = $fileentry['path'].'/'.$dirsource;
-							$dirdest = $fileentry['path'].'/'.$dirdest;
-							@rename($dirsource, $dirdest);
-						}
-					}
-				}
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Set new ref and current status
 		if (!$error) {
-			$this->ref = $num;
 			$this->status = self::STATUS_CONFIRMED;
 		}
 
@@ -565,7 +532,7 @@ class ConferenceOrBooth extends ActionComm
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
 
-		$url = dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -576,7 +543,7 @@ class ConferenceOrBooth extends ActionComm
 			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
-			if ($option=='withproject') {
+			if ($option == 'withproject') {
 				$url .= '&withproject=1';
 			}
 		}
@@ -635,7 +602,7 @@ class ConferenceOrBooth extends ActionComm
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('conferenceorboothdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -672,18 +639,18 @@ class ConferenceOrBooth extends ActionComm
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("eventorganization@eventorganization");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
-			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatus[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
-			$this->labelStatus[self::STATUS_DONE] = $langs->trans('Done');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
-			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatusShort[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
-			$this->labelStatusShort[self::STATUS_DONE] = $langs->trans('Done');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->transnoentitiesnoconv('Suggested');
+			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->transnoentitiesnoconv('Confirmed');
+			$this->labelStatus[self::STATUS_NOT_QUALIFIED] = $langs->transnoentitiesnoconv('NotSelected');
+			$this->labelStatus[self::STATUS_DONE] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->transnoentitiesnoconv('Suggested');
+			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->transnoentitiesnoconv('Confirmed');
+			$this->labelStatusShort[self::STATUS_NOT_QUALIFIED] = $langs->transnoentitiesnoconv('NotSelected');
+			$this->labelStatusShort[self::STATUS_DONE] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;
@@ -749,7 +716,7 @@ class ConferenceOrBooth extends ActionComm
 		$this->lines = array();
 
 		$objectline = new ConferenceOrBoothLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

@@ -48,7 +48,7 @@ $paymentnum	= GETPOST('num_paiement', 'alpha');
 $socid      = GETPOST('socid', 'int');
 
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
-$sortorder	= GETPOST('sortorder', 'alpha');
+$sortorder	= GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 $amounts = array();
@@ -127,11 +127,11 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => $_POST[$key]);
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
 				$cursorfacid = substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
-				$multicurrency_totalpayment += $multicurrency_amounts[$cursorfacid];
+				$multicurrency_totalpayment += floatval($multicurrency_amounts[$cursorfacid]);
 				if (!empty($multicurrency_amounts[$cursorfacid])) {
 					$atleastonepaymentnotnull++;
 				}
@@ -348,7 +348,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Add realtime total information
 		if (!empty($conf->use_javascript_ajax)) {
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print '$(document).ready(function () {
             			setPaiementCode();
 
@@ -702,11 +702,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								if (!empty($conf->use_javascript_ajax)) {
 									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 								}
-								print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+								print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 								print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 							} else {
-								print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-								print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+								print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
+								print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							}
 						}
 						print "</td>";
@@ -726,7 +726,31 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					print '</span></td>';
 
 					// Remain to take or to pay back
-					print '<td class="right">'.price($sign * $remaintopay).'</td>';
+					print '<td class="right">';
+					print price($sign * $remaintopay);
+					if (!empty($conf->prelevement->enabled)) {
+						$numdirectdebitopen = 0;
+						$totaldirectdebit = 0;
+						$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
+						$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+						$sql .= " WHERE fk_facture = ".((int) $objp->facid);
+						$sql .= " AND pfd.traite = 0";
+						$sql .= " AND pfd.ext_payment_id IS NULL";
+
+						$result_sql = $db->query($sql);
+						if ($result_sql) {
+							$obj = $db->fetch_object($result_sql);
+							$numdirectdebitopen = $obj->nb;
+							$totaldirectdebit = $obj->amount;
+						} else {
+							dol_print_error($db);
+						}
+						if ($numdirectdebitopen) {
+							$langs->load("withdrawals");
+							print img_warning($langs->trans("WarningSomeDirectDebitOrdersAlreadyExists", $numdirectdebitopen, price(price2num($totaldirectdebit, 'MT'), 0, $langs, 1, -1, -1, $conf->currency)), '', 'classfortooltip');
+						}
+					}
+					print '</td>';
 					//$test= price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits));
 
 					// Amount
@@ -802,6 +826,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			dol_print_error($db);
 		}
 
+		$formconfirm = '';
 
 		// Save button
 		if ($action != 'add_paiement') {
@@ -840,8 +865,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 				print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 			}
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
 		}
+
+		// Call Hook formConfirm
+		$parameters = array('formConfirm' => $formconfirm);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
+		}
+
+		// Print form confirm
+		print $formconfirm;
 
 		print "</form>\n";
 	}

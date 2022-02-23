@@ -16,10 +16,10 @@
 #
 # Generic
 #
-ModulePartnershipName=Parnterschafts-Verwaltung
+ModulePartnershipName=Partnerschaften
 PartnershipDescription=Modul zur Parnterschafts-Verwaltung
 PartnershipDescriptionLong= Modul zur Parnterschafts-Verwaltung
-
+Partnership=Partnerschaft
 AddPartnership=Partnerschaft hinzufügen
 CancelPartnershipForExpiredMembers=Partnerschaft: Partnerschaft von Mitgliedern mit abgelaufenen Abonnements kündigen
 PartnershipCheckBacklink=Partnerschaft: Überprüfen Sie den verweisenden Backlink
@@ -58,6 +58,7 @@ ManagePartnership=Partnerschaft verwalten
 BacklinkNotFoundOnPartnerWebsite=Backlink auf Partner-Website nicht gefunden
 ConfirmClosePartnershipAsk=Möchten Sie diese Partnerschaft wirklich beenden?
 PartnershipType=Partnerschaftstyp
+PartnershipRefApproved=Partnerschaft %s genehmigt
 
 #
 # Template Mail

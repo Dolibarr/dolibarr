@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2015  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2021  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -107,7 +107,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 		if ($dir = opendir($newpath)) {
 			$filedate = '';
 			$filesize = '';
-
+			$fileperm = '';
 			while (false !== ($file = readdir($dir))) {        // $file is always a basename (into directory $newpath)
 				if (!utf8_check($file)) {
 					$file = utf8_encode($file); // To be sure data is stored in utf8 in memory
@@ -1971,6 +1971,9 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 		} elseif ($mode == 'bz') {
 			$foundhandler = 1;
 			$compressdata = bzcompress($data, 9);
+		} elseif ($mode == 'zstd') {
+			$foundhandler = 1;
+			$compressdata = zstd_compress($data, 9);
 		} elseif ($mode == 'zip') {
 			if (class_exists('ZipArchive') && !empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS)) {
 				$foundhandler = 1;
@@ -2001,11 +2004,15 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 					// Skip directories (they would be added automatically)
 					if (!$file->isDir()) {
 						// Get real and relative path for current file
-						$filePath = $file->getRealPath();
-						$relativePath = substr($filePath, strlen($rootPath) + 1);
+						$filePath = $file->getPath();				// the full path with filename using the $inputdir root.
+						$fileName = $file->getFilename();
+						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
+
+						//$relativePath = substr($fileFullRealPath, strlen($rootPath) + 1);
+						$relativePath = substr(($filePath ? $filePath.'/' : '').$fileName, strlen($rootPath) + 1);
 
 						// Add current file to archive
-						$zip->addFile($filePath, $relativePath);
+						$zip->addFile($fileFullRealPath, $relativePath);
 					}
 				}
 
@@ -2193,22 +2200,29 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				}
 
 				// Create recursive directory iterator
+				// This does not return symbolic links
 				/** @var SplFileInfo[] $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($inputdir),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
 
+				//var_dump($inputdir);
 				foreach ($files as $name => $file) {
 					// Skip directories (they would be added automatically)
 					if (!$file->isDir()) {
 						// Get real and relative path for current file
-						$filePath = $file->getRealPath();
-						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen($inputdir) + 1);
+						$filePath = $file->getPath();				// the full path with filename using the $inputdir root.
+						$fileName = $file->getFilename();
+						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						if (empty($excludefiles) || !preg_match($excludefiles, $filePath)) {
+						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($fileFullRealPath, strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr(($filePath ? $filePath.'/' : '').$fileName, strlen($inputdir) + 1);
+
+						//var_dump($filePath);var_dump($fileFullRealPath);var_dump($relativePath);
+						if (empty($excludefiles) || !preg_match($excludefiles, $fileFullRealPath)) {
 							// Add current file to archive
-							$zip->addFile($filePath, $relativePath);
+							$zip->addFile($fileFullRealPath, $relativePath);
 						}
 					}
 				}
@@ -2256,13 +2270,13 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
- * TODO Replace code that set $accesallowed by a call to restrictedArea()
+ * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
  * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
  * @param	string	$entity				Restrict onto entity (0=no restriction)
  * @param  	User	$fuser				User object (forced)
- * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
+ * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
  * @param   string  $mode               Check permission for 'read' or 'write'
  * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea()
@@ -2303,9 +2317,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	$sqlprotectagainstexternals = '';
 	$ret = array();
 
-	// Find the subdirectory name as the reference. For exemple original_file='10/myfile.pdf' -> refname='10'
+	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
 		$refname = basename(dirname($original_file)."/");
+		if ($refname == 'thumbs') {
+			// If we get the thumbns directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+			$refname = basename(dirname(dirname($original_file))."/");
+		}
 	}
 
 	// Define possible keys to use for permission check
@@ -2330,15 +2348,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/'.$original_file;
 	} elseif ($modulepart == 'doctemplates' && !empty($dolibarr_main_data_root)) {
-		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
+		// Wrapping for doctemplates
 		$accessallowed = $user->admin;
 		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
-		// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
+		// Wrapping for doctemplates of websites
 		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {
-		// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
+		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
 		// Dir for custom dirs
 		$tmp = explode(',', $dolibarr_main_document_root_alt);
 		$dirins = $tmp[0];
@@ -2351,11 +2369,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output)) {
 		// Wrapping for users photos
-		$accessallowed = 1;
+		$accessallowed = 0;
+		if (preg_match('/^\d+\/photos\//', $original_file)) {
+			$accessallowed = 1;
+		}
 		$original_file = $conf->user->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->adherent->dir_output)) {
 		// Wrapping for members photos
-		$accessallowed = 1;
+		$accessallowed = 0;
+		if (preg_match('/^\d+\/photos\//', $original_file)) {
+			$accessallowed = 1;
+		}
 		$original_file = $conf->adherent->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'apercufacture' && !empty($conf->facture->multidir_output[$entity])) {
 		// Wrapping pour les apercu factures
@@ -2405,8 +2429,32 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'holiday') && !empty($conf->holiday->dir_output)) {
+		if ($fuser->rights->holiday->{$read} || !empty($fuser->rights->holiday->readall) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// If we known $id of holiday, call checkUserAccessToObject to check permission on properties and hierarchy of leave request
+			if ($refname && empty($fuser->rights->holiday->readall) && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+				$tmpholiday = new Holiday($db);
+				$tmpholiday->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
+			}
+		}
+		$original_file = $conf->holiday->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
+		if ($fuser->rights->expensereport->{$lire} || !empty($fuser->rights->expensereport->readall) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// If we known $id of expensereport, call checkUserAccessToObject to check permission on properties and hierarchy of expense report
+			if ($refname && empty($fuser->rights->expensereport->readall) && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+				$tmpexpensereport = new ExpenseReport($db);
+				$tmpexpensereport->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
+			}
+		}
+		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercuexpensereport') && !empty($conf->expensereport->dir_output)) {
-		// Wrapping pour les apercu supplier invoice
+		// Wrapping pour les apercu expense report
 		if ($fuser->rights->expensereport->{$lire}) {
 			$accessallowed = 1;
 		}
@@ -2491,7 +2539,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if ($fuser->rights->categorie->{$lire}) {
+		if ($fuser->rights->categorie->{$lire} || $fuser->rights->takepos->run) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->categorie->multidir_output[$entity].'/'.$original_file;
@@ -2668,7 +2716,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
 				$tmptask->fetch('', $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
@@ -2715,13 +2763,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/sending/".$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos('sending/', $original_file) === 0 ? '' : 'sending/').$original_file;
+		//$original_file = $conf->expedition->dir_output."/".$original_file;
 	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->expedition->dir_output."/receipt/".$original_file;
+		$original_file = $conf->expedition->dir_output."/".(strpos('receipt/', $original_file) === 0 ? '' : 'receipt/').$original_file;
 	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
 		// Wrapping pour les actions
 		if ($fuser->rights->agenda->myactions->{$read} || preg_match('/^specimen/i', $original_file)) {
@@ -2859,6 +2908,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->admin) {
 			$accessallowed = 1; // If user is admin
 		}
+
 		$tmpmodulepart = explode('-', $modulepart);
 		if (!empty($tmpmodulepart[1])) {
 				$modulepart = $tmpmodulepart[0];
@@ -2938,6 +2988,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		);
 		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
 		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['original_file'])) {
+				$original_file = $hookmanager->resArray['original_file'];
+			}
 			if (!empty($hookmanager->resArray['accessallowed'])) {
 				$accessallowed = $hookmanager->resArray['accessallowed'];
 			}
@@ -2948,9 +3001,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	$ret = array(
-		'accessallowed' => $accessallowed,
-		'sqlprotectagainstexternals'=>$sqlprotectagainstexternals,
-		'original_file'=>$original_file
+		'accessallowed' => ($accessallowed ? 1 : 0),
+		'sqlprotectagainstexternals' => $sqlprotectagainstexternals,
+		'original_file' => $original_file
 	);
 
 	return $ret;

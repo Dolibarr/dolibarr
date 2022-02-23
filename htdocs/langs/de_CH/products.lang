@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - products
-Service=Leistung
+ProductRef=Produkt-Nr.
 Create=Erstelle
 Reference=Referenz
 ProductVatMassChange=Globale MWST - Änderung

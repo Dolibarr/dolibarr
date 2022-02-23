@@ -172,3 +172,4 @@ ProjectBillTimeDescription=Verifique si ingresa la hoja de tiempo en las tareas 
 UsageBillTimeShort=Uso: Tiempo a facturar
 NewInter=Nueva intervención
 RefTaskParent=Árbitro. Tarea principal
+StartDateCannotBeAfterEndDate=La fecha de finalización no puede ser anterior a la fecha de inicio

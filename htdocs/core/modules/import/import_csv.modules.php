@@ -586,18 +586,22 @@ class ImportCsv extends ModeleImports
 										$arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getrefifauto') {
-									$defaultref = '';
-									// TODO provide the $modTask (module of generation of ref) as parameter of import_insert function
-									$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-									if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php")) {
-										require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
-										$modTask = new $obj;
-										$defaultref = $modTask->getNextValue(null, null);
-									}
-									if (is_numeric($defaultref) && $defaultref <= 0) {
+									if (strtolower($newval) == 'auto') {
 										$defaultref = '';
+
+										$classModForNumber = $objimport->array_import_convertvalue[0][$val]['class'];
+										$pathModForNumber = $objimport->array_import_convertvalue[0][$val]['path'];
+
+										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
+											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
+											$modForNumber = new $classModForNumber;
+											$defaultref = $modForNumber->getNextValue(null, null);
+										}
+										if (is_numeric($defaultref) && $defaultref <= 0) {
+											$defaultref = '';
+										}
+										$newval = $defaultref;
 									}
-									$newval = $defaultref;
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'compute') {
 									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 									$class = $objimport->array_import_convertvalue[0][$val]['class'];
@@ -732,6 +736,29 @@ class ImportCsv extends ModeleImports
 							$tmp = explode('-', $val, 2);
 							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
+						} elseif (preg_match('/^rule-/', $val)) {
+							$fieldname = $key;
+							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
+								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {
+									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
+									$class = $objimport->array_import_convertvalue[0][$fieldname]['class'];
+									$method = $objimport->array_import_convertvalue[0][$fieldname]['method'];
+									$resultload = dol_include_once($file);
+									if (empty($resultload)) {
+										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+										break;
+									}
+									$classinstance = new $class($this->db);
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
+									if ($res < 0) {
+										if (!empty($objimport->array_import_convertvalue[0][$fieldname]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, end($listvalues), 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$fieldname]['dict']));
+										else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
+										$this->errors[$error]['type'] = 'FOREIGNKEY';
+										$errorforthistable++;
+										$error++;
+									}
+								}
+							}
 						} else {
 							$this->errors[$error]['lib'] = 'Bad value of profile setup '.$val.' for array_import_fieldshidden';
 							$this->errors[$error]['type'] = 'Import profile setup';

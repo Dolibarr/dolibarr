@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Bình thường
 TicketSeverityShortHIGH=Cao
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=Khác
+
 ErrorBadEmailAddress=Trường '%s' không chính xác
 MenuTicketMyAssign=Vé của tôi
 MenuTicketMyAssignNonClosed=Vé mở của tôi
@@ -180,7 +182,7 @@ MessageSuccessfullyAdded=Đã thêm vé
 TicketMessageSuccessfullyAdded=Thông điệp đã được thêm thành công
 TicketMessagesList=Danh sách tin nhắn
 NoMsgForThisTicket=Không có tin nhắn cho vé này
-Properties=Phân loại
+TicketProperties=Phân loại
 LatestNewTickets=Vé mới nhất %s (không đọc)
 TicketSeverity=Mức độ nghiêm trọng
 ShowTicket=Xem vé
@@ -316,6 +318,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

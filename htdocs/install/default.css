@@ -40,6 +40,10 @@
 	display: inline-block;	
 }
 
+.no-bottom {
+	padding-bottom: 0;	
+}
+
 .small {
 	font-size: 0.9em;	
 }
@@ -413,7 +417,7 @@ a.button:hover {
     /* background-color: rgba(70, 3, 62, 0.3); */
     padding: 2px 4px;
     border-radius: 4px;
-    white-space: nowrap;
+    /* white-space: nowrap; */
 }
 .choiceselected {
 	background-color: #f4f6f4;
@@ -466,13 +470,12 @@ table.tablesupport {
 @media only screen and (max-width: 570px)
 {
 	.blocksupport {
-		width: 90%;
+		width: calc(100% - 4px);
+		padding: 4px;
 	}
 	
 	.tablesupport {
 		padding: 6px;
 		width: 100%;
 	}
-}
-	
 }

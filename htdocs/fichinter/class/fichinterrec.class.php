@@ -182,18 +182,18 @@ class FichinterRec extends Fichinter
 
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->title)."'";
-			$sql .= ", ".($this->socid > 0 ? $this->socid : 'null');
-			$sql .= ", ".$conf->entity;
+			$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : 'null');
+			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($fichintsrc->duration) ? $fichintsrc->duration : '0');
+			$sql .= ", ".(!empty($fichintsrc->duration) ? ((int) $fichintsrc->duration) : '0');
 			$sql .= ", ".(!empty($this->description) ? ("'".$this->db->escape($this->description)."'") : "null");
 			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape($fichintsrc->note_private)."'") : "null");
 			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape($fichintsrc->note_public)."'") : "null");
-			$sql .= ", ".$user->id;
+			$sql .= ", ".((int) $user->id);
 			// si c'est la même société on conserve les liens vers le projet et le contrat
 			if ($this->socid == $fichintsrc->socid) {
-				$sql .= ", ".(!empty($fichintsrc->fk_project) ? $fichintsrc->fk_project : "null");
-				$sql .= ", ".(!empty($fichintsrc->fk_contrat) ? $fichintsrc->fk_contrat : "null");
+				$sql .= ", ".(!empty($fichintsrc->fk_project) ? ((int) $fichintsrc->fk_project) : "null");
+				$sql .= ", ".(!empty($fichintsrc->fk_contrat) ? ((int) $fichintsrc->fk_contrat) : "null");
 			} else {
 				$sql .= ", null, null";
 			}
@@ -201,12 +201,12 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($fichintsrc->model_pdf) ? "'".$this->db->escape($fichintsrc->model_pdf)."'" : "''");
 
 			// récurrence
-			$sql .= ", ".(!empty($this->frequency) ? $this->frequency : "null");
+			$sql .= ", ".(!empty($this->frequency) ? ((int) $this->frequency) : "null");
 			$sql .= ", '".$this->db->escape($this->unit_frequency)."'";
 			$sql .= ", ".(!empty($this->date_when) ? "'".$this->db->idate($this->date_when)."'" : 'null');
 			$sql .= ", ".(!empty($this->date_last_gen) ? "'".$this->db->idate($this->date_last_gen)."'" : 'null');
 			$sql .= ", 0"; // we start à 0
-			$sql .= ", ".$this->nb_gen_max;
+			$sql .= ", ".((int) $this->nb_gen_max);
 			// $sql.= ", ".$this->auto_validate;
 			$sql .= ")";
 
@@ -279,9 +279,9 @@ class FichinterRec extends Fichinter
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter_rec as f';
 		if ($rowid > 0) {
-			$sql .= ' WHERE f.rowid='.$rowid;
+			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		} elseif ($ref) {
-			$sql .= " WHERE f.titre='".$this->db->escape($ref)."'";
+			$sql .= " WHERE f.titre = '".$this->db->escape($ref)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
@@ -628,7 +628,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '')
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 		$label = $langs->trans("ShowInterventionModel").': '.$this->ref;
@@ -652,6 +652,15 @@ class FichinterRec extends Fichinter
 		}
 		if ($withpicto != 2) {
 			$result .= $link.$this->ref.$linkend;
+		}
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 		return $result;
 	}

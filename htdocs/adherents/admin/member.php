@@ -25,7 +25,7 @@
  */
 
 /**
- *   	\file       htdocs/adherents/admin/adherent.php
+ *   	\file       htdocs/adherents/admin/member.php
  *		\ingroup    member
  *		\brief      Page to setup the module Foundation
  */
@@ -196,6 +196,9 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
+
+// Mains options
+
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -205,14 +208,14 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-// Login/Pass required for members
-print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
-print "</td></tr>\n";
-
 // Mail required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
 print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? $conf->global->ADHERENT_MAIL_REQUIRED : 0), 1);
+print "</td></tr>\n";
+
+// Login/Pass required for members
+print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
 print "</td></tr>\n";
 
 // Send mail information is on by default
@@ -228,7 +231,7 @@ print "</td></tr>\n";
 // Allow members to change type on renewal forms
 /* To test during next beta
 print '<tr class="oddeven"><td>'.$langs->trans("MemberAllowchangeOfType").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
+print $form->selectyesno('MEMBER_ALLOW_CHANGE_OF_TYPE', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
 print "</td></tr>\n";
 */
 
@@ -286,51 +289,15 @@ print '</div>';
 
 print '</form>';
 
-print '<br>';
-
-
-/*
- * Edit info of model document
- */
-$constantes = array(
-		'ADHERENT_CARD_TYPE',
-		//'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
-);
-
-print load_fiche_titre($langs->trans("MembersCards"), '', '');
-
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
-
-form_constantes($constantes, 0, $helptext);
 
 print '<br>';
 
 
-/*
- * Edit info of model document
- */
-$constantes = array('ADHERENT_ETIQUETTE_TYPE', 'ADHERENT_ETIQUETTE_TEXT');
-
-print load_fiche_titre($langs->trans("MembersTickets"), '', '');
-
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
-
-form_constantes($constantes, 0, $helptext);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // Defined model definition table
 $def = array();
-$sql = "SELECT nom";
+$sql = "SELECT nom as name";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
@@ -339,13 +306,14 @@ if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		$obj = $db->fetch_object($resql);
+		array_push($def, $obj->name);
 		$i++;
 	}
 } else {
 	dol_print_error($db);
 }
+
 
 print load_fiche_titre($langs->trans("MembersDocModules"), '', '');
 
@@ -404,13 +372,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&amp;token='.newToken().'&amp;value='.$name.'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&token='.newToken().'&value='.$name.'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -419,7 +387,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->MEMBER_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -459,6 +427,55 @@ foreach ($dirmodels as $reldir) {
 
 print '</table>';
 print '</div>';
+
+
+
+/*
+TODO Use a global form instead of embeded form into table
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateall">';
+*/
+
+/*
+ * Edit info of model document
+ */
+$constantes = array(
+		'ADHERENT_CARD_TYPE',
+		//'ADHERENT_CARD_BACKGROUND',
+		'ADHERENT_CARD_HEADER_TEXT',
+		'ADHERENT_CARD_TEXT',
+		'ADHERENT_CARD_TEXT_RIGHT',
+		'ADHERENT_CARD_FOOTER_TEXT'
+);
+
+print load_fiche_titre($langs->trans("MembersCards"), '', '');
+
+$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext .= '__YEAR__, __MONTH__, __DAY__';
+
+form_constantes($constantes, 0, $helptext);
+
+print '<br>';
+
+
+/*
+ * Edit info of model document
+ */
+$constantes = array('ADHERENT_ETIQUETTE_TYPE', 'ADHERENT_ETIQUETTE_TEXT');
+
+print load_fiche_titre($langs->trans("MembersTickets"), '', '');
+
+$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext .= '__YEAR__, __MONTH__, __DAY__';
+
+form_constantes($constantes, 0, $helptext);
+
+//print '</form>';
 
 print "<br>";
 

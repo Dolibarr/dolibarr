@@ -47,8 +47,8 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $type = GETPOST('type', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -89,6 +89,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x'
 $hookmanager->initHooks(array('assettypecard', 'globalcard'));
 
 $permissiontoadd = $user->rights->asset->setup_advance;
+
 
 /*
  *	Actions
@@ -158,7 +159,7 @@ if ($action == 'update' && $user->rights->asset->write) {
 	$object->note = trim($comment);
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost(null, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 	if ($ret < 0) {
 		$error++;
 	}
@@ -297,7 +298,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 
 			if ($user->rights->asset->write) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			} else {
 				print '<td class="right">&nbsp;</td>';
 			}
@@ -389,14 +390,14 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 	print '<tbody>';
 	print "</table>\n";
 
 	print dol_get_fiche_end();
 
-	$form->buttonsSaveCancel("Add");
+	print $form->buttonsSaveCancel("Add");
 
 	print "</form>\n";
 }
@@ -502,12 +503,12 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->rights->asset->write) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.((int) $object->id).'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Delete
 		if ($user->rights->asset->write) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $object->id).'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";

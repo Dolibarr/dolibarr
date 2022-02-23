@@ -37,8 +37,6 @@ if (!$user->admin) {
 $rowid = GETPOST('rowid', 'int');
 $entity = GETPOST('entity', 'int');
 $action = GETPOST('action', 'aZ09');
-$update = GETPOST('update', 'alpha');
-$delete = GETPOST('delete', 'none'); // Do not use alpha here
 $debug = GETPOST('debug', 'int');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
@@ -259,7 +257,7 @@ if ($result) {
 
 		print "\n";
 
-		print '<tr class="oddeven"><td>'.$obj->name.'</td>'."\n";
+		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.$obj->name.'</td>'."\n";
 
 		// Value
 		print '<td>';

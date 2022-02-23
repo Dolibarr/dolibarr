@@ -124,6 +124,8 @@ SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
 SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted
 SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Other orders
+SupplierOrderValidatedAndApproved=Supplier order is validated and approved : %s
+SupplierOrderValidated=Supplier order is validated : %s
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
 TypeContact_commande_internal_SHIPPING=Representative following-up shipping

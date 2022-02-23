@@ -240,7 +240,7 @@ class RssParser
 			if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
 				//print 'xx'.LIBXML_NOCDATA;
 				libxml_use_internal_errors(false);
-				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
+				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA|LIBXML_NOCDATA);
 			} else {
 				if (!function_exists('xml_parser_create')) {
 					$this->error = 'Function xml_parser_create are not supported by your PHP';
