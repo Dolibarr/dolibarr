@@ -370,6 +370,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					continue;
 				}
 				if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
+					var_dump($matches);
 					$ok=false;	// This will generate error
 					break;
 				}
