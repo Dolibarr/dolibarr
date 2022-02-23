@@ -2455,18 +2455,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$formconfirm = '';
 
 		// Confirm delete third party
-		if ($action == 'delete') {
-			$formquestion = array(
-				array(
-					'value' => 'yes',
-				)
-			);
-
-			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteACompany'), $langs->trans('ConfirmDeleteCompany'), 'confirm_delete', '', 0, 2);
+		if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
 		}
-
-
-
 
 		if ($action == 'merge') {
 			$formquestion = array(
