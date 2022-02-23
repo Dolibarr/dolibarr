@@ -366,6 +366,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$matches=array();
 			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES|LIKE).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
+				if ($val[1] == 'sql' && $val[2] == 'this->d' && preg_match('/this->db->decrypt/', $val[0])) {	// exclude ".$this->db->decrypt(
+					continue;
+				}
 				if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
 					$ok=false;	// This will generate error
 					break;
