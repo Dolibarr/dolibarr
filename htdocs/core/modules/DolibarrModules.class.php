@@ -2125,7 +2125,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "SELECT count(*)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
 		$sql.= " AND entity = ".(! empty($force_entity) ? (int) $force_entity : $conf->entity);
 
 		dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
