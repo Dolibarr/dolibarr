@@ -320,6 +320,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 	// Loop on each request to execute request
 	$cursorinsert = 0;
 	$listofinsertedrowid = array();
+	$keyforsql = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
 			// Replace the prefix tables
@@ -335,7 +336,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 			// Add log of request
 			if (!$silent) {
-				print '<tr class="trforrunsql'.md5($sqlfile).'"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+				print '<tr class="trforrunsql'.$keyforsql.'"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
 			}
 			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
@@ -454,18 +455,18 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			function init_trrunsql'.md5($sqlfile).'()
+			function init_trrunsql'.$keyforsql.'()
 			{
-				console.log("toggle .trforrunsql'.md5($sqlfile).'");
-				jQuery(".trforrunsql'.md5($sqlfile).'").toggle();
+				console.log("toggle .trforrunsql'.$keyforsql.'");
+				jQuery(".trforrunsql'.$keyforsql.'").toggle();
 			}
-			init_trrunsql'.md5($sqlfile).'();
-			jQuery(".trforrunsqlshowhide'.md5($sqlfile).'").click(function() {
-				init_trrunsql'.md5($sqlfile).'();
+			init_trrunsql'.$keyforsql.'();
+			jQuery(".trforrunsqlshowhide'.$keyforsql.'").click(function() {
+				init_trrunsql'.$keyforsql.'();
 			});
 		});
 		</script>';
-		print ' - <a class="trforrunsqlshowhide'.md5($sqlfile).'" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
 
 		print '</td></tr>'."\n";
