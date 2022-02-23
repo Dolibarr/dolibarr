@@ -81,21 +81,38 @@ class box_contacts extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
 
-		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
-		{
+		if ($user->rights->societe->lire && $user->rights->societe->contact->lire) {
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
-			$sql .= ", s.nom as socname, s.name_alias, s.email as semail";
-			$sql .= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.client";
+			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= ", spe.accountancy_code_customer as code_compta";
+				$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+			} else {
+				$sql .= ", s.code_compta";
+				$sql .= ", s.code_compta_fournisseur";
+			}
+			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", co.label as country, co.code as country_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+			}
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND sp.fk_soc = ".$user->socid;
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND sp.fk_soc = ".((int) $user->socid);
+			}
 			$sql .= " ORDER BY sp.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -107,8 +124,7 @@ class box_contacts extends ModeleBoxes
 				$societestatic = new Societe($this->db);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
@@ -128,14 +144,18 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->country = $objp->country;
 					$contactstatic->country_code = $objp->country_code;
 
-					$societestatic->id = $objp->fk_soc;
-					$societestatic->name = $objp->socname;
-					$societestatic->email = $objp->semail;
-					$societestatic->name_alias = $objp->name_alias;
+					$societestatic->id = $objp->socid;
+					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_fournisseur = $objp->code_fournisseur;
+					$societestatic->code_compta = $objp->code_compta;
 					$societestatic->client = $objp->client;
+					$societestatic->code_fournisseur = $objp->code_fournisseur;
+					$societestatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$societestatic->fournisseur = $objp->fournisseur;
+					$societestatic->logo = $objp->logo;
+					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
@@ -145,13 +165,13 @@ class box_contacts extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => ($objp->fk_soc > 0 ? $societestatic->getNomUrl(1) : ''),
+						'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day"),
+						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -163,12 +183,13 @@ class box_contacts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
 						'asis'=> 1
 					);
+				}
 
 				$this->db->free($result);
 			} else {
@@ -180,8 +201,8 @@ class box_contacts extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

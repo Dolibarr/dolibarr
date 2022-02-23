@@ -35,10 +35,10 @@ $langs->load("categories");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
-$type = (int) GETPOST('type', 'int');
 $action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = (int) GETPOST('socid', 'int');
 $label = (string) GETPOST('label', 'alphanohtml');
@@ -56,8 +56,14 @@ if ($id == "") {
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-if ($id > 0) {
-	$result = $object->fetch($id);
+$result = $object->fetch($id, $label);
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
+
+$type = $object->type;
+if (is_numeric($type)) {
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
 
 $extrafields = new ExtraFields($db);
@@ -74,20 +80,24 @@ $error = 0;
  */
 
 if ($cancel) {
-	header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-	exit;
+	if ($backtopage) {
+		header("Location: ".$backtopage);
+		exit;
+	} else {
+		header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+		exit;
+	}
 }
 
 // Action mise a jour d'une categorie
 if ($action == 'update' && $user->rights->categorie->creer) {
 	$object->oldcopy = dol_clone($object);
-	$object->label          = $label;
+	$object->label = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
 	$object->socid          = ($socid > 0 ? $socid : 0);
 	$object->visible        = $visible;
 	$object->fk_parent = $parent != -1 ? $parent : 0;
-
 
 	if (empty($object->label)) {
 		$error++;
@@ -95,12 +105,19 @@ if ($action == 'update' && $user->rights->categorie->creer) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	if (!$error && empty($object->error)) {
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
-		if ($ret < 0) $error++;
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+		if ($ret < 0) {
+			$error++;
+		}
 
 		if (!$error && $object->update($user) > 0) {
-			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-			exit;
+			if ($backtopage) {
+				header("Location: ".$backtopage);
+				exit;
+			} else {
+				header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+				exit;
+			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -131,6 +148,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print dol_get_fiche_head('');
 
@@ -160,7 +178,9 @@ print '</td></tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
+print img_picto('', 'category', 'class="pictofixedwidth"');
 print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id);
+print ajax_combobox('parent');
 print '</td></tr>';
 
 $parameters = array();

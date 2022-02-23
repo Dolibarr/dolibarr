@@ -63,7 +63,9 @@ class box_prospect extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $this->enabled = 0; // disabled by this option
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+			$this->enabled = 0; // disabled by this option
+		}
 
 		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
 	}
@@ -84,54 +86,57 @@ class box_prospect extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
 
-		if ($user->rights->societe->lire)
-		{
-			$sql = "SELECT s.nom as name, s.rowid as socid";
-			$sql .= ", s.code_client";
-			$sql .= ", s.client, s.email";
-			$sql .= ", s.code_fournisseur";
-			$sql .= ", s.fournisseur";
-			$sql .= ", s.logo";
-			$sql .= ", s.fk_stcomm, s.datec, s.tms, s.status";
+		if ($user->rights->societe->lire) {
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.fk_stcomm";
+			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE s.client IN (2, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
 			$sql .= " ORDER BY s.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $this->db->num_rows($resql);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
+
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
-					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
-					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartystatic->code_compta = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
-					$thirdpartystatic->fournisseur = $objp->fournisseur;
 					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $thirdpartystatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day"),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

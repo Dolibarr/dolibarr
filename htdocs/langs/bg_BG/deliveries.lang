@@ -27,5 +27,7 @@ Recipient=Получател
 ErrorStockIsNotEnough=Няма достатъчна наличност
 Shippable=Годно за изпращане
 NonShippable=Негодно за изпращане
+ShowShippableStatus=Show shippable status
 ShowReceiving=Показване на разписка за доставка
 NonExistentOrder=Несъществуваща поръчка
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

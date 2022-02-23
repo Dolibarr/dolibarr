@@ -37,7 +37,7 @@ class ZapierApi extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'url',
 	);
 
@@ -104,6 +104,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->read) {
 			throw new RestException(401);
 		}
+
 		$arraychoices = array(
 			'invoices' => 'Invoices',
 			'orders' => 'Orders',
@@ -143,6 +144,10 @@ class ZapierApi extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->zapier->read) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
@@ -163,7 +168,9 @@ class ZapierApi extends DolibarrApi
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."hook_mytable as t";
 
-		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		}
 		$sql .= " WHERE 1 = 1";
 
 		// Example of use $mode
@@ -178,7 +185,7 @@ class ZapierApi extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($restrictonsocid && $socid) {
-			$sql .= " AND t.fk_soc = ".$socid;
+			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 		if ($restrictonsocid && $search_sale > 0) {
 			// Join for the needed table to filter by sale
@@ -186,13 +193,14 @@ class ZapierApi extends DolibarrApi
 		}
 		// Insert sale filter
 		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -240,6 +248,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->write) {
 			throw new RestException(401);
 		}
+
 		// Check mandatory fields
 		$fields = array(
 			'url',
@@ -270,33 +279,33 @@ class ZapierApi extends DolibarrApi
 	//  * @url	PUT /hooks/{id}
 	//  */
 	/*public function put($id, $request_data = null)
-    {
-        if (! DolibarrApiAccess::$user->rights->zapier->write) {
-            throw new RestException(401);
-        }
+	{
+		if (! DolibarrApiAccess::$user->rights->zapier->write) {
+			throw new RestException(401);
+		}
 
-        $result = $this->hook->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Hook not found');
-        }
+		$result = $this->hook->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Hook not found');
+		}
 
-        if( ! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if( ! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        foreach($request_data as $field => $value) {
-            if ($field == 'id') {
-                continue;
-            }
-            $this->hook->$field = $value;
-        }
+		foreach($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			$this->hook->$field = $value;
+		}
 
-        if ($this->hook->update($id, DolibarrApiAccess::$user) > 0) {
-            return $this->get($id);
-        } else {
-            throw new RestException(500, $this->hook->error);
-        }
-    }*/
+		if ($this->hook->update($id, DolibarrApiAccess::$user) > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->hook->error);
+		}
+	}*/
 
 	/**
 	 * Delete hook
@@ -311,6 +320,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->delete) {
 			throw new RestException(401);
 		}
+
 		$result = $this->hook->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Hook not found');

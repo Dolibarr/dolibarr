@@ -17,3 +17,7 @@ for Linux OS
 to install or to update transifex client: 
 sudo pip install --upgrade transifex-client
 
+
+Comparison of Terms between ERPs
+---------------------------------
+https://wiki.dolibarr.org/index.php?title=Comparison_of_Terms_between_ERPs

@@ -1,0 +1,167 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Impreza organizacyjna
+EventOrganizationDescription = Impreza organizacyjna za pomocą modułu Projekty
+EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+#
+# Menu
+#
+EventOrganizationMenuLeft = Imprezy zorganizowane
+EventOrganizationConferenceOrBoothMenuLeft = Konferencja lub stoisko
+
+PaymentEvent=Payment of event
+
+#
+# Admin page
+#
+NewRegistration=Registration
+EventOrganizationSetup=Konfiguracja imprezy organizacyjnej
+EventOrganization=Event organization
+Settings=Ustawienia
+EventOrganizationSetupPage = Strona konfiguracji imprezy organizacyjnej
+EVENTORGANIZATION_TASK_LABEL = Etykiety zadań automatycznie tworzonych po zatwierdzeniu projektu
+EVENTORGANIZATION_TASK_LABELTooltip = Podczas walidacji zorganizowanego wydarzenia niektóre zadania mogą być tworzone automatycznie w projekcie<br><br>Na przykład: <br>Wyślij wezwanie na konferencję<br>Wyślij wezwanie do stoiska<br>Odbierz wezwanie na konferencję<br>Odbierz wezwanie na konferencję<br>Odbierz wezwanie do stoiska<br>Wyślij prelegentom przypomnienie o imprezie<br>Wyślij gospodarzom stoiska przypomnienie o imprezie<br>Wyślij uczestnikom przypomnienie o imprezie
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategoria dodawana do kontrahentów, tworzona automatycznie po otrzymaniu sugestii zorganizowania konferencji.
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategoria dodawana do kontrahentów, tworzona automatycznie po otrzymaniu sugestii zorganizowania stoiska.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Szablon wiadomości e-mail wysyłany po otrzymaniu sugestii zorganizowania konferencji.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Szablon wiadomości e-mail wysyłany po otrzymaniu sugestii zorganizowania stoiska.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Konferencja lub stoisko
+ManageOrganizeEvent = Manage the organization of an event
+ConferenceOrBooth = Konferencja lub stoisko
+ConferenceOrBoothTab = Konferencja lub stoisko
+AmountPaid = Amount paid
+DateOfRegistration = Date of registration
+ConferenceOrBoothAttendee = Uczestnik konferencji lub stoiska
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Twoje żądanie o konferencję zostało odebrane
+YourOrganizationEventBoothRequestWasReceived = Twoje żądanie o stoisko zostało odebrane
+EventOrganizationEmailAskConf = Żądanie o konferencję
+EventOrganizationEmailAskBooth = Żądanie o stoisko
+EventOrganizationEmailBoothPayment = Payment of your booth
+EventOrganizationEmailRegistrationPayment = Registration for an event
+EventOrganizationMassEmailAttendees = Komunikacja z uczestnikami
+EventOrganizationMassEmailSpeakers = Komunikacja z prelegentami
+ToSpeakers=To speakers
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
+AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+PriceOfRegistration=Cena rejestracji
+PriceOfRegistrationHelp=Price to pay to register or participate in the event
+PriceOfBooth=Cena abonamentu za stoisko
+PriceOfBoothHelp=Cena abonamentu za stoisko
+EventOrganizationICSLink=Link ICS for conferences
+ConferenceOrBoothInformation=Informacje o konferencji lub stoisku
+Attendees=Uczestnicy
+ListOfAttendeesOfEvent=List of attendees of the event project
+DownloadICSLink = Pobierz link do ICS
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+SERVICE_BOOTH_LOCATION = Usługa używana do wiersza faktury o lokalizacji stoiska
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+NbVotes=Liczba głosów
+#
+# Status
+#
+EvntOrgDraft = Szkic
+EvntOrgSuggested = Zasugerowane
+EvntOrgConfirmed = Potwierdzone
+EvntOrgNotQualified = Brak kwalifikacji
+EvntOrgDone = Zrobione
+EvntOrgCancelled = Anulowane
+#
+# Public page
+#
+SuggestForm = Strona sugestii
+SuggestOrVoteForConfOrBooth = Page for suggestion or vote
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
+EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+ListOfSuggestedConferences = Lista proponowanych konferencji
+ListOfSuggestedBooths = Lista sugerowanych stoisk
+ListOfConferencesOrBooths=List of conferences or booths of event project
+SuggestConference = Zaproponuj nową konferencję
+SuggestBooth = Zaproponuj stoisko
+ViewAndVote = Zobacz i zagłosuj na sugerowane wydarzenia
+PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
+PublicAttendeeSubscriptionPage = Public link for registration to this event only
+MissingOrBadSecureKey = Klucz bezpieczeństwa jest nieprawidłowy lub go brakuje
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
+EvntOrgDuration = Ta konferencja zaczyna się %s i kończy się %s.
+ConferenceAttendeeFee = Opłata uczestnika konferencji za wydarzenie: '%s' występujące od %s do %s.
+BoothLocationFee = Lokalizacja stoiska dla wydarzenia: „%s” występujące od %s do %s
+EventType = Typ wydarzenia
+LabelOfBooth=Etykieta stoiska
+LabelOfconference=Etykieta konferencji
+ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
+DateMustBeBeforeThan=%s must be before %s
+DateMustBeAfterThan=%s must be after %s
+
+NewSubscription=Registration
+OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
+OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
+OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
+OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
+OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
+OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+
+NewSuggestionOfBooth=Application for a booth
+NewSuggestionOfConference=Application for a conference
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Witamy na stronie z propozycjami konferencji lub stoisk.
+EvntOrgRegistrationConfWelcomeMessage = Witamy na stronie propozycji konferencji.
+EvntOrgRegistrationBoothWelcomeMessage = Witamy na stronie propozycji stoisk.
+EvntOrgVoteHelpMessage = Tutaj możesz przeglądać i głosować na sugerowane wydarzenia dla projektu
+VoteOk = Twój głos został zaakceptowany.
+AlreadyVoted = Już zagłosowałeś na to wydarzenie.
+VoteError = Podczas głosowania wystąpił błąd, spróbuj ponownie.
+
+SubscriptionOk = Your registration has been validated
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
+Attendee = Uczestnik
+PaymentConferenceAttendee = Opłata za uczestnika konferencji
+PaymentBoothLocation = Płatność za miejsce na stoisku
+DeleteConferenceOrBoothAttendee=Remove attendee
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
+EmailAttendee=Attendee email
+EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event

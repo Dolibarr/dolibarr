@@ -106,7 +106,7 @@ class ProductCombination
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight, variation_ref_ext FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE rowid = ".(int) $rowid." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight, variation_ref_ext FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE rowid = ".((int) $rowid)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -174,8 +174,7 @@ class ProductCombination
 			 */
 			if ($fk_price_level > 0) {
 				$combination_price_levels[$fk_price_level] = ProductCombinationLevel::createFromParent($this->db, $this, $fk_price_level);
-			}
-			else {
+			} else {
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					$combination_price_levels[$i] = ProductCombinationLevel::createFromParent($this->db, $this, $i);
 				}
@@ -227,8 +226,7 @@ class ProductCombination
 
 		if ($error) {
 			return $error * -1;
-		}
-		else {
+		} else {
 			return 1;
 		}
 	}
@@ -283,7 +281,7 @@ class ProductCombination
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".((int) $fk_product_parent)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -322,12 +320,14 @@ class ProductCombination
 	public function countNbOfCombinationForFkProductParent($fk_product_parent)
 	{
 		$nb = 0;
-		$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".((int) $fk_product_parent)." AND entity IN (".getEntity('product').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) $nb = $obj->nb;
+			if ($obj) {
+				$nb = $obj->nb;
+			}
 		}
 
 		return $nb;
@@ -470,11 +470,12 @@ class ProductCombination
 	}
 
 	/**
-	 * Updates the weight of the child product. The price must be updated using Product::updatePrices
+	 * Updates the weight of the child product. The price must be updated using Product::updatePrices.
+	 * This method is called by the update() of a product.
 	 *
-	 * @param Product $parent Parent product
+	 * @param	Product $parent 	Parent product
 	 * @param	User	$user		Object user
-	 * @return int >0 OK <0 KO
+	 * @return 	int 				>0 if OK, <0 if KO
 	 */
 	public function updateProperties(Product $parent, User $user)
 	{
@@ -487,6 +488,14 @@ class ProductCombination
 
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
+		// Only when Parent Status are updated
+		if ($parent->oldcopy && ($parent->status != $parent->oldcopy->status)) {
+			$child->status = $parent->status;
+		}
+		if ($parent->oldcopy && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+			$child->status_buy = $parent->status_buy;
+		}
+
 		if ($this->variation_weight) {	// If we must add a delta on weight
 			$child->weight = ($child->weight ? $child->weight : 0) + $this->variation_weight;
 		}
@@ -506,13 +515,12 @@ class ProductCombination
 
 			// MultiPrix
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
-				{
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
-						$new_type = $parent->multiprices_base_type[$i];
+						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
-						$variation_price = doubleval(!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
-						$variation_price_percentage = doubleval(!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
+						$variation_price = floatval(!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
+						$variation_price_percentage = floatval(!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
 
 						if ($parent->prices_by_qty_list[$i]) {
 							$new_psq = 1;
@@ -534,7 +542,7 @@ class ProductCombination
 							$new_price += $variation_price;
 						}
 
-						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq);
+						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
 					}
 				}
 			} else {
@@ -709,9 +717,12 @@ class ProductCombination
 		//Final price impact
 		if (!is_array($forced_pricevar)) {
 			$price_impact[1] = (float) $forced_pricevar; // If false, return 0
-		}
-		else {
+		} else {
 			$price_impact = $forced_pricevar;
+		}
+
+		if (!array($price_var_percent)) {
+			$price_var_percent[1] = (float) $price_var_percent;
 		}
 
 		$newcomb = new ProductCombination($this->db);
@@ -765,8 +776,7 @@ class ProductCombination
 
 				// Manage Price levels
 				if ($conf->global->PRODUIT_MULTIPRICES) {
-					for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
-					{
+					for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 						$price_impact[$i] += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 					}
 				}
@@ -787,7 +797,7 @@ class ProductCombination
 			$newproduct->description .= '<strong>'.$prodattr->label.':</strong> '.$prodattrval->value;
 		}
 
-		$newcomb->variation_price_percentage = $price_var_percent;
+		$newcomb->variation_price_percentage = $price_var_percent[1];
 		$newcomb->variation_price = $price_impact[1];
 		$newcomb->variation_weight = $weight_impact;
 		$newcomb->variation_ref_ext = $this->db->escape($ref_ext);
@@ -826,8 +836,7 @@ class ProductCombination
 			$newproduct->barcode = -1;
 			$result = $newproduct->create($user);
 
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				//In case the error is not related with an already existing product
 				if ($newproduct->error != 'ErrorProductAlreadyExists') {
 					$this->error[] = $newproduct->error;
@@ -867,8 +876,7 @@ class ProductCombination
 			}
 		} else {
 			$result = $newproduct->update($newproduct->id, $user);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->db->rollback();
 				return -1;
 			}
@@ -876,8 +884,7 @@ class ProductCombination
 
 		$newcomb->fk_product_child = $newproduct->id;
 
-		if ($newcomb->update($user) < 0)
-		{
+		if ($newcomb->update($user) < 0) {
 			$this->error = $newcomb->error;
 			$this->errors = $newcomb->errors;
 			$this->db->rollback();
@@ -925,8 +932,7 @@ class ProductCombination
 				$combination->variation_price_percentage,
 				$combination->variation_price,
 				$combination->variation_weight
-				) < 0)
-			{
+			) < 0) {
 				return -1;
 			}
 		}
@@ -946,7 +952,7 @@ class ProductCombination
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination pac';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
-		$sql .= ' WHERE pac.fk_product_child='.$prod_child;
+		$sql .= ' WHERE pac.fk_product_child='.((int) $prod_child);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -954,12 +960,10 @@ class ProductCombination
 
 			$i = 0;
 
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				if ($obj->label)
-				{
+				if ($obj->label) {
 					$label .= ' '.$obj->label;
 				}
 				$i++;
@@ -1057,37 +1061,33 @@ class ProductCombinationLevel
 	 */
 	public function fetchAll($fk_product_attribute_combination, $fk_price_level = 0)
 	{
+		$result = array();
 
 		$sql = "SELECT rowid, fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE fk_product_attribute_combination = ".intval($fk_product_attribute_combination);
-
 		if (!empty($fk_price_level)) {
 			$sql .= ' AND fk_price_level = '.intval($fk_price_level);
 		}
 
-		$combination_price_levels = $this->db->getRows($sql);
-
-		if (!is_array($combination_price_levels)) {
-			return -1;
-		}
-
-		$result = array();
-
-		if (!empty($combination_price_levels)) {
-			// For more simple usage set level as array key
-			foreach ($combination_price_levels as $k => $row) {
-				$productCombinationLevel = new ProductCombinationLevel($this->db);
-				$productCombinationLevel->fetchFormObj($row);
-				$result[$row->fk_price_level] = $productCombinationLevel;
+		$res = $this->db->query($sql);
+		if ($res) {
+			if ($this->db->num_rows($res) > 0) {
+				while ($obj = $this->db->fetch_object($res)) {
+					$productCombinationLevel = new ProductCombinationLevel($this->db);
+					$productCombinationLevel->fetchFormObj($obj);
+					$result[$obj->fk_price_level] = $productCombinationLevel;
+				}
 			}
+		} else {
+			return -1;
 		}
 
 		return $result;
 	}
 
 	/**
-	 * assign vars form an stdclass like sql obj
+	 * Assign vars form an stdclass like sql obj
 	 *
 	 * @param 	int 	$obj		Object resultset
 	 * @return 	int 				<0 KO, >0 OK
@@ -1099,9 +1099,9 @@ class ProductCombinationLevel
 		}
 
 		$this->id = $obj->rowid;
-		$this->fk_product_attribute_combination = doubleval($obj->fk_product_attribute_combination);
+		$this->fk_product_attribute_combination = floatval($obj->fk_product_attribute_combination);
 		$this->fk_price_level = intval($obj->fk_price_level);
-		$this->variation_price = doubleval($obj->variation_price);
+		$this->variation_price = floatval($obj->variation_price);
 		$this->variation_price_percentage = (bool) $obj->variation_price_percentage;
 
 		return 1;
@@ -1135,7 +1135,7 @@ class ProductCombinationLevel
 		// Update
 		if (!empty($this->id)) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET variation_price = '.doubleval($this->variation_price).' , variation_price_percentage = '.intval($this->variation_price_percentage);
+			$sql .= ' SET variation_price = '.floatval($this->variation_price).' , variation_price_percentage = '.intval($this->variation_price_percentage);
 			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			$res = $this->db->query($sql);
@@ -1153,7 +1153,7 @@ class ProductCombinationLevel
 			$sql .= ") VALUES (";
 			$sql .= (int) $this->fk_product_attribute_combination;
 			$sql .= ", ".intval($this->fk_price_level);
-			$sql .= ", ".doubleval($this->variation_price);
+			$sql .= ", ".floatval($this->variation_price);
 			$sql .= ", ".intval($this->variation_price_percentage);
 			$sql .= ")";
 

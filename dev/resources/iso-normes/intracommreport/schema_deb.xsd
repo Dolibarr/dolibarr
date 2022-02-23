@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:element name="INSTAT">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="Envelope"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="Envelope">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="envelopeId"/>
+<xsd:element ref="DateTime"/>
+<xsd:element ref="Party"/>
+<xsd:element ref="softwareUsed" minOccurs="0"/>
+<xsd:element ref="Declaration" maxOccurs="unbounded"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="envelopeId" type="xsd:string"/>
+<xsd:element name="DateTime">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="date"/>
+<xsd:element ref="time" minOccurs="0"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="Party">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="partyId"/>
+<xsd:element ref="partyName"/>
+</xsd:sequence>
+<xsd:attribute name="partyType" use="required">
+<xsd:simpleType>
+<xsd:restriction base="xsd:NMTOKEN">
+<xsd:enumeration value="PSI"/>
+<xsd:enumeration value="TDP"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+<xsd:attribute name="partyRole" use="required">
+<xsd:simpleType>
+<xsd:restriction base="xsd:NMTOKEN">
+<xsd:enumeration value="sender"/>
+<xsd:enumeration value="PSI"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:attribute>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="partyId" type="xsd:string"/>
+<xsd:element name="partyName" type="xsd:string"/>
+<xsd:element name="softwareUsed" type="xsd:string"/>
+<xsd:element name="Declaration">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="declarationId"/>
+<xsd:element ref="referencePeriod"/>
+<xsd:element ref="PSIId"/>
+<xsd:element ref="Function"/>
+<xsd:element ref="declarationTypeCode"/>
+<xsd:element ref="flowCode"/>
+<xsd:element ref="currencyCode"/>
+<xsd:element ref="Item" maxOccurs="unbounded"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="declarationId" type="xsd:string"/>
+<xsd:element name="referencePeriod" type="xsd:string"/>
+<xsd:element name="PSIId" type="xsd:string"/>
+<xsd:element name="Function">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="functionCode"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="functionCode" type="xsd:string"/>
+<xsd:element name="declarationTypeCode" type="xsd:string"/>
+<xsd:element name="flowCode" type="xsd:string"/>
+<xsd:element name="currencyCode" type="xsd:string"/>
+<xsd:element name="Item">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="itemNumber"/>
+<xsd:element ref="CN8" minOccurs="0"/>
+<xsd:element ref="MSConsDestCode" minOccurs="0"/>
+<xsd:element ref="countryOfOriginCode" minOccurs="0"/>
+<xsd:element ref="netMass" minOccurs="0"/>
+<xsd:element ref="quantityInSU" minOccurs="0"/>
+<xsd:element ref="invoicedAmount"/>
+<xsd:element ref="partnerId" minOccurs="0"/>
+<xsd:element ref="invoicedNumber" minOccurs="0"/>
+<xsd:element ref="statisticalProcedureCode" />
+<xsd:element ref="NatureOfTransaction" minOccurs="0"/>
+<xsd:element ref="modeOfTransportCode" minOccurs="0"/>
+<xsd:element ref="regionCode" minOccurs="0"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="itemNumber" type="xsd:integer"/>
+<xsd:element name="CN8">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="CN8Code" minOccurs="0"/>
+<xsd:element ref="SUCode" minOccurs="0"/>
+<xsd:element ref="additionalGoodsCode" minOccurs="0"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CN8Code" type="xsd:string"/>
+<xsd:element name="SUCode" type="xsd:string"/>
+<xsd:element name="additionalGoodsCode" type="xsd:string"/>
+<xsd:element name="MSConsDestCode" type="xsd:string"/>
+<xsd:element name="countryOfOriginCode" type="xsd:string"/>
+<xsd:element name="netMass" type="xsd:integer"/>
+<xsd:element name="quantityInSU" type="xsd:integer"/>
+<xsd:element name="invoicedAmount" type="xsd:integer"/>
+<xsd:element name="partnerId" type="xsd:string"/>
+<xsd:element name="invoicedNumber" type="xsd:string"/>
+<xsd:element name="statisticalProcedureCode" type="xsd:integer"/>
+<xsd:element name="NatureOfTransaction">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="natureOfTransactionACode"/>
+<xsd:element ref="natureOfTransactionBCode" minOccurs="0"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="natureOfTransactionACode" type="xsd:string"/>
+<xsd:element name="natureOfTransactionBCode" type="xsd:string"/>
+<xsd:element name="modeOfTransportCode" type="xsd:string"/>
+<xsd:element name="regionCode" type="xsd:string"/>
+<xsd:element name="date" type="xsd:date"/>
+<xsd:element name="time" type="xsd:time"/>
+</xsd:schema>

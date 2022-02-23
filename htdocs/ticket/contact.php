@@ -50,16 +50,28 @@ $source = GETPOST('source', 'alpha');
 $ligne = GETPOST('ligne', 'int');
 $lineid = GETPOST('lineid', 'int');
 
-// Protection if external user
-if ($user->socid > 0) {
-	$socid = $user->socid;
-	accessforbidden();
-}
 
 // Store current page url
-$url_page_current = dol_buildpath('/ticket/contact.php', 1);
+$url_page_current = DOL_URL_ROOT.'/ticket/contact.php';
 
 $object = new Ticket($db);
+
+
+$permissiontoadd = $user->rights->ticket->write;
+
+// Security check
+$id = GETPOST("id", 'int');
+if ($user->socid > 0) $socid = $user->socid;
+$result = restrictedArea($user, 'ticket', $object->id, '');
+
+// restrict access for externals users
+if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
+	accessforbidden();
+}
+// or for unauthorized internals users
+if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+	accessforbidden();
+}
 
 
 /*
@@ -124,8 +136,7 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 if ($id > 0 || !empty($track_id) || !empty($ref)) {
-	if ($object->fetch($id, $ref, $track_id) > 0)
-	{
+	if ($object->fetch($id, $ref, $track_id) > 0) {
 		if ($socid > 0) {
 			$object->fetch_thirdparty();
 			$head = societe_prepare_head($object->thirdparty);
@@ -134,7 +145,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 			print dol_get_fiche_end();
 		}
 
-		if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+		if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
 			$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 		} elseif ($user->socid > 0) {
 			$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
@@ -153,7 +164,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
-			$morehtmlref .= $fuser->getNomUrl(0);
+			$morehtmlref .= $fuser->getNomUrl(-1);
 		}
 		if (!empty($object->origin_email)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
@@ -161,12 +172,11 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		// Thirdparty
-		if (!empty($conf->societe->enabled))
-		{
+		if (!empty($conf->societe->enabled)) {
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 			/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-        		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
-        	}*/
+				$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+			}*/
 			$morehtmlref .= ' : ';
 			if ($action == 'editcustomer') {
 				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
@@ -176,14 +186,12 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled))
-		{
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->ticket->write)
-			{
+			if ($user->rights->ticket->write) {
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 					$morehtmlref .= ' : ';
 				}
 				if ($action == 'classify') {

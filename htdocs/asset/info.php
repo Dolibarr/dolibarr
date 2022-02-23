@@ -29,12 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'asset', $id);
 
 $object = new Asset($db);
@@ -55,8 +57,10 @@ $object->fetch($id);
 $form = new Form($db);
 
 $title = $langs->trans('Asset')." - ".$langs->trans('Info');
-$helpurl = "";
-llxHeader('', $title, $helpurl);
+
+$help_url = "";
+
+llxHeader('', $title, $help_url);
 
 $object->info($id);
 

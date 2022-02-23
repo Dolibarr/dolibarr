@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/core/modules/modOauth.class.php
  *  \ingroup    oauth
- *  \brief      File of class to describe and activate module Oauth
+ *  \brief      Description and activation file for the module Oauth
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -71,7 +71,7 @@ class modOauth extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module                    // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module                    // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 7, -2); // Minimum version of Dolibarr required by module
 		$this->conflictwith = array();
 		$this->langfiles = array("oauth");
@@ -95,11 +95,11 @@ class modOauth extends DolibarrModules
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
 		/*$r++;
-        $this->rights[$r][0] = 66000;
-        $this->rights[$r][1] = 'OauthAccess';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'read';*/
+		$this->rights[$r][0] = 66000;
+		$this->rights[$r][1] = 'OauthAccess';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'read';*/
 
 		// Main menu entries
 		$this->menus = array(); // List of menus to add
@@ -122,7 +122,6 @@ class modOauth extends DolibarrModules
 	}
 
 
-<<<<<<< HEAD
     /**
      *      Function called when module is enabled.
      *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
@@ -135,19 +134,6 @@ class modOauth extends DolibarrModules
     public function init($options = '', $force_entity = null)
     {
         global $conf;
-=======
-	/**
-	 *      Function called when module is enabled.
-	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *      It also creates data directories
-	 *
-	 *      @param      string  $options    Options when enabling module ('', 'noboxes')
-	 *      @return     int                 1 if OK, 0 if KO
-	 */
-	public function init($options = '')
-	{
-		global $conf;
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 
 		// Clean before activation
 		$this->remove($options);

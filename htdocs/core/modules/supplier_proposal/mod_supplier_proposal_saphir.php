@@ -85,9 +85,9 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -104,15 +104,14 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 */
 	public function getExample()
 	{
-	 	global $conf, $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-	 	$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = 'NotConfigured';
 		}
 		return $numExample;
@@ -134,8 +133,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		// On defini critere recherche compteur
 		$mask = $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

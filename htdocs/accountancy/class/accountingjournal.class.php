@@ -102,23 +102,20 @@ class AccountingJournal extends CommonObject
 	{
 		global $conf;
 
-		if ($rowid || $journal_code)
-		{
+		if ($rowid || $journal_code) {
 			$sql = "SELECT rowid, code, label, nature, active";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 			$sql .= " WHERE";
 			if ($rowid) {
 				$sql .= " rowid = ".((int) $rowid);
-			} elseif ($journal_code)
-			{
+			} elseif ($journal_code) {
 				$sql .= " code = '".$this->db->escape($journal_code)."'";
 				$sql .= " AND entity  = ".$conf->entity;
 			}
 
-			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$obj = $this->db->fetch_object($result);
 
 				if ($obj) {
@@ -126,7 +123,7 @@ class AccountingJournal extends CommonObject
 					$this->rowid		= $obj->rowid;
 
 					$this->code			= $obj->code;
-					$this->ref = $obj->code;
+					$this->ref			= $obj->code;
 					$this->label		= $obj->label;
 					$this->nature		= $obj->nature;
 					$this->active		= $obj->active;
@@ -173,18 +170,18 @@ class AccountingJournal extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 		$this->lines = array();
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -224,26 +221,30 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
 		$url = DOL_URL_ROOT.'/accountancy/admin/journals_list.php?id=35';
 
 		$label = '<u>'.$langs->trans("ShowAccountingJournal").'</u>';
-		if (!empty($this->code))
+		if (!empty($this->code)) {
 			$label .= '<br><b>'.$langs->trans('Code').':</b> '.$this->code;
-		if (!empty($this->label))
+		}
+		if (!empty($this->label)) {
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$langs->transnoentities($this->label);
-		if ($moretitle) $label .= ' - '.$moretitle;
+		}
+		if ($moretitle) {
+			$label .= ' - '.$moretitle;
+		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowAccountingJournal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -255,21 +256,35 @@ class AccountingJournal extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
-		if ($nourl)
-		{
+		if ($nourl) {
 			$linkstart = '';
 			$linkclose = '';
 			$linkend = '';
 		}
 
 		$label_link = $this->code;
-		if ($withlabel) $label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
+		if ($withlabel) {
+			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
+		}
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $label_link;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $label_link;
+		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array('accountingjournaldao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -299,23 +314,35 @@ class AccountingJournal extends CommonObject
 
 		$langs->loadLangs(array("accountancy"));
 
-		if ($mode == 0)
-		{
+		if ($mode == 0) {
 			$prefix = '';
-			if ($nature == 9) return $langs->trans('AccountingJournalType9');
-			elseif ($nature == 5) return $langs->trans('AccountingJournalType5');
-			elseif ($nature == 4) return $langs->trans('AccountingJournalType4');
-			elseif ($nature == 3) return $langs->trans('AccountingJournalType3');
-			elseif ($nature == 2) return $langs->trans('AccountingJournalType2');
-			elseif ($nature == 1) return $langs->trans('AccountingJournalType1');
-		} elseif ($mode == 1)
-		{
-			if ($nature == 9) return $langs->trans('AccountingJournalType9');
-			elseif ($nature == 5) return $langs->trans('AccountingJournalType5');
-			elseif ($nature == 4) return $langs->trans('AccountingJournalType4');
-			elseif ($nature == 3) return $langs->trans('AccountingJournalType3');
-			elseif ($nature == 2) return $langs->trans('AccountingJournalType2');
-			elseif ($nature == 1) return $langs->trans('AccountingJournalType1');
+			if ($nature == 9) {
+				return $langs->trans('AccountingJournalType9');
+			} elseif ($nature == 5) {
+				return $langs->trans('AccountingJournalType5');
+			} elseif ($nature == 4) {
+				return $langs->trans('AccountingJournalType4');
+			} elseif ($nature == 3) {
+				return $langs->trans('AccountingJournalType3');
+			} elseif ($nature == 2) {
+				return $langs->trans('AccountingJournalType2');
+			} elseif ($nature == 1) {
+				return $langs->trans('AccountingJournalType1');
+			}
+		} elseif ($mode == 1) {
+			if ($nature == 9) {
+				return $langs->trans('AccountingJournalType9');
+			} elseif ($nature == 5) {
+				return $langs->trans('AccountingJournalType5');
+			} elseif ($nature == 4) {
+				return $langs->trans('AccountingJournalType4');
+			} elseif ($nature == 3) {
+				return $langs->trans('AccountingJournalType3');
+			} elseif ($nature == 2) {
+				return $langs->trans('AccountingJournalType2');
+			} elseif ($nature == 1) {
+				return $langs->trans('AccountingJournalType1');
+			}
 		}
 	}
 }

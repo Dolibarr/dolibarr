@@ -1,11 +1,16 @@
 # Dolibarr language file - Source file is en_US - products
 Reference=Artikelcode
+ProductVatMassChange=Algemene BTW update
+ProductVatMassChangeDesc=Deze tool update de BTW-tarieven op <b><u>ALLE</u></b> producten en diensten!
+ProductAccountancyBuyExportCode=Boekhoudcode (inkoop importeren)
+ServicesOnSale=Diensten voor verkoop
+ServicesOnPurchase=Diensten voor inkoop
 OnSell=Te koop
 OnBuy=Te koop
 NotOnSell=Niet meer beschikbaar
 ProductStatusNotOnSell=Niet meer verkrijgbaar
 ProductStatusOnSellShort=Te koop
+SupplierRef=Leverancier ref
 ListOfStockMovements=Voorradenlijst
-CustomCode=Customs / Commodity / HS code
 ProductSellByQuarterHT=Bruto omzetcijfer per trimester
 ServiceSellByQuarterHT=Bruto omzetcijfer per trimester

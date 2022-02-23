@@ -36,7 +36,7 @@ class Members extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'morphy',
 		'typeid'
 	);
@@ -204,7 +204,7 @@ class Members extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $typeid     ID of the type of member
-	 * @param  int    $category   Use this param to filter list by category
+	 * @param int    	$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
 	 * @return array                Array of member objects
@@ -228,19 +228,20 @@ class Members extends DolibarrApi
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('adherent').')';
 		if (!empty($typeid)) {
-			$sql .= ' AND t.fk_adherent_type='.$typeid;
+			$sql .= ' AND t.fk_adherent_type='.((int) $typeid);
 		}
 		// Select members of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
-			$sql .= " AND c.fk_member = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category);
+			$sql .= " AND c.fk_member = t.rowid";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -325,9 +326,11 @@ class Members extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			// Process the status separately because it must be updated using
-			// the validate() and resiliate() methods of the class Adherent.
+			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
 				if ($value == '0') {
 					$result = $member->resiliate(DolibarrApiAccess::$user);
@@ -338,6 +341,11 @@ class Members extends DolibarrApi
 					$result = $member->validate(DolibarrApiAccess::$user);
 					if ($result < 0) {
 						throw new RestException(500, 'Error when validating member: '.$member->error);
+					}
+				} elseif ($value == '-2') {
+					$result = $member->exclude(DolibarrApiAccess::$user);
+					if ($result < 0) {
+						throw new RestException(500, 'Error when excluding member: '.$member->error);
 					}
 				}
 			} else {
@@ -399,8 +407,9 @@ class Members extends DolibarrApi
 	{
 		$member = array();
 		foreach (Members::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$member[$field] = $data[$field];
 		}
 		return $member;

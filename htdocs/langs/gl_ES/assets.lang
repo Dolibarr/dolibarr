@@ -21,7 +21,7 @@ NewAsset = Novo activo
 AccountancyCodeAsset = Código contable (activo)
 AccountancyCodeDepreciationAsset = Código contable (conta depreciación activo)
 AccountancyCodeDepreciationExpense = Código contable (conta depreciación gastos)
-NewAssetType=Nuevo tipo de activo
+NewAssetType=Novo tipo de activo
 AssetsTypeSetup=Configuración tipos de activos
 AssetTypeModified=Tipo de activo modificado
 AssetType=Tipo de activo
@@ -34,7 +34,7 @@ ShowTypeCard=Ver tipo '%s'
 # Module label 'ModuleAssetsName'
 ModuleAssetsName = Activos
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Descrición ben
+ModuleAssetsDesc = Descrición de activos
 
 #
 # Admin page
@@ -61,5 +61,5 @@ MenuListTypeAssets = Listaxe
 #
 # Module
 #
-NewAssetType=Nuevo tipo de activo
+NewAssetType=Novo tipo de activo
 NewAsset=Novo activo

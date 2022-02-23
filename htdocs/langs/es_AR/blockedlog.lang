@@ -24,7 +24,6 @@ logBILL_SENTBYMAIL=Factura de cliente enviada por corre
 logBILL_DELETE=Borrado lógico de una factura de cliente
 logDON_DELETE=Borrado lógico de una donación
 logMEMBER_SUBSCRIPTION_DELETE=Borrado lógico de una suscripción de miembro
-logCASHCONTROL_VALIDATE=Registro de flujo de efectivo
 ListOfTrackedEvents=Lista de eventos rastreados
 logDOC_DOWNLOAD=Descarga de un documento validado para imprimir o enviar
 DataOfArchivedEvent=Datos completos del evento archivado

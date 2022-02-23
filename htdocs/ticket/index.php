@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -44,17 +46,18 @@ $msg_id = GETPOST('msg_id', 'int');
 
 $action = GETPOST('action', 'aZ09');
 
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$userid = $user->id;
 
 // Security check
 $result = restrictedArea($user, 'ticket', 0, '', '', '', '');
 
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
-//$startyear=$year-2;
-$startyear = $year - 1;
+$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 $object = new Ticket($db);
@@ -70,6 +73,7 @@ $object = new Ticket($db);
 /*
  * View
  */
+$resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 $form = new Form($db);
 $tickesupstatic = new Ticket($db);
@@ -77,7 +81,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback = '';
-print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
+print load_fiche_titre($langs->trans('TicketsIndex'), $resultboxes['selectboxlist'], 'ticket');
 
 
 $dir = '';
@@ -93,7 +97,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOST($param_year, 'int');
 	$shownb = GETPOST($param_shownb, 'alpha');
 	$showtot = GETPOST($param_showtot, 'alpha');
-} else {
+} elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
 	$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
 	$endyear = $tmparray['year'];
 	$shownb = $tmparray['shownb'];
@@ -101,6 +105,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 }
 if (empty($shownb) && empty($showtot)) {
 	$showtot = 1;
+	$shownb = 0;
 }
 
 $nowarray = dol_getdate(dol_now(), true);
@@ -109,10 +114,21 @@ if (empty($endyear)) {
 }
 
 $startyear = $endyear - 1;
-$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
-$HEIGHT = '200';
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+// Change default WIDHT and HEIGHT (we need a smaller than default for both desktop and smartphone)
+$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
+if (empty($conf->dol_optimize_smallscreen)) {
+	$HEIGHT = '200';
+} else {
+	$HEIGHT = '160';
+}
+
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 /*
  * Statistics area
@@ -120,24 +136,26 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $tick = array(
 	'unread' => 0,
 	'read' => 0,
+	'needmoreinfo' => 0,
 	'answered' => 0,
 	'assigned' => 0,
 	'inprogress' => 0,
 	'waiting' => 0,
 	'closed' => 0,
+	'canceled' => 0,
 	'deleted' => 0,
 );
 
 $sql = "SELECT t.fk_statut, COUNT(t.fk_statut) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 // External users restriction
@@ -146,7 +164,7 @@ if ($user->socid > 0) {
 } else {
 	// For internals users,
 	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign = ".$user->id;
+		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= " GROUP BY t.fk_statut";
@@ -181,32 +199,32 @@ if ($result) {
 		}
 	}
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	$dataseries = array();
 	$colorseries = array();
 
-	$dataseries[] = array('label' => $langs->trans("Unread"), 'data' => round($tick['unread']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
 	$colorseries[Ticket::STATUS_NOT_READ] = '-'.$badgeStatus0;
-	$dataseries[] = array('label' => $langs->trans("Read"), 'data' => round($tick['read']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_READ]), 'data' => round($tick['read']));
 	$colorseries[Ticket::STATUS_READ] = $badgeStatus1;
-	$dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_ASSIGNED]), 'data' => round($tick['assigned']));
 	$colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
-	$dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
-	$dataseries[] = array('label' => $langs->trans("Suspended"), 'data' => round($tick['waiting']));
-	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus3;
-	$dataseries[] = array('label' => $langs->trans("NeedMoreInformation"), 'data' => round($tick['needmoreinfo']));
-	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = $badgeStatus9;
-	$dataseries[] = array('label' => $langs->trans("Canceled"), 'data' => round($tick['canceled']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
+	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
+	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
 	$colorseries[Ticket::STATUS_CANCELED] = $badgeStatus9;
-	$dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CLOSED]), 'data' => round($tick['closed']));
 	$colorseries[Ticket::STATUS_CLOSED] = $badgeStatus6;
 } else {
 	dol_print_error($db);
 }
 
-$stringtoshow = '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();
@@ -279,11 +297,16 @@ print '</div>';
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '<br>'."\n";
 
+print $resultboxes['boxlista'];
+
+print '</div>'."\n";
+
+print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 /*
- * Latest tickets
+ * Latest unread tickets
  */
 
 $max = 10;
@@ -296,22 +319,22 @@ $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= " AND t.fk_statut=0";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 if ($user->socid > 0) {
 	$sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
 	// Restricted to assigned user only
-	if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign=".$user->id;
+	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
+		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= $db->order("t.datec", "DESC");
@@ -367,8 +390,10 @@ if ($result) {
 
 			// Category
 			print '<td class="nowrap">';
-			$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			if (!empty($obp->category_code)) {
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
+				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			}
 			//print $objp->category_label;
 			print "</td>";
 
@@ -389,20 +414,31 @@ if ($result) {
 
 		$db->free($result);
 	} else {
-		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</span></td></tr>';
 	}
 
 	print "</table>";
 	print '</div>';
+
+	print '<br>';
 } else {
 	dol_print_error($db);
 }
 
-print '</div></div></div>';
+
+print $resultboxes['boxlistb'];
+
+print '</div>';
+print '</div>';
+print '</div>';
+
+
 print '<div style="clear:both"></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+
 
 // End of page
 llxFooter('');

@@ -17,14 +17,13 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE contrat/tpl/linkedopjectblock.tpl.php -->\n";
 
 
 global $user;
@@ -37,24 +36,24 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("contracts");
 
 $total = 0; $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink)
-{
+foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
 	$trclass = 'oddeven';
-	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
+		$trclass .= ' liste_sub_total';
+	}
 	?>
 <tr class="<?php echo $trclass; ?>">
-    <td><?php echo $langs->trans("Contract"); ?></td>
-    <td><?php echo $objectlink->getNomUrl(1); ?></td>
-    <td></td>
+	<td><?php echo $langs->trans("Contract"); ?></td>
+	<td class="nowraponall"><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
-    <td class="right"><?php
+	<td class="right"><?php
 	// Price of contract is not shown by default because a contract is a list of service with
 	// start and end date that change with time andd that may be different that the period of reference for price.
 	// So price of a contract does often means nothing. Prices is on the different invoices done on same contract.
-	if ($user->rights->contrat->lire && empty($conf->global->CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE))
-	{
+	if ($user->rights->contrat->lire && empty($conf->global->CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE)) {
 		$totalcontrat = 0;
 		foreach ($objectlink->lines as $linecontrat) {
 			$totalcontrat = $totalcontrat + $linecontrat->total_ht;
@@ -63,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink)
 		echo price($totalcontrat);
 	} ?></td>
 	<td class="right"><?php echo $objectlink->getLibStatut(7); ?></td>
-	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 	<?php
 }

@@ -36,7 +36,6 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_N
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_FEATURES_LEVEL','0','chaine','Level of features to show: -1=stable+deprecated, 0=stable only (default), 1=stable+experimental, 2=stable+experimental+development',1,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAILING_LIMIT_SENDBYWEB','25','chaine','Number of targets to defined packet size when sending mass email',1,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_ENABLE_LOG_TO_HTML','0','chaine','If this option is set to 1, it is possible to see log output at end of HTML sources by adding paramater logtohtml=1 on URL. Module log must also be enabled.',1,0);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SECURITY_CSRF_WITH_TOKEN','0','chaine','If this option is set to 1, a CSRF protection using an antiCSRF token is added.',1,0);
 
 -- Hidden and common to all entities
 insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_HANDLERS','["mod_syslog_file"]','chaine','Which logger to use',0,0);
@@ -56,7 +55,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 --
 -- IHM
 --
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Maximum length of lists',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','20','chaine','Maximum length of lists',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Maximum length of short lists',0,0);
 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENU_STANDARD','eldy_menu.php','chaine','Menu manager for internal users',0,0);
@@ -85,8 +84,8 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_EXP
 --
 -- Mail Mailing
 --
-insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux ike system',1);
-insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','dolibarr@domain.com','chaine','EMail emmetteur pour les envois d emailings',0);
+--insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux like system',1);
+insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','no-reply@mydomain.com','chaine','EMail emmetteur pour les envois d emailings',0);
 
 
 --
@@ -102,4 +101,10 @@ insert into llx_const (name, value, type, visible, entity) VALUES ('USER_ADDON_P
 -- PRODUCTS
 --
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRICE_BASE_TYPE', 0, 'HT', 'string', 0);
+
+
+--
+-- Membership
+--
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('ADHERENT_LOGIN_NOT_REQUIRED', 0, '1', 'string', 0);
 

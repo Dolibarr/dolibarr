@@ -21,7 +21,7 @@
  *  \brief      cron module descriptor.
  *  \file       htdocs/core/modules/modCron.class.php
  *  \ingroup    cron
- *  \brief      Description and activation file for module Jobs
+ *  \brief      Description and activation file for the module Jobs
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -55,7 +55,7 @@ class modCron extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
-		$this->picto = 'technic';
+		$this->picto = 'cron';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -91,11 +91,13 @@ class modCron extends DolibarrModules
 
 		// Boxes
 		//------
-		$this->boxes = array();
+		$this->boxes = array(
+			0 => array('file' => 'box_scheduled_jobs.php', 'enabledbydefaulton' => 'Home')
+		);
 
 		// Cronjobs
 		$this->cronjobs = array(
-			0=>array('entity'=>0, 'label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>50, 'status'=>1, 'test'=>true),
+			0=>array('entity'=>0, 'label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'tempfilesold+logfiles', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>50, 'status'=>1, 'test'=>true),
 			1=>array('entity'=>0, 'label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>90, 'status'=>0, 'test'=>in_array($this->db->type, array('mysql', 'mysqli'))),
 			// 1=>array('entity'=>0, 'label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
 		);

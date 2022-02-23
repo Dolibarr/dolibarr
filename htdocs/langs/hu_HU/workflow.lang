@@ -13,6 +13,7 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=A kapcsolt forrásból származó ja
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=A kapcsolt forrásból származó értékesítési megrendelést számlázottra minősíti, ha az ügyfélszámla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=A kapcsolt forrásból származó értékesítési megrendelést számlázottra minősíti, ha az ügyfélszámla kifizetettre van állítva (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=A kapcsolt forrásból származó értékesítési megrendelést kiszállítottként minősíti, ha a kiszállítás érvényesítve van (és ha az összes szállítmány által szállított mennyiség megegyezik a frissített megrendelésével)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=A kapcsolt forrásból származó szállítói javaslatot számlázottként minősíti, ha a szállítói számla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó ajánlat teljes összegével)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=A kapcsolt forrásból származó megrendelést számlázottra minősíti, ha a szállítói számla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
@@ -21,3 +22,5 @@ descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked sup
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Automatikus létrehozás
 AutomaticClassification=Automatikus minősítés
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

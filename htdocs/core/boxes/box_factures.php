@@ -81,7 +81,7 @@ class box_factures extends ModeleBoxes
 
 		$langs->load("bills");
 
-		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."CustomerBills", $max);
+		$text = $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit'=> dol_strlen($text)
@@ -89,27 +89,38 @@ class box_factures extends ModeleBoxes
 
 		if ($user->rights->facture->lire) {
 			$sql = "SELECT f.rowid as facid";
-			$sql .= ", f.ref, f.type, f.total as total_ht";
-			$sql .= ", f.tva as total_tva";
+			$sql .= ", f.ref, f.type, f.total_ht";
+			$sql .= ", f.total_tva";
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.datef as df";
-			$sql .= ", f.paye, f.fk_statut, f.datec, f.tms";
-			$sql .= ", s.rowid as socid, s.nom as name, s.code_client, s.email, s.tva_intra, s.code_compta, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
+			$sql .= ", f.paye, f.fk_statut as status, f.datec, f.tms";
 			$sql .= ", f.date_lim_reglement as datelimite";
+			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= ")";
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid)	$sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
-			else $sql .= " ORDER BY f.tms DESC, f.ref DESC ";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";
+			} else {
+				$sql .= " ORDER BY f.tms DESC, f.ref DESC ";
+			}
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 				$now = dol_now();
 
@@ -128,14 +139,21 @@ class box_factures extends ModeleBoxes
 					$facturestatic->total_ht = $objp->total_ht;
 					$facturestatic->total_tva = $objp->total_tva;
 					$facturestatic->total_ttc = $objp->total_ttc;
-					$facturestatic->statut = $objp->fk_statut;
+					$facturestatic->statut = $objp->status;
+					$facturestatic->status = $objp->status;
 					$facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
+					$facturestatic->alreadypaid = $objp->paye;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
+					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->tva_intra = $objp->tva_intra;
+					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->client = $objp->client;
+					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
+					$societestatic->tva_intra = $objp->tva_intra;
 					$societestatic->idprof1 = $objp->idprof1;
 					$societestatic->idprof2 = $objp->idprof2;
 					$societestatic->idprof3 = $objp->idprof3;
@@ -145,7 +163,7 @@ class box_factures extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -162,28 +180,29 @@ class box_factures extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
+						'td' => 'class="right nowraponall amount"',
 						'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3),
+						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $objp->paye),
 					);
 
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoRecordedInvoices"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

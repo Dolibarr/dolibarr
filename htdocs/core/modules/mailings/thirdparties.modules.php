@@ -72,29 +72,24 @@ class mailing_thirdparties extends MailingTargets
 
 		$addDescription = "";
 		// Select the third parties from category
-		if (empty($_POST['filter']))
-		{
+		if (!GETPOST('filter')) {
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, null as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		} else {
 			$addFilter = "";
 			if (GETPOSTISSET("filter_client") && GETPOST("filter_client") <> '-1') {
 				$addFilter .= " AND s.client=".((int) GETPOST("filter_client", 'int'));
 				$addDescription = $langs->trans('ProspectCustomer')."=";
-				if ($_POST["filter_client"] == 0)
-				{
+				if (GETPOST("filter_client") == 0) {
 					$addDescription .= $langs->trans('NorProspectNorCustomer');
-				} elseif ($_POST["filter_client"] == 1)
-				{
+				} elseif (GETPOST("filter_client") == 1) {
 					$addDescription .= $langs->trans('Customer');
-				} elseif ($_POST["filter_client"] == 2)
-				{
+				} elseif (GETPOST("filter_client") == 2) {
 					$addDescription .= $langs->trans('Prospect');
-				} elseif ($_POST["filter_client"] == 3)
-				{
+				} elseif (GETPOST("filter_client") == 3) {
 					$addDescription .= $langs->trans('ProspectCustomer');
 				} else {
 					$addDescription .= "Unknown status ".GETPOST("filter_client");
@@ -117,28 +112,31 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 			$sql .= " AND cs.fk_soc = s.rowid";
 			$sql .= " AND c.rowid = cs.fk_categorie";
-			$sql .= " AND c.rowid=".((int) GETPOST('filter', 'int'));
+			if (GETPOST('filter', 'int') > 0) {
+				$sql .= " AND c.rowid=".((int) GETPOST('filter', 'int'));
+			}
 			$sql .= $addFilter;
 			$sql .= " UNION ";
 			$sql .= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_fournisseur as cs, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 			$sql .= " AND cs.fk_soc = s.rowid";
 			$sql .= " AND c.rowid = cs.fk_categorie";
-			$sql .= " AND c.rowid=".((int) GETPOST('filter', 'int'));
+			if (GETPOST('filter', 'int') > 0) {
+				$sql .= " AND c.rowid=".((int) GETPOST('filter', 'int'));
+			}
 			$sql .= $addFilter;
 		}
 		$sql .= " ORDER BY email";
 
 		// Stock recipients emails into targets table
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$j = 0;
@@ -146,14 +144,11 @@ class mailing_thirdparties extends MailingTargets
 			dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
 			$old = '';
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email)
-				{
+				if ($old <> $obj->email) {
 					$otherTxt = ($obj->label ? $langs->transnoentities("Category").'='.$obj->label : '');
-					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0)
-					{
+					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
 					}
 					$otherTxt .= $addDescription;
@@ -215,7 +210,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE s.email != ''";
+		$sql .= " WHERE s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
 
 		// La requete doit retourner un champ "nb" pour etre comprise
@@ -235,8 +230,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$langs->load("companies");
 
-		$s = $langs->trans("Categories").': ';
-		$s .= '<select name="filter" class="flat">';
+		$s = '<select id="filter_thirdparties" name="filter" class="flat">';
 
 		// Show categories
 		$sql = "SELECT rowid, label, type, visible";
@@ -248,36 +242,46 @@ class mailing_thirdparties extends MailingTargets
 
 		//print $sql;
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (empty($conf->categorie->enabled)) $num = 0; // Force empty list if category module is not enabled
+			if (empty($conf->categorie->enabled)) {
+				$num = 0; // Force empty list if category module is not enabled
+			}
 
-			if ($num) $s .= '<option value="0">&nbsp;</option>';
-			else $s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+			if ($num) {
+				$s .= '<option value="-1">'.$langs->trans("Categories").'</option>';
+			} else {
+				$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+			}
 
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
 				$type = '';
-				if ($obj->type == 1) $type = $langs->trans("Supplier");
-				if ($obj->type == 2) $type = $langs->trans("Customer");
+				if ($obj->type == 1) {
+					$type = $langs->trans("Supplier");
+				}
+				if ($obj->type == 2) {
+					$type = $langs->trans("Customer");
+				}
 				$s .= '<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
-				if ($type) $s .= ' ('.$type.')';
+				if ($type) {
+					$s .= ' ('.$type.')';
+				}
 				$s .= '</option>';
 				$i++;
 			}
+			$s .= ajax_combobox("filter_thirdparties");
 		} else {
 			dol_print_error($this->db);
 		}
 
 		$s .= '</select> ';
-		$s .= $langs->trans('ProspectCustomer');
-		$s .= ': <select name="filter_client" class="flat">';
-		$s .= '<option value="-1">&nbsp;</option>';
+
+		$s .= '<select id="filter_client_thirdparties" name="filter_client_thirdparties" class="flat">';
+		$s .= '<option value="-1">'.$langs->trans('ProspectCustomer').'</option>';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
 			$s .= '<option value="2">'.$langs->trans('Prospect').'</option>';
 		}
@@ -290,13 +294,14 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';
 
 		$s .= '</select> ';
+		$s .= ajax_combobox("filter_client_thirdparties");
 
-		$s .= $langs->trans("Status");
-		$s .= ': <select name="filter_status" class="flat">';
-		$s .= '<option value="-1">&nbsp;</option>';
-		$s .= '<option value="1" selected>'.$langs->trans("Enabled").'</option>';
+		$s .= ' <select id="filter_status_thirdparties" name="filter_status" class="flat">';
+		$s .= '<option value="-1">'.$langs->trans("Status").'</option>';
+		$s .= '<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s .= '</select>';
+		$s .= ajax_combobox("filter_status_thirdparties");
 		return $s;
 	}
 

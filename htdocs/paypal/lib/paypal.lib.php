@@ -82,30 +82,29 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 	//'
 	//'-------------------------------------------------
 
-	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY = 'integral';
+	if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) {
+		$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY = 'integral';
+	}
 
 	$solutionType = 'Sole';
 	$landingPage = 'Billing';
 	// For payment with Paypal only
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
-	{
+	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly') {
 		$solutionType = 'Mark';
 		$landingPage = 'Login';
 	}
 	// For payment with Credit card or Paypal
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
-	{
+	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral') {
 		$solutionType = 'Sole';
 		$landingPage = 'Billing';
 	}
 	// For payment with Credit card
-	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'cconly')
-	{
+	if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'cconly') {
 		$solutionType = 'Sole';
 		$landingPage = 'Billing';
 	}
 
-	dol_syslog("expresscheckout redirect with callSetExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
+	dol_syslog("print_paypal_redirect expresscheckout redirect with callSetExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
 	$resArray = callSetExpressCheckout(
 		$paymentAmount,
 		$currencyCodeType,
@@ -127,13 +126,15 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$desc
 	);
 
+	dol_syslog("print_paypal_redirect resArray=".var_export($resArray, true), LOG_DEBUG);
+
 	$ack = strtoupper($resArray["ACK"]);
-	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING")
-	{
+	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
 		$token = $resArray["TOKEN"];
 
 		// Redirect to paypal.com here
 		$payPalURL = $API_Url.$token;
+		dol_syslog("Redirect to ".$payPalURL, LOG_INFO);
 		header("Location: ".$payPalURL);
 		exit;
 	} else {
@@ -143,8 +144,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
 		$ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
 
-		if ($ErrorCode == 10729)
-		{
+		if ($ErrorCode == 10729) {
 			$mesg .= "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
 		} else {
 			$mesg = $langs->trans('SetExpressCheckoutAPICallFailed')."<br>\n";
@@ -213,26 +213,25 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	//$nvpstr = $nvpstr . "&VERSION=".$API_version;				// Already added by hash_call
 	$nvpstr = $nvpstr."&RETURNURL=".urlencode($returnURL);
 	$nvpstr = $nvpstr."&CANCELURL=".urlencode($cancelURL);
-	if (!empty($conf->global->PAYPAL_ALLOW_NOTES))
-	{
+	if (!empty($conf->global->PAYPAL_ALLOW_NOTES)) {
 		$nvpstr = $nvpstr."&ALLOWNOTE=0";
 	}
-	if (empty($conf->global->PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS))
-	{
+	if (empty($conf->global->PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS)) {
 		$nvpstr = $nvpstr."&NOSHIPPING=1"; // An empty or not complete shipping address will be accepted
 	} else {
 		$nvpstr = $nvpstr."&NOSHIPPING=0"; // A valid shipping address is required (full required fields mandatory)
 	}
 	$nvpstr = $nvpstr."&SOLUTIONTYPE=".urlencode($solutionType);
 	$nvpstr = $nvpstr."&LANDINGPAGE=".urlencode($landingPage);
-	if (!empty($conf->global->PAYPAL_CUSTOMER_SERVICE_NUMBER))
-	{
+	if (!empty($conf->global->PAYPAL_CUSTOMER_SERVICE_NUMBER)) {
 		$nvpstr = $nvpstr."&CUSTOMERSERVICENUMBER=".urlencode($conf->global->PAYPAL_CUSTOMER_SERVICE_NUMBER); // Hotline phone number
 	}
 
 	$paypalprefix = 'PAYMENTREQUEST_0_';
 	//$paypalprefix = '';
-	if (!empty($paypalprefix) && $paymentType == 'Sole') $paymentType = 'Sale';
+	if (!empty($paypalprefix) && $paymentType == 'Sole') {
+		$paymentType = 'Sale';
+	}
 
 	$nvpstr = $nvpstr."&AMT=".urlencode($paymentAmount); // Total for all elements
 
@@ -255,11 +254,14 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$nvpstr = $nvpstr."&".$paypalprefix."SHIPTOCOUNTRYCODE=".urlencode($shipToCountryCode);
 	$nvpstr = $nvpstr."&".$paypalprefix."SHIPTOZIP=".urlencode($shipToZip);
 	$nvpstr = $nvpstr."&".$paypalprefix."PHONENUM=".urlencode($phoneNum);
-	if (!empty($email)) $nvpstr = $nvpstr."&".$paypalprefix."EMAIL=".urlencode($email); // EMAIL deprecated by paypal -> PAYMENTREQUEST_n_EMAIL
-	if (!empty($desc))  $nvpstr = $nvpstr."&".$paypalprefix."DESC=".urlencode($desc); // DESC deprecated by paypal -> PAYMENTREQUEST_n_DESC
+	if (!empty($email)) {
+		$nvpstr = $nvpstr."&".$paypalprefix."EMAIL=".urlencode($email); // EMAIL deprecated by paypal -> PAYMENTREQUEST_n_EMAIL
+	}
+	if (!empty($desc)) {
+		$nvpstr = $nvpstr."&".$paypalprefix."DESC=".urlencode($desc); // DESC deprecated by paypal -> PAYMENTREQUEST_n_DESC
+	}
 
-	if (!empty($conf->global->PAYPAL_LOGOIMG) && $mysoc->logo)
-	{
+	if (!empty($conf->global->PAYPAL_LOGOIMG) && $mysoc->logo) {
 		global $dolibarr_main_url_root;
 
 		// Define $urlwithroot
@@ -270,19 +272,17 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 		$urllogo = $urlwithroot."/viewimage.php?modulepart=mycompany&file=".urlencode('logos/'.$mysoc->logo);
 		$nvpstr = $nvpstr."&LOGOIMG=".urlencode($urllogo);
 	}
-	if (!empty($conf->global->PAYPAL_BRANDNAME))
-	{
+	if (!empty($conf->global->PAYPAL_BRANDNAME)) {
 		$nvpstr = $nvpstr."&BRANDNAME=".urlencode($conf->global->PAYPAL_BRANDNAME); // BRANDNAME
 	}
-	if (!empty($conf->global->PAYPAL_NOTETOBUYER))
-	{
+	if (!empty($conf->global->PAYPAL_NOTETOBUYER)) {
 		$nvpstr = $nvpstr."&NOTETOBUYER=".urlencode($conf->global->PAYPAL_NOTETOBUYER); // PAYPAL_NOTETOBUYER
 	}
 
 	$_SESSION["FinalPaymentAmt"] = $paymentAmount;
 	$_SESSION["currencyCodeType"] = $currencyCodeType;
 	$_SESSION["PaymentType"] = $paymentType; // 'Mark', 'Sole'
-	$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR']; // Payer ip
+	$_SESSION['ipaddress'] = getUserRemoteIP(); // Payer ip
 
 	//'---------------------------------------------------------------------------------------------------------------
 	//' Make the API call to PayPal
@@ -291,8 +291,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	//'---------------------------------------------------------------------------------------------------------------
 	$resArray = hash_call("SetExpressCheckout", $nvpstr);
 	$ack = strtoupper($resArray["ACK"]);
-	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING")
-	{
+	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
 		$token = urldecode($resArray["TOKEN"]);
 		$_SESSION['TOKEN'] = $token;
 	}
@@ -336,8 +335,7 @@ function getDetails($token)
 	//'---------------------------------------------------------------------------
 	$resArray = hash_call("GetExpressCheckoutDetails", $nvpstr);
 	$ack = strtoupper($resArray["ACK"]);
-	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING")
-	{
+	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
 		$_SESSION['payer_id'] = $resArray['PAYERID'];
 	}
 	return $resArray;
@@ -359,9 +357,9 @@ function getDetails($token)
 function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag)
 {
 	/* Gather the information to make the final call to
-     finalize the PayPal payment.  The variable nvpstr
-     holds the name value pairs
-     */
+	 finalize the PayPal payment.  The variable nvpstr
+	 holds the name value pairs
+	 */
 
 	//declaring of global variables
 	global $conf, $langs;
@@ -378,14 +376,14 @@ function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipad
 	$nvpstr .= '&INVNUM='.urlencode($tag);
 
 	/* Make the call to PayPal to finalize payment
-     If an error occured, show the resulting errors
-     */
+	 If an error occured, show the resulting errors
+	 */
 	$resArray = hash_call("DoExpressCheckoutPayment", $nvpstr);
 
 	/* Display the API response back to the browser.
-     If the response from PayPal was a success, display the response parameters'
-     If the response was an error, display the errors received using APIError.php.
-     */
+	 If the response from PayPal was a success, display the response parameters'
+	 If the response was an error, display the errors received using APIError.php.
+	 */
 	$ack = strtoupper($resArray["ACK"]);
 
 	return $resArray;
@@ -413,32 +411,32 @@ function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipad
 /*
 function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCardNumber, $expDate, $cvv2, $firstName, $lastName, $street, $city, $state, $zip, $countryCode, $currencyCode, $tag)
 {
-    //declaring of global variables
-    global $conf, $langs;
-    global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
-    global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
+	//declaring of global variables
+	global $conf, $langs;
+	global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
+	global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
-    //Construct the parameter string that describes DoDirectPayment
-    $nvpstr = '';
-    $nvpstr = $nvpstr . "&AMT=" . urlencode($paymentAmount);              // deprecated by paypal
-    $nvpstr = $nvpstr . "&CURRENCYCODE=" . urlencode($currencyCode);
-    $nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);      // deprecated by paypal
-    $nvpstr = $nvpstr . "&CREDITCARDTYPE=" . urlencode($creditCardType);
-    $nvpstr = $nvpstr . "&ACCT=" . urlencode($creditCardNumber);
-    $nvpstr = $nvpstr . "&EXPDATE=" . urlencode($expDate);
-    $nvpstr = $nvpstr . "&CVV2=" . urlencode($cvv2);
-    $nvpstr = $nvpstr . "&FIRSTNAME=" . urlencode($firstName);
-    $nvpstr = $nvpstr . "&LASTNAME=" . urlencode($lastName);
-    $nvpstr = $nvpstr . "&STREET=" . urlencode($street);
-    $nvpstr = $nvpstr . "&CITY=" . urlencode($city);
-    $nvpstr = $nvpstr . "&STATE=" . urlencode($state);
-    $nvpstr = $nvpstr . "&COUNTRYCODE=" . urlencode($countryCode);
-    $nvpstr = $nvpstr . "&IPADDRESS=" . $_SERVER['REMOTE_ADDR'];
-    $nvpstr = $nvpstr . "&INVNUM=" . urlencode($tag);
+	//Construct the parameter string that describes DoDirectPayment
+	$nvpstr = '';
+	$nvpstr = $nvpstr . "&AMT=" . urlencode($paymentAmount);              // deprecated by paypal
+	$nvpstr = $nvpstr . "&CURRENCYCODE=" . urlencode($currencyCode);
+	$nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);      // deprecated by paypal
+	$nvpstr = $nvpstr . "&CREDITCARDTYPE=" . urlencode($creditCardType);
+	$nvpstr = $nvpstr . "&ACCT=" . urlencode($creditCardNumber);
+	$nvpstr = $nvpstr . "&EXPDATE=" . urlencode($expDate);
+	$nvpstr = $nvpstr . "&CVV2=" . urlencode($cvv2);
+	$nvpstr = $nvpstr . "&FIRSTNAME=" . urlencode($firstName);
+	$nvpstr = $nvpstr . "&LASTNAME=" . urlencode($lastName);
+	$nvpstr = $nvpstr . "&STREET=" . urlencode($street);
+	$nvpstr = $nvpstr . "&CITY=" . urlencode($city);
+	$nvpstr = $nvpstr . "&STATE=" . urlencode($state);
+	$nvpstr = $nvpstr . "&COUNTRYCODE=" . urlencode($countryCode);
+	$nvpstr = $nvpstr . "&IPADDRESS=" . getUserRemotIP();
+	$nvpstr = $nvpstr . "&INVNUM=" . urlencode($tag);
 
-    $resArray=hash_call("DoDirectPayment", $nvpstr);
+	$resArray=hash_call("DoDirectPayment", $nvpstr);
 
-    return $resArray;
+	return $resArray;
 }
 */
 
@@ -459,8 +457,7 @@ function hash_call($methodName, $nvpStr)
 
 	// TODO problem with triggers
 	$API_version = "98.0";
-	if (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'alpha'))		// We can force sand box with param 'forcesandbox'
-	{
+	if (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'alpha')) {		// We can force sand box with param 'forcesandbox'
 		$API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 		$API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
 	} else {
@@ -470,13 +467,21 @@ function hash_call($methodName, $nvpStr)
 
 	// Clean parameters
 	$PAYPAL_API_USER = "";
-	if (!empty($conf->global->PAYPAL_API_USER)) $PAYPAL_API_USER = $conf->global->PAYPAL_API_USER;
+	if (!empty($conf->global->PAYPAL_API_USER)) {
+		$PAYPAL_API_USER = $conf->global->PAYPAL_API_USER;
+	}
 	$PAYPAL_API_PASSWORD = "";
-	if (!empty($conf->global->PAYPAL_API_PASSWORD)) $PAYPAL_API_PASSWORD = $conf->global->PAYPAL_API_PASSWORD;
+	if (!empty($conf->global->PAYPAL_API_PASSWORD)) {
+		$PAYPAL_API_PASSWORD = $conf->global->PAYPAL_API_PASSWORD;
+	}
 	$PAYPAL_API_SIGNATURE = "";
-	if (!empty($conf->global->PAYPAL_API_SIGNATURE)) $PAYPAL_API_SIGNATURE = $conf->global->PAYPAL_API_SIGNATURE;
+	if (!empty($conf->global->PAYPAL_API_SIGNATURE)) {
+		$PAYPAL_API_SIGNATURE = $conf->global->PAYPAL_API_SIGNATURE;
+	}
 	$PAYPAL_API_SANDBOX = "";
-	if (!empty($conf->global->PAYPAL_API_SANDBOX)) $PAYPAL_API_SANDBOX = $conf->global->PAYPAL_API_SANDBOX;
+	if (!empty($conf->global->PAYPAL_API_SANDBOX)) {
+		$PAYPAL_API_SANDBOX = $conf->global->PAYPAL_API_SANDBOX;
+	}
 	// TODO END problem with triggers
 
 	dol_syslog("Paypal API endpoint ".$API_Endpoint);
@@ -485,17 +490,28 @@ function hash_call($methodName, $nvpStr)
 	$ch = curl_init();
 
 	/*print $API_Endpoint."-".$API_version."-".$PAYPAL_API_USER."-".$PAYPAL_API_PASSWORD."-".$PAYPAL_API_SIGNATURE."<br>";
-     print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
-     print $nvpStr;
-     exit;*/
+	 print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
+	 print $nvpStr;
+	 exit;*/
 	curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
 	curl_setopt($ch, CURLOPT_VERBOSE, 1);
 	// TLSv1 by default or change to TLSv1.2 in module configuration
 	curl_setopt($ch, CURLOPT_SSLVERSION, (empty($conf->global->PAYPAL_SSLVERSION) ? 1 : $conf->global->PAYPAL_SSLVERSION));
 
+	$ssl_verifypeer = -1;
+
+	// Turning on or off the ssl target certificate
+	if ($ssl_verifypeer < 0) {
+		global $dolibarr_main_prod;
+		$ssl_verifypeer =  ($dolibarr_main_prod ? true : false);
+	}
+	if (!empty($conf->global->MAIN_CURL_DISABLE_VERIFYPEER)) {
+		$ssl_verifypeer = 0;
+	}
+
 	//turning off the server and peer verification(TrustManager Concept).
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
 	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
@@ -504,12 +520,13 @@ function hash_call($methodName, $nvpStr)
 	curl_setopt($ch, CURLOPT_POST, 1);
 
 	//if USE_PROXY constant set to true in Constants.php, then only proxy will be enabled.
-	if ($USE_PROXY)
-	{
+	if ($USE_PROXY) {
 		dol_syslog("Paypal API hash_call set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".$PROXY_PASS);
 		//curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
-		if ($PROXY_USER) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER.":".$PROXY_PASS);
+		if ($PROXY_USER) {
+			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER.":".$PROXY_PASS);
+		}
 	}
 
 	//NVPRequest for submitting to server
@@ -561,8 +578,7 @@ function deformatNVP($nvpstr)
 	$intial = 0;
 	$nvpArray = array();
 
-	while (strlen($nvpstr))
-	{
+	while (strlen($nvpstr)) {
 		//postion of Key
 		$keypos = strpos($nvpstr, '=');
 		//position of value
@@ -589,13 +605,11 @@ function getApiError()
 
 	$resArray = $_SESSION['reshash'];
 
-	if (isset($_SESSION['curl_error_no']))
-	{
+	if (isset($_SESSION['curl_error_no'])) {
 		$errors[] = $_SESSION['curl_error_no'].'-'.$_SESSION['curl_error_msg'];
 	}
 
-	foreach ($resArray as $key => $value)
-	{
+	foreach ($resArray as $key => $value) {
 		$errors[] = $key.'-'.$value;
 	}
 

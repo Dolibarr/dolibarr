@@ -13,11 +13,14 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Müşteri faturası doğrulandığı
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Müşteri faturası doğrulandığında (ve faturanın tutarı bağlantılı siparişin toplam tutarı ile aynı ise) bağlantılı kaynak müşteri siparişini "faturalandı" olarak sınıflandır
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Bir sevkiyat doğrulandığında (ve tüm sevkiyatlardan sonra sevk edilen miktar siparişteki miktar ile aynı ise) bağlantılı kaynak müşteri siparişini "sevk edildi" olarak sınıflandır
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Tedarikçi faturası doğrulandığında (ve faturanın tutarı bağlantılı teklifin toplam tutarı ile aynı ise) bağlantılı kaynak tedarikçi teklifini "faturalandı" olarak sınıflandır
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Tedarikçi faturası doğrulandığında (ve faturanın tutarı bağlantılı siparişin toplam tutarı ile aynı ise) bağlantılı kaynak tedarikçi siparişini "faturalandı" olarak sınıflandır
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Bağlantılı bir tedarikçi siparişi doğrulandığında alımları "faturalandırıldı" olarak sınıflandırın
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Otomatik oluşturma
 AutomaticClassification=Otomatik sınıflandırma
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

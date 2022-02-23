@@ -4,7 +4,7 @@ Actions=Events
 Agenda=Agenda
 TMenuAgenda=Agenda
 Agendas=Agendas
-LocalAgenda=Internal calendar
+LocalAgenda=Default calendar
 ActionsOwnedBy=Event owned by
 ActionsOwnedByShort=Owner
 AffectedTo=Assigned to
@@ -20,7 +20,7 @@ MenuToDoActions=All incomplete events
 MenuDoneActions=All terminated events
 MenuToDoMyActions=My incomplete events
 MenuDoneMyActions=My terminated events
-ListOfEvents=List of events (internal calendar)
+ListOfEvents=List of events (default calendar)
 ActionsAskedBy=Events reported by
 ActionsToDoBy=Events assigned to
 ActionsDoneBy=Events done by
@@ -38,6 +38,7 @@ ActionsEvents=Events for which Dolibarr will create an action in agenda automati
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
+COMPANY_MODIFYInDolibarr=Third party %s modified
 COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Contract %s validated
 CONTRACT_DELETEInDolibarr=Contract %s deleted
@@ -63,6 +64,7 @@ ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Shipment %s deleted
+ShipmentCanceledInDolibarr=Shipment %s canceled
 ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Order %s validated
@@ -87,6 +89,7 @@ OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
 DraftInvoiceDeleted=Draft invoice deleted
 CONTACT_CREATEInDolibarr=Contact %s created
+CONTACT_MODIFYInDolibarr=Contact %s modified
 CONTACT_DELETEInDolibarr=Contact %s deleted
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
@@ -119,6 +122,7 @@ MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
 MRP_MO_PRODUCEDInDolibarr=MO produced
 MRP_MO_DELETEInDolibarr=MO deleted
 MRP_MO_CANCELInDolibarr=MO canceled
+PAIDInDolibarr=%s paid
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Start date
@@ -130,7 +134,7 @@ AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to use
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays. 
-AgendaShowBirthdayEvents=Show birthdays of contacts
+AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy
 ExportDataset_event1=List of agenda events
@@ -167,3 +171,4 @@ ReminderType=Callback type
 AddReminder=Create an automatic reminder notification for this event
 ErrorReminderActionCommCreation=Error creating the reminder notification for this event
 BrowserPush=Browser Popup Notification
+ActiveByDefault=Enabled by default

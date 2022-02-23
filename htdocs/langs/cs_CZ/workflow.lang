@@ -13,11 +13,14 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Zařadit návrh propojeného zdroje 
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Zařadit propojenou prodejní objednávku jako fakturovanou při ověření faktury zákazníka (a pokud je částka faktury shodná s celkovou částkou propojené objednávky)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Zařadit propojenou prodejní objednávku jako fakturovanou, když je zákaznická faktura nastavena jako zaplacená (a pokud je částka faktury shodná s celkovou částkou propojené objednávky)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasifikujte propojenou prodejní objednávku dodávanou při ověření zásilky (a pokud je množství odeslané všemi zásilkami stejné jako v aktualizovaném pořadí)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Označte návrh dodavatele propojeného zdroje jako fakturovaný při validaci dodavatele (a pokud je částka faktury shodná s celkovou částkou propojeného návrhu)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Zařadit propojenou objednávku zdroje jako fakturovanou fakturaci dodavatele (a pokud je částka faktury shodná s celkovou částkou propojené objednávky)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Po ověření objednávky propojeného dodavatele klasifikujte recepce na „účtované“
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Když je lístek uzavřen, ukončete všechny zásahy spojené s lístkem
 AutomaticCreation=Automatická tvorba
 AutomaticClassification=Automatická klasifikace
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

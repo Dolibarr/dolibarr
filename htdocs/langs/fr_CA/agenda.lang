@@ -13,7 +13,6 @@ OrderDeliveredInDolibarr=Commande %s classée Délivrée
 ProposalDeleted=Proposition supprimée
 AgendaModelModule=Modèles de document pour l'événement
 AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
-AgendaShowBirthdayEvents=Afficher les dates d'anniversaire des contacts
 AgendaHideBirthdayEvents=Cacher les dates d'anniversaire des contacts
 ExportDataset_event1=Liste évênements de l'agenda
 VisibleTimeRange=Plage d'heures visibles

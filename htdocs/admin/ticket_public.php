@@ -48,14 +48,48 @@ $error = 0;
  * Actions
  */
 
-if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE')
-{
-	if (GETPOST('value')) dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
-	else dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
+if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
+	if (GETPOST('value')) {
+		dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
+	} else {
+		dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 if ($action == 'setvar') {
 	include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+
+	if (GETPOSTISSET('TICKET_ENABLE_PUBLIC_INTERFACE')) {	// only for no js case
+		$param_enable_public_interface = GETPOST('TICKET_ENABLE_PUBLIC_INTERFACE', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', $param_enable_public_interface, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+
+	if (GETPOSTISSET('TICKET_EMAIL_MUST_EXISTS')) {	// only for no js case
+		$param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+
+	if (GETPOSTISSET('TICKET_DISABLE_CUSTOMER_MAILS')) {	// only for no js case
+		$param_disable_email = GETPOST('TICKET_DISABLE_CUSTOMER_MAILS', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_DISABLE_CUSTOMER_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+
+	if (GETPOSTISSET('TICKET_SHOW_COMPANY_LOGO')) {	// only for no js case
+		$param_show_module_logo = GETPOST('TICKET_SHOW_COMPANY_LOGO', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_SHOW_COMPANY_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
 
 	$topic_interface = GETPOST('TICKET_PUBLIC_INTERFACE_TOPIC', 'nohtml');
 	if (!empty($topic_interface)) {
@@ -63,7 +97,7 @@ if ($action == 'setvar') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', '', 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -73,7 +107,7 @@ if ($action == 'setvar') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $langs->trans('TicketPublicInterfaceTextHome'), 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -83,7 +117,7 @@ if ($action == 'setvar') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'), 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -93,7 +127,7 @@ if ($action == 'setvar') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_NEW', $langs->trans('TicketMessageMailNewText'), 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -103,47 +137,20 @@ if ($action == 'setvar') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', '', 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
 	$param_public_notification_new_message_default_email = GETPOST('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL', $param_public_notification_new_message_default_email, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
-		$error++;
-	}
-}
-
-if ($action == 'setvarother') {
-	$param_enable_public_interface = GETPOST('TICKET_ENABLE_PUBLIC_INTERFACE', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', $param_enable_public_interface, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
-	$param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
-		$error++;
-	}
-
-	$param_disable_email = GETPOST('TICKET_DISABLE_CUSTOMER_MAILS', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_DISABLE_CUSTOMER_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
-		$error++;
-	}
-
-   	$param_show_module_logo = GETPOST('TICKET_SHOW_COMPANY_LOGO', 'alpha');
-   	$res = dolibarr_set_const($db, 'TICKET_SHOW_COMPANY_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
-   	if (!$res > 0) {
-	   	$error++;
-   	}
-
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) {
+		if (!($res > 0)) {
 			$error++;
 		}
 	}
@@ -173,14 +180,14 @@ $head = ticketAdminPrepareHead();
 
 print dol_get_fiche_head($head, 'public', $langs->trans("Module56000Name"), -1, "ticket");
 
-print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> : <a class="wordbreak" href="'.dol_buildpath('/public/ticket/index.php', 1).'" target="_blank" >'.dol_buildpath('/public/ticket/index.php', 2).'</a>';
+print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> : <a class="wordbreak" href="'.DOL_URL_ROOT.'/public/ticket/index.php" target="_blank" rel="noopener noreferrer">'.dol_buildpath('/public/ticket/index.php', 2).'</a>';
 
 print dol_get_fiche_end();
 
+$param = '';
 
 $enabledisablehtml = $langs->trans("TicketsActivatePublicInterface").' ';
-if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
-{
+if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setTICKET_ENABLE_PUBLIC_INTERFACE&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -196,20 +203,17 @@ print '<input type="hidden" id="TICKET_ENABLE_PUBLIC_INTERFACE" name="TICKET_ENA
 
 print '<br><br>';
 
-if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
-{
-	if (empty($conf->use_javascript_ajax)) {
-		print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="setvarother">';
-	}
+if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setvar">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td>';
 	print '<td class="left">';
 	print '</td>';
-	print '<td class="center">';
+	print '<td class="center width75">';
 	print '</td>';
 	print '</tr>';
 
@@ -223,28 +227,28 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 		print $form->selectarray("TICKET_EMAIL_MUST_EXISTS", $arrval, $conf->global->TICKET_EMAIL_MUST_EXISTS);
 	}
 	print '</td>';
-	print '<td class="center">';
+	print '<td class="center width75">';
 	print $form->textwithpicto('', $langs->trans("TicketsEmailMustExistHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
 
 	/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-    {
-    	// Show logo for module
-    	print '<tr class="oddeven"><td>' . $langs->trans("TicketsShowModuleLogo") . '</td>';
-    	print '<td class="left">';
-    	if ($conf->use_javascript_ajax) {
-    	    print ajax_constantonoff('TICKET_SHOW_MODULE_LOGO');
-    	} else {
-    	    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    	    print $form->selectarray("TICKET_SHOW_MODULE_LOGO", $arrval, $conf->global->TICKET_SHOW_MODULE_LOGO);
-    	}
-    	print '</td>';
-    	print '<td class="center">';
-    	print $form->textwithpicto('', $langs->trans("TicketsShowModuleLogoHelp"), 1, 'help');
-    	print '</td>';
-    	print '</tr>';
-    }*/
+	{
+		// Show logo for module
+		print '<tr class="oddeven"><td>' . $langs->trans("TicketsShowModuleLogo") . '</td>';
+		print '<td class="left">';
+		if ($conf->use_javascript_ajax) {
+			print ajax_constantonoff('TICKET_SHOW_MODULE_LOGO');
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("TICKET_SHOW_MODULE_LOGO", $arrval, $conf->global->TICKET_SHOW_MODULE_LOGO);
+		}
+		print '</td>';
+		print '<td class="center">';
+		print $form->textwithpicto('', $langs->trans("TicketsShowModuleLogoHelp"), 1, 'help');
+		print '</td>';
+		print '</tr>';
+	}*/
 
 	// Show logo for company
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowCompanyLogo").'</td>';
@@ -256,14 +260,13 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 		print $form->selectarray("TICKET_SHOW_COMPANY_LOGO", $arrval, $conf->global->TICKET_SHOW_COMPANY_LOGO);
 	}
 	print '</td>';
-	print '<td class="center">';
+	print '<td class="center width75">';
 	print $form->textwithpicto('', $langs->trans("TicketsShowCompanyLogoHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
 
 	// Also send to main email address
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
 		print '<td class="left">';
 		if ($conf->use_javascript_ajax) {
@@ -273,8 +276,8 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 			print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
 		}
 		print '</td>';
-		print '<td class="center">';
-		print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
+		print '<td class="center width75">';
+		print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp", $langs->transnoentitiesnoconv("TicketEmailNotificationTo").' ('.$langs->transnoentitiesnoconv("Creation").')', $langs->trans("Settings")), 1, 'help');
 		print '</td>';
 		print '</tr>';
 	}
@@ -283,28 +286,6 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 		print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></td>';
 		print '</tr>';
 	}
-
-	print '</table>';
-	print '</div>';
-	print '<br>';
-
-	if (!$conf->use_javascript_ajax) {
-		print '</form>';
-	}
-
-	// Admin var of module
-	print load_fiche_titre($langs->trans("TicketParamMail"));
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-
-	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="setvar">';
-
-	print '<tr class="liste_titre">';
-	print '<td colspan="3">'.$langs->trans("Parameter").'</td>';
-	print "</tr>\n";
 
 	if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 		print '<tr>';
@@ -318,7 +299,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 	print '</td><td>';
 	print '<input type="text"   name="TICKET_PUBLIC_INTERFACE_TOPIC" value="'.$conf->global->TICKET_PUBLIC_INTERFACE_TOPIC.'" size="40" ></td>';
 	print '</td>';
-	print '<td class="center">';
+	print '<td class="center width75">';
 	print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTopicHelp"), 1, 'help');
 	print '</td></tr>';
 
@@ -410,7 +391,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 	print '</table>';
 	print '</div>';
 
-	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print $form->buttonsSaveCancel("Save", '');
 
 	print '</form>';
 }

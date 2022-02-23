@@ -75,10 +75,10 @@ class TicketTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
 	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
@@ -87,11 +87,11 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
 	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
@@ -306,7 +306,7 @@ class TicketTest extends PHPUnit\Framework\TestCase
 		$user_id_to_assign = 1;
 
 		$result=$localobject->assignUser($user, $user_id_to_assign);
-        ;
+		;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);

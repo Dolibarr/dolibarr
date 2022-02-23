@@ -22,7 +22,7 @@
  *	\brief      	Module pour gerer des generations de documents
  *	\file       	htdocs/core/modules/modDocumentGeneration.class.php
  *	\ingroup    	document
- *	\brief      	Fichier de description et activation du module Generation document
+ *	\brief      	Description and activation file for the module Generation document
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -100,20 +100,12 @@ class modDocumentGeneration extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-<<<<<<< HEAD
      *  @param      string  $options        Options when enabling module ('', 'noboxes')
      *  @param      int     $force_entity	Force current entity
      *  @return     int                     1 if OK, 0 if KO
      */
     public function init($options = '', $force_entity = null)
     {
-=======
-	 *  @param      string  $options    Options when enabling module ('', 'noboxes')
-	 *  @return     int                 1 if OK, 0 if KO
-	 */
-	public function init($options = '')
-	{
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 		global $conf;
 
 		// Permissions

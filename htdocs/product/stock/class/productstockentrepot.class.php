@@ -93,17 +93,27 @@ class ProductStockEntrepot extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product = (int) $this->fk_product;
-		if (isset($this->fk_entrepot)) $this->fk_entrepot = (int) $this->fk_entrepot;
-		if (isset($this->seuil_stock_alerte)) $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
-		if (isset($this->desiredstock)) $this->desiredstock = trim($this->desiredstock);
-		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
+		if (isset($this->fk_product)) {
+			$this->fk_product = (int) $this->fk_product;
+		}
+		if (isset($this->fk_entrepot)) {
+			$this->fk_entrepot = (int) $this->fk_entrepot;
+		}
+		if (isset($this->seuil_stock_alerte)) {
+			$this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
+		}
+		if (isset($this->desiredstock)) {
+			$this->desiredstock = trim($this->desiredstock);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
+		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
 
 		$sql .= 'fk_product,';
 		$sql .= 'fk_entrepot,';
@@ -133,7 +143,7 @@ class ProductStockEntrepot extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			//if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -168,28 +178,31 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public function fetch($id, $fk_product = 0, $fk_entrepot = 0)
 	{
-		if (empty($id) && (empty($fk_product) || empty($fk_entrepot))) return -1;
+		if (empty($id) && (empty($fk_product) || empty($fk_entrepot))) {
+			return -1;
+		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_entrepot,";
 		$sql .= " t.seuil_stock_alerte,";
 		$sql .= " t.desiredstock,";
 		$sql .= " t.import_key";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (!empty($id)) $sql .= ' WHERE t.rowid = '.$id;
-		else $sql .= ' WHERE t.fk_product = '.$fk_product.' AND t.fk_entrepot = '.$fk_entrepot;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (!empty($id)) {
+			$sql .= " WHERE t.rowid = ".((int) $id);
+		} else {
+			$sql .= " WHERE t.fk_product = ".((int) $fk_product)." AND t.fk_entrepot = ".((int) $fk_entrepot);
+		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$numrows = $this->db->num_rows($resql);
-			if ($numrows)
-			{
+			if ($numrows) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -241,8 +254,8 @@ class ProductStockEntrepot extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product,";
@@ -252,25 +265,34 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= " t.import_key";
 
 
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 
-		$sql .= ' WHERE 1=1';
+		$sql .= " WHERE 1=1";
 
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
 			}
 		}
-		if (count($sqlwhere) > 0) $sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+		if (count($sqlwhere) > 0) {
+			$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+		}
 
-		if (!empty($fk_product)) $sql .= ' AND fk_product = '.$fk_product;
-		elseif (!empty($fk_entrepot)) $sql .= ' AND fk_entrepot = '.$fk_entrepot;
+		if (!empty($fk_product) && $fk_product > 0) {
+			$sql .= " AND fk_product = ".((int) $fk_product);
+		} elseif (!empty($fk_entrepot) && $fk_entrepot > 0) {
+			$sql .= " AND fk_entrepot = ".((int) $fk_entrepot);
+		}
 		// "elseif" used instead of "if" because getting list with specified fk_product and specified fk_entrepot would be the same as doing a fetch
 
-		if (!empty($sortfield)) $sql .= $this->db->order($sortfield, $sortorder);
-		if (!empty($limit)) $sql .= ' '.$this->db->plimit($limit, $offset);
+		if (!empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= $this->db->plimit($limit, $offset);
+		}
 
 		$lines = array();
 
@@ -312,18 +334,28 @@ class ProductStockEntrepot extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product = (int) $this->fk_product;
-		if (isset($this->fk_entrepot)) $this->fk_entrepot = (int) $this->fk_entrepot;
-		if (isset($this->seuil_stock_alerte)) $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
-		if (isset($this->desiredstock)) $this->desiredstock = trim($this->desiredstock);
-		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
+		if (isset($this->fk_product)) {
+			$this->fk_product = (int) $this->fk_product;
+		}
+		if (isset($this->fk_entrepot)) {
+			$this->fk_entrepot = (int) $this->fk_entrepot;
+		}
+		if (isset($this->seuil_stock_alerte)) {
+			$this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
+		}
+		if (isset($this->desiredstock)) {
+			$this->desiredstock = trim($this->desiredstock);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 
 
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
@@ -333,7 +365,7 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= ' import_key = '.(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -393,8 +425,8 @@ class ProductStockEntrepot extends CommonObject
 		//}
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -495,10 +527,11 @@ class ProductStockEntrepot extends CommonObject
 		$link .= '>';
 		$linkend = '</a>';
 
-		if ($withpicto)
-		{
+		if ($withpicto) {
 			$result .= ($link.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
-			if ($withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) {
+				$result .= ' ';
+			}
 		}
 		$result .= $link.$this->ref.$linkend;
 		return $result;
@@ -528,30 +561,42 @@ class ProductStockEntrepot extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		} elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+		if ($mode == 0) {
+			if ($status == 1) {
+				return $langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled');
+			}
+		} elseif ($mode == 1) {
+			if ($status == 1) {
+				return $langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled');
+			}
+		} elseif ($mode == 2) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			}
+		} elseif ($mode == 3) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5');
+			}
+		} elseif ($mode == 4) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			}
+		} elseif ($mode == 5) {
+			if ($status == 1) {
+				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			}
 		}
 	}
 

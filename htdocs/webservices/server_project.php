@@ -21,7 +21,9 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+if (!defined("NOCSRFCHECK")) {
+	define("NOCSRFCHECK", '1');
+}
 
 require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
@@ -37,8 +39,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -131,8 +132,7 @@ $server->wsdl->addComplexType(
 );
 
 $project_elements = array();
-foreach ($listofreferent as $key => $_)
-{
+foreach ($listofreferent as $key => $label) {
 	$project_elements[$key] = array('name'=>$key, 'type'=>'tns:elementsArray');
 }
 $server->wsdl->addComplexType(
@@ -169,18 +169,21 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-{
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-	{
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 		//$value=$object->array_options["options_".$key];
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
-		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
-		else {$type = 'xsd:string'; }
+		if ($type == 'date' || $type == 'datetime') {
+			$type = 'xsd:dateTime';
+		} else {
+			$type = 'xsd:string';
+		}
 		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
 	}
 }
-if (is_array($extrafield_array)) $project_fields = array_merge($project_fields, $extrafield_array);
+if (is_array($extrafield_array)) {
+	$project_fields = array_merge($project_fields, $extrafield_array);
+}
 
 $server->wsdl->addComplexType(
 	'project',
@@ -240,7 +243,9 @@ function createProject($authentication, $project)
 
 	dol_syslog("Function: createProject login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -248,18 +253,15 @@ function createProject($authentication, $project)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (empty($project['ref']))
-	{
+	if (empty($project['ref'])) {
 		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
 	}
 
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->projet->creer)
-		{
+		if ($fuser->rights->projet->creer) {
 			$newobject = new Project($db);
 			$newobject->ref = $project['ref'];
 			$newobject->title = $project['label'];
@@ -277,10 +279,8 @@ function createProject($authentication, $project)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-				{
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
 					$newobject->array_options[$key] = $project[$key];
 				}
@@ -289,39 +289,32 @@ function createProject($authentication, $project)
 			$db->begin();
 
 			$result = $newobject->create($fuser);
-			if (!$error && $result > 0)
-			{
+			if (!$error && $result > 0) {
 				// Add myself as project leader
 				$result = $newobject->add_contact($fuser->id, 'PROJECTLEADER', 'internal');
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 				}
-			}
-			else {
+			} else {
 				$error++;
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$db->commit();
 				$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
-			}
-			else {
+			} else {
 				$db->rollback();
 				$error++;
 				$errorcode = 'KO';
 				$errorlabel = $newobject->error;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -338,11 +331,13 @@ function createProject($authentication, $project)
  */
 function getProject($authentication, $id = '', $ref = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getProject login=".$authentication['login']." id=".$id." ref=".$ref);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -350,22 +345,18 @@ function getProject($authentication, $id = '', $ref = '')
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (!$error && (($id && $ref)))
-	{
+	if (!$error && (($id && $ref))) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->projet->lire)
-		{
+		if ($fuser->rights->projet->lire) {
 			$project = new Project($db);
 			$result = $project->fetch($id, $ref);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$project_result_fields = array(
 					'id' => $project->id,
 					'ref' => $project->ref,
@@ -386,11 +377,9 @@ function getProject($authentication, $id = '', $ref = '')
 				$extrafields->fetch_name_optionals_label($elementtype, true);
 
 				//Get extrafield values
-				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-				{
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
 					$project->fetch_optionals();
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-					{
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 						$project_result_fields = array_merge($project_result_fields, array('options_'.$key => $project->array_options['options_'.$key]));
 					}
 				}
@@ -398,14 +387,11 @@ function getProject($authentication, $id = '', $ref = '')
 				//Get linked elements
 				global $listofreferent;
 				$elements = array();
-				foreach ($listofreferent as $key => $tablename)
-				{
+				foreach ($listofreferent as $key => $tablename) {
 					$elements[$key] = array();
 					$element_array = $project->get_element_list($key, $tablename);
-					if (count($element_array) > 0 && is_array($element_array))
-					{
-						foreach ($element_array as $element)
-						{
+					if (count($element_array) > 0 && is_array($element_array)) {
+						foreach ($element_array as $element) {
 							$tmp = explode('_', $element);
 							$idofelement = count($tmp) > 0 ? $tmp[0] : "";
 							$idofelementuser = count($tmp) > 1 ? $tmp[1] : "";
@@ -420,20 +406,17 @@ function getProject($authentication, $id = '', $ref = '')
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'project'=>$project_result_fields
 				);
-			}
-			else {
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

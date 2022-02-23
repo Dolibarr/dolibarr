@@ -47,7 +47,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 		$this->description = "Triggers of this module auto link contact to company.";
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = self::VERSION_DOLIBARR;
-		$this->picto = 'action';
+		$this->picto = 'company';
 	}
 
 	/**
@@ -78,30 +78,33 @@ class InterfaceContactRoles extends DolibarrTriggers
 				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactdefault = new Contact($this->db);
 				$contactdefault->socid = $socid;
-				$TContact = $contactdefault->getContactRoles($object->element);
+
+				$TContact = array();
+				if (method_exists($contactdefault, 'getContactRoles')) {	// For backward compatibility
+					$TContact = $contactdefault->getContactRoles($object->element);
+				}
 
 				if (is_array($TContact) && !empty($TContact)) {
 					$TContactAlreadyLinked = array();
-					if ($object->id > 0) {
-						$cloneFrom = dol_clone($object, 1);
 
-						if (!empty($cloneFrom->id)) {
-							$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
-						}
+					if ($object->id > 0) {
+						$TContactAlreadyLinked = array_merge($object->liste_contact(-1, 'external'), $object->liste_contact(-1, 'internal'));
 					}
 
 					foreach ($TContact as $i => $infos) {
 						foreach ($TContactAlreadyLinked as $contactData) {
-							if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact'])
+							if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) {
 								unset($TContact[$i]);
+							}
 						}
 					}
 
 					$nb = 0;
 					foreach ($TContact as $infos) {
 						$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
-						if ($res > 0)
+						if ($res > 0) {
 							$nb++;
+						}
 					}
 
 					if ($nb > 0) {

@@ -85,8 +85,8 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -101,15 +101,14 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 */
 	public function getExample()
 	{
-	 	global $conf, $langs, $user;
+		global $conf, $langs, $user;
 
 		$old_login = $user->login;
 		$user->login = 'UUUUUUU';
-	 	$numExample = $this->getNextValue($user, '');
+		$numExample = $this->getNextValue($user, '');
 		$user->login = $old_login;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -130,8 +129,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 
 		$mask = $conf->global->HOLIDAY_IMMACULATE_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

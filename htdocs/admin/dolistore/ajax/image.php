@@ -17,7 +17,9 @@
  * or see https://www.gnu.org/
  */
 
-if (!defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
+if (!defined('REQUIRE_JQUERY_BLOCKUI')) {
+	define('REQUIRE_JQUERY_BLOCKUI', 1);
+}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
@@ -47,7 +49,8 @@ try {
 	$url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
 	$api = new PrestaShopWebservice(
 		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
-		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api
+		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY,
+		$dolistore->debug_api
 	);
 	//echo $url;
 	$request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
@@ -56,7 +59,11 @@ try {
 } catch (PrestaShopWebserviceException $e) {
 	// Here we are dealing with errors
 	$trace = $e->getTrace();
-	if ($trace[0]['args'][0] == 404) die('Bad ID');
-	elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
-	else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+	if ($trace[0]['args'][0] == 404) {
+		die('Bad ID');
+	} elseif ($trace[0]['args'][0] == 401) {
+		die('Bad auth key');
+	} else {
+		die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+	}
 }

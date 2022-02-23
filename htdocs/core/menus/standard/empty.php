@@ -198,8 +198,8 @@ class MenuManager
 					$submenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"), 1);
 					$submenu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"), 1);
 
-					$submenu->add("/admin/boxes.php", $langs->trans("Boxes"), 1);
-					$submenu->add("/admin/delais.php", $langs->trans("Alerts"), 1);
+					$submenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"), 1);
+					$submenu->add("/admin/delais.php?mainmenu=home", $langs->trans("Alerts"), 1);
 					$submenu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"), 1);
 					$submenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"), 1);
 					$submenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
@@ -285,13 +285,12 @@ class MenuManager
 							}
 							print $disabled.'">'; // ui-btn to highlight on clic
 							if ($relurl2) {
-								if ($val2['enabled']) {	// Allowed
-									print '<a href="'.$relurl2.'"';
-									//print ' data-ajax="false"';
-									print '>';
+								if ($val2['enabled']) {
+									// Allowed
+									print '<a href="'.$relurl2.'">';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else // Not allowed but visible (greyed)
-								{
+								} else {
+									// Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -310,6 +309,7 @@ class MenuManager
 									// Allowed
 									print '</a>';
 								} else {
+									// Not allowed
 									print '</a>';
 								}
 							}
@@ -320,7 +320,7 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+					print '<span class="vsmenudisabled">'.$val['titre'].'</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";
@@ -340,8 +340,8 @@ class MenuManager
 			$this->menu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"), 1);
 			$this->menu->add("/admin/defaultvalues.php?mainmenu=home", $langs->trans("DefaultValues"), 1);
 
-			$this->menu->add("/admin/boxes.php", $langs->trans("Boxes"), 1);
-			$this->menu->add("/admin/delais.php", $langs->trans("Alerts"), 1);
+			$this->menu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"), 1);
+			$this->menu->add("/admin/delais.php?mainmenu=home", $langs->trans("Alerts"), 1);
 			$this->menu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"), 1);
 			$this->menu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"), 1);
 			$this->menu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
@@ -370,7 +370,9 @@ class MenuManager
 			}
 
 			if (empty($noout)) {
-				$alt = 0; $altok = 0; $blockvmenuopened = false;
+				$alt = 0;
+				$altok = 0;
+				$blockvmenuopened = false;
 				$num = count($menu_array);
 				for ($i = 0; $i < $num; $i++) {
 					$alt++;
@@ -405,7 +407,7 @@ class MenuManager
 						if ($menu_array[$i]['enabled']) {
 							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($menu_array[$i]['url'], 1).'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>'.$menu_array[$i]['titre'].'</a></div>'."\n";
 						} else {
-							print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
+							print '<div class="menu_titre">'.$tabstring.'<span class="vmenudisabled">'.$menu_array[$i]['titre'].'</span></div>'."\n";
 						}
 						print '<div class="menu_top"></div>'."\n";
 					}
@@ -431,7 +433,7 @@ class MenuManager
 								print '</span>';
 							}
 						} else {
-							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font>';
+							print $tabstring.'<span class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span>';
 						}
 
 						// If title is not pure text and contains a table, no carriage return added

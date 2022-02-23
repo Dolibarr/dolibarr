@@ -65,8 +65,8 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	public function __construct()
 	{
-		if (!empty($conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX))
-		{
+		global $conf;
+		if (!empty($conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX)) {
 			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX;
 		}
 	}
@@ -106,7 +106,8 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$langs->load("bills");
 
 		// Check invoice num
-		$fayymm = ''; $max = '';
+		$fayymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefixinvoice) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
@@ -115,13 +116,14 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if ($fayymm && !preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i', $fayymm))
-		{
+		if ($fayymm && !preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -137,13 +139,14 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if ($fayymm && !preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i', $fayymm))
-		{
+		if ($fayymm && !preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
@@ -158,13 +161,14 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if ($fayymm && !preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i', $fayymm))
-		{
+		if ($fayymm && !preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
@@ -173,12 +177,15 @@ class mod_facture_terre extends ModeleNumRefFactures
 	}
 
 	/**
-	 * Return next value not used or last value used
+	 * Return next value not used or last value used.
+	 * Note to increase perf of this numbering engine, you can create a calculated column and modify request to use this field instead for select:
+	 * ALTER TABLE llx_facture ADD COLUMN calculated_numrefonly INTEGER AS (CASE SUBSTRING(ref FROM 1 FOR 2) WHEN 'FA' THEN CAST(SUBSTRING(ref FROM 10) AS SIGNED) ELSE 0 END) PERSISTENT;
+	 * ALTER TABLE llx_facture ADD INDEX calculated_numrefonly_idx (calculated_numrefonly);
 	 *
 	 * @param   Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string       			Value
+	 * @return  string       			Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -187,8 +194,11 @@ class mod_facture_terre extends ModeleNumRefFactures
 		dol_syslog(get_class($this)."::getNextValue mode=".$mode, LOG_DEBUG);
 
 		$prefix = $this->prefixinvoice;
-		if ($invoice->type == 2) $prefix = $this->prefixcreditnote;
-		elseif ($invoice->type == 3) $prefix = $this->prefixdeposit;
+		if ($invoice->type == 2) {
+			$prefix = $this->prefixcreditnote;
+		} elseif ($invoice->type == 3) {
+			$prefix = $this->prefixdeposit;
+		}
 
 		// First we get the max value
 		$posindice = strlen($prefix) + 6;
@@ -198,19 +208,23 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		} else {
 			return -1;
 		}
 
-		if ($mode == 'last')
-		{
-			if ($max >= (pow(10, 4) - 1)) $num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
-			else $num = sprintf("%04s", $max);
+		if ($mode == 'last') {
+			if ($max >= (pow(10, 4) - 1)) {
+				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
+			} else {
+				$num = sprintf("%04s", $max);
+			}
 
 			$ref = '';
 			$sql = "SELECT ref as ref";
@@ -220,24 +234,31 @@ class mod_facture_terre extends ModeleNumRefFactures
 			$sql .= " ORDER BY ref DESC";
 
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				if ($obj) $ref = $obj->ref;
-			} else dol_print_error($db);
+				if ($obj) {
+					$ref = $obj->ref;
+				}
+			} else {
+				dol_print_error($db);
+			}
 
 			return $ref;
-		} elseif ($mode == 'next')
-		{
+		} elseif ($mode == 'next') {
 			$date = $invoice->date; // This is invoice date (not creation date)
 			$yymm = strftime("%y%m", $date);
 
-			if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-			else $num = sprintf("%04s", $max + 1);
+			if ($max >= (pow(10, 4) - 1)) {
+				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+			} else {
+				$num = sprintf("%04s", $max + 1);
+			}
 
 			dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 			return $prefix.$yymm."-".$num;
-		} else dol_print_error('', 'Bad parameter for getNextValue');
+		} else {
+			dol_print_error('', 'Bad parameter for getNextValue');
+		}
 	}
 
 	/**

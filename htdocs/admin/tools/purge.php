@@ -21,13 +21,14 @@
  *		\brief      Page to purge files (temporary or not)
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
+
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
-
-if (!$user->admin)
-	accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -36,22 +37,24 @@ $choice = GETPOST('choice', 'aZ09');
 
 // Define filelog to discard it from purge
 $filelog = '';
-if (!empty($conf->syslog->enabled))
-{
+if (!empty($conf->syslog->enabled)) {
 	$filelog = $conf->global->SYSLOG_FILE;
 	$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
+}
+
+if (!$user->admin) {
+	accessforbidden();
 }
 
 
 /*
  *	Actions
  */
-if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes'))
-{
+
+if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes')) {
 	// Increase limit of time. Works only if we are not in safe mode
 	$ExecTimeLimit = 600;
-	if (!empty($ExecTimeLimit))
-	{
+	if (!empty($ExecTimeLimit)) {
 		$err = error_reporting();
 		error_reporting(0); // Disable all errors
 		//error_reporting(E_ALL);
@@ -91,7 +94,7 @@ print '<table class="border centpercent">';
 print '<tr class="border"><td style="padding: 4px">';
 
 if (!empty($conf->syslog->enabled)) {
-	print '<input type="radio" name="choice" value="logfile"';
+	print '<input type="radio" name="choice" id="choicelogfile" value="logfile"';
 	print ($choice && $choice == 'logfile') ? ' checked' : '';
 	$filelogparam = $filelog;
 	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog))) {
@@ -101,24 +104,24 @@ if (!empty($conf->syslog->enabled)) {
 	}
 	$desc = $langs->trans("PurgeDeleteLogFile", '{filelogparam}');
 	$desc = str_replace('{filelogparam}', $filelogparam, $desc);
-	print '> '.$desc;
+	print '> <label for="choicelogfile">'.$desc.'</label>';
 	print '<br><br>';
 }
 
-print '<input type="radio" name="choice" value="tempfiles"';
+print '<input type="radio" name="choice" id="choicetempfiles" value="tempfiles"';
 print (!$choice || $choice == 'tempfiles' || $choice == 'allfiles') ? ' checked' : '';
-print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
+print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFilesShort").'</label><br><br>';
 
-print '<input type="radio" name="choice" value="confirm_allfiles"';
+print '<input type="radio" name="choice" id="choiceallfiles" value="confirm_allfiles"';
 print ($choice && $choice == 'confirm_allfiles') ? ' checked' : '';
-print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'<br>';
+print '> <label for="choiceallfiles">'.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'</label><br>';
 
 print '</td></tr></table>';
 
 //if ($choice != 'confirm_allfiles')
 //{
 	print '<br>';
-	print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></div>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("PurgeRunNow").'"></div>';
 //}
 
 print '</form>';

@@ -32,12 +32,14 @@ base=$2;
 port=$3;
 demologin=$4;
 demopass=$5;
+demopasshash=$6;
 
 # ----------------------------- check params
 if [ "x$confirm" != "xconfirm" ]
 then
 	echo "----- $0 -----"
-	echo "Usage: initdemopassword.sh confirm [base port login pass]"
+	echo "Usage: initdemopassword.sh confirm [base port login pass password_hash_algo]"
+	echo "password_hash_algo can be md5 or password_hash"
 	exit
 fi
 
@@ -53,7 +55,7 @@ then
 	DIALOG="$DIALOG --ascii-lines"
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
+	$DIALOG --title "Reset login password" --clear \
 	        --inputbox "Mysql database name :" 16 55 dolibarrdemo 2> $fichtemp
 	valret=$?
 	case $valret in
@@ -70,7 +72,7 @@ then
 	DIALOG=${DIALOG=dialog}
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
+	$DIALOG --title "Reset login password" --clear \
 	        --inputbox "Mysql port (ex: 3306):" 16 55 3306 2> $fichtemp
 	
 	valret=$?
@@ -128,7 +130,7 @@ then
 
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
-	$DIALOG --title "Init demo login with demo values" --clear \
+	$DIALOG --title "Reset login password" --clear \
 	        --yesno "Do you confirm ? \n Mysql database : '$base' \n Mysql port : '$port' \n Demo login: '$demologin' \n Demo password : '$demopass'" 15 55
 	
 	case $? in
@@ -147,13 +149,32 @@ then
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
-echo "echo \"UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';\" | mysql -P$port $base"
-echo "UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';" | mysql -P$port $base
+
+if [ "x${demopasshash}" != "xpassword_hash" ]
+then
+	echo '<?php echo MD5("$demopass"); ?>' > /tmp/tmp.php 
+	newpass=`php -f /tmp/tmp.php`
+	rm /tmp/tmp.php
+else
+	echo '<?php echo password_hash("'$demopass'", PASSWORD_DEFAULT); ?>' > /tmp/tmp.php
+	newpass=`php -f /tmp/tmp.php`
+	rm /tmp/tmp.php
+fi
+
+echo "echo \"UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';\" | mysql -P$port $base"
+echo "UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';" | mysql -P$port $base
 export res=$?
 
 if [ $res -ne 0 ]; then
 	echo "Error to execute sql with mysql -P$port -u$admin -p***** $base"
 	exit
+fi 
+
+if [ -s "$mydir/initdemopostsql.sql" ]; then
+	echo A file initdemopostsql.sql was found, we execute it.
+	mysql -P$port $base < "$mydir/initdemopostsql.sql"
+else
+	echo No file initdemopostsql.sql found, we extra sql action done.
 fi 
 
 

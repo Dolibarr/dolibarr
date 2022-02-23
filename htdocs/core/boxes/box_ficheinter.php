@@ -76,48 +76,60 @@ class box_ficheinter extends ModeleBoxes
 
 		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$ficheinterstatic = new Fichinter($this->db);
-		$companystatic = new Societe($this->db);
+		$thirdpartystatic = new Societe($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
 
-		if (!empty($user->rights->ficheinter->lire))
-		{
-			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut,";
-			$sql .= " f.datec,";
-			$sql .= " f.date_valid as datev,";
-			$sql .= " f.tms as datem,";
-			$sql .= " s.nom as name, s.rowid as socid, s.client, s.email as semail";
+		if (!empty($user->rights->ficheinter->lire)) {
+			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
+			$sql .= ", f.datec";
+			$sql .= ", f.date_valid as datev";
+			$sql .= ", f.tms as datem";
+			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir)) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql .= " WHERE f.fk_soc = s.rowid ";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid)	$sql .= " AND s.rowid = ".$user->socid;
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
 			$sql .= " ORDER BY f.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this).'::loadBox', LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$now = dol_now();
 
 				$i = 0;
 
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
 
-					$ficheinterstatic->statut = $objp->fk_statut;
+					$ficheinterstatic->statut = $objp->status;
+					$ficheinterstatic->status = $objp->status;
 					$ficheinterstatic->id = $objp->rowid;
 					$ficheinterstatic->ref = $objp->ref;
 
-					$companystatic->id = $objp->socid;
-					$companystatic->name = $objp->name;
-					$companystatic->email = $objp->semail;
+					$thirdpartystatic->id = $objp->socid;
+					$thirdpartystatic->name = $objp->name;
+					//$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->code_client = $objp->code_client;
+					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->client = $objp->client;
+					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="nowraponall"',
@@ -126,14 +138,14 @@ class box_ficheinter extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $companystatic->getNomUrl(1),
+						'td' => 'class="tdoverflowmax150"',
+						'text' => $thirdpartystatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'day'),
+						'text' => dol_print_date($datec, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$i][] = array(
@@ -145,10 +157,12 @@ class box_ficheinter extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$i][0] = array(
+				if ($num == 0) {
+					$this->info_box_contents[$i][0] = array(
 					'td' => 'class="center opacitymedium"',
 					'text'=>$langs->trans("NoRecordedInterventions")
-				);
+					);
+				}
 
 				$this->db->free($resql);
 			} else {

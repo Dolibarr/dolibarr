@@ -1,4 +1,8 @@
 # Dolibarr language file - Source file is en_US - margins
+ProductService=Produkt oder Service
+UseDiscountAsProduct=Als Produkt
+UseDiscountAsService=Als Service
+UseDiscountOnTotal=Auf Zwischensumme
 MARGIN_TYPE=Kaufpreis / Kosten standardmässig vorgeschlagen für Standardmargenkalkulation empfohlen\n
 MargeType1=Marge nach höchstem Lieferantenpreis
 MargeType3=Spanne vom Einstandspreis

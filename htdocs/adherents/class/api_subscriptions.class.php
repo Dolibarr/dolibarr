@@ -30,7 +30,7 @@ class Subscriptions extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'fk_adherent',
 		'dateh',
 		'datef',
@@ -87,7 +87,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
 	{
-		global $db, $conf;
+		global $conf;
 
 		$obj_ret = array();
 
@@ -100,10 +100,11 @@ class Subscriptions extends DolibarrApi
 		$sql .= ' WHERE 1 = 1';
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -183,7 +184,9 @@ class Subscriptions extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$subscription->$field = $value;
 		}
 
@@ -236,8 +239,9 @@ class Subscriptions extends DolibarrApi
 	{
 		$subscription = array();
 		foreach (Subscriptions::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$subscription[$field] = $data[$field];
 		}
 		return $subscription;

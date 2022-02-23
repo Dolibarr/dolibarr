@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/comm/mailing/index.php
  *       \ingroup    mailing
- *       \brief      Page accueil de la zone mailing
+ *       \brief      Home page for emailing area
  */
 
 require '../../main.inc.php';
@@ -34,8 +34,9 @@ $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('mailingindex'));
 
 // Load translation files required by the page
-$langs->loadLangs(array('commercial', 'orders'));
+$langs->loadLangs(array('commercial', 'orders', 'mails'));
 
+$object = new Mailing($db);
 
 // Security check
 $result = restrictedArea($user, 'mailing');
@@ -46,9 +47,11 @@ $result = restrictedArea($user, 'mailing');
  */
 
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
-llxHeader('', 'EMailing', $help_url);
+$title = $langs->trans('MailingArea');
 
-print load_fiche_titre($langs->trans("MailingArea"));
+llxHeader('', $title, $help_url);
+
+print load_fiche_titre($title);
 
 //print '<table class="notopnoleftnoright" width="100%">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -57,7 +60,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 //if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 //{
-	// Recherche emails
+	// Search into emailings
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<div class="div-table-responsive-no-min">';
@@ -80,16 +83,14 @@ print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("TargetsStatistic
 $dir = DOL_DOCUMENT_ROOT."/core/modules/mailings";
 $handle = opendir($dir);
 
-if (is_resource($handle))
-{
-	while (($file = readdir($handle)) !== false)
-	{
-		if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		{
-			if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg))
-			{
+if (is_resource($handle)) {
+	while (($file = readdir($handle)) !== false) {
+		if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+			if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg)) {
 				$modulename = $reg[1];
-	   			if ($modulename == 'example') continue;
+				if ($modulename == 'example') {
+					continue;
+				}
 
 				// Loading Class
 				$file = $dir."/".$modulename.".modules.php";
@@ -98,10 +99,8 @@ if (is_resource($handle))
 				$mailmodule = new $classname($db);
 
 				$qualified = 1;
-				foreach ($mailmodule->require_module as $key)
-				{
-					if (!$conf->$key->enabled || (!$user->admin && $mailmodule->require_admin))
-					{
+				foreach ($mailmodule->require_module as $key) {
+					if (!$conf->$key->enabled || (!$user->admin && $mailmodule->require_admin)) {
 						$qualified = 0;
 						//print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
 						break;
@@ -109,10 +108,8 @@ if (is_resource($handle))
 				}
 
 				// Si le module mailing est qualifi�
-				if ($qualified)
-				{
-					foreach ($mailmodule->getSqlArrayForStats() as $sql)
-					{
+				if ($qualified) {
+					foreach ($mailmodule->getSqlArrayForStats() as $sql) {
 						print '<tr class="oddeven">';
 
 						$result = $db->query($sql);
@@ -121,8 +118,7 @@ if (is_resource($handle))
 
 							$i = 0;
 
-							while ($i < $num)
-							{
+							while ($i < $num) {
 								$obj = $db->fetch_object($result);
 								print '<td>'.img_object('', $mailmodule->picto).' '.$obj->label.'</td><td class="right">'.$obj->nb.'<td>';
 								$i++;
@@ -145,8 +141,7 @@ if (is_resource($handle))
 print "</table><br>";
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -169,12 +164,10 @@ if ($result) {
 	print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
 
 	$num = $db->num_rows($result);
-	if ($num > 0)
-	{
+	if ($num > 0) {
 		$i = 0;
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 			$mailstatic = new Mailing($db);
 			$mailstatic->id = $obj->rowid;
@@ -190,7 +183,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table></div><br>";
 	$db->free($result);
@@ -199,18 +192,8 @@ if ($result) {
 }
 
 
-//print '</td></tr></table>';
-print '</div></div></div>';
+print '</div></div>';
 
-
-if ($langs->file_exists("html/spam.html", 0)) {
-	print "<br><br><br><br>".$langs->trans("Note")."<br>";
-	print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
-	dol_print_file($langs, "html/spam.html", 0);
-	print '</div>';
-
-	print '<br>';
-}
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardEmailings', $parameters, $object); // Note that $action and $object may have been modified by hook

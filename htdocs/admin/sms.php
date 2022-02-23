@@ -29,7 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
 
-$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -42,8 +43,6 @@ $substitutionarrayfortest = array(
 	'__LASTNAME__' => 'TESTLastname',
 	'__FIRSTNAME__' => 'TESTFirstname'
 );
-
-$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -62,14 +61,12 @@ if ($action == 'update' && !$cancel) {
 }
 
 
-/*
- * Send sms
- */
-if ($action == 'send' && !$_POST['cancel']) {
+// Send sms
+if ($action == 'send' && !$cancel) {
 	$error = 0;
 
 	$smsfrom = '';
-	if (!empty($_POST["fromsms"])) {
+	if (GETPOST("fromsms", 'alphanohtml')) {
 		$smsfrom = GETPOST("fromsms", 'alphanohtml');
 	}
 	if (empty($smsfrom)) {
@@ -135,6 +132,8 @@ if ($action == 'send' && !$_POST['cancel']) {
  * View
  */
 
+$form = new Form($db);
+
 $linuxlike = 1;
 if (preg_match('/^win/i', PHP_OS)) {
 	$linuxlike = 0;
@@ -157,13 +156,11 @@ asort($listofmethods);
 
 if (!count($listofmethods)) {
 	$descnosms = $langs->trans("NoSmsEngine", '{Dolistore}');
-	$descnosms = str_replace('{Dolistore}', '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>', $descnosms);
+	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>', $descnosms);
 	print '<div class="warning">'.$descnosms.'</div>';
 }
 
 if ($action == 'edit') {
-	$form = new Form($db);
-
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -175,7 +172,7 @@ if ($action == 'edit') {
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
-	print $form->selectyesno('MAIN_DISABLE_ALL_SMS', $conf->global->MAIN_DISABLE_ALL_SMS, 1);
+	print $form->selectyesno('MAIN_DISABLE_ALL_SMS', getDolGlobalString('MAIN_DISABLE_ALL_SMS'), 1);
 	print '</td></tr>';
 
 	// Separator
@@ -186,13 +183,13 @@ if ($action == 'edit') {
 	if (count($listofmethods)) {
 		print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, $conf->global->MAIN_SMS_SENDMODE, 1);
 	} else {
-		print '<font class="error">'.$langs->trans("None").'</font>';
+		print '<span class="error">'.$langs->trans("None").'</span>';
 	}
 	print '</td></tr>';
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="'.$conf->global->MAIN_MAIL_SMS_FROM;
+	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
 	print '"></td></tr>';
 
 	// Autocopy to
@@ -216,14 +213,14 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_SMS).'</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_SMS')).'</td></tr>';
 
 	// Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	$text = $listofmethods[$conf->global->MAIN_SMS_SENDMODE];
+	$text = empty(getDolGlobalString('MAIN_SMS_SENDMODE')) ? '' : $listofmethods[getDolGlobalString('MAIN_SMS_SENDMODE')];
 	if (empty($text)) {
 		$text = $langs->trans("Undefined").' '.img_warning();
 	}
@@ -232,7 +229,7 @@ if ($action == 'edit') {
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
+	print '<td>'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
 	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) {
 		print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	}
@@ -274,30 +271,6 @@ if ($action == 'edit') {
 	}
 	print '</div>';
 
-
-	// Run the test to connect
-	/*
-	if ($_GET["action"] == 'testconnect')
-	{
-		print '<br>';
-		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
-
-		// If we use SSL/TLS
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mail = new CSMSFile('','','','');
-		$result=$mail->check_server_port($server,$port);
-		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
-		else
-		{
-			print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
-			if ($mail->error) print ' - '.$mail->error;
-			print '</div>';
-		}
-		print '<br>';
-	}*/
-
 	// Affichage formulaire de TEST simple
 	if ($action == 'test') {
 		print '<br>';
@@ -308,12 +281,12 @@ if ($action == 'edit') {
 		$formsms = new FormSms($db);
 		$formsms->fromtype = 'user';
 		$formsms->fromid = $user->id;
-		$formsms->fromsms = (GETPOSTISSET('fromsms') ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+		$formsms->fromsms = (GETPOSTISSET('fromsms') ? GETPOST('fromsms') : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
 		$formsms->withfromreadonly = 0;
 		$formsms->withsubstit = 0;
 		$formsms->withfrom = 1;
-		$formsms->withto = (GETPOSTISSET('sendto') ? $_POST['sendto'] : ($user->user_mobile ? $user->user_mobile : 1));
-		$formsms->withbody = (GETPOSTISSET('message') ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
+		$formsms->withto = (GETPOSTISSET('sendto') ? GETPOST('sendto') : ($user->user_mobile ? $user->user_mobile : 1));
+		$formsms->withbody = (GETPOSTISSET('message') ? (!GETPOST('message') ? 1 : GETPOST('message')) : $langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly = 0;
 		$formsms->withcancel = 1;
 		// Tableau des substitutions

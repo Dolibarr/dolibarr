@@ -106,10 +106,12 @@ function versioncompare($versionarray1, $versionarray2)
 		$level++;
 		//print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
 		if ($operande1 < $operande2) {
-			$ret = -$level; break;
+			$ret = -$level;
+			break;
 		}
 		if ($operande1 > $operande2) {
-			$ret = $level; break;
+			$ret = $level;
+			break;
 		}
 	}
 	//print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
@@ -121,6 +123,7 @@ function versioncompare($versionarray1, $versionarray2)
  *	Return version PHP
  *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *  @see versioncompare()
  */
 function versionphparray()
 {
@@ -131,6 +134,7 @@ function versionphparray()
  *	Return version Dolibarr
  *
  *	@return     array               Tableau de version (vermajeur,vermineur,autre)
+ *  @see versioncompare()
  */
 function versiondolibarrarray()
 {
@@ -156,9 +160,10 @@ function versiondolibarrarray()
  *  @param		int		$linelengthlimit	Limit for length of each line (Use 0 if unknown, may be faster if defined)
  *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
+ *  @param		int		$colspan			2=Add a colspan=2 on td
  * 	@return		int							<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0)
+function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0)
 {
 	global $db, $conf, $langs, $user;
 
@@ -235,6 +240,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				if (empty($nocommentremoval)) {
 					$buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
 				}
+				if ($buffer) $buffer .= ' ';
 				$buffer .= trim($buf);
 			}
 
@@ -278,13 +284,9 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					}
 				} else {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>';
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div>";
+						print '</td></tr>';
 					}
 					$error++;
 					break;
@@ -301,20 +303,24 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 		if ($offsetforchartofaccount > 0) {
 			// Replace lines
-			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400, '...', 1);'
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400,...'
 			// with
-			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000, '...', 1);'
-			// Note: string with 1234 instead of '1234' is also supported
-			$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
-			$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000,...'
+			// Note: string with 'PCG99-ABREGE','CAPIT', 1234  instead of  'PCG99-ABREGE','CAPIT', '1234' is also supported
+			$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.((int) $offsetforchartofaccount).', \2, \3 + '.((int) $offsetforchartofaccount), $newsql);
+			$newsql = preg_replace('/([,\s])0 \+ '.((int) $offsetforchartofaccount).'/ims', '\1 0', $newsql);
 			//var_dump($newsql);
 			$arraysql[$i] = $newsql;
+
+			// FIXME Because we force the rowid during insert, we must also update the sequence with postgresql by running
+			// SELECT dol_util_rebuild_sequences();
 		}
 	}
 
 	// Loop on each request to execute request
 	$cursorinsert = 0;
 	$listofinsertedrowid = array();
+	$keyforsql = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
 			// Replace the prefix tables
@@ -330,7 +336,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 			// Add log of request
 			if (!$silent) {
-				print '<tr class="trforrunsql"><td class="tdtop opacitymedium">'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+				print '<tr class="trforrunsql'.$keyforsql.'"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
 			}
 			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
@@ -341,7 +347,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 				for ($j = 0; $j < $num; $j++) {
 					$from = $reg[0][$j];
-					$to = $db->encrypt($reg[1][$j], 1);
+					$to = $db->encrypt($reg[1][$j]);
 					$newsql = str_replace($from, $to, $newsql);
 				}
 				$sqlmodified++;
@@ -364,13 +370,9 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				$cursor = $reg[1];
 				if (empty($listofinsertedrowid[$cursor])) {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>';
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div>";
+						print '</td></tr>';
 					}
 					$error++;
 					break;
@@ -430,21 +432,13 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				// Is it an error we accept
 				if (!in_array($errno, $okerrors)) {
 					if (!$silent) {
-						print '<tr><td class="tdtop" colspan="2">';
-					}
-					if (!$silent) {
-						print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
-					}
-					if (!$silent) {
-						print '</tr>'."\n";
+						print '<tr><td class="tdtop"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div>";
+						print '</td></tr>'."\n";
 					}
 					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
 					$error++;
 				}
-			}
-
-			if (!$silent) {
-				print '</tr>'."\n";
 			}
 		}
 	}
@@ -457,22 +451,24 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		} else {
 			print '<span class="error">'.$langs->trans("Error").'</span>';
 		}
-		//if (! empty($conf->use_javascript_ajax)) {
-			print '<script type="text/javascript" language="javascript">
-			jQuery(document).ready(function() {
-				function init_trrunsql()
-				{
-					console.log("toggle .trforrunsql");
-					jQuery(".trforrunsql").toggle();
-				}
-				init_trrunsql();
-				jQuery(".trforrunsqlshowhide").click(function() {
-					init_trrunsql();
-				});
+
+		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
+		print '<script type="text/javascript">
+		jQuery(document).ready(function() {
+			function init_trrunsql'.$keyforsql.'()
+			{
+				console.log("toggle .trforrunsql'.$keyforsql.'");
+				jQuery(".trforrunsql'.$keyforsql.'").toggle();
+			}
+			init_trrunsql'.$keyforsql.'();
+			jQuery(".trforrunsqlshowhide'.$keyforsql.'").click(function() {
+				init_trrunsql'.$keyforsql.'();
 			});
-			</script>';
-			print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		});
+		</script>';
+		print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
+
 		print '</td></tr>'."\n";
 	}
 
@@ -487,10 +483,10 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 
 /**
- *	Effacement d'une constante dans la base de donnees
+ *	Delete a constant
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string		$name		Name of constant or rowid of line
+ *	@param	    string|int	$name		Name of constant or rowid of line
  *	@param	    int			$entity		Multi company id, -1 for all entities
  *	@return     int         			<0 if KO, >0 if OK
  *
@@ -508,11 +504,11 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
 	if (is_numeric($name)) {
-		$sql .= " OR rowid = '".$db->escape($name)."'";
+		$sql .= " OR rowid = ".((int) $name);
 	}
 	$sql .= ")";
 	if ($entity >= 0) {
-		$sql .= " AND entity = ".$entity;
+		$sql .= " AND entity = ".((int) $entity);
 	}
 
 	dol_syslog("admin.lib::dolibarr_del_const", LOG_DEBUG);
@@ -527,24 +523,23 @@ function dolibarr_del_const($db, $name, $entity = 1)
 }
 
 /**
- *	Recupere une constante depuis la base de donnees.
+ *	Get the value of a setup constant from database
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string		$name		Nom de la constante
+ *	@param	    string		$name		Name of constant
  *	@param	    int			$entity		Multi company id
- *	@return     string      			Valeur de la constante
+ *	@return     string      			Value of constant
  *
  *	@see		dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_get_const($db, $name, $entity = 1)
 {
-	global $conf;
 	$value = '';
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name, 1);
-	$sql .= " AND entity = ".$entity;
+	$sql .= " WHERE name = ".$db->encrypt($name);
+	$sql .= " AND entity = ".((int) $entity);
 
 	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -564,7 +559,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    string		$value		Value of constant
- *	@param	    string		$type		Type of constante (chaine par defaut)
+ *	@param	    string		$type		Type of constant. Deprecated, only strings are allowed for $value. Caller must json encode/decode to store other type of data.
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
  *	@param	    int			$entity		Multi company id (0 means all entities)
@@ -590,9 +585,9 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name, 1);
+	$sql .= " WHERE name = ".$db->encrypt($name);
 	if ($entity >= 0) {
-		$sql .= " AND entity = ".$entity;
+		$sql .= " AND entity = ".((int) $entity);
 	}
 
 	dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
@@ -601,9 +596,9 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity)";
 		$sql .= " VALUES (";
-		$sql .= $db->encrypt($name, 1);
-		$sql .= ", ".$db->encrypt($value, 1);
-		$sql .= ",'".$db->escape($type)."',".$visible.",'".$db->escape($note)."',".$entity.")";
+		$sql .= $db->encrypt($name);
+		$sql .= ", ".$db->encrypt($value);
+		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
@@ -628,16 +623,29 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @param	int		$nbofactivatedmodules	Number if activated modules
+ * @param	int		$nboftotalmodules		Nb of total modules
+ * @return  array							Array of tabs to show
  */
-function modules_prepare_head()
+function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $form;
+
+	$desc = $langs->trans("ModulesDesc", '{picto}');
+	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
+
 	$h = 0;
 	$head = array();
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
-	$head[$h][1] = $langs->trans("AvailableModules");
+	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
+		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
+		$head[$h][1] = $langs->trans("AvailableModules");
+		$head[$h][1] .= $form->textwithpicto('', $langs->trans("YouMustEnableOneModule").'.<br><br><span class="opacitymedium">'.$desc.'</span>', 1, 'warning');
+	} else {
+		//$head[$h][1] = $langs->trans("AvailableModules").$form->textwithpicto('<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>', $desc, 1, 'help', '', 1, 3);
+		$head[$h][1] = $langs->trans("AvailableModules").'<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>';
+	}
 	$head[$h][2] = 'modules';
 	$h++;
 
@@ -655,6 +663,45 @@ function modules_prepare_head()
 	$head[$h][1] = $langs->trans("ModulesDevelopYourModule");
 	$head[$h][2] = 'develop';
 	$h++;
+
+	return $head;
+}
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function ihm_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=other";
+	$head[$h][1] = $langs->trans("LanguageAndPresentation");
+	$head[$h][2] = 'other';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=template";
+	$head[$h][1] = $langs->trans("SkinAndColors");
+	$head[$h][2] = 'template';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=dashboard";
+	$head[$h][1] = $langs->trans("Dashboard");
+	$head[$h][2] = 'dashboard';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/ihm.php?mode=login";
+	$head[$h][1] = $langs->trans("LoginPage");
+	$head[$h][2] = 'login';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin', 'remove');
+
 
 	return $head;
 }
@@ -709,7 +756,7 @@ function security_prepare_head()
 	$sql = "SELECT COUNT(r.id) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 	$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$sql .= " AND bydefault = 1";
 	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 		$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
@@ -790,7 +837,7 @@ function translation_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
-	$head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+	$head[$h][1] = '<span class="valignmiddle">'.$langs->trans("TranslationOverwriteKey").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 	$head[$h][2] = 'overwrite';
 	$h++;
 
@@ -888,7 +935,7 @@ function listOfSessions()
 
 					if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
 						(preg_match('/dol_entity\|i:'.$conf->entity.';/i', $sessValues) || preg_match('/dol_entity\|s:([0-9]+):"'.$conf->entity.'"/i', $sessValues)) && // limit to current entity
-					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i', $sessValues)) { // limit to company name
+					preg_match('/dol_company\|s:([0-9]+):"('.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').')"/i', $sessValues)) { // limit to company name
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
 						$regs = array();
@@ -1083,7 +1130,7 @@ function activateModule($value, $withdeps = 1)
 
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
-		$ret['nbperms'] += count($objMod->rights);
+		$ret['nbperms'] += (is_array($objMod->rights)?count($objMod->rights):0);
 	}
 
 	return $ret;
@@ -1171,10 +1218,10 @@ function unActivateModule($value, $requiredby = 1)
  * 	@param		array		$tabrowid			Tabrowid
  * 	@param		array		$tabcond			Tabcond
  * 	@param		array		$tabhelp			Tabhelp
- *  @param		array		$tabfieldcheck		Tabfieldcheck
+ *  @param		array		$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
  * 	@return		int			1
  */
-function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabfieldcheck)
+function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabcomplete)
 {
 	global $db, $modules, $conf, $langs;
 
@@ -1210,14 +1257,14 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
 						//If module is not activated disqualified
-						if (empty($conf->global->$const_name)) {
+						if (empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
 
@@ -1237,41 +1284,76 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 							if (!empty($objMod->dictionaries)) {
 								//var_dump($objMod->dictionaries['tabname']);
 								$nbtabname = $nbtablib = $nbtabsql = $nbtabsqlsort = $nbtabfield = $nbtabfieldvalue = $nbtabfieldinsert = $nbtabrowid = $nbtabcond = $nbtabfieldcheck = $nbtabhelp = 0;
-								foreach ($objMod->dictionaries['tabname'] as $val) {
-									$nbtabname++; $taborder[] = max($taborder) + 1; $tabname[] = $val;
+								$tabnamerelwithkey = array();
+								foreach ($objMod->dictionaries['tabname'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $val);
+									$nbtabname++;
+									$taborder[] = max($taborder) + 1;
+									$tabname[] = $val;
+									$tabnamerelwithkey[$key] = $val;
+									$tabcomplete[$tmptablename]['picto'] = $objMod->picto;
 								}		// Position
-								foreach ($objMod->dictionaries['tablib'] as $val) {
-									$nbtablib++; $tablib[] = $val;
+								foreach ($objMod->dictionaries['tablib'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+									$nbtablib++;
+									$tablib[] = $val;
+									$tabcomplete[$tmptablename]['lib'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabsql'] as $val) {
-									$nbtabsql++; $tabsql[] = $val;
+								foreach ($objMod->dictionaries['tabsql'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+									$nbtabsql++;
+									$tabsql[] = $val;
+									$tabcomplete[$tmptablename]['sql'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabsqlsort'] as $val) {
-									$nbtabsqlsort++; $tabsqlsort[] = $val;
+								foreach ($objMod->dictionaries['tabsqlsort'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+									$nbtabsqlsort++;
+									$tabsqlsort[] = $val;
+									$tabcomplete[$tmptablename]['sqlsort'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfield'] as $val) {
-									$nbtabfield++; $tabfield[] = $val;
+								foreach ($objMod->dictionaries['tabfield'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+									$nbtabfield++;
+									$tabfield[] = $val;
+									$tabcomplete[$tmptablename]['field'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfieldvalue'] as $val) {
-									$nbtabfieldvalue++; $tabfieldvalue[] = $val;
+								foreach ($objMod->dictionaries['tabfieldvalue'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+									$nbtabfieldvalue++;
+									$tabfieldvalue[] = $val;
+									$tabcomplete[$tmptablename]['value'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfieldinsert'] as $val) {
-									$nbtabfieldinsert++; $tabfieldinsert[] = $val;
+								foreach ($objMod->dictionaries['tabfieldinsert'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+									$nbtabfieldinsert++;
+									$tabfieldinsert[] = $val;
+									$tabcomplete[$tmptablename]['fieldinsert'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabrowid'] as $val) {
-									$nbtabrowid++; $tabrowid[] = $val;
+								foreach ($objMod->dictionaries['tabrowid'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+									$nbtabrowid++;
+									$tabrowid[] = $val;
+									$tabcomplete[$tmptablename]['rowid'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabcond'] as $val) {
-									$nbtabcond++; $tabcond[] = $val;
+								foreach ($objMod->dictionaries['tabcond'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+									$nbtabcond++;
+									$tabcond[] = $val;
+									$tabcomplete[$tmptablename]['rowid'] = $val;
 								}
 								if (!empty($objMod->dictionaries['tabhelp'])) {
-									foreach ($objMod->dictionaries['tabhelp'] as $val) {
-										$nbtabhelp++; $tabhelp[] = $val;
+									foreach ($objMod->dictionaries['tabhelp'] as $key => $val) {
+										$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+										$nbtabhelp++;
+										$tabhelp[] = $val;
+										$tabcomplete[$tmptablename]['help'] = $val;
 									}
 								}
 								if (!empty($objMod->dictionaries['tabfieldcheck'])) {
-									foreach ($objMod->dictionaries['tabfieldcheck'] as $val) {
-										$nbtabfieldcheck++; $tabfieldcheck[] = $val;
+									foreach ($objMod->dictionaries['tabfieldcheck'] as $key => $val) {
+										$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
+										$nbtabfieldcheck++;
+										$tabcomplete[$tmptablename]['fieldcheck'] = $val;
 									}
 								}
 
@@ -1439,7 +1521,13 @@ function complete_elementList_with_modules(&$elementList)
 							//print "x".$modName." ".$orders[$i]."\n<br>";
 
 							if (!empty($objMod->module_parts['contactelement'])) {
-								$elementList[$objMod->name] = $langs->trans($objMod->name);
+								if (is_array($objMod->module_parts['contactelement'])) {
+									foreach ($objMod->module_parts['contactelement'] as $elem => $title) {
+										$elementList[$elem] = $langs->trans($title);
+									}
+								} else {
+									$elementList[$objMod->name] = $langs->trans($objMod->name);
+								}
 							}
 
 							$j++;
@@ -1466,11 +1554,12 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all (form is output by caller, recommended)
- *  @param  string  $helptext       Help
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)
+ *  @param  string  $helptext       Tooltip help to use for the column name of values
+ *  @param	string	$text			Text to use for the column name of values
  *	@return	void
  */
-function form_constantes($tableau, $strictw3c = 0, $helptext = '')
+function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Value')
 {
 	global $db, $langs, $conf, $user;
 	global $_Avery_Labels;
@@ -1486,11 +1575,12 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		print '<input type="hidden" name="action" value="updateall">';
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("Description").'</td>';
+	print '<td class="">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$text = $langs->trans("Value");
+	$text = $langs->trans($text);
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
 	print '</td>';
 	if (empty($strictw3c)) {
@@ -1538,6 +1628,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 			if (empty($strictw3c)) {
 				print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="page_y" value="'.newToken().'">';
 			}
 
 			print '<tr class="oddeven">';
@@ -1592,24 +1683,24 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 				foreach (array_keys($_Avery_Labels) as $codecards) {
 					$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 				}
-				print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : '[]'), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
+				print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
 				print '<input type="hidden" name="consttype" value="yesno">';
 				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				print '</td>';
 			} else {
 				print '<td>';
-				print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : '[]').'" value="'.($obj->type ? $obj->type : 'string').'">';
-				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+				print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.($obj->type ? $obj->type : 'string').'">';
+				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				if ($obj->type == 'textarea' || in_array($const, array('ADHERENT_CARD_TEXT', 'ADHERENT_CARD_TEXT_RIGHT', 'ADHERENT_ETIQUETTE_TEXT'))) {
-					print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" cols="50" rows="5" wrap="soft">'."\n";
+					print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" cols="50" rows="5" wrap="soft">'."\n";
 					print $obj->value;
 					print "</textarea>\n";
 				} elseif ($obj->type == 'html') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('constvalue_'.$const.(empty($strictw3c) ? '' : '[]'), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
-					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : '[]'), $obj->value, 1);
+					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1);
 				} elseif (preg_match('/emailtemplate/', $obj->type)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
@@ -1632,19 +1723,22 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 					}
 					//var_dump($arraydefaultmessage);
 					//var_dump($arrayofmessagename);
-					print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
-				} else // type = 'string' ou 'chaine'
-				{
-					print '<input type="text" class="flat" size="48" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
+					print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+				} elseif (preg_match('/MAIL_FROM$/i', $const)) {
+					print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
+				} else { // type = 'string' ou 'chaine'
+					print '<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
 				}
 				print '</td>';
 			}
+
 			// Submit
 			if (empty($strictw3c)) {
 				print '<td class="center">';
-				print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+				print '<input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update">';
 				print "</td>";
 			}
+
 			print "</tr>\n";
 
 			if (empty($strictw3c)) {
@@ -1653,9 +1747,10 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		}
 	}
 	print '</table>';
+	print '</div>';
 
 	if (!empty($strictw3c) && $strictw3c == 1) {
-		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+		print '<div align="center"><input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update"></div>';
 		print "</form>\n";
 	}
 }
@@ -1715,7 +1810,7 @@ function addDocumentModel($name, $type, $label = '', $description = '')
 	$db->begin();
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql .= " VALUES ('".$db->escape($name)."','".$db->escape($type)."',".$conf->entity.", ";
+	$sql .= " VALUES ('".$db->escape($name)."','".$db->escape($type)."',".((int) $conf->entity).", ";
 	$sql .= ($label ? "'".$db->escape($label)."'" : 'null').", ";
 	$sql .= (!empty($description) ? "'".$db->escape($description)."'" : "null");
 	$sql .= ")";
@@ -1748,7 +1843,7 @@ function delDocumentModel($name, $type)
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE nom = '".$db->escape($name)."'";
 	$sql .= " AND type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	dol_syslog("admin.lib::delDocumentModel", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -1819,6 +1914,11 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'accountant';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/company_socialnetworks.php";
+	$head[$h][1] = $langs->trans("SocialNetworksInformation");
+	$head[$h][2] = 'socialnetworks';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'remove');
@@ -1844,14 +1944,14 @@ function email_admin_prepare_head()
 		$head[$h][2] = 'common';
 		$h++;
 
-		if ($conf->mailing->enabled) {
+		if (!empty($conf->mailing->enabled)) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
 			$h++;
 		}
 
-		if ($conf->ticket->enabled) {
+		if (!empty($conf->ticket->enabled)) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_ticket.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("Ticket"));
 			$head[$h][2] = 'common_ticket';
@@ -1859,17 +1959,18 @@ function email_admin_prepare_head()
 		}
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-	$head[$h][1] = $langs->trans("EMailTemplates");
-	$head[$h][2] = 'templates';
-	$h++;
-
-	if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	// admin and non admin can view this menu entry, but it is not shown yet when we on user menu "Email templates"
+	if (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates') {
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");
 		$head[$h][2] = 'senderprofiles';
 		$h++;
 	}
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
+	$head[$h][1] = $langs->trans("EMailTemplates");
+	$head[$h][2] = 'templates';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'email_admin', 'remove');
 

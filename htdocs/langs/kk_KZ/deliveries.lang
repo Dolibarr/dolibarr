@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Жеткізу
+DeliveryRef=Ref жеткізу
+DeliveryCard=Түбіртек картасы
+DeliveryOrder=Жеткізу түбіртегі
+DeliveryDate=Жеткізіп беру күні
+CreateDeliveryOrder=Жеткізу түбіртегін жасаңыз
+DeliveryStateSaved=Жеткізу күйі сақталды
+SetDeliveryDate=Жеткізу күнін орнатыңыз
+ValidateDeliveryReceipt=Жеткізу түбіртегін растау
+ValidateDeliveryReceiptConfirm=Бұл жеткізу түбіртегін растағыңыз келетініне сенімдісіз бе?
+DeleteDeliveryReceipt=Жеткізу түбіртегін жою
+DeleteDeliveryReceiptConfirm=<b> %s </b> жеткізу түбіртегін шынымен жойғыңыз келе ме?
+DeliveryMethod=Жеткізу әдісі
+TrackingNumber=Бақылау нөмірі
+DeliveryNotValidated=Жеткізу расталмады
+StatusDeliveryCanceled=Бас тартылды
+StatusDeliveryDraft=Жоба
+StatusDeliveryValidated=Алынған
+# merou PDF model
+NameAndSignature=Аты мен қолы:
+ToAndDate=_____________________________________________ ____/_____/__________
+GoodStatusDeclaration=Жоғарыда көрсетілген тауарларды жақсы күйде алды,
+Deliverer=Жеткізуші:
+Sender=Жіберуші
+Recipient=Алушы
+ErrorStockIsNotEnough=Қор жеткіліксіз
+Shippable=Жеткізілетін
+NonShippable=Жеткізілмейді
+ShowShippableStatus=Жеткізілетін күйді көрсету
+ShowReceiving=Жеткізу түбіртегін көрсету
+NonExistentOrder=Болмайтын тәртіп
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Алдыңғы жолдарда бөлінген акциялар саны

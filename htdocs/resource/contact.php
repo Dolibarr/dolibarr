@@ -38,29 +38,35 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-// Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'resource', $id, 'resource');
-
 $object = new DolResource($db);
-$result = $object->fetch($id, $ref);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'resource', $object->id, 'resource');
+
+// Security check
+if (!$user->rights->resource->read) {
+	accessforbidden();
+}
 
 
 /*
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->resource->write)
-{
-	if ($result > 0 && $id > 0)
-	{
+if ($action == 'addcontact' && $user->rights->resource->write) {
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -73,21 +79,14 @@ if ($action == 'addcontact' && $user->rights->resource->write)
 
 		setEventMessages($mesg, null, 'errors');
 	}
-}
-
-// Toggle the status of a contact
-elseif ($action == 'swapstatut' && $user->rights->resource->write)
-{
+} elseif ($action == 'swapstatut' && $user->rights->resource->write) {
+	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-}
-
-// Erase a contact
-elseif ($action == 'deletecontact' && $user->rights->resource->write)
-{
+} elseif ($action == 'deletecontact' && $user->rights->resource->write) {
+	// Erase a contact
 	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -109,8 +108,7 @@ llxHeader('', $langs->trans("Resource"));
 
 // Mode vue et edition
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
@@ -152,8 +150,12 @@ if ($id > 0 || !empty($ref))
 
 	print '<br>';
 
-	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser = 1;
-	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty = 1;
+	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER)) {
+		$hideaddcontactforuser = 1;
+	}
+	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) {
+		$hideaddcontactforthirdparty = 1;
+	}
 
 	$permission = 1;
 	// Contacts lines

@@ -46,23 +46,31 @@ class modMyModule extends DolibarrModules
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'mymodule';
+
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
 		$this->family = "other";
+
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '90';
+
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 		// Module label (no space allowed), used if translation string 'ModuleMyModuleName' not found (MyModule is name of module).
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
+
 		// Module description, used if translation string 'ModuleMyModuleDesc' not found (MyModule is name of module).
 		$this->description = "MyModuleDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "MyModule description (Long)";
+		$this->descriptionlong = "MyModuleDescription";
+
+		// Author
 		$this->editor_name = 'Editor name';
 		$this->editor_url = 'https://www.example.com';
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
 		// Url to the file with your last numberversion of this module
@@ -70,10 +78,13 @@ class modMyModule extends DolibarrModules
 
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
+		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
 		$this->picto = 'generic';
+
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
@@ -113,11 +124,14 @@ class modMyModule extends DolibarrModules
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
 		);
+
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp","/mymodule/subdir");
 		$this->dirs = array("/mymodule/temp");
+
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
 		$this->config_page_url = array("setup.php@mymodule");
+
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
@@ -125,11 +139,17 @@ class modMyModule extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
+
+		// The language file dedicated to your module
 		$this->langfiles = array("mymodule@mymodule");
-		$this->phpmin = array(5, 5); // Minimum version of PHP required by module
+
+		// Prerequisites
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+
+		// Messages at activation
+		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
 		//$this->automatic_activation = array('FR'=>'MyModuleWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
 
@@ -244,20 +264,20 @@ class modMyModule extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of MyModule'; // Permission label
-		$this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+		$this->rights[$r][4] = 'myobject';
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->read)
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update objects of MyModule'; // Permission label
-		$this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+		$this->rights[$r][4] = 'myobject';
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->write)
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of MyModule'; // Permission label
-		$this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+		$this->rights[$r][4] = 'myobject';
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->delete)
 		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
@@ -270,6 +290,7 @@ class modMyModule extends DolibarrModules
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleMyModuleName',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'',
 			'url'=>'/mymodule/mymoduleindex.php',
@@ -286,6 +307,7 @@ class modMyModule extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Top menu entry
 			'titre'=>'MyObject',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'myobject',
 			'url'=>'/mymodule/mymoduleindex.php',
@@ -390,8 +412,11 @@ class modMyModule extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		//$result = $this->_load_tables('/install/mysql/tables/', 'mymodule');
 		$result = $this->_load_tables('/mymodule/sql/');
-		if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -413,19 +438,19 @@ class modMyModule extends DolibarrModules
 		$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'MyObject') continue;
+			if ($myTmpObjectKey == 'MyObject') {
+				continue;
+			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/mymodule';
 				$dest = $dirodt.'/template_myobjects.odt';
 
-				if (file_exists($src) && !file_exists($dest))
-				{
+				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
 					$result = dol_copy($src, $dest, 0, 0);
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 						return 0;
@@ -433,10 +458,10 @@ class modMyModule extends DolibarrModules
 				}
 
 				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".$conf->entity.")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
 				));
 			}
 		}

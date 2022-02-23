@@ -17,7 +17,7 @@
 
  use Luracast\Restler\RestException;
 
-require 'ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 
 
@@ -114,8 +114,7 @@ class Tickets extends DolibarrApi
 	{
 		try {
 			return $this->getCommon(0, '', $ref);
-		} catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			   throw $e;
 		}
 	}
@@ -233,6 +232,10 @@ class Tickets extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+			throw new RestException(403);
+		}
+
 		$obj_ret = array();
 
 		if (!$socid && DolibarrApiAccess::$user->socid) {
@@ -259,7 +262,7 @@ class Tickets extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($socid > 0) {
-			$sql .= " AND t.fk_soc = ".$socid;
+			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 		if ($search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -267,14 +270,15 @@ class Tickets extends DolibarrApi
 
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 

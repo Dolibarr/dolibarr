@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/core/modules/modIntracommreport.class.php
  * 	\ingroup    Intracomm report
- *	\brief      Module to activate intracomm report module
+ *	\brief      Description and activation file for the module intracomm report
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -44,13 +44,13 @@ class modIntracommreport extends DolibarrModules
 		$this->numero = 68000;
 
 		$this->family = "financial";
-		$this->module_position = '100';
+		$this->module_position = '60';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Intracomm report management (Support for French DEB/DES format)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'intracommreport';
@@ -62,10 +62,10 @@ class modIntracommreport extends DolibarrModules
 		$this->config_page_url = array("intracommreport.php@intracommreport");
 
 		// Dependencies
-		$this->depends = array("modFacture", "modTax"); // List of modules id that must be enabled if this module is enabled
+		$this->depends = array("modFacture", "modTax", "modCategorie"); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 5); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(13, 0, -5); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("intracommreport");
 
@@ -86,8 +86,7 @@ class modIntracommreport extends DolibarrModules
 		$this->boxes = array();
 
 		// Dictionaries
-		if (!isset($conf->intracommreport->enabled))
-		{
+		if (!isset($conf->intracommreport->enabled)) {
 			$conf->intracommreport = new stdClass();
 			$conf->intracommreport->enabled = 0;
 		}
@@ -125,5 +124,27 @@ class modIntracommreport extends DolibarrModules
 
 		// Exports
 		$r = 1;
+	}
+
+	/**
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		global $conf;
+
+		$result = $this->_load_tables('/install/mysql/tables/', 'intracommreport');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
+		$sql = array();
+
+		return $this->_init($sql, $options);
 	}
 }

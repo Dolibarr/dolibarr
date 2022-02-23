@@ -4,6 +4,7 @@
  * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +81,10 @@ class Tva extends CommonObject
 	 */
 	public $fk_user_modif;
 
+
+	const STATUS_UNPAID = 0;
+	const STATUS_PAID = 1;
+
 	/**
 	 *	Constructor
 	 *
@@ -107,8 +112,9 @@ class Tva extends CommonObject
 		// Clean parameters
 		$this->amount = trim($this->amount);
 		$this->label = trim($this->label);
+		$this->type_payment = (int) $this->type_payment;
 		$this->note = trim($this->note);
-		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_account = (int) $this->fk_account;
 		$this->fk_user_creat = (int) $this->fk_user_creat;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
 
@@ -125,7 +131,8 @@ class Tva extends CommonObject
 		$sql .= "amount,";
 		$sql .= "label,";
 		$sql .= "note,";
-		$sql .= "fk_bank,";
+		$sql .= "fk_account,";
+		$sql .= "fk_typepayment,";
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
 		$sql .= ") VALUES (";
@@ -135,24 +142,25 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->escape($this->amount)."',";
 		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " '".$this->db->escape($this->note)."',";
-		$sql .= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
-		$sql .= " '".$this->db->escape($this->fk_user_creat)."',";
+		$sql .= " '".$this->db->escape($this->fk_account)."',";
+		$sql .= " '".$this->db->escape($this->type_payment)."',";
+		$sql .= " '".($this->fk_user_creat > 0 ? (int) $this->fk_user_creat : (int) $user->id)."',";
 		$sql .= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql .= ")";
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
 
 			// Call trigger
 			$result = $this->call_trigger('TVA_CREATE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return $this->id;
 			} else {
@@ -183,7 +191,6 @@ class Tva extends CommonObject
 		$this->amount = trim($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
-		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_creat = (int) $this->fk_user_creat;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
 
@@ -200,33 +207,71 @@ class Tva extends CommonObject
 		$sql .= " amount=".price2num($this->amount).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
-		$sql .= " fk_bank=".$this->fk_bank.",";
-		$sql .= " fk_user_creat=".$this->fk_user_creat.",";
+		$sql .= " fk_user_creat=".((int) $this->fk_user_creat).",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id)."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			$error++;
 		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('TVA_MODIFY', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
 			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 *    Tag TVA as payed completely
+	 *
+	 *    @param    User    $user       Object user making change
+	 *    @return   int					<0 if KO, >0 if OK
+	 */
+	public function setPaid($user)
+	{
+		// phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
+		$sql .= " paye = 1";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+
+	/**
+	 *    Remove tag payed on TVA
+	 *
+	 *    @param	User	$user       Object user making change
+	 *    @return	int					<0 if KO, >0 if OK
+	 */
+	public function setUnpaid($user)
+	{
+		// phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
+		$sql .= " paye = 0";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return 1;
+		} else {
 			return -1;
 		}
 	}
@@ -253,23 +298,19 @@ class Tva extends CommonObject
 		$sql .= " t.num_payment,";
 		$sql .= " t.label,";
 		$sql .= " t.note,";
-		$sql .= " t.fk_bank,";
+		$sql .= " t.paye,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
-		$sql .= " b.fk_account,";
-		$sql .= " b.fk_type,";
-		$sql .= " b.rappro";
+		$sql .= " t.fk_account";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
-		$sql .= " WHERE t.rowid = ".$id;
+		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
@@ -281,8 +322,8 @@ class Tva extends CommonObject
 				$this->type_payment = $obj->fk_typepayment;
 				$this->num_payment = $obj->num_payment;
 				$this->label = $obj->label;
+				$this->paye  = $obj->paye;
 				$this->note  = $obj->note;
-				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
@@ -293,18 +334,18 @@ class Tva extends CommonObject
 
 			return 1;
 		} else {
-	  		$this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
 
 
- 	/**
- 	 *  Delete object in database
- 	 *
- 	 *	@param	User	$user       User that delete
- 	 *	@return	int					<0 if KO, >0 if OK
- 	 */
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param	User	$user       User that delete
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
 	public function delete($user)
 	{
 		global $conf, $langs;
@@ -313,16 +354,17 @@ class Tva extends CommonObject
 
 		// Call trigger
 		$result = $this->call_trigger('TVA_DELETE', $user);
-		if ($result < 0) return -1;
+		if ($result < 0) {
+			return -1;
+		}
 		// End call triggers
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
-	   	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -374,7 +416,7 @@ class Tva extends CommonObject
 		return $solde;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Total of the VAT from invoices emitted by the thirdparty.
 	 *
@@ -383,20 +425,17 @@ class Tva extends CommonObject
 	 */
 	public function tva_sum_collectee($year = 0)
 	{
-		// phpcs:enable
+        // phpcs:enable
 
-		$sql = "SELECT sum(f.tva) as amount";
+		$sql = "SELECT sum(f.total_tva) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
-		if ($year)
-		{
+		if ($year) {
 			$sql .= " AND f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$ret = $obj->amount;
 				$this->db->free($result);
@@ -411,7 +450,7 @@ class Tva extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	VAT payed
 	 *
@@ -420,20 +459,17 @@ class Tva extends CommonObject
 	 */
 	public function tva_sum_payee($year = 0)
 	{
-		// phpcs:enable
+        // phpcs:enable
 
 		$sql = "SELECT sum(f.total_tva) as total_tva";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-		if ($year)
-		{
+		if ($year) {
 			$sql .= " WHERE f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$ret = $obj->total_tva;
 				$this->db->free($result);
@@ -449,7 +485,7 @@ class Tva extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Total of the VAT payed
 	 *
@@ -458,21 +494,18 @@ class Tva extends CommonObject
 	 */
 	public function tva_sum_reglee($year = 0)
 	{
-		// phpcs:enable
+        // phpcs:enable
 
 		$sql = "SELECT sum(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
 
-		if ($year)
-		{
+		if ($year) {
 			$sql .= " WHERE f.datev >= '".$this->db->escape($year)."-01-01' AND f.datev <= '".$this->db->escape($year)."-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$ret = $obj->amount;
 				$this->db->free($result);
@@ -508,26 +541,24 @@ class Tva extends CommonObject
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_creat = (int) $this->fk_user_creat;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
-		if (empty($this->datec)) $this->datec = dol_now();
+		if (empty($this->datec)) {
+			$this->datec = dol_now();
+		}
 
 		// Check parameters
-		if (!$this->label)
-		{
+		if (!$this->label) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
 			return -3;
 		}
-		if ($this->amount == '')
-		{
+		if ($this->amount == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -4;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
-		{
+		if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -5;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
-		{
+		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -5;
 		}
@@ -540,8 +571,12 @@ class Tva extends CommonObject
 		$sql .= ", amount";
 		$sql .= ", fk_typepayment";
 		$sql .= ", num_payment";
-		if ($this->note)  $sql .= ", note";
-		if ($this->label) $sql .= ", label";
+		if ($this->note) {
+			$sql .= ", note";
+		}
+		if ($this->label) {
+			$sql .= ", label";
+		}
 		$sql .= ", fk_user_creat";
 		$sql .= ", fk_bank";
 		$sql .= ", entity";
@@ -550,43 +585,45 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", ".$this->amount;
+		$sql .= ", ".((float) $this->amount);
 		$sql .= ", '".$this->db->escape($this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
-		if ($this->note)  $sql .= ", '".$this->db->escape($this->note)."'";
-		if ($this->label) $sql .= ", '".$this->db->escape($this->label)."'";
+		if ($this->note) {
+			$sql .= ", '".$this->db->escape($this->note)."'";
+		}
+		if ($this->label) {
+			$sql .= ", '".$this->db->escape($this->label)."'";
+		}
 		$sql .= ", '".$this->db->escape($user->id)."'";
 		$sql .= ", NULL";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva"); // TODO should be called 'payment_vat'
 
 			// Call trigger
 			//XXX: Should be done just befor commit no ?
 			$result = $this->call_trigger('TVA_ADDPAYMENT', $user);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->id = 0;
 				$ok = 0;
 			}
 			// End call triggers
 
-			if ($this->id > 0)
-			{
+			if ($this->id > 0) {
 				$ok = 1;
-				if (!empty($conf->banque->enabled) && !empty($this->amount))
-				{
+				if (!empty($conf->banque->enabled) && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);
 					$result = $acc->fetch($this->accountid);
-					if ($result <= 0) dol_print_error($this->db);
+					if ($result <= 0) {
+						dol_print_error($this->db);
+					}
 
 					if ($this->amount > 0) {
 						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), $this->num_payment, '', $user);
@@ -595,8 +632,7 @@ class Tva extends CommonObject
 					}
 
 					// Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
-					if ($bank_line_id > 0)
-					{
+					if ($bank_line_id > 0) {
 						$this->update_fk_bank($bank_line_id);
 					} else {
 						$this->error = $acc->error;
@@ -605,15 +641,13 @@ class Tva extends CommonObject
 
 					// Update links
 					$result = $acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/card.php?id=', "(VATPayment)", "payment_vat");
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$this->error = $acc->error;
 						$ok = 0;
 					}
 				}
 
-				if ($ok)
-				{
+				if ($ok) {
 					$this->db->commit();
 					return $this->id;
 				} else {
@@ -631,7 +665,7 @@ class Tva extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update link between payment tva and line generate into llx_bank
 	 *
@@ -640,12 +674,11 @@ class Tva extends CommonObject
 	 */
 	public function update_fk_bank($id_bank)
 	{
-		// phpcs:enable
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.(int) $id_bank;
 		$sql .= ' WHERE rowid = '.(int) $this->id;
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -659,34 +692,51 @@ class Tva extends CommonObject
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			link option
 	 *  @param	int  	$notooltip		1=Disable tooltip
-	 *  @param	string	$morecss			More CSS
+	 *  @param	string	$morecss		More CSS
+	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string					Chaine with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $conf;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
 		$label = '<u>'.$langs->trans("ShowVatPayment").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->label)) {
+			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		}
 
 		$url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
 
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -695,8 +745,12 @@ class Tva extends CommonObject
 		$picto = 'payment';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 
 		return $result;
@@ -709,21 +763,22 @@ class Tva extends CommonObject
 	 */
 	public function getSommePaiement()
 	{
-		$table = 'paiementcharge';
-		$field = 'fk_charge';
+		$table = 'payment_vat';
+		$field = 'fk_tva';
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$amount = 0;
 
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) $amount = $obj->amount ? $obj->amount : 0;
+			if ($obj) {
+				$amount = $obj->amount ? $obj->amount : 0;
+			}
 
 			$this->db->free($resql);
 			return $amount;
@@ -746,10 +801,8 @@ class Tva extends CommonObject
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
@@ -778,29 +831,61 @@ class Tva extends CommonObject
 	}
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Retourne le libelle du statut d'une TVA (impaye, payee)
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return  string				Libelle
+	 *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @return	string        			Label
 	 */
-	public function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->paye, $mode, $alreadypaid);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoi le libelle d'un statut donne
+	 *  Renvoi le libelle d'un statut donne
 	 *
-	 * @param   int		$status     Statut
-	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @return string        			Label
 	 */
-	public function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
 	{
 		// phpcs:enable
-		global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
+		global $langs;
 
-		return '';
+		// Load translation files required by the page
+		$langs->loadLangs(array("customers", "bills"));
+
+		// We reinit status array to force to redefine them because label may change according to properties values.
+		$this->labelStatus = array();
+		$this->labelStatusShort = array();
+
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
+				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
+			}
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
+				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
+			}
+		}
+
+		$statusType = 'status1';
+		if ($status == 0 && $alreadypaid <> 0) {
+			$statusType = 'status3';
+		}
+		if ($status == 1) {
+			$statusType = 'status6';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 }

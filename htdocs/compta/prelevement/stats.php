@@ -31,12 +31,18 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
+$type = GETPOST('type', 'aZ09');
+
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
-
-$type = GETPOST('type', 'aZ09');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
 
 
 /*
@@ -64,13 +70,11 @@ if ($type == 'bank-transfer') {
 }
 $sql .= " AND pb.entity = ".$conf->entity;
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	if ($num > 0)
-	{
+	if ($num > 0) {
 		$row = $db->fetch_row($resql);
 		$total = $row[0];
 		$nbtotal = $row[1];
@@ -100,8 +104,7 @@ if ($type == 'bank-transfer') {
 $sql .= " GROUP BY pl.statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -111,8 +114,7 @@ if ($resql)
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
 		print '<tr class="oddeven"><td>';
@@ -168,13 +170,11 @@ if ($type == 'bank-transfer') {
 	$sql .= " AND pb.type = 'debit-order'";
 }
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	if ($num > 0)
-	{
+	if ($num > 0) {
 		$row = $db->fetch_row($resql);
 		$total = $row[0];
 		$nbtotal = $row[1];
@@ -202,8 +202,7 @@ $sql .= " GROUP BY pr.motif";
 $sql .= " ORDER BY cc DESC";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -216,8 +215,7 @@ if ($resql)
 	require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 	$Rejet = new RejetPrelevement($db, $user, $type);
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
 		print '<tr class="oddeven"><td>';

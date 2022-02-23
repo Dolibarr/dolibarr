@@ -30,7 +30,6 @@ EditInLine=編輯嵌入
 AddWebsite=新增網站
 Webpage=網頁/容器
 AddPage=新增 頁面/容器
-HomePage=首頁
 PageContainer=頁面
 PreviewOfSiteNotYetAvailable=您的網站<strong>%s</strong>預覽尚不可用。您必須先“ <strong>導入完整的網站模板</strong> ”或僅“ <strong>新增頁面/容器</strong> ”。
 RequestedPageHasNoContentYet=要求ID為%s的頁面尚無內容，或暫存檔案.tpl.php被刪除。編輯頁面內容以解決此問題。
@@ -46,13 +45,13 @@ ViewWebsiteInProduction=使用家庭網址檢視網站
 SetHereVirtualHost=<u>使用Apache/NGinx/...</u><br>建立您的網頁伺服器 (Apache, Nginx, ...) 啟用了含有PHP的專用虛擬主機並且根目錄資料夾位於<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=在Apache虛擬主機設定中使用的範例：
 YouCanAlsoTestWithPHPS=在開發環境中<u>使用嵌入式PHP伺服器</u><br>, 您也許想要使用<br><strong>php -S 0.0.0.0:8080 -t %s</strong> 來測試此嵌入式PHP伺服器 (需要PHP 5.5) 的網站
-YouCanAlsoDeployToAnotherWHP=<u>在其他Dolibarr網站託管供應商執行您的網站</u> <br>如果您在網路上沒有Apache或NGinx之類的Web伺服器，則可以將網站匯出並匯入到另一個由Dolibarr網站託管供應商提供且有完整整合網站模組。您可以在<a href="https://saas.dolibarr.org" target="_blank"> https://saas.dolibarr.org </a>上找到一些Dolibarr網站託管服務供應商的清單。
-CheckVirtualHostPerms=還要檢查虛擬主機是否具有將<strong> %s </strong>上的許可權轉換為<br> <strong> %s </strong>的權限
+YouCanAlsoDeployToAnotherWHP=<u>在其他Dolibarr網站託管供應商執行您的網站</u> <br>如果您在網路上沒有Apache或NGinx之類的Web伺服器，則可以將網站匯出並匯入到另一個由Dolibarr網站託管供應商提供且有完整整合網站模組。您可以在<a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>上找到一些Dolibarr網站託管服務供應商的清單。
+CheckVirtualHostPerms=同時請確認虛擬主機使用者(例如www-data)擁有檔案<br><strong>%s</strong>的<strong>%s</strong>權限
 ReadPerm=閱讀
 WritePerm=寫入
 TestDeployOnWeb=上線 測試/部署
 PreviewSiteServedByWebServer=<u>在新分頁中預覽%s。 </u> <br> <br> %s將由外部Web伺服器（例如Apache，Nginx，IIS）提供服務。您必須先安裝和設定此伺服器，然後再指向目錄：<br> <strong> %s </strong> <br>外部伺服器提供的網址：<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>在新分頁中預覽%s。 </u> <br> <br> Dolibarr伺服器將為%s提供服務，因此不需要安裝任何其他Web伺服器（例如Apache，Nginx，IIS）。 <br>的不便之處在於頁面的URL不友好，並且以Dolibarr的路徑開頭。 <br> URL由Dolibarr提供：<br> <strong> %s </strong> <br> <br>要使用自己的外部Web伺服器來服務於這個網站，在您的Web伺服器上建立一個虛擬主機其指向目錄<br> <strong> %s </strong> <br>然後輸入該虛伺服器的名稱然後點擊另一個預覽按鈕。
+PreviewSiteServedByDolibarr=<u>在新分頁中預覽%s。 </u> <br> <br> Dolibarr伺服器將為%s提供服務，因此不需要安裝任何其他Web伺服器（例如Apache，Nginx，IIS）。 <br>的不便之處在於頁面的URL不友好，並且以您的Dolibarr路徑開始。 <br> URL由Dolibarr提供：<br> <strong> %s </strong> <br> <br>要使用自己的外部Web伺服器來服務於這個網站，在您的Web伺服器上建立一個虛擬主機其指向目錄<br> <strong> %s </strong> <br>然後輸入該虛伺服器的名稱然後點擊此連結"在此網站測試/佈署"。
 VirtualHostUrlNotDefined=未定義由外部網站伺服器提供服務的虛擬主機網址
 NoPageYet=暫無頁面
 YouCanCreatePageOrImportTemplate=您可以建立一個新頁面或匯入完整的網站模板
@@ -61,7 +60,7 @@ YouCanEditHtmlSourceckeditor=您可以使用編輯器中的“Source”按鈕來
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> 您可以使用標籤將PHP代碼包含到此源中<strong>&lt;?php ?&gt;</strong>. 以下全域變數可用: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs.<br><br><span class="fa fa-bug"></span> 您還可以使用以下語法包含另一個頁面/容器的內容:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> 您可以使用以下語法重新定向到另一個頁面/容器（注意：重新定向之前請勿輸出任何內容）:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> 要增加到另一個頁面的連結，請使用以下語法:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> 要包含一個 <strong>連結</strong> 下載儲存到 <strong>文件</strong>資料夾, 使用<strong>document.php</strong>打包器:<br>例如, 一個檔案要儲存到documents/ecm (需要紀錄)中, 語法為:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>檔案要儲存到documents/medias (公共權限的資料夾)中, 語法為:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>對於使用共用連結共享的檔案(使用檔案的共用hash鍵進行開放訪問), 語法為:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> 要包含一個<strong>影像</strong> 檔案且儲存到<strong>documents</strong>目錄中, 使用 <strong>viewimage.php</strong> 打包器:<br>例如, 儲存影像到documents/medias (公共權限的資料夾), 語法為:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>.
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=使用有分享連結的影像 (使用檔案的Hash key開啟), 語法為:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>您可以在<a href="%s" target="_blank">Wiki文件</a>中找到更多HTML或是動態編碼的範例<br>
+YouCanEditHtmlSourceMore=<br>您可以在<a href="%s" target="_blank" rel="noopener noreferrer external">Wiki文件</a>中找到更多HTML或是動態編碼的範例<br>
 ClonePage=複製頁面/容器
 CloneSite=複製網站
 SiteAdded=網站已增加
@@ -101,7 +100,7 @@ EmptyPage=空白頁
 ExternalURLMustStartWithHttp=外部網址必須以http://或https://開始
 ZipOfWebsitePackageToImport=上傳網站模板包的Zip檔案
 ZipOfWebsitePackageToLoad=或選擇一個可用的嵌入式網站模板包
-ShowSubcontainers=包含動態內容
+ShowSubcontainers=顯示動態內容
 InternalURLOfPage=頁面的內部網址
 ThisPageIsTranslationOf=該頁面/內容是以下內容的翻譯：
 ThisPageHasTranslationPages=此頁面/內容已翻譯
@@ -136,4 +135,13 @@ RSSFeed=RSS 訂閱
 RSSFeedDesc=您可以使用此網址獲得類型為“ blogpost”的最新文章RSS feed。
 PagesRegenerated=已重新產生%s頁面/容器
 RegenerateWebsiteContent=重新產生網站快取檔案
-AllowedInFrames=Allowed in Frames
+AllowedInFrames=允許在框架中
+DefineListOfAltLanguagesInWebsiteProperties=在網站屬性中定義所有可用語言的清單。
+GenerateSitemaps=產生網站地圖檔案
+ConfirmGenerateSitemaps=如果您確認，您將刪除現有的網站地圖檔案...
+ConfirmSitemapsCreation=確認產生網站地圖
+SitemapGenerated=網站地圖檔案<b>%s</b>已產生
+ImportFavicon=圖示
+ErrorFaviconType=圖示必須為png格式
+ErrorFaviconSize=圖示的尺寸必須為16x16, 32x32 或 64x64
+FaviconTooltip=上傳的影像檔案必須為 png (16x16、32x32 或 64x64)

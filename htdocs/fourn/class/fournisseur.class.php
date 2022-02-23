@@ -59,15 +59,13 @@ class Fournisseur extends Societe
 	{
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-		$sql .= " WHERE cf.fk_soc = ".$this->id;
+		$sql .= " WHERE cf.fk_soc = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if ($num == 1)
-			{
+			if ($num == 1) {
 				$row = $this->db->fetch_row($resql);
 
 				$this->single_open_commande = $row[0];
@@ -88,11 +86,10 @@ class Fournisseur extends Societe
 		$sql = "SELECT count(pfp.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql .= " WHERE pfp.entity = ".$conf->entity;
-		$sql .= " AND pfp.fk_soc = ".$this->id;
+		$sql .= " AND pfp.fk_soc = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			return $obj->nb;
 		} else {
@@ -116,20 +113,17 @@ class Fournisseur extends Societe
 
 		$sql = "SELECT count(s.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->socid)
-		{
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".$user->id;
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
 		$sql .= " ".$clause." s.fournisseur = 1";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$this->nb["suppliers"] = $obj->nb;
 			}
 			$this->db->free($resql);
@@ -158,8 +152,7 @@ class Fournisseur extends Societe
 
 		dol_syslog("Fournisseur::CreateCategory", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			dol_syslog("Fournisseur::CreateCategory : Success");
 			return 0;
 		} else {
@@ -185,17 +178,19 @@ class Fournisseur extends Societe
 
 		$sql = "SELECT s.rowid, s.nom as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= " WHERE s.fournisseur = 1";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		}
 
 		$resql = $this->db->query($sql);
 
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$arr[$obj->rowid] = $obj->name;
 			}
 		} else {
@@ -203,5 +198,22 @@ class Fournisseur extends Societe
 			$this->error = $this->db->lasterror();
 		}
 		return $arr;
+	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param  DoliDB  $db             Database handler
+	 * @param  int     $origin_id      Old third-party id
+	 * @param  int     $dest_id        New third-party id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facture_fourn'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 }

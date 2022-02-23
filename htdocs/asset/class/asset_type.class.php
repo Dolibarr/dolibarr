@@ -42,7 +42,7 @@ class AssetType extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'invoice';
+	public $picto = 'asset';
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -126,32 +126,30 @@ class AssetType extends CommonObject
 		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
 		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
 		$sql .= ", '".$this->db->escape($this->note)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog("Asset_type::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."asset_type");
 
 			$result = $this->update($user, 1);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->db->rollback();
 				return -3;
 			}
 
-			if (!$notrigger)
-			{
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('ASSET_TYPE_CREATE', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return $this->id;
 			} else {
@@ -190,33 +188,30 @@ class AssetType extends CommonObject
 		$sql .= "accountancy_code_depreciation_asset = '".$this->db->escape($this->accountancy_code_depreciation_asset)."',";
 		$sql .= "accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."',";
 		$sql .= "note = '".$this->db->escape($this->note)."'";
-		$sql .= " WHERE rowid =".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error)
-			{
+			if (!$error) {
 				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 				}
 			}
 
-			if (!$error && !$notrigger)
-			{
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('ASSET_TYPE_MODIFY', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -243,14 +238,15 @@ class AssetType extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."asset_type";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			// Call trigger
 			$result = $this->call_trigger('ASSET_TYPE_DELETE', $user);
-			if ($result < 0) { $error++; $this->db->rollback(); return -2; }
+			if ($result < 0) {
+				$error++; $this->db->rollback(); return -2;
+			}
 			// End call triggers
 
 			$this->db->commit();
@@ -277,10 +273,8 @@ class AssetType extends CommonObject
 		dol_syslog("Asset_type::fetch", LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -317,15 +311,12 @@ class AssetType extends CommonObject
 		$sql .= " WHERE entity IN (".getEntity('asset_type').")";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$nump = $this->db->num_rows($resql);
 
-			if ($nump)
-			{
+			if ($nump) {
 				$i = 0;
-				while ($i < $nump)
-				{
+				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
 
 					$assettypes[$obj->rowid] = $langs->trans($obj->label);
@@ -341,7 +332,7 @@ class AssetType extends CommonObject
 	/**
 	 * 	Return array of Asset objects for asset type this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude
+	 * 	@param	string	$excludefilter		Filter string to exclude. This parameter must not be provided by input of users
 	 *  @param	int		$mode				0=Return array of asset instance
 	 *  									1=Return array of asset instance without extra data
 	 *  									2=Return array of asset id only
@@ -356,27 +347,23 @@ class AssetType extends CommonObject
 		$sql = "SELECT a.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."asset as a";
 		$sql .= " WHERE a.entity IN (".getEntity('asset').")";
-		$sql .= " AND a.fk_asset_type = ".$this->id;
-		if (!empty($excludefilter)) $sql .= ' AND ('.$excludefilter.')';
+		$sql .= " AND a.fk_asset_type = ".((int) $this->id);
+		if (!empty($excludefilter)) {
+			$sql .= ' AND ('.$excludefilter.')';
+		}
 
 		dol_syslog(get_class($this)."::listAssetsForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				if (!array_key_exists($obj->rowid, $ret))
-				{
-					if ($mode < 2)
-					{
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (!array_key_exists($obj->rowid, $ret)) {
+					if ($mode < 2) {
 						$assetstatic = new Asset($this->db);
-						if ($mode == 1) {
-							$assetstatic->fetch($obj->rowid, '', '', '', false, false);
-						} else {
-							$assetstatic->fetch($obj->rowid);
-						}
+						$assetstatic->fetch($obj->rowid);
 						$ret[$obj->rowid] = $assetstatic;
-					} else $ret[$obj->rowid] = $obj->rowid;
+					} else {
+						$ret[$obj->rowid] = $obj->rowid;
+					}
 				}
 			}
 
@@ -406,12 +393,16 @@ class AssetType extends CommonObject
 		$result = '';
 		$label = $langs->trans("ShowTypeCard", $this->label);
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.((int) $this->id).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
+		}
 		$result .= $linkend;
 
 		return $result;

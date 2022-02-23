@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=供應商
 SuppliersInvoice=供應商發票
+SupplierInvoices=供應商發票
 ShowSupplierInvoice=顯示供應商發票
 NewSupplier=新供應商
 History=歷史紀錄
@@ -38,7 +39,7 @@ MenuOrdersSupplierToBill=採購訂單發票
 NbDaysToDelivery=交貨延遲時間（天）
 DescNbDaysToDelivery=此訂單中產品的最長交貨延遲時間
 SupplierReputation=供應商信譽
-ReferenceReputation=Reference reputation
+ReferenceReputation=參考商譽
 DoNotOrderThisProductToThisSupplier=不訂購
 NotTheGoodQualitySupplier=低品質
 ReputationForThisProduct=信譽

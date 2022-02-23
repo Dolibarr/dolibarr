@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -33,8 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php'
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "trips", "errors", "other", "dict"));
 
-if (!$user->admin) accessforbidden();
-
 $error = 0;
 
 $action = GETPOST('action', 'aZ09');
@@ -43,15 +41,25 @@ $ikoffset = GETPOST('ikoffset', 'int');
 $coef = GETPOST('coef', 'int');
 
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
-$fk_range = GETPOST('fk_range');
+$fk_range = GETPOST('fk_range', 'int');
 
-if ($action == 'updateik')
-{
-	$expIk = new ExpenseReportIk($db);
-	if ($id > 0)
-	{
+$expIk = new ExpenseReportIk($db);
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
+
+if ($action == 'updateik') {
+	if ($id > 0) {
 		$result = $expIk->fetch($id);
-		if ($result < 0) dol_print_error('', $expIk->error, $expIk->errors);
+		if ($result < 0) {
+			dol_print_error('', $expIk->error, $expIk->errors);
+		}
 	}
 
 	$expIk->setValues($_POST);
@@ -59,28 +67,27 @@ if ($action == 'updateik')
 
 	if ($result > 0) {
 		setEventMessages('SetupSaved', null, 'mesgs');
+
 		header('Location: '.$_SERVER['PHP_SELF']);
 		exit;
 	} else {
 		setEventMessages($expIk->error, $expIk->errors, 'errors');
 	}
-} elseif ($action == 'delete') // TODO add confirm
-{
-	$expIk = new ExpenseReportIk($db);
-	if ($id > 0)
-	{
+} elseif ($action == 'delete') { // TODO add confirm
+	if ($id > 0) {
 		$result = $expIk->fetch($id);
-		if ($result < 0) dol_print_error('', $expIk->error, $expIk->errors);
+		if ($result < 0) {
+			dol_print_error('', $expIk->error, $expIk->errors);
+		}
 
 		$expIk->delete($user);
 	}
-
 
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit;
 }
 
-$rangesbycateg = ExpenseReportIk::getAllRanges();
+$rangesbycateg = $expIk->getAllRanges();
 
 
 /*
@@ -100,22 +107,19 @@ print dol_get_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), 
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportIkDesc').'</span>';
 print '<br><br>';
 
-echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
+echo '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	echo '<input type="hidden" name="id" value="'.$id.'" />';
 	echo '<input type="hidden" name="fk_c_exp_tax_cat" value="'.$fk_c_exp_tax_cat.'" />';
 	echo '<input type="hidden" name="fk_range" value="'.$fk_range.'" />';
 	echo '<input type="hidden" name="action" value="updateik" />';
 }
 
-echo '<input type="hidden" name="token" value="'.newToken().'" />';
-
 echo '<table class="noborder centpercent">';
 
-foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
-{
+foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab) {
 	$title = ($Tab['active'] == 1) ? $langs->trans($Tab['label']) : $form->textwithpicto($langs->trans($Tab['label']), $langs->trans('expenseReportCatDisabled'), 1, 'help', '', 0, 3);
 	echo '<tr class="liste_titre">';
 	echo '<td>'.$title.'</td>';
@@ -125,16 +129,22 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 	echo '<td>&nbsp;</td>';
 	echo '</tr>';
 
-	if ($Tab['active'] == 0) continue;
+	if ($Tab['active'] == 0) {
+		continue;
+	}
 
 	$tranche = 1;
 
-	foreach ($Tab['ranges'] as $k => $range)
-	{
-		if (isset($Tab['ranges'][$k + 1])) $label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k + 1]->range_ik - 1));
-		else $label = $langs->trans('expenseReportRangeMoreThan', $range->range_ik);
+	foreach ($Tab['ranges'] as $k => $range) {
+		if (isset($Tab['ranges'][$k + 1])) {
+			$label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k + 1]->range_ik - 1));
+		} else {
+			$label = $langs->trans('expenseReportRangeMoreThan', $range->range_ik);
+		}
 
-		if ($range->range_active == 0) $label = $form->textwithpicto($label, $langs->trans('expenseReportRangeDisabled'), 1, 'help', '', 0, 3);
+		if ($range->range_active == 0) {
+			$label = $form->textwithpicto($label, $langs->trans('expenseReportRangeDisabled'), 1, 'help', '', 0, 3);
+		}
 
 		echo '<tr class="oddeven">';
 
@@ -143,15 +153,19 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 
 		// Offset
 		echo '<td class="nowraponall">';
-		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" class="maxwidth100" name="ikoffset" value="'.$range->ik->ikoffset.'" />';
-		else {
+		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
+			echo '<input type="text" class="maxwidth100" name="ikoffset" value="'.$range->ik->ikoffset.'" />';
+		} else {
 			echo $range->ik->ikoffset;
 		}
 		echo '</td>';
 		// Coef
 		echo '<td class="nowraponall">';
-		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" class="maxwidth100" name="coef" value="'.$range->ik->coef.'" />';
-		else echo ($range->ik->id > 0 ? $range->ik->coef : $langs->trans('expenseReportCoefUndefined'));
+		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
+			echo '<input type="text" class="maxwidth100" name="coef" value="'.$range->ik->coef.'" />';
+		} else {
+			echo ($range->ik->id > 0 ? $range->ik->coef : $langs->trans('expenseReportCoefUndefined'));
+		}
 		echo '</td>';
 
 		// Total for one
@@ -159,15 +173,15 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 
 		// Action
 		echo '<td class="right">';
-		if ($range->range_active == 1)
-		{
-			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat)
-			{
+		if ($range->range_active == 1) {
+			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) {
 				echo '<input id="" class="button button-save" name="save" value="'.$langs->trans("Save").'" type="submit" />';
 				echo '<input class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)" type="button" />';
 			} else {
 				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
-				if (!empty($range->ik->id)) echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$range->ik->id.'">'.img_delete().'</a>';
+				if (!empty($range->ik->id)) {
+					echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$range->ik->id.'">'.img_delete().'</a>';
+				}
 				// TODO add delete link
 			}
 		}

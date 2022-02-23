@@ -152,32 +152,32 @@ if ($action == 'add') {
 	$langs->load("errors");
 
 	$error = 0;
-	if (!$error && !$_POST['menu_handler']) {
+	if (!$error && !GETPOST('menu_handler')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MenuHandler")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !$_POST['type']) {
+	if (!$error && !GETPOST('type')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !$_POST['url']) {
+	if (!$error && !GETPOST('url')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("URL")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !$_POST['titre']) {
+	if (!$error && !GETPOST('titre')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && $_POST['menuId'] && $_POST['type'] == 'top') {
+	if (!$error && GETPOST('menuId') && GETPOST('type') == 'top') {
 		setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !$_POST['menuId'] && $_POST['type'] == 'left') {
+	if (!$error && !GETPOST('menuId') && GETPOST('type') == 'left') {
 		setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
 		$action = 'create';
 		$error++;
@@ -255,7 +255,7 @@ llxHeader('', $langs->trans("Menu"));
 
 
 if ($action == 'create') {
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
     jQuery(document).ready(function() {
     	function init_topleft()
     	{
@@ -281,7 +281,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewMenu"), '', 'title_setup');
 
-	print '<form action="./edit.php?action=add&menuId='.GETPOST('menuId', 'int').'" method="post" name="formmenucreate">';
+	print '<form action="'.DOL_URL_ROOT.'/admin/menus/edit.php?action=add&token='.newToken().'&menuId='.GETPOST('menuId', 'int').'" method="post" name="formmenucreate">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print dol_get_fiche_head();
@@ -290,6 +290,11 @@ if ($action == 'create') {
 
 	// Id
 	$parent_rowid = GETPOST('menuId', 'int');
+	$parent_mainmenu = '';
+	$parent_leftmenu = '';
+	$parent_langs = '';
+	$parent_level = '';
+
 	if (GETPOST('menuId', 'int')) {
 		$sql = "SELECT m.rowid, m.mainmenu, m.leftmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".GETPOST('menuId', 'int');
 		$res = $db->query($sql);
@@ -328,8 +333,8 @@ if ($action == 'create') {
 	} else {
 		print '<select name="type" class="flat" id="topleft">';
 		print '<option value="">&nbsp;</option>';
-		print '<option value="top"'.($_POST["type"] && $_POST["type"] == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
-		print '<option value="left"'.($_POST["type"] && $_POST["type"] == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
+		print '<option value="top"'.(GETPOST("type") == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
+		print '<option value="left"'.(GETPOST("type") == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
 		print '</select>';
 	}
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
@@ -370,8 +375,8 @@ if ($action == 'create') {
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
-	print '<option value=""'.($menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.($menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	// Enabled
@@ -386,11 +391,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 } elseif ($action == 'edit') {
@@ -511,12 +512,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	// Bouton
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 

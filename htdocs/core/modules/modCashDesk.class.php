@@ -123,7 +123,6 @@ class modCashDesk extends DolibarrModules
 	}
 
 
-<<<<<<< HEAD
     /**
      *  Function called when module is enabled.
      *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
@@ -136,19 +135,6 @@ class modCashDesk extends DolibarrModules
     public function init($options = '', $force_entity = null)
     {
         $sql = array();
-=======
-	/**
-	 *  Function called when module is enabled.
-	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *  It also creates data directories
-	 *
-	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
-	 */
-	public function init($options = '')
-	{
-		$sql = array();
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 
 		// Remove permissions and default values
 		$this->remove($options);

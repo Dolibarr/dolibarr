@@ -20,7 +20,9 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+if (!defined("NOCSRFCHECK")) {
+	define("NOCSRFCHECK", '1');
+}
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
@@ -36,8 +38,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -102,7 +103,7 @@ $thirdparty_fields = array(
 		'address' => array('name'=>'address', 'type'=>'xsd:string'),
 		'zip' => array('name'=>'zip', 'type'=>'xsd:string'),
 		'town' => array('name'=>'town', 'type'=>'xsd:string'),
-		'province_id' => array('name'=>'province_id', 'type'=>'xsd:string'),
+		'region_code' => array('name'=>'region_code', 'type'=>'xsd:string'),
 		'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
 		'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
 		'country' => array('name'=>'country', 'type'=>'xsd:string'),
@@ -130,20 +131,23 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-{
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-	{
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 		//$value=$object->array_options["options_".$key];
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
-		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
-		else {$type = 'xsd:string'; }
+		if ($type == 'date' || $type == 'datetime') {
+			$type = 'xsd:dateTime';
+		} else {
+			$type = 'xsd:string';
+		}
 
 		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
 	}
 }
 
-if (is_array($extrafield_array)) $thirdparty_fields = array_merge($thirdparty_fields, $extrafield_array);
+if (is_array($extrafield_array)) {
+	$thirdparty_fields = array_merge($thirdparty_fields, $extrafield_array);
+}
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -210,7 +214,7 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string', 'barcode'=>'xsd:string', 'profid1'=>'xsd:string', 'profid2'=>'xsd:string'),
 	// Exit values
 	array('result'=>'tns:result', 'thirdparty'=>'tns:thirdparty'),
 	$ns,
@@ -265,16 +269,16 @@ $server->register(
 
 // Register WSDL
 $server->register(
-		'deleteThirdParty',
-		// Entry values
+	'deleteThirdParty',
+	// Entry values
 		array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
-		// Exit values
+	// Exit values
 		array('result'=>'tns:result', 'id'=>'xsd:string'),
-		$ns,
-		$ns.'#deleteThirdParty',
-		$styledoc,
-		$styleuse,
-		'WS to delete a thirdparty from its id, ref or ref_ext'
+	$ns,
+	$ns.'#deleteThirdParty',
+	$styledoc,
+	$styleuse,
+	'WS to delete a thirdparty from its id, ref or ref_ext'
 );
 
 
@@ -286,56 +290,60 @@ $server->register(
  * @param	string		$id		    		internal id
  * @param	string		$ref		    	internal reference
  * @param	string		$ref_ext	   		external reference
+ * @param	string		$barcode	   		barcode
+ * @param	string		$profid1	   		profid1
+ * @param	string		$profid2	   		profid2
  * @return	array							Array result
  */
-function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
+function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $barcode = '', $profid1 = '', $profid2 = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
-	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext." barcode=".$barcode." profid1=".$profid1." profid2=".$profid2);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-	{
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire)
-		{
+		if ($fuser->rights->societe->lire) {
 			$thirdparty = new Societe($db);
-			$result = $thirdparty->fetch($id, $ref, $ref_ext);
-			if ($result > 0)
-			{
+			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
+			if ($result > 0) {
 				$thirdparty_result_fields = array(
 						'id' => $thirdparty->id,
-			   			'ref' => $thirdparty->name,
-			   			'ref_ext' => $thirdparty->ref_ext,
-			   			'status' => $thirdparty->status,
+						'ref' => $thirdparty->name,
+						'ref_ext' => $thirdparty->ref_ext,
+						'status' => $thirdparty->status,
 						'client' => $thirdparty->client,
 						'supplier' => $thirdparty->fournisseur,
 						'customer_code' => $thirdparty->code_client,
 						'supplier_code' => $thirdparty->code_fournisseur,
 						'customer_code_accountancy' => $thirdparty->code_compta,
 						'supplier_code_accountancy' => $thirdparty->code_compta_fournisseur,
-						'fk_user_author' => $thirdparty->fk_user_author,
+						'user_creation' => $thirdparty->user_creation,
 						'date_creation' => dol_print_date($thirdparty->date_creation, 'dayhourrfc'),
+						'user_modification' => $thirdparty->user_modification,
 						'date_modification' => dol_print_date($thirdparty->date_modification, 'dayhourrfc'),
 						'address' => $thirdparty->address,
 						'zip' => $thirdparty->zip,
 						'town' => $thirdparty->town,
-						'province_id' => $thirdparty->state_id,
+						'region_code' => $thirdparty->region_code,
 						'country_id' => $thirdparty->country_id,
 						'country_code' => $thirdparty->country_code,
 						'country' => $thirdparty->country,
@@ -350,7 +358,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 						'profid5' => $thirdparty->idprof5,
 						'profid6' => $thirdparty->idprof6,
 						'capital' => $thirdparty->capital,
-			   			'barcode' => $thirdparty->barcode,
+						'barcode' => $thirdparty->barcode,
 						'vat_used' => $thirdparty->tva_assuj,
 						'vat_number' => $thirdparty->tva_intra,
 						'note_private' => $thirdparty->note_private,
@@ -365,11 +373,11 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				//Get extrafield values
 				$thirdparty->fetch_optionals();
 
-				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-				{
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-					{
-						$thirdparty_result_fields = array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+						if (isset($thirdparty->array_options['options_'.$key])) {
+							$thirdparty_result_fields = array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+						}
 					}
 				}
 
@@ -377,20 +385,20 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'thirdparty'=>$thirdparty_result_fields);
-			}
-			else {
+			} elseif ($result == -2) {
+				$error++;
+				$errorcode = 'DUPLICATE_FOUND'; $errorlabel = 'Object found several times for id='.$id.' or ref='.$ref.' or ref_ext='.$ref_ext;
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -408,13 +416,15 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
  */
 function createThirdParty($authentication, $thirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
 	dol_syslog("Function: createThirdParty login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -422,14 +432,12 @@ function createThirdParty($authentication, $thirdparty)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (empty($thirdparty['ref']))
-	{
+	if (empty($thirdparty['ref'])) {
 		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
 	}
 
 
-	if (!$error)
-	{
+	if (!$error) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$newobject = new Societe($db);
@@ -451,8 +459,10 @@ function createThirdParty($authentication, $thirdparty)
 		$newobject->town = $thirdparty['town'];
 
 		$newobject->country_id = $thirdparty['country_id'];
-		if ($thirdparty['country_code']) $newobject->country_id = getCountry($thirdparty['country_code'], 3);
-		$newobject->province_id = $thirdparty['province_id'];
+		if ($thirdparty['country_code']) {
+			$newobject->country_id = getCountry($thirdparty['country_code'], 3);
+		}
+		$newobject->region_code = empty($thirdparty['region_code']) ? '' : $thirdparty['region_code'];
 		//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 		$newobject->phone = $thirdparty['phone'];
@@ -468,12 +478,12 @@ function createThirdParty($authentication, $thirdparty)
 
 		$newobject->capital = $thirdparty['capital'];
 
-		$newobject->barcode = $thirdparty['barcode'];
-		$newobject->tva_assuj = $thirdparty['vat_used'];
-		$newobject->tva_intra = $thirdparty['vat_number'];
+		$newobject->barcode = empty($thirdparty['barcode']) ? '' : $thirdparty['barcode'];
+		$newobject->tva_assuj = empty($thirdparty['vat_used']) ? 0 : $thirdparty['vat_used'];
+		$newobject->tva_intra = empty($thirdparty['vat_number']) ? '' : $thirdparty['vat_number'];
 
-		$newobject->canvas = $thirdparty['canvas'];
-		$newobject->particulier = $thirdparty['individual'];
+		$newobject->canvas = empty($thirdparty['canvas']) ? '' : $thirdparty['canvas'];
+		$newobject->particulier = empty($thirdparty['individual']) ? 0 : $thirdparty['individual'];
 
 		$elementtype = 'societe';
 
@@ -481,12 +491,12 @@ function createThirdParty($authentication, $thirdparty)
 		// fetch optionals attributes and labels
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-			{
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 				$key = 'options_'.$key;
-				$newobject->array_options[$key] = $thirdparty[$key];
+				if (isset($thirdparty[$key])) {
+					$newobject->array_options[$key] = $thirdparty[$key];
+				}
 			}
 		}
 
@@ -498,22 +508,20 @@ function createThirdParty($authentication, $thirdparty)
 			$newobject->name_bis = $thirdparty['lastname'];
 			$result = $newobject->create_individual($fuser);
 		}
-		if ($result <= 0)
-		{
+		if ($result <= 0) {
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 
 			// Patch to add capability to associate (one) sale representative
-			if ($thirdparty['commid'] && $thirdparty['commid'] > 0)
+			if (!empty($thirdparty['commid']) && $thirdparty['commid'] > 0) {
 				$newobject->add_commercial($fuser, $thirdparty["commid"]);
+			}
 
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
-		}
-		else {
+		} else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -521,8 +529,7 @@ function createThirdParty($authentication, $thirdparty)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -538,13 +545,15 @@ function createThirdParty($authentication, $thirdparty)
  */
 function updateThirdParty($authentication, $thirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
 	dol_syslog("Function: updateThirdParty login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -556,8 +565,7 @@ function updateThirdParty($authentication, $thirdparty)
 		$error++; $errorcode = 'KO'; $errorlabel = "Thirdparty id is mandatory.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$objectfound = false;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -586,8 +594,10 @@ function updateThirdParty($authentication, $thirdparty)
 			$object->town = $thirdparty['town'];
 
 			$object->country_id = $thirdparty['country_id'];
-			if ($thirdparty['country_code']) $object->country_id = getCountry($thirdparty['country_code'], 3);
-			$object->province_id = $thirdparty['province_id'];
+			if ($thirdparty['country_code']) {
+				$object->country_id = getCountry($thirdparty['country_code'], 3);
+			}
+			$object->region_code = $thirdparty['region_code'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 			$object->phone = $thirdparty['phone'];
@@ -615,12 +625,12 @@ function updateThirdParty($authentication, $thirdparty)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-				{
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
-					$object->array_options[$key] = $thirdparty[$key];
+					if (isset($thirdparty[$key])) {
+						$object->array_options[$key] = $thirdparty[$key];
+					}
 				}
 			}
 
@@ -632,16 +642,13 @@ function updateThirdParty($authentication, $thirdparty)
 			}
 		}
 
-		if ((!$error) && ($objectfound))
-		{
+		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'id'=>$object->id
 			);
-		}
-		elseif ($objectfound)
-		{
+		} elseif ($objectfound) {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -653,8 +660,7 @@ function updateThirdParty($authentication, $thirdparty)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -672,13 +678,13 @@ function updateThirdParty($authentication, $thirdparty)
  */
 function getListOfThirdParties($authentication, $filterthirdparty)
 {
-	global $db, $conf, $langs;
-
-	$now = dol_now();
+	global $db, $conf;
 
 	dol_syslog("Function: getListOfThirdParties login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -689,20 +695,26 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 
-	if (!$error)
-	{
+	if (!$error) {
 		$sql  = "SELECT s.rowid as socRowid, s.nom as ref, s.ref_ext, s.address, s.zip, s.town, c.label as country, s.phone, s.fax, s.url, extra.*";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON s.fk_pays = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as extra ON s.rowid=fk_object";
 
 		$sql .= " WHERE entity=".$conf->entity;
-		foreach ($filterthirdparty as $key => $val)
-		{
-			if ($key == 'name' && $val != '')  $sql .= " AND s.name LIKE '%".$db->escape($val)."%'";
-			if ($key == 'client' && (int) $val > 0)  $sql .= " AND s.client = ".$db->escape($val);
-			if ($key == 'supplier' && (int) $val > 0)  $sql .= " AND s.fournisseur = ".$db->escape($val);
-			if ($key == 'category' && (int) $val > 0)  $sql .= " AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
+		foreach ($filterthirdparty as $key => $val) {
+			if ($key == 'name' && $val != '') {
+				$sql .= " AND s.name LIKE '%".$db->escape($val)."%'";
+			}
+			if ($key == 'client' && (int) $val > 0) {
+				$sql .= " AND s.client = ".((int) $val);
+			}
+			if ($key == 'supplier' && (int) $val > 0) {
+				$sql .= " AND s.fournisseur = ".((int) $val);
+			}
+			if ($key == 'category' && (int) $val > 0) {
+				$sql .= " AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie = ".((int) $val).") ";
+			}
 		}
 		dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 
@@ -713,21 +725,19 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$extrafieldsOptions = array();
 				$obj = $db->fetch_object($resql);
 
-				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-				{
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-					{
-						$extrafieldsOptions['options_'.$key] = $obj->{$key};
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+						if (isset($obj->{$key})) {
+							$extrafieldsOptions['options_'.$key] = $obj->{$key};
+						}
 					}
 				}
 
@@ -746,22 +756,19 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 
 				$i++;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = $db->lasterrno();
 			$errorlabel = $db->lasterror();
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array(
 			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
 			'thirdparties'=>$arraythirdparties
 		);
-	}
-	else {
+	} else {
 		$objectresp = array(
 			'result'=>array('result_code' => 'OK', 'result_label' => ''),
 			'thirdparties'=>$arraythirdparties
@@ -782,11 +789,13 @@ function getListOfThirdParties($authentication, $filterthirdparty)
  */
 function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: deleteThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -794,56 +803,47 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-	{
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		dol_syslog("Function: deleteThirdParty checkparam");
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 	dol_syslog("Function: deleteThirdParty 1");
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer)
-		{
+		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext);
 
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$db->begin();
 
 				$result = $thirdparty->delete($thirdparty->id, $fuser);
 
-				if ($result > 0)
-				{
+				if ($result > 0) {
 					$db->commit();
 
 					$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''));
-				}
-				else {
+				} else {
 					$db->rollback();
 					$error++;
 					$errorcode = 'KO';
 					$errorlabel = $thirdparty->error;
 					dol_syslog("Function: deleteThirdParty cant delete");
 				}
-			}
-			else {
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

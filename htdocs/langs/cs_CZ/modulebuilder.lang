@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Tento nástroj musí používat pouze zkušení uživatelé nebo vývojáři. Poskytuje nástroje pro sestavení nebo úpravu vlastního modulu. Dokumentace pro alternativní <a href="%s" target="_blank">manuální vývoj je zde</a> .
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Zadejte název modulu/aplikace pro vytvoření bez mezer. Použijte velká slova k oddělení slov (například: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Zadejte název objektu, který chcete vytvořit, bez mezer. Použijte velká písmena pro oddělení slov (například: MyObject, Student, Teacher ...). Bude vygenerován soubor třídy CRUD, ale také soubor API, stránky pro zápis / přidání / úpravy / odstranění objektů a souborů SQL.
 ModuleBuilderDesc2=Cesta, kde jsou moduly generovány/editovány (první adresář pro externí moduly definované v %s): <strong>%s</strong>
@@ -40,6 +40,7 @@ PageForCreateEditView=PHP stránku pro vytvoření / úpravu / prohlížení zá
 PageForAgendaTab=Stránka PHP pro kartu události
 PageForDocumentTab=Stránka PHP pro kartu dokumentu
 PageForNoteTab=Stránka PHP pro kartu poznámky
+PageForContactTab=PHP page for contact tab
 PathToModulePackage=Cesta k zip modulu / aplikačního balíčku
 PathToModuleDocumentation=Cesta k souboru dokumentace modulu/aplikace (%s)
 SpaceOrSpecialCharAreNotAllowed=Mezery nebo speciální znaky nejsou povoleny.
@@ -77,14 +78,14 @@ IsAMeasure=Je to opatření
 DirScanned=Adresář naskenován
 NoTrigger=Žádný spouštěč
 NoWidget=Žádný widget
-GoToApiExplorer=Přejděte na prohlížeč rozhraní API
+GoToApiExplorer=API explorer
 ListOfMenusEntries=Seznam položek menu
 ListOfDictionariesEntries=Seznam položek slovníků
 ListOfPermissionsDefined=Seznam definovaných oprávnění
 SeeExamples=Viz příklady zde
 EnabledDesc=Podmínka, aby bylo toto pole aktivní (příklady: 1 nebo $ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=Je pole viditelné? (Příklady: 0 = Nikdy neviditelné, 1 = Viditelné v seznamu a vytvářet/aktualizovat/prohlížet formuláře, 2 = Viditelné pouze v seznamu, 3 = Viditelné pouze při vytváření/aktualizaci/zobrazit formulář (není v seznamu), 4 = Viditelné v seznamu a pouze formulář aktualizace/zobrazení (nevytvářet), 5 = viditelné pouze ve formuláři pro prohlížení koncových zobrazení (nevytvářet, neaktualizovat). <br><br>  Použití záporné hodnoty znamená, že pole není ve výchozím nastavení zobrazeno v seznamu, ale může být vybráno pro zobrazení). <br><br>Může to být výraz, například: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Zobrazte toto pole na kompatibilních dokumentech PDF. Polohu můžete spravovat pomocí pole „Poloha“. <br/> V současné době známých modelů compatibles PDF jsou: Eratosthenés z Kyrény (objednávka), Espadon (loď), houba (faktury), cyan (propal / citát), Cornas (dodavatel pořadí) <br/> <br/> <strong> Z dokumentu: </strong> <br/> 0 = nezobrazí <br/> 1 = displej <br/> 2 = zobrazí pouze tehdy, pokud není prázdný <br/> <br/> <strong> pro linky na dokumenty: </strong> <br/> 0 = není zobrazena <br/> 1 = zobrazena v koloně <br/> 3 = zobrazení v popis řádku sloupce po popisu <br/> 4 = zobrazení ve sloupci s popisem po vyrobení popis pouze pokud není prázdný
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Zobrazit v PDF
 IsAMeasureDesc=Může být hodnota pole kumulativní, aby se dostala do seznamu celkem? (Příklady: 1 nebo 0)
 SearchAllDesc=Používá se pole pro vyhledávání pomocí nástroje rychlého vyhledávání? (Příklady: 1 nebo 0)
@@ -97,7 +98,7 @@ MenusDefDescTooltip=Nabídky poskytované modulem / aplikací jsou definovány v
 DictionariesDefDescTooltip=Slovníky poskytované vaším modulem / aplikací jsou definovány do pole <strong> $ this-> slovníky </strong> do souboru deskriptoru modulu. Tento soubor můžete upravit ručně nebo použít zabudovaný editor. <br> <br> Poznámka: Jakmile je definován (a modul je znovu aktivován), jsou v oblasti nastavení také viditelné slovníky pro administrátorské uživatele na %s.
 PermissionsDefDescTooltip=Oprávnění poskytnutá vaším modulem / aplikací jsou definována do pole <strong>$ this-> práva</strong> do souboru deskriptoru modulu. Tento soubor můžete upravit ručně nebo použít vložený editor. <br><br> Poznámka: Po definování (a opětovném aktivaci modulu) jsou oprávnění viditelná ve výchozím nastavení oprávnění %s.
 HooksDefDesc=Definujte v <b> module_parts ['hooks'] </b> vlastnost, v deskriptoru modulu, kontext háčků, které chcete spravovat (seznam kontextů lze nalézt při hledání na '<b> initHooks (</b>' v jádrovém kódu) <br> Editovat soubor háku přidáte kód vašich háknutých funkcí (hákovatelné funkce lze nalézt při hledání na '<b> executeHooks </b>' v jádrovém kódu).
-TriggerDefDesc=Definujte ve spouštěcím souboru kód, který chcete provést pro každou provedenou událost.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Viz ID používané ve vaší instalaci
 SeeReservedIDsRangeHere=Viz rozsah vyhrazených ID
 ToolkitForDevelopers=Toolkit pro vývojáře Dolibarr
@@ -105,7 +106,7 @@ TryToUseTheModuleBuilder=Pokud máte znalosti o SQL a PHP, můžete použít pr�
 SeeTopRightMenu=Viz <span class="fa fa-bug"> </span> v pravé horní nabídce
 AddLanguageFile=Přidat jazyk
 YouCanUseTranslationKey=Zde můžete použít klíč, který je překladatelským klíčem nalezeným v jazykovém souboru (viz záložka "Jazyky")
-DropTableIfEmpty=(Vymazat tabulku, pokud je prázdná)
+DropTableIfEmpty=(Destroy table if empty)
 TableDoesNotExists=Tabulka %s neexistuje
 TableDropped=Tabulka %s byla smazána
 InitStructureFromExistingTable=Vytvořte řetězec struktury pole existující tabulky
@@ -126,17 +127,21 @@ UseSpecificEditorURL = Použijte specifickou adresu URL editoru
 UseSpecificFamily = Použijte konkrétní rodinu
 UseSpecificAuthor = Použijte specifického autora
 UseSpecificVersion = Použijte specifickou počáteční verzi
-ModuleMustBeEnabled=Nejprve musí být aktivován modul / aplikace
 IncludeRefGeneration=Odkaz na objekt musí být generován automaticky
 IncludeRefGenerationHelp=Zaškrtněte toto, pokud chcete zahrnout kód pro automatické generování reference
 IncludeDocGeneration=Chci z objektu vygenerovat nějaké dokumenty
 IncludeDocGenerationHelp=Pokud toto zaškrtnete, bude vygenerován nějaký kód pro přidání pole „Generovat dokument“ do záznamu.
 ShowOnCombobox=Zobrazit hodnotu do komboboxu
 KeyForTooltip=Klíč pro popis
-CSSClass=Třída CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Nelze upravovat
 ForeignKey=Cizí klíč
 TypeOfFieldsHelp=Typ polí: <br> varchar (99), dvojitý (24,8), reálný, text, html, datetime, timestamp, celé číslo, celé číslo: ClassName: relativní cesta / do / classfile.class.php [: 1 [: filter]] ('1' znamená, že přidáme tlačítko + za kombajn pro vytvoření záznamu, 'filter' může být 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__))
 AsciiToHtmlConverter=Převodník ASCII na HTML
 AsciiToPdfConverter=Převodník ASCII na PDF
 TableNotEmptyDropCanceled=Tabulka není prázdná. Odstranění tabulky bylo zrušeno.
+ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

@@ -1,0 +1,437 @@
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Баҳисобгирии муҳосибӣ
+Accounting=Баҳисобгирии муҳосибӣ
+ACCOUNTING_EXPORT_SEPARATORCSV=Ҷудокунандаи сутун барои файли содиротӣ
+ACCOUNTING_EXPORT_DATE=Формати сана барои содироти файл
+ACCOUNTING_EXPORT_PIECE=Шумораи қисмҳоро содир кунед
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Бо ҳисоби ҷаҳонӣ содирот кунед
+ACCOUNTING_EXPORT_LABEL=Нишони содирот
+ACCOUNTING_EXPORT_AMOUNT=Маблағи содирот
+ACCOUNTING_EXPORT_DEVISE=Асъори содиротӣ
+Selectformat=Форматро барои файл интихоб кунед
+ACCOUNTING_EXPORT_FORMAT=Форматро барои файл интихоб кунед
+ACCOUNTING_EXPORT_ENDLINE=Навъи бозгашти вагонро интихоб кунед
+ACCOUNTING_EXPORT_PREFIX_SPEC=Префикси номи файлро муайян кунед
+ThisService=Ин хидмат
+ThisProduct=Ин маҳсулот
+DefaultForService=Пешфарз барои хидмат
+DefaultForProduct=Пешфарз барои маҳсулот
+ProductForThisThirdparty=Маҳсулот барои ин тарафи сеюм
+ServiceForThisThirdparty=Хидмат барои ин шахси сеюм
+CantSuggest=Тавсия дода наметавонад
+AccountancySetupDoneFromAccountancyMenu=Аксар танзимоти баҳисобгирӣ аз менюи %s анҷом дода мешавад
+ConfigAccountingExpert=Танзимоти баҳисобгирии модул (вуруди дубора)
+Journalization=Журналистика
+Journals=Маҷаллаҳо
+JournalFinancial=Маҷаллаҳои молиявӣ
+BackToChartofaccounts=Нақшаи баргардонидани ҳисобҳо
+Chartofaccounts=Нақшаи ҳисобҳо
+ChartOfSubaccounts=Нақшаи ҳисобҳои инфиродӣ
+ChartOfIndividualAccountsOfSubsidiaryLedger=Нақшаи ҳисобҳои инфиродии дафтари фаръӣ
+CurrentDedicatedAccountingAccount=Ҳисоби ҷории бахшидашуда
+AssignDedicatedAccountingAccount=Ҳисоби нав барои таъин кардан
+InvoiceLabel=Этикети фактура
+OverviewOfAmountOfLinesNotBound=Шарҳи миқдори сатрҳое, ки ба ҳисоби баҳисобгирӣ алоқаманд нестанд
+OverviewOfAmountOfLinesBound=Шарҳи миқдори сатрҳое, ки аллакай ба ҳисоби баҳисобгирӣ баста шудаанд
+OtherInfo=Маълумоти дигар
+DeleteCptCategory=Ҳисоби муҳосибиро аз гурӯҳ хориҷ кунед
+ConfirmDeleteCptCategory=Шумо мутмаин ҳастед, ки мехоҳед ин ҳисоби баҳисобгириро аз гурӯҳи ҳисобҳои баҳисобгирӣ хориҷ кунед?
+JournalizationInLedgerStatus=Ҳолати журналистика
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
+GroupIsEmptyCheckSetup=Гурӯҳ холӣ аст, танзимоти гурӯҳи баҳисобгирии инфиродиро тафтиш кунед
+DetailByAccount=Тафсилотро аз рӯи ҳисоб нишон диҳед
+AccountWithNonZeroValues=Ҳисобҳо бо арзишҳои ғайри сифр
+ListOfAccounts=Рӯйхати ҳисобҳо
+CountriesInEEC=Кишварҳои Иттиҳоди Аврупо
+CountriesNotInEEC=Кишварҳое, ки дар ИАА нестанд
+CountriesInEECExceptMe=Кишварҳо дар ЕЭК ба истиснои %s
+CountriesExceptMe=Ҳама кишварҳо ба истиснои %s
+AccountantFiles=Ҳуҷҷатҳои манбаъро содир кунед
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp2=Барои содироти маҷаллаҳои худ, вуруди менюи %s - %s -ро истифода баред.
+VueByAccountAccounting=Аз ҳисоби ҳисоби баҳисобгирӣ дидан кунед
+VueBySubAccountAccounting=Бо зерсохтори баҳисобгирӣ дидан кунед
+
+MainAccountForCustomersNotDefined=Ҳисоби асосии баҳисобгирии муштариён, ки дар танзим муайян нашудаанд
+MainAccountForSuppliersNotDefined=Ҳисоби асосии баҳисобгирии фурӯшандагон, ки дар танзим муайян нашудаанд
+MainAccountForUsersNotDefined=Ҳисоби асосии баҳисобгирӣ барои корбароне, ки дар танзим муайян нашудаанд
+MainAccountForVatPaymentNotDefined=Ҳисоби асосии баҳисобгирии пардохти ААИ дар танзим муқаррар нашудааст
+MainAccountForSubscriptionPaymentNotDefined=Ҳисоби асосии баҳисобгирии пардохти обуна дар танзимот муайян нашудааст
+
+AccountancyArea=Минтақаи баҳисобгирӣ
+AccountancyAreaDescIntro=Истифодаи модули ҳисобдорӣ дар якчанд марҳила сурат мегирад:
+AccountancyAreaDescActionOnce=Амалҳои зерин одатан танҳо як маротиба ё дар як сол як маротиба иҷро карда мешаванд ...
+AccountancyAreaDescActionOnceBis=Қадамҳои минбаъда бояд барои сарфаи вақти шумо дар оянда бо пешниҳоди ҳисоби дурусти баҳисобгирии муҳосибӣ ҳангоми навиштани рӯзноманигорӣ анҷом дода шаванд (сабт дар маҷаллаҳо ва дафтари умумӣ)
+AccountancyAreaDescActionFreq=Амалҳои зерин одатан барои ширкатҳои хеле калон ҳар моҳ, ҳафта ё рӯз иҷро карда мешаванд ...
+
+AccountancyAreaDescJournalSetup=ҚАДАМИ %s: Аз менюи %s мундариҷаи рӯйхати журнали худро созед ё тафтиш кунед
+AccountancyAreaDescChartModel=ҚАДАМИ %s: мавҷуд будани модели диаграммаи ҳисобро тафтиш кунед ё аз менюи %s эҷод кунед
+AccountancyAreaDescChart=ҚАДАМИ %s: Диаграммаи ҳисоби худро аз менюи %s интихоб кунед ва | ё пур кунед.
+
+AccountancyAreaDescVat=ҚАДАМИ %s: Ҳисобҳои баҳисобгирии ҳар як Меъёрҳои андоз аз арзиши иловашударо муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescDefault=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгириро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescExpenseReport=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии ҳар як намуди ҳисоботи хароҷотро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescSal=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии музди меҳнатро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescContrib=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии хароҷоти махсусро муайян кунед (андозҳои гуногун). Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescDonation=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии хайрияро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescSubscription=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии аъзоёнро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescMisc=ҚАДАМИ %s: Ҳисоби пешфарзии ҳатмӣ ва ҳисобҳои пешфарзро барои амалиётҳои гуногун муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescLoan=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии қарзҳоро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescBank=ҚАДАМИ %s: Ҳисобҳои баҳисобгирӣ ва коди маҷаллаҳоро барои ҳар як бонк ва ҳисобҳои молиявӣ муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescProd=ҚАДАМИ %s: Ҳисобҳои баҳисобгирии маҳсулот/хидматҳои худро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+
+AccountancyAreaDescBind=ҚАДАМИ %s: Ҳатмии хатҳои мавҷудаи %s ва ҳисоби баҳисобгирии муҳосибиро тафтиш кунед, аз ин рӯ, барнома метавонад дар як клик амалиётҳоро дар дафтарчаи журналӣ ба қайд гирад. Пайвастҳои пурраи гумшуда. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescWriteRecords=ҚАДАМИ %s: Амалиётҳоро ба дафтар нависед. Барои ин ба менюи <strong> %s </strong> ворид шавед ва тугмаи <strong> %s a0a65d071f6fc9z -ро пахш кунед.
+AccountancyAreaDescAnalyze=ҚАДАМИ %s: Амалҳои мавҷударо илова ё таҳрир кунед ва ҳисоботҳо ва содиротро эҷод кунед.
+
+AccountancyAreaDescClosePeriod=ҚАДАМ %s: Давраи пӯшида, то мо дар оянда тағирот ворид карда натавонем.
+
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Қадами ҳатмӣ дар танзим ба анҷом нарасидааст (маҷаллаи рамзи баҳисобгирӣ барои ҳама суратҳисобҳои бонкӣ муайян нашудааст)
+Selectchartofaccounts=Нақшаи ҳисобҳои фаъолро интихоб кунед
+ChangeAndLoad=Тағир додан ва бор кардан
+Addanaccount=Ҳисоби баҳисобгирӣ илова кунед
+AccountAccounting=Ҳисоби баҳисобгирӣ
+AccountAccountingShort=Ҳисоб
+SubledgerAccount=Ҳисоби зерпардохт
+SubledgerAccountLabel=Барчаспҳои ҳисоби зерпардохт
+ShowAccountingAccount=Нишон додани ҳисоби баҳисобгирӣ
+ShowAccountingJournal=Нишон додани маҷаллаи баҳисобгирӣ
+ShowAccountingAccountInLedger=Ҳисобгирии муҳосибиро дар дафтар нишон диҳед
+ShowAccountingAccountInJournals=Нишон додани ҳисоби баҳисобгирӣ дар маҷаллаҳо
+AccountAccountingSuggest=Ҳисоби баҳисобгирӣ пешниҳод карда мешавад
+MenuDefaultAccounts=Ҳисобҳои пешфарз
+MenuBankAccounts=Ҳисобҳои бонкӣ
+MenuVatAccounts=Ҳисобҳои андоз аз арзиши иловашуда
+MenuTaxAccounts=Ҳисобҳои андоз
+MenuExpenseReportAccounts=Ҳисоботи ҳисоботи хароҷот
+MenuLoanAccounts=Ҳисобҳои қарзӣ
+MenuProductsAccounts=Ҳисобҳои маҳсулот
+MenuClosureAccounts=Ҳисобҳои басташавӣ
+MenuAccountancyClosure=Бастани
+MenuAccountancyValidationMovements=Ҳаракатҳоро тасдиқ кунед
+ProductsBinding=Ҳисобҳои маҳсулот
+TransferInAccounting=Интиқол дар баҳисобгирӣ
+RegistrationInAccounting=Бақайдгирӣ дар баҳисобгирӣ
+Binding=Ҳатмӣ ба ҳисобҳо
+CustomersVentilation=Ҳатмии фактураи муштарӣ
+SuppliersVentilation=Ҳисобнома -фактураи фурӯшанда
+ExpenseReportsVentilation=Ҳатмии ҳисоботи хароҷот
+CreateMvts=Эҷоди амалиёти нав
+UpdateMvts=Тағир додани амалиёт
+ValidTransaction=Транзаксияро тасдиқ кунед
+WriteBookKeeping=Амалиётҳоро дар баҳисобгирӣ ба қайд гиред
+Bookkeeping=Китоб
+BookkeepingSubAccount=Подшоҳ
+AccountBalance=Тавозуни суратҳисоб
+ObjectsRef=Манбаи объекти истинод
+CAHTF=Фурӯшандаи умумии харид пеш аз андоз
+TotalExpenseReport=Ҳисоботи умумии хароҷот
+InvoiceLines=Хатҳои ҳисобнома -фактураҳо барои пайванд кардан
+InvoiceLinesDone=Хатҳои сарҳадии фактураҳо
+ExpenseReportLines=Ҳисоботи хатҳои хароҷот барои ҳатмӣ
+ExpenseReportLinesDone=Ҳисоботи хатҳои маҳдуд
+IntoAccount=Пайвастшавӣ бо ҳисоби баҳисобгирӣ
+TotalForAccount=Ҳисоби умумии баҳисобгирӣ
+
+
+Ventilate=Бандад
+LineId=Хати ID
+Processing=Коркарди
+EndProcessing=Раванд қатъ шуд.
+SelectedLines=Хатҳои интихобшуда
+Lineofinvoice=Хатти фактура
+LineOfExpenseReport=Ҳисоботи хатти хароҷот
+NoAccountSelected=Ҳеҷ як ҳисоби баҳисобгирӣ интихоб нашудааст
+VentilatedinAccount=Ба ҳисоби баҳисобгирӣ бо муваффақият пайваст шуд
+NotVentilatedinAccount=Ба ҳисоби баҳисобгирӣ вобаста нест
+XLineSuccessfullyBinded=Маҳсулот/хидматҳои %s бомуваффақият ба суратҳисоби муҳосибӣ пайваст карда шуданд
+XLineFailedToBeBinded=Маҳсулот/хидматҳои %s ба ягон ҳисоби баҳисобгирӣ вобастагӣ надоштанд
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Шумораи ниҳоии сатрҳо дар рӯйхат ва саҳифаи ҳатмӣ (тавсия дода мешавад: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ҷудокунии саҳифаи "Ҳатмӣ ба кор" -ро бо унсурҳои охирин оғоз кунед
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ба навъбандии саҳифа "Ҳатмӣ иҷро шуд" аз ҷониби унсурҳои охирин оғоз кунед
+
+ACCOUNTING_LENGTH_DESCRIPTION=Тавсифи маҳсулот ва хидматҳоро дар рӯйхат пас аз x ҳарф буред (Беҳтарин = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Шакли тавсифи ҳисоби маҳсулот ва хидматҳоро дар рӯйхатҳо пас аз x ҳарф буред (Беҳтарин = 50)
+ACCOUNTING_LENGTH_GACCOUNT=Давомнокии суратҳисобҳои умумӣ (Агар шумо дар ин ҷо 6 -ро таъин кунед, ҳисоби '706' дар экран мисли '706000' пайдо мешавад)
+ACCOUNTING_LENGTH_AACCOUNT=Дарозии ҳисобҳои баҳисобгирии шахсони сеюм (Агар шумо дар ин ҷо 6-ро таъин кунед, ҳисоби '401' дар экран мисли '401000' пайдо мешавад)
+ACCOUNTING_MANAGE_ZERO=Иҷозат диҳед, ки шумораи охири сифрҳоро дар охири ҳисоби баҳисобгирӣ идора кунед. Ба баъзе кишварҳо лозим аст (ба монанди Швейтсария). Агар ба хомӯшӣ таъин шуда бошад (пешфарз), шумо метавонед ду параметрҳои зеринро таъин кунед, то аз барнома илова кардани сифрҳои виртуалӣ дархост кунанд.
+BANK_DISABLE_DIRECT_INPUT=Сабти мустақими амалиёт дар суратҳисоби бонкиро хомӯш кунед
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Экспорти лоиҳаро дар маҷалла фаъол созед
+ACCOUNTANCY_COMBO_FOR_AUX=Рӯйхати combo -ро барои ҳисоби фаръӣ фаъол созед (агар шумо шумораи зиёди шахсони сеюм дошта бошед, қобилияти ҷустуҷӯи як қисми арзишро вайрон кунед)
+ACCOUNTING_DATE_START_BINDING=Санаи оғози ҳатмӣ ва интиқол дар муҳосиботро муайян кунед. Дар зери ин сана амалиётҳо ба ҳисобдорӣ гузаронида намешаванд.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Ҳангоми интиқоли ҳисобдорӣ, давраи пешфарзро бо нобаёнӣ интихоб кунед
+
+ACCOUNTING_SELL_JOURNAL=Журнал фурӯшед
+ACCOUNTING_PURCHASE_JOURNAL=Журнал харед
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Маҷаллаи гуногун
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Маҷаллаи ҳисоботи хароҷот
+ACCOUNTING_SOCIAL_JOURNAL=Маҷаллаи иҷтимоӣ
+ACCOUNTING_HAS_NEW_JOURNAL=Маҷаллаи нав дорад
+
+ACCOUNTING_RESULT_PROFIT=Ҳисоби баҳисобгирии натиҷаҳо (фоида)
+ACCOUNTING_RESULT_LOSS=Ҳисоби баҳисобгирии натиҷаҳо (талафот)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Маҷаллаи басташавӣ
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Ҳисоби баҳисобгирии интиқоли бонкӣ
+TransitionalAccount=Ҳисоби интиқоли бонк
+
+ACCOUNTING_ACCOUNT_SUSPENSE=Ҳисоби баҳисобгирии интизорӣ
+DONATION_ACCOUNTINGACCOUNT=Ҳисоби баҳисобгирӣ барои бақайдгирии хайрияҳо
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Ҳисоби баҳисобгирӣ барои бақайдгирии обунаҳо
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Ҳисоби баҳисобгирӣ бо нобаёнӣ барои бақайдгирии пасандози муштарӣ
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои маҳсулоти харидашуда (агар дар варақаи маҳсулот муайян нашуда бошад) истифода мешавад
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои маҳсулоти харидашуда дар EEC (агар дар варақаи маҳсулот муайян нашуда бошад)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои маҳсулоти харидашуда ва берун аз ИА ворид карда мешавад (агар дар варақаи маҳсулот муайян нашуда бошад)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои маҳсулоти фурӯхташуда (агар дар варақаи маҳсулот муайян нашуда бошад)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Ҳисоби баҳисобгирӣ барои маҳсулоти дар EEC фурӯхташуда (агар дар варақаи маҳсулот муайян нашуда бошад)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои маҳсулоти фурӯхташуда ва берун аз EEC содиршуда (агар дар варақаи маҳсулот муайян нашуда бошад)
+
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Ҳисоби баҳисобгирӣ бо нобаёнӣ барои хидматҳои харидашуда (агар дар варақаи хидмат муайян нашуда бошад) истифода мешавад
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои хидматҳои харидашуда дар EEC (агар дар варақаи хидматӣ муайян нашуда бошад) истифода мешавад
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Ҳисоби баҳисобгирӣ бо нобаёнӣ барои хидматҳои харидашуда ва берун аз EEC воридшуда (агар дар варақаи хидматрасонӣ муайян нашуда бошад) истифода мешавад
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Ҳисоби баҳисобгирӣ бо нобаёнӣ барои хидматҳои фурӯхташуда (агар дар варақаи хидмат муайян нашуда бошад) истифода мешавад
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Ҳисоби баҳисобгирӣ бо нобаёнӣ барои хидматҳои дар EEC фурӯхташуда (агар дар варақаи хидматрасонӣ муайян нашуда бошад) истифода мешавад
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои хидматҳои фурӯхташуда ва берун аз EEC (агар дар варақаи хидматрасонӣ муайян нашуда бошад) истифода мешавад
+
+Doctype=Навъи ҳуҷҷат
+Docdate=Сана
+Docref=Маълумотнома
+LabelAccount=Ҳисоби нишона
+LabelOperation=Амалиёти тамғагузорӣ
+Sens=Самт
+AccountingDirectionHelp=Барои ҳисоби баҳисобгирии муштарӣ, барои сабт кардани пардохте, ки шумо гирифтаед, Кредитро истифода баред
+LetteringCode=Рамзи навиштан
+Lettering=Навиштан
+Codejournal=Маҷалла
+JournalLabel=Нишони рӯзнома
+NumPiece=Рақами дона
+TransactionNumShort=Адад муомилот
+AccountingCategory=Гурӯҳи фармоишӣ
+GroupByAccountAccounting=Гурӯҳбандӣ аз рӯи ҳисоби китоби умумӣ
+GroupBySubAccountAccounting=Гурӯҳбандӣ аз рӯи ҳисоби зерпардохт
+AccountingAccountGroupsDesc=Шумо метавонед дар ин ҷо баъзе гурӯҳҳои баҳисобгирии муҳосибиро муайян кунед. Онҳо барои ҳисоботи шахсии баҳисобгирӣ истифода мешаванд.
+ByAccounts=Аз рӯи ҳисобҳо
+ByPredefinedAccountGroups=Аз рӯи гурӯҳҳои пешакӣ муайяншуда
+ByPersonalizedAccountGroups=Аз ҷониби гурӯҳҳои инфиродӣ
+ByYear=Аз рӯи сол
+NotMatch=Танзим нашудааст
+DeleteMvt=Баъзе хатҳои амалиётро аз баҳисобгирӣ нест кунед
+DelMonth=Моҳ барои нест кардан
+DelYear=Сол барои нест кардан
+DelJournal=Журнал барои нест кардан
+ConfirmDeleteMvt=Ин ҳама сатрҳои амалиёти баҳисобгирии сол/моҳ ва/ё маҷаллаи мушаххасро нест мекунад (Ҳадди ақал як меъёр лозим аст). Шумо бояд хусусияти '%s' -ро дубора истифода баред, то сабти нестшударо дар дафтар баргардонед.
+ConfirmDeleteMvtPartial=Ин амалиётро аз баҳисобгирӣ нест мекунад (ҳама хатҳои амалиёти марбут ба як амалиёт нест карда мешаванд)
+FinanceJournal=Маҷаллаи молиявӣ
+ExpenseReportsJournal=Маҷаллаи ҳисоботи хароҷот
+DescFinanceJournal=Маҷаллаи молиявӣ, аз ҷумла ҳама намуди пардохтҳо бо суратҳисоби бонкӣ
+DescJournalOnlyBindedVisible=Ин назари сабтест, ки ба суратҳисоби баҳисобгирӣ вобастагӣ дорад ва онҳоро дар маҷаллаҳо ва дафтарчаҳо сабт кардан мумкин аст.
+VATAccountNotDefined=Ҳисоб барои ААИ муайян карда нашудааст
+ThirdpartyAccountNotDefined=Ҳисоби шахси сеюм муайян карда нашудааст
+ProductAccountNotDefined=Ҳисоби маҳсулот муайян карда нашудааст
+FeeAccountNotDefined=Ҳисоб барои пардохт муайян карда нашудааст
+BankAccountNotDefined=Ҳисоби бонк муайян карда нашудааст
+CustomerInvoicePayment=Пардохти муштарии ҳисобнома -фактура
+ThirdPartyAccount=Ҳисоби тарафи сеюм
+NewAccountingMvt=Амали нав
+NumMvts=Шумораи муомилот
+ListeMvts=Рӯйхати ҳаракатҳо
+ErrorDebitCredit=Дебет ва кредит наметавонанд дар як вақт арзиш дошта бошанд
+AddCompteFromBK=Ба гурӯҳ ҳисобҳои баҳисобгирӣ илова кунед
+ReportThirdParty=Ҳисоби тарафи сеюмро номбар кунед
+DescThirdPartyReport=Дар ин ҷо ба рӯйхати мизоҷон ва фурӯшандагони тарафи сеюм ва ҳисобҳои баҳисобгирии онҳо муроҷиат кунед
+ListAccounts=Рӯйхати ҳисобҳои муҳосибӣ
+UnknownAccountForThirdparty=Ҳисоби тарафи сеюми номаълум. Мо %s -ро истифода хоҳем бурд
+UnknownAccountForThirdpartyBlocking=Ҳисоби тарафи сеюми номаълум. Хатои басташавӣ
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Ҳисоби зерпардохт муайян нашудааст ё шахси сеюм ё корбар номаълум. Мо %s -ро истифода хоҳем бурд
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Шахси номаълум ва зерпардохти тарафи сеюм дар бораи пардохт муайян карда нашудааст. Мо арзиши ҳисоби зерпардохтро холӣ нигоҳ медорем.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Ҳисоби зерпардохт муайян нашудааст ё шахси сеюм ё корбар номаълум. Хатогии басташавӣ.
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ҳисоби тарафи сеюми номаълум ва ҳисоби интизорӣ муайян карда нашудааст. Хатои басташавӣ
+PaymentsNotLinkedToProduct=Пардохт ба ягон маҳсулот / хидмат алоқаманд нест
+OpeningBalance=Тавозуни кушод
+ShowOpeningBalance=Нишон додани тавозуни кушод
+HideOpeningBalance=Пинҳон кардани тавозуни кушод
+ShowSubtotalByGroup=Нишон додани маҷмӯа аз рӯи сатҳ
+
+Pcgtype=Гурӯҳи ҳисоб
+PcgtypeDesc=Гурӯҳи ҳисобҳо ҳамчун меъёрҳои пешакӣ муайяншудаи 'филтр' ва 'гурӯҳбандӣ' барои баъзе ҳисоботҳои баҳисобгирӣ истифода мешаванд. Масалан, 'ДАРОМАД' ё 'ХАРОҶО' ҳамчун гурӯҳҳо барои ҳисобҳои баҳисобгирии маҳсулот барои таҳияи гузориши хароҷот/даромад истифода мешаванд.
+
+Reconcilable=Оштӣ
+
+TotalVente=Маблағи умумии гардиш пеш аз андоз
+TotalMarge=Маржаи умумии фурӯш
+
+DescVentilCustomer=Дар ин ҷо рӯйхати хатҳои фактураи муштариёнро, ки ба суратҳисоби баҳисобгирии маҳсулот баста шудаанд, баррасӣ кунед
+DescVentilMore=Дар аксари ҳолатҳо, агар шумо маҳсулот ё хидматҳои пешакӣ муайяншударо истифода баред ва рақами суратҳисобро дар корти маҳсулот/хидмат гузоштед, барнома қодир аст, ки байни хатҳои ҳисобнома -фактураи шумо ва суратҳисоби муҳосибии нақшаи суратҳисобҳои шумо ҳатмӣ бошад. як клик бо тугмаи <strong> "%s" </strong>. Агар ҳисоб дар кортҳои маҳсулот/хидматрасонӣ насб нашуда бошад ё агар шумо то ҳол баъзе сатрҳои ба суратҳисоб алоқаманд набошед, шумо бояд аз менюи "<strong> %s </strong>" дастӣ ҳатмӣ кунед.
+DescVentilDoneCustomer=Дар ин ҷо ба рӯйхати хатҳои муштариёни ҳисобнома -фактура ва ҳисоби баҳисобгирии маҳсулоти онҳо муроҷиат кунед
+DescVentilTodoCustomer=Хатҳои фактураро, ки аллакай бо ҳисоби баҳисобгирии маҳсулот баста нашудаанд, бандед
+ChangeAccount=Ҳисоби баҳисобгирии маҳсулот/хидматро барои хатҳои интихобшуда бо ҳисоби баҳисобгирии зерин иваз кунед:
+Vide=-
+DescVentilSupplier=Дар ин ҷо ба рӯйхати хатҳои фактураи фурӯшанда муроҷиат кунед, ки ба суратҳисоби баҳисобгирии маҳсулот баста ё ҳанӯз баста нашудаанд (танҳо сабтҳое, ки ҳоло дар муҳосибот интиқол дода нашудаанд) намоёнанд)
+DescVentilDoneSupplier=Дар ин ҷо ба рӯйхати хатҳои фактураҳои фурӯшанда ва ҳисоби баҳисобгирии онҳо муроҷиат кунед
+DescVentilTodoExpenseReport=Хатҳои ҳисоботи хароҷотро, ки аллакай бо ҳисоби баҳисобгирии пардохтҳо алоқаманд нестанд, пайваст кунед
+DescVentilExpenseReport=Дар ин ҷо ба рӯйхати хатҳои ҳисоботи хароҷот, ки ба суратҳисоби баҳисобгирӣ вобастаанд, муроҷиат кунед
+DescVentilExpenseReportMore=Агар шумо ҳисоби баҳисобгирии муҳосибиро аз рӯи хатҳои ҳисоботи хароҷот танзим кунед, барнома метавонад ҳама ҳатмиро байни хатҳои ҳисоботи хароҷоти шумо ва ҳисоби баҳисобгирии нақшаи ҳисобҳои шумо иҷро кунад, танҳо дар як клик бо тугмаи <strong> "%s" </strong>. Агар ҳисоб дар луғати пардохт муқаррар нашуда бошад ё агар шумо то ҳол баъзе сатрҳои ба ягон ҳисоб алоқаманд надошта бошед, шумо бояд аз менюи "<strong> %s </strong>" дастӣ ҳатмӣ кунед.
+DescVentilDoneExpenseReport=Дар ин ҷо ба рӯйхати хатҳои ҳисобот дар бораи хароҷот ва ҳисоби баҳисобгирии хароҷоти онҳо муроҷиат кунед
+
+Closure=Бастани солона
+DescClosure=Дар ин ҷо шумораи ҳаракатҳо аз рӯи моҳро баррасӣ кунед, ки тасдиқ нашудаанд ва солҳои молиявӣ аллакай кушода шудаанд
+OverviewOfMovementsNotValidated=Қадами 1/ Шарҳи ҳаракатҳо тасдиқ нашудааст. (Барои бастани соли молиявӣ зарур аст)
+AllMovementsWereRecordedAsValidated=Ҳама ҳаракатҳо ҳамчун тасдиқшуда сабт карда шуданд
+NotAllMovementsCouldBeRecordedAsValidated=На ҳама ҳаракатҳоро метавон ҳамчун тасдиқшуда сабт кард
+ValidateMovements=Ҳаракатҳоро тасдиқ кунед
+DescValidateMovements=Ҳама гуна тағир ё нест кардани навиштан, навиштан ва нест кардан манъ карда мешавад. Ҳама сабтҳо барои машқ бояд тасдиқ карда шаванд, вагарна пӯшида намешавад
+
+ValidateHistory=Ба таври худкор пайваст кунед
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+
+ErrorAccountancyCodeIsAlreadyUse=Хато, шумо наметавонед ин ҳисоби баҳисобгириро нест кунед, зеро он истифода мешавад
+MvtNotCorrectlyBalanced=Ҳаракат дуруст тавозун нашудааст. Дебет = %s | Кредит = %s
+Balancing=Тавозун
+FicheVentilation=Корти ҳатмӣ
+GeneralLedgerIsWritten=Амалиётҳо дар дафтар навишта мешаванд
+GeneralLedgerSomeRecordWasNotRecorded=Баъзе транзаксияҳоро нашр кардан ғайриимкон буд. Агар паёми хатогии дигар вуҷуд надошта бошад, ин шояд аз он сабаб бошад, ки онҳо аллакай рӯзноманигор буданд.
+NoNewRecordSaved=Дигар сабти журналистон нест
+ListOfProductsWithoutAccountingAccount=Рӯйхати маҳсулоте, ки ба ягон ҳисоби баҳисобгирӣ вобастагӣ надоранд
+ChangeBinding=Пайвастшавиро тағир диҳед
+Accounted=Дар дафтари баҳисобгирӣ
+NotYetAccounted=Not yet transferred to accounting
+ShowTutorial=Нишон додани дарсӣ
+NotReconciled=Оштӣ нашудааст
+WarningRecordWithoutSubledgerAreExcluded=Огоҳӣ, ҳама амалиёте, ки ҳисоби зерҳисобиро муайян накардаанд, филтр карда шудаанд ва аз ин намуд хориҷ карда шудаанд
+
+## Admin
+BindingOptions=Вариантҳои ҳатмӣ
+ApplyMassCategories=Категорияҳои оммавиро татбиқ кунед
+AddAccountFromBookKeepingWithNoCategories=Ҳисоби дастрас ҳоло дар гурӯҳи фардӣ нест
+CategoryDeleted=Категорияи ҳисоби баҳисобгирӣ хориҷ карда шуд
+AccountingJournals=Маҷаллаҳои баҳисобгирӣ
+AccountingJournal=Журнали баҳисобгирӣ
+NewAccountingJournal=Маҷаллаи нави баҳисобгирӣ
+ShowAccountingJournal=Нишон додани маҷаллаи баҳисобгирӣ
+NatureOfJournal=Табиати рӯзнома
+AccountingJournalType1=Амалиётҳои гуногун
+AccountingJournalType2=Фурӯш
+AccountingJournalType3=Харидҳо
+AccountingJournalType4=Бонк
+AccountingJournalType5=Ҳисобот оид ба хароҷот
+AccountingJournalType8=Инвентаризатсия
+AccountingJournalType9=Нав-дорад
+ErrorAccountingJournalIsAlreadyUse=Ин маҷалла аллакай истифода мешавад
+AccountingAccountForSalesTaxAreDefinedInto=Эзоҳ: Ҳисоби баҳисобгирии андоз аз фурӯш дар менюи <b> %s </b> - <b> %s </b> муайян карда шудааст
+NumberOfAccountancyEntries=Шумораи сабтҳо
+NumberOfAccountancyMovements=Шумораи ҳаракатҳо
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Ҳатмӣ ва интиқол дар муҳосибот дар фурӯшро хомӯш кунед (фактураҳои муштариён ҳангоми баҳисобгирӣ ба назар гирифта намешаванд)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Ҳатмӣ ва интиқол дар муҳосибот ҳангоми харидро хомӯш кунед (фактураҳои фурӯшанда ҳангоми баҳисобгирӣ ба назар гирифта намешаванд)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Ҳатмӣ ва интиқол дар муҳосибот дар ҳисоботи хароҷотро хомӯш кунед (ҳисоботи хароҷот ҳангоми баҳисобгирӣ ба назар гирифта намешаванд)
+
+## Export
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+ConfirmExportFile=Тасдиқи тавлиди файли содироти баҳисобгирӣ?
+ExportDraftJournal=Содироти маҷаллаи лоиҳа
+Modelcsv=Модели содирот
+Selectmodelcsv=Модели содиротро интихоб кунед
+Modelcsv_normal=Экспорти классикӣ
+Modelcsv_CEGID=Содирот барои Cptid Expert Comptabilité
+Modelcsv_COALA=Содирот барои Sage Coala
+Modelcsv_bob50=Содирот барои Sage BOB 50
+Modelcsv_ciel=Содирот барои Sage50, Ciel Compta ё Compta Evo. (Формат XIMPORT)
+Modelcsv_quadratus=Содирот барои Quadratus QuadraCompta
+Modelcsv_ebp=Содирот барои EBP
+Modelcsv_cogilog=Содирот барои Cogilog
+Modelcsv_agiris=Export for Agiris Isacompta
+Modelcsv_LDCompta=Содирот барои LD Compta (v9) (Санҷиш)
+Modelcsv_LDCompta10=Содирот барои LD Compta (v10 ва боло)
+Modelcsv_openconcerto=Содирот барои OpenConcerto (Санҷиш)
+Modelcsv_configurable=CSV -и танзимшавандаро содир кунед
+Modelcsv_FEC=Содироти FEC
+Modelcsv_FEC2=Содироти FEC (Бо навиштани сана / баргардонидани ҳуҷҷат)
+Modelcsv_Sage50_Swiss=Содирот барои Sage 50 Швейтсария
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Содирот барои Gestinum (v3)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
+ChartofaccountsId=Нақшаи ҳисобҳо Id
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Баҳисобгирии муҳосибиро оғоз кунед
+InitAccountancyDesc=Ин саҳифа метавонад барои оғози ҳисоби баҳисобгирӣ дар маҳсулот ва хидматҳое, ки ҳисоби баҳисобгирии барои фурӯш ва харид муайяншударо надорад, истифода шавад.
+DefaultBindingDesc=Ин саҳифа метавонад барои насб кардани ҳисоби пешфарз истифода шавад барои пайваст кардани сабти муомилот дар бораи маоши пардохт, хайрия, андозҳо ва андоз аз арзиши иловашуда, вақте ки ягон ҳисоби мушаххаси баҳисобгирӣ насб нашудааст.
+DefaultClosureDesc=Ин саҳифа метавонад барои танзим кардани параметрҳое истифода шавад, ки барои бастани баҳисобгирӣ истифода мешаванд.
+Options=Имконот
+OptionModeProductSell=Фурӯши режим
+OptionModeProductSellIntra=Фурӯши режим дар EEC содир карда мешавад
+OptionModeProductSellExport=Фурӯши режим дар кишварҳои дигар содир карда мешавад
+OptionModeProductBuy=Хариди режим
+OptionModeProductBuyIntra=Хариди режиме, ки дар EEC ворид карда шудааст
+OptionModeProductBuyExport=Усули харид аз дигар кишварҳо ворид карда мешавад
+OptionModeProductSellDesc=Ҳама маҳсулотро бо ҳисоби баҳисобгирии фурӯш нишон диҳед.
+OptionModeProductSellIntraDesc=Ҳама маҳсулотро бо ҳисоби баҳисобгирии фурӯш дар EEC нишон диҳед.
+OptionModeProductSellExportDesc=Ҳама маҳсулотро бо ҳисоби баҳисобгирии дигар фурӯши хориҷӣ нишон диҳед.
+OptionModeProductBuyDesc=Ҳама маҳсулотро бо ҳисоби баҳисобгирии харид нишон диҳед.
+OptionModeProductBuyIntraDesc=Ҳама маҳсулотро бо ҳисоби баҳисобгирии харид дар EEC нишон диҳед.
+OptionModeProductBuyExportDesc=Ҳама маҳсулотро бо ҳисоби баҳисобгирии дигар хариди хориҷӣ нишон диҳед.
+CleanFixHistory=Рамзи баҳисобгирӣ аз сатрҳое, ки дар ҷадвалҳои ҳисоб мавҷуд нестанд, хориҷ кунед
+CleanHistory=Ҳама пайвандҳоро барои соли интихобшуда аз нав танзим кунед
+PredefinedGroups=Гурӯҳҳои пешакӣ муайяншуда
+WithoutValidAccount=Бе ҳисоби дурусти бахшидашуда
+WithValidAccount=Бо ҳисоби дурусти бахшидашуда
+ValueNotIntoChartOfAccount=Ин арзиши ҳисоби баҳисобгирӣ дар нақшаи ҳисоб мавҷуд нест
+AccountRemovedFromGroup=Ҳисоб аз гурӯҳ хориҷ карда шуд
+SaleLocal=Фурӯши маҳаллӣ
+SaleExport=Фурӯши содирот
+SaleEEC=Фурӯш дар EEC
+SaleEECWithVAT=Фурӯш дар ИАА бо арзиши иловашуда бо арзиши иловашуда бекор нест, бинобар ин мо фикр мекунем, ки ин фурӯши дохилиидоравӣ нест ва ҳисоби пешниҳодшуда ҳисоби стандартии маҳсулот аст.
+SaleEECWithoutVATNumber=Фурӯш дар ЕЭК бидуни андоз аз арзиши иловашуда, аммо ID -и ААИ аз тарафи сеюм муайян карда нашудааст. Мо аз ҳисоби маҳсулот барои фурӯши стандартӣ бармегардем. Агар лозим бошад, шумо метавонед ID ААИ -и тарафи сеюм ё ҳисоби маҳсулотро ислоҳ кунед.
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
+## Dictionary
+Range=Меъёри ҳисоби баҳисобгирӣ
+Calculated=Ҳисоб карда шудааст
+Formula=Формула
+
+## Error
+SomeMandatoryStepsOfSetupWereNotDone=Баъзе қадамҳои ҳатмии насбкунӣ иҷро нашудаанд, лутфан онҳоро анҷом диҳед
+ErrorNoAccountingCategoryForThisCountry=Ҳеҷ як гурӯҳи ҳисобҳои баҳисобгирӣ барои кишвар %s мавҷуд нест (Ба хона нигаред - Танзимот - Луғатҳо)
+ErrorInvoiceContainsLinesNotYetBounded=Шумо кӯшиш мекунед, ки баъзе сатрҳои фактураро <strong> %s </strong> маҷалла гузоред, аммо баъзе сатрҳои дигар то ҳол ба ҳисоби муҳосибӣ маҳдуд нашудаанд. Интишори ҳамаи сатрҳои ҳисобнома -фактура барои ин ҳисобнома рад карда мешавад.
+ErrorInvoiceContainsLinesNotYetBoundedShort=Баъзе сатрҳои фактура ба суратҳисоби баҳисобгирӣ вобаста нестанд.
+ExportNotSupported=Формати содиротии танзимшуда дар ин саҳифа дастгирӣ намешавад
+BookeppingLineAlreayExists=Сатрҳое, ки аллакай дар муҳосибот мавҷуданд
+NoJournalDefined=Ягон маҷалла муайян карда нашудааст
+Binded=Хатҳо баста шудаанд
+ToBind=Хатҳо барои пайвастан
+UseMenuToSetBindindManualy=Сатрҳо ҳанӯз баста нашудаанд, барои дастӣ бастани пайванд аз менюи <a href="%s"> %s </a> истифода баред
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+
+## Import
+ImportAccountingEntries=Сабтҳои баҳисобгирӣ
+ImportAccountingEntriesFECFormat=Сабтҳои баҳисобгирӣ - формати FEC
+FECFormatJournalCode=Маҷаллаи кодҳо (JournalCode)
+FECFormatJournalLabel=Маҷаллаи тамғагузорӣ (JournalLib)
+FECFormatEntryNum=Рақами дона (EcritureNum)
+FECFormatEntryDate=Санаи порча (EcritureDate)
+FECFormatGeneralAccountNumber=Рақами ҳисоби умумӣ (CompteNum)
+FECFormatGeneralAccountLabel=Нишони ҳисоби умумӣ (CompteLib)
+FECFormatSubledgerAccountNumber=Рақами суратҳисоби зерпардохт (CompAuxNum)
+FECFormatSubledgerAccountLabel=Рақами суратҳисоби зерпардохт (CompAuxLib)
+FECFormatPieceRef=Реферат (PieceRef)
+FECFormatPieceDate=Эҷоди санаи порча (PieceDate)
+FECFormatLabelOperation=Амалиёти тамғагузорӣ (EcritureLib)
+FECFormatDebit=Дебет (дебет)
+FECFormatCredit=Кредит (кредит)
+FECFormatReconcilableCode=Рамзи мувофиқаткунанда (EcritureLet)
+FECFormatReconcilableDate=Санаи оштӣ (DateLet)
+FECFormatValidateDate=Санаи тасдиқшуда (ValidDate)
+FECFormatMulticurrencyAmount=Миқдори асъор (Montantdevise)
+FECFormatMulticurrencyCode=Рамзи бисёрҷониба (Idevise)
+
+DateExport=Содироти сана
+WarningReportNotReliable=Огоҳӣ, ин гузориш ба дафтарча асос наёфтааст, аз ин рӯ амалиётеро, ки дар дафтар ба таври дастӣ тағир дода шудааст, дар бар намегирад. Агар рӯзноманигории шумо нав бошад, назари ҳисобдорӣ дақиқтар аст.
+ExpenseReportJournal=Ҳисоботи хароҷоти рӯзнома
+InventoryJournal=Маҷаллаи инвентаризатсия
+
+NAccounts=ҳисобҳои %s

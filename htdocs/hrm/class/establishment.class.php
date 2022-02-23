@@ -58,7 +58,7 @@ class Establishment extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'building';
+	public $picto = 'establishment';
 
 	/**
 	 * @var int ID
@@ -133,7 +133,7 @@ class Establishment extends CommonObject
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>20),
-		'label' =>array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>22),
+		'label' =>array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>2, 'position'=>22),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
@@ -180,7 +180,9 @@ class Establishment extends CommonObject
 		$this->zip = trim($this->zip);
 		$this->town = trim($this->town);
 
-		if (empty($this->ref)) $this->ref = '(PROV)';
+		if (empty($this->ref)) {
+			$this->ref = '(PROV)';
+		}
 
 		$this->db->begin();
 
@@ -202,12 +204,12 @@ class Establishment extends CommonObject
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", '".$this->db->escape($this->zip)."'";
 		$sql .= ", '".$this->db->escape($this->town)."'";
-		$sql .= ", ".$this->country_id;
-		$sql .= ", ".$this->status;
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $this->country_id);
+		$sql .= ", ".((int) $this->status);
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -229,7 +231,7 @@ class Establishment extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'establishment');
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."establishment SET ref = '".$this->db->escape($this->id)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$this->db->query($sql);
 
 			$this->db->commit();
@@ -248,8 +250,7 @@ class Establishment extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (empty($this->label))
-		{
+		if (empty($this->label)) {
 			$this->error = 'ErrorBadParameter';
 			return -1;
 		}
@@ -263,12 +264,12 @@ class Establishment extends CommonObject
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
-		$sql .= ", status = ".$this->db->escape($this->status);
-		$sql .= ", fk_user_mod = ".$user->id;
-		$sql .= ", entity = ".$this->entity;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ", status = ".((int) $this->status);
+		$sql .= ", fk_user_mod = ".((int) $user->id);
+		$sql .= ", entity = ".((int) $this->entity);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -292,12 +293,11 @@ class Establishment extends CommonObject
 		$sql .= ' c.code as country_code, c.label as country';
 		$sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON e.fk_country = c.rowid';
-		$sql .= " WHERE e.rowid = ".$id;
+		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$obj = $this->db->fetch_object($result);
 
 			$this->id = $obj->rowid;
@@ -330,12 +330,11 @@ class Establishment extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".$id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -367,19 +366,22 @@ class Establishment extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_OPEN] = $langs->trans('Open');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
-			$this->labelStatusShort[self::STATUS_OPEN] = $langs->trans('Open');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('Closed');
+			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Open');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Open');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_OPEN) $statusType = 'status4';
-		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+		if ($status == self::STATUS_OPEN) {
+			$statusType = 'status4';
+		}
+		if ($status == self::STATUS_CLOSED) {
+			$statusType = 'status6';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -395,27 +397,23 @@ class Establishment extends CommonObject
 	{
 		$sql = 'SELECT e.rowid, e.ref, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
-		$sql .= ' WHERE e.rowid = '.$id;
+		$sql .= ' WHERE e.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
 				$this->date_creation = $this->db->jdate($obj->datec);
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
-				if ($obj->fk_user_mod)
-				{
+				if ($obj->fk_user_mod) {
 					$muser = new User($this->db);
 					$muser->fetch($obj->fk_user_mod);
 					$this->user_modification = $muser;
@@ -430,28 +428,92 @@ class Establishment extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @return     string                  String with URL
+	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param  string  $option                     On what the link point to ('nolink', ...)
+	 *  @param  int     $notooltip                  1=Disable tooltip
+	 *  @param  string  $morecss                    Add more css on link
+	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string                              String with URL
 	 */
-	public function getNomUrl($withpicto = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $conf, $langs, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
-		$link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$this->id.'">';
-		$linkend = '</a>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Establishment").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$picto = 'building';
+		$url = DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$this->id;
 
-		$label = '<u>'.$langs->trans("Establishment").'</u>';
-		$label .= '<br>'.$langs->trans("Label").': '.$this->label;
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
 
-		if ($withpicto) $result .= ($link.img_object($label, $picto).$linkend);
-		if ($withpicto && $withpicto != 2) $result .= ' ';
-		if ($withpicto != 2) $result .= $link.$this->label.$linkend;
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$label = $langs->trans("Establishment");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
+
+		if ($option == 'nolink') {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
+		$linkstart .= $linkclose.'>';
+		if ($option == 'nolink') {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
+
+		$result .= $linkstart;
+
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
+
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array('establishmentdao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -465,10 +527,14 @@ class Establishment extends CommonObject
 		global $mysoc;
 
 		// We return country code of bank account
-		if (!empty($this->country_code)) return $this->country_code;
+		if (!empty($this->country_code)) {
+			return $this->country_code;
+		}
 
 		// We return country code of managed company
-		if (!empty($mysoc->country_code)) return $mysoc->country_code;
+		if (!empty($mysoc->country_code)) {
+			return $mysoc->country_code;
+		}
 
 		return '';
 	}

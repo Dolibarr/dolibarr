@@ -23,7 +23,7 @@
  *  \brief      Descriptor file for Api modulee
  *  \file       htdocs/core/modules/modApi.class.php
  *  \ingroup    api
- *  \brief      Description and activation file for module Api
+ *  \brief      Description and activation file for the module Api
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -83,7 +83,7 @@ class modApi extends DolibarrModules
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array('modZapier'); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("other");
 
 		// Constants
@@ -120,8 +120,7 @@ class modApi extends DolibarrModules
 		$this->tabs = array();
 
 		// Dictionaries
-		if (!isset($conf->api->enabled))
-		{
+		if (!isset($conf->api->enabled)) {
 			$conf->api = new stdClass();
 			$conf->api->enabled = 0;
 		}
@@ -135,16 +134,18 @@ class modApi extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
+		$this->rights_admin_allowed = 1; // Admin is always granted of permission (even when module is disabled)
+
 		$r = 0;
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
-		// $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $r++;
+		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = 'Générer / modifier la clé API des utilisateurs';	// Permission label
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'apikey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'generate';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
 
 
 		// Main menu entries
@@ -196,7 +197,7 @@ class modApi extends DolibarrModules
 		//	's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country','s.phone'=>'Phone',
 		//	's.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode',
 		//	's.code_compta_fournisseur'=>'SupplierAccountancyCode','f.rowid'=>"InvoiceId",'f.ref'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",
-		//	'f.datef'=>"DateInvoice",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus',
+		//	'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.total_tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus',
 		//	'f.note'=>"InvoiceNote",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.price'=>"LineUnitPrice",'fd.tva_tx'=>"LineVATRate",
 		//	'fd.qty'=>"LineQty",'fd.total_ht'=>"LineTotalHT",'fd.total_tva'=>"LineTotalTVA",'fd.total_ttc'=>"LineTotalTTC",'fd.date_start'=>"DateStart",
 		//	'fd.date_end'=>"DateEnd",'fd.fk_product'=>'ProductId','p.ref'=>'ProductRef'
@@ -204,7 +205,7 @@ class modApi extends DolibarrModules
 		// $this->export_entities_array[$r]=array(
 		//	's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company','s.phone'=>'company',
 		//	's.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company',
-		//	'f.rowid'=>"invoice",'f.ref'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",
+		//	'f.rowid'=>"invoice",'f.ref'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total_ht'=>"invoice",'f.total_ttc'=>"invoice",'f.total_tva'=>"invoice",
 		//	'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'fd.rowid'=>'invoice_line','fd.description'=>"invoice_line",'fd.price'=>"invoice_line",
 		//	'fd.total_ht'=>"invoice_line",'fd.total_tva'=>"invoice_line",'fd.total_ttc'=>"invoice_line",'fd.tva_tx'=>"invoice_line",'fd.qty'=>"invoice_line",
 		//	'fd.date_start'=>"invoice_line",'fd.date_end'=>"invoice_line",'fd.fk_product'=>'product','p.ref'=>'product'
@@ -222,25 +223,13 @@ class modApi extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-<<<<<<< HEAD
      *      @param      string	$options        Options when enabling module ('', 'noboxes')
      *      @param      int     $force_entity	Force current entity
-=======
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-<<<<<<< HEAD
-    public function init($options = '', $force_entity = null)
-    {
-        $sql = array();
-=======
-	public function init($options = '')
+	public function init($options = '', $force_entity = null)
 	{
 		$sql = array();
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
-
-		$result = $this->_load_tables('/api/sql/');
 
 		return $this->_init($sql, $options);
 	}
@@ -257,8 +246,8 @@ class modApi extends DolibarrModules
 	{
 		// Remove old constants with entity fields different of 0
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_API', 1),
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('API_PRODUCTION_MODE', 1)
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_API'),		// API can't be enabled per environment. Why ?
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('API_PRODUCTION_MODE')	// Not in production mode by default at activation
 		);
 
 		return $this->_remove($sql, $options);

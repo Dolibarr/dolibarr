@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,12 +93,11 @@ class box_last_ticket extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
-
-			$sql .= " WHERE t.entity = ".$conf->entity;
+			$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 			//          $sql.= " AND e.rowid = er.fk_event";
-			//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			if ($user->socid) {
-				$sql .= " AND t.fk_soc= ".$user->socid;
+				$sql .= " AND t.fk_soc= ".((int) $user->socid);
 			}
 
 			//$sql.= " AND t.fk_statut > 9";
@@ -115,9 +114,9 @@ class box_last_ticket extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
-					$dateterm = $this->db->jdate($objp->fin_validite);
-					$dateclose = $this->db->jdate($objp->date_cloture);
-					$late = '';
+					//$dateterm = $this->db->jdate($objp->fin_validite);
+					//$dateclose = $this->db->jdate($objp->date_close);
+					//$late = '';
 
 					$ticket = new Ticket($this->db);
 					$ticket->id = $objp->id;
@@ -134,7 +133,7 @@ class box_last_ticket extends ModeleBoxes
 						$thirdparty->name = $objp->company_name;
 						$link = $thirdparty->getNomUrl(1);
 					} else {
-						$link = dol_print_email($objp->origin_email);
+						$link = '<span title="'.$objp->origin_email.'">'.dol_print_email($objp->origin_email).'</span>';
 					}
 
 					$r = 0;
@@ -149,15 +148,15 @@ class box_last_ticket extends ModeleBoxes
 
 					// Subject
 					$this->info_box_contents[$i][$r] = array(
-						'td' => '',
-						'text' => $objp->subject, // Some event have no ref
+						'td' => 'class="tdoverflowmax200"',
+						'text' => '<span title="'.$objp->subject.'">'.$objp->subject.'</span>', // Some event have no ref
 						'url' => DOL_URL_ROOT."/ticket/card.php?track_id=".$objp->track_id,
 					);
 					$r++;
 
 					// Customer
 					$this->info_box_contents[$i][$r] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax100"',
 						'text' => $link,
 						'asis' => 1,
 					);
@@ -166,7 +165,7 @@ class box_last_ticket extends ModeleBoxes
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'dayhour'),
+						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel'),
 					);
 					$r++;
 

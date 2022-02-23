@@ -45,57 +45,49 @@ $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'facture', $id);
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 $object = new Facture($db);
+// Load object
+if ($id > 0 || !empty($ref)) {
+	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+}
+
+$result = restrictedArea($user, 'facture', $object->id);
 
 
 /*
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->facture->creer)
-{
-	$result = $object->fetch($id);
-
-	if ($result > 0 && $id > 0)
-	{
+if ($action == 'addcontact' && $user->rights->facture->creer) {
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} // Toggle the status of a contact
-elseif ($action == 'swapstatut' && $user->rights->facture->creer)
-{
-	if ($object->fetch($id))
-	{
-		$result = $object->swapContactStatus(GETPOST('ligne'));
-	} else {
-		dol_print_error($db);
-	}
-} // Deletes a contact
-elseif ($action == 'deletecontact' && $user->rights->facture->creer)
-{
-	$object->fetch($id);
+} elseif ($action == 'swapstatut' && $user->rights->facture->creer) {
+	// Toggle the status of a contact
+	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+} elseif ($action == 'deletecontact' && $user->rights->facture->creer) {
+	// Deletes a contact
 	$result = $object->delete_contact($lineid);
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -124,10 +116,8 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
-	if ($object->fetch($id, $ref) > 0)
-	{
+if ($id > 0 || !empty($ref)) {
+	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
 		$head = facture_prepare_head($object);
@@ -147,14 +137,12 @@ if ($id > 0 || !empty($ref))
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 		// Project
-		if (!empty($conf->projet->enabled))
-		{
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->facture->creer)
-			{
+			if ($user->rights->facture->creer) {
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';
 				}
 				if ($action == 'classify') {
@@ -172,9 +160,10 @@ if ($id > 0 || !empty($ref))
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -192,10 +181,11 @@ if ($id > 0 || !empty($ref))
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-		foreach ($dirtpls as $reldir)
-		{
+		foreach ($dirtpls as $reldir) {
 			$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-			if ($res) break;
+			if ($res) {
+				break;
+			}
 		}
 	} else {
 		// Record not found

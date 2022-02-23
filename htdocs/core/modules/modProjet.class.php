@@ -26,7 +26,7 @@
  *	\brief      Module to create projects/tasks/gantt diagram. Projects can them be affected to tasks.
  *  \file       htdocs/core/modules/modProjet.class.php
  *	\ingroup    projet
- *	\brief      Fichier de description et activation du module Projet
+ *	\brief      Description and activation file for the module project
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -66,9 +66,9 @@ class modProjet extends DolibarrModules
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->requiredby = array('modEventOrganization'); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array('projects');
 
 		// Constants
@@ -238,13 +238,13 @@ class modProjet extends DolibarrModules
 			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.description'=>"Description"
 		);
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
-		{
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('project'))); // If project are shared, nb will be > 1
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r] += array('p.entity'=>'Entity');
+			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+				$this->export_fields_array[$r] += array('p.entity'=>'Entity');
+			}
 		}
-		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
+		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			unset($this->export_fields_array[$r]['p.opp_percent']);
 			unset($this->export_fields_array[$r]['p.opp_amount']);
 			unset($this->export_fields_array[$r]['cls.code']);
@@ -253,13 +253,17 @@ class modProjet extends DolibarrModules
 		// Add fields for project
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array());
 		// Add extra fields for project
-		$keyforselect = 'projet'; $keyforelement = 'project'; $keyforaliasextra = 'extra';
+		$keyforselect = 'projet';
+		$keyforelement = 'project';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// Add fields for tasks
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pt.rowid'=>'TaskId', 'pt.ref'=>'RefTask', 'pt.label'=>'LabelTask', 'pt.dateo'=>"TaskDateStart", 'pt.datee'=>"TaskDateEnd", 'pt.duration_effective'=>"DurationEffective", 'pt.planned_workload'=>"PlannedWorkload", 'pt.progress'=>"Progress", 'pt.description'=>"TaskDescription"));
 		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pt.rowid'=>'projecttask', 'pt.ref'=>'projecttask', 'pt.label'=>'projecttask', 'pt.dateo'=>"projecttask", 'pt.datee'=>"projecttask", 'pt.duration_effective'=>"projecttask", 'pt.planned_workload'=>"projecttask", 'pt.progress'=>"projecttask", 'pt.description'=>"projecttask"));
 		// Add extra fields for task
-		$keyforselect = 'projet_task'; $keyforelement = 'projecttask'; $keyforaliasextra = 'extra2';
+		$keyforselect = 'projet_task';
+		$keyforelement = 'projecttask';
+		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.task_date'=>'TaskTimeDate', 'ptt.task_duration'=>"TimesSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
@@ -283,8 +287,7 @@ class modProjet extends DolibarrModules
 
 
 		// Import list of tasks
-		if (empty($conf->global->PROJECT_HIDE_TASKS))
-		{
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 			$r++;
 			$this->import_code[$r] = 'tasksofprojects';
 			$this->import_label[$r] = 'ImportDatasetTasks';
@@ -293,12 +296,10 @@ class modProjet extends DolibarrModules
 			$this->import_tables_array[$r] = array('t'=>MAIN_DB_PREFIX.'projet_task', 'extra'=>MAIN_DB_PREFIX.'projet_task_extrafields'); // List of tables to insert into (insert done in same order)
 			$this->import_fields_array[$r] = array('t.fk_projet'=>'ProjectRef*', 't.ref'=>'RefTask*', 't.label'=>'LabelTask*', 't.dateo'=>"DateStart", 't.datee'=>"DateEnd", 't.planned_workload'=>"PlannedWorkload", 't.progress'=>"Progress", 't.note_private'=>"NotePrivate", 't.note_public'=>"NotePublic", 't.datec'=>"DateCreation");
 			// Add extra fields
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'projet_task' AND entity IN (0,".$conf->entity.")";
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet_task' AND entity IN (0,".$conf->entity.")";
 			$resql = $this->db->query($sql);
-			if ($resql)    // This can fail when class is used on old database (during migration for example)
-			{
-				while ($obj = $this->db->fetch_object($resql))
-				{
+			if ($resql) {    // This can fail when class is used on old database (during migration for example)
+				while ($obj = $this->db->fetch_object($resql)) {
 					$fieldname = 'extra.'.$obj->name;
 					$fieldlabel = ucfirst($obj->label);
 					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
@@ -308,7 +309,7 @@ class modProjet extends DolibarrModules
 			$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet_task'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 			$this->import_convertvalue_array[$r] = array(
 				't.fk_projet'=>array('rule'=>'fetchidfromref', 'classfile'=>'/projet/class/project.class.php', 'class'=>'Project', 'method'=>'fetch', 'element'=>'Project'),
-				't.ref'=>array('rule'=>'getrefifauto')
+				't.ref'=>array('rule'=>'getrefifauto', 'class'=>(empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON), 'path'=>"/core/modules/project/task/".(empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON).'.php')
 			);
 			//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 			$this->import_regex_array[$r] = array('t.dateo'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datee'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
@@ -322,14 +323,9 @@ class modProjet extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-<<<<<<< HEAD
      *      @param      string	$options        Options when enabling module ('', 'noboxes')
      *      @param      int     $force_entity	Force current entity
 	 *      @return     int             	    1 if OK, 0 if KO
-=======
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 	 */
 	public function init($options = '', $force_entity = null)
 	{
@@ -343,13 +339,11 @@ class modProjet extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/projects';
 		$dest = $dirodt.'/template_project.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
@@ -361,13 +355,11 @@ class modProjet extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/tasks';
 		$dest = $dirodt.'/template_task_summary.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
@@ -375,12 +367,12 @@ class modProjet extends DolibarrModules
 		}
 
 		$sql = array();
-		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[3][2])."' AND type = 'task' AND entity = ".$conf->entity;
-		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."','task',".$conf->entity.")";
-		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'beluga' AND type = 'project' AND entity = ".$conf->entity;
-		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('beluga','project',".$conf->entity.")";
-		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'baleine' AND type = 'project' AND entity = ".$conf->entity;
-		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('baleine','project',".$conf->entity.")";
+		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[3][2])."' AND type = 'task' AND entity = ".((int) $conf->entity);
+		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."','task',".((int) $conf->entity).")";
+		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'beluga' AND type = 'project' AND entity = ".((int) $conf->entity);
+		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('beluga','project',".((int) $conf->entity).")";
+		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'baleine' AND type = 'project' AND entity = ".((int) $conf->entity);
+		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('baleine','project',".((int) $conf->entity).")";
 
 
 		return $this->_init($sql, $options);

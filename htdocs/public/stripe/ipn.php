@@ -16,13 +16,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -39,14 +49,14 @@ require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 
-if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
+if (empty($conf->stripe->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 // You can find your endpoint's secret in your webhook settings
-if (isset($_GET['connect']))
-{
-	if (isset($_GET['test']))
-	{
+if (isset($_GET['connect'])) {
+	if (isset($_GET['test'])) {
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -56,8 +66,7 @@ if (isset($_GET['connect']))
 		$servicestatus = 1;
 	}
 } else {
-	if (isset($_GET['test']))
-	{
+	if (isset($_GET['test'])) {
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -68,12 +77,26 @@ if (isset($_GET['connect']))
 	}
 }
 
-if (empty($endpoint_secret))
-{
+if (empty($endpoint_secret)) {
 	print 'Error: Setup of module Stripe not complete for mode '.$service.'. The WEBHOOK_KEY is not defined.';
 	http_response_code(400); // PHP 5.4 or greater
 	exit();
 }
+
+if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
+	// We set the user to use for all ipn actions in Dolibarr
+	$user = new User($db);
+	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
+	$user->getrights();
+} else {
+	print 'Error: Setup of module Stripe not complete for mode '.$service.'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.';
+	http_response_code(400); // PHP 5.4 or greater
+	exit();
+}
+
+
+// TODO Add a check on a security key
+
 
 
 /*
@@ -102,23 +125,16 @@ try {
 
 $langs->load("main");
 
-// TODO Do we really need a user in setup just to have a name to fill an email topic when it is a technical system notification email
-$user = new User($db);
-$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
-$user->getrights();
 
-if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled) && is_object($mc))
-{
+if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled) && is_object($mc)) {
 	$sql = "SELECT entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($event->account)."%'";
 
 	dol_syslog(get_class($db)."::fetch", LOG_DEBUG);
 	$result = $db->query($sql);
-	if ($result)
-	{
-		if ($db->num_rows($result))
-		{
+	if ($result) {
+		if ($db->num_rows($result)) {
 			$obj = $db->fetch_object($result);
 			$key = $obj->entity;
 		} else {
@@ -135,7 +151,9 @@ $stripe = new Stripe($db);
 
 // Subject
 $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+}
 
 
 dol_syslog("***** Stripe IPN was called with event->type = ".$event->type);
@@ -146,8 +164,7 @@ if ($event->type == 'payout.created') {
 
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
 		if (!empty($user->email)) {
 			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
@@ -189,8 +206,7 @@ if ($event->type == 'payout.created') {
 	global $conf;
 	$error = 0;
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", null, 'chaine', 0, '', $conf->entity);
-	if ($result)
-	{
+	if ($result) {
 		$langs->load("errors");
 
 		$dateo = dol_now();
@@ -205,8 +221,7 @@ if ($event->type == 'payout.created') {
 		$accountto = new Account($db);
 		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
 
-		if (($accountto->id != $accountfrom->id) && empty($error))
-		{
+		if (($accountto->id != $accountfrom->id) && empty($error)) {
 			$bank_line_id_from = 0;
 			$bank_line_id_to = 0;
 			$result = 0;
@@ -215,15 +230,31 @@ if ($event->type == 'payout.created') {
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
-			if (!$error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * price2num($amount), '', '', $user);
-			if (!($bank_line_id_from > 0)) $error++;
-			if (!$error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
-			if (!($bank_line_id_to > 0)) $error++;
+			if (!$error) {
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * price2num($amount), '', '', $user);
+			}
+			if (!($bank_line_id_from > 0)) {
+				$error++;
+			}
+			if (!$error) {
+				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+			}
+			if (!($bank_line_id_to > 0)) {
+				$error++;
+			}
 
-			if (!$error) $result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
-			if (!($result > 0)) $error++;
-			if (!$error) $result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
-			if (!($result > 0)) $error++;
+			if (!$error) {
+				$result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+			}
+			if (!($result > 0)) {
+				$error++;
+			}
+			if (!$error) {
+				$result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
+			}
+			if (!($result > 0)) {
+				$error++;
+			}
 		}
 
 		$subject = $societeName.' - [NOTIFICATION] Stripe payout done';
@@ -252,15 +283,15 @@ if ($event->type == 'payout.created') {
 			'',
 			0,
 			-1
-			);
+		);
 
 		$ret = $mailfile->sendfile();
 
-		http_response_code(200); // PHP 5.4 or greater
+		http_response_code(200);
 		return 1;
 	} else {
 		$error++;
-		http_response_code(500); // PHP 5.4 or greater
+		http_response_code(500);
 		return -1;
 	}
 } elseif ($event->type == 'customer.source.created') {
@@ -279,8 +310,7 @@ if ($event->type == 'payout.created') {
 	// TODO: Redirect to paymentok.php
 } elseif ($event->type == 'payment_intent.payment_failed') {
 	// TODO: Redirect to paymentko.php
-} elseif ($event->type == 'checkout.session.completed')		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
-{
+} elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
 	// TODO: Redirect to paymentok.php
 } elseif ($event->type == 'payment_method.attached') {
@@ -291,8 +321,7 @@ if ($event->type == 'payout.created') {
 	$companypaymentmode = new CompanyPaymentMode($db);
 
 	$idthirdparty = $societeaccount->getThirdPartyID($db->escape($event->data->object->customer), 'stripe', $servicestatus);
-	if ($idthirdparty > 0)	// If the payment mode is on an external customer that is known in societeaccount, we can create the payment mode
-	{
+	if ($idthirdparty > 0) {	// If the payment mode is on an external customer that is known in societeaccount, we can create the payment mode
 		$companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
 		$companypaymentmode->fk_soc          = $idthirdparty;
 		$companypaymentmode->bank            = null;
@@ -311,16 +340,13 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->status          = $servicestatus;
 
 		$db->begin();
-		if (!$error)
-		{
+		if (!$error) {
 			$result = $companypaymentmode->create($user);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$error++;
 			}
 		}
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -345,23 +371,20 @@ if ($event->type == 'payout.created') {
 	$companypaymentmode->status          = $servicestatus;
 
 	$db->begin();
-	if (!$error)
-	{
+	if (!$error) {
 		$result = $companypaymentmode->update($user);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$error++;
 		}
 	}
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 	} else {
 		$db->rollback();
 	}
 } elseif ($event->type == 'payment_method.detached') {
 	$db->begin();
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE ref = '".$db->escape($event->data->object->id)."' and status = ".$servicestatus;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE number = '".$db->escape($event->data->object->id)."' and status = ".((int) $servicestatus);
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'charge.succeeded') {
@@ -373,4 +396,4 @@ if ($event->type == 'payout.created') {
 	// This event is deprecated.
 }
 
-http_response_code(200); // PHP 5.4 or greater
+http_response_code(200);

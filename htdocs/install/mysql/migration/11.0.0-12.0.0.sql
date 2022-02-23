@@ -341,6 +341,10 @@ ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_commande (fk_commande);
 ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_product (fk_product);
 
+
+-- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN tracking varchar(255) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_shipment_mode ALTER COLUMN tracking DROP NOT NULL;
+
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (9,'INPERSON', 'In person at your site', NULL, NULL, 0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (10,'FEDEX', 'Fedex', NULL, 'https://www.fedex.com/apps/fedextrack/index.html?tracknumbers={TRACKID}', 0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (11,'TNT', 'TNT', NULL, 'https://www.tnt.com/express/fr_fr/site/outils-expedition/suivi.html?searchType=con&cons=={TRACKID}', 0);
@@ -348,4 +352,7 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active)
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (13,'DPD', 'DPD', NULL, 'https://www.dpd.fr/trace/{TRACKID}', 0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (14,'MAINFREIGHT', 'Mainfreight', NULL, 'https://www.mainfreight.com/track?{TRACKID}', 0);
 
+
+UPDATE llx_menu SET perms = '$user->rights->societe->creer' WHERE titre = 'MenuNewThirdParty' AND url = '/societe/card.php?mainmenu=companies&amp;action=create';
+UPDATE llx_menu SET url = '/societe/list.php?mainmenu=companies&amp;leftmenu=thirdparties' WHERE titre = 'List' AND url = '/societe/list.php?mainmenu=companies&amp;action=create';
 

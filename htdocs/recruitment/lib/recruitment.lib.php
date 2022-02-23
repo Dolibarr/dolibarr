@@ -56,7 +56,7 @@ function recruitmentAdminPrepareHead()
 	$h++;
 
 	$head[$h][0] = dol_buildpath("/recruitment/admin/candidature_extrafields.php", 1);
-	$head[$h][1] = $langs->trans("ExtrafieldsCandidature");
+	$head[$h][1] = $langs->trans("ExtrafieldsApplication");
 	$head[$h][2] = 'candidature_extrafields';
 	$h++;
 

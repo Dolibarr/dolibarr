@@ -1,0 +1,167 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Event Organisation
+EventOrganizationDescription = Eventorganisation genom modulprojekt
+EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+#
+# Menu
+#
+EventOrganizationMenuLeft = Organiserade evenemang
+EventOrganizationConferenceOrBoothMenuLeft = Konferens eller monter
+
+PaymentEvent=Payment of event
+
+#
+# Admin page
+#
+NewRegistration=Registration
+EventOrganizationSetup=Konfiguration av händelseorganisation
+EventOrganization=Event organization
+Settings=inställningar
+EventOrganizationSetupPage = Inställningssida för händelseorganisation
+EVENTORGANIZATION_TASK_LABEL = Etikett för uppgifter som ska skapas automatiskt när projektet valideras
+EVENTORGANIZATION_TASK_LABELTooltip = När du validerar en organiserad händelse kan vissa uppgifter skapas automatiskt i projektet <br> <br> Exempel: <br> Skicka samtal för konferens <br> Skicka samtal för monter <br> Ta emot samtal för konferens <br> påminna om händelse till högtalare <br> Skicka påminnelse om händelse till den bodansvariga <br> Skicka påminnelse om händelse till deltagare<br>Skicka påminnelse om händelse till den bodansvariga <br> Skicka påminnelse om händelse till deltagare
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategori som automatiskt kan läggas till tredje part när någon föreslår en konferens
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategori som ska läggas till tredje part automatiskt skapas när de föreslår en monter
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Mall för e-post att skicka efter att ha fått ett förslag på en konferens.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Mall för e-post att skicka efter att ha fått ett förslag på en monter.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Konferens eller monter
+ManageOrganizeEvent = Manage the organization of an event
+ConferenceOrBooth = Konferens eller monter
+ConferenceOrBoothTab = Konferens eller monter
+AmountPaid = Amount paid
+DateOfRegistration = Date of registration
+ConferenceOrBoothAttendee = Konferens eller monterdeltagare
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Din begäran om konferens mottogs
+YourOrganizationEventBoothRequestWasReceived = Din begäran om monter togs emot
+EventOrganizationEmailAskConf = Begäran om konferens
+EventOrganizationEmailAskBooth = Begäran om monter
+EventOrganizationEmailBoothPayment = Payment of your booth
+EventOrganizationEmailRegistrationPayment = Registration for an event
+EventOrganizationMassEmailAttendees = Kommunikation till deltagarna
+EventOrganizationMassEmailSpeakers = Kommunikation till högtalarna
+ToSpeakers=To speakers
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
+AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+PriceOfRegistration=Pris för registrering
+PriceOfRegistrationHelp=Price to pay to register or participate in the event
+PriceOfBooth=Prenumerationspris för att stå en monter
+PriceOfBoothHelp=Prenumerationspris för att stå en monter
+EventOrganizationICSLink=Link ICS for conferences
+ConferenceOrBoothInformation=Information om konferens eller monter
+Attendees=Deltagare
+ListOfAttendeesOfEvent=List of attendees of the event project
+DownloadICSLink = Ladda ner ICS-länk
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+SERVICE_BOOTH_LOCATION = Tjänst som används för fakturaraden om en monterplats
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+NbVotes=Röstetal
+#
+# Status
+#
+EvntOrgDraft = Utkast
+EvntOrgSuggested = Föreslagen
+EvntOrgConfirmed = Bekräftad
+EvntOrgNotQualified = Inte kvalificerad
+EvntOrgDone = Klar
+EvntOrgCancelled = Inställt
+#
+# Public page
+#
+SuggestForm = Förslagssida
+SuggestOrVoteForConfOrBooth = Page for suggestion or vote
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
+EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+ListOfSuggestedConferences = Lista över föreslagna konferenser
+ListOfSuggestedBooths = Lista över föreslagna bås
+ListOfConferencesOrBooths=List of conferences or booths of event project
+SuggestConference = Föreslå en ny konferens
+SuggestBooth = Föreslå en monter
+ViewAndVote = Visa och rösta på föreslagna händelser
+PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
+PublicAttendeeSubscriptionPage = Public link for registration to this event only
+MissingOrBadSecureKey = Säkerhetsnyckeln är ogiltig eller saknas
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
+EvntOrgDuration = Denna konferens börjar på %s och slutar på %s.
+ConferenceAttendeeFee = Konferensdeltagaravgift för evenemanget: '%s' som inträffar från %s till %s.
+BoothLocationFee = Båsplats för evenemanget: '%s' som inträffar från %s till %s
+EventType = Typ av händelse
+LabelOfBooth=Båsetikett
+LabelOfconference=Konferensetikett
+ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
+DateMustBeBeforeThan=%s must be before %s
+DateMustBeAfterThan=%s must be after %s
+
+NewSubscription=Registration
+OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
+OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
+OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
+OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
+OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
+OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+
+NewSuggestionOfBooth=Application for a booth
+NewSuggestionOfConference=Application for a conference
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Välkommen till konferens- eller monteringssidan.
+EvntOrgRegistrationConfWelcomeMessage = Välkommen till konferenssidan.
+EvntOrgRegistrationBoothWelcomeMessage = Välkommen till förslagssidan för monter.
+EvntOrgVoteHelpMessage = Här kan du se och rösta på de föreslagna händelserna för projektet
+VoteOk = Din röst har accepterats.
+AlreadyVoted = Du har redan röstat på det här evenemanget.
+VoteError = Ett fel har inträffat under omröstningen, försök igen.
+
+SubscriptionOk = Your registration has been validated
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
+Attendee = Deltagare
+PaymentConferenceAttendee = Konferensdeltagarebetalning
+PaymentBoothLocation = Betalning av monterplats
+DeleteConferenceOrBoothAttendee=Remove attendee
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
+EmailAttendee=Attendee email
+EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event

@@ -33,14 +33,20 @@ $langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
+$cancel = GETPOST('cancel');
+
 $refund = GETPOST("refund", "int");
-if (empty($refund)) $refund = 0;
+if (empty($refund)) {
+	$refund = 0;
+}
 
 $lttype = GETPOST('localTaxType', 'int');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Localtax($db);
@@ -53,20 +59,18 @@ $hookmanager->initHooks(array('localtaxvatcard', 'globalcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel") && !$id)
-{
+if ($cancel && !$id) {
 	header("Location: list.php?localTaxType=".$lttype);
 	exit;
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
-{
+if ($action == 'add' && !$cancel) {
 	$db->begin();
 
-	$datev = dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-	$datep = dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+	$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
 
-	$object->accountid = GETPOST("accountid");
+	$object->accountid = GETPOST("accountid", 'int');
 	$object->paymenttype = GETPOST("paiementtype");
 	$object->datev = $datev;
 	$object->datep = $datep;
@@ -75,8 +79,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->ltt = $lttype;
 
 	$ret = $object->addPayment($user);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$db->commit();
 		header("Location: list.php?localTaxType=".$lttype);
 		exit;
@@ -88,26 +91,23 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 }
 
 //delete payment of localtax
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$result = $object->fetch($id);
 
-	if ($object->rappro == 0)
-	{
+	if ($object->rappro == 0) {
 		$db->begin();
 
 		$ret = $object->delete($user);
-		if ($ret > 0)
-		{
-			if ($object->fk_bank)
-			{
+		if ($ret > 0) {
+			if ($object->fk_bank) {
 				$accountline = new AccountLine($db);
 				$result = $accountline->fetch($object->fk_bank);
-				if ($result > 0) $result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				if ($result > 0) {
+					$result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				}
 			}
 
-			if ($result >= 0)
-			{
+			if ($result >= 0) {
 				$db->commit();
 				header("Location: ".DOL_URL_ROOT.'/compta/localtax/list.php?localTaxType='.$object->ltt);
 				exit;
@@ -131,11 +131,9 @@ if ($action == 'delete')
  *	View
  */
 
-if ($id)
-{
+if ($id) {
 	$result = $object->fetch($id);
-	if ($result <= 0)
-	{
+	if ($result <= 0) {
 		dol_print_error($db);
 		exit;
 	}
@@ -147,8 +145,7 @@ $title = $langs->trans("LT".$object->ltt)." - ".$langs->trans("Card");
 $help_url = '';
 llxHeader("", $title, $helpurl);
 
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print load_fiche_titre($langs->transcountry($lttype == 2 ? "newLT2Payment" : "newLT1Payment", $mysoc->country_code));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formlocaltax" method="post">'."\n";
@@ -170,15 +167,14 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth200" value="'.($_POST["label"] ?GETPOST("label", '', 2) : $langs->transcountry(($lttype == 2 ? "LT2Payment" : "LT1Payment"), $mysoc->country_code)).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth200" value="'.(GETPOSTISSET("label") ? GETPOST("label", '', 2) : $langs->transcountry(($lttype == 2 ? "LT2Payment" : "LT1Payment"), $mysoc->country_code)).'"></td></tr>';
 
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
-	if (!empty($conf->banque->enabled))
-	{
+	if (!empty($conf->banque->enabled)) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1", 2); // Affiche liste des comptes courant
+		$form->select_comptes(GETPOST("accountid", "int"), "accountid", 0, "courant=1", 2); // Affiche liste des comptes courant
 		print '</td></tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
@@ -200,19 +196,14 @@ if ($action == 'create')
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
 
 
 // View mode
-if ($id)
-{
+if ($id) {
 	$h = 0;
 	$head[$h][0] = DOL_URL_ROOT.'/compta/localtax/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Card');
@@ -246,11 +237,9 @@ if ($id)
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-	if (!empty($conf->banque->enabled))
-	{
-		if ($object->fk_account > 0)
-		{
- 		   	$bankline = new AccountLine($db);
+	if (!empty($conf->banque->enabled)) {
+		if ($object->fk_account > 0) {
+			$bankline = new AccountLine($db);
 			$bankline->fetch($object->fk_bank);
 
 			print '<tr>';
@@ -275,11 +264,10 @@ if ($id)
 
 
 	/*
-	 * Action buttons
+	 * Action bar
 	 */
 	print "<div class=\"tabsAction\">\n";
-	if ($object->rappro == 0)
-	{
+	if ($object->rappro == 0) {
 		print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';

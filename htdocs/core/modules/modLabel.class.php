@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les formats d'impression des etiquettes
  *	\file       htdocs/core/modules/modLabel.class.php
  *	\ingroup    other
- *	\brief      Fichier de description et activation du module Label
+ *	\brief      Description and activation file for the module Labels
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -61,7 +61,7 @@ class modLabel extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 
 		// Config pages
 		// $this->config_page_url = array("label.php");
@@ -97,22 +97,12 @@ class modLabel extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-<<<<<<< HEAD
      *      @param      string  $options        Options when enabling module ('', 'noboxes')
      *      @param      int     $force_entity   Force current entity
 	 *      @return     int                     1 if OK, 0 if KO
-=======
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 	 */
-<<<<<<< HEAD
     public function init($options = '', $force_entity = null)
     {
-=======
-	public function init($options = '')
-	{
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 		// Permissions
 		$this->remove($options);
 

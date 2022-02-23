@@ -34,7 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->loadLangs(array("admin", "stocks"));
 
 // Securit check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
@@ -49,8 +51,7 @@ $type = 'stock';
 
 $reg = array();
 
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 
 	// If constant is for a unique choice, delete other choices
@@ -68,8 +69,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', $conf->entity);
 	}
 
-	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -77,11 +77,9 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -89,18 +87,18 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 	}
 }
 
-if ($action == 'warehouse')
-{
+if ($action == 'warehouse') {
 	$value = GETPOST('default_warehouse', 'alpha');
 	$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $value, 'chaine', 0, '', $conf->entity);
 	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
 	}
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
-if ($action == 'specimen')
-{
+if ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
 	$object = new Entrepot($db);
@@ -109,25 +107,21 @@ if ($action == 'specimen')
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
+	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/stock/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file))
-		{
+		if (file_exists($file)) {
 			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db);
 
-		if ($module->write_file($object, $langs) > 0)
-		{
+		if ($module->write_file($object, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=stock&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -138,24 +132,19 @@ if ($action == 'specimen')
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-}
-
-// Activate a model
-elseif ($action == 'set') {
+} elseif ($action == 'set') {
+	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		if ($conf->global->STOCK_ADDON_PDF == "$value") dolibarr_del_const($db, 'STOCK_ADDON_PDF', $conf->entity);
+	if ($ret > 0) {
+		if ($conf->global->STOCK_ADDON_PDF == "$value") {
+			dolibarr_del_const($db, 'STOCK_ADDON_PDF', $conf->entity);
+		}
 	}
-}
-
-// Set default model
-elseif ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "STOCK_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "STOCK_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that was read before the new set
 		// We therefore requires a variable to have a coherent view
 		$conf->global->STOCK_ADDON_PDF = $value;
@@ -163,8 +152,7 @@ elseif ($action == 'setdoc')
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
@@ -192,8 +180,7 @@ $formproduct = new FormProduct($db);
 
 
 $disabled = '';
-if (!empty($conf->productbatch->enabled))
-{
+if (!empty($conf->productbatch->enabled)) {
 	$langs->load("productbatch");
 	$disabled = ' disabled';
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
@@ -222,8 +209,7 @@ $found = 0;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
-if (!empty($conf->facture->enabled))
-{
+if (!empty($conf->facture->enabled)) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_BILL', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -240,8 +226,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (!empty($conf->commande->enabled))
-{
+if (!empty($conf->commande->enabled)) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -260,8 +245,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
-if (!empty($conf->expedition->enabled))
-{
+if (!empty($conf->expedition->enabled)) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -278,8 +262,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
-if (!empty($conf->expedition->enabled))
-{
+if (!empty($conf->expedition->enabled)) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -310,8 +293,7 @@ $found = 0;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-{
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -329,8 +311,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-{
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -343,8 +324,7 @@ if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUP
 print "</td>\n</tr>\n";
 $found++;
 
-if (!empty($conf->reception->enabled))
-{
+if (!empty($conf->reception->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
 	print '<td class="right">';
@@ -376,8 +356,7 @@ if (!empty($conf->reception->enabled))
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 	print '<td class="right">';
-	if (!empty($conf->fournisseur->enabled))
-	{
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1);
 		} else {
@@ -415,8 +394,7 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if ($conf->invoice->enabled)
-{
+if ($conf->invoice->enabled) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 	print '<td class="right">';
@@ -430,8 +408,7 @@ if ($conf->invoice->enabled)
 	print "</tr>\n";
 }
 
-if ($conf->order->enabled)
-{
+if ($conf->order->enabled) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 	print '<td class="right">';
@@ -445,8 +422,7 @@ if ($conf->order->enabled)
 	print "</tr>\n";
 }
 
-if ($conf->expedition->enabled)
-{
+if ($conf->expedition->enabled) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
 	print '<td class="right">';
@@ -469,13 +445,11 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
-	|| !empty($conf->mrp->enabled))
-{
+	|| !empty($conf->mrp->enabled)) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
-if ($virtualdiffersfromphysical)
-{
+if ($virtualdiffersfromphysical) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
@@ -521,12 +495,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows)
-	{
+	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
 		array_push($def, $array[0]);
 		$i++;
@@ -548,31 +520,23 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
-	foreach (array('', '/doc') as $valdir)
-	{
+foreach ($dirmodels as $reldir) {
+	foreach (array('', '/doc') as $valdir) {
 		$realpath = $reldir."core/modules/stock".$valdir;
 		$dir = dol_buildpath($realpath);
 
-		if (is_dir($dir))
-		{
+		if (is_dir($dir)) {
 			$handle = opendir($dir);
-			if (is_resource($handle))
-			{
-				while (($file = readdir($handle)) !== false)
-				{
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
 				closedir($handle);
 				arsort($filelist);
 
-				foreach ($filelist as $file)
-				{
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
-					{
-						if (file_exists($dir.'/'.$file))
-						{
+				foreach ($filelist as $file) {
+					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+						if (file_exists($dir.'/'.$file)) {
 							$name = substr($file, 4, dol_strlen($file) - 16);
 							$classname = substr($file, 0, dol_strlen($file) - 12);
 
@@ -580,47 +544,50 @@ foreach ($dirmodels as $reldir)
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								$modulequalified = 0;
+							}
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								$modulequalified = 0;
+							}
 
-							if ($modulequalified)
-							{
+							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
 								print (empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
-								if (method_exists($module, 'info')) print $module->info($langs);
-								else print $module->description;
+								if (method_exists($module, 'info')) {
+									print $module->info($langs);
+								} else {
+									print $module->description;
+								}
 								print '</td>';
 
 								// Active
-								if (in_array($name, $def))
-								{
+								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->STOCK_ADDON_PDF == $name)
-								{
+								if ($conf->global->STOCK_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
 								// Info
 								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf')
-								{
+								if ($module->type == 'pdf') {
 									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 								}
 								$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
@@ -636,8 +603,7 @@ foreach ($dirmodels as $reldir)
 
 								// Preview
 								print '<td class="center">';
-								if ($module->type == 'pdf')
-								{
+								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
@@ -678,7 +644,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
 print $formproduct->selectWarehouses($conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
 
@@ -709,6 +675,30 @@ if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 }
 
 print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseOnThirparty").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('SOCIETE_ASK_FOR_WAREHOUSE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("SOCIETE_ASK_FOR_WAREHOUSE", $arrval, $conf->global->SOCIETE_ASK_FOR_WAREHOUSE);
+}
+print "</td>";
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseDuringPropal").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL);
+}
+print "</td>";
+print "</tr>\n";
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAskWarehouseDuringOrder").'</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
@@ -717,9 +707,22 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER);
 }
-print "</td>";
 print '</td>';
 print "</tr>\n";
+
+/*
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseDuringProject").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT);
+}
+print '</td>';
+print "</tr>\n";
+*/
 
 print '<tr class="oddeven">';
 print '<td>';
@@ -758,6 +761,23 @@ if ($conf->use_javascript_ajax) {
 }
 print "</td>\n";
 print "</tr>\n";
+
+/* Disabled. Would be better to be managed with a user cookie
+if (!empty($conf->productbatch->enabled)) {
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("ShowAllBatchByDefault") . '</td>';
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STOCK_SHOW_ALL_BATCH_BY_DEFAULT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_SHOW_ALL_BATCH_BY_DEFAULT", $arrval, $conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT);
+	}
+	print "</td>\n";
+	print "</tr>\n";
+}
+*/
+
 print '</table>';
 
 print '</form>';

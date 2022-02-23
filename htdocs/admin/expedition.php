@@ -37,17 +37,19 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'shipping';
 
-if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
-{
+if (empty($conf->global->EXPEDITION_ADDON_NUMBER)) {
 	$conf->global->EXPEDITION_ADDON_NUMBER = 'mod_expedition_safor';
 }
 
@@ -58,43 +60,39 @@ if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstexpedition', 'alpha');
 	$maskvalue = GETPOST('maskexpedition', 'alpha');
-	if (!empty($maskconst))
+	if (!empty($maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
-
-	if (isset($res))
-	{
-		if ($res > 0)
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		else setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_param')
-{
+
+	if (isset($res)) {
+		if ($res > 0) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
+} elseif ($action == 'set_param') {
 	$freetext = GETPOST('SHIPPING_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
-	if ($res <= 0)
-	{
+	if ($res <= 0) {
 		$error++;
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 
 	$draft = GETPOST('SHIPPING_DRAFT_WATERMARK', 'alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
-	if ($res <= 0)
-	{
+	if ($res <= 0) {
 		$error++;
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-} elseif ($action == 'specimen')
-{
+} elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
 	$exp = new Expedition($db);
@@ -103,25 +101,21 @@ if ($action == 'updateMask')
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
+	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/expedition/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file))
-		{
+		if (file_exists($file)) {
 			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db);
 
-		if ($module->write_file($exp, $langs) > 0)
-		{
+		if ($module->write_file($exp, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=expedition&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -132,26 +126,19 @@ if ($action == 'updateMask')
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-}
-
-// Activate a model
-elseif ($action == 'set')
-{
+} elseif ($action == 'set') {
+	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del')
-{
+} elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		if ($conf->global->EXPEDITION_ADDON_PDF == "$value") dolibarr_del_const($db, 'EXPEDITION_ADDON_PDF', $conf->entity);
+	if ($ret > 0) {
+		if ($conf->global->EXPEDITION_ADDON_PDF == "$value") {
+			dolibarr_del_const($db, 'EXPEDITION_ADDON_PDF', $conf->entity);
+		}
 	}
-}
-
-// Set default model
-elseif ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->EXPEDITION_ADDON_PDF = $value;
@@ -159,12 +146,10 @@ elseif ($action == 'setdoc')
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'setmodel')
-{
+} elseif ($action == 'setmodel') {
 	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
 }
 
@@ -201,17 +186,13 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/expedition/");
 
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^mod_expedition_([a-z0-9_]*)\.php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
@@ -219,11 +200,14 @@ foreach ($dirmodels as $reldir)
 
 					$module = new $file;
 
-					if ($module->isEnabled())
-					{
+					if ($module->isEnabled()) {
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							continue;
+						}
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							continue;
+						}
 
 						print '<tr><td>'.$module->name."</td>\n";
 						print '<td>';
@@ -236,16 +220,18 @@ foreach ($dirmodels as $reldir)
 						if (preg_match('/^Error/', $tmp)) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-						else print $tmp;
+						} elseif ($tmp == 'NotConfigured') {
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+						} else {
+							print $tmp;
+						}
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->EXPEDITION_ADDON_NUMBER == "$file")
-						{
+						if ($conf->global->EXPEDITION_ADDON_NUMBER == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;token='.newToken().'&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -261,8 +247,9 @@ foreach ($dirmodels as $reldir)
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 									$nextval = $langs->trans($nextval);
+								}
 								$htmltooltip .= $nextval.'<br>';
 							} else {
 								$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -300,12 +287,10 @@ $sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows)
-	{
+	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
 		array_push($def, $array[0]);
 		$i++;
@@ -326,30 +311,22 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
-	foreach (array('', '/doc') as $valdir)
-	{
+foreach ($dirmodels as $reldir) {
+	foreach (array('', '/doc') as $valdir) {
 		$dir = dol_buildpath($reldir."core/modules/expedition".$valdir);
 
-		if (is_dir($dir))
-		{
+		if (is_dir($dir)) {
 			$handle = opendir($dir);
-			if (is_resource($handle))
-			{
-				while (($file = readdir($handle)) !== false)
-				{
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
 				closedir($handle);
 				arsort($filelist);
 
-				foreach ($filelist as $file)
-				{
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
-					{
-						if (file_exists($dir.'/'.$file))
-						{
+				foreach ($filelist as $file) {
+					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+						if (file_exists($dir.'/'.$file)) {
 							$name = substr($file, 4, dol_strlen($file) - 16);
 							$classname = substr($file, 0, dol_strlen($file) - 12);
 
@@ -357,47 +334,50 @@ foreach ($dirmodels as $reldir)
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								$modulequalified = 0;
+							}
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								$modulequalified = 0;
+							}
 
-							if ($modulequalified)
-							{
+							if ($modulequalified) {
 								print '<tr><td width="100">';
 								print (empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
-								if (method_exists($module, 'info')) print $module->info($langs);
-								else print $module->description;
+								if (method_exists($module, 'info')) {
+									print $module->info($langs);
+								} else {
+									print $module->description;
+								}
 								print '</td>';
 
 								// Active
-								if (in_array($name, $def))
-								{
+								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->EXPEDITION_ADDON_PDF == $name)
-								{
+								if ($conf->global->EXPEDITION_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
 								// Info
 								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf')
-								{
+								if ($module->type == 'pdf') {
 									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 								}
 								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
@@ -413,8 +393,7 @@ foreach ($dirmodels as $reldir)
 
 								// Preview
 								print '<td class="center">';
-								if ($module->type == 'pdf')
-								{
+								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
@@ -453,14 +432,15 @@ print "</tr>";
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+foreach ($substitutionarray as $key => $val) {
+	$htmltext .= $key.'<br>';
+}
 $htmltext .= '</i>';
 
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnShippings"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SHIPPING_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -471,12 +451,12 @@ print "</td></tr>\n";
 
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
-print '<input size="50" class="flat" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.$conf->global->SHIPPING_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.$conf->global->SHIPPING_DRAFT_WATERMARK.'">';
 print "</td></tr>\n";
 
 print '</table>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

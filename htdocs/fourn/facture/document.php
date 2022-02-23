@@ -5,7 +5,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2017		Ferran Marcet       	<fmarcet@2byte.es>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,35 +47,44 @@ $confirm = GETPOST('confirm', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
 $object = new FactureFournisseur($db);
-if ($object->fetch($id, $ref))
-{
+if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$ref = dol_sanitizeFileName($object->ref);
 	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
 }
+
+$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -87,10 +97,9 @@ $title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Documents');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	$head = facturefourn_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'bill');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
 
 	$totalpaye = $object->getSommePaiement();
 
@@ -102,17 +111,18 @@ if ($object->id > 0)
 	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+	}
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->facture->creer)
-		{
-			if ($action != 'classify')
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		if ($user->rights->facture->creer) {
+			if ($action != 'classify') {
+				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
+			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -128,9 +138,10 @@ if ($object->id > 0)
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -148,16 +159,14 @@ if ($object->id > 0)
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
 	}
 
 	/*
 	 * Confirm delete file
 	 */
-	if ($action == 'delete')
-	{
+	if ($action == 'delete') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 	}
 
@@ -165,39 +174,33 @@ if ($object->id > 0)
 
 	// Type
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
+	print '<span class="badgeneutral">';
 	print $object->getLibType();
-	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
-	{
+	print '</span>';
+	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 		$facreplaced = new FactureFournisseur($db);
 		$facreplaced->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 	}
-	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
-	{
+	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 		$facusing = new FactureFournisseur($db);
 		$facusing->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 	}
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
-	if (count($facidavoir) > 0)
-	{
-		print ' ('.$langs->transnoentities("InvoiceHasAvoir");
-		$i = 0;
-		foreach ($facidavoir as $id)
-		{
-			if ($i == 0) print ' ';
-			else print ',';
+	if (count($facidavoir) > 0) {
+		$invoicecredits = array();
+		foreach ($facidavoir as $facid) {
 			$facavoir = new FactureFournisseur($db);
-			$facavoir->fetch($id);
-			print $facavoir->getNomUrl(1);
+			$facavoir->fetch($facid);
+			$invoicecredits[] = $facavoir->getNomUrl(1);
 		}
-		print ')';
+		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 	}
 	/*
-	if ($facidnext > 0)
-	{
-		$facthatreplace=new FactureFournisseur($db);
+	if ($facidnext > 0) {
+		$facthatreplace = new FactureFournisseur($db);
 		$facthatreplace->fetch($facidnext);
 		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
 	}
@@ -215,14 +218,12 @@ if ($object->id > 0)
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
-	if ($mysoc->localtax1_assuj == "1") //Localtax1
-	{
+	if ($mysoc->localtax1_assuj == "1") { //Localtax1
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
 		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
-	if ($mysoc->localtax2_assuj == "1") //Localtax2
-	{
+	if ($mysoc->localtax2_assuj == "1") { //Localtax2
 		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
 		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
@@ -249,14 +250,13 @@ if ($object->id > 0)
 
 
 	$modulepart = 'facture_fournisseur';
-	$permission = $user->rights->fournisseur->facture->creer;
-	$permtoedit = $user->rights->fournisseur->facture->creer;
+	$permission = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+	$permtoedit = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
 	$param = '&facid='.$object->id;
 
 	$defaulttpldir = '/core/tpl';
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
-	foreach ($dirtpls as $module => $reldir)
-	{
+	foreach ($dirtpls as $module => $reldir) {
 		if (!empty($module)) {
 			$tpl = dol_buildpath($reldir.'/document_actions_post_headers.tpl.php');
 		} else {
@@ -268,7 +268,9 @@ if ($object->id > 0)
 		} else {
 			$res = include $tpl; // for debug
 		}
-		if ($res) break;
+		if ($res) {
+			break;
+		}
 	}
 } else {
 	print $langs->trans('ErrorUnknown');

@@ -31,12 +31,11 @@ TicketDictType=Destek Bildirimi - Türler
 TicketDictCategory=Destek Bildirimi - Gruplar
 TicketDictSeverity=Destek Bildirimi - Önemler
 TicketDictResolution=Destek Bildirimi - Çözüm
-TicketTypeShortBUGSOFT=Yazılım arızası
-TicketTypeShortBUGHARD=Donanım arızası
-TicketTypeShortCOM=Ticari soru
 
+TicketTypeShortCOM=Ticari soru
 TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Proje
 TicketTypeShortOTHER=Diğer
@@ -44,7 +43,9 @@ TicketTypeShortOTHER=Diğer
 TicketSeverityShortLOW=Düşük
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Yüksek
-TicketSeverityShortBLOCKING=Kritik/Engelleyici
+TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=Diğer
 
 ErrorBadEmailAddress='%s' alanı hatalı
 MenuTicketMyAssign=Destek bildirimlerim
@@ -56,23 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Atanan kullanıcı
 TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=Dış iştirakçi
 
-OriginEmail=E-posta kaynağı
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Destek bildirimini e-posta ile gönderil
 
 # Status
-NotRead=Okunmayan
 Read=Okundu
 Assigned=Atanan
 InProgress=Devam etmekte
-NeedMoreInformation=Bilgi bekleniyor
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Cevaplandı
 Waiting=Bekliyor
-Closed=Kapalı
+SolvedClosed=Solved
 Deleted=Silindi
 
 # Dict
 Type=Türü
 Severity=Önem seviyesi
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Destek bildirim mesajından e-posta göndermek için
@@ -117,8 +120,8 @@ TicketsShowModuleLogo=Genel arayüzde modülün logosunu görüntüle
 TicketsShowModuleLogoHelp=Genel arayüz sayfalarında logo modülünü gizlemek için bu seçeneği etkinleştirin
 TicketsShowCompanyLogo=Genel arayüzde firmanın logosunu göster 
 TicketsShowCompanyLogoHelp=Genel arayüz sayfalarında ana firmanın logosunu gizlemek için bu seçeneği etkinleştirin
-TicketsEmailAlsoSendToMainAddress=Ayrıca ana e-posta adresine de bildirim gönder
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to send an email to "Notification email from" address (see setup below)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
 TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will be visible. Does not apply to a user with tickets management rights.
 TicketsActivatePublicInterface=Genel arayüzü etkinleştir
@@ -126,12 +129,13 @@ TicketsActivatePublicInterfaceHelp=Genel arayüz, ziyaretçilerin destek bildiri
 TicketsAutoAssignTicket=Destek bildirimini oluşturan kullanıcıyı otomatik olarak atayın
 TicketsAutoAssignTicketHelp=Bir destek bildirimi oluştururken, kullanıcı otomatik olarak destek bildirimine atanabilir.
 TicketNumberingModules=Destek bildirimi numaralandırma modülü
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Oluşturunca üçüncü tarafa bildir
 TicketsDisableCustomerEmail=Bir destek bildirimi ortak arayüzden oluşturulduğunda e-postaları her zaman devre dışı bırak
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -160,7 +164,7 @@ CreatedBy=Oluşturan
 NewTicket=Yeni destek bildirimi
 SubjectAnswerToTicket=Destek bildirimi cevabı
 TicketTypeRequest=İstek türü
-TicketCategory=Grup
+TicketCategory=Ticket categorization
 SeeTicket=Destek bildirimini gör
 TicketMarkedAsRead=Destek bildirimi okundu olarak işaretlendi
 TicketReadOn=Okumaya devam et
@@ -178,15 +182,17 @@ MessageSuccessfullyAdded=Destek bildirimi eklendi
 TicketMessageSuccessfullyAdded=Mesaj başarılı şekilde eklendi
 TicketMessagesList=Mesaj listesi
 NoMsgForThisTicket=Bu destek bildirimi için mesaj yok
-Properties=Sınıflandırma
+TicketProperties=Sınıflandırma
 LatestNewTickets=En yeni %s destek bildirimi (okunmamış)
 TicketSeverity=Önem seviyesi
 ShowTicket=Destek bildirimini gör
 RelatedTickets=İlgili destek bildirimleri
 TicketAddIntervention=Müdahale oluştur
-CloseTicket=Destek bildirimini kapat
-CloseATicket=Bir destek bildirimini kapat
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Destek bildirimi kapatmayı onayla
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Lütfen destek bildirimi silmeyi onaylayın
 TicketDeletedSuccess=Destek bildirimi başarı ile silindi
 TicketMarkedAsClosed=Destek bildirimi kapalı olarak işaretlendi
@@ -211,6 +217,7 @@ TicketMessageHelp=Destek bildirimi kartı üzerindeki mesaj listesinde sadece bu
 TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
 TimeElapsedSince=Time elapsed since
 TicketTimeToRead=Time elapsed before read
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Kişilerin destek bildirimleri
 TicketDocumentsLinked=Destek bildirimine bağlı dokümanlar
 ConfirmReOpenTicket=Bu destek bildirimini yeniden açmayı onaylıyor musunuz?
@@ -233,7 +240,6 @@ TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Okunmamış
 TicketNotCreatedFromPublicInterface=Mevcut değil. Destek bildirimi genel arayüzden oluşturulmadı.
-PublicInterfaceNotEnabled=Public interface was not enabled
 ErrorTicketRefRequired=Destek bildirimi referans adı gerekli
 
 #
@@ -305,3 +311,14 @@ BoxLastModifiedTicket=En son değiştirilen destek bildirimleri
 BoxLastModifiedTicketDescription=Değiştirilen son %s destek bildirimi
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Yakın zamanda değiştirilmiş destek bildirimi yok
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

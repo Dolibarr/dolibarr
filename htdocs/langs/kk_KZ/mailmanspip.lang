@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Пошташы мен SPIP модулін орнату
+MailmanTitle=Пошта жөнелтушілерінің тізімінің жүйесі
+TestSubscribe=Пошта хатшыларының тізіміне жазылуды тексеру үшін
+TestUnSubscribe=Пошта жіберушілер тізімінен бас тартуды тексеру
+MailmanCreationSuccess=Жазылым сынағы сәтті өтті
+MailmanDeletionSuccess=Жазылымнан бас тарту сынағы сәтті орындалды
+SynchroMailManEnabled=Пошта хатшысы жаңартылады
+SynchroSpipEnabled=Spip жаңарту орындалады
+DescADHERENT_MAILMAN_ADMINPW=Пошта хатшысы әкімшісінің құпия сөзі
+DescADHERENT_MAILMAN_URL=Пошталық жазылушыларға арналған URL
+DescADHERENT_MAILMAN_UNSUB_URL=Пошталық жазылушылардың жазылуларының URL мекенжайы
+DescADHERENT_MAILMAN_LISTS=Жаңа мүшелерді автоматты түрде жазуға арналған тізімдер (үтірмен бөлінген)
+SPIPTitle=SPIP мазмұнын басқару жүйесі
+DescADHERENT_SPIP_SERVEUR=SPIP сервері
+DescADHERENT_SPIP_DB=SPIP мәліметтер базасының атауы
+DescADHERENT_SPIP_USER=SPIP мәліметтер базасына кіру
+DescADHERENT_SPIP_PASS=SPIP мәліметтер қорының құпия сөзі
+AddIntoSpip=SPIP -ке қосыңыз
+AddIntoSpipConfirmation=Бұл мүшені SPIP -ке қосқыңыз келетініне сенімдісіз бе?
+AddIntoSpipError=Пайдаланушыны SPIP -ке қосу мүмкін болмады
+DeleteIntoSpip=SPIP -тен алып тастаңыз
+DeleteIntoSpipConfirmation=Бұл мүшені SPIP -тен алып тастағыңыз келетініне сенімдісіз бе?
+DeleteIntoSpipError=Пайдаланушы SPIP -тен өшірілмеді
+SPIPConnectionFailed=SPIP -ке қосылу мүмкін болмады
+SuccessToAddToMailmanList=%s пошталық хатшылар тізіміне %s немесе SPIP дерекқорына сәтті қосылды
+SuccessToRemoveToMailmanList=%s пошталық хатшылар тізімінен %s немесе SPIP дерекқорынан сәтті жойылды

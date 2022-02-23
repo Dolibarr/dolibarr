@@ -82,32 +82,32 @@ class box_birthdays extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
-		if ($user->rights->user->user->lire)
-		{
+		if ($user->rights->user->user->lire) {
 			$tmparray = dol_getdate(dol_now(), true);
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth, u.email, u.statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql .= " WHERE u.entity IN (".getEntity('user').")";
 			$sql .= " AND u.statut = 1";
 			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-			$sql .= " ORDER BY u.birth ASC";
+			$sql .= " ORDER BY DAY(u.birth) ASC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
+
 					$userstatic->id = $objp->rowid;
 					$userstatic->firstname = $objp->firstname;
 					$userstatic->lastname = $objp->lastname;
 					$userstatic->email = $objp->email;
+					$userstatic->statut = $objp->status;
+
 					$dateb = $this->db->jdate($objp->birth);
 					$age = date('Y', dol_now()) - date('Y', $dateb);
 
@@ -118,19 +118,21 @@ class box_birthdays extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($dateb, "day").' - '.$age.' '.$langs->trans('DurationYears')
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($dateb, "day", 'gmt').' - '.$age.' '.$langs->trans('DurationYears')
 					);
 
 					/*$this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $userstatic->LibStatut($objp->status, 3)
-                    );*/
+						'td' => 'class="right" width="18"',
+						'text' => $userstatic->LibStatut($objp->status, 3)
+					);*/
 
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
+				}
 
 				$this->db->free($result);
 			} else {

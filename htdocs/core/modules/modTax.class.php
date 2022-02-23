@@ -25,7 +25,7 @@
  * 		\brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
  *      \file       htdocs/core/modules/modTax.class.php
  *      \ingroup    tax
- *      \brief      Fichier de description et activation du module Taxe
+ *      \brief      Description and activation file for the module taxes
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -71,7 +71,7 @@ class modTax extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("compta", "bills");
 
 		// Constants
@@ -182,14 +182,9 @@ class modTax extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-<<<<<<< HEAD
      *      @param      string  $options        Options when enabling module ('', 'noboxes')
      *      @param      int     $force_entity	Force current entity
      *      @return     int                     1 if OK, 0 if KO
-=======
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 	 */
 	public function init($options = '', $force_entity = null)
 	{

@@ -33,19 +33,16 @@ $comment = new Comment($db);
  * Actions
  */
 
-if ($action == 'addcomment')
-{
+if ($action == 'addcomment') {
 	$description = GETPOST('comment_description', 'restricthtml');
-	if (!empty($description))
-	{
+	if (!empty($description)) {
 		$comment->description = $description;
 		$comment->datec = time();
 		$comment->fk_element = GETPOST('id', 'int');
 		$comment->element_type = GETPOST('comment_element_type', 'alpha');
 		$comment->fk_user_author = $user->id;
 		$comment->entity = $conf->entity;
-		if ($comment->create($user) > 0)
-		{
+		if ($comment->create($user) > 0) {
 			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
 			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
 			exit;
@@ -55,13 +52,10 @@ if ($action == 'addcomment')
 		}
 	}
 }
-if ($action === 'updatecomment')
-{
-	if ($comment->fetch($idcomment) >= 0)
-	{
+if ($action === 'updatecomment') {
+	if ($comment->fetch($idcomment) >= 0) {
 		$comment->description = GETPOST('comment_description', 'restricthtml');
-		if ($comment->update($user) > 0)
-		{
+		if ($comment->update($user) > 0) {
 			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
 			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1#comment' : ''));
 			exit;
@@ -71,12 +65,9 @@ if ($action === 'updatecomment')
 		}
 	}
 }
-if ($action == 'deletecomment')
-{
-	if ($comment->fetch($idcomment) >= 0)
-	{
-		if ($comment->delete($user) > 0)
-		{
+if ($action == 'deletecomment') {
+	if ($comment->fetch($idcomment) >= 0) {
+		if ($comment->delete($user) > 0) {
 			setEventMessages($langs->trans("CommentDeleted"), null, 'mesgs');
 			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
 			exit;

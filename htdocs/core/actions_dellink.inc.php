@@ -27,19 +27,44 @@
 // $permissiondellink must be defined
 
 $dellinkid = GETPOST('dellinkid', 'int');
+$addlink = GETPOST('addlink', 'alpha');
 $addlinkid = GETPOST('idtolinkto', 'int');
+$addlinkref = GETPOST('reftolinkto', 'alpha');
+$cancellink = GETPOST('cancel', 'alpha');
 
 // Link invoice to order
-if ($action == 'addlink' && !empty($permissiondellink) && !GETPOST('cancel', 'alpha') && $id > 0 && $addlinkid > 0)
-{
+if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && $addlinkid > 0) {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$result = $object->add_object_linked(GETPOST('addlink', 'alpha'), $addlinkid);
+	$result = $object->add_object_linked($addlink, $addlinkid);
+}
+
+// Link by reference
+if ($action == 'addlinkbyref' && ! empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && !empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
+	$element_prop = getElementProperties($addlink);
+	if (is_array($element_prop)) {
+		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
+
+		$objecttmp = new $element_prop['classname']($db);
+		$ret = $objecttmp->fetch(0, $addlinkref);
+		if ($ret > 0) {
+			$object->fetch($id);
+			$object->fetch_thirdparty();
+			$result = $object->add_object_linked($addlink, $objecttmp->id);
+			if (isset($_POST['reftolinkto'])) unset($_POST['reftolinkto']);
+		} elseif ($ret < 0) {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+		} else {
+			$langs->load('errors');
+			setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+		}
+	}
 }
 
 // Delete link
-if ($action == 'dellink' && !empty($permissiondellink) && !GETPOST('cancel', 'alpha') && $dellinkid > 0)
-{
+if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $dellinkid > 0) {
 	$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
-	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }

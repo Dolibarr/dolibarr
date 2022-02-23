@@ -16,6 +16,8 @@ ThisService=Bu hizmet
 ThisProduct=Bu ürün
 DefaultForService=Hizmet için varsayılan
 DefaultForProduct=Ürün için varsayılan
+ProductForThisThirdparty=Product for this thirdparty
+ServiceForThisThirdparty=Service for this thirdparty
 CantSuggest=Öneri yok
 AccountancySetupDoneFromAccountancyMenu=Muhasebenin çoğu kurulumu %s menüsünden yapılır.
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
@@ -35,8 +37,8 @@ OtherInfo=Diğer Bilgiler
 DeleteCptCategory=Muhasebe hesabını gruptan kaldırın
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
 JournalizationInLedgerStatus=Günlükleme durumu
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Hesaba göre detayları göster
 AccountWithNonZeroValues=Sıfır olmayan değerlere sahip hesaplar
@@ -45,9 +47,11 @@ CountriesInEEC=Avrupa Ekonomi Topluluğu'ndaki Ülkeler
 CountriesNotInEEC=Avrupa Ekonomi Topluluğu'nda Olmayan Ülkeler
 CountriesInEECExceptMe=%s hariç Avrupa Ekonomi Topluluğu ülkeleri
 CountriesExceptMe=%s hariç tüm ülkeler
-AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+AccountantFiles=Kaynak belgeleri dışa aktar
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Müşteriler için ana muhasebe hesabı kurulumda tanımlı değil
 MainAccountForSuppliersNotDefined=Tedarikçiler için ana muhasebe hesabı kurulumda tanımlı değil
@@ -62,8 +66,8 @@ AccountancyAreaDescActionOnceBis=Günlükleme yaparken (Günlüklere ve Genel de
 AccountancyAreaDescActionFreq=Aşağıdaki eylemler çok büyük şirketler için genellikle her ay, her hafta veya her gün gerçekleştirilir...
 
 AccountancyAreaDescJournalSetup=ADIM %s: "%s" menüsünü kullanarak günlük listenizin içeriğini oluşturun veya kontrol edin.
-AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
-AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
+AccountancyAreaDescChartModel=ADIM %s: Bir hesap planı modelinin mevcut olup olmadığını kontrol edin veya menüden oluşturun %s
+AccountancyAreaDescChart=ADIM %s: Menüden hesap planınızı seçin ve|veya tamamlayın %s
 
 AccountancyAreaDescVat=ADIM %s: "%s" menüsünü kullanarak her bir KDV Oranı için muhasebe hesaplarını tanımlayın.
 AccountancyAreaDescDefault=ADIM %s: "%s" menüsünü kullanarak varsayılan muhasebe hesaplarını tanımlayın.
@@ -104,11 +108,11 @@ MenuExpenseReportAccounts=Gider raporu hesapları
 MenuLoanAccounts=Kredi hesapları
 MenuProductsAccounts=Ürün hesapları
 MenuClosureAccounts=Hesapları kapama
-MenuAccountancyClosure=kapatma
-MenuAccountancyValidationMovements=Validate movements
+MenuAccountancyClosure=Kapanış
+MenuAccountancyValidationMovements=Hareketleri doğrula
 ProductsBinding=Ürün hesapları
-TransferInAccounting=Transfer in accounting
-RegistrationInAccounting=Registration in accounting
+TransferInAccounting=Muhasebede aktarım
+RegistrationInAccounting=Muhasebede kayıt
 Binding=Hesaba bağlama
 CustomersVentilation=Müşteri faturası bağlama
 SuppliersVentilation=Tedarikçi faturası bağlama
@@ -128,7 +132,7 @@ InvoiceLinesDone=Bağlı fatura satırları
 ExpenseReportLines=Bağlanacak gider raporu satırları
 ExpenseReportLinesDone=Bağlanmış gider raporları satırları
 IntoAccount=Satırı muhasebe hesabına bağla
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=Bağla
@@ -141,10 +145,10 @@ LineOfExpenseReport=Gider raporu satırı
 NoAccountSelected=Hiçbir muhasebe hesabı seçilmedi
 VentilatedinAccount=Muhasebe hesabına başarıyla bağlandı
 NotVentilatedinAccount=Muhasebe hesabına bağlı değil
-XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
-XLineFailedToBeBinded=%s products/services were not bound to any accounting account
+XLineSuccessfullyBinded=%s ürün/hizmet bir muhasebe hesabına başarıyla bağlandı
+XLineFailedToBeBinded=%s ürün/hizmet herhangi bir muhasebe hesabına bağlı değil
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO="Bağlama yapılacaklar" sayfasının sıralama işlemini en son öğelerden başlatın
 ACCOUNTING_LIST_SORT_VENTILATION_DONE="Bağlama yapılanlar" sayfasının sıralama işlemini en son öğelerden başlatın
 
@@ -155,7 +159,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you
 ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
-ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -168,7 +172,7 @@ ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
-ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Kapanış günlüğü
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
 TransitionalAccount=Transitional bank transfer account
@@ -198,15 +202,17 @@ Docdate=Tarih
 Docref=Referans
 LabelAccount=Hesap etiketi
 LabelOperation=Label operation
-Sens=Sens (borsa haberleri yayınlama günlüğü)
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Lettering code
 Lettering=Lettering
 Codejournal=Günlük
 JournalLabel=Journal label
 NumPiece=Parça sayısı
 TransactionNumShort=Num. transaction
-AccountingCategory=Kişiselleştirilmiş gruplar
-GroupByAccountAccounting=Group by accounting account
+AccountingCategory=Custom group
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
 ByAccounts=By accounts
 ByPredefinedAccountGroups=Önceden tanımlanmış gruplar tarafından
@@ -240,15 +246,15 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=Muhasebe hesapları listesi
 UnknownAccountForThirdparty=Bilinmeyen üçüncü parti hesabı. %s kullanacağız
 UnknownAccountForThirdpartyBlocking=Bilinmeyen üçüncü parti hesabı. Engelleme hatası
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
 OpeningBalance=Opening balance
 ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Hesap grubu
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
@@ -271,14 +277,16 @@ DescVentilExpenseReport=Consult here the list of expense report lines bound (or 
 DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
+Closure=Yıllık kapanış
 DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
 OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
-ValidateMovements=Validate movements
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
+ValidateMovements=Hareketleri doğrula
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
-SelectMonthAndValidate=Select month and validate movements
 
 ValidateHistory=Otomatik Olarak Bağla
-AutomaticBindingDone=Otomatik bağlama bitti
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Hata, kullanıldığı için bu muhasebe hesabını silemezsiniz
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
@@ -290,9 +298,10 @@ NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Bağlamayı değiştir
 Accounted=Accounted in ledger
-NotYetAccounted=Büyük defterde henüz muhasebeleştirilmemiş
+NotYetAccounted=Henüz muhasebeye aktarılmamış
 ShowTutorial=Show Tutorial
 NotReconciled=Uzlaştırılmadı
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -320,6 +329,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Export draft journal
 Modelcsv=Dışa aktarım modeli
 Selectmodelcsv=Bir dışa aktarım modeli seçin
@@ -327,27 +339,29 @@ Modelcsv_normal=Klasik dışa aktarım
 Modelcsv_CEGID=Export for CEGID Expert Comptabilité
 Modelcsv_COALA=Export for Sage Coala
 Modelcsv_bob50=Export for Sage BOB 50
-Modelcsv_ciel=Export for Sage Ciel Compta or Compta Evolution
+Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=EBP için dışa aktarım
 Modelcsv_cogilog=Export for Cogilog
-Modelcsv_agiris=Export for Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Hesap planı Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Muhasebe başlangıcı
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=This page can be used to set a default account to use to link transactions record about payment salaries, donation, taxes and vat when no specific accounting account were already set.
-DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
+DefaultClosureDesc=Bu sayfa, muhasebe kapanışları için kullanılan parametreleri ayarlamak için kullanılabilir.
 Options=Seçenekler
 OptionModeProductSell=Satış modu
 OptionModeProductSellIntra=Mode sales exported in EEC
@@ -373,7 +387,8 @@ SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Muhasebe hesabı aralığı
 Calculated=Hesaplanmış
@@ -381,7 +396,7 @@ Formula=Formül
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Kurulumun bazı zorunlu adımları tamamlanmadı, lütfen onları tamamlayın.
-ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
+ErrorNoAccountingCategoryForThisCountry=%s ülkesi için muhasebe hesap grubu yok (Giriş - Ayarlar - Sözlükler kısmına bakın)
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=Ayarlanan dışa aktarım biçimi bu sayfada desteklenmiyor
@@ -390,10 +405,33 @@ NoJournalDefined=No journal defined
 Binded=Bağlanmış satırlar
 ToBind=Bağlanacak satırlar
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Muhasebe girişleri
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal
+
+NAccounts=%s accounts

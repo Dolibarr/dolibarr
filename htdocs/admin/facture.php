@@ -36,10 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
@@ -51,8 +55,7 @@ $type = 'invoice';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
 	$maskconstinvoice = GETPOST('maskconstinvoice', 'alpha');
 	$maskconstreplacement = GETPOST('maskconstreplacement', 'alpha');
 	$maskconstcredit = GETPOST('maskconstcredit', 'alpha');
@@ -61,21 +64,29 @@ if ($action == 'updateMask')
 	$maskreplacement = GETPOST('maskreplacement', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
 	$maskdeposit = GETPOST('maskdeposit', 'alpha');
-	if ($maskconstinvoice) $res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
-	if ($maskconstreplacement) $res = dolibarr_set_const($db, $maskconstreplacement, $maskreplacement, 'chaine', 0, '', $conf->entity);
-	if ($maskconstcredit)  $res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
-	if ($maskconstdeposit)  $res = dolibarr_set_const($db, $maskconstdeposit, $maskdeposit, 'chaine', 0, '', $conf->entity);
+	if ($maskconstinvoice) {
+		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
+	}
+	if ($maskconstreplacement) {
+		$res = dolibarr_set_const($db, $maskconstreplacement, $maskreplacement, 'chaine', 0, '', $conf->entity);
+	}
+	if ($maskconstcredit) {
+		$res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
+	}
+	if ($maskconstdeposit) {
+		$res = dolibarr_set_const($db, $maskconstdeposit, $maskdeposit, 'chaine', 0, '', $conf->entity);
+	}
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen')
-{
+} elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
 	$facture = new Facture($db);
@@ -84,25 +95,21 @@ if ($action == 'updateMask')
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
+	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/facture/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file))
-		{
+		if (file_exists($file)) {
 			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db);
 
-		if ($module->write_file($facture, $langs) > 0)
-		{
+		if ($module->write_file($facture, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -113,24 +120,19 @@ if ($action == 'updateMask')
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-}
-// Activate a model
-elseif ($action == 'set')
-{
+} elseif ($action == 'set') {
+	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del')
-{
+} elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		if ($conf->global->FACTURE_ADDON_PDF == "$value") dolibarr_del_const($db, 'FACTURE_ADDON_PDF', $conf->entity);
+	if ($ret > 0) {
+		if ($conf->global->FACTURE_ADDON_PDF == "$value") {
+			dolibarr_del_const($db, 'FACTURE_ADDON_PDF', $conf->entity);
+		}
 	}
-}
-// Set default model
-elseif ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "FACTURE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "FACTURE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->FACTURE_ADDON_PDF = $value;
@@ -138,90 +140,86 @@ elseif ($action == 'setdoc')
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'setmod')
-{
+} elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "FACTURE_ADDON", $value, 'chaine', 0, '', $conf->entity);
-} elseif ($action == 'setribchq')
-{
+} elseif ($action == 'setribchq') {
 	$rib = GETPOST('rib', 'alpha');
 	$chq = GETPOST('chq', 'alpha');
 
 	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_FACTURE_DRAFT_WATERMARK')
-{
+} elseif ($action == 'set_FACTURE_DRAFT_WATERMARK') {
 	$draft = GETPOST('FACTURE_DRAFT_WATERMARK', 'alpha');
 
 	$res = dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_INVOICE_FREE_TEXT')
-{
+} elseif ($action == 'set_INVOICE_FREE_TEXT') {
 	$freetext = GETPOST('INVOICE_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "INVOICE_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'setforcedate')
-{
+} elseif ($action == 'setforcedate') {
 	$forcedate = GETPOST('forcedate', 'alpha');
 
 	$res = dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION", $forcedate, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'setDefaultPDFModulesByType')
-{
+} elseif ($action == 'setDefaultPDFModulesByType') {
 	$invoicetypemodels = GETPOST('invoicetypemodels');
 
-	if (!empty($invoicetypemodels) && is_array($invoicetypemodels))
-	{
+	if (!empty($invoicetypemodels) && is_array($invoicetypemodels)) {
 		$error = 0;
 
-		foreach ($invoicetypemodels as $type => $value)
-		{
+		foreach ($invoicetypemodels as $type => $value) {
 			$res = dolibarr_set_const($db, 'FACTURE_ADDON_PDF_'.intval($type), $value, 'chaine', 0, '', $conf->entity);
-			if (!$res > 0) $error++;
+			if (!($res > 0)) {
+				$error++;
+			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
@@ -253,6 +251,7 @@ print dol_get_fiche_head($head, 'general', $langs->trans("Invoices"), -1, 'invoi
 
 print load_fiche_titre($langs->trans("BillsNumberingModule"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -264,44 +263,42 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/facture/");
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
-				{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')) {
 					$filebis = $file;
 					$classname = preg_replace('/\.php$/', '', $file);
 					// For compatibility
-					if (!is_file($dir.$filebis))
-					{
+					if (!is_file($dir.$filebis)) {
 						$filebis = $file."/".$file.".modules.php";
 						$classname = "mod_facture_".$file;
 					}
 					// Check if there is a filter on country
 					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
-					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
+					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
+						continue;
+					}
 
 					$classname = preg_replace('/\-.*$/', '', $classname);
-					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
-					{
+					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 						// Charging the numbering class
 						require_once $dir.$filebis;
 
 						$module = new $classname($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							continue;
+						}
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							continue;
+						}
 
-						if ($module->isEnabled())
-						{
+						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td width="100">';
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
@@ -316,14 +313,16 @@ foreach ($dirmodels as $reldir)
 							if (preg_match('/^Error/', $tmp)) {
 								$langs->load("errors");
 								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-							else print $tmp;
+							} elseif ($tmp == 'NotConfigured') {
+								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+							} else {
+								print $tmp;
+							}
 							print '</td>'."\n";
 
 							print '<td class="center">';
 							//print "> ".$conf->global->FACTURE_ADDON." - ".$file;
-							if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file)
-							{
+							if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -341,8 +340,9 @@ foreach ($dirmodels as $reldir)
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= $langs->trans("NextValueForInvoices").': ';
 								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 										$nextval = $langs->trans($nextval);
+									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -354,8 +354,9 @@ foreach ($dirmodels as $reldir)
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
 								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 										$nextval = $langs->trans($nextval);
+									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -368,8 +369,9 @@ foreach ($dirmodels as $reldir)
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= $langs->trans("NextValueForCreditNotes").': ';
 								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 										$nextval = $langs->trans($nextval);
+									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -381,8 +383,9 @@ foreach ($dirmodels as $reldir)
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= $langs->trans("NextValueForDeposit").': ';
 								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 										$nextval = $langs->trans($nextval);
+									}
 									$htmltooltip .= $nextval;
 								} else {
 									$htmltooltip .= $langs->trans($module->error);
@@ -392,9 +395,10 @@ foreach ($dirmodels as $reldir)
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
-							{
-								if (!empty($module->error)) dol_htmloutput_mesg($module->error, '', 'error', 1);
+							if ($conf->global->FACTURE_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
+								if (!empty($module->error)) {
+									dol_htmloutput_mesg($module->error, '', 'error', 1);
+								}
 							}
 
 							print '</td>';
@@ -410,6 +414,7 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+print '</div>';
 
 
 /*
@@ -426,12 +431,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows)
-	{
+	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
 		array_push($def, $array[0]);
 		$i++;
@@ -440,6 +443,7 @@ if ($resql)
 	dol_print_error($db);
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -454,31 +458,23 @@ clearstatcache();
 
 $activatedModels = array();
 
-foreach ($dirmodels as $reldir)
-{
-	foreach (array('', '/doc') as $valdir)
-	{
+foreach ($dirmodels as $reldir) {
+	foreach (array('', '/doc') as $valdir) {
 		$realpath = $reldir."core/modules/facture".$valdir;
 		$dir = dol_buildpath($realpath);
 
-		if (is_dir($dir))
-		{
+		if (is_dir($dir)) {
 			$handle = opendir($dir);
-			if (is_resource($handle))
-			{
-				while (($file = readdir($handle)) !== false)
-				{
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
 				closedir($handle);
 				arsort($filelist);
 
-				foreach ($filelist as $file)
-				{
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
-					{
-						if (file_exists($dir.'/'.$file))
-						{
+				foreach ($filelist as $file) {
+					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+						if (file_exists($dir.'/'.$file)) {
 							$name = substr($file, 4, dol_strlen($file) - 16);
 							$classname = substr($file, 0, dol_strlen($file) - 12);
 
@@ -486,47 +482,50 @@ foreach ($dirmodels as $reldir)
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								$modulequalified = 0;
+							}
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								$modulequalified = 0;
+							}
 
-							if ($modulequalified)
-							{
+							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
 								print (empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
-								if (method_exists($module, 'info')) print $module->info($langs);
-								else print $module->description;
+								if (method_exists($module, 'info')) {
+									print $module->info($langs);
+								} else {
+									print $module->description;
+								}
 								print '</td>';
 
 								// Active
-								if (in_array($name, $def))
-								{
+								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->FACTURE_ADDON_PDF == "$name")
-								{
+								if ($conf->global->FACTURE_ADDON_PDF == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
 								}
 								print '</td>';
 
 								// Info
 								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf')
-								{
+								if ($module->type == 'pdf') {
 									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 								}
 								$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
@@ -547,8 +546,7 @@ foreach ($dirmodels as $reldir)
 
 								// Preview
 								print '<td class="center">';
-								if ($module->type == 'pdf')
-								{
+								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
@@ -565,22 +563,25 @@ foreach ($dirmodels as $reldir)
 	}
 }
 print '</table>';
+print '</div>';
 
-if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
-{
+if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) { // Hidden conf
 	/*
-     *  Document templates generators
-     */
+	 *  Document templates generators
+	 */
 	print '<br>';
 	print load_fiche_titre($langs->trans("BillsPDFModulesAccordindToInvoiceType"), '', '');
+
 	print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'" />';
 	print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table id="default-pdf-modules-by-type-table" class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td>'.$langs->trans("Name").'</td>';
-	print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 	print "</tr>\n";
 
 	$listtype = array(
@@ -589,13 +590,11 @@ if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
 		Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
 		Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 	);
-	if (!empty($conf->global->INVOICE_USE_SITUATION))
-	{
+	if (!empty($conf->global->INVOICE_USE_SITUATION)) {
 		$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
 	}
 
-	foreach ($listtype as $type => $trans)
-	{
+	foreach ($listtype as $type => $trans) {
 		$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
 		$current = !empty($conf->global->{$thisTypeConfName}) ? $conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
 		print '<tr >';
@@ -605,6 +604,8 @@ if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
 	}
 
 	print '</table>';
+	print '</div>';
+
 	print "</form>";
 }
 
@@ -617,36 +618,33 @@ print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
-print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
-if (!empty($conf->banque->enabled))
-{
+if (!empty($conf->banque->enabled)) {
 	$sql = "SELECT rowid, label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 	$sql .= " WHERE clos = 0";
 	$sql .= " AND courant = 1";
 	$sql .= " AND entity IN (".getEntity('bank_account').")";
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-		if ($num > 0)
-		{
+		if ($num > 0) {
 			print '<select name="rib" class="flat" id="rib">';
 			print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 
 				print '<option value="'.$row[0].'"';
@@ -679,12 +677,10 @@ $sql .= " AND courant = 1";
 $sql .= " AND entity IN (".getEntity('bank_account').")";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
 		print '<option value="'.$row[0].'"';
@@ -697,12 +693,15 @@ if ($resql)
 print "</select>";
 print "</td></tr>";
 print "</table>";
+print '</div>';
+
 print "</form>";
 
 
 print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -719,14 +718,16 @@ print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" class="center">';
 print $form->selectyesno("forcedate", $conf->global->FAC_FORCE_DATE_VALIDATION, 1);
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+foreach ($substitutionarray as $key => $val) {
+	$htmltext .= $key.'<br>';
+}
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -735,8 +736,7 @@ print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'INVOICE_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -744,7 +744,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 
@@ -755,14 +755,14 @@ print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftBill"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td>';
-print '<td><input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
+print '<td><input class="flat minwidth200imp" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
 print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 
 print '</table>';
-
+print '</div>';
 
 /*
  *  Repertoire

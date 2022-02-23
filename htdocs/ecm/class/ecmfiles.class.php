@@ -47,7 +47,7 @@ class EcmFiles extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'folder-open';
 
 	/**
 	 * @var string Ref hash of file path
@@ -149,6 +149,12 @@ class EcmFiles extends CommonObject
 	 * @var int src object id
 	 */
 	public $src_object_id;
+
+	/**
+	 * @var int section_id		ID of section = ID of EcmDirectory, directory of manual ECM (not stored into database)
+	 */
+	public $section_id;
+
 
 
 	/**
@@ -297,17 +303,17 @@ class EcmFiles extends CommonObject
 		$sql .= " '".$this->db->escape($ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->share) ? 'NULL' : "'".$this->db->escape($this->share)."'").',';
-		$sql .= ' '.$this->entity.',';
+		$sql .= ' '.((int) $this->entity).',';
 		$sql .= ' '.(!isset($this->filename) ? 'NULL' : "'".$this->db->escape($this->filename)."'").',';
 		$sql .= ' '.(!isset($this->filepath) ? 'NULL' : "'".$this->db->escape($this->filepath)."'").',';
 		$sql .= ' '.(!isset($this->fullpath_orig) ? 'NULL' : "'".$this->db->escape($this->fullpath_orig)."'").',';
 		$sql .= ' '.(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(!isset($this->keywords) ? 'NULL' : "'".$this->db->escape($this->keywords)."'").',';
 		$sql .= ' '.(!isset($this->cover) ? 'NULL' : "'".$this->db->escape($this->cover)."'").',';
-		$sql .= ' '.$maxposition.',';
+		$sql .= ' '.((int) $maxposition).',';
 		$sql .= ' '.(!isset($this->gen_or_uploaded) ? 'NULL' : "'".$this->db->escape($this->gen_or_uploaded)."'").',';
 		$sql .= ' '.(!isset($this->extraparams) ? 'NULL' : "'".$this->db->escape($this->extraparams)."'").',';
-		$sql .= ' '."'".$this->db->idate($this->date_c)."'".',';
+		$sql .= " '".$this->db->idate($this->date_c)."',";
 		$sql .= ' '.(!isset($this->date_m) || dol_strlen($this->date_m) == 0 ? 'NULL' : "'".$this->db->idate($this->date_m)."'").',';
 		$sql .= ' '.(!isset($this->fk_user_c) ? $user->id : $this->fk_user_c).',';
 		$sql .= ' '.(!isset($this->fk_user_m) ? 'NULL' : $this->fk_user_m).',';
@@ -389,6 +395,8 @@ class EcmFiles extends CommonObject
 		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
+		$sql .= ' t.note_private,';
+		$sql .= ' t.note_public,';
 		$sql .= " t.acl,";
 		$sql .= " t.src_object_type,";
 		$sql .= " t.src_object_id";
@@ -417,10 +425,10 @@ class EcmFiles extends CommonObject
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
 		} elseif ($src_object_type && $src_object_id) {
 			// Warning: May return several record, and only first one is returned !
-			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
+			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
 			$sql .= " AND t.entity = ".$conf->entity;
 		} else {
-			$sql .= ' AND t.rowid = '.$this->db->escape($id); // rowid already unique
+			$sql .= ' AND t.rowid = '.((int) $id); // rowid already unique
 		}
 
 		$this->db->plimit(1); // When we search on src or on hash of content (hashforfile) to solve hash conflict when several files has same content, we take first one only
@@ -450,6 +458,8 @@ class EcmFiles extends CommonObject
 				$this->date_m = $this->db->jdate($obj->date_m);
 				$this->fk_user_c = $obj->fk_user_c;
 				$this->fk_user_m = $obj->fk_user_m;
+				$this->note_private = $obj->note_private;
+				$this->note_public = $obj->note_public;
 				$this->acl = $obj->acl;
 				$this->src_object_type = $obj->src_object_type;
 				$this->src_object_id = $obj->src_object_id;
@@ -519,7 +529,11 @@ class EcmFiles extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				if ($key == 't.src_object_id') {
+					$sqlwhere[] = $key." = ".((int) $value);
+				} else {
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+				}
 			}
 		}
 		$sql .= ' WHERE 1 = 1';
@@ -528,13 +542,13 @@ class EcmFiles extends CommonObject
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$this->lines = array();
@@ -650,7 +664,7 @@ class EcmFiles extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= " ref = '".dol_hash($this->filepath.'/'.$this->filename, 3)."',";
+		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, 3))."',";
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= ' share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null").',';
 		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : $conf->entity).',';
@@ -669,7 +683,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';
 		$sql .= ' src_object_type = '.(isset($this->src_object_type) ? "'".$this->db->escape($this->src_object_type)."'" : "null");
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -732,7 +746,7 @@ class EcmFiles extends CommonObject
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -817,7 +831,7 @@ class EcmFiles extends CommonObject
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $menumanager, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -854,6 +868,16 @@ class EcmFiles extends CommonObject
 			}
 		}
 		$result .= $linkstart.$this->ref.$linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

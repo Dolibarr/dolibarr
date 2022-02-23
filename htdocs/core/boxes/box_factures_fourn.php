@@ -78,39 +78,48 @@ class box_factures_fourn extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 		$facturestatic = new FactureFournisseur($this->db);
-		$thirdpartytmp = new Fournisseur($this->db);
+		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."SupplierBills", $max)
+			'text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierBills", $max)
 		);
 
-		if ($user->rights->fournisseur->facture->lire)
-		{
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
-			$sql .= " s.code_fournisseur, s.email,";
-			$sql .= " s.logo,";
-			$sql .= " f.rowid as facid, f.ref, f.ref_supplier,";
-			$sql .= " f.total_ht,";
-			$sql .= " f.total_tva,";
-			$sql .= " f.total_ttc,";
-			$sql .= " f.paye, f.fk_statut,";
-			$sql .= ' f.datef as df,';
-			$sql .= ' f.datec as datec,';
-			$sql .= ' f.date_lim_reglement as datelimite, f.tms, f.type';
+		if ($user->rights->fournisseur->facture->lire) {
+			$langs->load("bills");
+
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", f.rowid as facid, f.ref, f.ref_supplier";
+			$sql .= ", f.total_ht";
+			$sql .= ", f.total_tva";
+			$sql .= ", f.total_ttc";
+			$sql .= ", f.paye, f.fk_statut as status";
+			$sql .= ', f.datef as df';
+			$sql .= ', f.datec as datec';
+			$sql .= ', f.date_lim_reglement as datelimite, f.tms, f.type';
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
-			else $sql .= " ORDER BY f.tms DESC, f.ref DESC ";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";
+			} else {
+				$sql .= " ORDER BY f.tms DESC, f.ref DESC ";
+			}
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
@@ -118,6 +127,7 @@ class box_factures_fourn extends ModeleBoxes
 
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
+
 					$datelimite = $this->db->jdate($objp->datelimite);
 					$date = $this->db->jdate($objp->df);
 					$datem = $this->db->jdate($objp->tms);
@@ -128,20 +138,28 @@ class box_factures_fourn extends ModeleBoxes
 					$facturestatic->total_tva = $objp->total_tva;
 					$facturestatic->total_ttc = $objp->total_ttc;
 					$facturestatic->date_echeance = $datelimite;
-					$facturestatic->statut = $objp->fk_statut;
+					$facturestatic->statut = $objp->status;
+					$facturestatic->status = $objp->status;
 					$facturestatic->ref_supplier = $objp->ref_supplier;
 
-					$thirdpartytmp->id = $objp->socid;
-					$thirdpartytmp->name = $objp->name;
-					$thirdpartytmp->email = $objp->email;
-					$thirdpartytmp->fournisseur = 1;
-					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
-					$thirdpartytmp->logo = $objp->logo;
+					$alreadypaid = $facturestatic->getSommePaiement();
+
+					$facturestatic->alreadypaid = $alreadypaid ? $alreadypaid : 0;
+
+					$thirdpartystatic->id = $objp->socid;
+					$thirdpartystatic->name = $objp->name;
+					$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+					$thirdpartystatic->fournisseur = $objp->fournisseur;
+					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
 					$late = '';
 
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -160,36 +178,34 @@ class box_factures_fourn extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150"',
-						'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
+						'text' => $thirdpartystatic->getNomUrl(1, 'supplier'),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
-					$fac = new FactureFournisseur($this->db);
-					$fac->fetch($objp->facid);
-					$alreadypaid = $fac->getSommePaiement();
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $alreadypaid, $objp->type),
+						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $alreadypaid, $objp->type),
 					);
 
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoModifiedSupplierBills"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

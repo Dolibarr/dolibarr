@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Chargen-/Serien-Nr. benutzen 
-ProductStatusOnBatch=Ja  (Chargen-/Serien-Nr. Pflicht)
-ProductStatusNotOnBatch=Nein  (keine Chargen-/Serien-Nr.)
-ProductStatusOnBatchShort=Ja
+ProductStatusOnBatch=Ja (Chargennummer erforderlich)
+ProductStatusOnSerial=Ja (eindeutige Seriennummer erforderlich)
+ProductStatusNotOnBatch=Nein (keine Chargen-/Serien-Nr.)
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Seriennummer
 ProductStatusNotOnBatchShort=Keine
 Batch=Charge / Seriennr.
 atleast1batchfield="Verzehr bis" oder "Verkaufen bis"-Datum oder Chargen- / Seriennummer
@@ -16,9 +18,28 @@ printEatby=Verzehren bis: %s
 printSellby=Verkaufen bis: %s
 printQty=Menge: %d
 AddDispatchBatchLine=Fügen Sie eine Zeile für den Versand bis Haltbarkeit hinzu
-WhenProductBatchModuleOnOptionAreForced=Wenn das Modul Chargen- und Seriennummernverwaltung aktiviert ist, wird die automatische Warenbestandsanpassung gezwungen beim Ereignis "versendet" den tatsächlichen Bestand zu verringern und beim Ereignis "manuelles Buchen in ein Warenlager" die tatsächlichen Bestand zu erhöhen. Dies kann nicht beeinflusst werden. Andere Optionen können wie gewünscht definiert werden.
+WhenProductBatchModuleOnOptionAreForced=Wenn das Modul "Produkt-Chargen und Serien" aktiviert ist, wird die automatische Warenbestandsanpassung gezwungen beim Ereignis "versendet" den tatsächlichen Bestand zu verringern und beim Ereignis "manuelles Buchen in ein Warenlager" die tatsächlichen Bestand zu erhöhen. Dies kann nicht beeinflusst werden. Andere Optionen können wie gewünscht definiert werden.
 ProductDoesNotUseBatchSerial=Dieses Produkt hat keine Chargen-/Seriennummer
-ProductLotSetup=Einstellungen des Moduls Chargen- und Seriennummernverwaltung
+ProductLotSetup=Einstellungen des Moduls "Produkt-Chargen und Serien"
 ShowCurrentStockOfLot=Warenbestand für diese Chargen-/Seriennummer anzeigen
 ShowLogOfMovementIfLot=Bewegungen für diese Chargen-/Seriennummer anzeigen
 StockDetailPerBatch=Lagerdetail nach Chargen
+SerialNumberAlreadyInUse=Die Seriennummer %s wird bereits für das Produkt %s verwendet
+TooManyQtyForSerialNumber=Sie können nur ein Produkt %s für die Seriennummer %s haben
+ManageLotMask=Benutzerdefinierte Maske
+CustomMasks=Option, für jedes Produkt ein anderes Nummerierungsschema zu definieren
+BatchLotNumberingModules=Nummerierungsregel zur automatischen Generierung der Chargennummer
+BatchSerialNumberingModules=Nummerierungsregel zur automatischen Generierung der Seriennummer (für Produkte mit der Eigenschaft 1 eindeutiges Los/Serie für jedes Produkt)
+QtyToAddAfterBarcodeScan=Menge an %s für jeden gescannten Barcode/jede Charge/jede  Seriennummer
+LifeTime=Lebensdauer (in Tagen)
+EndOfLife=Ende der Lebensdauer
+ManufacturingDate=Herstellungsdatum
+DestructionDate=Datum der Vernichtung
+FirstUseDate=Datum der ersten Verwendung
+QCFrequency=Häufigkeit der Qualitätskontrolle (in Tagen)
+ShowAllLots=Alle Lose anzeigen
+HideLots=Lose ausblenden
+#Traceability - qc status
+OutOfOrder=Außer Betrieb
+InWorkingOrder=In betriebsfähigem Zustand
+ToReplace=Ersetzen

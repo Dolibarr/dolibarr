@@ -28,8 +28,9 @@ require '../../main.inc.php';
 
 $langs->load("admin");
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $table = GETPOST('table', 'alpha');
 
@@ -45,40 +46,32 @@ print load_fiche_titre($langs->trans("Table")." ".$table, '', 'title_setup');
 
 // Define request to get table description
 $base = 0;
-if (preg_match('/mysql/i', $conf->db->type))
-{
+if (preg_match('/mysql/i', $conf->db->type)) {
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
 	$base = 1;
-} elseif ($conf->db->type == 'pgsql')
-{
+} elseif ($conf->db->type == 'pgsql') {
 	$sql = "SELECT conname,contype FROM pg_constraint";
 	$base = 2;
 }
 
-if (!$base)
-{
+if (!$base) {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 } else {
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$row = $db->fetch_row($resql);
 			$i++;
 		}
 	}
 
-	if ($base == 1)	// mysql
-	{
+	if ($base == 1) {	// mysql
 		$link = array();
 		$cons = explode(";", $row[14]);
-		if (!empty($cons))
-		{
-			foreach ($cons as $cc)
-			{
+		if (!empty($cons)) {
+			foreach ($cons as $cc) {
 				$cx = preg_replace("/\)\sREFER/", "", $cc);
 				$cx = preg_replace("/\(`/", "", $cx);
 				$cx = preg_replace("/`\)/", "", $cx);
@@ -107,12 +100,10 @@ if (!$base)
 		$sql = "SHOW FULL COLUMNS IN ".$db->escape($table);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
 				print "<td>".$row[0]."</td>";

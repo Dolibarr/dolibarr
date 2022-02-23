@@ -25,8 +25,9 @@
  * \ingroup mailing
  * \brief 	Script to send a prepared and validated emaling from command line
  */
-
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -45,12 +46,17 @@ if (!isset($argv[1]) || !$argv[1]) {
 
 $id = $argv[1];
 
-if (isset($argv[2]) || !empty($argv[2])) $login = $argv[2];
-else $login = '';
+if (isset($argv[2]) || !empty($argv[2])) {
+	$login = $argv[2];
+} else {
+	$login = '';
+}
 
 $max = 0;
 
-if (isset($argv[3]) || !empty($argv[3])) $max = $argv[3];
+if (isset($argv[3]) || !empty($argv[3])) {
+	$max = $argv[3];
+}
 
 
 require_once $path."../../htdocs/master.inc.php";
@@ -61,8 +67,7 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
-if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
-{
+if (empty($conf->global->MAILING_LIMIT_SENDBYCLI)) {
 	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
@@ -74,19 +79,30 @@ if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
-if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {}
+if (!empty($conf->global->MAILING_DELAY)) {
+	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' millisecond has been set between each email'."\n";
+}
+
+if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {
+}
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-only mode\n";
+	exit(-1);
+}
 
 $user = new User($db);
 // for signature, we use user send as parameter
-if (!empty($login))
+if (!empty($login)) {
 	$user->fetch('', $login);
+}
 
 // We get list of emailing id to process
 $sql = "SELECT m.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.statut IN (1,2)";
 if ($id != 'all') {
-	$sql .= " AND m.rowid= ".$id;
+	$sql .= " AND m.rowid= ".((int) $id);
 	$sql .= " LIMIT 1";
 }
 
@@ -115,8 +131,9 @@ if ($resql) {
 			$errorsto = $emailing->email_errorsto;
 			// Le message est-il en html
 			$msgishtml = - 1; // Unknown by default
-			if (preg_match('/[\s\t]*<html>/i', $message))
+			if (preg_match('/[\s\t]*<html>/i', $message)) {
 				$msgishtml = 1;
+			}
 
 			$nbok = 0;
 			$nbko = 0;
@@ -131,7 +148,7 @@ if ($resql) {
 			} elseif ($conf->global->MAILING_LIMIT_SENDBYCLI > 0 && $max > 0) {
 				$sql2 .= " LIMIT ".min($conf->global->MAILING_LIMIT_SENDBYCLI, $max);
 			} elseif ($max > 0) {
-				$sql2 .= " LIMIT ".$max;
+				$sql2 .= " LIMIT ".((int) $max);
 			}
 
 			$resql2 = $db->query($sql2);
@@ -150,6 +167,8 @@ if ($resql) {
 						dol_print_error($db);
 						$error++;
 					}
+
+					$thirdpartystatic = new Societe($db);
 
 					// Look on each email and sent message
 					$i = 0;
@@ -183,6 +202,15 @@ if ($resql) {
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray['__ID__'] = $obj->source_id;
+						if ($obj->source_type == "thirdparty") {
+							$result = $thirdpartystatic->fetch($obj->source_id);
+
+							if ($result > 0) {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
+							} else {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = '';
+							}
+						}
 						$substitutionarray['__EMAIL__'] = $obj->email;
 						$substitutionarray['__LASTNAME__'] = $obj->lastname;
 						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;
@@ -194,16 +222,20 @@ if ($resql) {
 						$substitutionarray['__OTHER5__'] = $other5;
 						$substitutionarray['__USER_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
 						$substitutionarray['__SIGNATURE__'] = $signature; // For backward compatibility
-						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
-						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
+						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($obj->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid.'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.urlencode($obj->tag).'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid.'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
+						$substitutionarray['__UNSUBSCRIBE_URL__'] = DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.urlencode($obj->tag).'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid;
 
 						$onlinepaymentenabled = 0;
-						if (!empty($conf->paypal->enabled))
+						if (!empty($conf->paypal->enabled)) {
 							$onlinepaymentenabled++;
-						if (!empty($conf->paybox->enabled))
+						}
+						if (!empty($conf->paybox->enabled)) {
 							$onlinepaymentenabled++;
-						if (!empty($conf->stripe->enabled))
+						}
+						if (!empty($conf->stripe->enabled)) {
 							$onlinepaymentenabled++;
+						}
 						if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
@@ -222,21 +254,29 @@ if ($resql) {
 						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'membersubscription'.$obj->source_id, 2);
+							} else {
+								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'membersubscription'.$obj->source_id, 2);
+							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'order'.$obj->source_id, 2);
+							} else {
+								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'order'.$obj->source_id, 2);
+							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
+							} else {
+								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
+							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
+							} else {
+								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
+							}
 						}
 
 						complete_substitutions_array($substitutionarray, $langs);
@@ -245,6 +285,12 @@ if ($resql) {
 
 						$substitutionisok = true;
 
+						$moreinheader = '';
+						if (preg_match('/__UNSUBSCRIBE__/', $message)) {
+							$moreinheader = "List-Unsubscribe: <__UNSUBSCRIBE_URL__>\n";
+							$moreinheader = make_substitutions($moreinheader, $substitutionarray);
+						}
+
 						$arr_file = array();
 						$arr_mime = array();
 						$arr_name = array();
@@ -252,10 +298,8 @@ if ($resql) {
 
 						$listofpaths = dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
 
-						if (count($listofpaths))
-						{
-							foreach ($listofpaths as $key => $val)
-							{
+						if (count($listofpaths)) {
+							foreach ($listofpaths as $key => $val) {
 								$arr_file[] = $listofpaths[$key]['fullname'];
 								$arr_mime[] = dol_mimetype($listofpaths[$key]['name']);
 								$arr_name[] = $listofpaths[$key]['name'];
@@ -263,7 +307,7 @@ if ($resql) {
 						}
 						// Fabrication du mail
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, '', 'emailing');
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing');
 
 						if ($mail->error) {
 							$res = 0;
@@ -303,7 +347,7 @@ if ($resql) {
 							 */
 
 							$sqlok = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sqlok .= " SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
+							$sqlok .= " SET statut = 1, date_envoi = '".$db->idate($now)."' WHERE rowid = ".((int) $obj->rowid);
 							$resqlok = $db->query($sqlok);
 							if (!$resqlok) {
 								dol_print_error($db);
@@ -312,7 +356,7 @@ if ($resql) {
 								// if cheack read is use then update prospect contact status
 								if (strpos($message, '__CHECK_READ__') !== false) {
 									// Update status communication of thirdparty prospect
-									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj->rowid.")";
+									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".((int) $obj->rowid).")";
 									dol_syslog("card.php: set prospect thirdparty status", LOG_DEBUG);
 									$resqlx = $db->query($sqlx);
 									if (!$resqlx) {
@@ -321,7 +365,7 @@ if ($resql) {
 									}
 
 									// Update status communication of contact prospect
-									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".((int) $obj->rowid)." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 									dol_syslog("card.php: set prospect contact status", LOG_DEBUG);
 
 									$resqlx = $db->query($sqlx);
@@ -332,7 +376,7 @@ if ($resql) {
 								}
 
 								if (!empty($conf->global->MAILING_DELAY)) {
-									sleep($conf->global->MAILING_DELAY);
+									usleep((float) $conf->global->MAILING_DELAY * 1000000);
 								}
 							}
 						} else {
@@ -360,10 +404,11 @@ if ($resql) {
 
 				// Loop finished, set global statut of mail
 				$statut = 2;
-				if (!$nbko)
+				if (!$nbko) {
 					$statut = 3;
+				}
 
-				$sqlenddate = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
+				$sqlenddate = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid=".((int) $id);
 
 				dol_syslog("update global status", LOG_DEBUG);
 				print "Update status of emailing id ".$id." to ".$statut."\n";

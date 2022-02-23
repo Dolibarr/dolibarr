@@ -25,7 +25,7 @@
  *	\brief      Module to manage intervention cards
  *	\file       htdocs/core/modules/modFicheinter.class.php
  *	\ingroup    ficheinter
- *	\brief      Fichier de description et activation du module Ficheinter
+ *	\brief      Description and activation file for the module Ficheinter
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -76,6 +76,11 @@ class modFicheinter extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r = 0;
+
+		if (!isset($conf->ficheinter) || !isset($conf->ficheinter->enabled)) {
+			$conf->ficheinter = new stdClass();
+			$conf->ficheinter->enabled = 0;
+		}
 
 		$this->const[$r][0] = "FICHEINTER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -165,25 +170,20 @@ class modFicheinter extends DolibarrModules
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 'f.rowid'=>"InterId", 'f.ref'=>"InterRef", 'f.datec'=>"InterDateCreation",
 			'f.duree'=>"InterDuration", 'f.fk_statut'=>'InterStatus', 'f.description'=>"InterNote");
-		$keyforselect = 'fichinter'; $keyforelement = 'intervention'; $keyforaliasextra = 'extra';
+		$keyforselect = 'fichinter';
+		$keyforelement = 'intervention';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] += array(
 			'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel',
 			'fd.rowid'=>'InterLineId',
 			'fd.date'=>"InterLineDate", 'fd.duree'=>"InterLineDuration", 'fd.description'=>"InterLineDesc"
 		);
-		//$this->export_TypeFields_array[$r]=array(
-		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label',
-		//	's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text',
-		//	's.code_compta_fournisseur'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.duree'=>"Duree",'f.fk_statut'=>'Statut','f.description'=>"Text",
-		//	'f.datee'=>"Date",'f.dateo'=>"Date",'f.fulldayevent'=>"Boolean",'fd.date'=>"Date",'fd.duree'=>"Duree",'fd.description'=>"Text",
-		//	'fd.total_ht'=>"Numeric"
-		//);
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>"Numeric", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text',
 			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.datec'=>"Date",
-			'f.duree'=>"Duree", 'f.fk_statut'=>'Numeric', 'f.description'=>"Text", 'f.datee'=>"Date", 'f.dateo'=>"Date", 'f.fulldayevent'=>"Boolean",
+			'f.duree'=>"Duree", 'f.fk_statut'=>'Numeric', 'f.description'=>"Text", 'f.datee'=>"Date", 'f.dateo'=>"Date", 'f.fulldayevent'=>"Text",
 			'pj.ref'=>'Text', 'pj.title'=>'Text',
 			'fd.rowid'=>"Numeric", 'fd.date'=>"Date", 'fd.duree'=>"Duree", 'fd.description'=>"Text", 'fd.total_ht'=>"Numeric"
 		);
@@ -195,7 +195,9 @@ class modFicheinter extends DolibarrModules
 			'fd.duree'=>'inter_line', 'fd.description'=>'inter_line'
 		);
 		$this->export_dependencies_array[$r] = array('inter_line'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		$keyforselect = 'fichinterdet'; $keyforelement = 'inter_line'; $keyforaliasextra = 'extradet';
+		$keyforselect = 'fichinterdet';
+		$keyforelement = 'inter_line';
+		$keyforaliasextra = 'extradet';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -216,7 +218,6 @@ class modFicheinter extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-<<<<<<< HEAD
      *  @param      string	$options        Options when enabling module ('', 'noboxes')
      *  @param      int     $force_entity	Force current entity
      *  @return     int             	    1 if OK, 0 if KO
@@ -224,21 +225,13 @@ class modFicheinter extends DolibarrModules
     public function init($options = '', $force_entity = null)
     {
         global $conf;
-=======
-	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
-	 */
-	public function init($options = '')
-	{
-		global $conf;
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 
 		// Permissions
 		$this->remove($options);
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'ficheinter' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','ficheinter',".$conf->entity.")",
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'ficheinter' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','ficheinter',".((int) $conf->entity).")",
 		);
 
 		return $this->_init($sql, $options);

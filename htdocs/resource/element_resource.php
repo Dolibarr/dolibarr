@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +46,9 @@ $sortfield                      = GETPOST('sortfield','alpha');
 $page                           = GETPOST('page','int');
 */
 
-if (!$user->rights->resource->read)
+if (!$user->rights->resource->read) {
 		accessforbidden();
+}
 
 $object = new Dolresource($db);
 
@@ -69,12 +71,24 @@ $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
 $socid                  = GETPOST('socid', 'int');
 
-if ($socid > 0) // Special for thirdparty
-{
+if ($socid > 0) { // Special for thirdparty
 	$element_id = $socid;
 	$element = 'societe';
 }
 
+// Permission is not permission on resources. We just make link here on objects.
+if ($element == 'action') {
+	$result = restrictedArea($user, 'agenda', $element_id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+}
+if ($element == 'fichinter') {
+	$result = restrictedArea($user, 'ficheinter', $element_id, 'fichinter');
+}
+if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUCTS or RESOURCE_ON_SERVICES is set
+	$tmpobject = new Product($db);
+	$tmpobject->fetch($element_id);
+	$fieldtype = $tmpobject->type;
+	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', $fieldtype);
+}
 
 
 /*
@@ -83,17 +97,16 @@ if ($socid > 0) // Special for thirdparty
 
 $parameters = array('resource_id' => $resource_id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	$error = 0;
 
-	if ($action == 'add_element_resource' && !$cancel)
-	{
+	if ($action == 'add_element_resource' && !$cancel) {
 		$res = 0;
-		if (!($resource_id > 0))
-		{
+		if (!($resource_id > 0)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Resource")), null, 'errors');
 			$action = '';
@@ -106,7 +119,7 @@ if (empty($reshook))
 			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
-				$isFullDayEvent = intval($objstat->fulldayevent);
+				$isFullDayEvent = $objstat->fulldayevent;
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -119,7 +132,7 @@ if (empty($reshook))
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($resource_type)."'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($objstat->element)."'";
-				$sql .= " WHERE er.resource_id = ".$resource_id;
+				$sql .= " WHERE er.resource_id = ".((int) $resource_id);
 				$sql .= " AND er.busy = 1";
 				$sql .= " AND (";
 
@@ -162,30 +175,26 @@ if (empty($reshook))
 			}
 		}
 
-		if (!$error && $res > 0)
-		{
+		if (!$error && $res > 0) {
 			setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
 			exit;
-		} elseif ($objstat)
-		{
+		} elseif ($objstat) {
 			setEventMessages($objstat->error, $objstat->errors, 'errors');
 		}
 	}
 
 	// Update ressource
-	if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha'))
-	{
+	if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha')) {
 		$res = $object->fetch_element_resource($lineid);
-		if ($res)
-		{
+		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
 			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;
 				$eventDateEnd   = $object->objelement->datef;
-				$isFullDayEvent = intval($objstat->fulldayevent);
+				$isFullDayEvent = $objstat->fulldayevent;
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -198,8 +207,8 @@ if (empty($reshook))
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($object->resource_type)."'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element_type)."'";
-				$sql .= " WHERE er.resource_id = ".$object->resource_id;
-				$sql .= " AND ac.id != ".$object->element_id;
+				$sql .= " WHERE er.resource_id = ".((int) $object->resource_id);
+				$sql .= " AND ac.id <> ".((int) $object->element_id);
 				$sql .= " AND er.busy = 1";
 				$sql .= " AND (";
 
@@ -239,7 +248,9 @@ if (empty($reshook))
 
 			if (!$error) {
 				$result = $object->update_element_resource($user);
-				if ($result < 0)    $error++;
+				if ($result < 0) {
+					$error++;
+				}
 			}
 
 			if ($error) {
@@ -253,12 +264,10 @@ if (empty($reshook))
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes')
-	{
+	if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes') {
 		$result = $object->delete_resource($lineid, $element);
 
-		if ($result >= 0)
-		{
+		if ($result >= 0) {
 			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
 			exit;
@@ -270,7 +279,9 @@ if (empty($reshook))
 
 $parameters = array('resource_id'=>$resource_id);
 $reshook = $hookmanager->executeHooks('getElementResources', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 
 
@@ -283,6 +294,8 @@ $form = new Form($db);
 $pagetitle = $langs->trans('ResourceElementPage');
 llxHeader('', $pagetitle, '');
 
+$now = dol_now();
+$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 // Load available resource, declared by modules
 $ret = count($object->available_resources);
@@ -294,37 +307,34 @@ if (!$ret) {
 	print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
 } else {
 	// Confirmation suppression resource line
-	if ($action == 'delete_resource')
-	{
+	if ($action == 'delete_resource') {
 		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResourceElement"), "confirm_delete_linked_resource", '', '', 1);
 	}
 
 
 	// Specific to agenda module
-	if (($element_id || $element_ref) && $element == 'action')
-	{
+	if (($element_id || $element_ref) && $element == 'action') {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 		$act = fetchObjectByElement($element_id, $element, $element_ref);
-		if (is_object($act))
-		{
+		if (is_object($act)) {
 			$head = actions_prepare_head($act);
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
+			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list">'.$langs->trans("BackToList").'</a>';
 
 			// Link to other agenda views
 			$out = '';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
 			$linkback .= $out;
 
@@ -332,18 +342,17 @@ if (!$ret) {
 			// Thirdparty
 			//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled))
-			{
+			if (!empty($conf->projet->enabled)) {
 				$langs->load("projects");
 				//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 				$morehtmlref .= $langs->trans('Project').': ';
 				if (!empty($act->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($act->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$act->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
-					if ($proj->title) $morehtmlref .= ' - '.$proj->title;
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -359,54 +368,67 @@ if (!$ret) {
 			print '<table class="border tableforfield" width="100%">';
 
 			// Type
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
-			{
-				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
+				print $act->getTypePicto();
+				print $langs->trans("Action".$act->type_code);
+				print '</td></tr>';
 			}
 
 			// Full day event
-			print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent, 3).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-			if (!$act->fulldayevent) print dol_print_date($act->datep, 'dayhour');
-			else print dol_print_date($act->datep, 'day');
-			if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
+			if (empty($act->fulldayevent)) {
+				print dol_print_date($act->datep, 'dayhour', 'tzuser');
+			} else {
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				print dol_print_date($act->datep, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
+			}
+			if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) {
+				print img_warning($langs->trans("Late"));
+			}
 			print '</td>';
 			print '</tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-			if (!$act->fulldayevent) print dol_print_date($act->datef, 'dayhour');
-			else print dol_print_date($act->datef, 'day');
-			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
+			if (empty($act->fulldayevent)) {
+				print dol_print_date($act->datef, 'dayhour', 'tzuser');
+			} else {
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				print dol_print_date($act->datef, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
+			}
+			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now - $delay_warning)) {
+				print img_warning($langs->trans("Late"));
+			}
 			print '</td></tr>';
 
 			// Location
-			if (empty($conf->global->AGENDA_DISABLE_LOCATION))
-			{
+			if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
 				print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
 			}
 
 			// Assigned to
 			print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 			$listofuserid = array();
-			if (empty($donotclearsession))
-			{
-				if ($act->userownerid > 0) $listofuserid[$act->userownerid] = array('id'=>$act->userownerid, 'transparency'=>$act->transparency); // Owner first
-				if (!empty($act->userassigned))	// Now concat assigned users
-				{
+			if (empty($donotclearsession)) {
+				if ($act->userownerid > 0) {
+					$listofuserid[$act->userownerid] = array('id'=>$act->userownerid, 'transparency'=>$act->transparency); // Owner first
+				}
+				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
 					$tmplist1 = $act->userassigned; $tmplist2 = array();
-					foreach ($tmplist1 as $key => $val)
-					{
-						if ($val['id'] && $val['id'] != $act->userownerid) $listofuserid[$val['id']] = $val;
+					foreach ($tmplist1 as $key => $val) {
+						if ($val['id'] && $val['id'] != $act->userownerid) {
+							$listofuserid[$val['id']] = $val;
+						}
 					}
 				}
 				$_SESSION['assignedtouser'] = json_encode($listofuserid);
 			} else {
-				if (!empty($_SESSION['assignedtouser']))
-				{
+				if (!empty($_SESSION['assignedtouser'])) {
 					$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 				}
 			}
@@ -432,8 +454,7 @@ if (!$ret) {
 	}
 
 	// Specific to thirdparty module
-	if (($element_id || $element_ref) && $element == 'societe')
-	{
+	if (($element_id || $element_ref) && $element == 'societe') {
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
 			$savobject = $object;
@@ -467,16 +488,14 @@ if (!$ret) {
 	}
 
 	// Specific to fichinter module
-	if (($element_id || $element_ref) && $element == 'fichinter')
-	{
+	if (($element_id || $element_ref) && $element == 'fichinter') {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
 		$fichinter = new Fichinter($db);
 		$fichinter->fetch($element_id, $element_ref);
 		$fichinter->fetch_thirdparty();
 
-		if (is_object($fichinter))
-		{
+		if (is_object($fichinter)) {
 			$head = fichinter_prepare_head($fichinter);
 			print dol_get_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
@@ -491,15 +510,14 @@ if (!$ret) {
 			// Thirdparty
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$fichinter->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled))
-			{
+			if (!empty($conf->projet->enabled)) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-				if ($user->rights->commande->creer)
-				{
-					if ($action != 'classify')
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				if ($user->rights->commande->creer) {
+					if ($action != 'classify') {
+						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 						$morehtmlref .= ' : ';
+					}
 					if ($action == 'classify') {
 						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $fichinter->id, $fichinter->socid, $fichinter->fk_project, 'projectid', 0, 0, 1, 1);
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$fichinter->id.'">';
@@ -515,9 +533,10 @@ if (!$ret) {
 					if (!empty($fichinter->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($fichinter->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$fichinter->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}
@@ -532,15 +551,13 @@ if (!$ret) {
 	}
 
 	// Specific to product/service module
-	if (($element_id || $element_ref) && ($element == 'product' || $element == 'service'))
-	{
+	if (($element_id || $element_ref) && ($element == 'product' || $element == 'service')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$product = new Product($db);
 		$product->fetch($element_id, $element_ref);
 
-		if (is_object($product))
-		{
+		if (is_object($product)) {
 			$head = product_prepare_head($product);
 			$titre = $langs->trans("CardProduct".$product->type);
 			$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -548,7 +565,9 @@ if (!$ret) {
 			print dol_get_fiche_head($head, 'resources', $titre, -1, $picto);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+				$shownav = 0;
+			}
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
 
 			print dol_get_fiche_end();
@@ -559,7 +578,9 @@ if (!$ret) {
 	// hook for other elements linked
 	$parameters = array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
 	$reshook = $hookmanager->executeHooks('printElementTab', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 
 
 	//print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
@@ -567,18 +588,17 @@ if (!$ret) {
 
 	// Show list of resource links
 
-	foreach ($object->available_resources as $modresources => $resources)
-	{
+	foreach ($object->available_resources as $modresources => $resources) {
 		$resources = (array) $resources; // To be sure $resources is an array
-		foreach ($resources as $resource_obj)
-		{
+		foreach ($resources as $resource_obj) {
 			$element_prop = getElementProperties($resource_obj);
 
 			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br>';
 
 			$path = '';
-			if (strpos($resource_obj, '@'))
+			if (strpos($resource_obj, '@')) {
 				$path .= '/'.$element_prop['module'];
+			}
 
 			$linked_resources = $object->getElementResources($element, $element_id, $resource_obj);
 
@@ -586,10 +606,8 @@ if (!$ret) {
 			$defaulttpldir = '/core/tpl';
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir), array($path.$defaulttpldir));
 
-			foreach ($dirtpls as $module => $reldir)
-			{
-				if (file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php')))
-				{
+			foreach ($dirtpls as $module => $reldir) {
+				if (file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php'))) {
 					$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php');
 				} else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_add.tpl.php';
@@ -599,15 +617,14 @@ if (!$ret) {
 				} else {
 					$res = include $tpl; // for debug
 				}
-				if ($res) break;
+				if ($res) {
+					break;
+				}
 			}
 
-			if ($mode != 'add' || $resource_obj != $resource_type)
-			{
-				foreach ($dirtpls as $module => $reldir)
-				{
-					if (file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php')))
-					{
+			if ($mode != 'add' || $resource_obj != $resource_type) {
+				foreach ($dirtpls as $module => $reldir) {
+					if (file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php'))) {
 						$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php');
 					} else {
 						$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_view.tpl.php';
@@ -617,7 +634,9 @@ if (!$ret) {
 					} else {
 						$res = include $tpl; // for debug
 					}
-					if ($res) break;
+					if ($res) {
+						break;
+					}
 				}
 			}
 		}

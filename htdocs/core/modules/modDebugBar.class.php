@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modDebugBar.class.php
  *  \ingroup    debugbar
- *  \brief      Description and activation file for module debugbar
+ *  \brief     Description and activation file for the module debugbar
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -79,7 +79,7 @@ class modDebugBar extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 
-		$this->rights[1][0] = 430; // id de la permission
+		$this->rights[1][0] = 431; // id de la permission
 		$this->rights[1][1] = 'Use Debug Bar'; // libelle de la permission
 		$this->rights[1][2] = 'u'; // type de la permission (deprecie a ce jour)
 		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
@@ -87,7 +87,6 @@ class modDebugBar extends DolibarrModules
 	}
 
 
-<<<<<<< HEAD
     /**
      *      Function called when module is enabled.
      *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
@@ -101,20 +100,6 @@ class modDebugBar extends DolibarrModules
     {
         // Permissions
         $this->remove($options);
-=======
-	/**
-	 *      Function called when module is enabled.
-	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *      It also creates data directories.
-	 *
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	public function init($options = '')
-	{
-		// Permissions
-		$this->remove($options);
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
 
 		$sql = array(
 		);
