@@ -240,6 +240,46 @@ if ($action == "setaddemailphonetownincontactlist") {
 	}
 }
 
+// Disable Parent company
+if ($action == "setdisableParentCompagny") {
+	$val = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_DISABLE_PARENTCOMPANY", $val, 'yesno', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	} else {
+		$res = dolibarr_set_const($db, "SOCIETE_DISABLE_SUBSIDIARIES", $val, 'yesno', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+// Disable Parent contact
+if ($action == "setdisableParentContact") {
+	$val = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_DISABLE_PARENTCONTACT", $val, 'yesno', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	} else {
+		$res = dolibarr_set_const($db, "SOCIETE_DISABLE_CONTACT_CHILDS", $val, 'yesno', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Ask For Preferred Shipping Method
 if ($action == "setaskforshippingmet") {
 	$setaskforshippingmet = GETPOST('value', 'int');
@@ -859,6 +899,34 @@ if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("DisableParentCompagny").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if (!empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableParentCompagny&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableParentCompagny&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("DisableParentContact").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if (!empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT)) {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableParentContact&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableParentContact&token='.newToken().'&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';

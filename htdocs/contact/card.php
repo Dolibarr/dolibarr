@@ -58,6 +58,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
+$parent = GETPOST("parent", 'int');
 
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
@@ -225,6 +226,7 @@ if (empty($reshook)) {
 		$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 		$object->fax = (string) GETPOST("fax", 'alpha');
 		$object->priv = GETPOST("priv", 'int');
+		$object->parent = GETPOST("parent", 'int');
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
@@ -431,6 +433,7 @@ if (empty($reshook)) {
 			$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 			$object->fax = (string) GETPOST("fax", 'alpha');
 			$object->priv = (string) GETPOST("priv", 'int');
+			$object->parent = (string) GETPOST("parent", 'int');
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
@@ -848,6 +851,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ?GETPOST("priv", 'alpha') : $object->priv), 0);
 			print '</td></tr>';
 
+			// parent user
+			$nbcchilds = count($object->childs_array_objects());
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
+				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
+				print img_picto('', 'object_contact');
+				print $form->selectcontacts(0, $parent, 'parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
+				print '</td></tr>';
+			}
+
 			// Categories
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td><td colspan="3">';
@@ -1127,6 +1139,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->selectarray('priv', $selectarray, $object->priv, 0);
 			print '</td></tr>';
 
+			// parent user
+			$nbcchilds = count($object->childs_array_objects());
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
+				$parent = $object->parent;
+				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
+				print img_picto('', 'object_contact');
+				print $form->selectcontacts(0, $parent, 'parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
+				print '</td></tr>';
+			}
+
 			// Note Public
 			print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
 			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
@@ -1343,6 +1365,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print $object->LibPubPriv($object->priv);
 		print '</td></tr>';
 
+		// parent user
+		$nbcchilds = count($object->childs_array_objects());
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
+			print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
+			if ($object->parent > 0) {
+				$objparent = new Contact($db);
+				$objparent->fetch($object->parent);
+				print $objparent->getNomUrl(1);
+			}
+			print '</td></tr>';
+		}
+
 		print '</table>';
 		print '</div>';
 
@@ -1522,6 +1556,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
+			// Childs list
+			if (empty($conf->global->SOCIETE_DISABLE_CONTACT_CHILDS)) {
+				$result = show_childs($conf, $langs, $db, $object);
+			}
+
 
 			print '</div><div class="fichehalfright">';
 

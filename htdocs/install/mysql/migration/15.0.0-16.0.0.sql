@@ -238,3 +238,4 @@ ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
 
 
+ALTER TABLE llx_socpeople ADD COLUMN parent integer DEFAULT 0 NOT NULL AFTER fk_stcommcontact;

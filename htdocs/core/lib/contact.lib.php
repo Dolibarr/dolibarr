@@ -279,3 +279,85 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 	return $i;
 }
+
+/**
+ * 		Show html area for list of childs
+ *
+ *		@param	Conf		$conf		Object conf
+ * 		@param	Translate	$langs		Object langs
+ * 		@param	DoliDB		$db			Database handler
+ * 		@param	Societe		$object		Third party object
+ * 		@return	int
+ */
+function show_childs($conf, $langs, $db, $object)
+{
+	global $user;
+
+	$i = -1;
+
+	$sql = "SELECT c.rowid, c.lastname, c.firstname, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.address, c.zip, c.town";
+	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+	$sql .= " WHERE c.parent = ".((int) $object->id);
+	$sql .= " ORDER BY c.lastname";
+
+	$result = $db->query($sql);
+	$num = $db->num_rows($result);
+
+	if ($num) {
+		$childstatic = new Contact($db);
+
+		print load_fiche_titre($langs->trans("ChildsContacts"), '', '');
+
+		print "\n".'<div class="div-table-responsive-no-min">'."\n";
+		print '<table class="noborder centpercent">'."\n";
+
+		print '<tr class="liste_titre"><td>'.$langs->trans("Contact").'</td>';
+		print '<td>'.$langs->trans("Mail").'</td><td>'.$langs->trans("Phone").'</td>';
+		print '<td>'.$langs->trans("Mobile").'</td>';
+		print "<td>&nbsp;</td>";
+		print "</tr>";
+
+		$i = 0;
+
+		while ($i < $num) {
+			$obj = $db->fetch_object($result);
+
+			$childstatic->id = $obj->rowid;
+			$childstatic->lastname = $obj->lastname;
+			$childstatic->firstname = $obj->firstname;
+			$childstatic->phone = $obj->phone;
+			$childstatic->phone_perso = $obj->phone_perso;
+			$childstatic->phone_mobile = $obj->phone_mobile;
+			$childstatic->fax = $obj->fax;
+			$childstatic->email = $obj->email;
+			$childstatic->address = $obj->address;
+			$childstatic->zip = $obj->zip;
+			$childstatic->town = $obj->town;
+
+
+			print '<tr class="oddeven">';
+
+			print '<td class="tdoverflowmax150">';
+			print $childstatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->phone).'">'.dol_print_phone($obj->phone, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->phone_mobile).'">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+
+			print '<td class="center">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/contact/card.php?id='.((int) $obj->rowid).'&action=edit&token='.newToken().'">';
+			print img_edit();
+			print '</a></td>';
+
+			print "</tr>\n";
+			$i++;
+		}
+		print "\n</table>\n";
+		print '</div>'."\n";
+	}
+
+	print "<br>\n";
+
+	return $i;
+}
