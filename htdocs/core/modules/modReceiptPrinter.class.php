@@ -122,21 +122,21 @@ class modReceiptPrinter extends DolibarrModules
 	}
 
 
-    /**
-     *      Function called when module is enabled.
-     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *      It also creates data directories
-     *
-     *      @param      string  $options        Options when enabling module ('', 'noboxes')
-     *      @param      int     $force_entity	Force current entity
-     *      @return     int                     1 if OK, 0 if KO
-     */
-    public function init($options = '', $force_entity = null)
-    {
-        global $conf, $langs;
+	/**
+	 *      Function called when module is enabled.
+	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *      It also creates data directories
+	 *
+	 *      @param      string  $options        Options when enabling module ('', 'noboxes')
+	 *      @param      int     $force_entity	Force current entity
+	 *      @return     int                     1 if OK, 0 if KO
+	 */
+	public function init($options = '', $force_entity = null)
+	{
+		global $conf, $langs;
 
-        // Clean before activation
-        $this->remove($options);
+		// Clean before activation
+		$this->remove($options);
 
 		$templateexample = '{dol_align_center}\r\n{dol_print_text}{dol_value_mysoc_name}\r\n{dol_print_text}{dol_value_mysoc_address}\r\n{dol_print_text}{dol_value_mysoc_zip}{dol_value_mysoc_town}\r\n{dol_line_feed}\r\n{dol_print_text}Facture {dol_value_object_ref}\r\n{dol_line_feed}\r\n{dol_align_left}\r\n{dol_print_object_lines}\r\n{dol_line_feed}\r\n{dol_print_object_tax}\r\n{dol_line_feed}\r\n{dol_print_object_total}\r\n{dol_line_feed}\r\n{dol_cut_paper_full}';
 		$sql = array(

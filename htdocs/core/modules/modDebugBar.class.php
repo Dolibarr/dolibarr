@@ -87,19 +87,19 @@ class modDebugBar extends DolibarrModules
 	}
 
 
-    /**
-     *      Function called when module is enabled.
-     *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *      It also creates data directories.
-     *
-     *      @param      string	$options        Options when enabling module ('', 'noboxes')
-     *      @param      int     $force_entity   Force current entity
-     *      @return     int             	    1 if OK, 0 if KO
-     */
-    public function init($options = '', $force_entity = null)
-    {
-        // Permissions
-        $this->remove($options);
+	/**
+	 *      Function called when module is enabled.
+	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *      It also creates data directories.
+	 *
+	 *      @param      string	$options        Options when enabling module ('', 'noboxes')
+	 *      @param      int     $force_entity   Force current entity
+	 *      @return     int             	    1 if OK, 0 if KO
+	 */
+	public function init($options = '', $force_entity = null)
+	{
+		// Permissions
+		$this->remove($options);
 
 		$sql = array(
 		);

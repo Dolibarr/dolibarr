@@ -389,50 +389,50 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$this->db->begin();
 
-        // Insert activation module constant
-        if (!$err) {
-        	$err += $this->_active($force_entity);
-        }
+		// Insert activation module constant
+		if (!$err) {
+			$err += $this->_active($force_entity);
+		}
 
-        // Insert new pages for tabs (into llx_const)
-        if (!$err) {
-        	$err += $this->insert_tabs($force_entity);
-        }
+		// Insert new pages for tabs (into llx_const)
+		if (!$err) {
+			$err += $this->insert_tabs($force_entity);
+		}
 
-        // Insert activation of module's parts
-        if (!$err) {
-        	$err += $this->insert_module_parts($force_entity);
-        }
+		// Insert activation of module's parts
+		if (!$err) {
+			$err += $this->insert_module_parts($force_entity);
+		}
 
-        // Insert constant defined by modules (into llx_const)
-        if (!$err && !preg_match('/newboxdefonly/', $options)) {
-        	$err += $this->insert_const($force_entity); // Test on newboxdefonly to avoid to erase value during upgrade
-        }
+		// Insert constant defined by modules (into llx_const)
+		if (!$err && !preg_match('/newboxdefonly/', $options)) {
+			$err += $this->insert_const($force_entity); // Test on newboxdefonly to avoid to erase value during upgrade
+		}
 
 		// Insert boxes def (into llx_boxes_def) and boxes setup (into llx_boxes)
 		if (!$err && !preg_match('/noboxes/', $options)) {
 			$err += $this->insert_boxes($options, $force_entity);
 		}
 
-        // Insert cron job entries (entry in llx_cronjobs)
-        if (!$err) {
-        	$err += $this->insert_cronjobs($force_entity);
-        }
+		// Insert cron job entries (entry in llx_cronjobs)
+		if (!$err) {
+			$err += $this->insert_cronjobs($force_entity);
+		}
 
-        // Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
-        if (!$err) {
-        	$err += $this->insert_permissions(1, $force_entity, 1);
-        }
+		// Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
+		if (!$err) {
+			$err += $this->insert_permissions(1, $force_entity, 1);
+		}
 
-        // Insert specific menus entries into database
-        if (!$err) {
-        	$err += $this->insert_menus($force_entity);
-        }
+		// Insert specific menus entries into database
+		if (!$err) {
+			$err += $this->insert_menus($force_entity);
+		}
 
-        // Create module's directories
-        if (!$err) {
-        	$err += $this->create_dirs($force_entity);
-        }
+		// Create module's directories
+		if (!$err) {
+			$err += $this->create_dirs($force_entity);
+		}
 
 		// Execute addons requests
 		$num = count($array_sql);
@@ -974,21 +974,21 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Insert constants for module activation
-     *
-     * @param  int $force_entity     Force current entity
-     * @return int Error count (0 if OK)
-     */
-    protected function _active($force_entity = null)
-    {
+	/**
+	 * Insert constants for module activation
+	 *
+	 * @param  int $force_entity     Force current entity
+	 * @return int Error count (0 if OK)
+	 */
+	protected function _active($force_entity = null)
+	{
         // phpcs:enable
-        global $conf, $user;
+		global $conf, $user;
 
 		$err = 0;
 
-        // Common module
-        $entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : (! empty($force_entity) ? (int) $force_entity : $conf->entity));
+		// Common module
+		$entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : (! empty($force_entity) ? (int) $force_entity : $conf->entity));
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
@@ -1206,18 +1206,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Adds boxes
-     *
-     * @param string $option Options when disabling module ('newboxdefonly'=insert only boxes definition)
-     *
-     * @param  int $force_entity     Force current entity
-     * @return int             Error count (0 if OK)
-     */
-    public function insert_boxes($option = '', $force_entity = null)
-    {
+	/**
+	 * Adds boxes
+	 *
+	 * @param string $option Options when disabling module ('newboxdefonly'=insert only boxes definition)
+	 *
+	 * @param  int $force_entity     Force current entity
+	 * @return int             Error count (0 if OK)
+	 */
+	public function insert_boxes($option = '', $force_entity = null)
+	{
         // phpcs:enable
-        include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
 		global $conf;
 
@@ -1255,12 +1255,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					if ($obj->nb == 0) {
 						$this->db->begin();
 
-                        if (!$err) {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, entity, note)";
-                            $sql .= " VALUES ('".$this->db->escape($file)."', ";
-                            $sql .= $entity.", ";
-                            $sql .= $note ? "'".$this->db->escape($note)."'" : "null";
-                            $sql .= ")";
+						if (!$err) {
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, entity, note)";
+							$sql .= " VALUES ('".$this->db->escape($file)."', ";
+							$sql .= $entity.", ";
+							$sql .= $note ? "'".$this->db->escape($note)."'" : "null";
+							$sql .= ")";
 
 							dol_syslog(get_class($this)."::insert_boxes", LOG_DEBUG);
 							$resql = $this->db->query($sql);
@@ -1382,16 +1382,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Adds cronjobs
-     *
-     * @param  int $force_entity     Force current entity
-     * @return int             Error count (0 if OK)
-     */
-    public function insert_cronjobs($force_entity = null)
-    {
+	/**
+	 * Adds cronjobs
+	 *
+	 * @param  int $force_entity     Force current entity
+	 * @return int             Error count (0 if OK)
+	 */
+	public function insert_cronjobs($force_entity = null)
+	{
         // phpcs:enable
-        include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
 		global $conf;
 
@@ -1402,10 +1402,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 			foreach ($this->cronjobs as $key => $value) {
 				if (! empty($force_entity)) {
-            		$entity = (isset($this->cronjobs[$key]['entity']) && $this->cronjobs[$key]['entity'] == 0 ? $this->cronjobs[$key]['entity'] : $force_entity);
-            	} else {
-            		$entity = isset($this->cronjobs[$key]['entity']) ? $this->cronjobs[$key]['entity'] : $conf->entity;
-            	}
+					$entity = (isset($this->cronjobs[$key]['entity']) && $this->cronjobs[$key]['entity'] == 0 ? $this->cronjobs[$key]['entity'] : $force_entity);
+				} else {
+					$entity = isset($this->cronjobs[$key]['entity']) ? $this->cronjobs[$key]['entity'] : $conf->entity;
+				}
 				$label  = isset($this->cronjobs[$key]['label']) ? $this->cronjobs[$key]['label'] : '';
 				$jobtype = isset($this->cronjobs[$key]['jobtype']) ? $this->cronjobs[$key]['jobtype'] : '';
 				$class  = isset($this->cronjobs[$key]['class']) ? $this->cronjobs[$key]['class'] : '';
@@ -1574,16 +1574,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Adds tabs
-     *
-     * @param  int $force_entity     Force current entity
-     * @return int  Error count (0 if ok)
-     */
-    public function insert_tabs($force_entity = null)
-    {
+	/**
+	 * Adds tabs
+	 *
+	 * @param  int $force_entity     Force current entity
+	 * @return int  Error count (0 if ok)
+	 */
+	public function insert_tabs($force_entity = null)
+	{
         // phpcs:enable
-        global $conf;
+		global $conf;
 
 		$err = 0;
 
@@ -1596,8 +1596,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					continue; // Discard empty arrays
 				}
 
-                $entity = (! empty($force_entity) ? $force_entity : $conf->entity);
-                $newvalue = $value;
+				$entity = (! empty($force_entity) ? $force_entity : $conf->entity);
+				$newvalue = $value;
 
 				if (is_array($value)) {
 					$newvalue = $value['data'];
@@ -1642,16 +1642,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Adds constants
-     *
-     * @param  int $force_entity     Force current entity
-     * @return int Error count (0 if OK)
-     */
-    public function insert_const($force_entity = null)
-    {
+	/**
+	 * Adds constants
+	 *
+	 * @param  int $force_entity     Force current entity
+	 * @return int Error count (0 if OK)
+	 */
+	public function insert_const($force_entity = null)
+	{
         // phpcs:enable
-        global $conf;
+		global $conf;
 
 		$err = 0;
 
@@ -1911,16 +1911,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Adds menu entries
-     *
-     * @param  int $force_entity     Force current entity
-     * @return int     Error count (0 if OK)
-     */
-    public function insert_menus($force_entity = null)
-    {
+	/**
+	 * Adds menu entries
+	 *
+	 * @param  int $force_entity     Force current entity
+	 * @return int     Error count (0 if OK)
+	 */
+	public function insert_menus($force_entity = null)
+	{
         // phpcs:enable
-        global $user;
+		global $user;
 
 		if (!is_array($this->menu) || empty($this->menu)) {
 			return 0;
@@ -1938,8 +1938,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu = new Menubase($this->db);
 			$menu->menu_handler = 'all';
 
-            //$menu->module=strtolower($this->name);    TODO When right_class will be same than module name
-            $menu->module = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
+			//$menu->module=strtolower($this->name);    TODO When right_class will be same than module name
+			$menu->module = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 
 			if (!$this->menu[$key]['fk_menu']) {
 				$menu->fk_menu = 0;
@@ -1983,8 +1983,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->enabled = isset($this->menu[$key]['enabled']) ? $this->menu[$key]['enabled'] : 0;
 			$menu->position = $this->menu[$key]['position'];
 			if (! empty($force_entity)) {
-            	$menu->entity = (int) $force_entity;
-            }
+				$menu->entity = (int) $force_entity;
+			}
 
 			if (!$err) {
 				$result = $menu->create($user); // Save menu entry into table llx_menu
@@ -2041,16 +2041,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Creates directories
-     *
-     * @param  int $force_entity     Force current entity
-     * @return int Error count (0 if OK)
-     */
-    public function create_dirs($force_entity = null)
-    {
+	/**
+	 * Creates directories
+	 *
+	 * @param  int $force_entity     Force current entity
+	 * @return int Error count (0 if OK)
+	 */
+	public function create_dirs($force_entity = null)
+	{
         // phpcs:enable
-        global $langs, $conf;
+		global $langs, $conf;
 
 		$err = 0;
 
@@ -2107,26 +2107,26 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Adds directories definitions
-     *
-     * @param string	$name			Name
-     * @param string	$dir			Directory
-     * @param int		$force_entity	Force current entity
-     *
-     * @return int             Error count (0 if OK)
-     */
-    public function insert_dirs($name, $dir, $force_entity = null)
-    {
+	/**
+	 * Adds directories definitions
+	 *
+	 * @param string	$name			Name
+	 * @param string	$dir			Directory
+	 * @param int		$force_entity	Force current entity
+	 *
+	 * @return int             Error count (0 if OK)
+	 */
+	public function insert_dirs($name, $dir, $force_entity = null)
+	{
         // phpcs:enable
-        global $conf;
+		global $conf;
 
 		$err = 0;
 
-        $sql = "SELECT count(*)";
-        $sql .= " FROM ".MAIN_DB_PREFIX."const";
-        $sql .= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
-        $sql .= " AND entity = ".(! empty($force_entity) ? (int) $force_entity : $conf->entity);
+		$sql = "SELECT count(*)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."const";
+		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
+		$sql .= " AND entity = ".(! empty($force_entity) ? (int) $force_entity : $conf->entity);
 
 		dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -2176,16 +2176,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Adds generic parts
-     *
-     * @param int $force_entity	Force current entity
-     * @return int Error count (0 if OK)
-     */
-    public function insert_module_parts($force_entity = null)
-    {
+	/**
+	 * Adds generic parts
+	 *
+	 * @param int $force_entity	Force current entity
+	 * @return int Error count (0 if OK)
+	 */
+	public function insert_module_parts($force_entity = null)
+	{
         // phpcs:enable
-        global $conf;
+		global $conf;
 
 		$error = 0;
 
@@ -2195,8 +2195,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					continue; // Discard empty arrays
 				}
 
-                $entity = (! empty($force_entity) ? (int) $force_entity : $conf->entity); // Reset the current entity
-                $newvalue = $value;
+				$entity = (! empty($force_entity) ? (int) $force_entity : $conf->entity); // Reset the current entity
+				$newvalue = $value;
 
 				// Serialize array parameters
 				if (is_array($value)) {
