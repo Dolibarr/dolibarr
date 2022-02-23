@@ -7370,7 +7370,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	#divbodywebsite {
-		word-break: break-all;
+		word-break: break-word;
 	}
 
 	.websiteselectionsection {
