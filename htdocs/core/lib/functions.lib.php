@@ -9954,7 +9954,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
-		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
+		if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(
@@ -9965,6 +9965,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	if (empty($html)) {
 		$html = $label;
+		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
 		$attr['aria-label'] = $label;
 	}
