@@ -16,17 +16,17 @@
  */
 class Swift_AddressEncoderException extends Swift_RfcComplianceException
 {
-    protected $address;
+	protected $address;
 
-    public function __construct(string $message, string $address)
-    {
-        parent::__construct($message);
+	public function __construct(string $message, string $address)
+	{
+		parent::__construct($message);
 
-        $this->address = $address;
-    }
+		$this->address = $address;
+	}
 
-    public function getAddress(): string
-    {
-        return $this->address;
-    }
+	public function getAddress(): string
+	{
+		return $this->address;
+	}
 }
