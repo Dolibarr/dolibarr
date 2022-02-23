@@ -1949,7 +1949,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('CT-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_CREDITOR .= '				</PmtId>'.$CrLf;
 			if ($this->sepa_xml_pti_in_ctti) {
-				$XML_CREDITOR .= '			<PmtTpInf>' . $CrLf;
+				$XML_CREDITOR .= '				<PmtTpInf>' . $CrLf;
 
 				// Can be 'NORM' for normal or 'HIGH' for high priority level
 				if (!empty($conf->global->PAYMENTBYBANKTRANSFER_FORCE_HIGH_PRIORITY)) {
@@ -1957,14 +1957,14 @@ class BonPrelevement extends CommonObject
 				} else {
 					$instrprty = 'NORM';
 				}
-				$XML_CREDITOR .= '				<InstrPrty>'.$instrprty.'</InstrPrty>' . $CrLf;
-				$XML_CREDITOR .= '				<SvcLvl>' . $CrLf;
-				$XML_CREDITOR .= '					<Cd>SEPA</Cd>' . $CrLf;
-				$XML_CREDITOR .= '				</SvcLvl>' . $CrLf;
-				$XML_CREDITOR .= '				<CtgyPurp>' . $CrLf;
-				$XML_CREDITOR .= '					<Cd>CORE</Cd>' . $CrLf;
-				$XML_CREDITOR .= '				</CtgyPurp>' . $CrLf;
-				$XML_CREDITOR .= '			</PmtTpInf>' . $CrLf;
+				$XML_CREDITOR .= '					<InstrPrty>'.$instrprty.'</InstrPrty>' . $CrLf;
+				$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
+				$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
+				$XML_CREDITOR .= '					<CtgyPurp>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>CORE</Cd>' . $CrLf;
+				$XML_CREDITOR .= '					</CtgyPurp>' . $CrLf;
+				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 			}
 			$XML_CREDITOR .= '				<Amt>'.$CrLf;
 			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
