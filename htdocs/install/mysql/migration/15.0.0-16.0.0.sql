@@ -245,3 +245,5 @@ create table llx_inventory_extrafields
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 ALTER TABLE llx_inventory_extrafields ADD INDEX idx_inventory_extrafields (fk_object);
+
+ALTER TABLE llx_reception MODIFY COLUMN ref_supplier varchar(128);
