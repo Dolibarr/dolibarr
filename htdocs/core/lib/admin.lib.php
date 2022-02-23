@@ -335,7 +335,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 			// Add log of request
 			if (!$silent) {
-				print '<tr class="trforrunsql"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+				print '<tr class="trforrunsql'.md5($sqlfile).'"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
 			}
 			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
@@ -454,18 +454,18 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			function init_trrunsql()
+			function init_trrunsql'.md5($sqlfile).'()
 			{
-				console.log("toggle .trforrunsql");
-				jQuery(".trforrunsql").toggle();
+				console.log("toggle .trforrunsql'.md5($sqlfile).'");
+				jQuery(".trforrunsql'.md5($sqlfile).'").toggle();
 			}
-			init_trrunsql();
-			jQuery(".trforrunsqlshowhide").click(function() {
-				init_trrunsql();
+			init_trrunsql'.md5($sqlfile).'();
+			jQuery(".trforrunsqlshowhide'.md5($sqlfile).'").click(function() {
+				init_trrunsql'.md5($sqlfile).'();
 			});
 		});
 		</script>';
-		print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		print ' - <a class="trforrunsqlshowhide'.md5($sqlfile).'" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
 
 		print '</td></tr>'."\n";
