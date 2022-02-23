@@ -565,7 +565,7 @@ class Hook extends CommonObject
 		$hookmanager->initHooks(array('hookdao'));
 		$parameters = array(
 			'id' => $this->id,
-			'getnomurl' => $result,
+			'getnomurl' => &$result,
 		);
 		// Note that $action and $object may have been modified by some hooks
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);

@@ -1604,11 +1604,11 @@ while ($i < min($num, $limit)) {
 	}
 	// VAT
 	if (!empty($arrayfields['s.tva_intra']['checked'])) {
-		print "<td>";
-		print $obj->tva_intra;
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->tva_intra).'">';
 		if ($obj->tva_intra && !isValidVATID($companystatic)) {
-			print img_warning("BadVATNumber", '', '');
+			print img_warning("BadVATNumber", '', 'pictofixedwidth');
 		}
+		print $obj->tva_intra;
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;

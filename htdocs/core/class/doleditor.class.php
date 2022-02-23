@@ -287,6 +287,8 @@ class DolEditor
 			$out .= '">';
 			$out .= htmlspecialchars($this->content);
 			$out .= '</pre>';
+			$out .= '<input type="hidden" id="'.$this->htmlname.'_x" name="'.$this->htmlname.'_x">';
+			$out .= '<input type="hidden" id="'.$this->htmlname.'_y" name="'.$this->htmlname.'_y">';
 			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" style="width:0px; height: 0px; display: none;">';
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
@@ -315,11 +317,23 @@ class DolEditor
 			$out .= 'jQuery(document).ready(function() {
 						jQuery(".buttonforacesave").click(function() {
         					console.log("We click on savefile button for component '.$this->htmlname.'");
-        					var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid")
-        					console.log(aceEditor.getSession().getValue());
-							jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
-							/*if (jQuery("#'.$this->htmlname.'").html().length > 0) return true;
-							else return false;*/
+        					var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+							if (aceEditor) {
+								var cursorPos = aceEditor.getCursorPosition();
+								console.log(cursorPos);
+								if (cursorPos) {
+									jQuery("#'.$this->htmlname.'_x").val(cursorPos.row);
+									jQuery("#'.$this->htmlname.'_y").val(cursorPos.column);
+								}
+	        					//console.log(aceEditor.getSession().getValue());
+								// Inject content of editor into the original HTML field.
+								jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
+								/*if (jQuery("#'.$this->htmlname.'").html().length > 0) return true;
+								else return false;*/
+							} else {
+								console.log("Failed to retrieve js object ACE from its name");
+								return false;
+							}
 	        			});
 					})';
 			$out .= '</script>'."\n";

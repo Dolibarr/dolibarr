@@ -30,8 +30,17 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+// DDOS protection
+$size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
+if ($size > 10000) {
+	http_response_code(413);
+	$langs->loadLangs(array("errors", "install"));
+	accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 0, 0, 1);
+	exit;
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -85,7 +94,7 @@ if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disablenofollow = 0;
 }
 
-print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
+print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -316,6 +325,32 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 	echo '</div>';
 }
 
+if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication)) {
+	$langs->load("users");
+
+	global $dolibarr_main_url_root;
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	echo '<br>';
+	echo '<div class="center" style="margin-top: 4px;">';
+
+	//$shortscope = 'userinfo_email,userinfo_profile';
+	$shortscope = 'openid,email,profile';	// For openid connect
+
+	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+	$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
+	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
+
+	$url = $urltorenew;
+
+	print img_picto('', 'google', 'class="pictofixedwidth"').'<a class="alogin" href="'.$url.'">'.$langs->trans("LoginWith", "Google").'</a>';
+
+	echo '</div>';
+}
 
 ?>
 

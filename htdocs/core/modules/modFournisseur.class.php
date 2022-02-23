@@ -129,6 +129,25 @@ class modFournisseur extends DolibarrModules
 			6=>array('file'=>'box_supplier_orders_awaiting_reception.php', 'enabledbydefaulton'=>'Home'),
 		);
 
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label'=>'RecurringSupplierInvoices',
+				'jobtype'=>'method',
+				'class'=>'fourn/class/fournisseur.facture-rec.class.php',
+				'objectname'=>'FactureFournisseurRec',
+				'method'=>'createRecurringInvoices',
+				'parameters'=>'',
+				'comment'=>'Generate recurring supplier invoices',
+				'frequency'=>1,
+				'unitfrequency'=>3600 * 24,
+				'priority'=>50,
+				'status'=>1,
+				'datestart'=>$datestart
+			));
+
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'fournisseur';

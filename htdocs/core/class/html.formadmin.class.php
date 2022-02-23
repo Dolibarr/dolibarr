@@ -420,7 +420,7 @@ class FormAdmin
 		$langs->load("dict");
 
 		$sql = "SELECT code, label, width, height, unit";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_paper_format";
+		$sql .= " FROM ".$this->db->prefix()."c_paper_format";
 		$sql .= " WHERE active=1";
 		if ($filter) {
 			$sql .= " AND code LIKE '%".$this->db->escape($filter)."%'";

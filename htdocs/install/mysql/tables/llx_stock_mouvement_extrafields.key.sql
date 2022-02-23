@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2013 Florian Henry <florian.henry@open-concept.pro>
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,19 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Table to setup advanced targeting for emailing
 -- ============================================================================
 
-CREATE TABLE llx_advtargetemailing
-(
-  rowid integer NOT NULL auto_increment PRIMARY KEY,
-  name varchar(180) NOT NULL,
-  entity integer NOT NULL DEFAULT 1,
-  fk_element	integer NOT NULL,
-  type_element	varchar(180) NOT NULL,
-  filtervalue	text,
-  fk_user_author integer NOT NULL,
-  datec datetime NOT NULL,
-  fk_user_mod integer NOT NULL,
-  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-)ENGINE=innodb;
+
+ALTER TABLE llx_stock_mouvement_extrafields ADD INDEX idx_stock_mouvement_extrafields (fk_object);
