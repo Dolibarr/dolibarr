@@ -2447,12 +2447,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action == 'delete') {
 			$formquestion = array(
 				array(
-					'label' => $langs->trans('M456465645y'),
 					'value' => 'yes',
 				)
 			);
 
-			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteThirdParty'), $langs->trans('ConfirmDeleteCompany'), 'confirm_delete', '', 0, 2);
+			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteACompany'), $langs->trans('ConfirmDeleteCompany'), 'confirm_delete', '', 0, 2);
 		}
 
 
@@ -2933,9 +2932,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 
-				if ($user->rights->societe->creer) {
-					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
-				}
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 				if (!empty($conf->adherent->enabled)) {
 					$adh = new Adherent($db);
@@ -2945,10 +2942,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 
+				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete);
+
 				if ($user->rights->societe->supprimer) {
-					print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontoadd);
+					if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), 'action-delete', $permissiontodelete);
+					} else {
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete);
+					}
 				}
-				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->supprimer);
 			}
 
 			print '</div>'."\n";
