@@ -45,7 +45,7 @@ if ($mode == 'customer' && !$user->rights->commande->lire) {
 if ($mode == 'supplier' && !$user->rights->fournisseur->commande->lire) {
 	accessforbidden();
 }
-if($mode == 'supplier'){
+if ($mode == 'supplier') {
 	$object_status = GETPOST('object_status', 'array:int');
 	$object_status = implode(',', $object_status);
 } else {
