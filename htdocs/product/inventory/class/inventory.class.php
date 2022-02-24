@@ -101,7 +101,6 @@ class Inventory extends CommonObject
 		'entity'         => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'title'          => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax200'),
 		'fk_warehouse'   => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
-		'include_sub_warehouse'    => array('type'=>'boolean', 'label'=>'IncludeSubWarehouse', 'enabled'=>'$conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE', 'visible'=>1, 'notnull'=>0, 'index'=>0, 'position'=>31),
 		'fk_product'     => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
 		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>'$conf->global->STOCK_INVENTORY_ADD_A_VALUE_DATE', 'position'=>35),	// This date is not used so disabled by default.
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
@@ -265,6 +264,7 @@ class Inventory extends CommonObject
 
 		$result = 0;
 
+		$this->include_sub_warehouse = GETPOST('include_sub_warehouse');
 		if ($this->status == self::STATUS_DRAFT) {
 			// Delete inventory
 			$sql = 'DELETE FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
@@ -291,12 +291,12 @@ class Inventory extends CommonObject
 			}
 			if ($this->fk_warehouse > 0) {
 				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
+				if (!empty($this->include_sub_warehouse) && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE) {
+					$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
+					$sql .= " OR ps.fk_entrepot IN (".filter_var(implode(',', $TChildWarehouses), FILTER_SANITIZE_STRING).")";
+				}
+				$sql .= ')';
 			}
-			if ($this->include_sub_warehouse>0 && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE) {
-				$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
-				$sql .= " OR ps.fk_entrepot IN (".filter_var(implode(',', $TChildWarehouses), FILTER_SANITIZE_STRING).")";
-			}
-			$sql .= ')';
 
 			$inventoryline = new InventoryLine($this->db);
 

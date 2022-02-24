@@ -271,4 +271,6 @@ ErrorCantFindCodeInInventory=Can't find the following code in inventory
 QtyWasAddedToTheScannedBarcode=Success !! The quantity was added to all the requested barcode. You can close the Scanner tool.
 StockChangeDisabled=Change on stock disabled
 NoWarehouseDefinedForTerminal=No warehouse defined for terminal
+ValidateInventory=Inventory validation
 IncludeSubWarehouse=Include sub-warehouse ?
+IncludeSubWarehouseExplanation=Check this box if you want to include all sub-warehouses of the associated warehouse in the inventory
