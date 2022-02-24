@@ -539,10 +539,12 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans($bickey).'</td>';
 		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOST('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation").'</td>';
-		print '<td><input type="checkbox" class="flat minwidth150" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>&nbsp;';
-		print img_picto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp"), 'info');
-		print '</td></tr>';
+		if ($conf->paymentbybanktransfer->enabled) {
+			print '<tr><td>'.$langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation").'</td>';
+			print '<td><input type="checkbox" class="flat minwidth150" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>&nbsp;';
+			print img_picto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp"), 'info');
+			print '</td></tr>';
+		}
 
 		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 		print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
