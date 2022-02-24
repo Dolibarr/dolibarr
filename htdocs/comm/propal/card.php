@@ -2550,10 +2550,8 @@ if ($action == 'create') {
 					|| ($object->statut == Propal::STATUS_DRAFT && !empty($conf->global->PROPAL_ENABLE_NEGATIVE) && count($object->lines) > 0)) {
 					if ($usercanvalidate) {
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=validate&token='.newToken(), '', true, $params);
-						//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans('Validate').'</a>';
 					} else {
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'] . '#', '', false, $params);
-						//print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
 					}
 				}
 				// Create event
@@ -2564,14 +2562,11 @@ if ($action == 'create') {
 				// Edit
 				if ($object->statut == Propal::STATUS_VALIDATED && $usercancreate) {
 					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=modif&token='.newToken(), '', true, $params);
-					//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=modif&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 				}
 
 				// ReOpen
 				if ( (( ! empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && $object->statut == Propal::STATUS_NOTSIGNED) || (empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED))) && $usercanclose) {
 					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'] . '?id='.$object->id.'&action=reopen&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen'), '', true, $params);
-					//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen').'"';
-					//print '>'.$langs->trans('ReOpen').'</a>';
 				}
 
 				// Send
@@ -2579,11 +2574,9 @@ if ($action == 'create') {
 					if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
 						if ($usercansend) {
 							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id='.$object->id.'&action=presend&token='.newToken(), '', true, $params);
-							//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 						} else {
 							$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
 							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '#', '', false, $params);
-							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
 						}
 					}
 				}
@@ -2592,7 +2585,6 @@ if ($action == 'create') {
 				if (!empty($conf->commande->enabled) && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print dolGetButtonAction($langs->trans('AddOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '', true, $params);
-						//print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 					}
 				}
 
@@ -2601,7 +2593,6 @@ if ($action == 'create') {
 					if ($object->statut == Propal::STATUS_SIGNED && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled))) {
 						if ($usercancreatepurchaseorder) {
 							print dolGetButtonAction($langs->trans('AddPurchaseOrder'), '', 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '', true, $params);
-							//print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddPurchaseOrder").'</a>';
 						}
 					}
 				}
@@ -2611,7 +2602,6 @@ if ($action == 'create') {
 					if ($usercancreateintervention) {
 						$langs->load("interventions");
 						print dolGetButtonAction($langs->trans('AddIntervention'), '', 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '', true, $params);
-						//print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';
 					}
 				}
 
@@ -2621,7 +2611,6 @@ if ($action == 'create') {
 
 					if ($usercancreatecontract) {
 						print dolGetButtonAction($langs->trans('AddContract'), '', 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '', true, $params);
-						//print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
 					}
 				}
 
@@ -2629,17 +2618,14 @@ if ($action == 'create') {
 				if ($object->statut == Propal::STATUS_SIGNED && empty($conf->global->PROPOSAL_ARE_NOT_BILLABLE)) {
 					if (!empty($conf->facture->enabled) && $usercancreateinvoice) {
 						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '', true, $params);
-						//print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
 
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
 					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || empty($conf->global->WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED)) {
 						if ($usercanclose) {
 							print dolGetButtonAction($langs->trans('ClassifyBilled'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'&socid='.$object->socid, '', true, $params);
-							//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'&socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 						} else {
 							print dolGetButtonAction($langs->trans('ClassifyBilled'), '', 'default', '#', '', false, $params);
-							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					}
 				}
@@ -2648,27 +2634,20 @@ if ($action == 'create') {
 				if ($object->statut == Propal::STATUS_VALIDATED) {
 					if ($usercanclose) {
 						print dolGetButtonAction($langs->trans('SetAcceptedRefused'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=closeas&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close'), '', true, $params);
-						//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=closeas&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
-						//print '>'.$langs->trans('SetAcceptedRefused').'</a>';
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
 						print dolGetButtonAction($langs->trans('SetAcceptedRefused'), '', 'default', '#', '', false, $params);
-						//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'"';
-						//print '>'.$langs->trans('SetAcceptedRefused').'</a>';
 					}
 				}
 
 				// Clone
 				if ($usercancreate) {
 					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object='.$object->element, '', true, $params);
-					//print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Delete
 				if ($usercandelete) {
 					print dolGetButtonAction($langs->trans('Delete'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', false, $params);
-					//print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'"';
-					//print '>'.$langs->trans('Delete').'</a>';
 				}
 			}
 		}
