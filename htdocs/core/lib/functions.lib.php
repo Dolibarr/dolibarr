@@ -6582,16 +6582,18 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
 							$valuetoclean = $attrs->item($ii)->value;
 
-							do {
-								$oldvaluetoclean = $valuetoclean;
-								$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
-								$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
-								if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-									$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-									$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-									$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
-								}
-							} while ($oldvaluetoclean != $valuetoclean);
+							if (isset($valuetoclean)) {
+								do {
+									$oldvaluetoclean = $valuetoclean;
+									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
+									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
+									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
+										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+									}
+								} while ($oldvaluetoclean != $valuetoclean);
+							}
 
 							$attrs->item($ii)->value = $valuetoclean;
 						}
