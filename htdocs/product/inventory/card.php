@@ -292,10 +292,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
-	if ($action == 'validate'){
+	if ($action == 'validate') {
 		$form = new Form($db);
 		$formquestion = '';
-		if($conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE && !empty($object->fk_warehouse)){
+		if ($conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE && !empty($object->fk_warehouse)) {
 			$formquestion = array(
 				array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 0, 'size' => '10'),
 			);
@@ -426,7 +426,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_CANCELED) {
 				if ($permissiontoadd) {
-					if($conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE && !empty($object->fk_warehouse)){
+					if ($conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE && !empty($object->fk_warehouse)) {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
