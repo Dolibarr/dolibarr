@@ -128,7 +128,7 @@ class Loan extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
+		$sql = "SELECT l.rowid, l.fk_bank, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
 		$sql .= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
 		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE l.rowid = ".((int) $id);
@@ -143,6 +143,7 @@ class Loan extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->datestart = $this->db->jdate($obj->datestart);
 				$this->dateend				= $this->db->jdate($obj->dateend);
+				$this->fk_bank	= $obj->fk_bank;
 				$this->label				= $obj->label;
 				$this->capital				= $obj->capital;
 				$this->nbterm = $obj->nbterm;

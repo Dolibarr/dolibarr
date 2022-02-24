@@ -293,14 +293,14 @@ if ($action == 'create') {
 		print '</tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-		$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype", 'alphanohtml') : $loan->fk_typepayment, "paymenttype");
+		$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype", 'alphanohtml') : $line->fk_typepayment, "paymenttype");
 		print "</td>\n";
 		print '</tr>';
 
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 		print '<td colspan="2">';
-		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opend bank account list
+		$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $loan->fk_bank, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opend bank account list
 		print '</td></tr>';
 
 	// Number
