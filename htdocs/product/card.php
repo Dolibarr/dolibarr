@@ -2539,6 +2539,11 @@ print $formconfirm;
  * Action bar
  */
 if ($action != 'create' && $action != 'edit') {
+	$cloneProductUrl = $_SERVER["PHP_SELF"].'?action=clone&token='.newToken();
+	$cloneButtonId = 'action-clone-no-ajax';
+	$deleteProductUrl = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id;
+	$deleteButtonId = 'action-delete-no-ajax';
+
 	print "\n".'<div class="tabsAction">'."\n";
 
 	$parameters = array();
@@ -2547,14 +2552,16 @@ if ($action != 'create' && $action != 'edit') {
 		if ($usercancreate) {
 			if (!isset($object->no_button_edit) || $object->no_button_edit <> 1) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+				print dolGetButtonAction('', $langs->trans('ModifyGREG'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $user->rights->societe->creer);
 			}
 
 			if (!isset($object->no_button_copy) || $object->no_button_copy <> 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-					print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
-				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+					//print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
+					$cloneProductUrl = '';
+					$cloneButtonId = 'action-clone';
 				}
+				print dolGetButtonAction($langs->trans('ToCloneGREG'), '', 'default', $cloneProductUrl, $cloneButtonId, $user->rights->societe->creer);
 			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);
@@ -2563,6 +2570,8 @@ if ($action != 'create' && $action != 'edit') {
 			if (empty($object_is_used) && (!isset($object->no_button_delete) || $object->no_button_delete <> 1)) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
+					//$deleteProductUrl = '';
+					//$cloneButtonId = 'action-delete';
 				} else {
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 				}
@@ -2572,6 +2581,8 @@ if ($action != 'create' && $action != 'edit') {
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a>';
 		}
+		print dolGetButtonAction($langs->trans('deleteGREG'), '', 'danger', $deleteProductUrl, $deleteButtonId, $user->rights->societe->creer);
+		print dolGetButtonAction($langs->trans('DeleteNEW'), '', 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->societe->creer);
 	}
 
 	print "\n</div>\n";
