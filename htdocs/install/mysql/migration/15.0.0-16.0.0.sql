@@ -237,8 +237,6 @@ ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 
 ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
 
-ALTER TABLE llx_inventory ADD COLUMN include_sub_warehouse boolean DEFAULT FALSE;
-
 create table llx_inventory_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
