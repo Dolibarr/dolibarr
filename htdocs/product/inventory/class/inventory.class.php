@@ -294,9 +294,7 @@ class Inventory extends CommonObject
 			}
 			if ($this->include_sub_warehouse>0 && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE) {
 				$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
-				foreach ($TChildWarehouses as $childWarehouse) {
-					$sql .= " OR ps.fk_entrepot = ".((int) $childWarehouse);
-				}
+				$sql .= " OR ps.fk_entrepot IN (".implode(',', $TChildWarehouses).")";
 			}
 			$sql .= ')';
 
