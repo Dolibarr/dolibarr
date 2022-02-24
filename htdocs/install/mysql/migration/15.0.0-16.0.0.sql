@@ -246,4 +246,4 @@ create table llx_inventory_extrafields
 ) ENGINE=innodb;
 ALTER TABLE llx_inventory_extrafields ADD INDEX idx_inventory_extrafields (fk_object);
 
-ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti integer DEFAULT 0 AFTER domiciliation;
+ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER domiciliation;
