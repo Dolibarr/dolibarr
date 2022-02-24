@@ -1,22 +1,23 @@
 <?php
-/* Copyright (C) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2020 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2012-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
- * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
- * Copyright (C) 2016      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018      Alexandre Spangaro    <aspangaro@open-dsi.fr>
- * Copyright (C) 2018      Nicolas ZABOURI        <info@inovea-conseil.com>
+/* Copyright (C) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012-2014  Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1159,6 +1160,9 @@ class Facture extends CommonInvoice
 
 		$object->fetch($fromid);
 
+		// Load source object
+		$objFrom = clone $object;
+
 		// Change socid if needed
 		if (!empty($this->socid) && $this->socid != $object->socid) {
 			$objsoc = new Societe($this->db);
@@ -1239,13 +1243,13 @@ class Facture extends CommonInvoice
 			$this->errors = $object->errors;
 		} else {
 			// copy internal contacts
-			if ($object->copy_linked_contact($this, 'internal') < 0) {
+			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
 				$this->error = $object->error;
 				$this->errors = $object->errors;
-			} elseif ($this->socid == $object->socid) {
+			} elseif ($object->socid == $objFrom->socid) {
 				// copy external contacts if same company
-				if ($object->copy_linked_contact($this, 'external') < 0) {
+				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
 					$this->error = $object->error;
 					$this->errors = $object->errors;
@@ -1256,7 +1260,7 @@ class Facture extends CommonInvoice
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom'=>$this);
+				$parameters = array('objFrom'=>$objFrom);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
