@@ -141,9 +141,9 @@ class Form
 				}
 			}
 		} else {
-			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
+			//if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
 				$ret .= '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
-			}
+			//}
 			if ($fieldrequired) {
 				$ret .= '<span class="fieldrequired">';
 			}
@@ -158,9 +158,9 @@ class Form
 			if (!empty($notabletag)) {
 				$ret .= ' ';
 			}
-			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
+			//if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
 				$ret .= '</td>';
-			}
+			//}
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
 				$ret .= '<td class="right">';
 			}
@@ -176,9 +176,9 @@ class Form
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
 				$ret .= '</td>';
 			}
-			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
+			//if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
 				$ret .= '</tr></table>';
-			}
+			//}
 		}
 
 		return $ret;
