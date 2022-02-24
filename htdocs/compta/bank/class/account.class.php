@@ -1192,7 +1192,7 @@ class Account extends CommonObject
 	 *	@param	string	$field		dateo or datev
 	 *	@return	int		current sold (value date <= today)
 	 */
-	public function solde($option = 0, $date_end='', $field='dateo')
+	public function solde($option = 0, $date_end = '', $field = 'dateo')
 	{
 		$solde = 0;
 
