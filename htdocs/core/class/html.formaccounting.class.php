@@ -441,7 +441,7 @@ class FormAccounting extends Form
 	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @return string       	   			String with HTML select
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '', $labelhtmlname = '')
 	{
 		// phpcs:enable
 
@@ -505,7 +505,20 @@ class FormAccounting extends Form
 
 		// Build select
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		//automatic filling if we give the name of the subledger_label input
+		if (!empty($labelhtmlname)) {
+			$out .= '<script>
+				jQuery(document).ready(() => {
+					$("#'.$htmlname.'").on("select2:select", function(e) {
+						var regExp = /\(([^)]+)\)/;
+						const match = regExp.exec(e.params.data.text);
+						$(\'input[name="'.$labelhtmlname.'"]\').val(match[1]);
+					});
+				});
 
+			</script>';
+		}
+		
 		return $out;
 	}
 
