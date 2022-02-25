@@ -1902,8 +1902,12 @@ if ($action == 'create' && $usercancreate) {
 		if ($action == 'validate') {
 			// We check that object has a temporary ref
 			$ref = substr($object->ref, 1, 4);
-			if ($ref == 'PROV') {
+			if ($ref == 'PROV' || $ref == '') {
 				$numref = $object->getNextNumRef($soc);
+				if (empty($numref)) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			} else {
 				$numref = $object->ref;
 			}
@@ -1954,8 +1958,9 @@ if ($action == 'create' && $usercancreate) {
 			if ($nbMandated > 0 ) $text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
 
 
-
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+			if (!$error) {
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+			}
 		}
 
 		// Confirm back to draft status
