@@ -215,7 +215,7 @@ class Subscription extends CommonObject
 		$sql .= " tms,";
 		$sql .= " dateadh as dateh,";
 		$sql .= " datef,";
-		$sql .= " subscription, note, fk_bank";
+		$sql .= " subscription, note as note_public, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
 		$sql .= "	WHERE rowid=".((int) $rowid);
 
@@ -235,7 +235,8 @@ class Subscription extends CommonObject
 				$this->dateh          = $this->db->jdate($obj->dateh);
 				$this->datef          = $this->db->jdate($obj->datef);
 				$this->amount         = $obj->subscription;
-				$this->note           = $obj->note;
+				$this->note           = $obj->note_public;	// deprecated
+				$this->note_public    = $obj->note_public;
 				$this->fk_bank        = $obj->fk_bank;
 				return 1;
 			} else {
@@ -266,10 +267,14 @@ class Subscription extends CommonObject
 			return -1;
 		}
 
+		if (empty($this->note_public) && !empty($this->note)) {	// For backward compatibility
+			$this->note_public = $this->note;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
 		$sql .= " fk_type = ".((int) $this->fk_type).",";
 		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
-		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
+		$sql .= " note=".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null').",";
 		$sql .= " subscription = ".price2num($this->amount).",";
 		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
 		$sql .= " datef='".$this->db->idate($this->datef)."',";

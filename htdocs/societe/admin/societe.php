@@ -34,6 +34,7 @@ $langs->loadLangs(array("admin", "companies", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 if (!$user->admin) {
 	accessforbidden();
@@ -166,6 +167,20 @@ if ($action == 'setdoc') {
 		$db->commit();
 	} else {
 		$db->rollback();
+	}
+}
+
+//Activate Set accountancy code customer invoice mandatory
+if ($action == "setaccountancycodecustomerinvoicemandatory") {
+	$setaccountancycodecustomerinvoicemandatory = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY", $setaccountancycodecustomerinvoicemandatory, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -709,6 +724,23 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
+if ($conf->accounting->enabled) {
+	print '<tr class="oddeven">';
+	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
+	print '<td colspan="2"></td>';
+
+	if (!empty($conf->global->SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY)) {
+		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaccountancycodecustomerinvoicemandatory&token='.newToken().'&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaccountancycodecustomerinvoicemandatory&token='.newToken().'&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print "</tr>\n";
+}
+
 print "</table>\n";
 print '</div>';
 
@@ -748,7 +780,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, (property_exists($conf->global, 'COMPANY_USE_SEARCH_TO_SELECT')?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:''), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button reposition" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -769,7 +801,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, (property_exists($conf->global, 'CONTACT_USE_SEARCH_TO_SELECT')?$conf->global->CONTACT_USE_SEARCH_TO_SELECT:''), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button reposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small eposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -873,7 +905,7 @@ if (empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 	print $formcompany->selectProspectCustomerType((property_exists($conf->global, 'THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')?$conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT:''), 'defaultcustomertype', 'defaultcustomertype', 'admin');
 	print '</td>';
 	print '<td class="center">';
-	print '<input type="submit" class="button reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
 	print '</tr>';
 }

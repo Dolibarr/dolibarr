@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -225,10 +225,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return next contract ref
+	 *	Return next expedition ref
 	 *
 	 *	@param	Societe		$soc	Thirdparty object
-	 *	@return string				Free reference for contract
+	 *	@return string				Free reference for expedition
 	 */
 	public function getNextNumRef($soc)
 	{
@@ -1403,6 +1403,9 @@ class Expedition extends CommonObject
 
 			$langs->load("agenda");
 
+			// we try deletion of batch line even if module batch not enabled in case of the module were enabled and disabled previously
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
+
 			// Loop on each product line to add a stock movement
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
@@ -1422,12 +1425,9 @@ class Expedition extends CommonObject
 					// we do not log origin because it will be deleted
 					$mouvS->origin = null;
 					// get lot/serial
-					$lotArray = null;
-					if ($conf->productbatch->enabled) {
-						$lotArray = ExpeditionLineBatch::fetchAll($this->db, $obj->expeditiondet_id);
-						if (!is_array($lotArray)) {
-							$error++; $this->errors[] = "Error ".$this->db->lasterror();
-						}
+					$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
+					if (!is_array($lotArray)) {
+						$error++; $this->errors[] = "Error ".$this->db->lasterror();
 					}
 					if (empty($lotArray)) {
 						// no lot/serial
@@ -1458,9 +1458,9 @@ class Expedition extends CommonObject
 			}
 		}
 
-		// delete batch expedition line (we try deletion even if module not enabled in case of the module were enabled and disabled previously)
+		// delete batch expedition line
 		if (!$error) {
-			$shipmentlinebatch = ExpeditionLineBatch($this->db);
+			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
@@ -1778,7 +1778,7 @@ class Expedition extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf;
+		global $langs, $conf, $hookmanager;
 
 		$result = '';
 		$label = '<u>'.$langs->trans("Shipment").'</u>';
@@ -1824,7 +1824,15 @@ class Expedition extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -2091,7 +2099,7 @@ class Expedition extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
-		$sql .= ' WHERE rowid='.$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 	}
@@ -2108,7 +2116,7 @@ class Expedition extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
-		$sql .= ' WHERE rowid='.$id;
+		$sql .= " WHERE rowid= ".((int) $id);
 
 		$resql = $this->db->query($sql);
 	}

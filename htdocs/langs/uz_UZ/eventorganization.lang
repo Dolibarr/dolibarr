@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kimdir konferentsiya taklif qilganda a
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Uchinchi shaxslarga qo'shiladigan toifani, ular stendni taklif qilganda avtomatik ravishda yaratiladi
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Konferentsiya taklifini olgandan so'ng yuborish uchun elektron pochta shablonini.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Stend taklifini olgandan keyin yuborish uchun elektron pochta shablonini.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Stendga ro'yxatdan o'tgandan so'ng yuboriladigan elektron pochta shabloni to'langan.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Tadbirga ro'yxatdan o'tgandan so'ng yuboriladigan elektron pochta shablonini.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Ishtirokchilarga ommaviy massaj elektron pochta shablonini
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Spikerlarga ommaviy elektron pochta orqali yuborilgan shablon
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Uchinchi tomonning tanlangan ro'yxatini ishtirokchilarni yaratish kartasida / toifadagi katakchasida filtrlang
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Uchinchi tomonning tanlangan ro'yxatini ishtirokchilarni yaratish kartasida / mijozning turiga qarab shaklda filtrlang
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Stendingizning to'lovi
 EventOrganizationEmailRegistrationPayment = Tadbir uchun ro'yxatdan o'tish
 EventOrganizationMassEmailAttendees = Ishtirokchilar bilan aloqa
 EventOrganizationMassEmailSpeakers = Spikerlar bilan aloqa
+ToSpeakers=To speakers
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Ro'yxatdan o'tish narxi
 PriceOfRegistrationHelp=Ro'yxatdan o'tish yoki tadbirda qatnashish uchun to'lanadigan narx
 PriceOfBooth=Stendda turish uchun obuna narxi
 PriceOfBoothHelp=Stendda turish uchun obuna narxi
-EventOrganizationICSLink=Voqealar uchun ICS-ni bog'lang
+EventOrganizationICSLink=Link ICS for conferences
 ConferenceOrBoothInformation=Konferentsiya yoki stend ma'lumotlari
 Attendees=Ishtirokchilar
 ListOfAttendeesOfEvent=Loyiha ishtirokchilari ro'yxati
 DownloadICSLink = ICS havolasini yuklab oling
-EVENTORGANIZATION_SECUREKEY = Konferentsiyaga ochiq ro'yxatdan o'tishning havfli kaliti
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = Stend joylashgan joy haqida hisob-faktura qatori uchun ishlatiladigan xizmat
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Konferentsiyaga qatnashuvchi obuna haqida hisob-faktura satrida ishlatiladigan xizmat
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Ovozlar soni
 #
 # Status

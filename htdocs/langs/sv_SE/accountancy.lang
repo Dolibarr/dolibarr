@@ -48,7 +48,7 @@ CountriesNotInEEC=Länder inte i EEG
 CountriesInEECExceptMe=Länder i EEG förutom %s
 CountriesExceptMe=Alla länder utom %s
 AccountantFiles=Exportera källdokument
-ExportAccountingSourceDocHelp=Med det här verktyget kan du exportera källhändelserna (lista i CSV och PDF-filer) som användes för att generera din redovisning.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=För att exportera verifikationer, använd menyn %s - %s
 VueByAccountAccounting=Visa baserat på redovisningskonto
 VueBySubAccountAccounting=Visa efter redovisning av underkonto
@@ -286,7 +286,7 @@ ValidateMovements=Validera rörelser
 DescValidateMovements=Alla ändringar eller raderingar av skrift, bokstäver och raderingar är förbjudna. Alla bidrag till en övning måste valideras, annars är det inte möjligt att stänga
 
 ValidateHistory=Förbind automatiskt
-AutomaticBindingDone=Automatisk bindning gjord
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort denna redovisningskonto eftersom den används
 MvtNotCorrectlyBalanced=Rörelsen är inte korrekt balanserad. Debit = %s | Kredit = %s
@@ -387,7 +387,8 @@ SaleExport=Exportförsäljning
 SaleEEC=Försäljning i EEG
 SaleEECWithVAT=Försäljning i EEG med moms som inte är null, så vi antar att detta INTE är en försäljning inom gemenskapen och det föreslagna kontot är standardproduktkontot.
 SaleEECWithoutVATNumber=Försäljning i EEG utan moms men tredjeparts moms-ID definieras inte. Vi återgår till produktkontot för standardförsäljning. Du kan fastställa tredjeparts moms-ID eller produktkonto om det behövs.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Räckvidd av bokföringskonto
 Calculated=Beräknad
@@ -404,6 +405,7 @@ NoJournalDefined=Ingen loggbok definierad
 Binded=Förbundna rader
 ToBind=Rader att förbinda
 UseMenuToSetBindindManualy=Linjer som ännu inte är bundna, använd menyn <a href="%s"> %s </a> för att göra bindningen manuellt
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Redovisningsposter

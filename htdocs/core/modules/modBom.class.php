@@ -467,11 +467,6 @@ class modBom extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		$result = $this->_load_tables('/bom/sql/');
-		if ($result < 0) {
-			return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
-		}
-
 		// Create extrafields
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);

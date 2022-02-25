@@ -132,10 +132,18 @@ class Account extends CommonObject
 	public $bic;
 
 	/**
-	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database
+	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database (TODO Rename field in database)
 	 * @var string
 	 */
 	public $iban;
+
+	/**
+	 * IBAN number
+	 *
+	 * @var string
+	 * @deprecated see $iban
+	 */
+	public $iban_prefix;
 
 	/**
 	 * Name of account holder
@@ -1503,10 +1511,10 @@ class Account extends CommonObject
 	{
 		$country_code = $this->getCountryCode();
 
-		if (in_array($country_code, array('AD', 'FR', 'ES', 'GA', 'IT', 'NC'))) {
+		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC'))) {
 			return 1; // France, Spain, Gabon, ... - Not valid for CH
 		}
-		if (in_array($country_code, array('AU', 'BE', 'CA', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
+		if (in_array($country_code, array('AD', 'AU', 'BE', 'CA', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
 			return 2; // Australia, England...
 		}
 		return 0;

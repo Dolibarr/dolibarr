@@ -192,7 +192,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (14
 
 -- MALI (id country=147)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1471, 147,  '0','0','VAT rate 0', 1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1471, 147, '18','0','VAT rate - standard', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1472, 147, '18','0','VAT rate - standard', 1);
 
 -- MONACO (id country=27)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 271,  27,   '0','0','VAT rate 0 ou non applicable',1);

@@ -26,7 +26,7 @@ require '../../main.inc.php';
 
 // Security
 if ($dolibarr_main_prod) {
-	accessforbidden();
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
 
 
@@ -186,7 +186,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 $nav = '';
-$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?mode=show_peruser'.$param.'">';
 if ($actioncode || GETPOSTISSET('actioncode')) {
 	$nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 }

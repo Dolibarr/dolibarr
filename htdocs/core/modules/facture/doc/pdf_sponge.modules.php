@@ -187,6 +187,7 @@ class pdf_sponge extends ModelePDFFactures
 		//  Use new system for position of columns, view  $this->defineColumnField()
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -264,7 +265,7 @@ class pdf_sponge extends ModelePDFFactures
 				$arephoto = false;
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
-						if ($conf->product->entity != $objphoto->entity) {
+						if ($conf->entity != $objphoto->entity) {
 							$dir = $conf->product->multidir_output[$objphoto->entity].'/'.$midir; //Check repertories of current entities
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
@@ -366,7 +367,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfInvoiceTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($mysoc->name.($user->id > 0 ? ' - '.$outputlangs->convToOutputCharset($user->getFullName($outputlangs)) : ''));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
 					$pdf->SetCompression(false);
@@ -374,9 +375,13 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Set certificate
 				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
+				$certprivate = empty($user->conf->CERTIFICATE_CRT_PRIVATE) ? '' : $user->conf->CERTIFICATE_CRT_PRIVATE;
 				// If user has no certificate, we try to take the company one
 				if (!$cert) {
 					$cert = empty($conf->global->CERTIFICATE_CRT) ? '' : $conf->global->CERTIFICATE_CRT;
+				}
+				if (!$certprivate) {
+					$certprivate = empty($conf->global->CERTIFICATE_CRT_PRIVATE) ? '' : $conf->global->CERTIFICATE_CRT_PRIVATE;
 				}
 				// If a certificate is found
 				if ($cert) {
@@ -386,7 +391,7 @@ class pdf_sponge extends ModelePDFFactures
 						'Reason' => 'INVOICE',
 						'ContactInfo' => $this->emetteur->email
 					);
-					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
+					$pdf->setSignature($cert, $certprivate, $this->emetteur->name, '', 2, $info);
 				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
@@ -417,12 +422,46 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				// You can add more thing undr header here, if you increase top_shift too.
-				// TODO
+				// $pdf->GetY() here can't be used. It is bottom of the second addresse box but first one may be higher
 
 				// $tab_top is y where we must continue content (90 = 42 + 48: 42 is height of logo and ref, 48 is address blocks)
 				$tab_top = 90 + $top_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+
+				// You can add more thing under header here, if you increase $extra_under_address_shift too.
+				$extra_under_address_shift = 0;
+				if (! empty($conf->global->INVOICE_ADD_ZATCA_QR_CODE)) {
+					$qrcodestring = $object->buildZATCAQRString();
+					$qrcodecolor = array('25', '25', '25');
+					// set style for QR-code
+					$styleQr = array(
+						'border' => false,
+						'padding' => 0,
+						'fgcolor' => $qrcodecolor,
+						'bgcolor' => false, //array(255,255,255)
+						'module_width' => 1, // width of a single module in points
+						'module_height' => 1 // height of a single module in points
+					);
+					$pdf->write2DBarcode($qrcodestring, 'QRCODE,M', $this->marge_gauche, $tab_top - 5, 25, 25, $styleQr, 'N');
+					$extra_under_address_shift += 25;
+				}
+
+				// Call hook printUnderHeaderPDFline
+				$parameters = array(
+					'object' => $object,
+					'i' => $i,
+					'pdf' =>& $pdf,
+					'outputlangs' => $outputlangs,
+					'hidedetails' => $hidedetails
+				);
+				$reshook = $hookmanager->executeHooks('printUnderHeaderPDFline', $parameters, $this); // Note that $object may have been modified by hook
+				if (!empty($hookmanager->resArray['extra_under_address_shift'])) {
+					$extra_under_address_shift += $hookmanager->resArray['extra_under_header_shift'];
+				}
+
+				$tab_top += $extra_under_address_shift;
+				$tab_top_newpage += $extra_under_address_shift;
+
 
 				// Define heigth of table for lines (for first page)
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
@@ -847,10 +886,17 @@ class pdf_sponge extends ModelePDFFactures
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
+
+					// Fill $this->tva and $this->tva_array
 					if (!isset($this->tva[$vatrate])) {
 						$this->tva[$vatrate] = 0;
 					}
-					$this->tva[$vatrate] += $tvaligne;
+					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandonned, we use now ->tva_array that is more complete
+					$vatcode = $object->lines[$i]->vat_src_code;
+					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
+						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
+					}
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					$nexY = max($nexY, $posYAfterImage);
 
@@ -1213,9 +1259,9 @@ class pdf_sponge extends ModelePDFFactures
 
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, '', '', dol_htmlentitiesbr($linktopay), 0, 1);
-				}
 
-				$posy = $pdf->GetY() + 1;
+					$posy = $pdf->GetY() + 1;
+				}
 			}
 
 			// Show payment mode CHQ
@@ -1559,9 +1605,8 @@ class pdf_sponge extends ModelePDFFactures
 				}
 				//}
 
-				// VAT
-				// Situations totals migth be wrong on huge amounts
-				if ($object->situation_cycle_ref && $object->situation_counter > 1) {
+				// Situations totals migth be wrong on huge amounts with old mode 1
+				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1 && $object->situation_cycle_ref && $object->situation_counter > 1) {
 					$sum_pdf_tva = 0;
 					foreach ($this->tva as $tvakey => $tvaval) {
 						$sum_pdf_tva += $tvaval; // sum VAT amounts to compare to object
@@ -1578,10 +1623,14 @@ class pdf_sponge extends ModelePDFFactures
 						foreach ($this->tva as $tvakey => $tvaval) {
 							$this->tva[$tvakey] = $tvaval * $coef_fix_tva;
 						}
+						foreach ($this->tva_array as $tvakey => $tvaval) {
+							$this->tva_array[$tvakey]['amount'] = $tvaval['amount'] * $coef_fix_tva;
+						}
 					}
 				}
 
-				foreach ($this->tva as $tvakey => $tvaval) {
+				// VAT
+				foreach ($this->tva_array as $tvakey => $tvaval) {
 					if ($tvakey != 0) {    // On affiche pas taux 0
 						$this->atleastoneratenotnull++;
 
@@ -1595,11 +1644,17 @@ class pdf_sponge extends ModelePDFFactures
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
 						$totalvat .= ' ';
-						$totalvat .= vatrate($tvakey, 1).$tvacompl;
+						if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
+							$totalvat .= vatrate($tvaval['vatrate'], 1).$tvacompl;
+						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
+							$totalvat .= ($tvaval['vatcode'] ? $tvaval['vatcode'] : vatrate($tvaval['vatrate'], 1)).$tvacompl;
+						} else {
+							$totalvat .= vatrate($tvaval['vatrate'], 1).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
+						}
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($tvaval['amount'], 'MT'), 0, $outputlangs), 0, 'R', 1);
 					}
 				}
 
@@ -1863,7 +1918,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	void
+	 *  @return	int							top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{

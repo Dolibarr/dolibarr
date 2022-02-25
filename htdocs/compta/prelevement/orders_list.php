@@ -212,7 +212,7 @@ if ($result) {
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 			print '<td class="right">';
-			print $bon->LibStatut($obj->statut, 3);
+			print $bon->LibStatut($obj->statut, 5);
 			print '</td>';
 
 			print '<td class="right"></td>'."\n";

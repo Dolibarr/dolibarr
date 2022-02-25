@@ -106,7 +106,7 @@ class Partnership extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
-		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'position' => 20),
+		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php', 'label' => 'Type', 'notnull'=>1, 'enabled' => 1, 'visible' => 1, 'position' => 20),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -245,6 +245,11 @@ class Partnership extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
+			$this->error[] = "ErrorThirpdartyOrMemberidIsManadatory";
+			return -1;
+		}
+
 		$this->status = 0;
 		return $this->createCommon($user, $notrigger);
 	}
@@ -547,6 +552,11 @@ class Partnership extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
+			$this->error[] = "ErrorThirpdartyOrMemberidIsManadatory";
+			return -1;
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -1035,7 +1045,7 @@ class Partnership extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('partnershipdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

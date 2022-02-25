@@ -173,8 +173,8 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 	}
 }
 
-if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
-	$res = $object->update_num($_POST['num_paiement']);
+if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
+	$res = $object->update_num(GETPOST('num_paiement'));
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
 	} else {
@@ -182,7 +182,7 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
 	}
 }
 
-if ($action == 'setdatep' && !empty($_POST['datepday'])) {
+if ($action == 'setdatep' && GETPOST('datepday')) {
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0) {
@@ -295,7 +295,7 @@ print '</td></tr>';
 if (!empty($conf->banque->enabled)) {
 	if ($object->fk_account > 0) {
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
-			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
+			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 			$bordereau = new RemiseCheque($db);
 			$bordereau->fetch($bankline->fk_bordereau);
 

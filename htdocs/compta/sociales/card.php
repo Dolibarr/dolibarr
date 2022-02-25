@@ -26,11 +26,11 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -46,8 +46,14 @@ if (!empty($conf->accounting->enabled)) {
 $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
 
 $id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$confirm = GETPOST('confirm');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
 $fk_project = (GETPOST('fk_project') ? GETPOST('fk_project', 'int') : 0);
 
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
@@ -56,10 +62,30 @@ $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
 $fk_user = GETPOST('userid', 'int');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('taxcard', 'globalcard'));
+
+// Initialize technical objects
 $object = new ChargeSociales($db);
+$extrafields = new ExtraFields($db);
+$diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('taxsocialcontributioncard', 'globalcard'));
+
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'view';
+}
+
+// Load object
 if ($id > 0) {
 	$object->fetch($id);
 }
+
+$permissiontoread = $user->rights->tax->charges->lire;
+$permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->tax->charges->creer; // Used by the include of actions_dellink.inc.php
+$upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -73,6 +99,12 @@ $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges')
 /*
  * Actions
  */
+
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 // Classify paid
 if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes') {
@@ -122,7 +154,7 @@ if ($action == 'setmode' && $user->rights->tax->charges->creer) {
 	}
 }
 
-// bank account
+// Bank account
 if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
 	$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -151,7 +183,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {
 
 // Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer) {
-	$amount = price2num(GETPOST('amount'), 'MT');
+	$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 	if (!$dateech) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
@@ -189,7 +221,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer) {
 
 
 if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
-	$amount = price2num(GETPOST('amount'), 'MT');
+	$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 	if (!$dateech) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
@@ -297,6 +329,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $bankaccountstatic = new Account($db);
 if (!empty($conf->projet->enabled)) {
@@ -308,7 +341,7 @@ $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividen
 llxHeader("", $title, $help_url);
 
 
-// Mode creation
+// Form to create a social contribution
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewSocialContribution"));
 
@@ -411,14 +444,12 @@ if ($action == 'create') {
 	print '</form>';
 }
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Card Mode                                                                   */
-/*                                                                             */
-/* *************************************************************************** */
+// View mode
 if ($id > 0) {
 	$object = new ChargeSociales($db);
 	$result = $object->fetch($id);
+
+	$formconfirm = '';
 
 	if ($result > 0) {
 		$head = tax_prepare_head($object);
@@ -438,25 +469,36 @@ if ($id > 0) {
 				$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 			}
 
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
 		}
 
 
 		if ($action == 'paid') {
 			$text = $langs->trans('ConfirmPaySocialContribution');
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySocialContribution'), $text, "confirm_paid", '', '', 2);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySocialContribution'), $text, "confirm_paid", '', '', 2);
 		}
 
 		// Confirmation of the removal of the Social Contribution
 		if ($action == 'delete') {
 			$text = $langs->trans('ConfirmDeleteSocialContribution');
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSocialContribution'), $text, 'confirm_delete', '', '', 2);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSocialContribution'), $text, 'confirm_delete', '', '', 2);
 		}
 
 		if ($action == 'edit') {
 			print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 		}
+		// Call Hook formConfirm
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
+		}
+
+		// Print form confirm
+		print $formconfirm;
 
 		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
 
@@ -574,7 +616,7 @@ if ($id > 0) {
 			print '<input type="text" name="amount" size="12" class="flat" value="'.price($object->amount).'">';
 			print "</td></tr>";
 		} else {
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td><span class="amount">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 		}
 
 		// Mode of payment
@@ -594,7 +636,7 @@ if ($id > 0) {
 		}
 		print '</td></tr>';
 
-		// Bank Account
+		// Bank account
 		if (!empty($conf->banque->enabled)) {
 			print '<tr><td class="nowrap">';
 			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -614,6 +656,11 @@ if ($id > 0) {
 			print '</tr>';
 		}
 
+		// Other attributes
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		print '</table>';
 
 		print '</div>';
@@ -627,7 +674,7 @@ if ($id > 0) {
 		/*
 		 * Payments
 		 */
-		$sql = "SELECT p.rowid, p.num_paiement as num_payment, datep as dp, p.amount,";
+		$sql = "SELECT p.rowid, p.num_paiement as num_payment, p.datep as dp, p.amount,";
 		$sql .= " c.code as type_code,c.libelle as paiement_type,";
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -637,7 +684,7 @@ if ($id > 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " WHERE p.fk_charge = ".((int) $id);
 		$sql .= " AND p.fk_charge = cs.rowid";
-		$sql .= " AND cs.entity IN (".getEntity('tax').")";
+		$sql .= " AND cs.entity IN (".getEntity('sc').")";
 		$sql .= " ORDER BY dp DESC";
 
 		//print $sql;
@@ -710,8 +757,8 @@ if ($id > 0) {
 				print '</tr>';
 			}
 
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaye)."</td></tr>\n";
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaye)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->amount)."</td></tr>\n";
 
 			$resteapayer = $object->amount - $totalpaye;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -735,22 +782,15 @@ if ($id > 0) {
 		print dol_get_fiche_end();
 
 		if ($action == 'edit') {
-			print '<div align="center">';
-			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-			print ' &nbsp; ';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
-		}
+			print $form->buttonsSaveCancel();
 
-		if ($action == 'edit') {
 			print "</form>\n";
 		}
 
 
 
-		/*
-		*   Actions buttons
-		*/
+		// Buttons for actions
+
 		if ($action != 'edit') {
 			print '<div class="tabsAction">'."\n";
 
@@ -788,6 +828,64 @@ if ($id > 0) {
 
 			print "</div>";
 		}
+
+
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
+		}
+
+		if ($action != 'presend') {
+			print '<div class="fichecenter"><div class="fichehalfleft">';
+			print '<a name="builddoc"></a>'; // ancre
+
+			$includedocgeneration = 1;
+
+			// Documents
+			if ($includedocgeneration) {
+				$objref = dol_sanitizeFileName($object->ref);
+				$relativepath = $objref.'/'.$objref.'.pdf';
+				$filedir = $conf->tax->dir_output.'/'.$objref;
+				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+				//$genallowed = $user->rights->tax->charges->lire; // If you can read, you can build the PDF to read content
+				$genallowed = 0;
+				$delallowed = $user->rights->tax->charges->creer; // If you can create/edit, you can remove a file on card
+				print $formfile->showdocuments('tax', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+			}
+
+			// Show links to link elements
+			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+
+			print '</div><div class="fichehalfright">';
+
+			/*
+			 $MAXEVENT = 10;
+
+			 $morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+
+			 // List of actions on element
+			 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+			 $formactions = new FormActions($db);
+			 $somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+			 */
+
+			print '</div></div>';
+		}
+
+		//Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
+		}
+
+		// Presend form
+		$modelmail = 'sc';
+		$defaulttopic = 'InformationMessage';
+		$diroutput = $conf->tax->dir_output;
+		$trackid = 'sc'.$object->id;
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	} else {
 		/* Social contribution not found */
 		dol_print_error('', $object->error);

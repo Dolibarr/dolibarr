@@ -196,9 +196,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
-
 	print '<table class="border centpercent tableforfieldcreate">' . "\n";
 
 	// Common attributes
@@ -264,7 +261,7 @@ if (($id || $ref) && $action == 'edit') {
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) > 0) {
 		print '<table>';
 		foreach ($SkilldetRecords as $sk) {
-			if ($sk->rank > $MaxNumberSkill) {
+			if ($sk->rankorder > $MaxNumberSkill) {
 				continue;
 			}
 
@@ -291,7 +288,7 @@ if (($id || $ref) && $action == 'edit') {
 				//              if (!empty($val['help'])) {
 				//                  print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 				//              } else {
-					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rank;
+					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
 				//              }
 				print '</td>';
 				print '<td class="valuefieldcreate">';
@@ -696,7 +693,7 @@ if ($action != "create" && $action != "edit") {
 			break; // Should not happen
 		}
 
-		if ($obj->rank > $MaxNumberSkill) {
+		if ($obj->rankorder > $MaxNumberSkill) {
 			continue;
 		}
 

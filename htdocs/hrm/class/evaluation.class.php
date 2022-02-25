@@ -236,7 +236,7 @@ class Evaluation extends CommonObject
 					$line = new Evaluationline($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
-					$line->required_rank = $required->rank;
+					$line->required_rank = $required->rankorder;
 					$line->fk_rank = 0;
 
 					$res = $line->create($user, $notrigger);
@@ -808,7 +808,7 @@ class Evaluation extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('evaluationdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

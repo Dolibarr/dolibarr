@@ -36,6 +36,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 
 /*

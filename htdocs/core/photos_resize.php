@@ -413,7 +413,6 @@ if ($action == 'confirm_crop') {
 
 	$fullpath = $dir."/".$original_file;
 
-	//var_dump($fullpath.' '.$_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
 	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
 
 	if ($result == $fullpath) {
@@ -536,11 +535,16 @@ if (!empty($conf->use_javascript_ajax)) {
 	$widthforcrop = $width;
 	$refsizeforcrop = 'orig';
 	$ratioforcrop = 1;
+
 	// If image is too large, we use another scale.
-	if (!empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth'] / 2))) {
-		$ratioforcrop = 2;
-		$widthforcrop = round($_SESSION['dol_screenwidth'] / $ratioforcrop);
-		$refsizeforcrop = 'screenwidth';
+	if (!empty($_SESSION['dol_screenwidth'])) {
+		$widthforcroporigin = $widthforcrop;
+		while ($widthforcrop > round($_SESSION['dol_screenwidth'] / 1.5)) {
+			//var_dump($widthforcrop.' '.round($_SESSION['dol_screenwidth'] / 1.5));
+			$ratioforcrop = 2 * $ratioforcrop;
+			$widthforcrop = floor($widthforcroporigin / $ratioforcrop);
+			$refsizeforcrop = 'screenwidth';
+		}
 	}
 
 	print '<!-- Form to crop -->'."\n";
@@ -571,8 +575,11 @@ if (!empty($conf->use_javascript_ajax)) {
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
 		      <input type="hidden" id="action" name="action" value="confirm_crop" />
 		      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
+		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.$_SESSION['dol_screenwidth'].'" />
 		      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
-		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- field used by core/lib/lib_photoresize.js -->
+		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
+		      <input type="hidden" id="imagewidth" name="imagewidth" value="'.$width.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
+		      <input type="hidden" id="imageheight" name="imageheight" value="'.$height.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 	          <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
 		      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
 		      <br>

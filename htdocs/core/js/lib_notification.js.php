@@ -64,7 +64,7 @@ print "jQuery(document).ready(function () {\n";
 //print "	console.log('referrer=".dol_escape_js($_SERVER['HTTP_REFERER'])."');\n";
 
 print '	var nowtime = Date.now();';
-print '	var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
+print '	var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
 print '	var time_js_next_test;'."\n";
 ?>
 

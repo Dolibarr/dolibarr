@@ -171,6 +171,7 @@ if (empty($reshook)) {
 						dol_print_error($db);
 					}
 
+					$thirdpartystatic = new Societe($db);
 					// Loop on each email and send it
 					$i = 0;
 
@@ -200,6 +201,15 @@ if (empty($reshook)) {
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray['__ID__'] = $obj->source_id;
+						if ($obj->source_type == "thirdparty") {
+							$result = $thirdpartystatic->fetch($obj->source_id);
+
+							if ($result > 0) {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
+							} else {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = '';
+							}
+						}
 						$substitutionarray['__EMAIL__'] = $obj->email;
 						$substitutionarray['__LASTNAME__'] = $obj->lastname;
 						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;
@@ -483,9 +493,9 @@ if (empty($reshook)) {
 	if ($action == 'add') {
 		$mesgs = array();
 
-		$object->email_from     = (string) GETPOST("from", "none"); // Must allow 'name <email>'
-		$object->email_replyto  = (string) GETPOST("replyto", "none"); // Must allow 'name <email>'
-		$object->email_errorsto = (string) GETPOST("errorsto", "none"); // Must allow 'name <email>'
+		$object->email_from     = (string) GETPOST("from", 'alphawithlgt'); // Must allow 'name <email>'
+		$object->email_replyto  = (string) GETPOST("replyto", 'alphawithlgt'); // Must allow 'name <email>'
+		$object->email_errorsto = (string) GETPOST("errorsto", 'alphawithlgt'); // Must allow 'name <email>'
 		$object->title          = (string) GETPOST("title");
 		$object->sujet          = (string) GETPOST("sujet");
 		$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
@@ -521,11 +531,11 @@ if (empty($reshook)) {
 		if ($action == 'settitle') {
 			$object->title = trim(GETPOST('title', 'alpha'));
 		} elseif ($action == 'setemail_from') {
-			$object->email_from = trim(GETPOST('email_from', 'none')); // Must allow 'name <email>'
+			$object->email_from = trim(GETPOST('email_from', 'alphawithlgt')); // Must allow 'name <email>'
 		} elseif ($action == 'setemail_replyto') {
-			$object->email_replyto = trim(GETPOST('email_replyto', 'none')); // Must allow 'name <email>'
+			$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
 		} elseif ($action == 'setemail_errorsto') {
-			$object->email_errorsto = trim(GETPOST('email_errorsto', 'none')); // Must allow 'name <email>'
+			$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
 		} elseif ($action == 'settitle' && empty($object->title)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {
@@ -735,7 +745,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-	print $htmlother->selectColor($_POST['bgcolor'], 'bgcolor', '', 0);
+	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
 	print '</td></tr>';
 
 	print '</table>';
