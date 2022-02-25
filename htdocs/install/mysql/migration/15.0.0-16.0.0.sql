@@ -245,3 +245,5 @@ create table llx_inventory_extrafields
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 ALTER TABLE llx_inventory_extrafields ADD INDEX idx_inventory_extrafields (fk_object);
+
+ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER domiciliation;
