@@ -806,7 +806,7 @@ $includeonly = '';
 if (empty($user->rights->user->user->lire)) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
@@ -814,7 +814,7 @@ if ($user->rights->societe->client->voir || $socid) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
-	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 
