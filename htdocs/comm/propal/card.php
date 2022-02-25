@@ -2647,7 +2647,7 @@ if ($action == 'create') {
 
 				// Delete
 				if ($usercandelete) {
-					print dolGetButtonAction($langs->trans('Delete'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, $params);
 				}
 			}
 		}
