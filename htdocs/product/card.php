@@ -2541,8 +2541,6 @@ print $formconfirm;
 if ($action != 'create' && $action != 'edit') {
 	$cloneProductUrl = $_SERVER["PHP_SELF"].'?action=clone&token='.newToken();
 	$cloneButtonId = 'action-clone-no-ajax';
-	$deleteProductUrl = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id;
-	$deleteButtonId = 'action-delete-no-ajax';
 
 	print "\n".'<div class="tabsAction">'."\n";
 
