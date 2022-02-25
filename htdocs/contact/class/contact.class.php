@@ -1938,7 +1938,7 @@ class Contact extends CommonObject
 	 *
 	 *    @return    int    $nbchilds   number of childs contacts
 	 */
-	public function NbChilds()
+	public function nbChilds()
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE parent = ".((int) $this->id);
 		$resql = $this->db->query($sql);
