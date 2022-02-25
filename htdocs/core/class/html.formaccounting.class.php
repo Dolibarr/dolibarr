@@ -518,7 +518,7 @@ class FormAccounting extends Form
 
 			</script>';
 		}
-		
+
 		return $out;
 	}
 

@@ -663,7 +663,7 @@ if ($action == 'create') {
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1,'maxwidth250','','subledger_label');
+							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 						}
@@ -746,7 +746,7 @@ if ($action == 'create') {
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount('', 'subledger_account', 1,'maxwidth250','','subledger_label');
+							print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
 						}
