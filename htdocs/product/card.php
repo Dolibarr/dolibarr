@@ -2549,7 +2549,7 @@ if ($action != 'create' && $action != 'edit') {
 	if (empty($reshook)) {
 		if ($usercancreate) {
 			if (!isset($object->no_button_edit) || $object->no_button_edit <> 1) {
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $user->rights->societe->creer);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
 			if (!isset($object->no_button_copy) || $object->no_button_copy <> 1) {
@@ -2557,7 +2557,7 @@ if ($action != 'create' && $action != 'edit') {
 					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneProductUrl, $cloneButtonId, $user->rights->societe->creer);
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneProductUrl, $cloneButtonId, $usercancreate);
 			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);
