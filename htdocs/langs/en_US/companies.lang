@@ -493,3 +493,4 @@ RestOfEurope=Rest of Europe (EEC)
 OutOfEurope=Out of Europe (EEC)
 CurrentOutstandingBillLate=Current outstanding bill late
 BecarefullChangeThirdpartyBeforeAddProductToInvoice=Be carefull, depending on your product price settings, you should change thirdparty before adding product to POS.
+DocModelLabelDescription=Label adresse
