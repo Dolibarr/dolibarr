@@ -72,7 +72,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$addDescription = "";
 		// Select the third parties from category
-		if (empty($_POST['filter'])) {
+		if (!GETPOST('filter')) {
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, null as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " WHERE s.email <> ''";

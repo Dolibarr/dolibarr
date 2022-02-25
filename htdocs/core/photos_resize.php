@@ -413,7 +413,6 @@ if ($action == 'confirm_crop') {
 
 	$fullpath = $dir."/".$original_file;
 
-	//var_dump($fullpath.' '.$_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
 	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
 
 	if ($result == $fullpath) {

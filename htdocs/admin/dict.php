@@ -706,19 +706,19 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			continue; // For some pages, country is not mandatory
 		}
 		// Discard check of mandatory fiedls for other fields
-		if ($value == 'localtax1' && empty($_POST['localtax1_type'])) {
+		if ($value == 'localtax1' && !GETPOST('localtax1_type')) {
 			continue;
 		}
-		if ($value == 'localtax2' && empty($_POST['localtax2_type'])) {
+		if ($value == 'localtax2' && !GETPOST('localtax2_type')) {
 			continue;
 		}
-		if ($value == 'color' && empty($_POST['color'])) {
+		if ($value == 'color' && !GETPOST('color')) {
 			continue;
 		}
-		if ($value == 'formula' && empty($_POST['formula'])) {
+		if ($value == 'formula' && !GETPOST('formula')) {
 			continue;
 		}
-		if ($value == 'dayrule' && empty($_POST['dayrule'])) {
+		if ($value == 'dayrule' && !GETPOST('dayrule')) {
 			continue;
 		}
 		if ($value == 'sortorder') {
@@ -794,11 +794,6 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			$ok = 0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}
-		/*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
-		{
-			$ok = 0;
-			$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
-		}*/
 	}
 	if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2)) {
 		if (in_array($tablib[$id], array('DictionaryCompanyType', 'DictionaryHolidayTypes'))) {	// Field country is no mandatory for such dictionaries
@@ -830,7 +825,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 		$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
 	}
 	if ($id == 10 && GETPOSTISSET("code")) {  // Spaces are not allowed into code for tax dictionary
-		$_POST["code"] = preg_replace('/[^a-zA-Z0-9\-\+]/', '', $_POST["code"]);
+		$_POST["code"] = preg_replace('/[^a-zA-Z0-9\-\+]/', '', GETPOST("code"));
 	}
 
 	// If check ok and action add, add the line
@@ -883,7 +878,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 
 			if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
 				$sql .= (int) GETPOST('position', 'int');
-			} elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) {
+			} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == 10)) {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} elseif ($keycode == 'content') {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
@@ -952,7 +947,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			$sql .= $field."=";
 			if ($listfieldvalue[$i] == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
 				$sql .= (int) GETPOST('position', 'int');
-			} elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) {
+			} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == 10)) {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} elseif ($keycode == 'content') {
 				$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";

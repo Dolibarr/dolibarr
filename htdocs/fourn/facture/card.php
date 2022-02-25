@@ -990,7 +990,7 @@ if (empty($reshook)) {
 				if (!$error && GETPOST('origin', 'alpha') && GETPOST('originid')) {
 					// Parse element/subelement (ex: project_task)
 					$element = $subelement = GETPOST('origin', 'alpha');
-					/*if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
+					/*if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'),$regs))
 					 {
 					$element = $regs[1];
 					$subelement = $regs[2];
@@ -1954,7 +1954,7 @@ if ($action == 'create') {
 
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
-		$datetmp = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
+		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
 		// Replicate extrafields
@@ -1967,7 +1967,7 @@ if ($action == 'create') {
 		$fk_account = $societe->fk_account;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
-		$datetmp = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
+		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) {
@@ -2110,7 +2110,7 @@ if ($action == 'create') {
 	}
 
 	// Ref supplier
-	print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier']) ? $_POST['ref_supplier'] : $objectsrc->ref_supplier).'" type="text"';
+	print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : $objectsrc->ref_supplier).'" type="text"';
 	if ($societe->id > 0) {
 		print ' autofocus';
 	}
@@ -2203,8 +2203,9 @@ if ($action == 'create') {
 			foreach ($facids as $facparam)
 			{
 				$options .= '<option value="' . $facparam ['id'] . '"';
-				if ($facparam ['id'] == $_POST['fac_replacement'])
+				if ($facparam ['id'] == GETPOST('fac_replacement') {
 					$options .= ' selected';
+				}
 				$options .= '>' . $facparam ['ref'];
 				$options .= ' (' . $facturestatic->LibStatut(0, $facparam ['status']) . ')';
 				$options .= '</option>';
@@ -2446,7 +2447,7 @@ if ($action == 'create') {
 	if (!empty($conf->intracommreport->enabled)) {
 		$langs->loadLangs(array("intracommreport"));
 		print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
-		$form->selectTransportMode(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
+		$form->selectTransportMode(GETPOSTISSET('transport_mode_id') ? GETPOST('transport_mode_id') : $transport_mode_id, 'transport_mode_id');
 		print '</td></tr>';
 	}
 
