@@ -647,6 +647,11 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 			break;
 		}
 	}
+	// Check dynamic functions $xxx(
+	if (preg_match('/\$[a-z0-9_]+\(/ims', $phpfullcodestring)) {
+		$error++;
+		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
+	}
 
 	if (!$error && empty($user->rights->website->writephp)) {
 		if ($phpfullcodestringold != $phpfullcodestring) {
