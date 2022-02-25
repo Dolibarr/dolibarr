@@ -1934,32 +1934,20 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *    Returns the contact childs list of this contact
+	 *    Returns the number contact childs
 	 *
-	 *    @return    array    $contacts    array of contacts
+	 *    @return    int    $nbchilds   number of childs contacts
 	 */
-	public function childsArrayObjects()
+	public function NbChilds()
 	{
-		$contacts = array();
-
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE parent = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$nump = $this->db->num_rows($resql);
-			if ($nump) {
-				$i = 0;
-				while ($i < $nump) {
-					$obj = $this->db->fetch_object($resql);
-					$contact = new Contact($this->db);
-					$contact->fetch($obj->rowid);
-					$contacts[] = $contact;
-					$i++;
-				}
-			}
+			$nbchilds = $this->db->num_rows($resql);
 		} else {
 			dol_print_error($this->db);
 		}
-		return $contacts;
+		return $nbchilds;
 	}
 
 	/**

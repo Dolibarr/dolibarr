@@ -852,8 +852,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// parent user
-			$nbcchilds = count($object->childsArrayObjects());
-			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
+			$nbchilds = $object->NbChilds();
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
 				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 				print img_picto('', 'object_contact');
 				print $form->selectcontacts(0, $parent, 'parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
@@ -1140,8 +1140,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// parent user
-			$nbcchilds = count($object->childsArrayObjects());
-			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
+			$nbchilds = $object->NbChilds();
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
 				$parent = $object->parent;
 				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 				print img_picto('', 'object_contact');
@@ -1366,8 +1366,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// parent user
-		$nbcchilds = count($object->childsArrayObjects());
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbcchilds <= 0) {
+		$nbchilds = $object->NbChilds();
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
 			print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 			if ($object->parent > 0) {
 				$objparent = new Contact($db);
@@ -1558,7 +1558,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			// Childs list
 			if (empty($conf->global->SOCIETE_DISABLE_CONTACT_CHILDS)) {
-				$result = show_childs($conf, $langs, $db, $object);
+				$result = show_childs($conf, $langs, $db, $object, $childs);
 			}
 
 
