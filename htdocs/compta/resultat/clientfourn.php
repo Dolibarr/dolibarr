@@ -857,7 +857,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
 			if ($modecompta == 'CREANCES-DETTES') {
-				$column = 'p.datev';
+				$column = 'b.datev';
 			} else {
 				$column = 'p.datep';
 			}
@@ -865,6 +865,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, s.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid=p.fk_salary";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank=b.rowid";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
 			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
 			if (!empty($date_start) && !empty($date_end)) {
@@ -876,6 +877,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " UNION ";
 			$sql .= " SELECT u.rowid, u.firstname, u.lastname, p.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank=b.rowid";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
 			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
 			if (!empty($date_start) && !empty($date_end)) {
