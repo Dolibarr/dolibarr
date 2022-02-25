@@ -6881,6 +6881,11 @@ class TCPDF {
 				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
 				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
 				//return false;
+				// try to encode spaces on filename
+				$tfile = str_replace(' ', '%20', $file);
+				if (@TCPDF_STATIC::file_exists($tfile)) {
+					$file = $tfile;
+				}
 			}
 			if (($imsize = @getimagesize($file)) === FALSE) {
 				if (in_array($file, $this->imagekeys)) {
