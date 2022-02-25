@@ -293,7 +293,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-		$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype", 'alphanohtml') : $line->fk_typepayment, "paymenttype");
+		$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype", 'alphanohtml') : (!empty($line) ? $line->fk_typepayment : ''), "paymenttype");
 		print "</td>\n";
 		print '</tr>';
 
