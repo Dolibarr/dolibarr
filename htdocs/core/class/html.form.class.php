@@ -5203,9 +5203,7 @@ class Form
 			if ($selected) {
 				$projet = new Project($this->db);
 				$projet->fetch($selected);
-
                 $out .= $projet->getNomUrl(1, '', 1);
-
 			} else {
 				$out .= "&nbsp;";
 			}
