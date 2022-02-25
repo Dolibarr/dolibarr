@@ -265,9 +265,9 @@ if (empty($reshook)) {
 					$error++;
 					$action = 'create';
 				}
-				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
+				//$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
-				$object->array_options = $array_options;
+				//$object->array_options = $array_options;
 
 				$id = $object->create($user);
 
