@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Acest contact este deja definit ca pe
 ErrorCashAccountAcceptsOnlyCashMoney=Acest cont bancar este un cont de numerar, sunt accepate doar plăţi de tip cash.
 ErrorFromToAccountsMustDiffers=Contul bancar sursă şi contul bancar destinaţie trebuie să fie diferite.
 ErrorBadThirdPartyName=Valoare greşită pentru numele terțului
+ForbiddenBySetupRules=Interzis de regulile de instalare configurare
 ErrorProdIdIsMandatory=%s este obligatoriu
+ErrorAccountancyCodeCustomerIsMandatory=Codul contabil aferent clientului %s este obligatoriu
 ErrorBadCustomerCodeSyntax=Sintaxă eronată pentru codul de client
 ErrorBadBarCodeSyntax=Sintaxă greșită pentru codul de bare. Poate s-a setat un tip de cod de bare greșit sau ați definit o mască de numerotare care nu se potrivește cu valoarea scanată.
 ErrorCustomerCodeRequired=Codul client este obligatoriu
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Nu se află în dicționarul Condiții de 
 ErrorIsNotADraft=%s nu este o schiţă
 ErrorExecIdFailed=Nu se poate executa comanda "id"
 ErrorBadCharIntoLoginName=Caracter nepermis în numele de utilizator
+ErrorRequestTooLarge=Eroare, cererea este prea mare
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Necesită cel puţin %s caracter(e)
 RequireXStringMax = Necesită %s caracter(e) maxim
 RequireAtLeastXDigits = Necesită cel puţin %s cifr(e)
 RequireXDigitsMax = Necesită cel puţin %s cifr(e) maxim
+RequireValidNumeric = Necesită o valoare numerică
 RequireValidEmail = Adresa de email nu este validă
 RequireMaxLength = Lungimea trebuie să fie mai mică de %s caractere
 RequireMinLength = Lungimea trebuie să fie mai mare de %s caracter(e)

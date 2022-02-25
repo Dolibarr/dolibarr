@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=MSGID %s elektron pochtasidan elektron pochta yig
 TicketCreatedByEmailCollector=MSGID %s elektron pochtasidan elektron pochta yig'uvchisi tomonidan yaratilgan chipta
 OpeningHoursFormatDesc=Ochilish va yopilish soatlarini ajratish uchun a - dan foydalaning. <br> Turli xil intervallarni kiritish uchun bo'sh joydan foydalaning. <br> Misol: 8-12 14-18
 SuffixSessionName=Sessiya nomi uchun qo'shimchalar
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Eksport maydoni

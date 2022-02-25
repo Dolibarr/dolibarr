@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Бунёд
 Version=Версия
 Publisher=Ношир
@@ -343,7 +343,7 @@ StepNb=Қадами %s
 FindPackageFromWebSite=Бастаро пайдо кунед, ки хусусиятҳои ба шумо лозимро таъмин кунад (масалан дар вебсайти расмии %s).
 DownloadPackageFromWebSite=Бастаро зеркашӣ кунед (масалан аз вебсайти расмии %s).
 UnpackPackageInDolibarrRoot=Файлҳои басташударо дар феҳристи сервери Dolibarr кушоед/кушоед: <b> %s </b>
-UnpackPackageInModulesRoot=Барои ҷойгир кардан/насб кардани модули беруна, файлҳои басташударо дар феҳристи серверҳои бахшида ба модулҳои беруна кушоед/кушоед: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Ҷойгиркунии модул ба охир расид. Аммо шумо бояд модулро дар замимаи худ тавассути рафтан ба модулҳои танзимоти саҳифа фаъол ва танзим кунед: <a href="%s"> %s </a>.
 NotExistsDirect=Феҳристи решаи алтернативӣ ба директорияи мавҷуда муайян карда нашудааст. <br>
 InfDirAlt=Аз версияи 3, феҳристи алтернативии решаро муайян кардан мумкин аст. Ин ба шумо имкон медиҳад, ки дар феҳристи махсус, плагинҳо ва қолабҳои фармоишӣ захира кунед. <br> Танҳо дар решаи Dolibarr феҳрист эҷод кунед (масалан: фармоишӣ). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Насб кардан ё сохтани модули �
 HighlightLinesOnMouseHover=Ҳангоми гузаштан аз болои муш хатҳои ҷадвалро равшан кунед
 HighlightLinesColor=Ҳангоми гузаштани муш ранги сатрро равшан кунед ('ffffff' -ро истифода баред, то равшан набошад)
 HighlightLinesChecked=Ҳангоме ки он тафтиш карда мешавад, ранги хатро қайд кунед ('ffffff' -ро истифода баред, то равшан накунед)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Ранги матни сарлавҳаи саҳифа
 LinkColor=Ранги пайвандҳо
 PressF5AfterChangingThis=CTRL+F5 -ро дар клавиатура пахш кунед ё кэши браузери худро пас аз тағир додани ин арзиш барои самаранокӣ тоза кунед
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

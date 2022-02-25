@@ -353,12 +353,14 @@ function GETPOSTISSET($paramname)
 				}
 			}
 		}
-		// If there is saved contextpage, page or limit
+		// If there is saved contextpage, limit, page or mode
 		if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring])) {
+			$isset = true;
+		} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
 			$isset = true;
 		} elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring])) {
 			$isset = true;
-		} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
+		} elseif ($paramname == 'mode' && !empty($_SESSION['lastsearch_mode_'.$relativepathstring])) {
 			$isset = true;
 		}
 	} else {
@@ -448,10 +450,12 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			// If there is saved contextpage, page or limit
 			if ($paramname == 'contextpage' && !empty($_SESSION['lastsearch_contextpage_'.$relativepathstring])) {
 				$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
-			} elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring])) {
-				$out = $_SESSION['lastsearch_page_'.$relativepathstring];
 			} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
 				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
+			} elseif ($paramname == 'page' && !empty($_SESSION['lastsearch_page_'.$relativepathstring])) {
+				$out = $_SESSION['lastsearch_page_'.$relativepathstring];
+			} elseif ($paramname == 'mode' && !empty($_SESSION['lastsearch_mode_'.$relativepathstring])) {
+				$out = $_SESSION['lastsearch_mode_'.$relativepathstring];
 			}
 		} elseif (!isset($_GET['sortfield'])) {
 			// Else, retrieve default values if we are not doing a sort
@@ -661,16 +665,16 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Sanitizing for special parameters.
-	// Note: There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL.
+	// Note: There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL. Only relative URLs are allowed.
 	if ($paramname == 'backtopage' || $paramname == 'backtolist' || $paramname == 'backtourl') {
-		$out = str_replace('\\', '/', $out);					// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
-		$out = str_replace(array(':', ';', '@'), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
+		$out = str_replace('\\', '/', $out);								// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
+		$out = str_replace(array(':', ';', '@', "\t", ' '), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to retreive it after other replacements.
 		do {
 			$oldstringtoclean = $out;
 			$out = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $out);
+			$out = preg_replace(array('/^[^\?]*%/'), '', $out);				// We remove any % chars before the ?. Example in url: '/product/stock/card.php?action=create&backtopage=%2Fdolibarr_dev%2Fhtdocs%2Fpro%25duct%2Fcard.php%3Fid%3Dabc'
+			$out = preg_replace(array('/^[a-z]*\/\s*\/+/i'), '', $out);		// We remove schema*// to remove external URL
 		} while ($oldstringtoclean != $out);
-
-		$out = preg_replace(array('/^[a-z]*\/\/+/i'), '', $out);	// We remove schema*// to remove external URL
 	}
 
 	// Code for search criteria persistence.
@@ -709,11 +713,11 @@ function GETPOSTINT($paramname, $method = 0)
 /**
  *  Return a value after checking on a rule. A sanitization may also have been done.
  *
- *  @param  string  $out	     Value to check/clear.
- *  @param  string  $check	     Type of check/sanitizing
- *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
- *  @return string|array         Value sanitized (string or array). It may be '' if format check fails.
+ *  @param  string|array  	$out	     Value to check/clear.
+ *  @param  string  		$check	     Type of check/sanitizing
+ *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array    		     Value sanitized (string or array). It may be '' if format check fails.
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
@@ -866,31 +870,32 @@ if (!function_exists('dol_getprefix')) {
 	 *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
 	 *  The prefix is unique for instance and avoid conflict between multi-instances, even when having two instances with same root dir
 	 *  or two instances in same virtual servers.
+	 *  This function must not use dol_hash (that is used for password hash) and need to have all context $conf loaded.
 	 *
 	 *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
 	 *  @return	string                          A calculated prefix
 	 */
 	function dol_getprefix($mode = '')
 	{
-		// If prefix is for email (we need to have $conf alreayd loaded for this case)
+		// If prefix is for email (we need to have $conf already loaded for this case)
 		if ($mode == 'email') {
 			global $conf;
 
-			if (!empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID)) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
+			if (!empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID)) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') {
 					return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
-				} elseif (isset($_SERVER["SERVER_NAME"])) {
+				} elseif (isset($_SERVER["SERVER_NAME"])) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set to 'SERVER_NAME'
 					return $_SERVER["SERVER_NAME"];
 				}
 			}
 
-			// The recommended value (may be not defined for old versions)
+			// The recommended value if MAIL_PREFIX_FOR_EMAIL_ID is not defined (may be not defined for old versions)
 			if (!empty($conf->file->instance_unique_id)) {
-				return $conf->file->instance_unique_id;
+				return sha1('dolibarr'.$conf->file->instance_unique_id);
 			}
 
-			// For backward compatibility
-			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
+			// For backward compatibility when instance_unique_id is not set
+			return sha1(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
 
 		// If prefix is for session (no need to have $conf loaded)
@@ -899,15 +904,15 @@ if (!function_exists('dol_getprefix')) {
 
 		// The recommended value (may be not defined for old versions)
 		if (!empty($tmp_instance_unique_id)) {
-			return $tmp_instance_unique_id;
+			return sha1('dolibarr'.$tmp_instance_unique_id);
 		}
 
-		// For backward compatibility
+		// For backward compatibility when instance_unique_id is not set
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"])) {
-			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
+			return sha1($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		} else {
+			return sha1(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
-
-		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 	}
 }
 
@@ -1100,6 +1105,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
 
@@ -1123,6 +1129,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
 
@@ -2016,7 +2023,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 
 			if (empty($phototoshow)) {      // Show No photo link (picto of object)
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action') {
 					$width = 80;
 					$cssclass = 'photorefcenter';
@@ -2038,8 +2044,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
 				$morehtmlleft .= $nophoto;
 				$morehtmlleft .= '</div></div>';
-
-				$morehtmlleft .= '</div>';
 			}
 		}
 	}
@@ -2569,11 +2573,11 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
-	//print 'gm:'.$gm.' gm==auto:'.($gm == 'auto').'<br>';
 
 	if ($gm === 'auto') {
 		$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
+	//print 'gm:'.$gm.' gm === auto:'.($gm === 'auto').'<br>';exit;
 
 	// Clean parameters
 	if ($hour == -1 || empty($hour)) {
@@ -3719,7 +3723,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
-				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
+				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
 				'multicurrency',
@@ -3729,7 +3733,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
-				'label', 'language', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
+				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'puce',
@@ -3745,7 +3749,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'uncheck', 'user-cog', 'vat', 'website', 'workstation',
+				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
 			))) {
 			$fakey = $pictowithouttext;
@@ -3774,7 +3778,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'email'=>'at', 'establishment'=>'building', 'edit'=>'pencil-alt', 'entity'=>'globe',
 				'graph'=>'chart-line', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach',
-				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'knowledgemanagement'=>'ticket-alt', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
+				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'knowledgemanagement'=>'ticket-alt', 'label'=>'layer-group', 'line'=>'bars', 'loan'=>'money-bill-alt',
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'expensereport'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
@@ -6578,16 +6582,18 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
 							$valuetoclean = $attrs->item($ii)->value;
 
-							do {
-								$oldvaluetoclean = $valuetoclean;
-								$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
-								$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
-								if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-									$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-									$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-									$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
-								}
-							} while ($oldvaluetoclean != $valuetoclean);
+							if (isset($valuetoclean)) {
+								do {
+									$oldvaluetoclean = $valuetoclean;
+									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
+									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
+									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
+										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+									}
+								} while ($oldvaluetoclean != $valuetoclean);
+							}
 
 							$attrs->item($ii)->value = $valuetoclean;
 						}
@@ -8795,7 +8801,7 @@ function printCommonFooter($zone = 'private')
 
 	// A div to store page_y POST parameter so we can read it using javascript
 	print "\n<!-- A div to store page_y POST parameter -->\n";
-	print '<div id="page_y" style="display: none;">'.(empty($_POST['page_y']) ? '' : $_POST['page_y']).'</div>'."\n";
+	print '<div id="page_y" style="display: none;">'.(GETPOST('page_y') ? GETPOST('page_y') : '').'</div>'."\n";
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -10500,6 +10506,7 @@ function newToken()
 
 /**
  * Return the value of token currently saved into session with name 'token'.
+ * For ajax call, you must use this token as a parameter of the call into the js calling script (the called ajax php page must also set constant NOTOKENRENEWAL).
  *
  * @return  string
  */
@@ -10797,7 +10804,7 @@ function dolForgeCriteriaCallback($matches)
 {
 	global $db;
 
-	//dol_syslog("Convert matches ".$matches[1]);
+	dol_syslog("Convert matches ".$matches[1]);
 	if (empty($matches[1])) {
 		return '';
 	}

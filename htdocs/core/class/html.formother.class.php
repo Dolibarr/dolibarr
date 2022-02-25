@@ -460,7 +460,7 @@ class FormOther
 	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
 	 *  @param  User		$user           	Object user
 	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	int|string	$showempty			1=show also an empty value
+	 *  @param	int|string	$showempty			1=show also an empty value or text to show for empty
 	 *  @param	string		$morecss			More CSS
 	 *  @param	int			$norepresentative	Show also an entry "Not categorized"
 	 *  @return string							Html combo list code
@@ -489,11 +489,11 @@ class FormOther
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($showempty) {
 			$textforempty = ' ';
-			if (!empty($conf->use_javascript_ajax)) {
-				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-			}
 			if (!is_numeric($showempty)) {
 				$textforempty = $showempty;
+			}
+			if (!empty($conf->use_javascript_ajax) && $textforempty == ' ') {
+				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
 			}
 			$out .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
 		}
@@ -1479,69 +1479,18 @@ class FormOther
 	 * @param	array	$search_groupby		Array of preselected fields
 	 * @param	array	$arrayofgroupby		Array of groupby to fill
 	 * @param	string	$morecss			More CSS
+	 * @param	string  $showempty          '1' or 'text'
 	 * @return string						HTML string component
 	 */
-	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250')
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
 		global $langs, $extrafields, $form;
 
-		$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-		$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-		$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-		$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-		$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
-
-		foreach ($object->fields as $key => $val) {
-			if (!$val['measure']) {
-				if (in_array($key, array(
-					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
-					continue;
-				}
-				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
-					continue;
-				}
-				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
-					continue;
-				}
-				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
-					continue;
-				}
-				if (preg_match('/^pass/', $key)) {
-					continue;
-				}
-				if (in_array($val['type'], array('html', 'text'))) {
-					continue;
-				}
-				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => $val['position'].'-y');
-					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => $val['position'].'-m');
-					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => $val['position'].'-d');
-				} else {
-					$arrayofgroupby['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
-				}
-			}
-		}
-		// Add extrafields to Group by
-		if ($object->isextrafieldmanaged) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
-					continue;
-				}
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
-					continue;
-				}
-				$arrayofgroupby['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-			}
-		}
-
-		$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
 		$arrayofgroupbylabel = array();
 		foreach ($arrayofgroupby as $key => $val) {
 			$arrayofgroupbylabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}
@@ -1552,72 +1501,18 @@ class FormOther
 	 * @param 	mixed	$object				Object analyzed
 	 * @param	array	$search_xaxis		Array of preselected fields
 	 * @param	array	$arrayofxaxis		Array of groupby to fill
-	 * @return string						HTML string component
+	 * @param	string  $showempty          '1' or 'text'
+	 * @return 	string						HTML string component
 	 */
-	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis)
+	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1')
 	{
-		global $langs, $extrafields, $form;
-
-		$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-		$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-		$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-		$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-		$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
-
-
-		foreach ($object->fields as $key => $val) {
-			if (!$val['measure']) {
-				if (in_array($key, array(
-					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
-					continue;
-				}
-				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
-					continue;
-				}
-				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
-					continue;
-				}
-				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
-					continue;
-				}
-				if (preg_match('/^pass/', $key)) {
-					continue;
-				}
-				if (in_array($val['type'], array('html', 'text'))) {
-					continue;
-				}
-				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
-					$arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
-					$arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
-				} else {
-					$arrayofxaxis['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
-				}
-			}
-		}
-
-		// Add extrafields to X-Axis
-		if ($object->isextrafieldmanaged) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
-					continue;
-				}
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
-					continue;
-				}
-				$arrayofxaxis['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-			}
-		}
-
-		$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 0, 0, 1);
+		global $form;
 
 		$arrayofxaxislabel = array();
 		foreach ($arrayofxaxis as $key => $val) {
 			$arrayofxaxislabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth250 maxwidth500', 1);
 
 		return $result;
 	}

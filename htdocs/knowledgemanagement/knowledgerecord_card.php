@@ -175,24 +175,21 @@ if ($action == 'create') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage) {
+	if (!empty($backtopage)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
-	if ($conf->categorie->enabled) {
+	if (!empty($conf->categorie->enabled)) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
 
 		if (count($cate_arbo)) {
@@ -225,10 +222,10 @@ if (($id || $ref) && $action == 'edit') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($backtopage) {
+	if (!empty($backtopage)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
@@ -239,7 +236,7 @@ if (($id || $ref) && $action == 'edit') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
 
-	if ($conf->categorie->enabled) {
+	if (!empty($conf->categorie->enabled)) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
 
 		if (count($cate_arbo)) {

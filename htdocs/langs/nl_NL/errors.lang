@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Deze contactpersoon is al ingesteld a
 ErrorCashAccountAcceptsOnlyCashMoney=Dit is een kasrekening, dus deze accepteert alleen betalingen van het type kas.
 ErrorFromToAccountsMustDiffers=De bron- en doelrekening mogen niet dezelfde zijn.
 ErrorBadThirdPartyName=Onjuiste waarde voor naam van derde partij
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=De %s is verplicht
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Verkeerde syntaxis voor afnemerscode
 ErrorBadBarCodeSyntax=Onjuiste syntaxis voor streepjescode. Misschien stelt u een slecht barcodetype in of heeft u een barcodemasker gedefinieerd voor nummering dat niet overeenkomt met de gescande waarde.
 ErrorCustomerCodeRequired=Afnemerscode nodig
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Niet bekend in de gedefinieerde betaalrege
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Uw PHP-parameter upload_max_filesize (%s) is hoger dan PHP-parameter post_max_size (%s). Dit is geen consistente opstelling.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

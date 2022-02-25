@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=ای میل MSGID %s سے ای میل کلکٹر 
 TicketCreatedByEmailCollector=ای میل MSGID %s سے ای میل کلکٹر کے ذریعہ تیار کردہ ٹکٹ
 OpeningHoursFormatDesc=کھلنے اور بند ہونے کے اوقات کو الگ کرنے کے لیے - کا استعمال کریں۔ <br> مختلف حدود میں داخل ہونے کے لیے اسپیس کا استعمال کریں۔ <br> مثال: 8-12 14-18
 SuffixSessionName=سیشن کے نام کے لیے لاحقہ
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=برآمدات کا علاقہ

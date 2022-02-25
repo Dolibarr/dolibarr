@@ -97,14 +97,14 @@ function testSqlAndScriptInject($val, $type)
 		//$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $val); // Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
 		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
 			return realCharForNumericEntities($m); }, $val);
+
+		// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
+		// We should use dol_string_nounprintableascii but function is not yet loaded/available
+		$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+		// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+		$val = preg_replace('/<!--[^>]*-->/', '', $val);
 	} while ($oldval != $val);
 	//print "after  decoding $val\n";
-
-	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
-	// We should use dol_string_nounprintableascii but function is not yet loaded/available
-	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
-	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
-	$val = preg_replace('/<!--[^>]*-->/', '', $val);
 
 	$inj = 0;
 	// For SQL Injection (only GET are used to scan for such injection strings)
@@ -149,7 +149,7 @@ function testSqlAndScriptInject($val, $type)
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforecopy|beforecut|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $val);
-	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $val);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $val);
@@ -158,8 +158,8 @@ function testSqlAndScriptInject($val, $type)
 	$tmpval = preg_replace('/<[^<]+>/', '', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $tmpval);
-	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $tmpval);
+	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforecopy|beforecut|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $tmpval);
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $tmpval);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $tmpval);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $tmpval);
@@ -282,14 +282,13 @@ if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
 
 // Init session. Name of session is specific to Dolibarr instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
-// Note: the function dol_getprefix is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
+// Note: the function dol_getprefix() is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
 $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 }
-
 
 // This create lock, released by session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
@@ -475,7 +474,9 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions and mass actions are processed as sensitive.
-		$sensitiveget = true;
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'file_manager'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
+			$sensitiveget = true;
+		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
 		// Few GET actions coded with a &token into url are processed as sensitive.
 		$arrayofactiontoforcetokencheck = array(
@@ -508,6 +509,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 				print $langs->trans("ErrorGoBackAndCorrectParameters");
 				die;
 			} else {
+				http_response_code(403);
 				if (defined('CSRFCHECK_WITH_TOKEN')) {
 					dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (CSRFCHECK_WITH_TOKEN protection) in main.inc.php. Token not provided.", LOG_WARNING);
 					print "Access to a page that needs a token (constant CSRFCHECK_WITH_TOKEN is defined) is refused by CSRF protection in main.inc.php. Token not provided.\n";
@@ -531,7 +533,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
-		if (isset($_POST['id'])) $savid = ((int) $_POST['id']);
+		$savid = null;
+		if (isset($_POST['id'])) {
+			$savid = ((int) $_POST['id']);
+		}
 		unset($_POST);
 		//unset($_POST['action']); unset($_POST['massaction']);
 		//unset($_POST['confirm']); unset($_POST['confirmmassaction']);
@@ -539,7 +544,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		unset($_GET['action']);
 		unset($_GET['confirmmassaction']);
 		unset($_GET['massaction']);
-		if (isset($savid)) $_POST['id'] = ((int) $savid);
+		unset($_GET['token']);			// TODO Make a redirect if we have a token in url to remove it ?
+		if (isset($savid)) {
+			$_POST['id'] = ((int) $savid);
+		}
 	}
 
 	// Note: There is another CSRF protection into the filefunc.inc.php
@@ -934,7 +942,7 @@ if (!defined('NOLOGIN')) {
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				//var_dump($relativepathstring);
 
-				// We click on a link that leave a page we have to save search criteria, contextpage, limit and page. We save them from tmp to no tmp
+				// We click on a link that leave a page we have to save search criteria, contextpage, limit and page and mode. We save them from tmp to no tmp
 				if (!empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring])) {
 					$_SESSION['lastsearch_values_'.$relativepathstring] = $_SESSION['lastsearch_values_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
@@ -943,13 +951,17 @@ if (!defined('NOLOGIN')) {
 					$_SESSION['lastsearch_contextpage_'.$relativepathstring] = $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 				}
+				if (!empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit) {
+					$_SESSION['lastsearch_limit_'.$relativepathstring] = $_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
+					unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+				}
 				if (!empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 0) {
 					$_SESSION['lastsearch_page_'.$relativepathstring] = $_SESSION['lastsearch_page_tmp_'.$relativepathstring];
 					unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
 				}
-				if (!empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit) {
-					$_SESSION['lastsearch_limit_'.$relativepathstring] = $_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
-					unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+				if (!empty($_SESSION['lastsearch_mode_tmp_'.$relativepathstring])) {
+					$_SESSION['lastsearch_mode_'.$relativepathstring] = $_SESSION['lastsearch_mode_tmp_'.$relativepathstring];
+					unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 				}
 			}
 
@@ -3110,7 +3122,7 @@ if (!function_exists("llxFooter")) {
 	{
 		global $conf, $db, $langs, $user, $mysoc, $object, $hookmanager;
 		global $delayedhtmlcontent;
-		global $contextpage, $page, $limit;
+		global $contextpage, $page, $limit, $mode;
 		global $dolibarr_distrib;
 
 		$ext = 'layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
@@ -3150,6 +3162,7 @@ if (!function_exists("llxFooter")) {
 			unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 
 			if (!empty($contextpage)) {
 				$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring] = $contextpage;
@@ -3160,10 +3173,14 @@ if (!function_exists("llxFooter")) {
 			if (!empty($limit) && $limit != $conf->liste_limit) {
 				$_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
 			}
+			if (!empty($mode)) {
+				$_SESSION['lastsearch_mode_tmp_'.$relativepathstring] = $mode;
+			}
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_limit_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_mode_'.$relativepathstring]);
 		}
 
 		// Core error message
@@ -3222,6 +3239,7 @@ if (!function_exists("llxFooter")) {
 									id:<?php echo $object->id; ?>
 									, element:'<?php echo $object->element ?>'
 									, action:'DOC_PREVIEW'
+									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
@@ -3231,6 +3249,7 @@ if (!function_exists("llxFooter")) {
 									id:<?php echo $object->id; ?>
 									, element:'<?php echo $object->element ?>'
 									, action:'DOC_DOWNLOAD'
+									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
@@ -3249,7 +3268,7 @@ if (!function_exists("llxFooter")) {
 		$forceping = GETPOST('forceping', 'alpha');
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
-			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);	// Do not use dol_hash(), must not change if salt changes.
 
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
 				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))

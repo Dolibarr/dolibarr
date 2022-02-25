@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Dieser Kontakt ist bereits als Kontak
 ErrorCashAccountAcceptsOnlyCashMoney=Dies ist ein Bargeldkonto (Kasse) und akzeptiert deshalb nur Bargeldtransaktionen.
 ErrorFromToAccountsMustDiffers=Quell- und Zielbankkonto müssen unterschiedlich sein.
 ErrorBadThirdPartyName=Ungültiger Wert für den Namen des Partners
+ForbiddenBySetupRules=Durch Setup-Regeln verboten
 ErrorProdIdIsMandatory=Die %s ist zwingend notwendig
+ErrorAccountancyCodeCustomerIsMandatory=Der Buchhaltungscode des Kunden %s ist eine Pflichtangabe
 ErrorBadCustomerCodeSyntax=Die eingegebene Kundennummer ist unzulässig.
 ErrorBadBarCodeSyntax=Falsche Syntax für den Barcode. Vielleicht haben Sie eine falsche Barcodeart  eingestellt  oder eine falsche Barcode Maske definiert.
 ErrorCustomerCodeRequired=Kunden Nr. erforderlich
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Nicht im Dictionary der Zahlungsbedingunge
 ErrorIsNotADraft=%s ist kein Entwurf
 ErrorExecIdFailed=Befehl "id" kann nicht ausgeführt werden
 ErrorBadCharIntoLoginName=Unzulässiges Zeichen im Login-Namen
+ErrorRequestTooLarge=Fehler, Anfrage zu groß
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Mindestlänge beträgt %s Zeichen
 RequireXStringMax = Maximal %s Zeichen zulässig
 RequireAtLeastXDigits = Mindestlänge beträgt %s Ziffern
 RequireXDigitsMax = Maximal %s Ziffern zulässig
+RequireValidNumeric = Erfordert einen numerischen Wert
 RequireValidEmail = E-Mail Adresse ist nicht gültig
 RequireMaxLength = Länge muss kleiner sein als %s Zeichen
 RequireMinLength = Länge muss größer als %s Zeichen sein

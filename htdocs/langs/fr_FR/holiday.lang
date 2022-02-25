@@ -134,4 +134,6 @@ HolidaysToApprove=Vacances à approuver
 NobodyHasPermissionToValidateHolidays=Aucun utilisateur ne dispose des permissions pour valider les demandes de congés
 HolidayBalanceMonthlyUpdate=Mise à jour mensuelle du solde des congés
 XIsAUsualNonWorkingDay=%s est généralement un jour NON ouvrable
+BlockHolidayIfNegative=Block if balance negative
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=La demande de congé %s doit être brouillon, annulée ou refusée pour être supprimée

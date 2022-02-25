@@ -189,7 +189,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	/* padding: 5px; */
 }
-.pageplusone,
+.pageplusone, .divadvancedsearchfieldcompinput,
 div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
@@ -201,6 +201,11 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 		<?php
 	}
 	?>
+}
+.divadvancedsearchfieldcompinput {
+	background: #fff;
+	border-bottom: solid 1px var(--inputbordercolor);
+	border-radius: 3px;
 }
 input[name=duration_value], input[name=durationhour]
 {
@@ -218,7 +223,7 @@ input {
 	padding-left: 5px;
 }
 select {
-	padding-top: 5px;
+	padding-top: 4px;
 	padding-right: 4px;
 	padding-bottom: 5px;
 	padding-left: 2px;
@@ -259,7 +264,8 @@ input:invalid, select:invalid, input.--error , select.--error {
 
 section.setupsection {
 	padding: 20px;
-	background-color: var(--colorbacktitle1);
+	/* background-color: var(--colorbacktitle1); */
+	background-color: #f0f0f0;
 	border-radius: 5px;
 }
 
@@ -269,7 +275,7 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input), select:focus, .select2-container--open .select2-selection--single {
+input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input), select:focus, .select2-container--open .select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -544,6 +550,13 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
+
+table.tableforfield .button:not(.bordertransp):not(.buttonpayment),
+table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
+	margin-bottom: 2px;
+	margin-top: 2px;
+}
+
 .button:not(.bordertransp):not(.buttonpayment),
 .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 3px;
@@ -722,6 +735,9 @@ textarea.centpercent {
 .center {
 	text-align: center;
 	margin: 0px auto;
+}
+.centerimp {
+	text-align: center !important;
 }
 .alignstart {
 	text-align: start;
@@ -1032,10 +1048,11 @@ div.divsearchfield {
 	background: #fff;
 	padding-top: 3px;
 	padding-bottom: 3px;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-<?php echo $left; ?>: 0;
+	padding-<?php echo $right; ?>: 0;
 	border-bottom: solid 1px var(--inputbordercolor);
 	height: 24px;
+	border-radius: 3px;
 }
 .search_component_searchtext {
 	padding-top: 2px;
@@ -1045,6 +1062,32 @@ div.divsearchfield {
 	width: auto;
 	margin: 0 !important;
 	padding: 3px;
+}
+.tagsearch {
+	padding: 2px;
+	padding-right: 4px;
+	padding-bottom: 3px;
+	background: #ddd;
+	border-radius: 4px;
+}
+.tagsearchdelete {
+	color: #999;
+	cursor: pointer;
+	display: inline-block;
+	font-weight: bold;
+	margin-right: 2px;
+	padding-left: 4px;
+}
+
+.caretleftaxis {
+	margin-left: -13px;
+	margin-top: -1px;
+	position: absolute;
+}
+.caretdownaxis {
+	margin-left: -12px;
+	margin-top: 0;
+	position: absolute;
 }
 
 .a-filter, .a-mesure {
@@ -3459,11 +3502,10 @@ table.border, table.bordernooddeven, table.dataTable, .table-border, .table-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
-.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 22px;
-}
+.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
+div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-	height: 22px;
+	height: 28px;
 }
 
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
@@ -3471,17 +3513,15 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
 	vertical-align: top !important;
-	/*padding-top: 10px !important;
-	padding-bottom: 2px !important; */
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 5px 2px 5px 2px;
+	padding: 2px 2px 2px 2px;
 	border-collapse: collapse;
 }
 div.tabBar .fichecenter table.border>tbody>tr>td, div.tabBar .fichecenter div.border div div.tagtd, div.tabBar div.border div div.tagtd
 {
-	padding-top: 5px;
+	padding-top: 2px;
 	border-bottom: 1px solid #E0E0E0;
 }
 
@@ -3713,7 +3753,7 @@ div.refidno form {
 }
 
 div.pagination {
-	float: right;
+	float: <?php echo $right; ?>;
 }
 div.pagination a {
 	font-weight: normal;
@@ -5885,6 +5925,7 @@ span#select2-taskid-container[title^='--'] {
 }
 
 span.select2.select2-container.select2-container--default {
+	text-align: initial;
 	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
 	border-left: none;
 	border-top: none;
@@ -5902,7 +5943,7 @@ input.select2-input {
 	color: #FFF !important;
 }
 .select2-container .select2-selection--multiple {
-	min-height: 30px !important;
+	min-height: 28px !important;
 }
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	margin-top: 5px !important;
@@ -6014,6 +6055,9 @@ input.select2-input {
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	background-color: #ddd;
 	margin-top: 4px !important;
+}
+.select2-selection--multiple input.select2-search__field {
+	border-bottom: none !important;
 }
 
 .select2-search__field
@@ -6197,6 +6241,10 @@ span#select2-boxbookmark-container {
   position: relative;
   cursor: text;
   overflow: hidden;
+}
+
+ul.select2-results__options li {
+	font-size: 0.95em;
 }
 
 
@@ -7365,7 +7413,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	#divbodywebsite {
-		word-break: break-all;
+		word-break: break-word;
 	}
 
 	.websiteselectionsection {

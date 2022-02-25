@@ -47,8 +47,6 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = '/bbb/'; }
-
 	$openeddir = GETPOST('openeddir');
 	$modulepart = GETPOST('modulepart');
 	$selecteddir = jsUnEscape(GETPOST('dir')); // relative path. We must decode using same encoding function used by javascript: escape()
@@ -60,7 +58,6 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	}
 } else {
 	// For no ajax call
-	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = GETPOST('preopened'); }
 
 	$openeddir = GETPOST('openeddir');
 	$modulepart = GETPOST('modulepart');

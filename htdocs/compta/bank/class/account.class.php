@@ -1188,9 +1188,11 @@ class Account extends CommonObject
 	 * 	Return current sold
 	 *
 	 * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-	 *	@return	int					Current sold (value date <= today)
+	 *	@param	tms		$date_end	Date until we want to get bank account sold
+	 *	@param	string	$field		dateo or datev
+	 *	@return	int		current sold (value date <= today)
 	 */
-	public function solde($option = 0)
+	public function solde($option = 0, $date_end = '', $field = 'dateo')
 	{
 		$solde = 0;
 
@@ -1198,7 +1200,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $this->id);
 		if ($option == 1) {
-			$sql .= " AND dateo <= '".$this->db->idate(dol_now())."'";
+			$sql .= " AND ".$this->db->escape($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
 		}
 
 		$resql = $this->db->query($sql);
@@ -1511,10 +1513,10 @@ class Account extends CommonObject
 	{
 		$country_code = $this->getCountryCode();
 
-		if (in_array($country_code, array('AD', 'FR', 'ES', 'GA', 'IT', 'NC'))) {
+		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC'))) {
 			return 1; // France, Spain, Gabon, ... - Not valid for CH
 		}
-		if (in_array($country_code, array('AU', 'BE', 'CA', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
+		if (in_array($country_code, array('AD', 'AU', 'BE', 'CA', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
 			return 2; // Australia, England...
 		}
 		return 0;

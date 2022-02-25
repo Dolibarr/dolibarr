@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto já está definido como
 ErrorCashAccountAcceptsOnlyCashMoney=Esta conta bancaria é de tipo Caixa e só aceita o método de pagamento de tipo <b>especie</b>.
 ErrorFromToAccountsMustDiffers=A conta origem e destino devem ser diferentes.
 ErrorBadThirdPartyName=Bad value for third-party name
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=O %s é obrigatório
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=A sintaxis do código cliente é incorrecta
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Código cliente obrigatório
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please mo
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

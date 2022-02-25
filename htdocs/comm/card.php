@@ -214,7 +214,7 @@ if (empty($reshook)) {
 	// assujetissement a la TVA
 	if ($action == 'setassujtva' && $user->rights->societe->creer) {
 		$object->fetch($id);
-		$object->tva_assuj = $_POST['assujtva_value'];
+		$object->tva_assuj = GETPOST('assujtva_value');
 		$result = $object->update($object->id);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');

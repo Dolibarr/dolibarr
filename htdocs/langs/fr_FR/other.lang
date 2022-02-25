@@ -258,10 +258,10 @@ PassEncoding=Codage du mot de passe
 PermissionsAdd=Permissions ajoutés
 PermissionsDelete=Permissions retirées
 YourPasswordMustHaveAtLeastXChars=Votre mot de passe doit avoir au moins <strong> %s </strong> caractères
-PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
-PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
-PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
-PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
+PasswordNeedAtLeastXUpperCaseChars=Le mot de passe nécessite au moins <strong>%s</strong> caractères majuscules
+PasswordNeedAtLeastXDigitChars=Le mot de passe nécessite au moins <strong>%s</strong> caractères numériques
+PasswordNeedAtLeastXSpecialChars=Le mot de passe nécessite au moins <strong>%s</strong> caractères spéciaux
+PasswordNeedNoXConsecutiveChars=Le mot de passe ne doit pas avoir <strong>%s</strong> caractères similaires consécutifs
 YourPasswordHasBeenReset=Votre mot de passe a été réinitialisé avec succès
 ApplicantIpAddress=Adresse IP du demandeur
 SMSSentTo=SMS envoyé à %s
@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Projet créé par le collecteur de courrier élec
 TicketCreatedByEmailCollector=Ticket créé par le collecteur de courrier électronique à partir du courrier électronique MSGID %s
 OpeningHoursFormatDesc=Utilisez un - pour séparer les heures d'ouverture et de fermeture. <br> Utilisez un espace pour entrer différentes plages. <br> Exemple: 8-12 14-18
 SuffixSessionName=Suffixe pour le nom de la session
+LoginWith=Connectez-vous avec %s
 
 ##### Export #####
 ExportsArea=Espace exports

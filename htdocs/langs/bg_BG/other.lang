@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Проектът е създаден, чрез и
 TicketCreatedByEmailCollector=Тикетът е създаден, чрез имейл колектор от имейл MSGID %s
 OpeningHoursFormatDesc=Използвайте средно тире '-' за разделяне на часовете на отваряне и затваряне.<br> Използвайте интервал, за да въведете различни диапазони.<br> Пример: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Секция с експортирания

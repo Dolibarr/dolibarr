@@ -1669,7 +1669,7 @@ class ActionComm extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('actiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1955,14 +1955,14 @@ class ActionComm extends CommonObject
 					$event = array();
 					$event['uid'] = 'dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
 					$event['type'] = $type;
+
 					$datestart = $this->db->jdate($obj->datep) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 
 					// fix for -> Warning: A non-numeric value encountered
 					if (is_numeric($this->db->jdate($obj->datep2))) {
-						$dateend = $this->db->jdate($obj->datep2)
-								 - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+						$dateend = $this->db->jdate($obj->datep2) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 					} else {
-						// use start date as fall-back to avoid import erros on empty end date
+						// use start date as fall-back to avoid pb with empty end date on ICS readers
 						$dateend = $datestart;
 					}
 

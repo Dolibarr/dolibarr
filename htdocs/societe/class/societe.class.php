@@ -898,8 +898,8 @@ class Societe extends CommonObject
 			$sql .= ", name_alias";
 			$sql .= ", entity";
 			$sql .= ", datec";
-			$sql .= ", fk_typent";
 			$sql .= ", fk_user_creat";
+			$sql .= ", fk_typent";
 			$sql .= ", canvas";
 			$sql .= ", status";
 			$sql .= ", ref_ext";
@@ -2329,7 +2329,7 @@ class Societe extends CommonObject
 	/**
 	 *  Return array of sales representatives
 	 *
-	 *  @param	User		$user			Object user
+	 *  @param	User		$user			Object user (not used)
 	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
 	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
@@ -2733,7 +2733,7 @@ class Societe extends CommonObject
 		$hookmanager->initHooks(array('thirdpartydao'));
 		$parameters = array(
 			'id'=>$this->id,
-			'getnomurl'=>$result,
+			'getnomurl' => &$result,
 			'withpicto '=> $withpicto,
 			'option'=> $option,
 			'maxlen'=> $maxlen,

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Ссылка и период жирным шрифтом в PDF 
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Фонд
 Version=Версия
 Publisher=Издатель
@@ -343,7 +343,7 @@ StepNb=Шаг %s
 FindPackageFromWebSite=Найдите пакет, который предоставит нужные вам функции (например, на официальном веб-сайте %s).
 DownloadPackageFromWebSite=Скачать пакет (например, с официального сайта %s).
 UnpackPackageInDolibarrRoot=Распакуйте упакованные файлы в каталог вашего сервера Dolibarr: <b>%s</b>
-UnpackPackageInModulesRoot=Чтобы развернуть/установить внешний модуль, распакуйте/разархивируйте упакованные файлы в каталог сервера, предназначенный для внешних модулей:<br><b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Развертывание модуля завершено. Однако вы должны включить и настроить модуль в своем приложении, перейдя на страницу настройки модулей: <a href="%s">%s</a> .
 NotExistsDirect=Альтернативная корневая директория не задана.<br>
 InfDirAlt=Начиная с 3-ей версии, можно определить альтернативный корневой каталог. Это позволяет вам хранить в специальном каталоге, плагины и настраиваемые шаблоны. <br> Просто создайте каталог в корне Dolibarr (например: custom).<br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Для установки или создания вн
 HighlightLinesOnMouseHover=Выделите строки таблицы при перемещении мыши
 HighlightLinesColor=Цвет выделения строки при наведении курсора мыши (используйте 'ffffff', чтобы не выделять)
 HighlightLinesChecked=Выделите цвет строки, когда она отмечена (используйте 'ffffff', чтобы не выделять)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Цвет текста заголовка страницы
 LinkColor=Цвет ссылок
 PressF5AfterChangingThis=Нажмите CTRL + F5 на клавиатуре или очистите кеш браузера после изменения этого значения, чтобы оно было эффективным
@@ -2216,3 +2218,5 @@ NativeModules=Родные модули
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

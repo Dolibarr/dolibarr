@@ -38,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int'); // id of record
@@ -91,6 +93,11 @@ if (empty($user->rights->accounting->mouvements->lire)) {
 /*
  * Actions
  */
+
+if ($cancel) {
+	header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
+	exit;
+}
 
 if ($action == "confirm_update") {
 	$error = 0;

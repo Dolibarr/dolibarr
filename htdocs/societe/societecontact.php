@@ -111,13 +111,6 @@ if ($action == 'addcontact' && $user->rights->societe->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*

@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=この連絡先は既にこのタイ�
 ErrorCashAccountAcceptsOnlyCashMoney=この銀行口座は現金勘定であるため、それが唯一のタイプの現金の支払を受け入れる。
 ErrorFromToAccountsMustDiffers=ソースとターゲットの銀行口座は異なっている必要がある。
 ErrorBadThirdPartyName=取引先名の値が正しくない
+ForbiddenBySetupRules=設定ルールにより禁止
 ErrorProdIdIsMandatory=%sは必須だ
+ErrorAccountancyCodeCustomerIsMandatory=顧客%sの会計コードは必須
 ErrorBadCustomerCodeSyntax=顧客コードの不正な構文
 ErrorBadBarCodeSyntax=バーコードの構文が正しくない。不正なバーコードタイプを設定したか、スキャンした値と一致しない番号付け用のバーコードマスクを定義した可能性がある。
 ErrorCustomerCodeRequired=顧客コードが必要だ
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=支払条件辞書にないので、変更
 ErrorIsNotADraft=%sはドラフトではない
 ErrorExecIdFailed=コマンド「id」を実行できない
 ErrorBadCharIntoLoginName=ログイン名に含まれる不正な文字
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。
@@ -315,6 +318,7 @@ RequireAtLeastXString = 少なくとも%s文字(s)が必要
 RequireXStringMax = 最大%s文字(s)が必要
 RequireAtLeastXDigits = 少なくとも%s桁(s)が必要
 RequireXDigitsMax = 最大%s桁(s)が必要
+RequireValidNumeric = 数値が必要
 RequireValidEmail = メールアドレスが無効.
 RequireMaxLength = 長さは%s文字未満である必要がある
 RequireMinLength = 長さは%s文字(s)より長くする必要がある

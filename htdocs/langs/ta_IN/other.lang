@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=MSGID %s என்ற மின்னஞ்சல
 TicketCreatedByEmailCollector=MSGID %s மின்னஞ்சலில் இருந்து மின்னஞ்சல் சேகரிப்பாளரால் உருவாக்கப்பட்ட டிக்கெட்
 OpeningHoursFormatDesc=திறக்கும் மற்றும் மூடும் நேரத்தைப் பிரிக்க a - ஐப் பயன்படுத்தவும். <br> வெவ்வேறு வரம்புகளை உள்ளிட ஸ்பேஸைப் பயன்படுத்தவும். <br> எடுத்துக்காட்டு: 8-12 14-18
 SuffixSessionName=அமர்வு பெயருக்கான பின்னொட்டு
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=ஏற்றுமதி பகுதி

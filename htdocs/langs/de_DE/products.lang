@@ -410,3 +410,4 @@ DefaultBOMDesc=Die zur Herstellung dieses Produkts empfohlene Standardstücklist
 Rank=Rang
 SwitchOnSaleStatus=Status Verkauf einschalten
 SwitchOnPurchaseStatus=Status Einkauf einschalten
+StockMouvementExtraFields= Zusatzfelder (Lagerbewegung)

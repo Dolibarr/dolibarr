@@ -87,7 +87,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// Turning off the server and peer verification(TrustManager Concept).
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
 
 	// Restrict use to some protocols only
 	$protocols = 0;

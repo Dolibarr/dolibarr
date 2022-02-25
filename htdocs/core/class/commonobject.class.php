@@ -84,6 +84,11 @@ abstract class CommonObject
 	public $element;
 
 	/**
+	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea(). Undefined means same value than $element.
+	 */
+	public $element_for_permission;
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element;
@@ -681,13 +686,20 @@ abstract class CommonObject
 	 */
 	public function getKanbanView($option = '')
 	{
-		$return = '<div class="box-flex-item">';
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-title">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'label')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
@@ -3378,7 +3390,7 @@ abstract class CommonObject
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		} elseif ($this->element == 'facture' || $this->element == 'invoice') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
-		} elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier') {
+		} elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
 		} elseif ($this->element == 'order_supplier' || $this->element == 'supplier_order') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
@@ -3421,6 +3433,9 @@ abstract class CommonObject
 		$fieldup = 'subprice';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			$fieldtva = 'tva';
+			$fieldup = 'pu_ht';
+		}
+		if ($this->element == 'invoice_supplier_rec') {
 			$fieldup = 'pu_ht';
 		}
 		if ($this->element == 'expensereport') {
@@ -3573,7 +3588,7 @@ abstract class CommonObject
 			if ($this->element == 'facture' || $this->element == 'facturerec') {
 				$fieldtva = 'total_tva';
 			}
-			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
+			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
 				$fieldtva = 'total_tva';
 			}
 			if ($this->element == 'propal') {
@@ -5295,8 +5310,7 @@ abstract class CommonObject
 				$sav_charset_output = $outputlangs->charset_output;
 
 				if (in_array(get_class($this), array('Adherent'))) {
-					$arrayofrecords = array(); // The write_file of templates of adherent class need this var
-					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
+					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 				} else {
 					 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 				}
@@ -5694,11 +5708,11 @@ abstract class CommonObject
 			if (in_array($key_type, array('date'))) {
 				// Clean parameters
 				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
-				$value_key = dol_mktime(0, 0, 0, $_POST[$postfieldkey."month"], $_POST[$postfieldkey."day"], $_POST[$postfieldkey."year"]);
+				$value_key = dol_mktime(0, 0, 0, GETPOST($postfieldkey."month", 'int'), GETPOST($postfieldkey."day", 'int'), GETPOST($postfieldkey."year", 'int'));
 			} elseif (in_array($key_type, array('datetime'))) {
 				// Clean parameters
 				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
-				$value_key = dol_mktime($_POST[$postfieldkey."hour"], $_POST[$postfieldkey."min"], 0, $_POST[$postfieldkey."month"], $_POST[$postfieldkey."day"], $_POST[$postfieldkey."year"]);
+				$value_key = dol_mktime(GETPOST($postfieldkey."hour", 'int'), GETPOST($postfieldkey."min", 'int'), 0, GETPOST($postfieldkey."month", 'int'), GETPOST($postfieldkey."day", 'int'), GETPOST($postfieldkey."year", 'int'));
 			} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 				$value_arr = GETPOST($postfieldkey, 'array'); // check if an array
 				if (!empty($value_arr)) {
@@ -8036,6 +8050,8 @@ abstract class CommonObject
 		$element = $this->element;
 		if ($element == 'facturerec') {
 			$element = 'facture';
+		} elseif ($element == 'invoice_supplier_rec') {
+			return $user->rights->fournisseur->facture;
 		}
 
 		return $user->rights->{$element};

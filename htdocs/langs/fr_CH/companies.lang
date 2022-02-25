@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - companies
+ProfId1CM=Id. prof. 1 (Trade Register)
+ProfId2CM=Id. prof. 2 (Taxpayer No.)
+ProfId3CM=Id. prof. 3 (Decree of creation)
+ProfId1ShortCM=Trade Register
+ProfId2ShortCM=Taxpayer No.
+ProfId3ShortCM=Decree of creation
+PL_UNKNOWN=Inconnue
