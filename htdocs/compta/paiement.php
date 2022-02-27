@@ -511,6 +511,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '</td>';
 		print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 
+		// Other attributes
+		$parameters = array('colspan' => ' colspan="2"', 'cols' => 2);
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
 		print '<td class="tdtop">';
@@ -882,7 +887,6 @@ if (!GETPOST('action', 'aZ09')) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-
 		print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num);
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';

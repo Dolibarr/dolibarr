@@ -326,6 +326,11 @@ print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->
 print $form->editfieldval("Note", 'note', $object->note, $object, $user->rights->facture->paiement, 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
+// Other attributes
+$parameters = array('colspan' => ' colspan="2"', 'cols' => 2);
+$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print '</table>';
 
 print '</div>';
