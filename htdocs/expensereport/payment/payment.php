@@ -87,8 +87,8 @@ if ($action == 'add_payment') {
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
-				$amounts[$expensereport->fk_user_author] = price2num($_POST[$key]);
-				$total += price2num($_POST[$key]);
+				$amounts[$expensereport->fk_user_author] = price2num(GETPOST($key));
+				$total += price2num(GETPOST($key));
 			}
 		}
 

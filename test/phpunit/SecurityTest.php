@@ -574,7 +574,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["backtopage"]='javascripT&javascript#javascriptxjavascript3a alert(1)';
 		$result=GETPOST("backtopage");
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('x3a alert(1)', $result, 'Test for backtopage param');
+		$this->assertEquals('x3aalert(1)', $result, 'Test for backtopage param');
 
 		return $result;
 	}

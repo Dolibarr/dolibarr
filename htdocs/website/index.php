@@ -1406,9 +1406,13 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
+			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'none'));
+			$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
+
 			// Html header file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_HTML_HEADER', 'none'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1426,13 +1430,11 @@ if ($action == 'updatecss' && $usercanedit) {
 				// $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
 				$htmlheadercontent.= "// END PHP ?>\n";*/
 
-				$htmlheadercontent .= preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), GETPOST('WEBSITE_HTML_HEADER', 'none'));
+				$htmlheadercontent .= $dataposted."\n";
 
 				/*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
 				$htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
 				$htmlheadercontent.= "// END PHP ?>"."\n";*/
-
-				$htmlheadercontent = trim($htmlheadercontent)."\n";
 
 				$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
 				if (!$result) {
@@ -1443,10 +1445,12 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_CSS_INLINE', 'none'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Css file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_CSS_INLINE', 'none'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1466,7 +1470,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$csscontent .= "}\n";
 				$csscontent .= "// END PHP ?>\n";
 
-				$csscontent .= trim(GETPOST('WEBSITE_CSS_INLINE', 'none'))."\n";
+				$csscontent .= $dataposted."\n";
 
 				$csscontent .= '<?php // BEGIN PHP'."\n";
 				$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
@@ -1484,9 +1488,12 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
+			$dataposted = trim(GETPOST('WEBSITE_JS_INLINE', 'none'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
+
 			// Js file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_JS_INLINE', 'none'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1504,7 +1511,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$jscontent .= "header('Content-type: application/javascript');\n";
 				$jscontent .= "// END PHP ?>\n";
 
-				$jscontent .= trim(GETPOST('WEBSITE_JS_INLINE', 'none'))."\n";
+				$jscontent .= $dataposted."\n";
 
 				$jscontent .= '<?php // BEGIN PHP'."\n";
 				$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
@@ -1519,10 +1526,12 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Robot file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_ROBOT', 'restricthtml'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1540,7 +1549,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$robotcontent.= "header('Content-type: text/css');\n";
 				$robotcontent.= "// END PHP ?>\n";*/
 
-				$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
+				$robotcontent .= $dataposted."\n";
 
 				/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
 				$robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
@@ -1555,17 +1564,19 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Htaccess file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_HTACCESS', 'restricthtml'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
 			if (!$errorphpcheck) {
 				$htaccesscontent = '';
-				$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
+				$htaccesscontent .= $dataposted."\n";
 
 				$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
 				if (!$result) {
@@ -1577,9 +1588,12 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
+			$dataposted = trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
+
 			// Manifest.json file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_MANIFEST_JSON', 'none'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1597,7 +1611,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
 				$manifestjsoncontent .= "// END PHP ?>\n";
 
-				$manifestjsoncontent .= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
+				$manifestjsoncontent .= $dataposted."\n";
 
 				$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
 				$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
@@ -1612,10 +1626,12 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_README', 'restricthtml'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// README.md file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_README', 'restricthtml'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1633,7 +1649,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				   $readmecontent.= "header('Content-type: application/manifest+json');\n";
 				   $readmecontent.= "// END PHP ?>\n";*/
 
-				$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
+				$readmecontent .= $dataposted."\n";
 
 				/*$readmecontent.= '<?php // BEGIN PHP'."\n";
 				   $readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
@@ -3517,7 +3533,7 @@ if ($action == 'createsite') {
 
 	$siteref = $sitedesc = $sitelang = $siteotherlang = '';
 	if (GETPOST('WEBSITE_REF')) {
-		$siteref = GETPOST('WEBSITE_REF', 'alpha');
+		$siteref = GETPOST('WEBSITE_REF', 'aZ09');
 	}
 	if (GETPOST('WEBSITE_DESCRIPTION')) {
 		$sitedesc = GETPOST('WEBSITE_DESCRIPTION', 'alpha');

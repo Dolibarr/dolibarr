@@ -31,6 +31,8 @@
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
+	$str = str_replace('<?=', '<?php', $str);
+
 	$newstr = '';
 
 	//split on each opening tag
@@ -71,6 +73,8 @@ function dolStripPhpCode($str, $replacewith = '')
  */
 function dolKeepOnlyPhpCode($str)
 {
+	$str = str_replace('<?=', '<?php', $str);
+
 	$newstr = '';
 
 	//split on each opening tag
