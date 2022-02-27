@@ -44,6 +44,8 @@ class DolEditor
 	public $height;
 	public $width;
 	public $readonly;
+	public $posx;
+	public $posy;
 
 
 	/**
@@ -64,8 +66,9 @@ class DolEditor
 	 *  @param  int		$rows                   		Size of rows for textarea tool
 	 *  @param  string	$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
 	 *  @param	int		$readonly						0=Read/Edit, 1=Read only
+	 *  @param	array	$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y)
 	 */
-	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0)
+	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
 	{
 		global $conf, $langs;
 
@@ -106,8 +109,10 @@ class DolEditor
 			$this->toolbarstartexpanded = $toolbarstartexpanded;
 			$this->rows					= max(ROWS_3, $rows);
 			$this->cols					= (preg_match('/%/', $cols) ? $cols : max(40, $cols)); // If $cols is a percent, we keep it, otherwise, we take max
-			$this->height = $height;
+			$this->height               = $height;
 			$this->width				= $width;
+			$this->posx                 = empty($poscursor['x']) ? 0 : $poscursor['x'];
+			$this->posy                 = empty($poscursor['y']) ? 0 : $poscursor['y'];
 		}
 	}
 
@@ -257,9 +262,12 @@ class DolEditor
 				$out .= '<script type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function() {'."\n";
 				$out .= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+							aceEditor.moveCursorTo('.($this->posy+1).','.$this->posx.');
+							aceEditor.gotoLine('.($this->posy+1).','.$this->posx.');
 	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;									// Init status bar. Need lib ext-statusbar
 	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.$this->htmlname.'"));	// Init status bar. Need lib ext-statusbar
-	            			var oldNbOfLines = 0
+
+							var oldNbOfLines = 0;
 							jQuery(".morelines'.$this->htmlname.'").click(function() {
 	        	    				var aceEditorClicked = window.ace.edit("'.$this->htmlname.'aceeditorid");
 									currentline = aceEditorClicked.getOption("maxLines");
@@ -322,8 +330,8 @@ class DolEditor
 								var cursorPos = aceEditor.getCursorPosition();
 								console.log(cursorPos);
 								if (cursorPos) {
-									jQuery("#'.$this->htmlname.'_x").val(cursorPos.row);
-									jQuery("#'.$this->htmlname.'_y").val(cursorPos.column);
+									jQuery("#'.$this->htmlname.'_x").val(cursorPos.column);
+									jQuery("#'.$this->htmlname.'_y").val(cursorPos.row);
 								}
 	        					//console.log(aceEditor.getSession().getValue());
 								// Inject content of editor into the original HTML field.
