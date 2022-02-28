@@ -582,6 +582,7 @@ print '</div>';
 
 print '</form>';
 
+
 // Admin var of module
 print load_fiche_titre($langs->trans("Notification"), '', '');
 
