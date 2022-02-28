@@ -506,13 +506,13 @@ class FormAccounting extends Form
 		// Build select
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		//automatic filling if we give the name of the subledger_label input
-		if (!empty($conf->use_javascript_ajax)) {
+		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
 			$out .= '<script>
 				jQuery(document).ready(() => {
 					$("#'.$htmlname.'").on("select2:select", function(e) {
 						var regExp = /\(([^)]+)\)/;
 						const match = regExp.exec(e.params.data.text);
-						$(\'input[name="'.$labelhtmlname.'"]\').val(match[1]);
+						$(\'input[name="'.dol_escape_js($labelhtmlname).'"]\').val(match[1]);
 					});
 				});
 
