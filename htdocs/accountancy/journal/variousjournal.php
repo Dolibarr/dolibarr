@@ -16,7 +16,7 @@
  */
 
 /**
- * \file		htdocs/accountancy/journal/journal.php
+ * \file		htdocs/accountancy/journal/variousjournal.php
  * \ingroup		Accountancy (Double entries)
  * \brief		Page of a journal
  */
