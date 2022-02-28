@@ -18,13 +18,12 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 		if (empty($extrafieldsobjectprefix)) {
 			$extrafieldsobjectprefix = 'ef.';
 		}
-
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['list'][$key])) {
 				$arrayfields[$extrafieldsobjectprefix.$key] = array(
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'type'     => $extrafields->attributes[$extrafieldsobjectkey]['type'][$key],
-					'checked'  => (($extrafields->attributes[$extrafieldsobjectkey]['list'][$key] < 0) ? 0 : 1),
+					'checked'  => ((dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key],1) <= 0) ? 0 : 1),
 					'position' => $extrafields->attributes[$extrafieldsobjectkey]['pos'][$key],
 					'enabled'  => (abs((int) $extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) != 3 && $extrafields->attributes[$extrafieldsobjectkey]['perms'][$key]),
 					'langfile' => $extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key],
