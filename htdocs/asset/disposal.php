@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       htdocs/asset/note.php
+ *  \file       htdocs/asset/disposal.php
  *  \ingroup    asset
- *  \brief      Card with notes on Asset
+ *  \brief      Card with disposal info on Asset
  */
 
 require '../main.inc.php';
@@ -40,7 +40,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object = new Asset($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->asset->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('assetnote', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('assetdisposal', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -58,6 +58,7 @@ if ($user->socid > 0) accessforbidden();
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
 if (empty($conf->asset->enabled)) accessforbidden();
+if (!isset($object->disposal_date) || $object->disposal_date === "") accessforbidden();
 
 
 /*
@@ -69,7 +70,6 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 }
 
 
@@ -87,7 +87,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = assetPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'note', $langs->trans("Asset"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'disposal', $langs->trans("Asset"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -96,17 +96,20 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= '</div>';
 
-
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent tableforfield">'."\n";
 
+	// Common attributes
+	$show_fields = array('disposal_date', 'disposal_amount_ht', 'fk_disposal_type', 'disposal_depreciated', 'disposal_subject_to_vat');
+	foreach ($object->fields as $field_key => $field_info) {
+		$object->fields[$field_key]['visible'] = in_array($field_key, $show_fields) ? 1 : 0;
+	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
-	$cssclass = "titlefield";
-	include DOL_DOCUMENT_ROOT . '/core/tpl/notes.tpl.php';
-
+	print '</table>';
 	print '</div>';
 
 	print dol_get_fiche_end();
