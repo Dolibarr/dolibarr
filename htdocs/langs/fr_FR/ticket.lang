@@ -139,6 +139,8 @@ TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez un email à cette adr
 TicketsAutoNotifyClose=Envoyer un courriel de notification aux contacts à la cloture du ticket.
 TicketsAutoNotifyCloseHelp=A la cloture de tickets, vous pouvez envoyer des emails de notification aux contacts du ticket. Cette option sélectionne par défaut "tous les contacts".
 TicketWrongContact=Le contact n'est pas lié au ticket. L'email n'a pas été envoyé.
+TicketChooseProductCategory=Catégorie du produit pour la consommation de tickets
+TicketChooseProductCategoryHelp=Sélectionnez le type de produit pour la consommation de tickets. Cette information sera utilisée pour lier des contrats automatiquement aux tickets.
 
 #
 # Index & list page
@@ -250,6 +252,8 @@ TicketNotNotifyTiersAtClose=Aucun contact lié
 Unread=Non lu
 TicketNotCreatedFromPublicInterface=Non disponible. Le ticket n’a pas été créé à partir de l'interface publique.
 ErrorTicketRefRequired=La référence du ticket est requise
+TicketNoContractFoundToLink=Aucun contrat n'a été trouvé. Veuillez lier un contrat à ce ticket manuellement.
+TicketManyContractsLinked=Plusieurs contrats ont été liés à ce ticket. Veuillez choisir celui qui doit être utilisé.
 
 #
 # Logs
