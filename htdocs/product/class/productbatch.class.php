@@ -475,15 +475,15 @@ class Productbatch extends CommonObject
 			$num = $dbs->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
+				$obj = $dbs->fetch_object($resql);
 
-				$tmp = new Productbatch($db);
+				$tmp = new Productbatch($dbs);
 				$tmp->id    = $obj->rowid;
 				$tmp->lotid = $obj->lotid;
-				$tmp->tms = $db->jdate($obj->tms);
+				$tmp->tms = $dbs->jdate($obj->tms);
 				$tmp->fk_product_stock = $obj->fk_product_stock;
-				$tmp->sellby = $db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
-				$tmp->eatby = $db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
+				$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+				$tmp->eatby = $dbs->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
 				$tmp->batch = $obj->batch;
 				$tmp->qty = $obj->qty;
 				$tmp->import_key = $obj->import_key;
@@ -491,11 +491,11 @@ class Productbatch extends CommonObject
 				$ret[$tmp->batch] = $tmp; // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
 				$i++;
 			}
-			$db->free($resql);
+			$dbs->free($resql);
 
 			return $ret;
 		} else {
-			$error = "Error ".$db->lasterror();
+			$error = "Error ".$dbs->lasterror();
 			return -1;
 		}
 	}

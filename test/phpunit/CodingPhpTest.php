@@ -211,7 +211,6 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'modules_societe.class.php',
 					'TraceableDB.php',
 					'multicurrency.class.php',
-					'productbatch.class.php',
 					'reception.class.php',
 					'infobox.class.php'
 				))) {
