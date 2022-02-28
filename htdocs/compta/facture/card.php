@@ -2371,9 +2371,9 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code');
-		if (!GETPOST('qty')) {
-			$special_code = 3;
+		$special_code = GETPOST('special_code', 'int');
+		if ($special_code == 3) {
+			$special_code = 0;	// Options should not exists on invoices
 		}
 
 		$line = new FactureLigne($db);
