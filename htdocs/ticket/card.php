@@ -826,7 +826,7 @@ if ($action == 'create' || $action == 'presend') {
 				'-3' => $langs->trans('TicketNotNotifyTiersAtClose')
 			);
 			foreach ($thirdparty_contacts as $thirdparty_contact) {
-			    $contacts_select[$thirdparty_contact['id']] = $thirdparty_contact['civility'] . ' ' . $thirdparty_contact['lastname'] . ' ' . $thirdparty_contact['firstname'];
+				$contacts_select[$thirdparty_contact['id']] = $thirdparty_contact['civility'] . ' ' . $thirdparty_contact['lastname'] . ' ' . $thirdparty_contact['firstname'];
 			}
 
 			// Default select all or no contact
@@ -841,7 +841,7 @@ if ($action == 'create' || $action == 'presend') {
 				),
 			);
 
-			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", $formquestion, '', 1 );
+			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", $formquestion, '', 1);
 		}
 		// Confirmation abandon
 		if ($action == 'abandon') {

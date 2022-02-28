@@ -143,7 +143,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
 					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 					if ($sendto) {
-						$this->ComposeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs, $conf);
+						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs, $conf);
 					}
 				}
 
@@ -168,7 +168,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					if ($sendto) {
-						$this->ComposeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs, $conf);
+						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs, $conf);
 					}
 				}
 
@@ -197,7 +197,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
 					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 					if ($sendto) {
-						$this->ComposeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs, $conf);
+						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs, $conf);
 					}
 				}
 
@@ -226,10 +226,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$sendto = '';
 					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
 						$sendto = $contact->email;
-					// if sending to all contacts or sending to contacts while mass closing
 					} elseif ( !empty($linked_contacts) && ($contactid == -2 || (GETPOST('massaction', 'alpha') == 'close' && GETPOST('confirm', 'alpha') == 'yes'))) {
+						// if sending to all contacts or sending to contacts while mass closing
 						$temp_emails = [];
-						foreach($linked_contacts as $contact) {
+						foreach ($linked_contacts as $contact) {
 							$temp_emails[] = $contact['email'];
 						}
 						$sendto = implode(", ", $temp_emails);
@@ -237,7 +237,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						unset($linked_contacts);
 					}
 					if ($sendto) {
-						$this->ComposeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs, $conf);
+						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs, $conf);
 					}
 				}
 				$ok = 1;
@@ -247,7 +247,18 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		return $ok;
 	}
 
-	private function ComposeAndSendAdminMessage($sendto, $base_subject, $body, Ticket $object, Translate $langs, $conf)
+	/**
+	 * Composes and sends a message concerning a ticket, to be sent to admin address.
+	 * @param string $sendto			Addresses to send the mail, format "first@address.net, second@address.net," etc.
+	 * @param string $base_subject		email subject. Non-translated string.
+	 * @param string $body				email body (first line). Non-translated string.
+	 * @param Ticket $object			the ticket thet the email refers to
+	 * @param Translate $langs			the translation object
+	 * @param conf		    $conf       Object conf
+	 *
+	 * @return none
+	 */
+	private function composeAndSendAdminMessage($sendto, $base_subject, $body, Ticket $object, Translate $langs, $conf)
 	{
 		// Init to avoid errors
 		$filepath = array();
@@ -304,7 +315,19 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		}
 	}
 
-	private function ComposeAndSendCustomerMessage ($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs,  $conf)
+	/**
+	 * Composes and sends a message concerning a ticket, to be sent to customer addresses.
+	 * @param string $sendto			Addresses to send the mail, format "first@address.net, second@address.net, " etc.
+	 * @param string $base_subject		email subject. Non-translated string.
+	 * @param string $body				email body (first line). Non-translated string.
+	 * @param string $see_ticket		string indicating the ticket public address
+	 * @param Ticket $object			the ticket thet the email refers to
+	 * @param Translate $langs			the translation object
+	 * @param conf		    $conf       Object conf
+	 *
+	 * @return none
+	 */
+	private function composeAndSendCustomerMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs, $conf)
 	{
 		// Init to avoid errors
 		$filepath = array();
