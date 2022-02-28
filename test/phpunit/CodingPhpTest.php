@@ -213,8 +213,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'multicurrency.class.php',
 					'productbatch.class.php',
 					'reception.class.php',
-					'infobox.class.php',
-					'link.class.php',
+					'infobox.class.php'
 				))) {
 					// Must not find $db->
 					$ok=true;
@@ -231,10 +230,11 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				}
 			} else {
 				if (! in_array($file['name'], array(
+					'objectline_view.tpl.php',
 					'extrafieldsinexport.inc.php',
 					'DolQueryCollector.php'
 				))) {
-					// Must must not found $this->db->
+					// Must not found $this->db->
 					$ok=true;
 					$matches=array();
 					// Check string $this->db-> into a non class.php file (it shoud be $db-> into such classes)
@@ -244,7 +244,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 						break;
 					}
 					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-					$this->assertTrue($ok, 'Found string $this->db-> in '.$file['relativename']);
+					$this->assertTrue($ok, 'Found string "$this->db->" in '.$file['relativename']);
 					//exit;
 				}
 			}

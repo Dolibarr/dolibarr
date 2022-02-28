@@ -428,13 +428,13 @@ class Productbatch extends CommonObject
 	/**
 	 * Return all batch detail records for a given product and warehouse
 	 *
-	 *  @param	DoliDB		$db    				database object
+	 *  @param	DoliDB		$dbs    			database object
 	 *  @param	int			$fk_product_stock	id product_stock for objet
 	 *  @param	int			$with_qty    		1 = doesn't return line with 0 quantity
 	 *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
 	 *  @return array         					<0 if KO, array of batch
 	 */
-	public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
+	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
 		global $conf;
 
@@ -453,9 +453,9 @@ class Productbatch extends CommonObject
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
 			// TODO May add extrafields to ?
 		}
-		$sql .= " FROM ".$db->prefix()."product_batch as t";
+		$sql .= " FROM ".$dbs->prefix()."product_batch as t";
 		if ($fk_product > 0) {
-			$sql .= " LEFT JOIN ".$db->prefix()."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
+			$sql .= " LEFT JOIN ".$dbs->prefix()."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
 		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
@@ -470,9 +470,9 @@ class Productbatch extends CommonObject
 		$sql .= ", t.qty ".(!empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'DESC':'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $dbs->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
@@ -503,7 +503,6 @@ class Productbatch extends CommonObject
 	/**
 	 * Return all batch for a product and a warehouse
 	 *
-	 * @param	DoliDB		$db    				Database object
 	 * @param	int			$fk_product         Id of product
 	 * @param	int			$fk_warehouse       Id of warehouse
 	 * @param	int			$qty_min            [=NULL] Minimum quantity
@@ -513,7 +512,7 @@ class Productbatch extends CommonObject
 	 *
 	 * @throws  Exception
 	 */
-	public static function findAllForProduct($db, $fk_product, $fk_warehouse = 0, $qty_min = null, $sortfield = null, $sortorder = null)
+	public function findAllForProduct($fk_product, $fk_warehouse = 0, $qty_min = null, $sortfield = null, $sortorder = null)
 	{
 		$productBatchList = array();
 
@@ -526,10 +525,10 @@ class Productbatch extends CommonObject
 		$sql .= ", pl.sellby";
 		$sql .= ", pl.eatby";
 		$sql .= ", pb.qty";
-		$sql .= " FROM ".$db->prefix()."product_lot as pl";
-		$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = pl.fk_product";
-		$sql .= " LEFT JOIN ".$db->prefix()."product_batch AS pb ON pl.batch = pb.batch";
-		$sql .= " LEFT JOIN ".$db->prefix()."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " FROM ".$this->db->prefix()."product_lot as pl";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = pl.fk_product";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch AS pb ON pl.batch = pb.batch";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		$sql .= " AND pl.fk_product = ".((int) $fk_product);
 		if ($fk_warehouse > 0) {
@@ -538,25 +537,25 @@ class Productbatch extends CommonObject
 		if ($qty_min !== null) {
 			$sql .= " AND pb.qty > ".((float) price2num($qty_min, 'MS'));
 		}
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			while ($obj = $db->fetch_object($resql)) {
-				$productBatch             = new self($db);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$productBatch             = new self($this->db);
 				$productBatch->id         = $obj->rowid;
 				$productBatch->fk_product = $obj->fk_product;
 				$productBatch->batch      = $obj->batch;
-				$productBatch->eatby      = $db->jdate($obj->eatby);
-				$productBatch->sellby     = $db->jdate($obj->sellby);
+				$productBatch->eatby      = $this->db->jdate($obj->eatby);
+				$productBatch->sellby     = $this->db->jdate($obj->sellby);
 				$productBatch->qty        = $obj->qty;
 				$productBatchList[]       = $productBatch;
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 
 			return $productBatchList;
 		} else {
-			dol_syslog(__METHOD__.' Error: '.$db->lasterror(), LOG_ERR);
+			dol_syslog(__METHOD__.' Error: '.$this->db->lasterror(), LOG_ERR);
 			return -1;
 		}
 	}
