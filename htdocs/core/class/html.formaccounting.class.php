@@ -506,7 +506,7 @@ class FormAccounting extends Form
 		// Build select
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		//automatic filling if we give the name of the subledger_label input
-		if (!empty($labelhtmlname)) {
+		if (!empty($conf->use_javascript_ajax)) {
 			$out .= '<script>
 				jQuery(document).ready(() => {
 					$("#'.$htmlname.'").on("select2:select", function(e) {
