@@ -276,7 +276,6 @@ if (empty($reshook)) {
 						setEventMessages($fichinter->error, null, 'errors');
 					}
 				}
-
 			}
 
 			if (!$error) {
