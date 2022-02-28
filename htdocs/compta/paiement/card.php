@@ -449,6 +449,9 @@ if ($resql) {
  */
 
 print '<div class="tabsAction">';
+// Hook Add action button
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '') {
@@ -467,6 +470,8 @@ if ($user->socid == 0 && $action == '') {
 		}
 	}
 }
+
+
 
 print '</div>';
 
