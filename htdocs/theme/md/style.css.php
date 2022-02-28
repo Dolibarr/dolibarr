@@ -6063,7 +6063,7 @@ span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
 }
 span.noborderoncategories {
-	padding: 3px 5px 0px 5px;
+	padding: 3px 5px 3px 5px;
 }
 .categtextwhite, .treeview .categtextwhite.hover {
 	color: #fff !important;

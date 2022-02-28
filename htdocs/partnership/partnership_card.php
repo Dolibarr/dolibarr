@@ -79,12 +79,13 @@ $permissiontodelete 	= $user->rights->partnership->delete || ($permissiontoadd &
 $permissionnote 		= $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink 		= $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
 $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
-$managedfor 			= $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+$managedfor 			= empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) ? 'thirdparty' : $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
 
 if (empty($conf->partnership->enabled)) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
 if ($object->id > 0 && $object->fk_member > 0 && $managedfor != 'member') accessforbidden();
 if ($object->id > 0 && $object->fk_soc > 0 && $managedfor != 'thirdparty') accessforbidden();
+
 
 /*
  * Actions
@@ -581,7 +582,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Approve
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Approved'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('Approve'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				} else {
 					$langs->load("errors");
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Approved"), 'default', '#', '', 0);
@@ -591,7 +592,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Cancel
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_APPROVED) {
-					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('Resiliate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
 				} elseif ($object->status > $object::STATUS_APPROVED) {
 					// print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 					print dolGetButtonAction($langs->trans('Re-Open'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);

@@ -7699,7 +7699,7 @@ abstract class CommonObject
 		if (empty($reshook)) {
 			if (key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
 				$out .= "\n";
-				$out .= '<!-- showOptionals --> ';
+				$out .= '<!-- commonobject:showOptionals --> ';
 				$out .= "\n";
 
 				$extrafields_collapse_num = '';

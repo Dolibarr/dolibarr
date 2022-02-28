@@ -951,6 +951,7 @@ class Paiement extends CommonObject
 	 *
 	 *  @param	string		$filter         Filter
 	 *  @return int|array					<0 if KO or array of invoice id
+	 *  @see getAmountsArray()
 	 */
 	public function getBillsArray($filter = '')
 	{
@@ -984,6 +985,7 @@ class Paiement extends CommonObject
 	 *  Return list of amounts of payments.
 	 *
 	 *  @return int|array					Array of amount of payments
+	 *  @see getBillsArray()
 	 */
 	public function getAmountsArray()
 	{

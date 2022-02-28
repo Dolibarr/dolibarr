@@ -215,7 +215,14 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			}
 
 			// Common check on ip (local and external)
-			$arrayofmetadataserver = array('100.100.100.200' => 'Alibaba', '192.0.0.192'=> 'Oracle', '192.80.8.124'=>'Packet');
+			// See list on https://tagmerge.com/gist/a7b9d57ff8ec11d63642f8778609a0b8
+			// Not evasive url that ar enot IP are excluded by test on IP v4/v6 validity.
+			$arrayofmetadataserver = array(
+				'100.100.100.200' => 'Alibaba',
+				'192.0.0.192' => 'Oracle',
+				'192.80.8.124' => 'Packet',
+				'100.88.222.5' => 'Tencent cloud',
+			);
 			foreach ($arrayofmetadataserver as $ipofmetadataserver => $nameofmetadataserver) {
 				if ($iptocheck == $ipofmetadataserver) {
 					$info['http_code'] = 400;
