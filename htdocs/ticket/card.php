@@ -236,7 +236,7 @@ if (empty($reshook)) {
 					$fichinter = new Fichinter($db);
 					$fichinter->socid = $object->fk_soc;
 					$fichinter->fk_project = $projectid;
-					$fichinter->fk_contrat = $contractid;
+					$fichinter->fk_contrat = $object->fk_contract;
 					$fichinter->author = $user->id;
 					$fichinter->model_pdf = 'soleil';
 					$fichinter->origin = $object->element;
