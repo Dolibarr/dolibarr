@@ -344,7 +344,6 @@ foreach ($TCurrency as &$currency) {
 	print '<input type="hidden" name="fk_multicurrency" value="' . $currency->id . '">';
 
 	if ($conf->global->MULTICURRENCY_LESS_THAN_FOREIGN) {
-
 		print '1 ' . $currency->code . ' = ';
 		print '<input type="text" name="rate" class="width75 right" value="' . ($currency->rate->rate ? $currency->rate->rate : '') . '" size="13">&nbsp;' . $conf->currency . '&nbsp;';
 	} else {
