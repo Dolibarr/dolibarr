@@ -141,6 +141,8 @@ TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before 
 TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
 TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
 TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
 
 #
 # Index & list page
