@@ -223,7 +223,7 @@ input {
 	padding-left: 5px;
 }
 select {
-	padding-top: 5px;
+	padding-top: 4px;
 	padding-right: 4px;
 	padding-bottom: 5px;
 	padding-left: 2px;
@@ -549,6 +549,13 @@ div#moretabsList, div#moretabsListaction {
 
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
+
+
+table.tableforfield .button:not(.bordertransp):not(.buttonpayment),
+table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
+	margin-bottom: 2px;
+	margin-top: 2px;
+}
 
 .button:not(.bordertransp):not(.buttonpayment),
 .buttonDelete:not(.bordertransp):not(.buttonpayment) {
@@ -3495,11 +3502,10 @@ table.border, table.bordernooddeven, table.dataTable, .table-border, .table-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
-.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 22px;
-}
+.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
+div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-	height: 22px;
+	height: 28px;
 }
 
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
@@ -3507,17 +3513,15 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
 	vertical-align: top !important;
-	/*padding-top: 10px !important;
-	padding-bottom: 2px !important; */
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 5px 2px 5px 2px;
+	padding: 2px 2px 2px 2px;
 	border-collapse: collapse;
 }
 div.tabBar .fichecenter table.border>tbody>tr>td, div.tabBar .fichecenter div.border div div.tagtd, div.tabBar div.border div div.tagtd
 {
-	padding-top: 5px;
+	padding-top: 2px;
 	border-bottom: 1px solid #E0E0E0;
 }
 
@@ -6239,6 +6243,10 @@ span#select2-boxbookmark-container {
   overflow: hidden;
 }
 
+ul.select2-results__options li {
+	font-size: 0.95em;
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */
@@ -7405,7 +7413,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	#divbodywebsite {
-		word-break: break-all;
+		word-break: break-word;
 	}
 
 	.websiteselectionsection {

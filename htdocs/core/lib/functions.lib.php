@@ -665,16 +665,16 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Sanitizing for special parameters.
-	// Note: There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL.
+	// Note: There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL. Only relative URLs are allowed.
 	if ($paramname == 'backtopage' || $paramname == 'backtolist' || $paramname == 'backtourl') {
-		$out = str_replace('\\', '/', $out);					// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
-		$out = str_replace(array(':', ';', '@'), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
+		$out = str_replace('\\', '/', $out);								// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
+		$out = str_replace(array(':', ';', '@', "\t", ' '), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to retreive it after other replacements.
 		do {
 			$oldstringtoclean = $out;
 			$out = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $out);
+			$out = preg_replace(array('/^[^\?]*%/'), '', $out);				// We remove any % chars before the ?. Example in url: '/product/stock/card.php?action=create&backtopage=%2Fdolibarr_dev%2Fhtdocs%2Fpro%25duct%2Fcard.php%3Fid%3Dabc'
+			$out = preg_replace(array('/^[a-z]*\/\s*\/+/i'), '', $out);		// We remove schema*// to remove external URL
 		} while ($oldstringtoclean != $out);
-
-		$out = preg_replace(array('/^[a-z]*\/\/+/i'), '', $out);	// We remove schema*// to remove external URL
 	}
 
 	// Code for search criteria persistence.
@@ -713,11 +713,11 @@ function GETPOSTINT($paramname, $method = 0)
 /**
  *  Return a value after checking on a rule. A sanitization may also have been done.
  *
- *  @param  string  $out	     Value to check/clear.
- *  @param  string  $check	     Type of check/sanitizing
- *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
- *  @return string|array         Value sanitized (string or array). It may be '' if format check fails.
+ *  @param  string|array  	$out	     Value to check/clear.
+ *  @param  string  		$check	     Type of check/sanitizing
+ *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array    		     Value sanitized (string or array). It may be '' if format check fails.
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
@@ -1105,6 +1105,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
 
@@ -1128,6 +1129,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
 
@@ -3731,7 +3733,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
-				'label', 'language', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
+				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'puce',
@@ -3776,7 +3778,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'email'=>'at', 'establishment'=>'building', 'edit'=>'pencil-alt', 'entity'=>'globe',
 				'graph'=>'chart-line', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach',
-				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'knowledgemanagement'=>'ticket-alt', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
+				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'knowledgemanagement'=>'ticket-alt', 'label'=>'layer-group', 'line'=>'bars', 'loan'=>'money-bill-alt',
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'expensereport'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
@@ -6580,16 +6582,18 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
 							$valuetoclean = $attrs->item($ii)->value;
 
-							do {
-								$oldvaluetoclean = $valuetoclean;
-								$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
-								$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
-								if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-									$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-									$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-									$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
-								}
-							} while ($oldvaluetoclean != $valuetoclean);
+							if (isset($valuetoclean)) {
+								do {
+									$oldvaluetoclean = $valuetoclean;
+									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
+									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
+									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
+										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+									}
+								} while ($oldvaluetoclean != $valuetoclean);
+							}
 
 							$attrs->item($ii)->value = $valuetoclean;
 						}
@@ -8797,7 +8801,7 @@ function printCommonFooter($zone = 'private')
 
 	// A div to store page_y POST parameter so we can read it using javascript
 	print "\n<!-- A div to store page_y POST parameter -->\n";
-	print '<div id="page_y" style="display: none;">'.(empty($_POST['page_y']) ? '' : $_POST['page_y']).'</div>'."\n";
+	print '<div id="page_y" style="display: none;">'.(GETPOST('page_y') ? GETPOST('page_y') : '').'</div>'."\n";
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printCommonFooter', $parameters); // Note that $action and $object may have been modified by some hooks

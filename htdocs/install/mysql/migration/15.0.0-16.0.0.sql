@@ -237,5 +237,18 @@ ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 
 ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
 
+create table llx_inventory_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_inventory_extrafields ADD INDEX idx_inventory_extrafields (fk_object);
+
+
+ALTER TABLE llx_reception MODIFY COLUMN ref_supplier varchar(128);
+
+ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER domiciliation;
 
 ALTER TABLE llx_socpeople ADD COLUMN parent integer DEFAULT 0 NOT NULL AFTER fk_stcommcontact;

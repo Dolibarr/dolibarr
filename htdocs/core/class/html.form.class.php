@@ -141,7 +141,7 @@ class Form
 				}
 			}
 		} else {
-			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
+			if (empty($notabletag) && $perm) {
 				$ret .= '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 			}
 			if ($fieldrequired) {
@@ -158,10 +158,10 @@ class Form
 			if (!empty($notabletag)) {
 				$ret .= ' ';
 			}
-			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
+			if (empty($notabletag) && $perm) {
 				$ret .= '</td>';
 			}
-			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
+			if (empty($notabletag) && $perm) {
 				$ret .= '<td class="right">';
 			}
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
@@ -173,10 +173,10 @@ class Form
 			if (!empty($notabletag) && $notabletag == 3) {
 				$ret .= ' ';
 			}
-			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
+			if (empty($notabletag) && $perm) {
 				$ret .= '</td>';
 			}
-			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
+			if (empty($notabletag) && $perm) {
 				$ret .= '</tr></table>';
 			}
 		}
@@ -1599,7 +1599,7 @@ class Form
 	 *  @param  string	$exclude        List of contacts id to exclude
 	 *  @param	string	$limitto		Disable answers that are not id in this array list
 	 *  @param	integer	$showfunction   Add function into label
-	 *  @param	string	$moreclass		Add more class to class style
+	 *  @param	string	$morecss		Add more class to class style
 	 *  @param	integer	$showsoc	    Add company into label
 	 *  @param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
@@ -1609,10 +1609,10 @@ class Form
 	 *  @return	int						<0 if KO, Nb of contact in list if OK
 	 *  @deprecated						You can use selectcontacts directly (warning order of param was changed)
 	 */
-	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
+	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
 	{
 		// phpcs:enable
-		print $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
+		print $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
 		return $this->num;
 	}
 
@@ -1629,7 +1629,7 @@ class Form
 	 *	@param  string		$exclude        List of contacts id to exclude
 	 *	@param	string		$limitto		Disable answers that are not id in this array list
 	 *	@param	integer		$showfunction   Add function into label
-	 *	@param	string		$moreclass		Add more class to class style
+	 *	@param	string		$morecss		Add more class to class style
 	 *	@param	bool		$options_only	Return options only (for ajax treatment)
 	 *	@param	integer		$showsoc	    Add company into label
 	 * 	@param	int			$forcecombo		Force to use combo box (so no ajax beautify effect)
@@ -1641,7 +1641,7 @@ class Form
 	 *  @param	int			$nochild		Disable childs. Show only those that have no affect parent.
 	 *	@return	 int|string					<0 if KO, HTML with select string if OK.
 	 */
-	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $nochild = '')
+	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $nochild = '')
 	{
 		global $conf, $langs, $hookmanager, $action;
 
@@ -1694,7 +1694,7 @@ class Form
 			$num = $this->db->num_rows($resql);
 
 			if ($htmlname != 'none' && !$options_only) {
-				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
+				$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
 
 			if ($showempty && ! is_numeric($showempty)) {
@@ -2092,7 +2092,7 @@ class Form
 			if ($num) {
 				// Enhance with select2
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out = ajax_combobox($htmlname).$out;
+				$out .= ajax_combobox($htmlname);
 			}
 		} else {
 			dol_print_error($this->db);
@@ -2101,6 +2101,7 @@ class Form
 		if ($outputmode) {
 			return $outarray;
 		}
+
 		return $out;
 	}
 
@@ -8130,12 +8131,9 @@ class Form
 			$out .= "\n".'<script>'."\n";
 			if ($addjscombo == 1) {
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
-				$out .= 'function formatResult(record) {'."\n";
-				if ($elemtype == 'category') {
-					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
-				} else {
-					$out .= 'return record.text;';
-				}
+				$out .= 'function formatResult(record, container) {'."\n";
+				$out .= '	if ($(record.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(record.element).attr("data-html"));		// If property html set, we decode html entities and use this'."\n";
+				$out .= '	return record.text;';
 				$out .= '};'."\n";
 				$out .= 'function formatSelection(record) {'."\n";
 				if ($elemtype == 'category') {
@@ -8157,6 +8155,7 @@ class Form
 								// Specify format function for dropdown item
 								formatResult: formatResult,
 							 	templateResult: formatResult,		/* For 4.0 */
+								escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 								// Specify format function for selected item
 								formatSelection: formatSelection,
 							 	templateSelection: formatSelection		/* For 4.0 */
@@ -9104,13 +9103,13 @@ class Form
 			if (!empty($object->photo)) {
 				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.getImageFileNameForSize($object->photo, '_small');
 					} else {
-						$file = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->photo;
 					}
-					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->photo;
 				}
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {

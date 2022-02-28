@@ -745,7 +745,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-	print $htmlother->selectColor($_POST['bgcolor'], 'bgcolor', '', 0);
+	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
 	print '</td></tr>';
 
 	print '</table>';

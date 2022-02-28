@@ -1364,7 +1364,7 @@ class FormTicket
 		} elseif (!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$defaultmessage = dol_nl2br($defaultmessage);
 		}
-		if (GETPOSTISSET("message") && !$_POST['modelselected']) {
+		if (GETPOSTISSET("message") && !GETPOST('modelselected')) {
 			$defaultmessage = GETPOST('message', 'restricthtml');
 		} else {
 			$defaultmessage = make_substitutions($defaultmessage, $this->substit);
