@@ -145,6 +145,8 @@ TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received
 TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
 TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
 
 #
 # Index & list page
