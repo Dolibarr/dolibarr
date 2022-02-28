@@ -416,7 +416,7 @@ if (empty($error) && !empty($xml)) {
 
 	$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
 	if ($checksumget == $checksumtoget) {
-		if (count($file_list['added'])) {
+		if (is_array($file_list['added']) && count($file_list['added'])) {
 			$resultcode = 'warning';
 			$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
 			$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';

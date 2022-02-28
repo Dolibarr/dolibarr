@@ -67,6 +67,11 @@ class ExtraFields
 	public $attributes;
 
 	/**
+	 * @var array	Array with boolean of status of groups
+	 */
+	public $expand_display;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -1558,7 +1563,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $langs, 0, 0, -1);
+				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$langs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
@@ -1866,55 +1871,58 @@ class ExtraFields
 			$colspan=0;
 		}
 
+		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
+		$extrafield_param_list = array();
+		if (!empty($extrafield_param) && is_array($extrafield_param)) {
+			$extrafield_param_list = array_keys($extrafield_param['options']);
+		}
+		$extrafield_collapse_display_value = -1;
+		$expand_display = false;
+		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
+			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+		}
+
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
-		$out .='<strong>';
+		$out .= '<span class="cursorpointer far fa-'.($expand_display ? 'minus' : 'plus').'-square"></span>&nbsp;';
+		$out .= '<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out .= '</strong>';
 		$out .= '</'.$tagtype_dyn.'>';
 		$out .= '</'.$tagtype.'>';
 
-		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
-		if (!empty($extrafield_param) && is_array($extrafield_param)) {
-			$extrafield_param_list = array_keys($extrafield_param['options']);
+		if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+			// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
+			$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
+			$this->expand_display[$extrafields_collapse_num] = $expand_display;
 
-			if (count($extrafield_param_list) > 0) {
-				$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-				if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-					// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
-					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
-					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
-
-					if (!empty($conf->use_javascript_ajax)) {
-						$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
-						$out .= '<script type="text/javascript">'."\n";
-						$out .= 'jQuery(document).ready(function(){'."\n";
-						if ($collapse_display === false) {
-							$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");';
-							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
-							$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
-						} else {
-							$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");';
-							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
-							$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						}
-						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
-						$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
-						$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(100, function(){'."\n";
-						$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
-						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						$out .= '           } else {'."\n";
-						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						$out .= '           }'."\n";
-						$out .= '       });'."\n";
-						$out .= '   });'."\n";
-						$out .= '});'."\n";
-						$out .= '</script>'."\n";
-					}
+			if (!empty($conf->use_javascript_ajax)) {
+				$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
+				$out .= '<script type="text/javascript">'."\n";
+				$out .= 'jQuery(document).ready(function(){'."\n";
+				if ($expand_display === false) {
+					$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
+					$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
+				} else {
+					$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
+					$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				}
+				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+				$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
+				$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(100, function(){'."\n";
+				$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '           } else {'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '           }'."\n";
+				$out .= '       });'."\n";
+				$out .= '   });'."\n";
+				$out .= '});'."\n";
+				$out .= '</script>'."\n";
 			}
 		}
 

@@ -126,7 +126,7 @@ if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('save', 'alph
 	$upload_dir_tmp = $vardir.'/temp/'.session_id();
 
 	// TODO Delete only files that was uploaded from email form
-	dol_remove_file_process($_POST['removedfile'], 0, 0);
+	dol_remove_file_process(GETPOST('removedfile'), 0, 0);
 	$action = 'create_ticket';
 }
 
@@ -259,7 +259,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 				$message  = ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
 				$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
-				$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+				$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
 				$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'" rel="nofollow noopener">'.$object->track_id.'</a>').'<br>';
 				$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 

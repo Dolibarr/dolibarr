@@ -109,7 +109,7 @@ class Position extends CommonObject
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>1,),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0),
 		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
 		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>51, 'notnull'=>1, 'visible'=>1,),
 		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>52, 'notnull'=>0, 'visible'=>1,),
@@ -843,6 +843,77 @@ class Position extends CommonObject
 	}
 
 	/**
+	 * Return HTML string to put an input field into a page
+	 * Code very similar with showInputField of extra fields
+	 *
+	 * @param  array   		$val	       Array of properties for field to show
+	 * @param  string  		$key           Key of attribute
+	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  		$moreparam     To add more parameters on html input tag
+	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  int			$nonewbutton   Do not show new button
+	 * @return string
+	 */
+	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
+	{
+		global $langs;
+
+		if ($key == 'fk_user') {
+			$vacantId = $keyprefix.$key.'vacant'.$keysuffix;
+
+			$out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>';
+
+			?>
+			<script type="text/javascript">
+				$(document).ready(function () {
+					var checkbox = $('#<?php print $vacantId; ?>');
+					var searchfkuser = $('#<?php print $keyprefix.$key.$keysuffix; ?>');
+					checkbox.click(function () {
+						if (checkbox.prop('checked')) {
+							searchfkuser.val(0).trigger('change');
+							searchfkuser.prop('disabled', 1);
+						} else {
+							searchfkuser.prop('disabled', 0);
+						}
+					});
+				});
+			</script>
+			<?php
+		} else {
+			$out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Return HTML string to show a field into a page
+	 * Code very similar with showOutputField of extra fields
+	 *
+	 * @param  array   $val		       Array of properties of field to show
+	 * @param  string  $key            Key of attribute
+	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  $moreparam      To add more parametes on html input tag
+	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed   $morecss        Value for css to define size. May also be a numeric.
+	 * @return string
+	 */
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	{
+		global $langs;
+
+		if ($key == 'fk_user' && $this->fk_user == 0) {
+			return $langs->trans("VacantPosition");
+		}
+		return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+	}
+
+
+		/**
 	 *    Load the info information in the object
 	 *
 	 * @param int $id Id of object
@@ -1072,7 +1143,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobjectline.class.php';
 class PositionLine extends CommonObjectLine
 {
 	// To complete with content of an object PositionLine
-	// We should have a field rowid, fk_position and position
+	// We should have a field rowid , fk_position and position
 
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes

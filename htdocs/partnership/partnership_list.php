@@ -74,7 +74,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+$managedfor	= empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) ? 'thirdparty' : $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
 
 if ($managedfor != 'member' && $sortfield == 'd.datefin') $sortfield = '';
 

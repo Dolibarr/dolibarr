@@ -357,18 +357,18 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
  *	Convert a string date into a GM Timestamps date
  *	Warning: YYYY-MM-DDTHH:MM:SS+02:00 (RFC3339) is not supported. If parameter gm is 1, we will use no TZ, if not we will use TZ of server, not the one inside string.
  *
- *	@param	string	$string		Date in a string
- *				     	        YYYYMMDD
- *	                 			YYYYMMDDHHMMSS
- *								YYYYMMDDTHHMMSSZ
- *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
- *		                		DD/MM/YY or DD/MM/YYYY (deprecated)
- *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
- *  @param	int		$gm         1 =Input date is GM date,
- *                              0 =Input date is local date using PHP server timezone
- *  @return	int					Date as a timestamp
- *		                		19700101020000 -> 7200 with gm=1
- *								19700101000000 -> 0 with gm=1
+ *	@param	string		$string		Date in a string
+ *				     		        YYYYMMDD
+ *	                 				YYYYMMDDHHMMSS
+ *									YYYYMMDDTHHMMSSZ
+ *									YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+ *		                			DD/MM/YY or DD/MM/YYYY (deprecated)
+ *		                			DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
+ *  @param	int|string	$gm         'gmt' or 1 =Input date is GM date,
+ *                          	    'tzserver' or 0 =Input date is date using PHP server timezone
+ *  @return	int						Date as a timestamp
+ *		                			19700101020000 -> 7200 with gm=1
+ *									19700101000000 -> 0 with gm=1
  *
  *  @see    dol_print_date(), dol_mktime(), dol_getdate()
  */
@@ -408,7 +408,14 @@ function dol_stringtotime($string, $gm = 1)
 
 	$string = preg_replace('/([^0-9])/i', '', $string);
 	$tmp = $string.'000000';
-	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), ($gm ? 1 : 0));
+	// Clean $gm
+	if ($gm === 1) {
+		$gm = 'gmt';
+	} elseif (empty($gm) || $gm === 'tzserver') {
+		$gm = 'tzserver';
+	}
+
+	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
 	return $date;
 }
 

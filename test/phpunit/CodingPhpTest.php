@@ -444,7 +444,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$matches=array();
 			preg_match_all('/GETPOST\s*\(([^\)]+),\s*["\']none["\']/i', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				var_dump($val);
+				//var_dump($val);
 				if (!in_array($val[1], array(
 						"'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'",
 						"'search_status'", '"mysqldump"', '"postgresqldump"', "'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'", '"MAIN_MAIL_SMTPS_PW"'))) {

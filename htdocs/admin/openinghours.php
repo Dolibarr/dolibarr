@@ -97,7 +97,7 @@ if (empty($action) || $action == 'edit' || $action == 'updateedit') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Monday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="monday" id="monday" class="minwidth100" autofocus value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_MONDAY : GETPOST("monday", 'alpha')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
+	print '<input name="monday" id="monday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_MONDAY : GETPOST("monday", 'alpha')).'"'.(empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Tuesday"), $langs->trans("OpeningHoursFormatDesc"));

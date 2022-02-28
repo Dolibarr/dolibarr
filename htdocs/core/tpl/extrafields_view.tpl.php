@@ -125,14 +125,19 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
-			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
+			$collapse_group = $extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
+			print '<tr class="trextrafields_collapse'.$collapse_group;
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
 			}*/
 			if ($extrafields_collapse_num && $i == count($extrafields->attributes[$object->table_element]['label'])) {
 				print ' trextrafields_collapse_last';
 			}
-			print '">';
+			print '"';
+			if (empty($extrafields->expand_display[$collapse_group])) {
+				print ' style="display: none;"';
+			}
+			print '>';
 			$extrafields_collapse_num_old = $extrafields_collapse_num;
 			print '<td class="titlefield">';
 			print '<table class="nobordernopadding centpercent">';

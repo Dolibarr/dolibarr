@@ -615,23 +615,31 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 
 if (!empty($conf->salaries->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
-		//$column = 's.dateep';		// we use the date of salary
-		$column = 'p.datep';
+		$column = 's.dateep';		// we use the date of end of period of salary
+
+		$sql = "SELECT s.label as nom, date_format(".$column.",'%Y-%m') as dm, sum(s.amount) as amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+		$sql .= " WHERE s.entity IN (".getEntity('salary').")";
+		if (!empty($date_start) && !empty($date_end)) {
+			$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
+		}
+		$sql .= " GROUP BY s.label, dm";
 	}
 	if ($modecompta == "RECETTES-DEPENSES") {
 		$column = 'p.datep';
+
+		$sql = "SELECT p.label as nom, date_format(".$column.",'%Y-%m') as dm, sum(p.amount) as amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON p.fk_salary = s.rowid";
+		$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
+		if (!empty($date_start) && !empty($date_end)) {
+			$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
+		}
+		$sql .= " GROUP BY p.label, dm";
 	}
 
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
-	$sql = "SELECT p.label as nom, date_format(".$column.",'%Y-%m') as dm, sum(p.amount) as amount";
-	$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p, ".MAIN_DB_PREFIX."salary as s";
-	$sql .= " WHERE p.fk_salary = s.rowid";
-	$sql .= " AND s.entity IN (".getEntity('salary').")";
-	if (!empty($date_start) && !empty($date_end)) {
-		$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
-	}
-	$sql .= " GROUP BY p.label, dm";
 
 	dol_syslog("get social salaries payments");
 	$result = $db->query($sql);
