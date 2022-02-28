@@ -578,14 +578,6 @@ print $form->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"),
 print '</td>';
 print '</tr>';
 
-print '</table><br>';
-
-print '<div class="center">';
-print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-print '</div>';
-
-print '</form>';
-
 // Define wanted maximum time elapsed before answers to tickets
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
 print '<input type="hidden" name="action" value="setvarother">';
@@ -612,9 +604,13 @@ print $form->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 
 print '</td>';
 print '</tr>';
 
-print '</form>';
-
 print '</table><br>';
+
+print '<div class="center">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '</form>';
 
 
 // Admin var of module
