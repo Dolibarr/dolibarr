@@ -82,12 +82,12 @@ class Paiement extends CommonObject
 	public $paiementcode; // Code of payment.
 
 	/**
-	 * @var string type libelle
+	 * @var string Type of payment label
 	 */
 	public $type_label;
 
 	/**
-	 * @var string type code
+	 * @var string Type of payment code (seems duplicate with $paiementcode);
 	 */
 	public $type_code;
 
