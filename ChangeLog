@@ -2,6 +2,11 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 14.0.5 adapted by avadnc *****
+
+ADD: Allow posibility to add to converse exchange when the local money is less than foreign money For Example: Local Currency MXN, 1 USD = 20 MXN
+
+
 
 ***** ChangeLog for 14.0.5 compared to 14.0.4 *****
 
