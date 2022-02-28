@@ -573,8 +573,7 @@ class MultiCurrency extends CommonObject
 
 		if ($multicurrency_tx) {
 			if ($way == 'dolibarr') {
-				if($conf->global->MULTICURRENCY_LESS_THAN_FOREIGN){
-					
+				if ($conf->global->MULTICURRENCY_LESS_THAN_FOREIGN) {
 					return price2num($amount / $multicurrency_tx, 'MU');
 				} else {
 					return price2num($amount * $multicurrency_tx, 'MU');
