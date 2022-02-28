@@ -121,8 +121,8 @@ class DolEditor
 	 *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
 	 *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
 	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
-	 *  @param	string	$moreparams			Add extra tags to the textarea
-	 *  @param	string	$morecss			Add extra css to the textarea
+	 *  @param	string	$moreparam			 Add extra tags to the textarea
+	 *  @param	string	$morecss			 Add extra css to the textarea
 	 *  @return	void|string
 	 */
 	public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '', $moreparam = '', $morecss = '')
