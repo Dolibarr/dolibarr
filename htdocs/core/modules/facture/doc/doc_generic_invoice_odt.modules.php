@@ -159,7 +159,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte .= $conf->global->FACTURE_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="Button"value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small reposition" name="modify"value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -399,6 +399,20 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_propal, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+
+				// Complete also with substitution from keys directly found into template
+				// TODO Search all tags {object_...:xxxx} into template then loop on this found tags to analyze them and the the corresponding
+				// property of object and use the xxxx to know how to format it.
+				// Before that, we hard code this substitution as if we have found them into the template.
+				$tmparray['object_PREVIOUS_MONTH'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%m');
+				$tmparray['object_MONTH'] = dol_print_date($this->date, '%m');
+				$tmparray['object_NEXT_MONTH'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%m');
+				$tmparray['object_PREVIOUS_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'm'), '%B');
+				$tmparray['object_MONTH_TEXT'] = dol_print_date($this->date, '%B');
+				$tmparray['object_NEXT_MONTH_TEXT'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'm'), '%B');
+				$tmparray['object_PREVIOUS_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
+				$tmparray['object_YEAR'] = dol_print_date($this->date, '%Y');
+				$tmparray['object_NEXT_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
 
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);

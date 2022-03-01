@@ -2,6 +2,7 @@
 -- Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2004		Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+-- Copyright (C) 2022 	    Juanjo Menent           <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@ create table llx_c_country
   rowid    integer            PRIMARY KEY,
   code     varchar(2)         NOT NULL,
   code_iso varchar(3)         ,
-  label    varchar(50)        NOT NULL,
+  label    varchar(128)        NOT NULL,
   eec      integer            ,
   active   tinyint DEFAULT 1  NOT NULL,
   favorite tinyint DEFAULT 0  NOT NULL

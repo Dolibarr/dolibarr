@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -247,6 +248,10 @@ if (empty($reshook)) {
 				}
 				if ($element == 'propal') {
 					$element = 'comm/propal'; $subelement = 'propal';
+				}
+				if ($element == 'invoice' || $element == 'facture') {
+					$element = 'compta/facture';
+					$subelement = 'facture';
 				}
 
 				$object->origin    = $origin;
@@ -529,9 +534,9 @@ if (empty($reshook)) {
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
 			// ajout prix achat
-			$fk_fournprice = $_POST['fournprice'];
-			if (!empty($_POST['buying_price'])) {
-				$pa_ht = $_POST['buying_price'];
+			$fk_fournprice = GETPOST('fournprice');
+			if (GETPOST('buying_price')) {
+				$pa_ht = GETPOST('buying_price');
 			} else {
 				$pa_ht = null;
 			}
@@ -1039,6 +1044,10 @@ if ($action == 'create') {
 			}
 			if ($element == 'propal') {
 				$element = 'comm/propal'; $subelement = 'propal';
+			}
+			if ($element == 'invoice' || $element == 'facture') {
+				$element = 'compta/facture';
+				$subelement = 'facture';
 			}
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');

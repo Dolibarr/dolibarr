@@ -200,7 +200,7 @@ function invoice_rec_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/card-rec.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/card-rec.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("RepeatableInvoice");
 	$head[$h][2] = 'card';
 	$h++;
@@ -212,6 +212,35 @@ function invoice_rec_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice-rec');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice-rec', 'remove');
+
+	return $head;
+}
+
+/**
+ * Return array head with list of tabs to view object informations.
+ *
+ * @param   Facture     $object     Invoice object
+ * @return array                    head array with tabs
+ */
+function supplier_invoice_rec_prepare_head($object)
+{
+	global $db, $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/card-rec.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("RepeatableSupplierInvoice");
+	$head[$h][2] = 'card';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice_supplier_rec');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice_supplier_rec', 'remove');
 
 	return $head;
 }
@@ -1196,11 +1225,6 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nobordernopadding nowrap">';
 					print $tmpinvoice->getNomUrl(1, '');
 					print '</td>';
-					print '<td width="20" class="nobordernopadding nowrap">';
-					if ($tmpinvoice->hasDelay()) {
-						print img_warning($langs->trans("Late"));
-					}
-					print '</td>';
 					print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 					$filename = dol_sanitizeFileName($obj->ref);
 					$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
@@ -1212,7 +1236,12 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nowrap tdoverflowmax100">';
 					print $societestatic->getNomUrl(1, 'customer');
 					print '</td>';
-					print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
+					print '<td class="right">';
+					print dol_print_date($db->jdate($obj->datelimite), 'day');
+					if ($tmpinvoice->hasDelay()) {
+						print img_warning($langs->trans("Late"));
+					}
+					print '</td>';
 					if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 						print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 					}

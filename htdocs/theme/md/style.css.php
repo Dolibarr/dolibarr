@@ -6,6 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,6 +149,12 @@ if (!isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) {
 if (!isset($conf->global->THEME_ELDY_TEXTLINK)) {
 	$conf->global->THEME_ELDY_TEXTLINK = $colortextlink;
 }
+if (!isset($conf->global->THEME_ELDY_BTNACTION)) {
+	$conf->global->THEME_ELDY_BTNACTION = $butactionbg;
+}
+if (!isset($conf->global->THEME_ELDY_TEXTBTNACTION)) {
+	$conf->global->THEME_ELDY_TEXTBTNACTION = $textbutaction;
+}
 
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED)) {
@@ -177,6 +184,8 @@ $colortexttitle      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (emp
 $colortexttitlelink  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $conf->global->THEME_ELDY_TEXTTITLELINK) : (empty($user->conf->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $user->conf->THEME_ELDY_TEXTTITLELINK);
 $colortext           = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXT) ? $colortext : $conf->global->THEME_ELDY_TEXT) : (empty($user->conf->THEME_ELDY_TEXT) ? $colortext : $user->conf->THEME_ELDY_TEXT);
 $colortextlink       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTLINK) ? $colortext : $conf->global->THEME_ELDY_TEXTLINK) : (empty($user->conf->THEME_ELDY_TEXTLINK) ? $colortextlink : $user->conf->THEME_ELDY_TEXTLINK);
+$butactionbg       	 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_BTNACTION) ? $butactionbg : $conf->global->THEME_ELDY_BTNACTION) : (empty($user->conf->THEME_ELDY_BTNACTION) ? $butactionbg : $user->conf->THEME_ELDY_BTNACTION);
+$textbutaction     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $conf->global->THEME_ELDY_TEXTBTNACTION) : (empty($user->conf->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $user->conf->THEME_ELDY_TEXTBTNACTION);
 $fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE1) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE2) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE2) : (empty($user->conf->THEME_ELDY_FONT_SIZE2) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE2);
 
@@ -338,6 +347,8 @@ print '*/'."\n";
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+	--butactionbg : #<?php print $butactionbg; ?>;
+	--textbutaction : #<?php print $textbutaction; ?>;
 }
 
 body {
@@ -440,7 +451,7 @@ input, select {
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
-	color: #FFF !important;
+	color: var(--textbutaction)!important;
 	border-radius: 3px;
 	border-collapse: collapse;
 	border: none;
@@ -612,12 +623,12 @@ td.amount, span.amount, div.amount, b.amount {
 td.actionbuttons a {
 	padding-left: 6px;
 }
-select.flat, form.flat select, .pageplusone {
+select.flat, form.flat select, .pageplusone, .divadvancedsearchfieldcompinput, {
 	font-weight: normal;
 	font-size: unset;
 	height: 2em;
 }
-input.pageplusone {
+input.pageplusone, .divadvancedsearchfieldcompinput, {
 	padding-bottom: 4px;
 	padding-top: 4px;
 }
@@ -719,6 +730,14 @@ div#moretabsList, div#moretabsListaction {
 }
 
 hr { border: 0; border-top: 1px solid #ccc; }
+.tabBar hr { margin-top: 20px; margin-bottom: 17px; }
+
+
+table.tableforfield .button:not(.bordertransp):not(.buttonpayment),
+table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
+	margin-bottom: 2px;
+	margin-top: 2px;
+}
 
 .button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-color: #c5c5c5;
@@ -1147,6 +1166,59 @@ div.divsearchfield {
 .divadvancedsearchfield span.select2.select2-container.select2-container--default {
 	padding-bottom: 4px;
 }
+.divadvancedsearchfieldcompinput {
+	background: #fff;
+	border-bottom: solid 1px var(--inputbordercolor);
+}
+
+.search_component_params {
+	/*display: flex; */
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+	background: #fff;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-<?php echo $left; ?>: 0;
+	padding-<?php echo $right; ?>: 0;
+	border-bottom: solid 1px var(--inputbordercolor);
+	height: 24px;
+}
+.search_component_searchtext {
+	padding-top: 2px;
+}
+.search_component_params_text, .search_component_params_text:focus {
+	border-bottom: none;
+	width: auto;
+	margin: 0 !important;
+	padding: 3px;
+}
+.tagsearch {
+	padding: 2px;
+	padding-right: 4px;
+	padding-bottom: 3px;
+	background: #ddd;
+	border-radius: 4px;
+}
+.tagsearchdelete {
+	color: #999;
+	cursor: pointer;
+	display: inline-block;
+	font-weight: bold;
+	margin-right: 2px;
+	padding-left: 4px;
+}
+
+.caretleftaxis {
+	margin-left: -13px;
+	margin-top: -1px;
+	position: absolute;
+}
+.caretdownaxis {
+	margin-left: -12px;
+	margin-top: 0;
+	position: absolute;
+}
+
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
@@ -3500,15 +3572,14 @@ table.borderplus {
 	border: 1px solid #BBB;
 }
 
-.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 26px;
-}
+.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
+div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-	height: 26px;
+	height: 28px;
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 4px 4px 4px 4px;
+	padding: 3px 4px 3px 4px;
 	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
@@ -5793,6 +5864,10 @@ input.select2-input {
 	color: #FFF !important;
 }
 
+.select2-container .select2-selection--multiple {
+	min-height: 28px !important;
+}
+
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	border: 1px solid #e4e4e4;
 }
@@ -5869,6 +5944,9 @@ input.select2-input {
 	border-left: none;
 	border-right: none;
 	border-radius: 0 !important;
+}
+.select2-selection--multiple input.select2-search__field {
+	border-bottom: none !important;
 }
 .select2-search__field
 {
@@ -6044,6 +6122,10 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 span.select2.select2-container.select2-container--default {
 	text-align: initial;
+}
+
+ul.select2-results__options li {
+	font-size: 0.95em;
 }
 
 

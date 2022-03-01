@@ -892,8 +892,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
-				if (!in_array($useridtocheck, $childids)) {
-					return false;
+				if (!$user->rights->expensereport->readall) {
+					if (!in_array($useridtocheck, $childids)) {
+						return false;
+					}
 				}
 			}
 		}

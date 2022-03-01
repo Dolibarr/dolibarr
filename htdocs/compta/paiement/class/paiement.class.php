@@ -82,12 +82,12 @@ class Paiement extends CommonObject
 	public $paiementcode; // Code of payment.
 
 	/**
-	 * @var string type libelle
+	 * @var string Type of payment label
 	 */
 	public $type_label;
 
 	/**
-	 * @var string type code
+	 * @var string Type of payment code (seems duplicate with $paiementcode);
 	 */
 	public $type_code;
 
@@ -585,16 +585,19 @@ class Paiement extends CommonObject
 				return -1;
 			}
 
-			$this->db->begin();
-
 			$this->fk_account = $accountid;
 
+			dol_syslog("addPaymentToBank ".$user->id.", ".$mode.", ".$label.", ".$this->fk_account.", ".$emetteur_nom.", ".$emetteur_banque);
+
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-			dol_syslog("$user->id, $mode, $label, $this->fk_account, $emetteur_nom, $emetteur_banque");
-
 			$acc = new Account($this->db);
 			$result = $acc->fetch($this->fk_account);
+			if ($result < 0) {
+				$error++;
+				return -1;
+			}
+
+			$this->db->begin();
 
 			$totalamount = $this->amount;
 			if (empty($totalamount)) {
@@ -1153,7 +1156,7 @@ class Paiement extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1211,7 +1214,15 @@ class Paiement extends CommonObject
 			$result .= ($this->ref ? $this->ref : $this->id);
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

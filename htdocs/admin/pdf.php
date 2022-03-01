@@ -96,9 +96,9 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_PDF_NO_RECIPENT_FRAME", GETPOST("MAIN_PDF_NO_RECIPENT_FRAME"), 'chaine', 0, '', $conf->entity);
 	}
 
-	if (GETPOSTISSET('MAIN_PDF_HIDE_SENDER_NAME')) {
+	/*if (GETPOSTISSET('MAIN_PDF_HIDE_SENDER_NAME')) {
 		dolibarr_set_const($db, "MAIN_PDF_HIDE_SENDER_NAME", GETPOST("MAIN_PDF_HIDE_SENDER_NAME"), 'chaine', 0, '', $conf->entity);
-	}
+	}*/
 
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", GETPOST("MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"), 'chaine', 0, '', $conf->entity);
@@ -307,6 +307,18 @@ print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
+// Show sender name
+
+/* Set option as hidden because no need of this for 99.99% of users.
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_SENDER_NAME").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_HIDE_SENDER_NAME');
+} else {
+	print $form->selectyesno('MAIN_PDF_HIDE_SENDER_NAME', (!empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) ? $conf->global->MAIN_PDF_HIDE_SENDER_NAME : 0, 1);
+}
+print '</td></tr>';
+*/
+
 // Hide VAT Intra on address
 
 print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
@@ -357,16 +369,6 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_PDF_NO_RECIPENT_FRAME", $arrval, $conf->global->MAIN_PDF_NO_RECIPENT_FRAME);
 }
-
-// Show sender name
-
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_SENDER_NAME").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_PDF_HIDE_SENDER_NAME');
-} else {
-	print $form->selectyesno('MAIN_PDF_HIDE_SENDER_NAME', (!empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) ? $conf->global->MAIN_PDF_HIDE_SENDER_NAME : 0, 1);
-}
-print '</td></tr>';
 
 //Invert sender and recipient
 
@@ -506,22 +508,6 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_BOLD_PRODUCT_LABEL');
-} else {
-	print $form->selectyesno('PDF_BOLD_PRODUCT_LABEL', (!empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) ? $conf->global->PDF_BOLD_PRODUCT_LABEL : 0, 1);
-}
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_BOLD_PRODUCT_REF_AND_PERIOD');
-} else {
-	print $form->selectyesno('PDF_BOLD_PRODUCT_REF_AND_PERIOD', (!empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) ? $conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD : 0, 1);
-}
-print '</td></tr>';
-
 // Desc
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
@@ -539,6 +525,26 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS');
 } else {
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS : 0, 1);
+}
+print '</td></tr>';
+
+// Swicth in Bold
+
+print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_BOLD_PRODUCT_LABEL');
+} else {
+	print $form->selectyesno('PDF_BOLD_PRODUCT_LABEL', (!empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) ? $conf->global->PDF_BOLD_PRODUCT_LABEL : 0, 1);
+}
+print '</td></tr>';
+
+// Swicth in Bold
+
+print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PDF_BOLD_PRODUCT_REF_AND_PERIOD');
+} else {
+	print $form->selectyesno('PDF_BOLD_PRODUCT_REF_AND_PERIOD', (!empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) ? $conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD : 0, 1);
 }
 print '</td></tr>';
 

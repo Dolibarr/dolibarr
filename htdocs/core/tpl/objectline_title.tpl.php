@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
 // Supplier ref
-if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier') {
+if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
 	print '<td class="linerefsupplier maxwidth125"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
 }
 
@@ -138,6 +139,10 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 
 if ($outputalsopricetotalwithtax) {
 	print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
+}
+
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	print '<td class="linecolasset"></td>';
 }
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
