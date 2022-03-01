@@ -289,7 +289,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	}
 
 	if ($dbt_select != 'rowid' && $dbt_select != 'id') {
-		$objectid = "'".$objectid."'";
+		$objectid = "'".$db->escape($objectid)."'";
 	}
 
 	// Features/modules to check
