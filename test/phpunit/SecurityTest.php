@@ -910,7 +910,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
-		$result=dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0, '');
+		$result=dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
