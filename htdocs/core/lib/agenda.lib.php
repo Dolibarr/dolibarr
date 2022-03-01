@@ -73,11 +73,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<div class="divsearchfield">';
 
 		// Type
-		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;" title="'.$langs->trans("ActionType").'"></span>';
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
+		print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
 		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
 		print '</div>';
 
@@ -162,13 +162,13 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -183,7 +183,7 @@ function show_array_actions_to_do($max = 5)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$i = 0;
@@ -278,13 +278,13 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -299,7 +299,7 @@ function show_array_last_actions_done($max = 5)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$i = 0;
@@ -479,22 +479,22 @@ function calendars_prepare_head($param)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php?action=show_list'.($param ? '&'.$param : '');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php?mode=show_list'.($param ? '&'.$param : '');
 	$head[$h][1] = $langs->trans("ViewList");
 	$head[$h][2] = 'cardlist';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param ? '&'.$param : '');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_month'.($param ? '&'.$param : '');
 	$head[$h][1] = $langs->trans("ViewCal");
 	$head[$h][2] = 'cardmonth';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param ? '&'.$param : '');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_week'.($param ? '&'.$param : '');
 	$head[$h][1] = $langs->trans("ViewWeek");
 	$head[$h][2] = 'cardweek';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param ? '&'.$param : '');
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day'.($param ? '&'.$param : '');
 	$head[$h][1] = $langs->trans("ViewDay");
 	$head[$h][2] = 'cardday';
 	$h++;

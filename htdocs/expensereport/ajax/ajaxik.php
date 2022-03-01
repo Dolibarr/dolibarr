@@ -76,7 +76,8 @@ if (empty($fk_expense) || $fk_expense < 0) {
 		if ($userauthor->fetch($expense->fk_user_author) <= 0) {
 			echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_user_author' => $expense->fk_user_author));
 		} else {
-			$range = ExpenseReportIk::getRangeByUser($userauthor, $fk_c_exp_tax_cat);
+			$expenseik = new ExpenseReportIk($db);
+			$range = $expenseik->getRangeByUser($userauthor, $fk_c_exp_tax_cat);
 
 			if (empty($range)) {
 				echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'range' => $range));

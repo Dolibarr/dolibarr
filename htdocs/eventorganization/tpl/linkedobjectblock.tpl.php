@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-echo "<!-- BEGIN PHP TEMPLATE -->\n";
+echo "<!-- BEGIN PHP TEMPLATE eventorganization/tpl/linkedopjectblock.tpl.php -->\n";
 
 global $user;
 
@@ -54,7 +54,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	print '</td>';
 	echo '<td class="right">'.$objectlink->getLibStatut(3).'</td>';
-	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	echo '</tr>';
 }
 

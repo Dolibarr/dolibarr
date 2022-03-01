@@ -18,59 +18,59 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = ການຮັບສະັກພະນັກງານ
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = ຄຸ້ມຄອງແລະປະຕິບັດຕາມການໂຄສະນາຫາສຽງ ສຳ ລັບ ຕຳ ແໜ່ງ ວຽກໃ່
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = ການຕັ້ງການຮັບສະັກພະນັກງານ
+Settings = ການຕັ້ງຄ່າ
+RecruitmentSetupPage = ໃສ່ບ່ອນນີ້ການຕັ້ງຕົວເລືອກຫຼັກສໍາລັບໂມດູນການຮັບສະັກພະນັກງານ
+RecruitmentArea=ພື້ນທີ່ຮັບສະັກພະນັກງານ
+PublicInterfaceRecruitmentDesc=ໜ້າ ວຽກສາທາລະນະແມ່ນ URL ສາທາລະນະເພື່ອສະແດງແລະຕອບເພື່ອເປີດວຽກ. ມີການເຊື່ອມຕໍ່ທີ່ແຕກຕ່າງກັນອັນນຶ່ງສໍາລັບແຕ່ລະ ໜ້າ ວຽກທີ່ເປີດຢູ່, ພົບເຫັນຢູ່ໃນແຕ່ລະບັນທຶກວຽກ.
+EnablePublicRecruitmentPages=ເປີດໃຊ້ ໜ້າ ສາທາລະນະຂອງວຽກທີ່ເປີດຢູ່
 
 #
 # About page
 #
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+About = ກ່ຽວກັບ
+RecruitmentAbout = ກ່ຽວກັບການຮັບສະັກພະນັກງານ
+RecruitmentAboutPage = ຮັບສະັກພະນັກງານກ່ຽວກັບ ໜ້າ
+NbOfEmployeesExpected=ຄາດວ່າຈະມີພະນັກງານ nb
+JobLabel=ປ້າຍ ກຳ ກັບ ຕຳ ແໜ່ງ ວຽກ
+WorkPlace=ບ່ອນເຮັດວຽກ
+DateExpected=ວັນທີຄາດວ່າ
+FutureManager=ຜູ້ຈັດການໃນອະນາຄົດ
+ResponsibleOfRecruitement=ຮັບຜິດຊອບວຽກຮັບສະັກພະນັກງານ
+IfJobIsLocatedAtAPartner=ຖ້າວຽກຢູ່ໃນສະຖານທີ່ຄູ່ຮ່ວມງານ
+PositionToBeFilled=ຕຳ ແໜ່ງ ວຽກ
+PositionsToBeFilled=ຕຳ ແໜ່ງ ວຽກ
+ListOfPositionsToBeFilled=ລາຍຊື່ ຕຳ ແໜ່ງ ວຽກ
+NewPositionToBeFilled=ຕຳ ແໜ່ງ ວຽກໃ່
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+JobOfferToBeFilled=ຕຳ ແໜ່ງ ວຽກທີ່ຕ້ອງຕື່ມໃສ່
+ThisIsInformationOnJobPosition=ຂໍ້ມູນຂອງ ຕຳ ແໜ່ງ ວຽກທີ່ຈະຕ້ອງຕື່ມໃສ່
+ContactForRecruitment=ຕິດຕໍ່ຮັບສະັກພະນັກງານ
+EmailRecruiter=ນາຍຈ້າງອີເມລ
+ToUseAGenericEmail=ເພື່ອໃຊ້ອີເມວທົ່ວໄປ. ຖ້າບໍ່ໄດ້ລະບຸ, ອີເມລ of ຂອງຜູ້ຮັບຜິດຊອບການຮັບສະັກພະນັກງານຈະຖືກນໍາໃຊ້
+NewCandidature=ຄໍາຮ້ອງສະຫມັກໃຫມ່
+ListOfCandidatures=ລາຍການຄໍາຮ້ອງສະຫມັກ
+RequestedRemuneration=ຮ້ອງຂໍຄ່າຕອບແທນ
+ProposedRemuneration=ສະ ເໜີ ຄ່າຕອບແທນ
+ContractProposed=ສັນຍາສະ ເໜີ
+ContractSigned=ເຊັນສັນຍາແລ້ວ
+ContractRefused=ສັນຍາຖືກປະຕິເສດ
+RecruitmentCandidature=ຄໍາຮ້ອງສະຫມັກ
+JobPositions=ຕຳ ແໜ່ງ ວຽກ
+RecruitmentCandidatures=ຄໍາຮ້ອງສະຫມັກ
+InterviewToDo=ສໍາພາດເພື່ອເຮັດ
+AnswerCandidature=ຄໍາຕອບຄໍາຮ້ອງສະຫມັກ
+YourCandidature=ຄໍາຮ້ອງສະຫມັກຂອງທ່ານ
+YourCandidatureAnswerMessage=ຂອບໃຈສໍາລັບຄໍາຮ້ອງສະຫມັກຂອງເຈົ້າ. <br> ...
+JobClosedTextCandidateFound=ຕຳ ແໜ່ງ ວຽກຖືກປິດ. ຕຳ ແໜ່ງ ດັ່ງກ່າວໄດ້ຖືກຕື່ມໃສ່.
+JobClosedTextCanceled=ຕຳ ແໜ່ງ ວຽກຖືກປິດ.
+ExtrafieldsJobPosition=ຄຸນສົມບັດເພີ່ມເຕີມ (ຕຳ ແໜ່ງ ວຽກ)
+ExtrafieldsApplication=ຄຸນລັກສະນະເສີມ (ການສະjobັກວຽກ)
+MakeOffer=ສະ ເໜີ ໃຫ້

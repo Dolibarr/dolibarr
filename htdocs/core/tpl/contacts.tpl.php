@@ -89,8 +89,8 @@ if ($permission) {
 
 	?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").' | '.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo img_object('', 'company', 'class="optiongrey paddingright"').$langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd liste_titre"><?php echo img_picto($langs->trans("Users"), 'user', 'class="optiongrey paddingright"').$langs->trans("Users").' | '.img_picto($langs->trans("Contacts"), 'contact', 'class="optiongrey paddingright"').$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
 		<div class="tagtd liste_titre">&nbsp;</div>
 		<div class="tagtd liste_titre">&nbsp;</div>
@@ -111,17 +111,17 @@ if ($permission) {
 
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
 		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div> -->
-		<div class="tagtd maxwidthonsmartphone"><?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 0, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, '', 0, '', 'minwidth200imp'); ?></div>
+		<div class="tagtd maxwidthonsmartphone"><?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 0, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400'); ?></div>
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject = $object;
 		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 			$tmpobject = $objectsrc;
 		}
-		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
+		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
-		<div class="tagtd center"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
+		<div class="tagtd center"><input type="submit" class="button small" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
 
 		<?php
@@ -135,22 +135,19 @@ if ($permission) {
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="external" />
+		<input type="hidden" name="page_y" value="" />
 		<?php if (!empty($withproject)) {
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		} ?>
 
-		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
-			<?php $selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : (empty($object->socid) ?  0 : $object->socid);
-			// add company icon before select list
-			if ($selectedCompany) {
-				echo img_object('', 'company', 'class="hideonsmartphone"');
-			}
+		<div class="tagtd nowrap noborderbottom">
+			<?php
+			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ?  0 : $object->socid);
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
-		<!--  <div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>-->
-		<div class="tagtd maxwidthonsmartphone noborderbottom">
+		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
-			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
@@ -160,20 +157,20 @@ if ($permission) {
 			print $newcardbutton;
 			?>
 		</div>
-		<div class="tagtd maxwidthonsmartphone noborderbottom">
+		<div class="tagtd noborderbottom">
 			<?php
 			$tmpobject = $object;
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 				$tmpobject = $objectsrc;
 			}
-			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth100imp');
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth125imp widthcentpercentminusx maxwidth400');
 			?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
-			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) {
+			<input type="submit" id="add-customer-contact" class="button small" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) {
 				echo ' disabled';
-																				 } ?>>
+																					   } ?>>
 		</div>
 	</form>
 
@@ -306,12 +303,12 @@ foreach ($list as $entry) {
 
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
-		$href .= '?id='.$object->id;
+		$href .= '?id='.((int) $object->id);
 		$href .= '&action=deletecontact&token='.newToken();
-		$href .= '&lineid='.$entry->id;
+		$href .= '&lineid='.((int) $entry->id);
 
-		print "<td class='center'>";
-		print "<a href='$href'>";
+		print '<td class="center">';
+		print '<a href="'.$href.'">';
 		print img_picto($langs->trans("Unlink"), "unlink");
 		print "</a>";
 		print "</td>";

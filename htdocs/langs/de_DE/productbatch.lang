@@ -1,8 +1,8 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Chargen-/Serien-Nr. benutzen 
-ProductStatusOnBatch=Ja (Charge erforderlich)
-ProductStatusOnSerial=Ja  (einzigartige Seriennummer erforderlich)
-ProductStatusNotOnBatch=Nein  (keine Chargen-/Serien-Nr.)
+ProductStatusOnBatch=Ja (Chargennummer erforderlich)
+ProductStatusOnSerial=Ja (eindeutige Seriennummer erforderlich)
+ProductStatusNotOnBatch=Nein (keine Chargen-/Serien-Nr.)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Seriennummer
 ProductStatusNotOnBatchShort=Keine
@@ -30,14 +30,16 @@ ManageLotMask=Benutzerdefinierte Maske
 CustomMasks=Option, für jedes Produkt ein anderes Nummerierungsschema zu definieren
 BatchLotNumberingModules=Nummerierungsregel zur automatischen Generierung der Chargennummer
 BatchSerialNumberingModules=Nummerierungsregel zur automatischen Generierung der Seriennummer (für Produkte mit der Eigenschaft 1 eindeutiges Los/Serie für jedes Produkt)
-QtyToAddAfterBarcodeScan=Menge, die für jeden gescannten Barcode / jedes Los / jede Serienummer hinzugefügt werden muss
+QtyToAddAfterBarcodeScan=Menge an %s für jeden gescannten Barcode/jede Charge/jede  Seriennummer
 LifeTime=Lebensdauer (in Tagen)
 EndOfLife=Ende der Lebensdauer
 ManufacturingDate=Herstellungsdatum
 DestructionDate=Datum der Vernichtung
 FirstUseDate=Datum der ersten Verwendung
 QCFrequency=Häufigkeit der Qualitätskontrolle (in Tagen)
-
+ShowAllLots=Alle Lose anzeigen
+HideLots=Lose ausblenden
 #Traceability - qc status
 OutOfOrder=Außer Betrieb
 InWorkingOrder=In betriebsfähigem Zustand
+ToReplace=Ersetzen

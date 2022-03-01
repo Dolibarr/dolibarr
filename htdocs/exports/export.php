@@ -151,7 +151,6 @@ $sqlusedforexport = '';
 $head = array();
 $upload_dir = $conf->export->dir_temp.'/'.$user->id;
 
-//$usefilters=($conf->global->MAIN_FEATURES_LEVEL > 1);
 $usefilters = 1;
 
 // Security check
@@ -389,16 +388,17 @@ if ($step == 4 && $action == 'submitFormField') {
 		$_SESSION["export_filtered_fields"] = array();
 		foreach ($objexport->array_export_TypeFields[0] as $code => $type) {	// $code: s.fieldname $value: Text|Boolean|List:ccc
 			$newcode = (string) preg_replace('/\./', '_', $code);
-			//print 'xxx'.$code."=".$newcode."=".$type."=".$_POST[$newcode]."\n<br>";
+			//print 'xxx '.$code."=".$newcode."=".$type."=".GETPOST($newcode)."\n<br>";
+			$check = 'alphanohtml';
 			$filterqualified = 1;
-			if (!GETPOSTISSET($newcode) || GETPOST($newcode, 'restricthtml') == '') {
+			if (!GETPOSTISSET($newcode) || GETPOST($newcode, $check) == '') {
 				$filterqualified = 0;
-			} elseif (preg_match('/^List/', $type) && (is_numeric(GETPOST($newcode, 'restricthtml')) && GETPOST($newcode, 'restricthtml') <= 0)) {
+			} elseif (preg_match('/^List/', $type) && (is_numeric(GETPOST($newcode, $check)) && GETPOST($newcode, $check) <= 0)) {
 				$filterqualified = 0;
 			}
 			if ($filterqualified) {
 				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
-				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, 'restricthtml');
+				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, $check);
 			}
 		}
 		$array_filtervalue = (!empty($objexport->array_export_FilterValue[0]) ? $objexport->array_export_FilterValue[0] : '');
@@ -1212,7 +1212,7 @@ if ($step == 5 && $datatoexport) {
 
 	// Show existing generated documents
 	// NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (!empty($_POST['model']) ? $_POST['model'] : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
+	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (GETPOST('model') ? GETPOST('model') : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 
 llxFooter();

@@ -39,21 +39,18 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
-
 $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
 $id_bankaccount = GETPOST('id_bankaccount', 'int');
+$executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
@@ -62,6 +59,18 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 
 $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
+
+$error = 0;
 
 
 /*
@@ -86,60 +95,63 @@ if (empty($reshook)) {
 		}
 	}
 	if ($action == 'create') {
-		$default_account=($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
+		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
-		if ($id_bankaccount != $conf->global->{$default_account}) {
-			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity);	//Set as default
+		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
+
+		if ($id_bankaccount != $conf->global->$default_account) {
+			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
 		$bank->fetch($conf->global->{$default_account});
-		if (empty($bank->ics) || empty($bank->ics_transfer)) {
+		if ((empty($bank->ics) && $type !== 'bank-transfer')
+			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
+		) {
 			$errormessage = str_replace('{url}', $bank->getNomUrl(1, '', '', -1, 1), $langs->trans("ErrorICSmissing", '{url}'));
 			setEventMessages($errormessage, null, 'errors');
-			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/create.php');
-			exit;
+			$action = '';
+			$error++;
 		}
 
 
-		$delayindays = 0;
-		if ($type != 'bank-transfer') {
-			$delayindays = $conf->global->PRELEVEMENT_ADDDAYS;
-		} else {
-			$delayindays = $conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
-		}
 		$bprev = new BonPrelevement($db);
-		$executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), (GETPOST('reday', 'int') + $delayindays), GETPOST('reyear', 'int'));
 
-		// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
-		$result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
-		if ($result < 0) {
-			setEventMessages($bprev->error, $bprev->errors, 'errors');
-		} elseif ($result == 0) {
-			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
-			setEventMessages($mesg, null, 'errors');
-			$mesg .= '<br>'."\n";
-			foreach ($bprev->invoice_in_error as $key => $val) {
-				$mesg .= '<span class="warning">'.$val."</span><br>\n";
-			}
-		} else {
-			if ($type != 'bank-transfer') {
-				$texttoshow = $langs->trans("DirectDebitOrderCreated", '{s}');
-				$texttoshow = str_replace('{s}', $bprev->getNomUrl(1), $texttoshow);
-				setEventMessages($texttoshow, null);
+		if (!$error) {
+			// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
+			$result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
+			if ($result < 0) {
+				setEventMessages($bprev->error, $bprev->errors, 'errors');
+			} elseif ($result == 0) {
+				$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
+				setEventMessages($mesg, null, 'errors');
+				$mesg .= '<br>'."\n";
+				foreach ($bprev->invoice_in_error as $key => $val) {
+					$mesg .= '<span class="warning">'.$val."</span><br>\n";
+				}
 			} else {
-				$texttoshow = $langs->trans("CreditTransferOrderCreated", '{s}');
-				$texttoshow = str_replace('{s}', $bprev->getNomUrl(1), $texttoshow);
-				setEventMessages($texttoshow, null);
-			}
+				if ($type != 'bank-transfer') {
+					$texttoshow = $langs->trans("DirectDebitOrderCreated", '{s}');
+					$texttoshow = str_replace('{s}', $bprev->getNomUrl(1), $texttoshow);
+					setEventMessages($texttoshow, null);
+				} else {
+					$texttoshow = $langs->trans("CreditTransferOrderCreated", '{s}');
+					$texttoshow = str_replace('{s}', $bprev->getNomUrl(1), $texttoshow);
+					setEventMessages($texttoshow, null);
+				}
 
-			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$bprev->id);
-			exit;
+				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.urlencode($bprev->id).'&type='.urlencode($type));
+				exit;
+			}
 		}
 	}
 	$objectclass = "BonPrelevement";
-	$uploaddir = $conf->prelevement->dir_output;
+	if ($type == 'bank-transfer') {
+		$uploaddir = $conf->paymentbybanktransfer->dir_output;
+	} else {
+		$uploaddir = $conf->prelevement->dir_output;
+	}
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -240,11 +252,25 @@ if ($nb) {
 		}
 		print $title;
 		print img_picto('', 'bank_account');
-		print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1", 0, '', 0, '', 1);
+
+		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
+
+		print $form->select_comptes($conf->global->$default_account, 'id_bankaccount', 0, "courant=1", 0, '', 0, '', 1);
 		print ' - ';
 
+		if (empty($executiondate)) {
+			$delayindays = 0;
+			if ($type != 'bank-transfer') {
+				$delayindays = $conf->global->PRELEVEMENT_ADDDAYS;
+			} else {
+				$delayindays = $conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
+			}
+
+			$executiondate = dol_time_plus_duree(dol_now(), $delayindays, 'd');
+		}
+
 		print $langs->trans('ExecutionDate').' ';
-		$datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datere = $executiondate;
 		print $form->selectDate($datere, 're');
 
 
@@ -260,13 +286,14 @@ if ($nb) {
 				print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
-			print '<input class="butAction" type="submit" value="'.$title.'"/>';
+			print '<input type="submit" class="butAction" value="'.$title.'"/>';
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
-			print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
+			print '<input type="hidden" name="format" value="ALL">'."\n";
+			print '<input type="submit" class="butAction" value="'.$title.'">'."\n";
 		}
 	} else {
 		if ($mysoc->isInEEC()) {

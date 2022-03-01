@@ -96,7 +96,7 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php') {	// If we browsi
 		$sql .= " WHERE wp.fk_website = ".((int) $website->id);
 		$sql .= " AND (wp.fk_page = ".((int) $pageid)." OR wp.rowid  = ".((int) $pageid);
 		if (is_object($websitepage) && $websitepage->fk_page > 0) {
-			$sql .= " OR wp.fk_page = ".$websitepage->fk_page." OR wp.rowid = ".$websitepage->fk_page;
+			$sql .= " OR wp.fk_page = ".((int) $websitepage->fk_page)." OR wp.rowid = ".((int) $websitepage->fk_page);
 		}
 		$sql .= ")";
 		$sql .= " AND wp.lang = '".$db->escape(GETPOST('l', 'aZ09'))."'";

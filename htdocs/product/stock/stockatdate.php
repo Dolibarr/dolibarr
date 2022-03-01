@@ -188,7 +188,7 @@ if ($date && $dateIsValid) {
 	if ($mode == 'future') {
 		$sql .= " AND sm.datem <= '".$db->idate($dateendofday)."'";
 	} else {
-		$sql .= " AND sm.datem >= '".$db->idate($date)."'";
+		$sql .= " AND sm.datem >= '".$db->idate($dateendofday)."'";
 	}
 	if ($productid > 0) {
 		$sql .= " AND sm.fk_product = ".((int) $productid);
@@ -272,7 +272,7 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if (!empty($canvas)) {
-	$sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
+	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
 if ($fk_warehouse > 0) {
 	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
@@ -363,7 +363,7 @@ print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, ar
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'stock', 'class="pictofiwedwidth"');
 print '</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifonenodefault'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
 print '</div>';
 
 $parameters = array();
@@ -373,7 +373,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input class="button" type="submit" name="valid" value="'.$langs->trans('Refresh').'">';
+print '<input type="submit" class="button" name="valid" value="'.$langs->trans('Refresh').'">';
 print '</div>';
 
 //print '</form>';
@@ -475,6 +475,8 @@ print $hookmanager->resPrint;
 
 print "</tr>\n";
 
+$totalbuyingprice = 0;
+
 $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
@@ -488,7 +490,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
 			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);
-			$sql .= ' AND lang = "'.$langs->getDefaultLang().'"';
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= ' LIMIT 1';
 
 			$resqlm = $db->query($sql);
@@ -567,6 +569,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			} else {
 				print '';
 			}
+			$totalbuyingprice += $objp->estimatedvalue;
 			print '</td>';
 
 			// Selling value
@@ -598,7 +601,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
-		print '</tr>';
+		print '</tr>'."\n";
 	}
 	$i++;
 }
@@ -607,11 +610,15 @@ $parameters = array('sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-if (empty($date) || ! $dateIsValid) {
-	$colspan = 8;
-	if ($mode == 'future') {
-		$colspan++;
-	}
+$colspan = 8;
+if ($mode == 'future') {
+	$colspan++;
+}
+
+print '<tr class="liste_total"><td>'.$langs->trans("Totalforthispage").'</td>';
+print '<td></td><td></td><td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td><td></td><td></td><td></td><td></td></tr>';
+
+if (empty($date) || !$dateIsValid) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
 }
 

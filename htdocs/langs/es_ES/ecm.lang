@@ -45,3 +45,5 @@ GenerateImgWebp=Duplica todas las imágenes con otra versión con formato .webp
 ConfirmGenerateImgWebp=Si confirma, generará una imagen en formato .webp para todas las imágenes que se encuentran actualmente en esta carpeta (las subcarpetas no están incluidas) ...
 ConfirmImgWebpCreation=Confirmar la duplicación de todas las imágenes
 SucessConvertImgWebp=Imágenes duplicadas correctamente
+ECMDirName=Nombre del directorio
+ECMParentDirectory=Directorio padre

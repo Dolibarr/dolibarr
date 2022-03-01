@@ -210,6 +210,8 @@ class DoliDBMysqli extends DoliDB
 	{
 		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name", LOG_DEBUG);
 
+		//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 		// Can also be
 		// mysqli::init(); mysql::options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 0'); mysqli::options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
 		// return mysqli::real_connect($host, $user, $pass, $db, $port);
@@ -255,6 +257,8 @@ class DoliDBMysqli extends DoliDB
 		return false;
 	}
 
+
+
 	/**
 	 * 	Execute a SQL request and return the resultset
 	 *
@@ -288,11 +292,16 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 
-		if (!$this->database_name) {
-			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
-			$ret = $this->db->query($query, $result_mode);
-		} else {
-			$ret = $this->db->query($query, $result_mode);
+		try {
+			if (!$this->database_name) {
+				// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+				$ret = $this->db->query($query, $result_mode);
+			} else {
+				$ret = $this->db->query($query, $result_mode);
+			}
+		} catch (Exception $e) {
+			dol_syslog(get_class($this)."::query Exception in query instead of returning an error: ".$e->getMessage(), LOG_ERR);
+			$ret = false;
 		}
 
 		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) {
@@ -441,6 +450,17 @@ class DoliDBMysqli extends DoliDB
 	}
 
 	/**
+	 *	Escape a string to insert data
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return str_replace('_', '\_', $stringtoencode);
+	}
+
+	/**
 	 *	Return generic error code of last operation.
 	 *
 	 *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
@@ -522,15 +542,14 @@ class DoliDBMysqli extends DoliDB
 	}
 
 	/**
-	 *	Encrypt sensitive data in database
-	 *  Warning: This function includes the escape, so it must use direct value
+	 * Encrypt sensitive data in database
+	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 *	@param	string	$fieldorvalue	Field name or value to encrypt
-	 * 	@param	int		$withQuotes		Return string with quotes
-	 * 	@return	string					XXX(field) or XXX('value') or field or 'value'
-	 *
+	 * @param	string	$fieldorvalue	Field name or value to encrypt
+	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string					XXX(field) or XXX('value') or field or 'value'
 	 */
-	public function encrypt($fieldorvalue, $withQuotes = 0)
+	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
 		global $conf;
 
@@ -540,17 +559,17 @@ class DoliDBMysqli extends DoliDB
 		//Encryption key
 		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey) ? $conf->db->dolibarr_main_db_cryptkey : '');
 
-		$return = ($withQuotes ? "'" : "").$this->escape($fieldorvalue).($withQuotes ? "'" : "");
+		$escapedstringwithquotes = ($withQuotes ? "'" : "").$this->escape($fieldorvalue).($withQuotes ? "'" : "");
 
 		if ($cryptType && !empty($cryptKey)) {
 			if ($cryptType == 2) {
-				$return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
+				$escapedstringwithquotes = "AES_ENCRYPT(".$escapedstringwithquotes.", '".$this->escape($cryptKey)."')";
 			} elseif ($cryptType == 1) {
-				$return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
+				$escapedstringwithquotes = "DES_ENCRYPT(".$escapedstringwithquotes.", '".$this->escape($cryptKey)."')";
 			}
 		}
 
-		return $return;
+		return $escapedstringwithquotes;
 	}
 
 	/**
@@ -653,9 +672,13 @@ class DoliDBMysqli extends DoliDB
 
 		$like = '';
 		if ($table) {
-			$like = "LIKE '".$table."'";
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$like = "LIKE '".$this->escape($tmptable)."'";
 		}
-		$sql = "SHOW TABLES FROM ".$database." ".$like.";";
+		$tmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+
+		$sql = "SHOW TABLES FROM ".$tmpdatabase." ".$like.";";
 		//print $sql;
 		$result = $this->query($sql);
 		if ($result) {
@@ -678,7 +701,9 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		$infotables = array();
 
-		$sql = "SHOW FULL COLUMNS FROM ".$table.";";
+		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+
+		$sql = "SHOW FULL COLUMNS FROM ".$tmptable.";";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
@@ -784,7 +809,9 @@ class DoliDBMysqli extends DoliDB
 	public function DDLDropTable($table)
 	{
 		// phpcs:enable
-		$sql = "DROP TABLE ".$table;
+		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+
+		$sql = "DROP TABLE ".$tmptable;
 
 		if (!$this->query($sql)) {
 			return -1;
@@ -915,8 +942,9 @@ class DoliDBMysqli extends DoliDB
 	public function DDLDropField($table, $field_name)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-		dol_syslog(get_class($this)."::DDLDropField ".$sql, LOG_DEBUG);
+		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
+
+		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$tmp_field_name."`";
 		if ($this->query($sql)) {
 			return 1;
 		}

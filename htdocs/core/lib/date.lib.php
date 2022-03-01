@@ -115,9 +115,10 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
  *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i)
+ *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
  */
-function dol_time_plus_duree($time, $duration_value, $duration_unit)
+function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
 
@@ -166,7 +167,31 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 	} else {
 		$date->add($interval);
 	}
+	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (php returns March 1, 2 or 3 respectively)
+	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
+		$timeyear = dol_print_date($time, '%Y');
+		$timemonth = dol_print_date($time, '%m');
+		$timetotalmonths = (($timeyear * 12) + $timemonth);
 
+		$monthsexpected = ($timetotalmonths + $duration_value);
+
+		$newtime = $date->getTimestamp();
+
+		$newtimeyear = dol_print_date($newtime, '%Y');
+		$newtimemonth = dol_print_date($newtime, '%m');
+		$newtimetotalmonths = (($newtimeyear * 12) + $newtimemonth);
+
+		if ($monthsexpected < $newtimetotalmonths) {
+			$newtimehours = dol_print_date($newtime, '%H');
+			$newtimemins = dol_print_date($newtime, '%M');
+			$newtimesecs = dol_print_date($newtime, '%S');
+
+			$datelim = dol_mktime($newtimehours, $newtimemins, $newtimesecs, $newtimemonth, 1, $newtimeyear);
+			$datelim -= (3600 * 24);
+
+			$date->setTimestamp($datelim);
+		}
+	}
 	return $date->getTimestamp();
 }
 
@@ -332,18 +357,18 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
  *	Convert a string date into a GM Timestamps date
  *	Warning: YYYY-MM-DDTHH:MM:SS+02:00 (RFC3339) is not supported. If parameter gm is 1, we will use no TZ, if not we will use TZ of server, not the one inside string.
  *
- *	@param	string	$string		Date in a string
- *				     	        YYYYMMDD
- *	                 			YYYYMMDDHHMMSS
- *								YYYYMMDDTHHMMSSZ
- *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
- *		                		DD/MM/YY or DD/MM/YYYY (deprecated)
- *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
- *  @param	int		$gm         1 =Input date is GM date,
- *                              0 =Input date is local date using PHP server timezone
- *  @return	int					Date as a timestamp
- *		                		19700101020000 -> 7200 with gm=1
- *								19700101000000 -> 0 with gm=1
+ *	@param	string		$string		Date in a string
+ *				     		        YYYYMMDD
+ *	                 				YYYYMMDDHHMMSS
+ *									YYYYMMDDTHHMMSSZ
+ *									YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+ *		                			DD/MM/YY or DD/MM/YYYY (deprecated)
+ *		                			DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
+ *  @param	int|string	$gm         'gmt' or 1 =Input date is GM date,
+ *                          	    'tzserver' or 0 =Input date is date using PHP server timezone
+ *  @return	int						Date as a timestamp
+ *		                			19700101020000 -> 7200 with gm=1
+ *									19700101000000 -> 0 with gm=1
  *
  *  @see    dol_print_date(), dol_mktime(), dol_getdate()
  */
@@ -383,7 +408,14 @@ function dol_stringtotime($string, $gm = 1)
 
 	$string = preg_replace('/([^0-9])/i', '', $string);
 	$tmp = $string.'000000';
-	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), ($gm ? 1 : 0));
+	// Clean $gm
+	if ($gm === 1) {
+		$gm = 'gmt';
+	} elseif (empty($gm) || $gm === 'tzserver') {
+		$gm = 'tzserver';
+	}
+
+	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
 	return $date;
 }
 
@@ -656,7 +688,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 function getGMTEasterDatetime($year)
 {
 	$base = new DateTime("$year-03-21", new DateTimeZone("UTC"));
-	$days = easter_days($year);	// Return number of days between 21 march and easter day.
+	$days = easter_days($year); // Return number of days between 21 march and easter day.
 	$tmp = $base->add(new DateInterval("P{$days}D"));
 	return $tmp->getTimestamp();
 }

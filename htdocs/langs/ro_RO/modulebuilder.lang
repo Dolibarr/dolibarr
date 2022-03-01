@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Acest instrument poate fi folosit doar de utilizatori cu experiență sau dezvoltatori de software. Oferă facilităţi pentru a vă construi sau edita propriul modul. Documentația pentru <a href="%s" target="_blank">dezvoltare software alternativă se găsește aici</a>. 
+ModuleBuilderDesc=Acest instrument trebuie folosit numai de utilizatori sau dezvoltatori experimentați. Oferă utilități pentru a construi sau edita propriul modul. Documentația pentru <a href="%s" target="_blank" rel="noopener noreferrer">dezvoltarea manuală alternativă se găseşte aici</a>.
 EnterNameOfModuleDesc=Introduceți numele modulului/aplicației care va fi creat, fără spații. Utilizați majusculă pentru a separa cuvintele (De exemplu: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Introduceți numele obiectului de creat fără spații. Utilizează majusculă pentru a separa cuvintele (De exemplu: MyObject, Student, Profesor ...). Se va genera și fișierul clasă CRUD, dar și fișierul API, paginile de listare/adăugare/editare/ștergere ale obiectului și fișierele SQL.
 ModuleBuilderDesc2=Calea unde sunt generate/editate modulele (primul director pentru module externe definite în %s): <strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Meniurile furnizate de modulul/aplicația dvs. sunt definite
 DictionariesDefDescTooltip=Dicționarele furnizate de modulul/aplicația dvs. sunt definite în tabloul <strong>$ this->dictionaries</strong> în fișierul de descriere al modulului. Puteți edita manual acest fișier sau puteți utiliza editorul încorporat.<br><br> Notă: Modulul o dată definit (și reactivat), dicționarele lui sunt vizibile și în zona de configurare pentru administratori la %s.
 PermissionsDefDescTooltip= Permisiunile furnizate de modulul/aplicația dvs. sunt definite în matricea <strong>$ this->rights</strong> în fișierul de descriere al modulului. Puteți edita manual acest fișier sau puteți utiliza editorul încorporat. <br><br>Notă: Modulul o dată definit (și reactivat), permisiunile sunt vizibile în configurarea de bază a permisiunilor %s.
 HooksDefDesc=Definiți în proprietatea <b>module_parts['hooks'] </b>, în descriptorul modulului, contextul de cârlige pe care doreşti să îl gestionezi (lista de contexte poate fi găsită printr-o căutare după '<b>initHooks(</b>' în codul nucleu) <br> Editează fișierul cârlig hook pentru a adăuga cod cu funcțiile tale (funcțiile care pot fi legate pot fi găsite printr-o căutare după '<b>executeHooks</b>' în codul nucleu).
-TriggerDefDesc=Definiți în fișierul trigger codul pe care doriți să-l executați pentru fiecare eveniment urmărit.
+TriggerDefDesc=Defineşte în fișierul trigger codul pe care vrei să-l execuți atunci când este executat un eveniment de afaceri extern modulului tău(evenimente declanșate de alte module).
 SeeIDsInUse=Vezi ID-urile utilizate în instalarea ta.
 SeeReservedIDsRangeHere=Vezi gama de ID-uri rezervate
 ToolkitForDevelopers=Toolkit pentru dezvoltatorii de sistem Dolibarr
@@ -144,3 +144,4 @@ AsciiToPdfConverter=Convertor ASCII la PDF
 TableNotEmptyDropCanceled=Tabelul nu este gol. Operaţiunea de drop a fost anulată. 
 ModuleBuilderNotAllowed=Generatorul de module este disponibil, dar nu-ţi este permis să-l utilizezi.
 ImportExportProfiles=Profile import şi export
+ValidateModBuilderDesc=Introdu 1 dacă acest câmp trebuie validat cu $this->validateField() sau 0 dacă este necesară validarea

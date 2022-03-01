@@ -232,23 +232,39 @@ print '
 
 				jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
 					/* console.log(this.parentNode); */
-					console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class");
-					if (window.getSelection) {
-						selection = window.getSelection();
+					console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class and we want to copy content of clipboardCPValue class");
 
+					if (window.getSelection) {
 						range = document.createRange();
+
+						/* We select value to print using the parent. */
+						/* We should use the class clipboardCPValue but it may have several element with copy/paste so class to select is not enough */
 						range.selectNodeContents(this.parentNode.firstChild);
 
-						selection.removeAllRanges();
-						selection.addRange( range );
+						selection = window.getSelection();	/* get the object used for selection */
+						selection.removeAllRanges();		/* clear current selection */
+						selection.addRange(range);			/* make the new selection with the value to copy */
 					}
-					document.execCommand( \'copy\' );
+
+					/* copy selection into clipboard */
+					var succeed;
+				    try {
+				    	succeed = document.execCommand(\'copy\');
+				    } catch(e) {
+				        succeed = false;
+				    }
+
+					/* Remove the selection to avoid to see the hidden field to copy selected */
 					window.getSelection().removeAllRanges();
 
 					/* Show message */
-					var lastchild = this.parentNode.lastChild;
+					var lastchild = this.parentNode.lastChild;		/* .parentNode is clipboardCP and last child is clipboardCPText */
 					var tmp = lastchild.innerHTML
-					lastchild.innerHTML = \''.dol_escape_js($langs->trans('CopiedToClipboard')).'\';
+					if (succeed) {
+						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
+					} else {
+						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('Error')).'</div>\';
+					}
 					setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
 				});
 	});'."\n";

@@ -19,6 +19,8 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+
 
 /**
  * API class for invoices
@@ -39,7 +41,13 @@ class Invoices extends DolibarrApi
 	/**
 	 * @var Facture $invoice {@type Facture}
 	 */
-	public $invoice;
+	private $invoice;
+
+	/**
+	 * @var FactureRec $templte_invoice {@type FactureRec}
+	 */
+	private $template_invoice;
+
 
 	/**
 	 * Constructor
@@ -49,6 +57,7 @@ class Invoices extends DolibarrApi
 		global $db, $conf;
 		$this->db = $db;
 		$this->invoice = new Facture($this->db);
+		$this->template_invoice = new FactureRec($this->db);
 	}
 
 	/**
@@ -57,7 +66,7 @@ class Invoices extends DolibarrApi
 	 * Return an array with invoice informations
 	 *
 	 * @param 	int 	$id           ID of invoice
-	 * @param   int     $contact_list 0:Return array contains all properties, 1:Return array contains just id
+	 * @param   int     $contact_list 0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
@@ -73,7 +82,7 @@ class Invoices extends DolibarrApi
 	 * Return an array with invoice informations
 	 *
 	 * @param       string		$ref			Ref of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @url GET    ref/{ref}
@@ -91,7 +100,7 @@ class Invoices extends DolibarrApi
 	 * Return an array with invoice informations
 	 *
 	 * @param       string		$ref_ext			External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @url GET    ref_ext/{ref_ext}
@@ -108,10 +117,10 @@ class Invoices extends DolibarrApi
 	 *
 	 * Return an array with invoice informations
 	 *
-	 * @param       int         $id            ID of order
+	 * @param       int         $id            	ID of order
 	 * @param		string		$ref			Ref of object
 	 * @param		string		$ref_ext		External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
@@ -138,9 +147,12 @@ class Invoices extends DolibarrApi
 		}
 
 		// Add external contacts ids
-		$this->invoice->contacts_ids = $this->invoice->liste_contact(-1, 'external', $contact_list);
+		if ($contact_list > -1) {
+			$this->invoice->contacts_ids = $this->invoice->liste_contact(-1, 'external', $contact_list);
+		}
 
 		$this->invoice->fetchObjectLinked();
+
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
@@ -221,8 +233,9 @@ class Invoices extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -1138,7 +1151,7 @@ class Invoices extends DolibarrApi
 				$sql = 'SELECT SUM(pf.amount) as total_payments';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
-				$sql .= ' WHERE pf.fk_facture = '.$this->invoice->id;
+				$sql .= ' WHERE pf.fk_facture = '.((int) $this->invoice->id);
 				$sql .= ' AND pf.fk_paiement = p.rowid';
 				$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 				$resql = $this->db->query($sql);
@@ -1680,6 +1693,7 @@ class Invoices extends DolibarrApi
 		unset($object->barcode_type_code);
 		unset($object->barcode_type_label);
 		unset($object->barcode_type_coder);
+		unset($object->canvas);
 
 		return $object;
 	}
@@ -1702,5 +1716,85 @@ class Invoices extends DolibarrApi
 			$invoice[$field] = $data[$field];
 		}
 		return $invoice;
+	}
+
+
+	/**
+	 * Get properties of a template invoice object
+	 *
+	 * Return an array with invoice informations
+	 *
+	 * @param 	int 	$id           ID of template invoice
+	 * @param   int     $contact_list 0:Return array contains all properties, 1:Return array contains just id, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return 	array|mixed data without useless information
+	 *
+	 * @url GET    templates/{id}
+	 *
+	 * @throws 	RestException
+	 */
+	public function getTemplateInvoice($id, $contact_list = 1)
+	{
+		return $this->_fetchTemplateInvoice($id, '', '', $contact_list);
+	}
+
+	/**
+	 * Get properties of an invoice object
+	 *
+	 * Return an array with invoice informations
+	 *
+	 * @param       int         $id            	ID of order
+	 * @param		string		$ref			Ref of object
+	 * @param		string		$ref_ext		External reference of object
+	 * @param       int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return 	array|mixed data without useless information
+	 *
+	 * @throws 	RestException
+	 */
+	private function _fetchTemplateInvoice($id, $ref = '', $ref_ext = '', $contact_list = 1)
+	{
+		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+			throw new RestException(401);
+		}
+
+		$result = $this->template_invoice->fetch($id, $ref, $ref_ext);
+		if (!$result) {
+			throw new RestException(404, 'Template invoice not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('facturerec', $this->template_invoice->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Add external contacts ids
+		if ($contact_list > -1) {
+			$this->template_invoice->contacts_ids = $this->template_invoice->liste_contact(-1, 'external', $contact_list);
+		}
+
+		$this->template_invoice->fetchObjectLinked();
+		return $this->_cleanTemplateObjectDatas($this->template_invoice);
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 */
+	protected function _cleanTemplateObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+		unset($object->note);
+		unset($object->address);
+		unset($object->barcode_type);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_coder);
+		unset($object->canvas);
+
+		return $object;
 	}
 }

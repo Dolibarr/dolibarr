@@ -443,6 +443,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
  */
 
 $now = dol_now();
+$error = 0;
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
@@ -485,28 +486,36 @@ if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
+		$maxphp = preg_replace('/k$/i', '', $maxphp);
 		$maxphp = $maxphp * 1;
 	}
 	if (preg_match('/m$/i', $maxphp)) {
+		$maxphp = preg_replace('/m$/i', '', $maxphp);
 		$maxphp = $maxphp * 1024;
 	}
 	if (preg_match('/g$/i', $maxphp)) {
+		$maxphp = preg_replace('/g$/i', '', $maxphp);
 		$maxphp = $maxphp * 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp)) {
+		$maxphp = preg_replace('/t$/i', '', $maxphp);
 		$maxphp = $maxphp * 1024 * 1024 * 1024;
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
 		$maxphp2 = $maxphp2 * 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
 		$maxphp2 = $maxphp2 * 1024;
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
 		$maxphp2 = $maxphp2 * 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
 		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
@@ -632,7 +641,7 @@ foreach ($listofdata as $key => $val) {
 			print '</td>';
 		}
 		print '<td class="center">'.$val['qty'].'</td>';
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&token='.newToken().'&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 		print '</tr>';
 	}
 }
@@ -662,7 +671,7 @@ if (count($listofdata)) {
 	print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag($labelmovement).'"><br>';
 	print '<br>';
 
-	print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
 
 	print '<br>';
 	print '</div>';

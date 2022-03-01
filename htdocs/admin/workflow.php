@@ -123,9 +123,25 @@ $workflowcodes = array(
 	),
 
 	// Automatic classification supplier order
+	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
+		'family'=>'classify_supplier_order',
+		'position'=>63,
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (!empty($conf->reception->enabled)) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'picto'=>'supplier_order',
+		'warning'=>''
+	),
+
+	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
+		'family'=>'classify_supplier_order',
+		'position'=>64,
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (!empty($conf->reception->enabled)) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'picto'=>'supplier_order',
+		'warning'=>''
+	),
+
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array(
 		'family'=>'classify_supplier_order',
-		'position'=>62,
+		'position'=>65,
 		'enabled'=>((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
 		'picto'=>'supplier_order',
 		'warning'=>''
@@ -134,7 +150,7 @@ $workflowcodes = array(
 	// Automatic classification reception
 	'WORKFLOW_BILL_ON_RECEPTION'=>array(
 		'family'=>'classify_reception',
-		'position'=>64,
+		'position'=>80,
 		'enabled'=>(!empty($conf->reception->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
 		'picto'=>'reception'
 	),
@@ -142,7 +158,7 @@ $workflowcodes = array(
 	// Automatic classification shipping
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
-		'position' => 66,
+		'position' => 90,
 		'enabled' => ! empty($conf->expedition->enabled) && ! empty($conf->facture->enabled),
 		'picto' => 'shipment'
 	)
@@ -250,11 +266,11 @@ foreach ($workflowcodes as $key => $params) {
 		print ajax_constantonoff($key);
 	} else {
 		if (!empty($conf->global->$key)) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&amp;token='.newToken().'">';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&token='.newToken().'">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a>';
 		} else {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'&amp;token='.newToken().'">';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'&token='.newToken().'">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a>';
 		}

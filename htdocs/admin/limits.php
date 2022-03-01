@@ -49,7 +49,7 @@ $mainroundingruletot = 'MAIN_ROUNDING_RULE_TOT'.(!empty($currencycode) ? '_'.$cu
 $valmainmaxdecimalsunit = GETPOST($mainmaxdecimalsunit, 'int');
 $valmainmaxdecimalstot = GETPOST($mainmaxdecimalstot, 'int');
 $valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'int');
-$valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alpha'));
+$valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alphanohtml'), '', 2);
 
 if ($action == 'update') {
 	$error = 0;
@@ -108,9 +108,9 @@ $aCurrencies = array($conf->currency); // Default currency always first position
 if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 
-	$sql = 'SELECT rowid, code FROM '.MAIN_DB_PREFIX.'multicurrency';
-	$sql .= ' WHERE entity = '.$conf->entity;
-	$sql .= ' AND code != "'.$conf->currency.'"'; // Default currency always first position
+	$sql = "SELECT rowid, code FROM ".MAIN_DB_PREFIX."multicurrency";
+	$sql .= " WHERE entity = ".((int) $conf->entity);
+	$sql .= " AND code <> '".$db->escape($conf->currency)."'"; // Default currency always first position
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -190,7 +190,7 @@ if ($action == 'edit') {
 	print '</div>';
 
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit'.(!empty($currencycode) ? '&currencycode='.$currencycode : '').'">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().''.(!empty($currencycode) ? '&currencycode='.$currencycode : '').'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 }
 
@@ -211,7 +211,7 @@ if (empty($mysoc->country_code)) {
 	print '<span class="opacitymedium">'.$langs->trans("Format").':</span> '.price(price2num(1234.56789, 'MT'), 0, $langs, 1, -1, -1, $currencycode)."<br>\n";
 
 	// Always show vat rates with vat 0
-	$s = 2 / 7; $qty = 1; $vat = 0;
+	$s = 2 / 3; $qty = 1; $vat = 0;
 	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 	print " x ".$langs->trans("Quantity").": ".$qty;
@@ -237,7 +237,7 @@ if (empty($mysoc->country_code)) {
 
 	$sql = "SELECT taux as vat_rate, t.code as vat_code, t.localtax1 as localtax_rate1, t.localtax2 as localtax_rate2";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($mysoc->country_code)."' AND (t.taux <> 0 OR t.localtax1 <>0 OR t.localtax2 <>0)";
+	$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($mysoc->country_code)."' AND (t.taux <> 0 OR t.localtax1 <> '0' OR t.localtax2 <> '0')";
 	$sql .= " ORDER BY t.taux ASC";
 	$resql = $db->query($sql);
 	if ($resql) {

@@ -101,8 +101,11 @@ class InterfaceEventOrganization extends DolibarrTriggers
 							$defaultref = '';
 						}
 						$task->ref = $defaultref;
-						$task->date_start = $object->date_start;
-						$task->date_end = $object->date_end;
+
+						// TODO Can set offset for start date or endline from setup of task to create when creating event
+						$task->date_start = null;
+						$task->date_end = null;
+
 						$result = $task->create($user);
 						if ($result < 0) {
 							$this->errors=array_merge($this->errors, $task->errors);

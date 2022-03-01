@@ -30,14 +30,16 @@ ManageLotMask=カスタムマスク
 CustomMasks=製品ごとに異なるナンバリングマスクを定義するオプション
 BatchLotNumberingModules=ロット番号の自動生成のための附番規則
 BatchSerialNumberingModules=シリアル番号の自動生成の附番規則（製品が製品毎に一意のロット/シリアルを1個だけ持つ性質の場合）
-QtyToAddAfterBarcodeScan=スキャンされたバーコード/ロット/シリアルごとに追加する数量
+QtyToAddAfterBarcodeScan=スキャンされた各バーコード/ロット/シリアルの数量から%s
 LifeTime=寿命（日数）
 EndOfLife=製品寿命
 ManufacturingDate=製造日付
 DestructionDate=破壊日
 FirstUseDate=初回使用日
 QCFrequency=品質管理頻度（日数）
-
+ShowAllLots=すべてのロットを表示
+HideLots=たくさん隠す
 #Traceability - qc status
 OutOfOrder=故障中
 InWorkingOrder=正常動作中
+ToReplace=交換

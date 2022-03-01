@@ -283,8 +283,6 @@ class modTakePos extends DolibarrModules
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
 
-		$this->_load_tables('/takepos/sql/');
-
 		$sql = array();
 
 		// Remove permissions and default values
