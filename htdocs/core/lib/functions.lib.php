@@ -8341,13 +8341,15 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing.
 	if ($onlysimplestring == '1') {
 		//print preg_quote('$_->&|', '/');
-		if (preg_match('/[^a-z0-9\s'.preg_quote('$_->&|=!?:', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('$_->&|=!?():"', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
 				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
 				return '';
 			}
+			// TODO We can exclude all () that is not  ...($db) and getDolGlobalInt( and getDolGlobalString(
+			// ...
 		}
 	} elseif ($onlysimplestring == '2') {
 		//print preg_quote('$_->&|', '/');

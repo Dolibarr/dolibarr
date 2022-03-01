@@ -915,7 +915,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
 		// Case with param onlysimplestring = 1
-		$result=dol_eval('1 && $conf->abc->doesnotexist1 && $conf->def->doesnotexist1', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
+		$result=dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
 		print "result = ".$result."\n";
 		$this->assertFalse($result);
 
