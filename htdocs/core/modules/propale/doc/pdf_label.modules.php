@@ -34,9 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-
 
 /**
  *	Class to generate PDF Thirdparty
@@ -132,7 +129,7 @@ class pdf_label extends ModeleThirdPartyDoc
 		global $conf,$langs,$mysoc;
 
 		// Translations
-		$langs->loadLangs(array("main", "companies", "bb2a"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "Label";
