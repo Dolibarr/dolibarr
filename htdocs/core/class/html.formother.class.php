@@ -1501,10 +1501,10 @@ class FormOther
 					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 					continue;
 				}
-				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
+				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1, 1, '1')) {
 					continue;
 				}
-				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
+				if (isset($val['visible']) && !dol_eval($val['visible'], 1, 1, '1')) {
 					continue;
 				}
 				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
@@ -1575,10 +1575,10 @@ class FormOther
 					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 					continue;
 				}
-				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
+				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1, 1, '1')) {
 					continue;
 				}
-				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
+				if (isset($val['visible']) && !dol_eval($val['visible'], 1, 1, '1')) {
 					continue;
 				}
 				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
