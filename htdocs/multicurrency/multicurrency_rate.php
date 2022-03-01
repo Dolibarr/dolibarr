@@ -247,6 +247,12 @@ print dol_get_fiche_head($head, 'ratelist', $langs->trans("ModuleSetup"), -1, "m
 // ACTION
 
 if (!in_array($action, array("updateRate", "deleteRate"))) {
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("FormCreateRate").'</td>'."\n";
+	print '</tr></table>';
+
+	$form = new Form($db);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 

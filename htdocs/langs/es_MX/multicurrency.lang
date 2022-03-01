@@ -16,3 +16,4 @@ MulticurrencyReceived=Recibido, divisa original
 MulticurrencyRemainderToTake=Importe restante, divisa original
 MulticurrencyPaymentAmount=Monto del pago, divisa original
 AmountToOthercurrency=Importe para (en la divisa de la cuenta receptora)
+MULTICURRENCY_LESS_THAN_FOREIGN=Divisa Foránea mas alta que la local 

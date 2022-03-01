@@ -199,6 +199,20 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+// when your currency is less than foreign currency
+
+print '<tr class="oddeven">';
+print '<td>' . $langs->transnoentitiesnoconv('MULTICURRENCY_LESS_THAN_FOREIGN') . '</td>';
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MULTICURRENCY_LESS_THAN_FOREIGN');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MULTICURRENCY_LESS_THAN_FOREIGN", $arrval, $conf->global->MULTICURRENCY_LESS_THAN_FOREIGN);
+}
+print '</td></tr>';
+
+
 // Online payment with currency on document. This option should be on by default.
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven">';
@@ -329,11 +343,17 @@ foreach ($TCurrency as &$currency) {
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_currency">';
-	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
-	print '1 '.$conf->currency.' = ';
-	print '<input type="text" name="rate" class="width75 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13">&nbsp;'.$currency->code.'&nbsp;';
-	print '<input type="submit" name="updatecurrency" class="button button-edit" value="'.$langs->trans("Modify").'">&nbsp;';
-	print '<input type="submit" name="deletecurrency" class="button" value="'.$langs->trans("Delete").'">';
+	print '<input type="hidden" name="fk_multicurrency" value="' . $currency->id . '">';
+
+	if ($conf->global->MULTICURRENCY_LESS_THAN_FOREIGN) {
+		print '1 ' . $currency->code . ' = ';
+		print '<input type="text" name="rate" class="width75 right" value="' . ($currency->rate->rate ? $currency->rate->rate : '') . '" size="13">&nbsp;' . $conf->currency . '&nbsp;';
+	} else {
+		print '1 ' . $conf->currency . ' = ';
+		print '<input type="text" name="rate" class="width75 right" value="' . ($currency->rate->rate ? $currency->rate->rate : '') . '" size="13">&nbsp;' . $currency->code . '&nbsp;';
+	}
+	print '<input type="submit" name="updatecurrency" class="button" value="' . $langs->trans("Modify") . '">&nbsp;';
+	print '<input type="submit" name="deletecurrency" class="button" value="' . $langs->trans("Delete") . '">';
 	print '</form>';
 	print '</td></tr>';
 }

@@ -5437,7 +5437,13 @@ class Form
 			if (!empty($rate)) {
 				print price($rate, 1, $langs, 1, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; ('.price($rate, 1, $langs, 1, 0).' '.$currency.' = 1 '.$conf->currency.')';
+					//Show exchange at inverse 1 XXX = XXX local exchange
+					if ($conf->global->MULTICURRENCY_LESS_THAN_FOREIGN) {
+						// print ' &nbsp; (' . price($rate, 1, $langs, 1, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
+						print ' &nbsp; ( 1  ' . $currency . ' = '. price($rate, 1, $langs, 1, 0).' ' . $conf->currency.')';
+					} else {
+						print ' &nbsp; (' . price($rate, 1, $langs, 1, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
+					}
 				}
 			} else {
 				print 1;

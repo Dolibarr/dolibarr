@@ -567,11 +567,17 @@ class MultiCurrency extends CommonObject
 	 */
 	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
 	{
+		global $conf;
+
 		$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
 
 		if ($multicurrency_tx) {
 			if ($way == 'dolibarr') {
-				return price2num($amount * $multicurrency_tx, 'MU');
+				if ($conf->global->MULTICURRENCY_LESS_THAN_FOREIGN) {
+					return price2num($amount / $multicurrency_tx, 'MU');
+				} else {
+					return price2num($amount * $multicurrency_tx, 'MU');
+				}
 			} else {
 				return price2num($amount / $multicurrency_tx, 'MU');
 			}
