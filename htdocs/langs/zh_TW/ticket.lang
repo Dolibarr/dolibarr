@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
 TicketSeverityShortBLOCKING=嚴重，阻止中
 
+TicketCategoryShortOTHER=其他
+
 ErrorBadEmailAddress=欄位'%s'不正確
 MenuTicketMyAssign=我的服務單
 MenuTicketMyAssignNonClosed=我的開放服務單
@@ -55,7 +57,7 @@ TypeContact_ticket_internal_SUPPORTTEC=已分配用戶
 TypeContact_ticket_external_SUPPORTCLI=客戶聯絡人/事件追踪
 TypeContact_ticket_external_CONTRIBUTOR=外部合作者
 
-OriginEmail=Reporter Email
+OriginEmail=填寫人Email
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
 
 # Status
@@ -66,7 +68,7 @@ NeedMoreInformation=等待作者回覆
 NeedMoreInformationShort=等待回覆
 Answered=已回覆
 Waiting=等待中
-Closed=已關閉
+SolvedClosed=已解決
 Deleted=已刪除
 
 # Dict
@@ -85,7 +87,7 @@ TicketSetup=服務單模組設定
 TicketSettings=設定
 TicketSetupPage=
 TicketPublicAccess=以下網址提供了無需認證的公共界面
-TicketSetupDictionaries=服務單類型，嚴重性和分析代碼可通過詞典設定
+TicketSetupDictionaries=服務單類型，嚴重性和分析代碼可前往分類進行設定
 TicketParamModule=模組變數設定
 TicketParamMail=電子郵件設定
 TicketEmailNotificationFrom=電子郵件通知寄件人
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=服務單已新增
 TicketMessageSuccessfullyAdded=訊息已成功新增
 TicketMessagesList=訊息清單
 NoMsgForThisTicket=沒有關於此服務單的訊息
-Properties=分類
+TicketProperties=分類
 LatestNewTickets=最後%s張最新服務單（未讀）
 TicketSeverity=嚴重程度
 ShowTicket=查閱服務單
 RelatedTickets=相關服務單
 TicketAddIntervention=建立干預
-CloseTicket=關閉服務單
-CloseATicket=關閉服務單
+CloseTicket=已關閉|已解決服務單
+AbandonTicket=放棄的服務單
+CloseATicket=關閉|解決一筆服務單
 ConfirmCloseAticket=確認關閉服務單
+ConfirmAbandonTicket=您確定要將關閉的服務單狀態更改為"已放棄"嗎?
 ConfirmDeleteTicket=請確認要刪除服務單
 TicketDeletedSuccess=服務單刪除成功
 TicketMarkedAsClosed=服務單標記為已關閉
@@ -314,6 +318,7 @@ BoxTicketLastXDays=最近 %s 天中依日期的新服務單數量
 BoxTicketLastXDayswidget = 最近X天中依日期的新服務單數量
 BoxNoTicketLastXDays=最近%s天沒有新服務單
 BoxNumberOfTicketByDay=每日新服務單數量
-BoxNewTicketVSClose=今日的新服務單數量與今日已關閉的服務單數量
+BoxNewTicketVSClose=服務單與已關閉服務單（本日）
 TicketCreatedToday=今天建立的服務單
 TicketClosedToday=今日已關閉的服務單
+KMFoundForTicketGroup=我們找到了可以回答您問題的主題和常見問題解答，感謝您在提交服務單以前檢查它們

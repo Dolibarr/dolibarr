@@ -78,7 +78,7 @@ span.butAction, span.butActionDelete {
 .butActionRefused, .butAction, .butActionDelete {
 	border-radius: 3px;
 }
-.butActionRefused:last-child, .butAction:last-child, .butActionDelete:last-child {
+:not(.center) > .butActionRefused:last-child, :not(.center) > .butAction:last-child, :not(.center) > .butActionDelete:last-child {
 	margin-<?php echo $right; ?>: 0px !important;
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
@@ -277,12 +277,12 @@ a.btnTitle.btnTitleSelected {
 }
 
 .btnTitle>.fa {
-	font-size: 20px;
+	font-size: 2em;
 	display: block;
 }
 
-div.pagination li:first-child a.btnTitle{
-	margin-left: 10px;
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle {
+	margin-<?php echo $left; ?>: 10px;
 }
 
 .button-title-separator{

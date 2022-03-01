@@ -42,6 +42,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 $category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'supplements'
 $action = GETPOST('action', 'aZ09');
@@ -119,6 +120,24 @@ if ($action == 'getProducts') {
 	if ($resql) {
 		$rows = array();
 		while ($obj = $db->fetch_object($resql)) {
+			$objProd = new Product($db);
+			$objProd->fetch($obj->rowid);
+			$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+
+			$match = array();
+			preg_match('@src="([^"]+)"@', $image, $match);
+			$file = array_pop($match);
+
+			if ($file == "") {
+				$ig = '../public/theme/common/nophoto.png';
+			} else {
+				if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+					$ig = $file.'&cache=1';
+				} else {
+					$ig = $file.'&cache=1&publictakepos=1&modulepart=product';
+				}
+			}
+
 			$rows[] = array(
 				'rowid' => $obj->rowid,
 				'ref' => $obj->ref,
@@ -127,7 +146,8 @@ if ($action == 'getProducts') {
 				'tobuy' => $obj->tobuy,
 				'barcode' => $obj->barcode,
 				'price' => $obj->price,
-			'object' => 'product'
+				'object' => 'product',
+				'img' => $ig,
 				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
 		}

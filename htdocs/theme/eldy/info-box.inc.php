@@ -33,9 +33,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	margin-bottom: 10px;
 	/* background: #fff; */
 }
-.opened-dash-board-wrap .info-box.info-box-sm {
-	border-radius: 0 0 0 20px;
+.opened-dash-board-wrap .info-box, .opened-dash-board-wrap .info-box .info-box-icon  {
+	border-radius: 0 0 0 15px;
 }
+/*.opened-dash-board-wrap .box-flex-item {
+	border-radius: 10px;
+}*/
+
 .info-box-more {
 	float: right;
 	top: 5px;
@@ -80,9 +84,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	overflow: hidden;
 	float: left;
 	height: 90px;
-	width: 90px;
+	width: 88px;
 	text-align: center;
-	font-size: 45px;
+	font-size: 2.8em;
 	line-height: 90px;
 	background: rgba(0, 0, 0, 0.08) !important;
 }
@@ -97,10 +101,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	font-size: 25px;
 	line-height: 92px;
 }
-.opened-dash-board-wrap .info-box-sm .info-box-icon {
-	border-radius: 0 0 0 20px;
+.opened-dash-board-wrap .info-box .info-box-icon {
+	font-size: 2em;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
+	border-radius: 0 0 0 20px;
 	line-height: 80px;
 }
 .info-box-module .info-box-icon {
@@ -150,13 +155,14 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	cursor: default;
 
 	font-size: 10px;
-	line-height: 22px;
-	padding: 0px 3px;
+	line-height: 1.5em;
+	padding: 4px 3px;
 	text-align: center;
 	opacity: 1;
 	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
 	transition: opacity 0.5s, visibility 0s 0.5s;
 }
+
 .box-flex-item.info-box-module.--disabled {
 	/* opacity: 0.6; */
 }
@@ -330,15 +336,15 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #b06080 !important;
 }
 /* Color for customer object */
-.infobox-propal:not(.pictotitle),
-.infobox-facture:not(.pictotitle),
-.infobox-commande:not(.pictotitle) {
+.infobox-propal:not(.pictotitle):not(.error),
+.infobox-facture:not(.pictotitle):not(.error),
+.infobox-commande:not(.pictotitle):not(.error) {
 	color: #65953d !important;
 }
 /* Color for vendor object */
-.infobox-supplier_proposal:not(.pictotitle),
-.infobox-invoice_supplier:not(.pictotitle),
-.infobox-order_supplier:not(.pictotitle){
+.infobox-supplier_proposal:not(.pictotitle):not(.error),
+.infobox-invoice_supplier:not(.pictotitle):not(.error),
+.infobox-order_supplier:not(.pictotitle):not(.error) {
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{
@@ -483,6 +489,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.info-box-module {
 		width: 100%;
 		max-width: unset;
+	}
+
+	.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version {
+		width: 60px;
 	}
 	.info-box-sm .info-box-icon {
 		width: 60px;

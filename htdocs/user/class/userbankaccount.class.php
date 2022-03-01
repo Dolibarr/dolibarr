@@ -140,7 +140,7 @@ class UserBankAccount extends Account
 		} else {
 			$sql .= ",label = NULL";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

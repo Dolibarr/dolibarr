@@ -322,7 +322,7 @@ class modProduct extends DolibarrModules
 			$this->export_code[$r] = $this->rights_class.'_'.$r;
 			$this->export_label[$r] = "ProductsMultiPrice"; // Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_permission[$r] = array(array("produit", "export"));
-			$this->export_fields_array[$r] = array('p.rowid'=>"Id", 'p.ref'=>"Ref",
+			$this->export_fields_array[$r] = array('p.rowid'=>"Id", 'p.ref'=>"Ref", 'p.label'=>"Label",
 				'pr.price_base_type'=>"PriceBase", 'pr.price_level'=>"PriceLevel",
 				'pr.price'=>"PriceLevelUnitPriceHT", 'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
 				'pr.price_min'=>"MinPriceLevelUnitPriceHT", 'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
@@ -337,7 +337,7 @@ class modProduct extends DolibarrModules
 			//	'p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",
 			//	'p.datec'=>'Date','p.tms'=>'Date'
 			//);
-			$this->export_entities_array[$r] = array('p.rowid'=>"product", 'p.ref'=>"product",
+			$this->export_entities_array[$r] = array('p.rowid'=>"product", 'p.ref'=>"product", 'p.label'=>"Label",
 				'pr.price_base_type'=>"product", 'pr.price_level'=>"product", 'pr.price'=>"product",
 				'pr.price_ttc'=>"product",
 				'pr.price_min'=>"product", 'pr.price_min_ttc'=>"product",
@@ -348,6 +348,8 @@ class modProduct extends DolibarrModules
 			$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.$conf->entity; // export prices only for the current entity
 			$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
+			$this->export_sql_end[$r] .= ' AND pr.date_price = (SELECT MAX(pr2.date_price) FROM '.MAIN_DB_PREFIX.'product_price as pr2 WHERE pr2.fk_product = pr.fk_product AND pr2.entity IN ('.getEntity('product').'))'; // export only latest prices not full history
+			$this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
 		}
 
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
@@ -356,7 +358,7 @@ class modProduct extends DolibarrModules
 			$this->export_code[$r] = $this->rights_class.'_'.$r;
 			$this->export_label[$r] = "ProductsPricePerCustomer"; // Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_permission[$r] = array(array("produit", "export"));
-			$this->export_fields_array[$r] = array('p.rowid'=>"Id", 'p.ref'=>"Ref",
+			$this->export_fields_array[$r] = array('p.rowid'=>"Id", 'p.ref'=>"Ref", 'p.label'=>"Label",
 				's.nom'=>'ThirdParty',
 				'pr.price_base_type'=>"PriceBase",
 				'pr.price'=>"PriceUnitPriceHT", 'pr.price_ttc'=>"PriceUnitPriceTTC",
@@ -367,7 +369,7 @@ class modProduct extends DolibarrModules
 			if (is_object($mysoc) && $usenpr) {
 				$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
 			}
-			$this->export_entities_array[$r] = array('p.rowid'=>"product", 'p.ref'=>"product",
+			$this->export_entities_array[$r] = array('p.rowid'=>"product", 'p.ref'=>"product", 'p.label'=>"Label",
 				's.nom'=>'company',
 				'pr.price_base_type'=>"product", 'pr.price'=>"product",
 				'pr.price_ttc'=>"product",
@@ -636,7 +638,7 @@ class modProduct extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'product' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'product' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -797,7 +799,7 @@ class modProduct extends DolibarrModules
 
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'product_fournisseur_price' AND entity IN (0, ".$conf->entity.")";
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND  elementtype = 'product_fournisseur_price' AND entity IN (0, ".$conf->entity.")";
 			$resql = $this->db->query($sql);
 			if ($resql) {    // This can fail when class is used on old database (during migration for example)
 				while ($obj = $this->db->fetch_object($resql)) {

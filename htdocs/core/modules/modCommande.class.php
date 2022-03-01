@@ -285,11 +285,11 @@ class modCommande extends DolibarrModules
 		$this->import_code[$r] = 'commande_'.$r;
 		$this->import_label[$r] = 'CustomersOrders';
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];
-		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields'];
-		$this->import_tables_creator_array[$r] = ['c' => 'fk_user_author']; // Fields to store import user id
-		$this->import_fields_array[$r] = [
-			'c.ref'               => 'Document Ref*',
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields');
+		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
+		$this->import_fields_array[$r] = array(
+			'c.ref'               => 'Ref*',
 			'c.ref_client'        => 'RefCustomer',
 			'c.fk_soc'            => 'ThirdPartyName*',
 			'c.fk_projet'         => 'ProjectId',
@@ -310,7 +310,7 @@ class modCommande extends DolibarrModules
 			'c.fk_cond_reglement' => 'Payment Condition',
 			'c.fk_mode_reglement' => 'Payment Mode',
 			'c.model_pdf'         => 'Model'
-		];
+		);
 
 		if (!empty($conf->multicurrency->enabled)) {
 			$this->import_fields_array[$r]['c.multicurrency_code']      = 'Currency';
@@ -321,8 +321,8 @@ class modCommande extends DolibarrModules
 		}
 
 		// Add extra fields
-		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'commande' AND entity IN (0, ".$conf->entity.")";
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'commande' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -337,7 +337,6 @@ class modCommande extends DolibarrModules
 
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande'];
 		$this->import_regex_array[$r] = [
-			'c.ref' => '(CPV\d{4}-\d{4}|CO\d{4}-\d{4}|PROV.{1,32}$)',
 			'c.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		];
 
@@ -371,10 +370,10 @@ class modCommande extends DolibarrModules
 		$this->import_code[$r] = 'commande_lines_'.$r;
 		$this->import_label[$r] = 'SaleOrderLines';
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];
-		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields'];
-		$this->import_fields_array[$r] = [
-			'cd.fk_commande'    => 'Document Ref*',
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields');
+		$this->import_fields_array[$r] = array(
+			'cd.fk_commande'    => 'SalesOrder*',
 			'cd.fk_parent_line' => 'PrParentLine',
 			'cd.fk_product'     => 'IdProduct',
 			'cd.label'          => 'Label',
@@ -393,7 +392,7 @@ class modCommande extends DolibarrModules
 			'cd.date_end'       => 'End Date',
 			'cd.buy_price_ht'   => 'LineBuyPriceHT',
 			'cd.rang'           => 'LinePosition'
-		];
+		);
 
 		if (!empty($conf->multicurrency->enabled)) {
 			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
@@ -404,7 +403,7 @@ class modCommande extends DolibarrModules
 		}
 
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'commandedet' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'commandedet' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -466,8 +465,8 @@ class modCommande extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order',".$conf->entity.")"
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order' AND entity = ".((int) $conf->entity),
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'order', ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

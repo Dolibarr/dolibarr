@@ -37,8 +37,8 @@ OtherInfo=Друга информация
 DeleteCptCategory=Премахване на счетоводна сметка от група
 ConfirmDeleteCptCategory=Сигурни ли сте, че искате да премахнете тази счетоводна сметка от групата счетоводни сметки?
 JournalizationInLedgerStatus=Статус на осчетоводяване
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Групата е празна, проверете настройката на персонализираната счетоводна група
 DetailByAccount=Показване на детайли по сметка
 AccountWithNonZeroValues=Сметки с различни от нула стойности
@@ -48,7 +48,8 @@ CountriesNotInEEC=Държави извън ЕИО
 CountriesInEECExceptMe=Държави в ЕИО, с изключение на %s
 CountriesExceptMe=Всички държави с изключение на %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
@@ -245,9 +246,9 @@ DescThirdPartyReport=Преглед на списъка с клиенти и д�
 ListAccounts=Списък на счетоводни сметки
 UnknownAccountForThirdparty=Неизвестна сметна на контрагент. Ще използваме %s
 UnknownAccountForThirdpartyBlocking=Неизвестна сметка на контрагент. Блокираща грешка.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Сметката на контрагента не е определена или контрагента е неизвестен. Ще използваме %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Неизвестен контрагент или недефинирана счетоводна сметка за това плащане. Ще запазим счетоводната сметка без стойност.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Сметката на контрагента не е определена или контрагента е неизвестен. Блокираща грешка.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Неизвестна сметка на контрагент и сметка за изчакване не са определени. Блокираща грешка.
 PaymentsNotLinkedToProduct=Плащането не е свързано с нито един продукт / услуга
 OpeningBalance=Начално салдо
@@ -285,7 +286,7 @@ ValidateMovements=Валидиране на движения
 DescValidateMovements=Всякакви промени или изтриване на написаното ще бъдат забранени. Всички записи за изпълнение трябва да бъдат валидирани, в противен случай приключването няма да е възможно.
 
 ValidateHistory=Автоматично свързване
-AutomaticBindingDone=Автоматичното свързване завърши
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Грешка, не може да изтриете тази счетоводна сметка, защото се използва.
 MvtNotCorrectlyBalanced=Движението не е правилно балансирано. Дебит = %s | Credit = %s
@@ -297,7 +298,7 @@ NoNewRecordSaved=Няма повече записи за осчетоводяв�
 ListOfProductsWithoutAccountingAccount=Списък на продукти, които не са свързани с нито една счетоводна сметка
 ChangeBinding=Промяна на свързване
 Accounted=Осчетоводено в книгата
-NotYetAccounted=Not yet accounted in the ledger
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Показване на урок
 NotReconciled=Не е съгласувано
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -328,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Експортиране на журнал в чернова
 Modelcsv=Модел на експортиране
@@ -338,11 +339,11 @@ Modelcsv_normal=Класическо експортиране
 Modelcsv_CEGID=Експортиране за CEGID Expert Comptabilité
 Modelcsv_COALA=Експортиране за Sage Coala
 Modelcsv_bob50=Експортиране за Sage BOB 50
-Modelcsv_ciel=Експортиране за Sage Ciel Compta или Compta Evolution
+Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Експортиране за Quadratus QuadraCompta
 Modelcsv_ebp=Експортиране за EBP
 Modelcsv_cogilog=Експортиране за Cogilog
-Modelcsv_agiris=Експортиране за Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Експортиране за LD Compta (v9) (тест)
 Modelcsv_LDCompta10=Експортиране за LD Compta (v10 и по-нова)
 Modelcsv_openconcerto=Експортиране за OpenConcerto (Тест)
@@ -350,9 +351,10 @@ Modelcsv_configurable=Експортиране в конфигурируем CSV
 Modelcsv_FEC=Експортиране за FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Експортиране за Sage 50 Швейцария
-Modelcsv_winfic=Експортиране за Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Идентификатор на сметкоплан
 
 ## Tools - Init accounting account on product / service
@@ -385,7 +387,8 @@ SaleExport=Експортна продажба
 SaleEEC=Вътреобщностна продажба
 SaleEECWithVAT=Продажба в ЕИО с ДДС различен от нула, за която се предполага, че НЕ е вътреобщностна продажба, поради тази причина се препоръчва стандартната сметка за продукти.
 SaleEECWithoutVATNumber=Продажба в ЕИО без ДДС, но идентификационният номер по ДДС на контрагента не е определен. Ще се използва стандартната сметка за продажба на продукти. Може да въведете идентификационен номер по ДДС на контрагента или сметка на продукта, ако е необходимо.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Обхват на счетоводна сметка
 Calculated=Изчислено
@@ -402,6 +405,7 @@ NoJournalDefined=Няма определен журнал
 Binded=Свързани редове
 ToBind=Редове за свързване
 UseMenuToSetBindindManualy=Редовете все още не са свързани, използвайте меню <a href="%s">%s</a>, за да направите връзката ръчно
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Счетоводни записи

@@ -197,6 +197,13 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
 
+		$r++;
+		$this->rights[$r][0] = 130;
+		$this->rights[$r][1] = 'Modify thirdparty information payment';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'thirdparty_paymentinformation_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'write';
+
 		// 262 : Restrict access to sales representative
 		$r++;
 		$this->rights[$r][0] = 262;
@@ -344,7 +351,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as incoterm ON s.fk_incoterms = incoterm.rowid';
 		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
 				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
@@ -414,7 +421,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('socpeople').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
 				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
@@ -496,7 +503,7 @@ class modSociete extends DolibarrModules
 			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -757,7 +764,7 @@ class modSociete extends DolibarrModules
 			'sr.bank' => "Bank",
 			'sr.code_banque' => "BankCode",
 			'sr.code_guichet' => "DeskCode",
-			'sr.number' => "BankAccountNumber*",
+			'sr.number' => "BankAccountNumber",
 			'sr.cle_rib' => "BankAccountNumberKey",
 			'sr.bic' => "BIC",
 			'sr.iban_prefix' => "IBAN",
@@ -766,6 +773,7 @@ class modSociete extends DolibarrModules
 			'sr.owner_address' => "BankAccountOwnerAddress",
 			'sr.default_rib' => 'Default',
 			'sr.rum' => 'RUM',
+			'sr.frstrecur' => "WithdrawMode",
 			'sr.type' => "Type ban is defaut",
 		);
 
@@ -797,6 +805,7 @@ class modSociete extends DolibarrModules
 			'sr.owner_address' => 'address of account holder',
 			'sr.default_rib' => '1 (default account) / 0 (not default)',
 			'sr.rum' => 'RUM code',
+			'sr.frstrecur' => 'FRST',
 			'sr.type' => 'ban',
 		);
 

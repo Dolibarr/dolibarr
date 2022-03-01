@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -279,7 +279,7 @@ class Lettering extends BookKeeping
 			$sql .= "  WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND date_validated IS NULL ";
 			$this->db->begin();
 
-			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;

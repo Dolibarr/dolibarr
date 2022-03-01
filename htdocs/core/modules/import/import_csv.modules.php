@@ -724,7 +724,7 @@ class ImportCsv extends ModeleImports
 						}
 						if ($val == 'user->id') {
 							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
-							$listvalues[] = $user->id;
+							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $val)) {
 							$tmp = explode('-', $val);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
@@ -735,7 +735,30 @@ class ImportCsv extends ModeleImports
 						} elseif (preg_match('/^const-/', $val)) {
 							$tmp = explode('-', $val, 2);
 							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
-							$listvalues[] = "'".$tmp[1]."'";
+							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
+						} elseif (preg_match('/^rule-/', $val)) {
+							$fieldname = $key;
+							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
+								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {
+									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
+									$class = $objimport->array_import_convertvalue[0][$fieldname]['class'];
+									$method = $objimport->array_import_convertvalue[0][$fieldname]['method'];
+									$resultload = dol_include_once($file);
+									if (empty($resultload)) {
+										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
+										break;
+									}
+									$classinstance = new $class($this->db);
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
+									if ($res < 0) {
+										if (!empty($objimport->array_import_convertvalue[0][$fieldname]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, end($listvalues), 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$fieldname]['dict']));
+										else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
+										$this->errors[$error]['type'] = 'FOREIGNKEY';
+										$errorforthistable++;
+										$error++;
+									}
+								}
+							}
 						} else {
 							$this->errors[$error]['lib'] = 'Bad value of profile setup '.$val.' for array_import_fieldshidden';
 							$this->errors[$error]['type'] = 'Import profile setup';
@@ -757,7 +780,7 @@ class ImportCsv extends ModeleImports
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = 'SELECT rowid FROM '.$tablename;
+								$sqlSelect = "SELECT rowid FROM ".$tablename;
 
 								$data = array_combine($listfields, $listvalues);
 								$where = array();
@@ -768,7 +791,7 @@ class ImportCsv extends ModeleImports
 									$where[] = $key.' = '.$data[$key];
 									$filters[] = $col.' = '.$data[$key];
 								}
-								$sqlSelect .= ' WHERE '.implode(' AND ', $where);
+								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -795,12 +818,12 @@ class ImportCsv extends ModeleImports
 								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
 								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
-								$sqlSelect = 'SELECT rowid FROM '.$tablename;
+								$sqlSelect = "SELECT rowid FROM ".$tablename;
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlSelect .= ' WHERE '.$keyfield.' = '.((int) $lastinsertid);
+								$sqlSelect .= " WHERE ".$keyfield.' = '.((int) $lastinsertid);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -822,19 +845,19 @@ class ImportCsv extends ModeleImports
 
 							if (!empty($lastinsertid)) {
 								// Build SQL UPDATE request
-								$sqlstart = 'UPDATE '.$tablename;
+								$sqlstart = "UPDATE ".$tablename;
 
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
-									$set[] = $key.' = '.$val;
+									$set[] = $key." = ".$val;
 								}
-								$sqlstart .= ' SET '.implode(', ', $set);
+								$sqlstart .= " SET ".implode(', ', $set);
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlend = ' WHERE '.$keyfield.' = '.((int) $lastinsertid);
+								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								$sql = $sqlstart.$sqlend;
 
@@ -855,17 +878,17 @@ class ImportCsv extends ModeleImports
 						// Update not done, we do insert
 						if (!$error && !$updatedone) {
 							// Build SQL INSERT request
-							$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
-							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$this->db->escape($importid)."'";
+							$sqlstart = "INSERT INTO ".$tablename."(".implode(", ", $listfields).", import_key";
+							$sqlend = ") VALUES(".implode(', ', $listvalues).", '".$this->db->escape($importid)."'";
 							if (!empty($tablewithentity_cache[$tablename])) {
-								$sqlstart .= ', entity';
-								$sqlend .= ', '.$conf->entity;
+								$sqlstart .= ", entity";
+								$sqlend .= ", ".$conf->entity;
 							}
 							if (!empty($objimport->array_import_tables_creator[0][$alias])) {
-								$sqlstart .= ', '.$objimport->array_import_tables_creator[0][$alias];
-								$sqlend .= ', '.$user->id;
+								$sqlstart .= ", ".$objimport->array_import_tables_creator[0][$alias];
+								$sqlend .= ", ".$user->id;
 							}
-							$sql = $sqlstart.$sqlend.')';
+							$sql = $sqlstart.$sqlend.")";
 							//dol_syslog("import_csv.modules", LOG_DEBUG);
 
 							// Run insert request

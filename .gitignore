@@ -55,3 +55,4 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
+/factory/

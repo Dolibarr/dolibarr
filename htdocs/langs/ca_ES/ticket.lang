@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alt
 TicketSeverityShortBLOCKING=Crític, bloqueig
 
+TicketCategoryShortOTHER=Altres
+
 ErrorBadEmailAddress=Camp '%s' incorrecte
 MenuTicketMyAssign=Els meus tiquets
 MenuTicketMyAssignNonClosed=Els meus tiquets oberts
@@ -55,7 +57,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Usuari assignat
 TypeContact_ticket_external_SUPPORTCLI=Contacte de clients / seguiment d'incidents
 TypeContact_ticket_external_CONTRIBUTOR=Col·laborador extern
 
-OriginEmail=Reporter Email
+OriginEmail=Correu electrònic del reporter
 Notify_TICKET_SENTBYMAIL=Envia el missatge del tiquet per correu electrònic
 
 # Status
@@ -66,7 +68,7 @@ NeedMoreInformation=Esperant els comentaris del informador
 NeedMoreInformationShort=Esperant comentaris
 Answered=Respost
 Waiting=En espera
-Closed=Tancat
+SolvedClosed=Resolt
 Deleted=Esborrat
 
 # Dict
@@ -119,7 +121,7 @@ TicketsShowModuleLogoHelp=Activeu aquesta opció per a ocultar el mòdul de logo
 TicketsShowCompanyLogo=Mostra el logotip de l'empresa en la interfície pública
 TicketsShowCompanyLogoHelp=Activeu aquesta opció per a ocultar el logotip de l'empresa principal a les pàgines de la interfície pública
 TicketsEmailAlsoSendToMainAddress=També envieu una notificació a l’adreça de correu electrònic principal
-TicketsEmailAlsoSendToMainAddressHelp=Activeu aquesta opció per enviar també un correu electrònic a l'adreça definida a la configuració "%s" (vegeu la pestanya "%s")
+TicketsEmailAlsoSendToMainAddressHelp=Activeu aquesta opció per a enviar també un correu electrònic a l'adreça definida a la configuració "%s" (vegeu la pestanya "%s")
 TicketsLimitViewAssignedOnly=Restringir la visualització als tiquets assignats a l'usuari actual (no és efectiu per als usuaris externs, sempre estarà limitat al tercer de qui depengui)
 TicketsLimitViewAssignedOnlyHelp=Només es veuran les entrades assignades a l'usuari actual. No s'aplica a un usuari amb drets de gestió de tiquets.
 TicketsActivatePublicInterface=Activar la interfície pública
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=Tiquet afegit
 TicketMessageSuccessfullyAdded=El missatge s'ha afegit correctament
 TicketMessagesList=Llista de missatges
 NoMsgForThisTicket=No hi ha missatges per aquest tiquet
-Properties=Classificació
+TicketProperties=Classificació
 LatestNewTickets=Últimes entrades més noves %s (no llegides)
 TicketSeverity=Gravetat
 ShowTicket=Consultar tiquet
 RelatedTickets=Tiquets relacionats
 TicketAddIntervention=Crea intervenció
-CloseTicket=Tanca el tiquet
-CloseATicket=Tanca el tiquet
+CloseTicket=Tancar | Resoldre el bitllet
+AbandonTicket=Abandonar el bitllet
+CloseATicket=Tancar | Resoldre un bitllet
 ConfirmCloseAticket=Confirma el tancament del tiquet
+ConfirmAbandonTicket=Confirmeu el tancament del bitllet a l'estat "Abandonat"
 ConfirmDeleteTicket=Si us plau, confirmeu l'esborrat del tiquet
 TicketDeletedSuccess=Tiquet esborrat amb èxit
 TicketMarkedAsClosed=Tiquet marcat com tancat
@@ -314,6 +318,7 @@ BoxTicketLastXDays=Nombre de bitllets nous per dies els darrers %s dies
 BoxTicketLastXDayswidget = Nombre de bitllets nous per dies els darrers X dies
 BoxNoTicketLastXDays=No hi ha entrades noves els darrers %s dies
 BoxNumberOfTicketByDay=Nombre de bitllets nous per dia
-BoxNewTicketVSClose=Nombre de bitllets nous d'avui en comparació amb els bitllets tancats d'avui
+BoxNewTicketVSClose=Nombre d'entrades versus entrades tancades (avui)
 TicketCreatedToday=Entrada creada avui
 TicketClosedToday=Entrada tancada avui
+KMFoundForTicketGroup=Hem trobat temes i preguntes més freqüents que poden respondre a la vostra pregunta, gràcies a comprovar-los abans d'enviar el bitllet

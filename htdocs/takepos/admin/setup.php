@@ -196,7 +196,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->TAKEPOS_REF_ADDON == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&token='.newToken().'&value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -256,8 +256,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
 print '<td colspan="2">';
-$array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9");
-print $form->selectarray('TAKEPOS_NUM_TERMINALS', $array, (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '0' : $conf->global->TAKEPOS_NUM_TERMINALS), 0);
+print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
 print "</td></tr>\n";
 
 // Services
@@ -474,7 +473,7 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 

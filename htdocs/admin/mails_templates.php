@@ -80,8 +80,8 @@ $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"')
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'alpha') > 0 ?GETPOST('listlimit', 'alpha') : 1000;
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -225,6 +225,9 @@ if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {
 if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
+if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
+	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTExpenseReport'));
+}
 if (!empty($conf->agenda->enabled)) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
@@ -243,9 +246,12 @@ if ($reshook == 0) {
 	}
 }
 
+$permissiontoadd = 1;
+
 //asort($elementList);
 
 $id = 25;
+
 
 
 /*
@@ -335,6 +341,7 @@ if (empty($reshook)) {
 				}
 
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+				$action = 'add';
 			}
 		}
 
@@ -408,6 +415,7 @@ if (empty($reshook)) {
 				} else {
 					dol_print_error($db);
 				}
+				$action = 'add';
 			}
 		}
 
@@ -486,6 +494,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			} else {
 				setEventMessages($db->error(), null, 'errors');
+				$action = 'edit';
 			}
 		}
 	}
@@ -512,7 +521,7 @@ if (empty($reshook)) {
 	if ($action == $acts[0]) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."=".((int) $rowid);
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -524,7 +533,7 @@ if (empty($reshook)) {
 	if ($action == $acts[1]) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."=".((int) $rowid);
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -542,18 +551,38 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $help_url = '';
-$title = $langs->trans("EMailsSetup");
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	$title = $langs->trans("EMailsSetup");
+} else {
+	$title = $langs->trans("EMailsTemplates");
+}
 
 llxHeader('', $title, $help_url);
 
 $linkback = '';
 $titlepicto = 'title_setup';
 
-print load_fiche_titre($title, $linkback, $titlepicto);
 
-$head = email_admin_prepare_head();
+$url = DOL_URL_ROOT.'/admin/mails_templates.php?action=add';
+$newcardbutton = dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
-print dol_get_fiche_head($head, 'templates', '', -1);
+
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	print load_fiche_titre($title, '', $titlepicto);
+} else {
+	print load_fiche_titre($title, $newcardbutton, $titlepicto);
+}
+
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	$head = email_admin_prepare_head();
+
+	print dol_get_fiche_head($head, 'templates', '', -1);
+
+	if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+		print load_fiche_titre('', $newcardbutton, '');
+	}
+}
+
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete') {
@@ -596,7 +625,7 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 
 $fieldlist = explode(',', $tabfield[$id]);
 
-if ($action == 'view') {
+if ($action == 'add') {
 	// Form to add a new line
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -654,7 +683,7 @@ if ($action == 'view') {
 		if ($valuetoshow != '') {
 			print '<td class="'.$align.'">';
 			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-				print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 			} elseif (!empty($tabhelp[$id][$value])) {
 				if (in_array($value, array('topic'))) {
 					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value); // Tooltip on click
@@ -747,7 +776,8 @@ if ($action == 'view') {
 		if ($tmpfieldlist == 'topic') {
 			print '<td class="center" rowspan="'.(count($fieldsforcontent)).'">';
 			if ($action != 'edit') {
-				print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'"><br>';
+				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</td>';
 		}
@@ -894,7 +924,7 @@ if ($resql) {
 			$valuetoshow = $langs->trans("Content"); $showfield = 0;
 		}
 		if ($fieldlist[$field] == 'content_lines') {
-			$valuetoshow = $langs->trans("ContentLines"); $showfield = 0;
+			$valuetoshow = $langs->trans("ContentForLines"); $showfield = 0;
 		}
 
 		// Show fields
@@ -936,7 +966,7 @@ if ($resql) {
 				print '<td class="center">';
 				print '<input type="hidden" name="page" value="'.$page.'">';
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button buttongen" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
@@ -971,6 +1001,14 @@ if ($resql) {
 								$okforextended = false;
 							}
 							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+							print $doleditor->Create(1);
+						}
+						if ($tmpfieldlist == 'content_lines') {
+							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+							$okforextended = true;
+							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
+								$okforextended = false;
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 						print '</td>';
@@ -1114,35 +1152,6 @@ if ($resql) {
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 				}
 				print '</td>';
-
-				/*
-				$fieldsforcontent = array('content');
-				if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
-				{
-					$fieldsforcontent = array('content', 'content_lines');
-				}
-				foreach ($fieldsforcontent as $tmpfieldlist)
-				{
-					$showfield = 1;
-					$align = "left";
-					$valuetoshow = $obj->{$tmpfieldlist};
-
-					$class = 'tddict';
-					// Show value for field
-					if ($showfield) {
-
-						print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$i.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
-						$okforextended = true;
-						if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
-							$okforextended = false;
-						$doleditor = new DolEditor($tmpfieldlist.'-'.$i, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%', 1);
-						print $doleditor->Create(1);
-						print '</td>';
-						print '<td></td><td></td><td></td>';
-
-					}
-				}*/
-
 				print "</tr>\n";
 			}
 
@@ -1160,7 +1169,10 @@ print '</div>';
 print '</form>';
 
 
-print dol_get_fiche_end();
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	print dol_get_fiche_end();
+}
+
 
 // End of page
 llxFooter();

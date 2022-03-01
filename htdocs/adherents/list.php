@@ -65,6 +65,7 @@ $search_filter = GETPOST("search_filter", 'alpha');
 $search_status = GETPOST("search_status", 'intcomma');
 $catid        = GETPOST("catid", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
+$socid = GETPOST('socid', 'int');
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -82,8 +83,8 @@ if ($search_status < -2) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -306,14 +307,14 @@ $memberstatic = new Adherent($db);
 
 $now = dol_now();
 
-if (!empty($search_categ) || !empty($catid)) {
+if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 	$sql = "SELECT DISTINCT";
 } else {
 	$sql = "SELECT";
 }
 $sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
-$sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
+$sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
 $sql .= " d.note_private, d.note_public,";
 $sql .= " s.nom,";
@@ -323,7 +324,7 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -335,7 +336,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
-if (!empty($search_categ) || !empty($catid)) {
+if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 	// We need this table joined to the select in order to filter by categ
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member";
 }
@@ -539,7 +540,7 @@ if ($search_login) {
 if ($search_email) {
 	$param .= "&search_email=".urlencode($search_email);
 }
-if ($search_categ) {
+if ($search_categ > 0 || $search_categ == -2) {
 	$param .= "&search_categ=".urlencode($search_categ);
 }
 if ($search_company) {
@@ -572,7 +573,7 @@ if ($search_phone_mobile != '') {
 if ($search_filter && $search_filter != '-1') {
 	$param .= "&search_filter=".urlencode($search_filter);
 }
-if ($search_status != "" && $search_status != Adherent::STATUS_DRAFT) {
+if ($search_status != "" && $search_status != -3) {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_type > 0) {
@@ -601,7 +602,7 @@ if ($user->rights->societe->creer) {
 if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
-if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);

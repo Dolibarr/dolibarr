@@ -13,7 +13,7 @@ if (isset($totalarray['pos'])) {
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
-			print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+			print '<td class="right">'.price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0).'</td>';
 		} else {
 			if ($i == 1) {
 				if (is_null($limit) || $num < $limit) {

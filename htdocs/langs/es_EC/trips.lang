@@ -31,7 +31,6 @@ ExpenseReportCanceledMessage=El informe de gastos %s fue cancelado. <br> - Usuar
 ExpenseReportPaid=Se pagó un informe de gastos
 ExpenseReportPaidMessage=El informe de gastos %s fue pagado. <br> - Usuario: %s<br> - Pagado por: %s<br> haga clic aquí para mostrar el informe de gastos: %s
 TripId=Informe de gastos de identificación
-AnyOtherInThisListCanValidate=Persona a informar para la validación.
 TripSociete=Empresa de información
 TripNDF=Informaciones sobre el informe de gastos
 PDFStandardExpenseReports=Plantilla estándar para generar un documento PDF para el informe de gastos
@@ -80,7 +79,6 @@ ExpenseReportPayment=Pago del informe de gastos
 ExpenseReportsToApprove=Informes de gastos para aprobar
 ExpenseReportsToPay=Informes de gastos a pagar
 ConfirmCloneExpenseReport=¿Seguro que desea copiar este informe de gastos?
-ExpenseReportsIk=Índice de millaje de informes de gastos
 ExpenseReportIkDesc=Se puede modificar el cálculo de los kilómetros de gasto por categoría y por rango que se definen previamente. <b> d </ b> es la distancia en kilómetros
 expenseReportOffset=Compensar
 expenseReportTotalForFive=Ejemplo con <u>d</u> = 5
@@ -88,8 +86,5 @@ expenseReportPrintExample=desplazamiento + (d x coef) = %S
 ExpenseReportApplyTo=Aplicar para
 ExpenseReportDateStart=Fecha de inicio
 ExpenseReportDateEnd=Fecha final
-ExpenseReportLimitAmount=Cantidad limitada
-ExpenseReportConstraintViolationError=Infracción de restricción id [%s]: %s es superior a %s %s
-ExpenseReportConstraintViolationWarning=Infracción de restricción id [%s]: %s es superior a %s %s
 ExpenseRangeOffset=Cantidad de compensación: %s
 AttachTheNewLineToTheDocument=Adjunte la línea a un documento cargado

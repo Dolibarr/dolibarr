@@ -200,6 +200,11 @@ with:
 with
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
 
+* Fix php fatal error on php 8.0 on tcpdi.php
+	while (list($k, $v) = each($value[1])) {
+with
+	foreach ($value[1] as $k => $v) {
+
 
 
 JSGANTT:
@@ -230,9 +235,11 @@ JCROP:
 * Remove analytics tag into file index.html
 
 
+
 JQUERYFILETREE:
 ---------------
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
+
 
 
 RESTLER:

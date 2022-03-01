@@ -102,7 +102,7 @@ class Link extends CommonObject
 		$sql .= ", '".$this->db->escape($this->url)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->objecttype)."'";
-		$sql .= ", ".$this->objectid.")";
+		$sql .= ", ".((int) $this->objectid).")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -182,7 +182,7 @@ class Link extends CommonObject
 		$sql .= ", label = '".$this->db->escape($this->label)."'";
 		$sql .= ", objecttype = '".$this->db->escape($this->objecttype)."'";
 		$sql .= ", objectid = ".$this->objectid;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql = ".$sql);
 		$resql = $this->db->query($sql);
@@ -249,7 +249,7 @@ class Link extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			dol_syslog(get_class($this)."::fetchAll ".$num."records", LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetchAll num=".((int) $num), LOG_DEBUG);
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$link = new Link($this->db);
@@ -274,24 +274,24 @@ class Link extends CommonObject
 	/**
 	 *  Return nb of links
 	 *
-	 *  @param  DoliDb  $db         Database handler
+	 *  @param  DoliDb  $dbs         Database handler
 	 *  @param  string  $objecttype Type of the associated object in dolibarr
 	 *  @param  int     $objectid   Id of the associated object in dolibarr
 	 *  @return int                 Nb of links, -1 if error
 	 **/
-	public static function count($db, $objecttype, $objectid)
+	public static function count($dbs, $objecttype, $objectid)
 	{
 		global $conf;
 
 		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."links";
-		$sql .= " WHERE objecttype = '".$db->escape($objecttype)."' AND objectid = ".((int) $objectid);
+		$sql .= " WHERE objecttype = '".$dbs->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".$conf->entity;
 		}
 
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if ($resql) {
-			$obj = $db->fetch_object($resql);
+			$obj = $dbs->fetch_object($resql);
 			if ($obj) {
 				return $obj->nb;
 			}
@@ -365,7 +365,7 @@ class Link extends CommonObject
 
 		// Remove link
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."links";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if (!$this->db->query($sql)) {

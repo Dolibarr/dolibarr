@@ -520,7 +520,7 @@ if ($tabname[$id]) {
 		if ($valuetoshow != '') {
 			print '<td class="'.$class.'">';
 			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-				print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				print '<a href="'.$tabhelp[$id][$value].'">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 			} elseif (!empty($tabhelp[$id][$value])) {
 				print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
 			} else {
@@ -561,7 +561,7 @@ if ($tabname[$id]) {
 	}
 
 	print '<td colspan="4" class="right">';
-	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 	print '</td>';
 	print "</tr>";
 
@@ -583,7 +583,7 @@ if ($resql) {
 
 	$param = '&id='.$id;
 	if ($search_country_id > 0) {
-		$param .= '&search_country_id='.$search_country_id;
+		$param .= '&search_country_id='.urlencode($search_country_id);
 	}
 	$paramwithsearch = $param;
 	if ($sortorder) {
@@ -737,14 +737,14 @@ if ($resql) {
 				print '<td class="center">';
 				print '<input type="hidden" name="page" value="'.$page.'">';
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '<td></td>';
 			} else {
 				$tmpaction = 'view';
-				$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				$error = $hookmanager->error; $errors = $hookmanager->errors;
@@ -814,7 +814,7 @@ if ($resql) {
 
 				// Modify link
 				if ($canbemodified) {
-					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 				} else {
 					print '<td>&nbsp;</td>';
 				}
@@ -823,7 +823,7 @@ if ($resql) {
 				if ($iserasable) {
 					print '<td class="center">';
 					if ($user->admin) {
-						print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+						print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
 					}
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 					print '</td>';

@@ -132,7 +132,7 @@ function facturefourn_prepare_head($object)
  * @param   Object	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function ordersupplier_prepare_head($object)
+function ordersupplier_prepare_head(CommandeFournisseur $object)
 {
 	global $db, $langs, $conf, $user;
 
@@ -159,6 +159,28 @@ function ordersupplier_prepare_head($object)
 		$langs->load("stocks");
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderDispatch");
+
+		//If dispach process running we add the number of item to dispatch into the head
+		if (in_array($object->statut, array($object::STATUS_ORDERSENT, $object::STATUS_RECEIVED_PARTIALLY, $object::STATUS_RECEIVED_COMPLETELY))) {
+			$sumQtyAllreadyDispatched = 0;
+			$sumQtyOrdered = 0;
+
+			if (empty($object->lines)) {
+				$object->fetch_lines();
+			}
+			$nbLinesOrdered = count($object->lines);
+			$dispachedLines = $object->getDispachedLines(1);
+			$nbDispachedLines = count($dispachedLines);
+
+			for ($line = 0 ; $line < $nbDispachedLines; $line++) {
+				$sumQtyAllreadyDispatched = $sumQtyAllreadyDispatched + $dispachedLines[$line]['qty'];
+			}
+			for ($line = 0 ; $line < $nbLinesOrdered; $line++) {
+				$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+			}
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.price2num($sumQtyAllreadyDispatched, 'MS').' / '.price2num($sumQtyOrdered, 'MS').'</span>';
+		}
+
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}

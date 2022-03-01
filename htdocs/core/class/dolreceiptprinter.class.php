@@ -61,6 +61,7 @@
  * <dol_value_month>                                Replaced by month number
  * <dol_value_day>                                  Replaced by day number
  * <dol_value_day_letters>                          Replaced by day number
+ * <dol_value_currentdate>                          Replaced by current date
  * <dol_object_id>                                  Replaced by object id
  * <dol_object_ref>                                 Replaced by object ref
  * <dol_value_customer_firstname>                   Replaced by customer firstname
@@ -186,6 +187,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_month' => 'DOL_VALUE_MONTH',
 			'dol_value_day' => 'DOL_VALUE_DAY',
 			'dol_value_day_letters' => 'DOL_VALUE_DAY',
+			'dol_value_currentdate' => 'DOL_VALUE_CURRENTDATE',
 			'dol_print_payment' => 'DOL_PRINT_PAYMENT',
 			'dol_print_logo' => 'DOL_PRINT_LOGO',
 			'dol_print_logo_old' => 'DOL_PRINT_LOGO_OLD',
@@ -221,6 +223,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_mysoc_idprof6' => 'ProfId6',
 			'dol_value_mysoc_tva_intra' => 'VATIntra',
 			'dol_value_mysoc_capital' => 'Capital',
+			'dol_value_mysoc_url' => 'Web',
 			'dol_value_vendor_lastname' => 'VendorLastname',
 			'dol_value_vendor_firstname' => 'VendorFirstname',
 			'dol_value_vendor_mail' => 'VendorEmail',
@@ -584,6 +587,7 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_month}', dol_print_date($object->date, '%m'), $this->template);
 		$this->template = str_replace('{dol_value_day}', dol_print_date($object->date, '%d'), $this->template);
 		$this->template = str_replace('{dol_value_day_letters}', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
+		$this->template = str_replace('{dol_value_currentdate}', dol_print_date(dol_now(), 'dayhour'), $this->template);
 
 		$this->template = str_replace('{dol_value_customer_firstname}', $object->thirdparty->firstname, $this->template);
 		$this->template = str_replace('{dol_value_customer_lastname}', $object->thirdparty->lastname, $this->template);
@@ -607,6 +611,7 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_mysoc_idprof6}', $mysoc->idprof6, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_tva_intra}', $mysoc->tva_intra, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_capital}', $mysoc->capital, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_url}', $mysoc->url, $this->template);
 
 		$this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
@@ -672,9 +677,9 @@ class dolReceiptPrinter extends Printer
 							$vatarray[$line->tva_tx] += $line->total_tva;
 						}
 						foreach ($vatarray as $vatkey => $vatvalue) {
-							 $spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
-							 $spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
-							 $this->printer->text($spaces.$vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
+							$spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
+							$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+							$this->printer->text($spaces.$vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
 						}
 						break;
 					case 'DOL_PRINT_OBJECT_TAX1':
@@ -870,7 +875,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'SELECT template';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= ' WHERE rowid='.$templateid;
+		$sql .= ' WHERE rowid = '.((int) $templateid);
 		$sql .= ' AND entity = '.$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -908,7 +913,7 @@ class dolReceiptPrinter extends Printer
 		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
 		$sql .= ' WHERE rowid = '.((int) $printerid);
-		$sql .= ' AND entity = '.$conf->entity;
+		$sql .= ' AND entity = '.((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);

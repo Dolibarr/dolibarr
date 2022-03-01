@@ -213,6 +213,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Holiday';
 	$permissiontoread = $user->rights->holiday->read;
 	$permissiontodelete = $user->rights->holiday->delete;
+	$permissiontoapprove = $user->rights->holiday->approve;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -295,7 +296,7 @@ $sql .= " ua.photo as validator_photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -441,6 +442,9 @@ if ($resql) {
 	if (!empty($user->rights->holiday->delete)) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
+	if (!empty($user->rights->holiday->approve)) {
+		$arrayofmassactions['preapproveleave'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Approve");
+	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
@@ -484,9 +488,15 @@ if ($resql) {
 
 		print '<div class="tabsAction">';
 
-		$canedit = (($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))));
+		$cancreate = 0;
+		if (!empty($user->rights->holiday->writeall)) {
+			$cancreate = 1;
+		}
+		if (!empty($user->rights->holiday->write) && in_array($user_id, $childids)) {
+			$cancreate = 1;
+		}
 
-		if ($canedit) {
+		if ($cancreate) {
 			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
 		}
 
@@ -732,6 +742,7 @@ if ($resql) {
 		$i = 0;
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
+		$totalduration = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -801,6 +812,7 @@ if ($resql) {
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
 				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
+				$totalduration += $nbopenedday;
 				print $nbopenedday.' '.$langs->trans('DurationDays');
 				print '</td>';
 				if (!$i) {
@@ -882,6 +894,21 @@ if ($resql) {
 			print '</tr>'."\n";
 
 			$i++;
+		}
+
+		// Add a line for total if there is a total to show
+		if (!empty($arrayfields['duration']['checked'])) {
+			print '<tr class="total">';
+			foreach ($arrayfields as $key => $val) {
+				if (!empty($val['checked'])) {
+					if ($key == 'duration') {
+						print '<td class="right">'.$totalduration.' '.$langs->trans('DurationDays').'</td>';
+					} else {
+						print '<td></td>';
+					}
+				}
+			}
+			print '</tr>';
 		}
 	}
 

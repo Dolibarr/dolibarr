@@ -1,5 +1,5 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
-Accountancy=Boekhouden
+Accountancy=Boekhouding
 Accounting=Boekhouding
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom separator voor export bestand
 ACCOUNTING_EXPORT_DATE=Datumnotatie voor exportbestand
@@ -10,7 +10,7 @@ ACCOUNTING_EXPORT_AMOUNT=Export bedrag
 ACCOUNTING_EXPORT_DEVISE=Export valuta
 Selectformat=Selecteer het formaat van het bestand
 ACCOUNTING_EXPORT_FORMAT=Selecteer het formaat van het bestand
-ACCOUNTING_EXPORT_ENDLINE=Selecteer nieuwe regel type
+ACCOUNTING_EXPORT_ENDLINE=Selecteer het nieuwe regel type 
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specificeer de prefix voor de bestandsnaam
 ThisService=Deze dienst
 ThisProduct=Dit product
@@ -18,13 +18,13 @@ DefaultForService=Standaard bij dienst
 DefaultForProduct=Standaard bij product
 ProductForThisThirdparty=Product voor deze relatie
 ServiceForThisThirdparty=Service voor deze relatie
-CantSuggest=Geen voorstel
-AccountancySetupDoneFromAccountancyMenu=Meeste instellingen boekhouding worden gedaan vanuit menu %s
+CantSuggest=Geen suggestie
+AccountancySetupDoneFromAccountancyMenu=De meeste instellingen boekhouding worden gedaan vanuit menu %s
 ConfigAccountingExpert=Configuratie van boekhoud-module (dubbel boekhouden)
-Journalization=Journaal
-Journals=Verkoopdagboek
+Journalization=Journalisatie
+Journals=Dagboeken
 JournalFinancial=Financiëel dagboek
-BackToChartofaccounts=Return chart of accounts
+BackToChartofaccounts=Rekeningschema retourneren
 Chartofaccounts=Rekeningschema
 ChartOfSubaccounts=Grafiek van individuele rekeningen
 ChartOfIndividualAccountsOfSubsidiaryLedger=Grafiek van individuele rekeningen van het subgrootboek
@@ -37,8 +37,8 @@ OtherInfo=Overige informatie
 DeleteCptCategory=Verwijder grootboekrekening uit groep
 ConfirmDeleteCptCategory=Weet u zeker dat u deze grootboekrekening wilt verwijderen uit de grootboekrekening-groep?
 JournalizationInLedgerStatus=Journaal-status
-AlreadyInGeneralLedger=Reeds verwerkt in journaals en grootboek
-NotYetInGeneralLedger=Nog niet doorgeboekt in journaals en grootboek
+AlreadyInGeneralLedger=Reeds overgezet naar boekhoudkundige dagboeken en grootboek
+NotYetInGeneralLedger=Nog niet overgezet naar boekhoudkundige dagboeken en grootboek
 GroupIsEmptyCheckSetup=Groep is leeg. Controleer instellingen bij gepersonaliseerde rekeninggroep
 DetailByAccount=Details grootboekrekening
 AccountWithNonZeroValues=Grootboekrekeningen met niet-nulwaarden
@@ -48,7 +48,8 @@ CountriesNotInEEC=Landen buiten de EU
 CountriesInEECExceptMe=EU landen behalve %s
 CountriesExceptMe=Alle landen behalve %s
 AccountantFiles=Bron-documenten exporteren
-ExportAccountingSourceDocHelp=Met deze tool kunt u de lijsten en pdf bestanden exporteren die werden gebruikt om uw boekhouding te genereren. Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
+ExportAccountingSourceDocHelp=Met deze tool kunt u de bron events (lijst in CSV en PDF) exporteren die zijn gebruikt om om uw boekhouding te genereren.
+ExportAccountingSourceDocHelp2=Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
 VueByAccountAccounting=Overzicht per grootboekrekening
 VueBySubAccountAccounting=Overzicht op volgorde subrekening
 
@@ -245,9 +246,9 @@ DescThirdPartyReport=Raadpleeg hier de lijst met externe klanten en leveranciers
 ListAccounts=Grootboekrekeningen
 UnknownAccountForThirdparty=Onbekende relatie-rekening. Gebruikt wordt 1%s
 UnknownAccountForThirdpartyBlocking=Blokkeringsfout. Onbekende relatierekening. 
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Derdenaccount niet gedefinieerd of derde partij onbekend. We zullen %s gebruiken
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subgrootboekrekening niet gedefinieerd of derde partij of gebruiker onbekend. We gebruiken %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Onbekende relatie en sub-administrator niet gedefinieerd op de betaling. Er zal geen waarde worden weggeschreven in de sub-administratierekening.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tegenrekening relatie niet gedefinieerd of relatie onbekend. Blokkeringsfout.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subgrootboekrekening niet gedefinieerd of derde partij of gebruiker onbekend. Blokkeringsfout.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Onbekend account van derden en wachtaccount niet gedefinieerd. Blokkeerfout
 PaymentsNotLinkedToProduct=Betaling niet gekoppeld aan een product / dienst
 OpeningBalance=Beginbalans
@@ -285,7 +286,7 @@ ValidateMovements=Valideer wijzigingen
 DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
 
 ValidateHistory=Automatisch boeken
-AutomaticBindingDone=Automatisch koppelen voltooid
+AutomaticBindingDone=Automatische bindings uitgevoerd (%s) - Automatische binding was niet mogelijk voor record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fout. U kunt geen grootboekrekening verwijderen welke in gebruik is.
 MvtNotCorrectlyBalanced=Boeking is niet in balans. Debet = %s | Credit = %s
@@ -297,7 +298,7 @@ NoNewRecordSaved=Geen posten door te boeken
 ListOfProductsWithoutAccountingAccount=Overzicht van producten welke nog niet zijn gekoppeld aan een grootboekrekening
 ChangeBinding=Wijzig koppeling
 Accounted=Geboekt in grootboek
-NotYetAccounted=Nog niet doorgeboekt in het grootboek
+NotYetAccounted=Nog niet overgezet naar boekhouding
 ShowTutorial=Handleiding weergeven
 NotReconciled=Niet afgestemd
 WarningRecordWithoutSubledgerAreExcluded=Pas op, alle bewerkingen zonder gedefinieerde subgrootboekrekening worden gefilterd en uitgesloten van deze weergave
@@ -328,9 +329,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Schakel het koppelen en doorboeken naar 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken naar de boekhouding van onkostendeclaraties uit (met onkostendeclaraties wordt geen rekening gehouden in de boekhouding)
 
 ## Export
-NotifiedExportDate=Notified export date (modification of the entries will not be possible)
-NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
-ConfirmExportFile=Confirmation of the generation of the accounting export file ?
+NotifiedExportDate=Markeer geëxporteerde regels als geëxporteerd (wijziging van de regels is niet mogelijk)
+NotifiedValidationDate=Valideer de geëxporteerde invoer (wijziging of verwijdering van de regels is niet mogelijk)
+ConfirmExportFile=Bevestiging van het genereren van het boekhoudkundige exportbestand ?
 ExportDraftJournal=Journaal exporteren
 Modelcsv=Export model
 Selectmodelcsv=Selecteer een export model
@@ -338,11 +339,11 @@ Modelcsv_normal=Klassieke export
 Modelcsv_CEGID=Exporteren naar CEGID Expert Comptabilité
 Modelcsv_COALA=Exporteren naar Sage Coala
 Modelcsv_bob50=Exporteren naar Sage BOB 50
-Modelcsv_ciel=Exporteren naar Sage Ciel Compta of Compta Evolution
+Modelcsv_ciel=Export voor Sage50, Ciel Compta of Compta Evo. (Formaat XIMPORT)
 Modelcsv_quadratus=Exporteren naar Quadratus QuadraCompta
 Modelcsv_ebp=Exporteren naar EBP
 Modelcsv_cogilog=Exporteren naar Cogilog
-Modelcsv_agiris=Exporteren naar Agiris
+Modelcsv_agiris=Exporteren voor Agiris Isacompta
 Modelcsv_LDCompta=Exporteren voor LD Compta (v9) (test)
 Modelcsv_LDCompta10=Exporteren voor LD Compta (v10 en hoger)
 Modelcsv_openconcerto=Exporteren voor OpenConcerto (test)
@@ -350,9 +351,10 @@ Modelcsv_configurable=Configureerbare CSV export
 Modelcsv_FEC=FEC exporteren
 Modelcsv_FEC2=FEC exporteren (met datumgeneratie schrijven / document omgekeerd)
 Modelcsv_Sage50_Swiss=Export voor Sage 50 Zwitserland
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Exporteren voor Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Exporteren voor Gestinum (v3)
-Modelcsv_Gestinumv5Export voor Gestinum (v5)
+Modelcsv_Gestinumv5=Exporteren voor Gestinum (v5)
+Modelcsv_charlemagne=Exporteren voor Aplim Charlemagne
 ChartofaccountsId=Rekeningschema Id
 
 ## Tools - Init accounting account on product / service
@@ -385,7 +387,8 @@ SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen de EU
 SaleEECWithVAT=Verkoop binnen de EU met een btw die niet nul is, dus we veronderstellen dat dit GEEN intracommunautaire verkoop is en de voorgestelde grootboekrekening het standaardproductaccount is.
 SaleEECWithoutVATNumber=Verkoop binnen de EU zonder btw, maar het btw-nummer van een derde partij is niet gedefinieerd. Voor standaardverkoop vallen we terug op het product-grootboekrekening. U kunt indien nodig het btw-nummer van een derde partij of het productaccount aanpassen.
-
+ForbiddenTransactionAlreadyExported=Niet toegestaan: De transactie is gevalideerd en/of geëxporteerd.
+ForbiddenTransactionAlreadyValidated=Niet toegestaan: De transactie is gevalideerd.
 ## Dictionary
 Range=Grootboeknummer van/tot
 Calculated=Berekend
@@ -402,6 +405,7 @@ NoJournalDefined=Geen dagboek ingesteld
 Binded=Geboekte regels
 ToBind=Te boeken regels
 UseMenuToSetBindindManualy=Regels die nog niet zijn gebonden, gebruik het menu <a href="%s"> %s </a> om de binding handmatig te maken
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry, deze module is niet compatibel met de experimentele functie van situatiefacturen
 
 ## Import
 ImportAccountingEntries=Boekingen

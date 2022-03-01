@@ -39,6 +39,7 @@ $id = GETPOST("facid", "int");
 $ref = GETPOST("ref", 'alpha');
 
 $object = new Facture($db);
+
 $extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
@@ -62,22 +63,19 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $field
  * View
  */
 
-if (empty($object->id)) {
-	llxHeader();
-	$head = facture_prepare_head($object);
-	$langs->load('errors');
-	echo dol_get_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill'),
-		'<div class="error">' . $langs->trans("ErrorRecordNotFound") . '</div>';
-	llxFooter();
-	exit;
-}
-
 $form = new Form($db);
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);
+
+if (empty($object->id)) {
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
 
 $object->fetch_thirdparty();
 
@@ -104,7 +102,7 @@ if (!empty($conf->projet->enabled)) {
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->facture->creer) {
 		if ($action != 'classify') {
-			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			$morehtmlref .= ' : ';
 		}
 		if ($action == 'classify') {
@@ -122,9 +120,10 @@ if (!empty($conf->projet->enabled)) {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			$morehtmlref .= $proj->ref;
-			$morehtmlref .= '</a>';
+			$morehtmlref .= ' : '.$proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= ' - '.$proj->title;
+			}
 		} else {
 			$morehtmlref .= '';
 		}

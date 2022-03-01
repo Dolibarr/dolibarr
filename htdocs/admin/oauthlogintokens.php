@@ -334,7 +334,7 @@ if ($mode == 'setup' && $user->admin) {
 
 		if (!empty($driver)) {
 			if ($submit_enabled) {
-				print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
+				print $form->buttonsSaveCancel("Modify", '');
 			}
 		}
 

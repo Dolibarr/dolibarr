@@ -35,11 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
@@ -64,6 +59,13 @@ if ($sortorder == "") {
 }
 if ($sortfield == "") {
 	$sortfield = "pl.fk_soc";
+}
+
+$type = $object->type;
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 
@@ -226,7 +228,7 @@ if ($id) {
 		print '</table><br>';
 
 		//Confirm Button
-		print '<div class="center"><input type="submit" class="button" value='.$langs->trans("Confirm").'></div>';
+		print '<div class="center"><input type="submit" class="button button-save" value='.$langs->trans("Confirm").'></div>';
 		print '</form>';
 	}
 
@@ -260,12 +262,20 @@ if ($id) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-	$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	if ($type == 'bank-transfer') {
+		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
+	} else {
+		$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	}
 	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 	$sql .= " AND pl.fk_prelevement_bons = p.rowid";
 	$sql .= " AND f.fk_soc = s.rowid";
-	$sql .= " AND pf.fk_facture = f.rowid";
+	if ($type == 'bank-transfer') {
+		$sql .= " AND pf.fk_facture_fourn = f.rowid";
+	} else {
+		$sql .= " AND pf.fk_facture = f.rowid";
+	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	$sql .= " AND pl.rowid = ".((int) $id);
 	if ($socid) {

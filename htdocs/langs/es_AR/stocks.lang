@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - stocks
 Location=Ubicaciòn
-WarehouseAskWarehouseOnThirparty=Set a warehouse on third-party
-OpenInternal=Open only for internal actions
 inventoryEdit=Editar
 inventoryDraft=Activos
 SelectCategory=Filtro por Categoría

@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '14.0.3'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '15.0.0'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -178,6 +178,19 @@ if (empty($dolibarr_strict_mode)) {
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
 
+if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
+	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
+	exit;
+}
+
+
+// Included by default (must be before the CSRF check so wa can use the dol_syslog)
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+//print memory_get_usage();
+
+
 // Security: CSRF protection
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
 // when we post forms (we allow GET and HEAD to accept direct link from a particular page).
@@ -198,7 +211,6 @@ if (!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck)) {
 		if ($csrfattack) {
 			//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 			// Note: We can't use dol_escape_htmltag here to escape output because lib functions.lib.ph is not yet loaded.
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (Bad referer).", LOG_WARNING);
 			print "Access refused by CSRF protection in main.inc.php. Referer of form (".htmlentities($_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
 			print "If you access your server behind a proxy using url rewriting, you might check that all HTTP headers are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file to remove this security check).\n";
@@ -334,18 +346,6 @@ if (!defined('DOL_DEFAULT_TTF_BOLD')) {
 if (!defined('ADODB_DATE_VERSION')) {
 	include_once ADODB_PATH.'adodb-time.inc.php';
 }
-
-if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
-	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
-	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
-	exit;
-}
-
-
-// Included by default
-include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-//print memory_get_usage();
 
 // If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.
 if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {

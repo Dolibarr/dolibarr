@@ -240,7 +240,6 @@ function _printInputFormPart($confkey, $title = false, $desc = '', $metas = arra
 	print '<td class="center" width="20">&nbsp;</td>';
 	print '<td class="right" width="300">';
 	print '<input type="hidden" name="param'.$inputCount.'" value="'.$confkey.'">';
-
 	print '<input type="hidden" name="action" value="setModuleOptions">';
 	if ($type == 'textarea') {
 		print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';

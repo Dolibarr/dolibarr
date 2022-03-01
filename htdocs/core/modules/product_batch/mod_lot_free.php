@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/core/modules/product/mod_lot_free.php
+ *       \file       htdocs/core/modules/product_batch/mod_lot_free.php
  *       \ingroup    productbatch
  *       \brief      File containing class for numbering model of Lot free
  */

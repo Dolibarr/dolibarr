@@ -37,8 +37,8 @@ OtherInfo=Inne informacje
 DeleteCptCategory=Usuń konto księgowe z grupy
 ConfirmDeleteCptCategory=Czy na pewno chcesz usunąć to konto księgowe z grupy kont księgowych?
 JournalizationInLedgerStatus=Status dokumentowania
-AlreadyInGeneralLedger=Już przeniesione w dziennikach księgowych i księdze
-NotYetInGeneralLedger=Jeszcze nie przeniesione w dziennikach księgowych i księdze rachunkowej
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Grupa jest pusta, sprawdź konfigurację spersonalizowanej grupy księgowej
 DetailByAccount=Pokaż szczegóły konta
 AccountWithNonZeroValues=Konta z wartościami niezerowymi
@@ -48,7 +48,7 @@ CountriesNotInEEC=Kraje spoza UE
 CountriesInEECExceptMe=Kraje UE oprócz %s
 CountriesExceptMe=Wszystkie kraje oprócz %s
 AccountantFiles=Eksportuj dokumenty źródłowe
-ExportAccountingSourceDocHelp=Za pomocą tego narzędzia możesz wyeksportować zdarzenia źródłowe (listę w formacie CSV i PDF), które zostały użyte do wygenerowania Twojej księgowości.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Aby wyeksportować swoje dzienniki, użyj pozycji menu %s - %s.
 VueByAccountAccounting=Wyświetl według konta księgowego
 VueBySubAccountAccounting=Wyświetl według subkonta księgowego
@@ -246,9 +246,9 @@ DescThirdPartyReport=Zapoznaj się z listą klientów i dostawców zewnętrznych
 ListAccounts=Lista kont księgowych
 UnknownAccountForThirdparty=Nieznane konto innej firmy. Użyjemy %s
 UnknownAccountForThirdpartyBlocking=Nieznane konto innej firmy. Błąd blokowania
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Konto innej firmy nie zostało zdefiniowane lub firma trzecia nieznana. Użyjemy %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Nieznany podmiot zewnętrzny i księga podrzędna nie została zdefiniowana w płatności. Wartość konta księgi podrzędnej pozostanie pusta.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Konto innej firmy nie zostało zdefiniowane lub firma trzecia nieznana. Błąd blokowania.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nieznane konto innej firmy i konto oczekujące nie zostały zdefiniowane. Błąd blokowania
 PaymentsNotLinkedToProduct=Płatność nie jest powiązana z żadnym produktem / usługą
 OpeningBalance=Bilans otwarcia
@@ -286,7 +286,7 @@ ValidateMovements=Zatwierdź ruchy
 DescValidateMovements=Jakakolwiek modyfikacja lub usunięcie pisma, napisów i usunięcia będzie zabronione. Wszystkie wpisy do ćwiczenia muszą zostać zatwierdzone, w przeciwnym razie zamknięcie nie będzie możliwe
 
 ValidateHistory=Dowiąż automatycznie
-AutomaticBindingDone=Automatyczne dowiązanie ukończone
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąc tego konta księgowego, ponieważ jest w użyciu
 MvtNotCorrectlyBalanced=Ruch nie jest prawidłowo wyważony. Obciążenie = %s | Kredyt = %s
@@ -298,7 +298,7 @@ NoNewRecordSaved=Koniec z zapisem do dziennika
 ListOfProductsWithoutAccountingAccount=Lista produktów nie dowiązanych do żadnego konta księgowego
 ChangeBinding=Zmień dowiązanie
 Accounted=Rozliczone w księdze
-NotYetAccounted=Jeszcze nie uwzględnione w księdze
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Pokaż Poradnik
 NotReconciled=Nie pogodzono się
 WarningRecordWithoutSubledgerAreExcluded=Ostrzeżenie, wszystkie operacje bez zdefiniowanego konta księgi podrzędnej są filtrowane i wykluczane z tego widoku
@@ -329,8 +329,8 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Wyłącz powiązanie i przeniesienie w k
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Wyłącz powiązanie i przeniesienie w księgowości na zestawieniach wydatków (zestawienia wydatków nie będą brane pod uwagę w księgowości)
 
 ## Export
-NotifiedExportDate=Zgłoszona data eksportu (modyfikacja wpisów nie będzie możliwa)
-NotifiedValidationDate=Walidacja wpisów (modyfikacja lub usunięcie wpisów nie będzie możliwe)
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
 ConfirmExportFile=Potwierdzenie wygenerowania pliku eksportu księgowości ?
 ExportDraftJournal=Export dziennika projektu
 Modelcsv=Model eksportu
@@ -339,11 +339,11 @@ Modelcsv_normal=Standardowy eksport
 Modelcsv_CEGID=Eksport dla CEGID Expert Comptabilité
 Modelcsv_COALA=Eksport dla Sage Coala
 Modelcsv_bob50=Eksport dla Sage BOB 50
-Modelcsv_ciel=Eksport dla Sage Ciel Compta lub Compta Evolution
+Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Eksport do Quadratus QuadraCompta
 Modelcsv_ebp=Eksport do EBP
 Modelcsv_cogilog=Eksport do Cogilog
-Modelcsv_agiris=Eksport dla Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Eksport do LD Compta (v9) (test)
 Modelcsv_LDCompta10=Eksport do LD Compta (wersja 10 i wyższa)
 Modelcsv_openconcerto=Eksport do OpenConcerto (test)
@@ -351,9 +351,10 @@ Modelcsv_configurable=Eksportuj plik CSV konfigurowalny
 Modelcsv_FEC=Eksportuj FEC
 Modelcsv_FEC2=Eksportuj FEC (z odwróceniem generowania dat / dokumentów)
 Modelcsv_Sage50_Swiss=Eksport dla Sage 50 Szwajcaria
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Eksport do Gestinum (v3)
-Modelcsv_Gestinumv5Export dla Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Id planu kont
 
 ## Tools - Init accounting account on product / service
@@ -386,7 +387,8 @@ SaleExport=Sprzedaż eksportowa
 SaleEEC=Sprzedaż w EWG
 SaleEECWithVAT=Sprzedaż w EWG z podatkiem VAT niezerowym, więc przypuszczamy, że NIE jest to sprzedaż wewnątrzwspólnotowa, a sugerowane konto to standardowe konto produktu.
 SaleEECWithoutVATNumber=Sprzedaż w EWG bez podatku VAT, ale identyfikator VAT strony trzeciej nie jest zdefiniowany. Wracamy na konto produktu dla sprzedaży standardowej. W razie potrzeby możesz poprawić identyfikator VAT strony trzeciej lub konto produktu.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Zakres konta księgowego
 Calculated=Przeliczone
@@ -403,6 +405,7 @@ NoJournalDefined=Nie zdefiniowano dziennika
 Binded=Linie związane
 ToBind=Linie do dowiązania
 UseMenuToSetBindindManualy=Wiersze jeszcze niezwiązane, użyj menu <a href="%s"> %s </a>, aby wykonać powiązanie ręcznie
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Zapisy księgowe

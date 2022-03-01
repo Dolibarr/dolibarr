@@ -176,6 +176,71 @@ foreach ($dirbarcode as $reldir) {
 	}
 }
 
+
+
+// Select barcode numbering module
+if ($conf->product->enabled) {
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td width="140">'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td>'.$langs->trans("Example").'</td>';
+	print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print "</tr>\n";
+
+	$dirbarcodenum = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
+
+	foreach ($dirbarcodenum as $dirroot) {
+		$dir = dol_buildpath($dirroot, 0);
+
+		$handle = @opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
+					$file = substr($file, 0, dol_strlen($file) - 4);
+
+					try {
+						dol_include_once($dirroot.$file.'.php');
+					} catch (Exception $e) {
+						dol_syslog($e->getMessage(), LOG_ERR);
+					}
+
+					$modBarCode = new $file();
+
+					print '<tr class="oddeven">';
+					print '<td>'.(isset($modBarCode->name) ? $modBarCode->name : $modBarCode->nom)."</td><td>\n";
+					print $modBarCode->info($langs);
+					print '</td>';
+					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
+
+					if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM) && $conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&token='.newToken().'&amp;value='.urlencode($file).'">';
+						print img_picto($langs->trans("Activated"), 'switch_on');
+						print '</a></td>';
+					} else {
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&token='.newToken().'&amp;value='.urlencode($file).'">';
+						print img_picto($langs->trans("Disabled"), 'switch_off');
+						print '</a></td>';
+					}
+					print '<td class="center">';
+					$s = $modBarCode->getToolTip($langs, null, -1);
+					print $form->textwithpicto('', $s, 1);
+					print '</td>';
+					print "</tr>\n";
+				}
+			}
+			closedir($handle);
+		}
+	}
+	print "</table>\n";
+	print '</div>';
+}
+
+
 /*
  *  CHOIX ENCODAGE
  */
@@ -189,6 +254,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<input type="hidden" name="action" value="updateengine">';
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -211,8 +277,9 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven"><td width="100">';
-		print $obj->label;
+		print '<tr class="oddeven">';
+		print '<td width="100">';
+		print dol_escape_htmltag($obj->label);
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);
 		//print "L'EAN se compose de 8 caracteres, 7 chiffres plus une cle de controle.<br>";
@@ -270,10 +337,10 @@ if ($resql) {
 	}
 }
 print "</table>\n";
+print '</div>';
 
 if (empty($conf->use_javascript_ajax)) {
-	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></div>';
-	print '</form>';
+	print $form->buttonsSaveCancel("Save", '');
 }
 
 print "<br>";
@@ -288,6 +355,7 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -303,9 +371,11 @@ if (!isset($_SERVER['WINDIR'])) {
 	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.$conf->global->GENBARCODE_LOCATION.'">';
 	if (!empty($conf->global->GENBARCODE_LOCATION) && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
 		$langs->load("errors");
-		print '<br><font class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</font>';
+		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</span>';
 	}
-	print '</td></tr>';
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '</tr>';
 }
 
 // Module products
@@ -314,7 +384,9 @@ if (!empty($conf->product->enabled)) {
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
 	print $formbarcode->selectBarcodeType($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE, "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
-	print '</td></tr>';
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '</tr>';
 }
 
 // Module thirdparty
@@ -323,10 +395,14 @@ if (!empty($conf->societe->enabled)) {
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';
 	print $formbarcode->selectBarcodeType($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY, "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
-	print '</td></tr>';
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '</tr>';
 }
 
 print "</table>\n";
+print '</div>';
+
 print '<div class="tabsAction">';
 print '<input type="submit" class="button" name="submit_GENBARCODE_BARCODETYPE_THIRDPARTY" value="'.$langs->trans("Modify").'">';
 print "</div>";
@@ -334,71 +410,6 @@ print '</form>';
 
 print '<br>';
 
-
-
-// Select barcode numbering module
-if ($conf->product->enabled) {
-	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
-
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td width="140">'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td>'.$langs->trans("Example").'</td>';
-	print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
-	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
-	print "</tr>\n";
-
-	$dirbarcodenum = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
-
-	foreach ($dirbarcodenum as $dirroot) {
-		$dir = dol_buildpath($dirroot, 0);
-
-		$handle = @opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
-					$file = substr($file, 0, dol_strlen($file) - 4);
-
-					try {
-						dol_include_once($dirroot.$file.'.php');
-					} catch (Exception $e) {
-						dol_syslog($e->getMessage(), LOG_ERR);
-					}
-
-					$modBarCode = new $file();
-
-					print '<tr class="oddeven">';
-					print '<td>'.(isset($modBarCode->name) ? $modBarCode->name : $modBarCode->nom)."</td><td>\n";
-					print $modBarCode->info($langs);
-					print '</td>';
-					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
-
-					if ($conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
-						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
-						print img_picto($langs->trans("Activated"), 'switch_on');
-						print '</a></td>';
-					} else {
-						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
-						print img_picto($langs->trans("Disabled"), 'switch_off');
-						print '</a></td>';
-					}
-					print '<td class="center">';
-					$s = $modBarCode->getToolTip($langs, null, -1);
-					print $form->textwithpicto('', $s, 1);
-					print '</td>';
-					print "</tr>\n";
-				}
-			}
-			closedir($handle);
-		}
-	}
-	print "</table>\n";
-}
-
-//print '</form>';
-
-print "<br>";
 
 // End of page
 llxFooter();

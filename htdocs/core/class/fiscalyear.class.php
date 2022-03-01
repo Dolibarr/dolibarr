@@ -147,9 +147,9 @@ class Fiscalyear extends CommonObject
 		$sql .= ", '".$this->db->idate($this->date_start)."'";
 		$sql .= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", 0";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -291,7 +291,7 @@ class Fiscalyear extends CommonObject
 
 		$url = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$this->id;
 
-		if (!$user->rights->accounting->fiscalyear->write) {
+		if (empty($user->rights->accounting->fiscalyear->write)) {
 			$option = 'nolink';
 		}
 

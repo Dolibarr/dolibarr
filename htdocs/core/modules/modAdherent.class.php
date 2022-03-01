@@ -349,7 +349,7 @@ class modAdherent extends DolibarrModules
 			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -397,9 +397,7 @@ class modAdherent extends DolibarrModules
 		if (!empty($conf->societe->enabled)) {
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
-		//$this->import_run_sql_after_array[$r] = array(
-		//	'UPDATE '.MAIN_DB_PREFIX."adherent as a SET a.ref = a.rowid WHERE a.ref LIKE '(PROV%)'"
-		//);
+		$this->import_updatekeys_array[$r] = array('a.ref'=>'Member Ref', 'a.login'=>'Login');
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
@@ -456,8 +454,8 @@ class modAdherent extends DolibarrModules
 		}*/
 
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".$conf->entity,
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".$conf->entity.")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

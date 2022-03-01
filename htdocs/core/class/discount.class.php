@@ -434,7 +434,7 @@ class DiscountAbsolute
 				$sql .= " SET fk_facture = ".((int) $rowidinvoice);
 			}
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::link_to_invoice", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -470,7 +470,7 @@ class DiscountAbsolute
 		} else {
 			$sql .= " SET fk_facture_line = NULL, fk_facture = NULL";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::unlink_invoice", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -516,10 +516,10 @@ class DiscountAbsolute
 			$sql .= " AND rc.fk_user = ".((int) $user->id);
 		}
 		if ($filter) {
-			$sql .= ' AND ('.$filter.')';
+			$sql .= " AND (".$filter.")";
 		}
 		if ($maxvalue) {
-			$sql .= ' AND rc.amount_ttc <= '.price2num($maxvalue);
+			$sql .= ' AND rc.amount_ttc <= '.((float) price2num($maxvalue));
 		}
 
 		$resql = $this->db->query($sql);
@@ -555,12 +555,12 @@ class DiscountAbsolute
 		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
 			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
-			$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
+			$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.((int) $invoice->id);
 			$sql .= ' AND f.type = 3';
 		} elseif ($invoice->element == 'invoice_supplier') {
 			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
-			$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
+			$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.((int) $invoice->id);
 			$sql .= ' AND f.type = 3';
 		} else {
 			$this->error = get_class($this)."::getSumDepositsUsed was called with a bad object as a first parameter";
@@ -596,13 +596,13 @@ class DiscountAbsolute
 		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
 			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
-			$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-			$sql .= ' AND f.type IN ('.$this->db->sanitize($invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE.', '.$invoice::TYPE_SITUATION).')'; // Find discount coming from credit note or excess received
+			$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.((int) $invoice->id);
+			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE.", ".$invoice::TYPE_SITUATION).')'; // Find discount coming from credit note or excess received
 		} elseif ($invoice->element == 'invoice_supplier') {
 			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
-			$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
-			$sql .= ' AND f.type IN ('.$this->db->sanitize($invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE).')'; // Find discount coming from credit note or excess paid
+			$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.((int) $invoice->id);
+			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE).')'; // Find discount coming from credit note or excess paid
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
 			dol_print_error($this->error);
@@ -636,11 +636,11 @@ class DiscountAbsolute
 		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
 			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
-			$sql .= ' WHERE rc.fk_facture IS NULL AND rc.fk_facture_source = '.$invoice->id;
+			$sql .= ' WHERE rc.fk_facture IS NULL AND rc.fk_facture_source = '.((int) $invoice->id);
 		} elseif ($invoice->element == 'invoice_supplier') {
 			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
-			$sql .= ' WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = '.$invoice->id;
+			$sql .= ' WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = '.((int) $invoice->id);
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
 			dol_print_error($this->error);

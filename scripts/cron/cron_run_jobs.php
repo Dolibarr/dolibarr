@@ -105,6 +105,11 @@ if ($key != $conf->global->CRON_KEY) {
 	exit(-1);
 }
 
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-only mode\n";
+	exit(-1);
+}
+
 // If param userlogin is reserved word 'firstadmin'
 if ($userlogin == 'firstadmin') {
 	$sql = 'SELECT login, entity from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';

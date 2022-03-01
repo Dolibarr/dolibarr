@@ -26,18 +26,20 @@ ShowLogOfMovementIfLot=Visa statestik för sammansatt produkt/parti
 StockDetailPerBatch=Detaljlager för parti
 SerialNumberAlreadyInUse=Serienummer %s är redan använt för produkt %s
 TooManyQtyForSerialNumber=Du kan bara ha en produkt %s för serienummer %s
-ManageLotMask=Custom mask
-CustomMasks=Option to define a different numbering mask for each product
-BatchLotNumberingModules=Numbering rule for automatic generation of lot number
-BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
-QtyToAddAfterBarcodeScan=Antal att lägga till för varje streckkod/parti/serienummer skannat
+ManageLotMask=Anpassad mask
+CustomMasks=Möjlighet att definiera en annan numreringsmask för varje produkt
+BatchLotNumberingModules=Numreringsregel för automatisk generering av partinummer
+BatchSerialNumberingModules=Numreringsregel för automatisk generering av serienummer (för produkter med egendom 1 unikt parti / serienummer för varje produkt)
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Livslängd (i dagar)
 EndOfLife=Livslängd
 ManufacturingDate=Tillverkningsdatum
 DestructionDate=Raseringsdatum
 FirstUseDate=Första användningsdatum
 QCFrequency=Kvalitetskontrollsperiod (i dagar)
-
+ShowAllLots=Show all lots
+HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Ej tillgänglig
-InWorkingOrder=In working order
+InWorkingOrder=I fungerande skick
+ToReplace=Replace

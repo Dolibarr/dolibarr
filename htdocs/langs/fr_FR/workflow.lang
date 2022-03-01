@@ -13,13 +13,18 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commer
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée(s) à la validation de la facture client (et si le montant de la facture est le même que le montant total des commandes liées)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) à Facturée quand une facture client est passée à Payé (et si le montant de la facture est identique à la somme des commandes sources)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer la commande source à expédiée à la validation d'une expédition (et si les quantités expédiées dans le bon d'expédition sont les même que dans la commande mise à jour)
-# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classer la commande client source liée à expédiée lorsqu'une expédition est fermée (et si la quantité expédiée par toutes les expéditions est la même que dans la commande à mettre à jour)
+# Autoclassify purchase proposal
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classer la ou les proposition(s) commerciale(s) fournisseur sources facturées quand une facture fournisseur est validée (et si le montant de la facture est le même que le total des propositions sources liées)
+# Autoclassify purchase order
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classer la ou les commande(s) fournisseur(s) de source(s) à facturée(s) lorsque la facture fournisseur est validée (et si le montant de la facture est le même que le montant total des commandes liées)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classer le bon de commande source liée comme reçu lorsqu'une réception est validée (et si la quantité reçue par toutes les réceptions est la même que dans le bon de commande à mettre à jour)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classer le bon de commande source lié comme reçu lorsqu'une réception est clôturée (et si la quantité reçue par toutes les réceptions est la même que dans le bon de commande à mettre à jour)
+# Autoclassify purchase invoice
 descWORKFLOW_BILL_ON_RECEPTION=Classer les réceptions en "facturées" lorsqu'une commande fournisseur liée est validée
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Fermer toutes les interventions liées au ticket lorsqu'un ticket est fermé
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classer l'expédition source liée comme fermée lorsque la facture client est validée

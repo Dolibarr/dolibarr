@@ -137,12 +137,15 @@ if ($action == 'presend') {
 		$formmail->fromname = '';
 		$formmail->fromtype = 'special';
 	}
+	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+
+
 
 	$formmail->trackid = $trackid;
-	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) {	// If bit 2 is set
-		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
-	}
 	$formmail->withfrom = 1;
 
 	// Fill list of recipient with email inside <>.
@@ -207,6 +210,9 @@ if ($action == 'presend') {
 	}
 
 	// Make substitution in email content
+	if ($object) {
+		$formmail->setSubstitFromObject($object, $langs);
+	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated

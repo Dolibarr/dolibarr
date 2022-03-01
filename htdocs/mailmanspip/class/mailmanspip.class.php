@@ -232,7 +232,7 @@ class MailmanSpip
 				$mydb = $this->connectSpip();
 
 				if ($mydb) {
-					$query = "DELETE FROM spip_auteurs WHERE login='".$object->login."'";
+					$query = "DELETE FROM spip_auteurs WHERE login = '".$mydb->escape($object->login)."'";
 
 					$result = $mydb->query($query);
 
@@ -271,18 +271,18 @@ class MailmanSpip
 				$mydb = $this->connectSpip();
 
 				if ($mydb) {
-					$query = "SELECT login FROM spip_auteurs WHERE login='".$object->login."'";
+					$query = "SELECT login FROM spip_auteurs WHERE login = '".$mydb->escape($object->login)."'";
 
 					$result = $mydb->query($query);
 
 					if ($result) {
 						if ($mydb->num_rows($result)) {
 							// nous avons au moins une reponse
-							$mydb->close($result);
+							$mydb->close();
 							return 1;
 						} else {
 							// nous n'avons pas de reponse => n'existe pas
-							$mydb->close($result);
+							$mydb->close();
 							return 0;
 						}
 					} else {

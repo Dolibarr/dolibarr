@@ -456,7 +456,7 @@ class FormAccounting extends Form
 			$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 			$sql .= " WHERE entity IN (".getEntity('societe').")";
-			$sql .= " AND client IN (1,3) OR fournisseur = 1";
+			$sql .= " AND (client IN (1,3) OR fournisseur = 1)";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {

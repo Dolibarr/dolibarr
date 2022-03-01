@@ -57,13 +57,14 @@ class FormOther
 	}
 
 	/**
-	 * Return HTML code for scanner tool.
+	 * Return the HTML code for scanner tool.
 	 * This must be called into an existing <form>
 	 *
-	 * @param	string	$jstoexecuteonadd		Name of javascript function to call
+	 * @param	string	$jstoexecuteonadd	Name of javascript function to call once the barcode scanning session is complete and user has click on "Add".
+	 * @param	string	$mode				'all' (both product and lot barcode) or 'product' (product barcode only) or 'lot' (lot number only)
 	 * @return	string						HTML component
 	 */
-	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodscannerjs')
+	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodescannerjs', $mode = 'all')
 	{
 		global $langs;
 
@@ -71,14 +72,23 @@ class FormOther
 
 		$out .= '<!-- Popup for mass barcode scanning -->'."\n";
 		$out .= '<div class="div-for-modal-topright" style="padding: 15px">';
-		$out .= '<center><strong>Barcode scanner tool...</strong></center><br>';
+		$out .= '<center>'.img_picto('', 'barcode', 'class="pictofixedwidth"').'<strong>Barcode scanner tool...</strong></center><br>';
 
-		$out .= '<input type="checkbox" name="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
-		$out .= '<input type="checkbox" name="barcodeforproduct"> Scan a product barcode<br>';
-		$out .= '<input type="checkbox" name="barcodeforlotserial"> Scan a product lot or serial number<br>';
-
-		$out .= $langs->trans("QtyToAddAfterBarcodeScan").' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
-		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
+		if ($mode == 'product') {
+			$out .= '<input type="hidden" name="barcodemode" value="barcodeforproduct" id="barcodeforproduct">';
+		} elseif ($mode == 'lot') {
+			$out .= '<input type="hidden" name="barcodemode" value="barcodeforlotserial" id="barcodeforlotserial">';
+		} else {	// $mode = 'all'
+			$out .= '<input type="radio" name="barcodemode" value="barcodeforautodetect" id="barcodeforautodetect" checked="checked"> <label for="barcodeforautodetect">Autodetect if we scan a product barcode or a lot/serial barcode</label><br>';
+			$out .= '<input type="radio" name="barcodemode" value="barcodeforproduct" id="barcodeforproduct"> <label for="barcodeforproduct">Scan a product barcode</label><br>';
+			$out .= '<input type="radio" name="barcodemode" value="barcodeforlotserial" id="barcodeforlotserial"> <label for="barcodeforlotserial">Scan a product lot or serial number</label><br>';
+		}
+		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
+		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
+		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
+		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$out .= '<br>';
+		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.dol_escape_htmltag($langs->trans("ScanOrTypeOrCopyPasteYouBarCode")).'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
 
@@ -88,13 +98,23 @@ class FormOther
 		*/
 		$out .= '<br>';
 		$out .= '<center>';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="addscan" value="'.$langs->trans("Add").'">';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id ="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.dol_escape_htmltag($langs->trans("CloseWindow")).'">';
+		$out .= '</center>';
 		$out .= '<br>';
+		$out .= '<div type="text" id="scantoolmessage" class="scantoolmessage ok nopadding"></div>';
 
-		$out .= '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
-
-		// TODO Add call of javascript $jstoexecuteonadd so each scan will add qty into the inventory page + an ajax save.
+		$out .= '<script>';
+		$out .= 'jQuery("#barcodeforautodetect, #barcodeforproduct, #barcodeforlotserial").click(function(){';
+		$out .= 'console.log("select choice");';
+		$out .= 'jQuery("#scantoolmessage").text("");';
+		$out .= '});'."\n";
+		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
+			console.log("We call js to execute '.dol_escape_js($jstoexecuteonadd).'");
+			'.dol_escape_js($jstoexecuteonadd).'();
+			return false;	/* We want to stay on the scan tool */
+		})';
+		$out .= '</script>';
 
 		$out .= '</center>';
 		$out .= '</div>';
@@ -453,15 +473,6 @@ class FormOther
 		$langs->load('users');
 
 		$out = '';
-		// Enhance with select2
-		if ($conf->use_javascript_ajax) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-
-			$comboenhancement = ajax_combobox($htmlname);
-			if ($comboenhancement) {
-				$out .= $comboenhancement;
-			}
-		}
 
 		$reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectSalesRep', array(), $this, $action);
 
@@ -539,7 +550,6 @@ class FormOther
 		$resql_usr = $this->db->query($sql_usr);
 		if ($resql_usr) {
 			$userstatic = new User($this->db);
-			$showstatus = 1;
 
 			while ($obj_usr = $this->db->fetch_object($resql_usr)) {
 				$userstatic->id = $obj_usr->rowid;
@@ -602,6 +612,16 @@ class FormOther
 		}
 
 		$out .= '</select>';
+
+		// Enhance with select2
+		if ($conf->use_javascript_ajax) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+
+			$comboenhancement = ajax_combobox($htmlname);
+			if ($comboenhancement) {
+				$out .= $comboenhancement;
+			}
+		}
 
 		return $out;
 	}
@@ -825,6 +845,7 @@ class FormOther
 				$out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
 				$out .= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
+					var originalhex = null;
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
 		                window: {
 		                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
@@ -854,18 +875,33 @@ class FormOther
 		                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
 		                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
 		                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
-		                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
+		                      ok: \''.dol_escape_js($langs->trans("Validate")).'\',
 		                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
 		                    }
 		                  }
 				        },
-						function(color, context) { console.log("close"); },
-						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex);';
+						function(color, context) { console.log("close color selector"); },
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
 				if ($setpropertyonselect) {
-					$out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.$setpropertyonselect.'\', \'#\'+hex);';
+					$out .= 'if (originalhex == null) {';
+					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
+					$out .= '   console.log("original color is saved into originalhex = "+originalhex);';
+					$out .= '}';
+					$out .= 'if (hex != null) {';
+					$out .= '	document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', \'#\'+hex);';
+					$out .= '}';
 				}
-						$out .= '},
-						function(color, context) { console.log("cancel"); }
+				$out .= '},
+						function(color, context) {
+							console.log("cancel selection of color");';
+				if ($setpropertyonselect) {
+					$out .= 'if (originalhex != null) {
+								console.log("Restore old color "+originalhex);
+								document.documentElement.style.setProperty(\'--'.dol_escape_js($setpropertyonselect).'\', originalhex);
+							}';
+				}
+				$out .= '
+						}
 					);
 				 });
 	             </script>';
@@ -903,11 +939,11 @@ class FormOther
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Creation d'un icone de couleur
+	 *	Creae an image for color
 	 *
-	 *	@param	string	$color		Couleur de l'image
-	 *	@param	string	$module 	Nom du module
-	 *	@param	string	$name		Nom de l'image
+	 *	@param	string	$color		Color of image
+	 *	@param	string	$module 	Name of module
+	 *	@param	string	$name		Name of image
 	 *	@param	int		$x 			Largeur de l'image en pixels
 	 *	@param	int		$y      	Hauteur de l'image en pixels
 	 *	@return	void
@@ -1192,7 +1228,7 @@ class FormOther
 
 		// Javascript code for dynamic actions
 		if (!empty($conf->use_javascript_ajax)) {
-			$selectboxlist .= '<script type="text/javascript" language="javascript">
+			$selectboxlist .= '<script type="text/javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
@@ -1379,12 +1415,13 @@ class FormOther
 
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || $selected == $obj->$keyfield) {
-						print '<option value="'.$obj->$keyfield.'" selected>';
+					if ($selected == $obj->rowid || $selected == $obj->{$keyfield}) {
+						print '<option value="'.$obj->{$keyfield}.'" selected>';
 					} else {
-						print '<option value="'.$obj->$keyfield.'">';
+						print '<option value="'.$obj->{$keyfield}.'">';
 					}
-					print $obj->$labelfield;
+					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != ($dictionarytable.$obj->{$labelfield}) ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
+					print $label;
 					print '</option>';
 					$i++;
 				}

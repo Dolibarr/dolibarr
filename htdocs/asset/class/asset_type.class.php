@@ -126,7 +126,7 @@ class AssetType extends CommonObject
 		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
 		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
 		$sql .= ", '".$this->db->escape($this->note)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog("Asset_type::create", LOG_DEBUG);
@@ -359,11 +359,7 @@ class AssetType extends CommonObject
 				if (!array_key_exists($obj->rowid, $ret)) {
 					if ($mode < 2) {
 						$assetstatic = new Asset($this->db);
-						if ($mode == 1) {
-							$assetstatic->fetch($obj->rowid, '', '', '', false, false);
-						} else {
-							$assetstatic->fetch($obj->rowid);
-						}
+						$assetstatic->fetch($obj->rowid);
 						$ret[$obj->rowid] = $assetstatic;
 					} else {
 						$ret[$obj->rowid] = $obj->rowid;

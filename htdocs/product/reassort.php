@@ -46,9 +46,10 @@ $toolowstock = GETPOST('toolowstock');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id", 'int');
+$sbarcode = GETPOST("sbarcode", 'int');
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) {
 	$page = 0;
@@ -146,11 +147,11 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 }
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
 }
 if ($sall) {
@@ -267,7 +268,7 @@ if ($resql) {
 	if ($search_sale) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
 	if ($toolowstock) {
@@ -344,7 +345,7 @@ if ($resql) {
 	if ($toolowstock) {
 		$param .= "&toolowstock=".urlencode($toolowstock);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
 
