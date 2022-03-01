@@ -107,19 +107,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 		// Print line tr of extra field
 		if ($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra] == 'separate') {
-			$extrafields_collapse_num = '';
-			$extrafield_param = $extrafields->attributes[$object->table_element]['param'][$tmpkeyextra];
-			if (!empty($extrafield_param) && is_array($extrafield_param)) {
-				$extrafield_param_list = array_keys($extrafield_param['options']);
-
-				if (count($extrafield_param_list) > 0) {
-					$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-
-					if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-						$extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$tmpkeyextra];
-					}
-				}
-			}
+			$extrafields_collapse_num = $tmpkeyextra;
 
 			print $extrafields->showSeparator($tmpkeyextra, $object);
 

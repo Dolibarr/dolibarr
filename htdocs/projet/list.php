@@ -699,7 +699,7 @@ if ($search_opp_percent != '') {
 if ($search_public != '') {
 	$param .= '&search_public='.urlencode($search_public);
 }
-if ($search_project_user != '') {
+if ($search_project_user > 0) {
 	$param .= '&search_project_user='.urlencode($search_project_user);
 }
 if ($search_project_contact != '') {

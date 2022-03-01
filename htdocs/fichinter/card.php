@@ -1342,6 +1342,23 @@ if ($action == 'create') {
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					print dol_htmlentitiesbr($objp->description);
 
+					$objectline = new FichinterLigne($db);
+					$objectline->fetch($objp->rowid);
+					$objectline->fetch_optionals();
+
+					$extrafields->fetch_name_optionals_label($objectline->table_element);
+
+					if (!empty($extrafields)) {
+						$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+						if (!empty($temps)) {
+							print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+							print $temps;
+							print '</div>';
+						}
+					}
+
+					print '</td>';
+
 					// Date
 					print '<td class="center" width="150">'.(empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR) ?dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
 
@@ -1378,15 +1395,6 @@ if ($action == 'create') {
 					}
 
 					print '</tr>';
-
-					$line = new FichinterLigne($db);
-					$line->fetch($objp->rowid);
-
-					$extrafields->fetch_name_optionals_label($line->table_element);
-
-					$line->fetch_optionals();
-
-					print $line->showOptionals($extrafields, 'view', array('colspan'=>5));
 				}
 
 				// Line in update mode
@@ -1405,6 +1413,22 @@ if ($action == 'create') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
 					$doleditor->Create();
+
+					$objectline = new FichinterLigne($db);
+					$objectline->fetch($objp->rowid);
+					$objectline->fetch_optionals();
+
+					$extrafields->fetch_name_optionals_label($objectline->table_element);
+
+					if (!empty($extrafields)) {
+						$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
+						if (!empty($temps)) {
+							print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+							print $temps;
+							print '</div>';
+						}
+					}
+
 					print '</td>';
 
 					// Date d'intervention
@@ -1431,14 +1455,6 @@ if ($action == 'create') {
 					print '<input type="submit" class="button buttongen marginbottomonly button-save" name="save" value="'.$langs->trans("Save").'">';
 					print '<input type="submit" class="button buttongen marginbottomonly button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>'."\n";
-
-					$line = new FichinterLigne($db);
-					$line->fetch($objp->rowid);
-
-					$extrafields->fetch_name_optionals_label($line->table_element);
-					$line->fetch_optionals();
-
-					print $line->showOptionals($extrafields, 'edit', array('colspan'=>5));
 				}
 
 				$i++;
@@ -1481,6 +1497,20 @@ if ($action == 'create') {
 					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
 					$doleditor->Create();
 				}
+
+				$objectline = new FichinterLigne($db);
+				$extrafields->fetch_name_optionals_label($objectline->table_element);
+
+				if (is_object($objectline)) {
+					$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
+
+					if (!empty($temps)) {
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
+						print $temps;
+						print '</div>';
+					}
+				}
+
 				print '</td>';
 
 				// Date intervention
@@ -1512,14 +1542,6 @@ if ($action == 'create') {
 
 				print '<td class="center" valign="middle" colspan="3"><input type="submit" class="button button-add" value="'.$langs->trans('Add').'" name="addline"></td>';
 				print '</tr>';
-
-				//Line extrafield
-
-				$lineadd = new FichinterLigne($db);
-
-				$extrafields->fetch_name_optionals_label($lineadd->table_element);
-
-				print $lineadd->showOptionals($extrafields, 'edit', array('colspan'=>5));
 
 				if (!$num) {
 					print '</table>';

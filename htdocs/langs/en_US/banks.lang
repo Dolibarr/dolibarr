@@ -184,3 +184,4 @@ NoRecordFoundIBankcAccount=No record found in bank account. Commonly, this occur
 AlreadyOneBankAccount=Already one bank account defined
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=SEPA transfer: 'Payment Type' at 'Credit Transfer' level
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=SEPA XML: PaymentTypeInformation is mandatory and can now be placed at CreditTransferTransactionInformation level (instead of Payment level). We strongly recommend to place PaymentTypeInformation at Payment level, as all banks will not necessarily accept it at CreditTransferTransactionInformation level. Contact your bank before placing PaymentTypeInformation at CreditTransferTransactionInformation level.
+ToCreateRelatedRecordIntoBank=To create missing related bank record
