@@ -5123,6 +5123,38 @@ class Facture extends CommonInvoice
 			return $error;
 		}
 	}
+
+	/**
+	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.
+	 * @param bool 	$strict		compare precise time or only days.
+	 * @return boolean
+	 */
+	public function willBeLastOfSameType()
+	{
+		// get date of last validated invoices of same type
+		$sql  = 'SELECT datef';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture';
+		$sql .= ' WHERE type = ' . (int) $this->type ;
+		$sql .= ' AND date_valid IS NOT NULL';
+		$sql .= ' ORDER BY datef DESC LIMIT 1';
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			// compare with current validation date
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$last_date = $this->db->jdate($obj->datef);
+				$invoice_date = $this->date;
+
+				return [$invoice_date >= $last_date, $last_date];
+			} else {
+				// element is first of type to be validated
+				return [true];
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+	}
 }
 
 /**
