@@ -165,7 +165,7 @@ if ($action == 'other')
 
 		if ($resql < 0)
 		{
-			dol_syslog( $db->lasterrno(),LOG_ERR);
+			dol_syslog($db->lasterrno(), LOG_ERR);
 		}
 	}
 }
