@@ -1167,3 +1167,6 @@ CanceledHidden=Canceled hidden
 CanceledShown=Canceled shown
 Terminate=Terminate
 Terminated=Terminated
+LinkNotFound= Link was not found
+ConfirmDeleteLink = Confirm link delete ?
+DeleteLink = Deleting link

@@ -829,6 +829,7 @@ class FormFile
 
 		// Get list of files
 		if (!empty($filedir)) {
+			/** @var Link[] $link_list */
 			$link_list = array();
 			if (is_object($object)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -986,8 +987,14 @@ class FormFile
 					$out .= '<td class="right">';
 					$out .= dol_print_date($file->datea, 'dayhour');
 					$out .= '</td>';
+					$out .= '<td> </td>';
 					if ($delallowed || $printer || $morepicto) {
-						$out .= '<td></td>';
+						$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
+						$out .= '<td class="right">';
+						$out .= '<a class="reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action=remove_link&token='.newToken().'&linkid='.urlencode($file->id);
+						$out .= ($param ? '&'.$param : '');
+						$out .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+						$out .= '</td>';
 					}
 					$out .= '</tr>'."\n";
 				}
