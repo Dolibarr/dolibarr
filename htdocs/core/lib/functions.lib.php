@@ -8318,12 +8318,13 @@ function verifCond($strToEvaluate)
  * Replace eval function to add more security.
  * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
- * @param 	string	$s				String to evaluate
- * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
- * @param   int     $hideerrors     1=Hide errors
- * @return	mixed					Nothing or return result of eval
+ * @param 	string	$s					String to evaluate
+ * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
+ * @param   int     $hideerrors     	1=Hide errors
+ * @param	string	$onlysimplestring	Accept only simple string with char 'a-z0-9\s$_->&|=';
+ * @return	mixed						Nothing or return result of eval
  */
-function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
+function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only global variables can be changed by eval function and returned to caller
 	global $db, $langs, $user, $conf, $website, $websitepage;
@@ -8335,9 +8336,18 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
 	global $soc; // For backward compatibility
 
-	// Replace dangerous char (used for RCE), we allow only PHP variable testing.
+	// Test dangerous char (used for RCE), we allow only PHP variable testing.
+	if ($onlysimplestring == '1') {
+		//print preg_quote('$_->&|', '/');
+		if (preg_match('/[^a-z0-9\s'.preg_quote('$_->&|=', '/').']/i', $s)) {
+			return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+		}
+	}
 	if (strpos($s, '`') !== false) {
-		return 'Bad string syntax to evaluate: '.$s;
+		return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
+	}
+	if (strpos($s, '.') !== false) {
+		return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
 	}
 
 	// We block use of php exec or php file functions
@@ -8345,7 +8355,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
 
 	$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 
 	$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
