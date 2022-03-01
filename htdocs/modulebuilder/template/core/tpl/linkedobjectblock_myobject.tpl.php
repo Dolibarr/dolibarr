@@ -22,7 +22,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE mymodule/core/tpl/linkedopjectblock_myobject.tpl.php  -->\n";
+print "<!-- BEGIN PHP TEMPLATE mymodule/core/tpl/linkedobjectblock_myobject.tpl.php  -->\n";
 
 
 global $user;
