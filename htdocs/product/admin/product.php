@@ -163,7 +163,7 @@ if ($action == 'other')
 		$sql_test = "SELECT count(packaging) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
 		$resql = $db->query($sql_test);
 
-		if ($resql) // if the field does not exist, we create it
+		if ($resql < 0)
 		{
 			dol_syslog( $db->lasterrno(),LOG_ERR);
 		}
