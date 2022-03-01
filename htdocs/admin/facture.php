@@ -225,6 +225,12 @@ if ($action == 'updateMask') {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
+} elseif ($action == 'set_INVOICE_CHECK_POSTERIOR_DATE') {
+	$check_posterior_date = GETPOST('INVOICE_CHECK_POSTERIOR_DATE', 'int');
+	$res = dolibarr_set_const($db, 'INVOICE_CHECK_POSTERIOR_DATE', $check_posterior_date, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 
@@ -760,6 +766,25 @@ print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
+
+
+print '<tr class="oddeven"><td>'.$langs->trans("InvoiceCheckPosteriorDate"). '&nbsp;' ;
+print $form->textwithpicto('', $langs->trans("InvoiceCheckPosteriorDateHelp"), 1, 'help') . '</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
+} else {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'" />';
+	print '<input type="hidden" name="action" value="set_INVOICE_CHECK_POSTERIOR_DATE" />';
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("INVOICE_CHECK_POSTERIOR_DATE", $arrval, $conf->global->INVOICE_CHECK_POSTERIOR_DATE);
+}
+print '</td>';
+print '<td class="center">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
+print '</form>';
+print '</td></tr>';
 
 print '</table>';
 print '</div>';
