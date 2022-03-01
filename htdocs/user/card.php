@@ -1577,10 +1577,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Accountancy code
-			if (!empty($conf->accounting->enabled)) {
-				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>'.$object->accountancy_code.'</td></tr>';
-			}
+			//if (!empty($conf->accounting->enabled)) {
+			//	print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+			//	print '<td>'.$object->accountancy_code.'</td></tr>';
+			//}
 
 			print '</table>';
 

@@ -502,6 +502,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '</tr>';
 	}
 
+	// Accountancy code
+	if (!empty($conf->accounting->enabled)) {
+		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+		print '<td>'.$object->accountancy_code.'</td></tr>';
+	}
+
 	print '</table>';
 
 	print '</div><div class="fichehalfright">';
