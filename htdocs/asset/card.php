@@ -284,9 +284,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			array('type' => 'checkbox', 'name' => 'disposal_subject_to_vat', 'label' => $langs->trans("AssetDisposalSubjectToVat"), 'value' => $disposal_subject_to_vat),
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('AssetDisposal'), $langs->trans('AssetConfirmDisposalAsk', $object->ref . ' - ' . $object->label), 'confirm_disposal', $formquestion, 'yes', 1);
-	}
-	// Re-open
-	elseif ($action == 'reopen') {
+	} elseif ($action == 'reopen') {
+		// Re-open
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('AssetConfirmReOpenAsk', $object->ref), 'confirm_reopen', $formquestion, 'yes', 1);

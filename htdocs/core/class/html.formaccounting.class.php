@@ -439,6 +439,7 @@ class FormAccounting extends Form
 	 * @param int|string    $showempty      Add an empty field
 	 * @param string   		$morecss        More css
 	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
 	 * @return string       	   			String with HTML select
 	 */
 	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '', $labelhtmlname = '')
