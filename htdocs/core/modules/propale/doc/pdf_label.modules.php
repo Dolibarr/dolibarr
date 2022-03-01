@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
 /**
- *	Class to generate PDF proposal GEST-MAG
+ *	Class to generate PDF Thirdparty
  */
 class pdf_label extends ModeleThirdPartyDoc
 {
