@@ -134,6 +134,9 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_DOCUMENTS_LOGO_HEIGHT')) {
 		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
 	}
+	if (GETPOSTISSET('MAIN_PDF_DATE_TEXT')) {
+		dolibarr_set_const($db, "MAIN_PDF_DATE_TEXT", GETPOST("MAIN_PDF_DATE_TEXT", 'int'), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('MAIN_INVERT_SENDER_RECIPIENT')) {
 		dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", GETPOST("MAIN_INVERT_SENDER_RECIPIENT"), 'chaine', 0, '', $conf->entity);
 	}
@@ -486,8 +489,18 @@ if (!empty($conf->projet->enabled)) {
 	print '</td></tr>';
 }
 
-//
+// Display date
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_DATE_TEXT");
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_DATE_TEXT');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_DATE_TEXT", $arrval, $conf->global->MAIN_PDF_DATE_TEXT);
+}
+print '</td></tr>';
 
+// Show customer code
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_CUSTOMER_CODE");
 print '</td><td>';
 if ($conf->use_javascript_ajax) {
