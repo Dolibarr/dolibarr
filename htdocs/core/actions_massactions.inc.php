@@ -1213,7 +1213,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		if (!empty($toselect) && !empty($conf->global->INVOICE_CHECK_POSTERIOR_DATE)) {
 			// order $toselect by date
 			$sql  = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' WHERE rowid IN ('.$db->escape(implode(', ', $toselect)).')';
+			$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $toselect)).')';
 			$sql .= ' ORDER BY datef';
 
 			$resql = $db->query($sql);
