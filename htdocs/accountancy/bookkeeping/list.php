@@ -682,13 +682,13 @@ if ($action == 'export_file') {
 		'name' => 'notifiedexportdate',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedExportDate'),
-		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
+		'value' => (empty($conf->global->ACCOUNTING_DEFAULT_NOTIFIED_EXPORT_DATE) ? false : true),
 	);
 	$form_question['notifiedvalidationdate'] = array(
 		'name' => 'notifiedvalidationdate',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedValidationDate'),
-		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) ? 'false' : 'true'),
+		'value' => (empty($conf->global->ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE) ? false : true),
 	);
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
