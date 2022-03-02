@@ -330,7 +330,7 @@ class DolEditor
         					var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 							if (aceEditor) {
 								var cursorPos = aceEditor.getCursorPosition();
-								console.log(cursorPos);
+								//console.log(cursorPos);
 								if (cursorPos) {
 									jQuery("#'.$this->htmlname.'_x").val(cursorPos.column);
 									jQuery("#'.$this->htmlname.'_y").val(cursorPos.row);
@@ -340,6 +340,7 @@ class DolEditor
 								jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
 								/*if (jQuery("#'.$this->htmlname.'").html().length > 0) return true;
 								else return false;*/
+								return true;
 							} else {
 								console.log("Failed to retrieve js object ACE from its name");
 								return false;
