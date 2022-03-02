@@ -2674,7 +2674,7 @@ class Facture extends CommonInvoice
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
 			$last_of_type = $this->willBeLastOfSameType();
 			if (!$last_of_type[0]) {
-				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref , dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
+				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref, dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
 				return -1;
 			}
 		}
@@ -5133,7 +5133,6 @@ class Facture extends CommonInvoice
 
 	/**
 	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.
-	 * @param bool 	$strict		compare precise time or only days.
 	 * @return boolean
 	 */
 	public function willBeLastOfSameType()
