@@ -160,3 +160,28 @@ if ($action == 'remove_file' && $permissiontoadd) {
 		setEventMessages('BugFoundVarUploaddirnotDefined', null, 'errors');
 	}
 }
+
+if ($action == 'remove_link') {
+	$form = new Form($db);
+	$delayedhtmlcontent .= $form->formconfirm(
+		$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&linkid=' . GETPOST('linkid', 'int') . (empty($param) ? '' : $param),
+		$langs->trans('DeleteLink'),
+		$langs->trans('ConfirmDeleteLink'),
+		'confirm_remove_link',
+		'',
+		'',
+		1
+	);
+}
+
+if ($action == 'confirm_remove_link') {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$link = new Link($db);
+	$res = $link->fetch(GETPOST('linkid', 'int'));
+	var_dump($res, $link->error, $link->errors);
+	if ($res > 0) {
+		$link->delete($user);
+	} else {
+		setEventMessage($langs->trans("LinkNotFound"), 'errors');
+	}
+}
