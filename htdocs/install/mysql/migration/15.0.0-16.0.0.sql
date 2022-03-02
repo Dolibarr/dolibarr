@@ -273,3 +273,6 @@ ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER dom
 
 -- Set default ticket type to OTHER if no default exists
 UPDATE llx_c_ticket_type SET use_default=1 WHERE code='OTHER' AND NOT EXISTS(SELECT * FROM (SELECT * FROM llx_c_ticket_type) AS t WHERE use_default=1);
+
+ALTER TABLE llx_user ADD COLUMN ref_employee varchar(50) DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN national_registration_number varchar(50) DEFAULT NULL;

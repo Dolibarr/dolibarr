@@ -247,6 +247,8 @@ if (empty($reshook)) {
 			$object->civility_code = GETPOST("civility_code", 'aZ09');
 			$object->lastname = GETPOST("lastname", 'alphanohtml');
 			$object->firstname = GETPOST("firstname", 'alphanohtml');
+			$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
+			$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
 			$object->login = GETPOST("login", 'alphanohtml');
 			$object->api_key = GETPOST("api_key", 'alphanohtml');
 			$object->gender = GETPOST("gender", 'aZ09');
@@ -259,6 +261,7 @@ if (empty($reshook)) {
 			$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
+			$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
 
 			if (!empty($conf->socialnetworks->enabled)) {
 				$object->socialnetworks = array();
@@ -402,6 +405,7 @@ if (empty($reshook)) {
 				$object->civility_code = GETPOST("civility_code", 'aZ09');
 				$object->lastname = GETPOST("lastname", 'alphanohtml');
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
+				$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
 				$object->gender = GETPOST("gender", 'aZ09');
 				$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
 				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
@@ -843,6 +847,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	} else {
 		print '<input class="minwidth100 maxwidth150onsmartphone" type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST('firstname', 'alphanohtml')).'">';
 	}
+	print '</td></tr>';
+
+	// Ref remployee
+	print '<tr><td>'.$langs->trans("ref_employee").'</td>';
+	print '<td>';
+	print '<input class="minwidth100 maxwidth150onsmartphone" type="text" name="ref_employee" value="'.dol_escape_htmltag(GETPOST('ref_employee', 'alphanohtml')).'">';
 	print '</td></tr>';
 
 	// Login
@@ -2086,6 +2096,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 			} else {
 				print '<input type="hidden" name="firstname" value="'.$object->firstname.'">';
 				print $object->firstname;
+			}
+			print '</td></tr>';
+
+			// Ref employee
+			print "<tr>".'<td>'.$langs->trans("ref_employee").'</td>';
+			print '<td>';
+			if ($caneditfield && !$object->ldap_sid) {
+				print '<input class="minwidth100" type="text" class="flat" name="ref_employee" value="'.$object->ref_employee.'">';
+			} else {
+				print '<input type="hidden" name="ref_employee" value="'.$object->ref_employee.'">';
+				print $object->ref_employee;
 			}
 			print '</td></tr>';
 

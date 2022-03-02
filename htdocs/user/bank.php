@@ -508,6 +508,19 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<td>'.$object->accountancy_code.'</td></tr>';
 	}
 
+	// Employee Number
+	if (!empty($conf->accounting->enabled)) {
+		print '<tr><td>'.$langs->trans("ref_employee").'</td>';
+		print '<td>'.$object->ref_employee.'</td></tr>';
+	}
+
+	// National registration number
+	if (!empty($conf->accounting->enabled)) {
+		print '<tr><td>'.$langs->trans("NationalRegistrationNumber").'</td>';
+		print '<td>'.$object->national_registration_number.'</td></tr>';
+	}
+
+
 	print '</table>';
 
 	print '</div><div class="fichehalfright">';
