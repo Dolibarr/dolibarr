@@ -28,6 +28,7 @@
 // $permissiontodelete must be defined
 // $backurlforlist must be defined
 // $backtopage may be defined
+// $noback may be defined
 // $triggermodname may be defined
 
 if (!empty($permissionedit) && empty($permissiontoadd)) {
@@ -137,8 +138,11 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
-			header("Location: ".$urltogo);
-			exit;
+
+			if (!empty($noback)) {
+				header("Location: " . $urltogo);
+				exit;
+			}
 		} else {
 			$error++;
 			// Creation KO
@@ -305,8 +309,10 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
-		header("Location: ".$backurlforlist);
-		exit;
+		if (!empty($noback)) {
+			header("Location: " . $backurlforlist);
+			exit;
+		}
 	} else {
 		$error++;
 		if (!empty($object->errors)) {
@@ -349,8 +355,10 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
+		if (!empty($noback)) {
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		}
 	} else {
 		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -488,8 +496,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 				$newid = $result;
 			}
 
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
-			exit;
+			if (!empty($noback)) {
+				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $newid); // Open record of new object
+				exit;
+			}
 		} else {
 			$error++;
 			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
