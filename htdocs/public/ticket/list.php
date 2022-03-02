@@ -653,7 +653,7 @@ if ($action == "view_ticketlist") {
 								}
 								print '>';
 								$tmpkey = 'options_'.$key;
-								print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+								print $extrafields->showOutputField($key, $obj->$tmpkey, '', $object->table_element);
 								print '</td>';
 							}
 						}
