@@ -510,7 +510,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Employee Number
 	if (!empty($conf->accounting->enabled)) {
-		print '<tr><td>'.$langs->trans("ref_employee").'</td>';
+		print '<tr><td>'.$langs->trans("RefEmployee").'</td>';
 		print '<td>'.$object->ref_employee.'</td></tr>';
 	}
 
