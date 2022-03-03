@@ -917,15 +917,13 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		global $leftmenu;	// Used into strings to eval
 
 		$leftmenu = 'AAA';
-		$conf->barcode->enabled = 1;
 		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
 
 		// Same with syntax error
 		$leftmenu = 'XXX';
-		$conf->barcode->enabled = 1;
-		$result=dol_eval('$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
 		print "result = ".$result."\n";
 		$this->assertFalse($result);
 
