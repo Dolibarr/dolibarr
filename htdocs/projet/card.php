@@ -174,10 +174,11 @@ if (empty($reshook))
 			if (!$error && $result > 0)
 			{
 				// Add myself as project leader
-				$typeofcontact = 'PROJECTLEADER';	// TODO If use rename this code in dictionary, the add_contact will generate an error.
+				$typeofcontact = 'PROJECTLEADER';
 				$result = $object->add_contact($user->id, $typeofcontact, 'internal');
-				if ($result < 0)
-				{
+
+				// -3 means type not found (PROJECTLEADER renamed, de-activated or deleted), so don't prevent creation if it has been the case
+				if ($result < 0 && $result != -3) {
 					$langs->load("errors");
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
