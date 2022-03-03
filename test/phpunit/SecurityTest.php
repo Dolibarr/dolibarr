@@ -914,7 +914,16 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
+		global $leftmenu;
+		$leftmenu = 'admintools';
+		$conf->barcode->enabled = 1;
+		$result=dol_eval('$conf->barcode->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)', 1, 0, '2');
+		print "result = ".$result."\n";
+		$this->assertTrue($result);
+
+
 		// Case with param onlysimplestring = 1
+
 		$result=dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
 		print "result = ".$result."\n";
 		$this->assertFalse($result);

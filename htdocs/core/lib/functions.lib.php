@@ -8167,7 +8167,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
  * Verify if condition in string is ok or not
  *
  * @param 	string		$strToEvaluate	String with condition to check
- * @return 	boolean						True or False. Note: It returns also True if $strToEvaluate is ''
+ * @return 	boolean						True or False. Note: It returns also True if $strToEvaluate is '' or if error
  */
 function verifCond($strToEvaluate)
 {
@@ -8180,8 +8180,10 @@ function verifCond($strToEvaluate)
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		$str = 'if(!('.$strToEvaluate.')) $rights = false;';
 		dol_eval($str, 0, 1, '2'); // The dol_eval must contains all the global $xxx used into a condition
-		//$rep = dol_eval($strToEvaluate, 1, 1 , '1'); // The dol_eval must contains all the global $xxx used into a condition
+		//var_dump($strToEvaluate);
+		//$rep = dol_eval($strToEvaluate, 1, 1 , '2'); // The dol_eval must contains all the global $xxx used into a condition
 		//$rights = ($rep ? true : false);
+		//var_dump($rights);
 	}
 	return $rights;
 }
@@ -8193,7 +8195,7 @@ function verifCond($strToEvaluate)
  * @param 	string	$s					String to evaluate
  * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s$_->&|=';, 2=Accept also '!?():";'
+ * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s$_->&|=';, 2=Accept also '!?():"\';,/'
  * @return	mixed						Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
@@ -8221,7 +8223,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		}
 	} elseif ($onlysimplestring == '2') {
 		//print preg_quote('$_->&|', '/');
-		if (preg_match('/[^a-z0-9\s'.preg_quote('$_->&|=!?():";', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_->&|=!?():"\';,/', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8231,10 +8233,20 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		}
 	}
 	if (strpos($s, '`') !== false) {
-		return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
+		if ($returnvalue) {
+			return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
+		} else {
+			dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): '.$s);
+			return '';
+		}
 	}
 	if (strpos($s, '.') !== false) {
-		return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
+		if ($returnvalue) {
+			return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
+		} else {
+			dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
+			return '';
+		}
 	}
 
 	// We block use of php exec or php file functions
@@ -8256,7 +8268,12 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 
 	if (strpos($s, '__forbiddenstring__') !== false) {
 		dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
-		return 'Bad string syntax to evaluate: '.$s;
+		if ($returnvalue) {
+			return 'Bad string syntax to evaluate: '.$s;
+		} else {
+			dol_syslog('Bad string syntax to evaluate: '.$s);
+			return '';
+		}
 	}
 
 	//print $s."<br>\n";
