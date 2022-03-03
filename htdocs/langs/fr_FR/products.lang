@@ -408,3 +408,4 @@ mandatoryHelper=Message to the user on the need to enter a start date and an end
 DefaultBOM=Nomenclature par défaut
 DefaultBOMDesc=La nomenclature par défaut qu'il est recommandé d'utiliser pour fabriquer ce produit. Ce champ ne peut être défini que si la nature du produit est '%s'.
 Rank=Classement
+PuttingPricesUpToDate=Mettre à jour les tarifs

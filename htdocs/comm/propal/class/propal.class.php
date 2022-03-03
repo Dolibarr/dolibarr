@@ -1309,11 +1309,12 @@ class Propal extends CommonObject
 	 *      @param	    User	$user		    User making the clone
 	 *		@param		int		$socid			Id of thirdparty
 	 *		@param		int		$forceentity	Entity id to force
+	 *		@param		bool	$update_prices	[=false] Update prices if true
 	 * 	 	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false)
 	{
-		global $conf, $hookmanager;
+		global $conf, $hookmanager, $mysoc;
 
 		dol_include_once('/projet/class/project.class.php');
 
@@ -1358,6 +1359,55 @@ class Propal extends CommonObject
 			// TODO Change product price if multi-prices
 		} else {
 			$objsoc->fetch($object->socid);
+		}
+
+		// update prices
+		if ($update_prices === true) {
+			if ($objsoc->id > 0 && !empty($object->lines)) {
+				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+					// If price per customer
+					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+				}
+
+				foreach ($object->lines as $line) {
+					if ($line->fk_product > 0) {
+						$prod = new Product($this->db);
+						$res = $prod->fetch($line->fk_product);
+						if ($res > 0) {
+							$pu_ht = $prod->price;
+							$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
+							$remise_percent = $objsoc->remise_percent;
+
+							if (!empty($conf->global->PRODUIT_MULTIPRICES) && $objsoc->price_level > 0) {
+								$pu_ht = $prod->multiprices[$objsoc->price_level];
+								if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+									if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
+										$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
+									}
+								}
+							} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+								$prodcustprice = new Productcustomerprice($this->db);
+								$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
+								$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+								if ($result) {
+									// If there is some prices specific to the customer
+									if (count($prodcustprice->lines) > 0) {
+										$pu_ht = price($prodcustprice->lines[0]->price);
+										$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
+										if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+											$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+										}
+									}
+								}
+							}
+
+							$line->subprice = $pu_ht;
+							$line->tva_tx = $tva_tx;
+							$line->remise_percent = $remise_percent;
+						}
+					}
+				}
+			}
 		}
 
 		$object->id = 0;

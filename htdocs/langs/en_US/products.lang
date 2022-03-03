@@ -399,3 +399,4 @@ ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
 DeleteLinkedProduct=Delete the child product linked to the combination
 PMPValue=Weighted average price
 PMPValueShort=WAP
+PuttingPricesUpToDate=Update prices
