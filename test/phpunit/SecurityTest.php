@@ -918,7 +918,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$leftmenu = 'AAA';
 		$conf->barcode->enabled = 1;
-		$result=dol_eval('$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
 
