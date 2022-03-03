@@ -230,6 +230,24 @@ if ($action == 'setpersonal_mobile' && $canadduser && !$cancel) {
 	}
 }
 
+// update ref_employee
+if ($action == 'setref_employee' && $canadduser && !$cancel) {
+	$object->ref_employee = (string) GETPOST('ref_employee', 'alphanohtml');
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// update national_registration_number
+if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
+	$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
 if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 	// update default_c_exp_tax_cat
 	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
@@ -509,17 +527,22 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Employee Number
-	if (!empty($conf->accounting->enabled)) {
-		print '<tr><td>'.$langs->trans("RefEmployee").'</td>';
-		print '<td>'.$object->ref_employee.'</td></tr>';
-	}
+	print '<tr class="nowrap">';
+	print '<td>';
+	print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer);
+	print '</td><td>';
+	print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer, 'string', $object->ref_employee);
+	print '</td>';
+	print '</tr>';
 
 	// National registration number
-	if (!empty($conf->accounting->enabled)) {
-		print '<tr><td>'.$langs->trans("NationalRegistrationNumber").'</td>';
-		print '<td>'.$object->national_registration_number.'</td></tr>';
-	}
-
+	print '<tr class="nowrap">';
+	print '<td>';
+	print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer);
+	print '</td><td>';
+	print $form->editfieldval("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer, 'string', $object->national_registration_number);
+	print '</td>';
+	print '</tr>';
 
 	print '</table>';
 

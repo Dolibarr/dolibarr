@@ -849,18 +849,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 	print '</td></tr>';
 
-	// Ref remployee
-	print '<tr><td>'.$langs->trans("RefEmployee").'</td>';
-	print '<td>';
-	print '<input class="minwidth100 maxwidth150onsmartphone" type="text" name="ref_employee" value="'.dol_escape_htmltag(GETPOST('ref_employee', 'alphanohtml')).'">';
-	print '</td></tr>';
-
-	// National registration number
-	print '<tr><td>'.$langs->trans("NationalRegistrationNumber").'</td>';
-	print '<td>';
-	print '<input class="minwidth100 maxwidth150onsmartphone" type="text" name="national_registration_number" value="'.dol_escape_htmltag(GETPOST('national_registration_number', 'alphanohtml')).'">';
-	print '</td></tr>';
-
 	// Login
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
 	print '<td>';
@@ -2096,28 +2084,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			} else {
 				print '<input type="hidden" name="firstname" value="'.$object->firstname.'">';
 				print $object->firstname;
-			}
-			print '</td></tr>';
-
-			// Ref employee
-			print "<tr>".'<td>'.$langs->trans("RefEmployee").'</td>';
-			print '<td>';
-			if ($caneditfield && !$object->ldap_sid) {
-				print '<input class="minwidth100" type="text" class="flat" name="ref_employee" value="'.$object->ref_employee.'">';
-			} else {
-				print '<input type="hidden" name="ref_employee" value="'.$object->ref_employee.'">';
-				print $object->ref_employee;
-			}
-			print '</td></tr>';
-
-			// National registration number
-			print "<tr>".'<td>'.$langs->trans("NationalRegistrationNumber").'</td>';
-			print '<td>';
-			if ($caneditfield && !$object->ldap_sid) {
-				print '<input class="minwidth100" type="text" class="flat" name="national_registration_number" value="'.$object->national_registration_number.'">';
-			} else {
-				print '<input type="hidden" name="national_registration_number" value="'.$object->national_registration_number.'">';
-				print $object->national_registration_number;
 			}
 			print '</td></tr>';
 
