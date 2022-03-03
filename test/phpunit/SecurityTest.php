@@ -916,8 +916,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		global $leftmenu;
 		$leftmenu = 'admintools';
-		$conf->barcode->enabled = 1;
-		$result=dol_eval('$conf->barcode->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)', 1, 0, '2');
+		$result=dol_eval('$conf->currency && preg_match(\'/^(admintools|all)/\',$leftmenu)', 1, 0, '2');
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
 
