@@ -3,6 +3,32 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 16.0.0 compared to 15.0.0 *****
+
+For users:
+---------------
+
+NEW: ...
+
+
+ Modules
+NEW: Experimental module Event Organization Management
+NEW: Experimental module Workstations Management
+NEW: Experimental module Partnership Management
+
+
+For developers:
+---------------
+
+NEW: 
+ 
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* verifCond('stringtoevaluate') now return false when string contains a bad syntax content instead of true. 
+
+
+
+
+
 ***** ChangeLog for 15.0.0 compared to 14.0.0 *****
 
 For users:
