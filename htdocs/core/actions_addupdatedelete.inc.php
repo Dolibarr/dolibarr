@@ -28,6 +28,7 @@
 // $permissiontodelete must be defined
 // $backurlforlist must be defined
 // $backtopage may be defined
+// $gotopage
 // $triggermodname may be defined
 
 if (!empty($permissionedit) && empty($permissiontoadd)) {
@@ -348,8 +349,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		}
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
-
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		header('Location: '.((empty($gotopage)) ? $_SERVER["PHP_SELF"].'?id='.$object->id : $gotopage));
 		exit;
 	} else {
 		$error++;

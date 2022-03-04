@@ -49,7 +49,6 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$savlimit = $limit;
 
 $fk_warehouse = GETPOST('fk_warehouse', 'int');
 $fk_product = GETPOST('fk_product', 'int');
@@ -103,6 +102,13 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 }
 
 $now = dol_now();
+
+//Parameters Page
+$param = '&id='.$object->id;
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.urlencode($limit);
+}
+$paramwithsearch = $param;
 
 
 /*
@@ -232,6 +238,7 @@ if (empty($reshook)) {
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();
 
@@ -293,6 +300,10 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+	}
+
+	if($action == 'confirm_deleteline'){
+		$gotopage =  $_SERVER["PHP_SELF"].'?id='.$object->id.'&page='.$page.$paramwithsearch;
 	}
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
@@ -407,13 +418,6 @@ jQuery(document).ready(function() {
 // Part to show record
 if ($object->id > 0) {
 
-	$param = '&id='.$object->id;
-	$param .= '&action=updateinventorylines';
-	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
-	}
-	$paramwithsearch = $param;
-
 	$res = $object->fetch_optionals();
 
 	$head = inventoryPrepareHead($object);
@@ -427,7 +431,7 @@ if ($object->id > 0) {
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid.'&page='.$page.$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Clone confirmation
@@ -923,7 +927,7 @@ if ($object->id > 0) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
-	$sql .= $db->plimit($limit + 1, $offset);
+	$sql .= $db->plimit($limit, $offset);
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
@@ -933,8 +937,8 @@ if ($object->id > 0) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 
-		if (!empty($savlimit != 0) || $num > $limit || $page) {
-			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '',$limit, $num);
+		if (!empty($limit != 0) || $num > $limit || $page) {
+			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num >= $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '',$limit);
 		}
 
 		$i = 0;
@@ -1014,7 +1018,7 @@ if ($object->id > 0) {
 
 				// Picto delete line
 				print '<td class="right">';
-				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
 				$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
 				print '<input type="hidden" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 				print '</td>';
@@ -1048,7 +1052,6 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-
 	// Call method to disable the button if no qty entered yet for inventory
 
 	if ($object->status != $object::STATUS_VALIDATED || !$hasinput) {
@@ -1060,6 +1063,39 @@ if ($object->id > 0) {
 				</script>';
 	}
 	print '</form>';
+
+
+	print '<script type="text/javascript">
+					$(document).ready(function() {
+
+                        $(".paginationnext:last").click(function(e){
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page + 1).$paramwithsearch.'";
+    						}});
+    					});
+
+
+                         $(".paginationprevious:last").click(function(e){
+                         console.log(1);
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'";
+       					 	}});
+						 });
+					});
+				</script>';
+
 }
 
 // End of page
