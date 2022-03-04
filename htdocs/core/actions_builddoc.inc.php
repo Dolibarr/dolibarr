@@ -178,7 +178,6 @@ if ($action == 'confirm_remove_link') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$link = new Link($db);
 	$res = $link->fetch(GETPOST('linkid', 'int'));
-	var_dump($res, $link->error, $link->errors);
 	if ($res > 0) {
 		$link->delete($user);
 	} else {
