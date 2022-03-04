@@ -293,7 +293,8 @@ class modFournisseur extends DolibarrModules
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_supplier'=>"RefSupplier", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>'DateMaxPayment',
 			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote",
 			'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT",
-			'fd.total_ttc'=>"LineTotalTTC", 'fd.tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.fk_product'=>'ProductId',
+			'fd.total_ttc'=>"LineTotalTTC", 'fd.tva'=>"LineTotalVAT", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
+			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'p.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
@@ -314,7 +315,8 @@ class modFournisseur extends DolibarrModules
 			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
 			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>'Date',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.note_public'=>"Text", 'fd.description'=>"Text", 'fd.tva_tx'=>"Text",
-			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.tva'=>"Numeric", 'fd.product_type'=>'Numeric', 'fd.fk_product'=>'List:product:label',
+			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.tva'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date", 'fd.special_code'=>"Numeric",
+			'fd.product_type'=>'Numeric', 'fd.fk_product'=>'List:product:label',
 			'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
@@ -322,7 +324,8 @@ class modFournisseur extends DolibarrModules
 			's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company', 'f.rowid'=>"invoice",
 			'f.ref'=>"invoice", 'f.ref_supplier'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.date_lim_reglement'=>'invoice', 'f.total_ht'=>"invoice", 'f.total_ttc'=>"invoice", 'f.total_tva'=>"invoice",
 			'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note_public'=>"invoice", 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line", 'fd.tva_tx'=>"invoice_line", 'fd.qty'=>"invoice_line",
-			'fd.remise_percent'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva'=>"invoice_line", 'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product',
+			'fd.remise_percent'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>"invoice_line",
+			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product',
 			'p.ref'=>'product', 'p.label'=>'product', 'p.accountancy_code_buy'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
 		);
 		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
@@ -432,7 +435,8 @@ class modFournisseur extends DolibarrModules
 			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.fk_statut'=>'Status', 'f.date_valid'=>'DateValidation', 'f.date_approve'=>'DateApprove', 'f.date_approve2'=>'DateApprove2',
 			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'uv.login'=>'UserValidation', 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC",
-			'fd.total_tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
+			'fd.total_tva'=>"LineTotalVAT", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
+			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
 		if (!empty($conf->multicurrency->enabled)) {
@@ -452,13 +456,15 @@ class modFournisseur extends DolibarrModules
 			'f.date_creation'=>"Date", 'f.date_commande'=>"Date", 'f.date_livraison'=>"Date", 'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric",
 			'f.fk_statut'=>'Status', 'f.date_valid'=>'Date', 'f.date_approve'=>'Date', 'f.date_approve2'=>'Date', 'f.note_public'=>"Text", 'f.note_private'=>"Text", 'fd.description'=>"Text",
 			'fd.tva_tx'=>"Numeric", 'fd.qty'=>"Numeric", 'fd.remise_percent'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.total_tva'=>"Numeric",
+			'fd.date_start'=>"Date", 'fd.date_end'=>"Date", 'fd.special_code'=>"Numeric",
 			'fd.product_type'=>'Numeric', 'fd.ref'=>'Text', 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 's.phone'=>'company', 's.siren'=>'company',
 			's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company', 's.tva_intra'=>'company', 'uv.login'=>'user', 'ua1.login'=>'user',
 			'ua2.login'=>'user', 'fd.rowid'=>'order_line', 'fd.description'=>"order_line", 'fd.tva_tx'=>"order_line", 'fd.qty'=>"order_line", 'fd.remise_percent'=>"order_line",
-			'fd.total_ht'=>"order_line", 'fd.total_ttc'=>"order_line", 'fd.total_tva'=>"order_line", 'fd.product_type'=>'order_line', 'fd.ref'=>'order_line', 'fd.fk_product'=>'product',
+			'fd.total_ht'=>"order_line", 'fd.total_ttc'=>"order_line", 'fd.total_tva'=>"order_line", 'fd.date_start'=>"order_line", 'fd.date_end'=>"order_line", 'fd.special_code'=>"order_line",
+			'fd.product_type'=>'order_line', 'fd.ref'=>'order_line', 'fd.fk_product'=>'product',
 			'p.ref'=>'product', 'p.label'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
 		);
 		$this->export_dependencies_array[$r] = array('order_line'=>'fd.rowid', 'product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them

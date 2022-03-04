@@ -6204,6 +6204,10 @@ span#select2-boxbookmark-container {
   overflow: hidden;
 }
 
+ul.select2-results__options li {
+	font-size: 0.95em;
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */
