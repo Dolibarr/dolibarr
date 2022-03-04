@@ -1002,27 +1002,7 @@ class FormFile
 			$colspanmore = 0;
 
 			$out .= '<th colspan="' . $colspan . '" class="formdoc liste_titre maxwidthonsmartphone center">';
-
-			// Model
-			if (!empty($modellist)) {
-				asort($modellist);
-				$out .= '<span class="hideonsmartphone">' . $langs->trans('Model') . ' </span>';
-				if (is_array($modellist) && count($modellist) == 1) {    // If there is only one element
-					$arraykeys = array_keys($modellist);
-					$modelselected = $arraykeys[0];
-				}
-				$morecss = 'minwidth75 maxwidth200';
-				if ($conf->browser->layout == 'phone') {
-					$morecss = 'maxwidth100';
-				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
-				if ($conf->use_javascript_ajax) {
-					$out .= ajax_combobox('model');
-				}
-				$out .= $form->textwithpicto('', $tooltipontemplatecombo, 1, 'help', 'marginrightonly', 0, 3, '', 0);
-			} else {
-				$out .= '<div class="float">' . $langs->trans("Links") . '</div>';
-			}
+			$out .= '<div class="float">' . $langs->trans("Links") . '</div>';
 
 			// Language code (if multilang)
 			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && !empty($conf->global->MAIN_MULTILANGS) && !$forcenomultilang && (!empty($modellist) || $showempty)) {
@@ -1037,25 +1017,6 @@ class FormFile
 			} else {
 				$out .= '&nbsp;';
 			}
-
-			// Button
-			$genbutton = '<input class="button buttongen reposition" id="' . $forname . '_generatebutton" name="' . $forname . '_generatebutton"';
-			$genbutton .= ' type="submit" value="' . $buttonlabel . '"';
-			if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
-				$genbutton .= ' disabled';
-			}
-			$genbutton .= '>';
-			if ($allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
-				$langs->load("errors");
-				$genbutton .= ' ' . img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
-			}
-			if (!$allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
-				$genbutton = '';
-			}
-			if (empty($modellist) && !$showempty && $modulepart != 'unpaid') {
-				$genbutton = '';
-			}
-			$out .= $genbutton;
 			$out .= '</th>';
 
 			// Loop on each link found
