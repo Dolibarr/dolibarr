@@ -40,6 +40,16 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$listoffset = GETPOST('listoffset', 'alpha');
+$limit = GETPOST('limit', 'int') > 0 ?GETPOST('limit', 'int') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+$savlimit = $limit;
 
 $fk_warehouse = GETPOST('fk_warehouse', 'int');
 $fk_product = GETPOST('fk_product', 'int');
@@ -228,6 +238,7 @@ if (empty($reshook)) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
+
 			$i = 0;
 			$totalarray = array();
 			$inventoryline = new InventoryLine($db);
@@ -283,7 +294,6 @@ if (empty($reshook)) {
 			$db->rollback();
 		}
 	}
-
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id;
@@ -396,6 +406,14 @@ jQuery(document).ready(function() {
 
 // Part to show record
 if ($object->id > 0) {
+
+	$param = '&id='.$object->id;
+	$param .= '&action=updateinventorylines';
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	$paramwithsearch = $param;
+
 	$res = $object->fetch_optionals();
 
 	$head = inventoryPrepareHead($object);
@@ -905,6 +923,7 @@ if ($object->id > 0) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+	$sql .= $db->plimit($limit + 1, $offset);
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
@@ -913,6 +932,10 @@ if ($object->id > 0) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
+
+		if (!empty($savlimit != 0) || $num > $limit || $page) {
+			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '',$limit, $num);
+		}
 
 		$i = 0;
 		$hasinput = false;
