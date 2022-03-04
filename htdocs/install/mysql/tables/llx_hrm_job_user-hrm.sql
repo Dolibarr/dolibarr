@@ -23,7 +23,7 @@ CREATE TABLE llx_hrm_job_user(
 	date_creation datetime NOT NULL,
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_contrat integer,
-	fk_user integer NOT NULL,
+	fk_user integer,
 	fk_job integer NOT NULL,
 	date_start datetime,
 	date_end datetime,

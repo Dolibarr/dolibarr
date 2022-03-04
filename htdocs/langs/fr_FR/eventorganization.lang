@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Catégorie à ajouter à des tiers aut
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Catégorie à ajouter à des tiers automatiquement créée lorsque quelqu’un suggère un stand
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modèle de courriel à envoyer après avoir reçu une suggestion de conférence.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Modèle de courriel à envoyer après avoir reçu une suggestion d'un stand.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Modèle d'e-mail à envoyer suite à l'enregistrement du paiement de la participation
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Modèle d'e-mail à envoyer après le paiement d'une inscription à un stand.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Modèle de courriel à envoyer après paiement d'une inscription à un événement.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modèle de courriel pour action de masse aux participants
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modèle de courriel pour action de masse aux intervenants
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrer la liste de sélection des tiers dans la fiche/le formulaire de création des participants avec/selon la catégorie
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtrer la liste de sélection des tiers dans la fiche/le formulaire de création des participants avec le type de client
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modèle d'e-mail à utiliser lors de l'envoi d'e-mails de la massaction "Envoyer des e-mails" aux intervenants
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modèle d'e-mail à utiliser lors de l'envoi d'e-mails depuis la massaction "Envoyer des e-mails" sur la liste des participants
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Dans le formulaire pour créer/ajouter un participant, limite la liste des tiers aux tiers de la catégorie
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Dans le formulaire pour créer/ajouter un participant, limite la liste des tiers aux tiers ayant la nature
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Règlement de votre stand
 EventOrganizationEmailRegistrationPayment = Inscription à un événement
 EventOrganizationMassEmailAttendees = Communication aux participants
 EventOrganizationMassEmailSpeakers = Communication aux conférenciers
+ToSpeakers=Aux conférenciers
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Prix de l'inscription
 PriceOfRegistrationHelp=Montant à payer pour l'enregistrement d'un participant à l'événement
 PriceOfBooth=Prix d’inscription pour un stand
 PriceOfBoothHelp=Prix d’inscription pour un stand
-EventOrganizationICSLink=Lien ICS des événements
+EventOrganizationICSLink=Lien ICS pour les conférences
 ConferenceOrBoothInformation=Renseignements sur la conférence ou le stand
 Attendees=Participants
 ListOfAttendeesOfEvent=Liste des participant à l'événement
 DownloadICSLink = Télécharger le lien ICS
-EVENTORGANIZATION_SECUREKEY = Clé sécurisée pour le lien d’inscription public à une conférence
+EVENTORGANIZATION_SECUREKEY = Graine pour sécuriser la clé de la page d'inscription publique pour suggérer une conférence
 SERVICE_BOOTH_LOCATION = Service utilisé pour la ligne de facture concernant l'emplacement d'un stand
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service utilisé pour la ligne de facture concernant l'abonnement d'un participant à une conférence
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service utilisé pour la ligne de facture relative à l'abonnement d'un participant à un événement
 NbVotes=Nombre de votes
 #
 # Status
@@ -162,5 +163,5 @@ RegistrationAndPaymentWereAlreadyRecorder=Une inscription et un règlement sont 
 EmailAttendee=E-mail du participant
 EmailCompanyForInvoice=E-mail de la société pour la facturation (si différent du participant)
 ErrorSeveralCompaniesWithEmailContactUs=Plusieurs entreprises avec cet email ont été trouvées donc nous ne pouvons pas valider automatiquement votre inscription. Veuillez nous contacter à %s pour une validation manuelle
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Plusieurs sociétés portant ce nom ont été trouvées, nous ne pouvons donc pas valider automatiquement votre inscription. Veuillez nous contacter à %s pour une validation manuelle
 NoPublicActionsAllowedForThisEvent=Aucune action publique n'est ouverte au public pour cet événement

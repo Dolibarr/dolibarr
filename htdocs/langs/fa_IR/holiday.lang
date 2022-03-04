@@ -134,4 +134,6 @@ HolidaysToApprove=روزهای‌تعطیل مجاز
 NobodyHasPermissionToValidateHolidays=Nobody has permission to validate holidays
 HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
 XIsAUsualNonWorkingDay=%s is usualy a NON working day
+BlockHolidayIfNegative=Block if balance negative
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Leave request %s must be draft, canceled or refused to be deleted

@@ -410,3 +410,4 @@ DefaultBOMDesc=A listaxe de materiais por defecto recomendada para fabricar este
 Rank=Rango
 SwitchOnSaleStatus=Activa o estado de venda 
 SwitchOnPurchaseStatus=Activa o estado de compra
+StockMouvementExtraFields= Campos extra (movemento de stock)

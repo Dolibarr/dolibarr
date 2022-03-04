@@ -98,6 +98,7 @@ $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
 $search_budget_amount = GETPOST("search_budget_amount", 'alpha');
 $search_public = GETPOST("search_public", 'int');
 $search_project_user = GETPOST('search_project_user', 'int');
+$search_project_contact = GETPOST('search_project_contact', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_usage_opportunity = GETPOST('search_usage_opportunity', 'int');
 $search_usage_task = GETPOST('search_usage_task', 'int');
@@ -182,11 +183,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = dol_eval($val['visible'], 1);
+		$visible = dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -253,6 +254,7 @@ if (empty($reshook)) {
 		$search_public = "";
 		$search_sale = "";
 		$search_project_user = '';
+		$search_project_contact = '';
 		$search_sday = "";
 		$search_smonth = "";
 		$search_syear = "";
@@ -364,19 +366,23 @@ if (empty($user->rights->projet->all->lire)) {
 
 // Get id of types of contacts for projects (This list never contains a lot of elements)
 $listofprojectcontacttype = array();
-$sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
+$listofprojectcontacttypeexternal = array();
+$sql = "SELECT ctc.rowid, ctc.code, ctc.source FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
 $sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
-$sql .= " AND ctc.source = 'internal'";
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
-		$listofprojectcontacttype[$obj->rowid] = $obj->code;
+		if ($obj->source == 'internal') $listofprojectcontacttype[$obj->rowid] = $obj->code;
+		else $listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
 	}
 } else {
 	dol_print_error($db);
 }
 if (count($listofprojectcontacttype) == 0) {
 	$listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
+}
+if (count($listofprojectcontacttypeexternal) == 0) {
+	$listofprojectcontacttypeexternal[0] = '0'; // To avoid sql syntax error if not found
 }
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
@@ -417,6 +423,9 @@ if ($search_sale > 0) {
 }
 if ($search_project_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp";
+}
+if ($search_project_contact > 0) {
+	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp_contact";
 }
 $sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (!empty($conf->categorie->enabled)) {
@@ -501,6 +510,9 @@ if ($search_sale > 0) {
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 if ($search_project_user > 0) {
 	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
+}
+if ($search_project_contact > 0) {
+	$sql .= " AND ecp_contact.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttypeexternal))).") AND ecp_contact.element_id = p.rowid AND ecp_contact.fk_socpeople = ".((int) $search_project_contact);
 }
 if ($search_opp_amount != '') {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
@@ -687,8 +699,11 @@ if ($search_opp_percent != '') {
 if ($search_public != '') {
 	$param .= '&search_public='.urlencode($search_public);
 }
-if ($search_project_user != '') {
+if ($search_project_user > 0) {
 	$param .= '&search_project_user='.urlencode($search_project_user);
+}
+if ($search_project_contact != '') {
+	$param .= '&search_project_user='.urlencode($search_project_contact);
 }
 if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
@@ -806,7 +821,12 @@ $includeonly = '';
 if (empty($user->rights->user->user->lire)) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+$moreforfilter .= '</div>';
+
+$moreforfilter .= '<div class="divsearchfield">';
+$tmptitle = $langs->trans('ProjectsWithThisContact');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->selectcontacts(0, $search_project_contact ? $search_project_contact : '', 'search_project_contact', $tmptitle, '', '', 0, 'maxwidth250 widthcentpercentminusx');
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
@@ -814,7 +834,7 @@ if ($user->rights->societe->client->voir || $socid) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
-	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 

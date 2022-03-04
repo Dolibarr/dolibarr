@@ -480,7 +480,7 @@ class Translate
 
 		if (!$found && !empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
 			// Overwrite translation with database read
-			$sql = "SELECT transkey, transvalue FROM ".MAIN_DB_PREFIX."overwrite_trans where lang='".$db->escape($this->defaultlang)."' OR lang IS NULL";
+			$sql = "SELECT transkey, transvalue FROM ".$db->prefix()."overwrite_trans where lang='".$db->escape($this->defaultlang)."' OR lang IS NULL";
 			$sql .= " AND entity IN (0, ".getEntity('overwrite_trans').")";
 			$sql .= $db->order("lang", "DESC");
 			$resql = $db->query($sql);
@@ -656,7 +656,7 @@ class Translate
 
 			return $str;
 		} else { // Translation is not available
-			//if ($key[0] == '$') { return dol_eval($key,1); }
+			//if ($key[0] == '$') { return dol_eval($key, 1, 1, '1'); }
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -722,7 +722,7 @@ class Translate
 			return $str;
 		} else {
 			if ($key[0] == '$') {
-				return dol_eval($key, 1);
+				return dol_eval($key, 1, 1, '1');
 			}
 			return $this->getTradFromKey($key);
 		}
@@ -980,7 +980,7 @@ class Translate
 
 		// Not found in loaded language file nor in cache. So we will take the label into database.
 		$sql = "SELECT ".$fieldlabel." as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tablename;
+		$sql .= " FROM ".$db->prefix().$tablename;
 		$sql .= " WHERE ".$fieldkey." = '".$db->escape($keyforselect ? $keyforselect : $key)."'";
 		if ($filteronentity) {
 			$sql .= " AND entity IN (".getEntity($tablename).')';
@@ -1067,7 +1067,7 @@ class Translate
 		}
 
 		$sql = "SELECT code_iso, label, unicode";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_currencies";
+		$sql .= " FROM ".$db->prefix()."c_currencies";
 		$sql .= " WHERE active = 1";
 		if (!empty($currency_code)) {
 			$sql .= " AND code_iso = '".$db->escape($currency_code)."'";

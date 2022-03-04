@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Stichting
 Version=Versie
 Publisher=Auteur
@@ -343,7 +343,7 @@ StepNb=Stap %s
 FindPackageFromWebSite=Zoek een pakket met de functies die u nodig hebt (bijvoorbeeld op de officiële website %s).
 DownloadPackageFromWebSite=Downloadpakket (bijvoorbeeld van de officiële website %s).
 UnpackPackageInDolibarrRoot=Pak de ingepakte bestanden uit in uw Dolibarr servermap: <b>%s</b>
-UnpackPackageInModulesRoot=Om een externe module te implementeren / installeren, moet u de gezipte bestanden uitpakken in de servermap voor externe modules: <br> <b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Module-implementatie is voltooid. U moet de module in uw toepassing echter inschakelen en configureren door naar de pagina Instellingen / modules te gaan: <a href="%s">%s</a>.
 NotExistsDirect=De alternatieve hoofdmap is niet gedefinieerd in een bestaande map.<br>
 InfDirAlt=Vanaf versie 3 is het mogelijk om een alternatieve root directory te definiëren.  Dit stelt je in staat om op dezelfde plaats zowel plug-ins als eigen templates te bewaren. <br>Maak gewoon een directory op het niveau van de root van Dolibarr (bv met de naam: aanpassing).<br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Het installeren of bouwen van een externe module vanui
 HighlightLinesOnMouseHover=Markeer tabellijnen wanneer u er met de muis overheen gaat
 HighlightLinesColor=Markeer de kleur van de lijn wanneer de muis overgaat (gebruik 'ffffff' voor geen hoogtepunt)
 HighlightLinesChecked=Markeer de kleur van de lijn wanneer deze is aangevinkt (gebruik 'ffffff' voor geen hoogtepunt)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Tekstkleur van paginatitel
 LinkColor=Link-kleur
 PressF5AfterChangingThis=Druk op CTRL + F5 op het toetsenbord of wis de cache van uw browser nadat u deze waarde hebt gewijzigd om deze effectief te maken
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=Geen modules gevonden voor deze zoekcriteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

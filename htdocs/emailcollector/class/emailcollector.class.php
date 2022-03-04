@@ -563,7 +563,7 @@ class EmailCollector extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('emailcollectordao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -2267,6 +2267,14 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->error = 'Failed to create ticket: '.$langs->trans($tickettocreate->error);
 										$this->errors = $tickettocreate->errors;
+									} else {
+										if ($attachments) {
+											$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
+											if (!dol_is_dir($destdir)) {
+												dol_mkdir($destdir);
+												$this->getmsg($connection, $imapemail, $destdir);
+											}
+										}
 									}
 								}
 							}
@@ -2490,9 +2498,10 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param 	Object $mbox     	Structure
 	 * @param 	string $mid		    prefix
+	 * @param 	string $destdir	    Target dir for attachments
 	 * @return 	array				Array with number and object
 	 */
-	private function getmsg($mbox, $mid)
+	private function getmsg($mbox, $mid, $destdir = '')
 	{
 		// input $mbox = IMAP stream, $mid = message id
 		// output all the following:
@@ -2513,7 +2522,7 @@ class EmailCollector extends CommonObject
 		} else {
 			// multipart: cycle through each part
 			foreach ($s->parts as $partno0 => $p) {
-				$this->getpart($mbox, $mid, $p, $partno0 + 1);
+				$this->getpart($mbox, $mid, $p, $partno0 + 1, $destdir);
 			}
 		}
 	}
@@ -2540,9 +2549,10 @@ class EmailCollector extends CommonObject
 	 * @param 	string		$mid			Part no
 	 * @param 	Object		$p              Object p
 	 * @param   string      $partno         Partno
+	 * @param 	string 		$destdir	    Target dir for attachments
 	 * @return	void
 	 */
-	private function getpart($mbox, $mid, $p, $partno)
+	private function getpart($mbox, $mid, $p, $partno, $destdir = '')
 	{
 		// $partno = '1', '2', '2.1', '2.1.3', etc for multipart, 0 if simple
 		global $htmlmsg, $plainmsg, $charset, $attachments;
@@ -2580,6 +2590,38 @@ class EmailCollector extends CommonObject
 			$filename = ($params['filename']) ? $params['filename'] : $params['name'];
 			// filename may be encoded, so see imap_mime_header_decode()
 			$attachments[$filename] = $data; // this is a problem if two files have same name
+
+			// Get file name (with extension)
+			$file_name_complete =  $params['filename'];
+
+
+			$destination = $destdir.'/'.$file_name_complete;
+
+			// Extract file extension
+			$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
+
+			// Extract file name without extension
+			$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
+
+			// Save an original file name variable to track while renaming if file already exists
+			$file_name_original = $file_name;
+
+			// Increment file name by 1
+			$num = 1;
+
+			/**
+			 * Check if the same file name already exists in the upload folder,
+			 * append increment number to the original filename
+			 */
+			while (file_exists($destdir."/" . $file_name . "." . $extension)) {
+				$file_name = (string) $file_name_original . ' (' . $num . ')';
+				$file_name_complete = $file_name . "." . $extension;
+				$destination = $destdir.'/'.$file_name_complete;
+				$num++;
+			}
+
+
+			file_put_contents($destination, $data);
 		}
 
 		// TEXT

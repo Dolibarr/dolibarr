@@ -1532,9 +1532,7 @@ if ($resql) {
 	$projectstatic = new Project($db);
 
 	$i = 0;
-	$totalarray = array();
-	$totalarray['nbfield'] = 0;
-	$totalarray['val'] = array();
+	$totalarray = array('nbfield' => 0, 'val' => array(), 'pos' => array());
 	$totalarray['val']['cf.total_ht'] = 0;
 	$totalarray['val']['cf.total_ttc'] = 0;
 	while ($i < min($num, $limit)) {

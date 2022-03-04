@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Säätiö
 Version=Versio
 Publisher=Julkaisija
@@ -343,7 +343,7 @@ StepNb=Vaihe %s
 FindPackageFromWebSite=Etsi paketti, joka tarjoaa tarvittavat ominaisuudet (esimerkiksi virallisella verkkosivustolla %s).
 DownloadPackageFromWebSite=Lataa paketti (esimerkiksi viralliselta verkkosivustolta %s).
 UnpackPackageInDolibarrRoot=Pura pakatut tiedostot Dolibarr-palvelinhakemistoon: <b> %s </b>
-UnpackPackageInModulesRoot=Ulkoisen moduulin käyttöönottoon/asentamiseksi pura pakatut tiedostot ulkoisille moduuleille tarkoitettuun palvelinhakemistoon: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Moduulin käyttöönotto on valmis. Sinun on kuitenkin otettava käyttöön ja määriteltävä moduuli sovelluksessasi siirtymällä sivun asetusmoduuleihin: <a href="%s"> %s </a>.
 NotExistsDirect=Vaihtoehtoista juurihakemistoa ei ole määritelty olemassa olevalle hakemistolle. <br>
 InfDirAlt=Versiosta 3 lähtien on mahdollista määrittää vaihtoehtoinen juurihakemisto. Tämän avulla voit tallentaa erilliseen hakemistoon laajennuksia ja mukautettuja malleja. <br> Luo vain hakemisto Dolibarrin juurelle (esim. mukautettu). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Installing or building an external module from applica
 HighlightLinesOnMouseHover=Korosta taulukon rivit hiiren liikkuessa niiden päällä
 HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
 HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Sivun otsikon tekstin väri
 LinkColor=Linkkien värit
 PressF5AfterChangingThis=Paina näppäimistön CTRL + F5 tai tyhjennä selaimen välimuisti muutettuasi tämän arvon, jotta se tulee voimaan
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

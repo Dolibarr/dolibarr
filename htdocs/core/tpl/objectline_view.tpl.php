@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +163,11 @@ if (($line->info_bits & 2) == 2) {
 	}
 
 	// Show date range
-	if ($line->element == 'facturedetrec') {
+	if ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec') {
+		if ($line->element == 'invoice_supplier_det_rec' && $line->product_type != Product::TYPE_PRODUCT) {
+			$line->date_start_fill = $line->date_start;
+			$line->date_end_fill = $line->date_end;
+		}
 		if ($line->date_start_fill || $line->date_end_fill) {
 			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
 		}
@@ -202,6 +207,8 @@ if (($line->info_bits & 2) == 2) {
 	if ($line->fk_product > 0 && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
 		if ($line->element == 'facturedetrec') {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+		} elseif ($line->element == 'invoice_supplier_det_rec') {
+			print (!empty($line->description) && $line->description != $line->label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		} else {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		}
@@ -239,7 +246,7 @@ if (!empty($conf->accounting->enabled) && $line->fk_accounting_account > 0) {
 }
 
 print '</td>';
-if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 	print '<td class="linecolrefsupplier">';
 	print ($line->ref_fourn ? $line->ref_fourn : $line->ref_supplier);
 	print '</td>';
@@ -379,6 +386,35 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 			// Set constant to disallow editing during a situation cycle
 			$situationinvoicelinewithparent = 1;
 		}
+	}
+
+	if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+		print '<td class="linecolasset center">';
+		$coldisplay++;
+		if (!empty($product_static->accountancy_code_buy) ||
+			!empty($product_static->accountancy_code_buy_intra) ||
+			!empty($product_static->accountancy_code_buy_export)
+		) {
+			$accountancy_category_asset = $conf->global->ASSET_ACCOUNTANCY_CATEGORY;
+			$filters = array();
+			if (!empty($product_static->accountancy_code_buy)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+			if (!empty($product_static->accountancy_code_buy_intra)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
+			if (!empty($product_static->accountancy_code_buy_export)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+			$sql = "SELECT COUNT(*) AS found";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
+			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
+			$sql .= " AND (" . implode(' OR ', $filters). ")";
+			$resql_asset = $this->db->query($sql);
+			if (!$resql_asset) {
+				print 'Error SQL: ' . $this->db->lasterror();
+			} elseif ($obj = $this->db->fetch_object($resql_asset)) {
+				if (!empty($obj->found)) {
+					print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&supplier_invoice_id=' . $object->id . '&token=' . newToken() . '">';
+					print img_edit_add() . '</a>';
+				}
+			}
+		}
+		print '</td>';
 	}
 
 	print '<td class="linecoledit center">';

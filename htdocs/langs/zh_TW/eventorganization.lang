@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = 有人建議會議時自動建立增�
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = 當合作方推薦展位時自動建立增加到合作方的類別
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = 收到會議建議後要發送的電子郵件模板。
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = 收到展位建議後要發送的電子郵件模板。
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = 支付展位註冊費用後發送的電子郵件模板。
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = 支付報名費後發送的電子郵件模板。
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = 向參與者發送的批次電子郵件模板
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 發送給演講者的批次電子郵件模板
-EVENTORGANIZATION_FILTERATTENDEES_CAT = 使用類別過濾參與者建立卡/表單中的合作方選擇清單
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = 使用客戶類型過濾參與者建立卡/表單中合作方選擇清單
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = 展位付款
 EventOrganizationEmailRegistrationPayment = 活動報名
 EventOrganizationMassEmailAttendees = 與參與者交流
 EventOrganizationMassEmailSpeakers = 與演講者交流
+ToSpeakers=致演講者
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=註冊價格
 PriceOfRegistrationHelp=註冊或參加活動的費用
 PriceOfBooth=展位認購價
 PriceOfBoothHelp=展位認購價
-EventOrganizationICSLink=為活動連結 ICS
+EventOrganizationICSLink=Link ICS for conferences
 ConferenceOrBoothInformation=會議或展位資訊
 Attendees=參與者
 ListOfAttendeesOfEvent=活動項目參與者名單
 DownloadICSLink = 下載 ICS連結
-EVENTORGANIZATION_SECUREKEY = 會議的公共註冊連結安全金鑰
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = 關於展位位置發票行的服務
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 關於參與者訂閱會議發票行的服務
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=票數
 #
 # Status

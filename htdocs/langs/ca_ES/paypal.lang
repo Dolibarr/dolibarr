@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuració mòdul PayPal
-PaypalDesc=Aquest mòdul permet el pagament per part dels clients a través de <a href="http://www.paypal.com" target="_blank"> PayPal </a>. Això es pot utilitzar per a un pagament ad hoc o per un pagament relacionat amb un objecte Dolibarr (factura, comanda ...)
+PaypalDesc=Aquest mòdul permet el pagament dels clients mitjançant <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Això es pot utilitzar per a un pagament ad hoc o per a un pagament relacionat amb un objecte Dolibarr (factura, comanda, ...)
 PaypalOrCBDoPayment=Paga amb PayPal (targeta de crèdit o PayPal)
 PaypalDoPayment=Paga amb PayPal
 PAYPAL_API_SANDBOX=Mode de proves(sandbox)
@@ -14,11 +14,11 @@ PaypalModeOnlyPaypal=Només PayPal
 ONLINE_PAYMENT_CSS_URL=URL opcional del full d'estils CSS a la pàgina de pagament en línia
 ThisIsTransactionId=Identificador de la transacció: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Incloeu l'adreça de pagament de PayPal quan envieu un document per correu electrònic
-NewOnlinePaymentReceived=Nou pagament online rebut
-NewOnlinePaymentFailed=S'ha intentat el nou pagament online però ha fallat
+NewOnlinePaymentReceived=S'ha rebut un pagament en línia nou
+NewOnlinePaymentFailed=S'ha intentat un pagament en línia nou, però ha fallat
 ONLINE_PAYMENT_SENDEMAIL=Adreça de correu electrònic per a les notificacions després de cada intent de pagament (per a l'èxit i el fracàs)
 ReturnURLAfterPayment=URL de retorn després del pagament
-ValidationOfOnlinePaymentFailed=Ha fallat la validació del pagament online
+ValidationOfOnlinePaymentFailed=La validació del pagament en línia ha fallat
 PaymentSystemConfirmPaymentPageWasCalledButFailed=La pàgina de confirmació de pagament sol·licitada pel sistema de pagament ha retornat un error
 SetExpressCheckoutAPICallFailed=Ha fallat la crida a l'API SetExpressCheckout.
 DoExpressCheckoutPaymentAPICallFailed=Ha fallat la crida a l'API DoExpressCheckoutPayment.
@@ -26,7 +26,7 @@ DetailedErrorMessage=Missatge d'error detallat
 ShortErrorMessage=Missatge d'error curt
 ErrorCode=Codi d'error
 ErrorSeverityCode=Codi sever d'error
-OnlinePaymentSystem=Sistema de pagament online
+OnlinePaymentSystem=Sistema de pagament en línia
 PaypalLiveEnabled=El mode "en viu" de PayPal habilitat (en cas contrari, el mode prova / sandbox)
 PaypalImportPayment=Importeu els pagaments de PayPal
 PostActionAfterPayment=Accions posteriors desprès dels pagaments

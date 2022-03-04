@@ -9,3 +9,4 @@ KnowledgeManagementArea =Conocimiento administrativo
 MenuKnowledgeRecord =Base de conocimientos
 GroupOfTicket=Grupo de entradas
 YouCanLinkArticleToATicketCategory=Puede vincular un artículo a un grupo de entradas (por lo que el artículo se sugerirá durante la calificación de nuevas entradas)
+SuggestedForTicketsInGroup=Sugerido para boletos cuando el grupo es

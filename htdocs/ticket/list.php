@@ -136,11 +136,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -157,6 +157,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (!$user->rights->ticket->read) {
 	accessforbidden();
 }
+// restrict view to current user's company
+if ($user->socid > 0) $socid = $user->socid;
 
 // Store current page url
 $url_page_current = DOL_URL_ROOT.'/ticket/list.php';
@@ -326,8 +328,6 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formTicket = new FormTicket($db);
-
-$now = dol_now();
 
 $user_temp = new User($db);
 $socstatic = new Societe($db);
@@ -619,10 +619,10 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 foreach ($search as $key => $val) {
-	if (is_array($search[$key]) && count($search[$key])) {
-		foreach ($search[$key] as $skey) {
+	if (is_array($val) && count($val)) {
+		foreach ($val as $skey) {
 			if ($skey != '') {
-				$param .= '&search_'.$key.'[]='.urlencode($skey);
+				$param .= (!empty($val)) ? '&search_'.$key.'[]='.urlencode($skey) : "";
 			}
 		}
 	} elseif ($search[$key] != '') {
@@ -940,6 +940,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
+$now = dol_now();
 
 $cacheofoutputfield = array();
 while ($i < ($limit ? min($num, $limit) : $num)) {
@@ -950,6 +951,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
+	$object->status = $object->fk_statut; // fk_statut is deprecated
 
 	// Show here line of result
 	print '<tr class="oddeven">';
@@ -1031,6 +1033,26 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				}
 			} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
+			} elseif ($key == 'ref') {
+				print $object->showOutputField($val, $key, $obj->$key, '');
+
+				// display a warning on untreated tickets
+				$is_open = ($object->status != Ticket::STATUS_CLOSED && $object->status != Ticket::STATUS_CANCELED );
+				$should_show_warning = (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) || !empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE));
+				if ($is_open && $should_show_warning) {
+					$date_last_msg_sent = (int) $object->date_last_msg_sent;
+					$hour_diff = ($now - $date_last_msg_sent) / 3600 ;
+
+					if (!empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE && $date_last_msg_sent == 0)) {
+						$creation_date =  $object->datec;
+						$hour_diff_creation = ($now - $creation_date) / 3600 ;
+						if ($hour_diff_creation > $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE) {
+							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE), 'warning', 'style="color: red;"', false, 0, 0, '', '');
+						}
+					} elseif (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) && $hour_diff > $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) {
+						print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE), 'warning');
+					}
+				}
 			} else {	// Example: key=fk_soc, obj->key=123 val=array('type'=>'integer', ...
 				$tmp = explode(':', $val['type']);
 				if ($tmp[0] == 'integer' && !empty($tmp[1]) && class_exists($tmp[1])) {

@@ -188,21 +188,21 @@ class Products extends DolibarrApi
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as t";
+		$sql .= " FROM ".$this->db->prefix()."product as t";
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
+			$sql .= ", ".$this->db->prefix()."categorie_product as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
 		if ($variant_filter == 1) {
-			$sql .= ' AND t.rowid not in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
-			$sql .= ' AND t.rowid not in (select distinct fk_product_child from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+			$sql .= ' AND t.rowid not in (select distinct fk_product_parent from '.$this->db->prefix().'product_attribute_combination)';
+			$sql .= ' AND t.rowid not in (select distinct fk_product_child from '.$this->db->prefix().'product_attribute_combination)';
 		}
 		if ($variant_filter == 2) {
-			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.$this->db->prefix().'product_attribute_combination)';
 		}
 		if ($variant_filter == 3) {
-			$sql .= ' AND t.rowid in (select distinct fk_product_child from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+			$sql .= ' AND t.rowid in (select distinct fk_product_child from '.$this->db->prefix().'product_attribute_combination)';
 		}
 
 		// Select products of given category
@@ -479,7 +479,7 @@ class Products extends DolibarrApi
 
 		$childsArbo = $this->product->getChildsArbo($id, 1);
 
-		$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'incdec', 'ref');
+		$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'incdec', 'ref', 'fk_association', 'rang');
 		$childs = array();
 		foreach ($childsArbo as $values) {
 			$childs[] = array_combine($keys, $values);
@@ -861,11 +861,11 @@ class Products extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as t";
+		$sql .= " FROM ".$this->db->prefix()."product as t";
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
+			$sql .= ", ".$this->db->prefix()."categorie_product as c";
 		}
-		$sql .= ", ".MAIN_DB_PREFIX."product_fournisseur_price as s";
+		$sql .= ", ".$this->db->prefix()."product_fournisseur_price as s";
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
@@ -1013,7 +1013,7 @@ class Products extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext, t.label, t.rang, t.entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute as t";
+		$sql .= " FROM ".$this->db->prefix()."product_attribute as t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
 		// Add sql filters
@@ -1094,8 +1094,8 @@ class Products extends DolibarrApi
 			}
 		}
 
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
-		$sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
+		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."product_attribute_combination2val as pac2v";
+		$sql .= " JOIN ".$this->db->prefix()."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
 		$sql .= " WHERE pac2v.fk_prod_attr = ".((int) $prodattr->id)." AND pac.entity IN (".getEntity('product').")";
 
 		$resql = $this->db->query($sql);
@@ -1122,7 +1122,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, rang, entity FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".trim($ref)."' AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, ref, ref_ext, label, rang, entity FROM ".$this->db->prefix()."product_attribute WHERE ref LIKE '".trim($ref)."' AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -1140,8 +1140,8 @@ class Products extends DolibarrApi
 		$attr['rang'] = $result->rang;
 		$attr['entity'] = $result->entity;
 
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
-		$sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
+		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."product_attribute_combination2val as pac2v";
+		$sql .= " JOIN ".$this->db->prefix()."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
 		$sql .= " WHERE pac2v.fk_prod_attr = ".((int) $result->rowid)." AND pac.entity IN (".getEntity('product').")";
 
 		$resql = $this->db->query($sql);
@@ -1169,7 +1169,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, rang, entity FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref_ext LIKE '".trim($ref_ext)."' AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, ref, ref_ext, label, rang, entity FROM ".$this->db->prefix()."product_attribute WHERE ref_ext LIKE '".trim($ref_ext)."' AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -1187,8 +1187,8 @@ class Products extends DolibarrApi
 		$attr['rang'] = $result->rang;
 		$attr['entity'] = $result->entity;
 
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
-		$sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
+		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."product_attribute_combination2val as pac2v";
+		$sql .= " JOIN ".$this->db->prefix()."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
 		$sql .= " WHERE pac2v.fk_prod_attr = ".((int) $result->rowid)." AND pac.entity IN (".getEntity('product').")";
 
 		$resql = $this->db->query($sql);
@@ -1322,7 +1322,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".$this->db->prefix()."product_attribute_value WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -1365,7 +1365,7 @@ class Products extends DolibarrApi
 
 		$ref = trim($ref);
 
-		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value";
+		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".$this->db->prefix()."product_attribute_value";
 		$sql .= " WHERE ref LIKE '".$this->db->escape($ref)."' AND fk_product_attribute = ".((int) $id)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
@@ -1408,7 +1408,7 @@ class Products extends DolibarrApi
 
 		$ref = trim($ref);
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_value";
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."product_attribute_value";
 		$sql .= " WHERE ref LIKE '".$this->db->escape($ref)."' AND fk_product_attribute = ".((int) $id)." AND entity IN (".getEntity('product').")";
 		$query = $this->db->query($sql);
 
@@ -1484,9 +1484,9 @@ class Products extends DolibarrApi
 
 		$return = array();
 
-		$sql = 'SELECT ';
-		$sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value as v';
-		$sql .= " WHERE v.fk_product_attribute IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".$this->db->escape($ref)."')";
+		$sql = "SELECT ";
+		$sql .= "v.fk_product_attribute, v.rowid, v.ref, v.value FROM ".$this->db->prefix()."product_attribute_value as v";
+		$sql .= " WHERE v.fk_product_attribute IN (SELECT rowid FROM ".$this->db->prefix()."product_attribute WHERE ref LIKE '".$this->db->escape($ref)."')";
 
 		$resql = $this->db->query($sql);
 
@@ -2049,7 +2049,7 @@ class Products extends DolibarrApi
 		if ($includesubproducts) {
 			$childsArbo = $this->product->getChildsArbo($id, 1);
 
-			$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'incdec');
+			$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'incdec', 'ref', 'fk_association', 'rang');
 			$childs = array();
 			foreach ($childsArbo as $values) {
 				$childs[] = array_combine($keys, $values);

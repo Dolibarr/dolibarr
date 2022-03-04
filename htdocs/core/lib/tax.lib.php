@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2021       Open-Dsi            <support@open-dsi.fr>
+ * Copyright (C) 2021-2022  Open-Dsi            <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -696,7 +696,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
 		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')) {
 		// Count on delivery date (use invoice date as delivery is unknown)
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
@@ -739,7 +739,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
 	} else {
 		// Count on payments date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
@@ -799,66 +799,71 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$rate = -1;
 			$oldrowid = '';
 			while ($assoc = $db->fetch_array($resql)) {
+				$rate_key = $assoc['rate'];
+				if ($f_rate == 'tva_tx' && !empty($assoc['vat_src_code']) && !preg_match('/\(/', $rate_key)) {
+					$rate_key .= ' (' . $assoc['vat_src_code'] . ')';
+				}
+
 				// Code to avoid warnings when array entry not defined
-				if (!isset($list[$assoc['rate']]['totalht'])) {
-					$list[$assoc['rate']]['totalht'] = 0;
+				if (!isset($list[$rate_key]['totalht'])) {
+					$list[$rate_key]['totalht'] = 0;
 				}
-				if (!isset($list[$assoc['rate']]['vat'])) {
-					$list[$assoc['rate']]['vat'] = 0;
+				if (!isset($list[$rate_key]['vat'])) {
+					$list[$rate_key]['vat'] = 0;
 				}
-				if (!isset($list[$assoc['rate']]['localtax1'])) {
-					$list[$assoc['rate']]['localtax1'] = 0;
+				if (!isset($list[$rate_key]['localtax1'])) {
+					$list[$rate_key]['localtax1'] = 0;
 				}
-				if (!isset($list[$assoc['rate']]['localtax2'])) {
-					$list[$assoc['rate']]['localtax2'] = 0;
+				if (!isset($list[$rate_key]['localtax2'])) {
+					$list[$rate_key]['localtax2'] = 0;
 				}
 
 				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 					$oldrowid = $assoc['rowid'];
-					$list[$assoc['rate']]['totalht']   += $assoc['total_ht'];
-					$list[$assoc['rate']]['vat']       += $assoc['total_vat'];
-					$list[$assoc['rate']]['localtax1'] += $assoc['total_localtax1'];
-					$list[$assoc['rate']]['localtax2'] += $assoc['total_localtax2'];
+					$list[$rate_key]['totalht']   += $assoc['total_ht'];
+					$list[$rate_key]['vat']       += $assoc['total_vat'];
+					$list[$rate_key]['localtax1'] += $assoc['total_localtax1'];
+					$list[$rate_key]['localtax2'] += $assoc['total_localtax2'];
 				}
-				$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
-				$list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
-				$list[$assoc['rate']]['datef'][] = $db->jdate($assoc['datef']);
-				$list[$assoc['rate']]['datep'][] = $db->jdate($assoc['datep']);
+				$list[$rate_key]['dtotal_ttc'][] = $assoc['total_ttc'];
+				$list[$rate_key]['dtype'][] = $assoc['dtype'];
+				$list[$rate_key]['datef'][] = $db->jdate($assoc['datef']);
+				$list[$rate_key]['datep'][] = $db->jdate($assoc['datep']);
 
-				$list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
-				$list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
-				$list[$assoc['rate']]['company_alias'][] = $assoc['company_alias'];
-				$list[$assoc['rate']]['company_email'][] = $assoc['company_email'];
-				$list[$assoc['rate']]['company_tva_intra'][] = $assoc['company_tva_intra'];
-				$list[$assoc['rate']]['company_client'][] = $assoc['company_client'];
-				$list[$assoc['rate']]['company_fournisseur'][] = $assoc['company_fournisseur'];
-				$list[$assoc['rate']]['company_customer_code'][] = $assoc['company_customer_code'];
-				$list[$assoc['rate']]['company_supplier_code'][] = $assoc['company_supplier_code'];
-				$list[$assoc['rate']]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
-				$list[$assoc['rate']]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
-				$list[$assoc['rate']]['company_status'][] = $assoc['company_status'];
+				$list[$rate_key]['company_name'][] = $assoc['company_name'];
+				$list[$rate_key]['company_id'][] = $assoc['company_id'];
+				$list[$rate_key]['company_alias'][] = $assoc['company_alias'];
+				$list[$rate_key]['company_email'][] = $assoc['company_email'];
+				$list[$rate_key]['company_tva_intra'][] = $assoc['company_tva_intra'];
+				$list[$rate_key]['company_client'][] = $assoc['company_client'];
+				$list[$rate_key]['company_fournisseur'][] = $assoc['company_fournisseur'];
+				$list[$rate_key]['company_customer_code'][] = $assoc['company_customer_code'];
+				$list[$rate_key]['company_supplier_code'][] = $assoc['company_supplier_code'];
+				$list[$rate_key]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
+				$list[$rate_key]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
+				$list[$rate_key]['company_status'][] = $assoc['company_status'];
 
-				$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
-				$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
+				$list[$rate_key]['ddate_start'][] = $db->jdate($assoc['date_start']);
+				$list[$rate_key]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
-				$list[$assoc['rate']]['type'][] = $assoc['type'];
-				$list[$assoc['rate']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-				$list[$assoc['rate']]['descr'][] = $assoc['descr'];
+				$list[$rate_key]['facid'][] = $assoc['facid'];
+				$list[$rate_key]['facnum'][] = $assoc['facnum'];
+				$list[$rate_key]['type'][] = $assoc['type'];
+				$list[$rate_key]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
+				$list[$rate_key]['descr'][] = $assoc['descr'];
 
-				$list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
-				$list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
-				$list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
-				$list[$assoc['rate']]['localtax2_list'][] = $assoc['total_localtax2'];
+				$list[$rate_key]['totalht_list'][] = $assoc['total_ht'];
+				$list[$rate_key]['vat_list'][] = $assoc['total_vat'];
+				$list[$rate_key]['localtax1_list'][] = $assoc['total_localtax1'];
+				$list[$rate_key]['localtax2_list'][] = $assoc['total_localtax2'];
 
-				$list[$assoc['rate']]['pid'][] = $assoc['pid'];
-				$list[$assoc['rate']]['pref'][] = $assoc['pref'];
-				$list[$assoc['rate']]['ptype'][] = $assoc['ptype'];
+				$list[$rate_key]['pid'][] = $assoc['pid'];
+				$list[$rate_key]['pref'][] = $assoc['pref'];
+				$list[$rate_key]['ptype'][] = $assoc['ptype'];
 
-				$list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
-				$list[$assoc['rate']]['payment_ref'][] = $assoc['payment_ref'];
-				$list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
+				$list[$rate_key]['payment_id'][] = $assoc['payment_id'];
+				$list[$rate_key]['payment_ref'][] = $assoc['payment_ref'];
+				$list[$rate_key]['payment_amount'][] = $assoc['payment_amount'];
 
 				$rate = $assoc['rate'];
 			}
@@ -876,7 +881,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')
 		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
 		// Count on invoice date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
@@ -919,7 +924,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
 	} else {
 		// Count on payments date
-		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
 		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
@@ -979,66 +984,71 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$rate = -1;
 			$oldrowid = '';
 			while ($assoc = $db->fetch_array($resql)) {
+				$rate_key = $assoc['rate'];
+				if ($f_rate == 'tva_tx' && !empty($assoc['vat_src_code']) && !preg_match('/\(/', $rate_key)) {
+					$rate_key .= ' (' . $assoc['vat_src_code'] . ')';
+				}
+
 				// Code to avoid warnings when array entry not defined
-				if (!isset($list[$assoc['rate']]['totalht'])) {
-					$list[$assoc['rate']]['totalht'] = 0;
+				if (!isset($list[$rate_key]['totalht'])) {
+					$list[$rate_key]['totalht'] = 0;
 				}
-				if (!isset($list[$assoc['rate']]['vat'])) {
-					$list[$assoc['rate']]['vat'] = 0;
+				if (!isset($list[$rate_key]['vat'])) {
+					$list[$rate_key]['vat'] = 0;
 				}
-				if (!isset($list[$assoc['rate']]['localtax1'])) {
-					$list[$assoc['rate']]['localtax1'] = 0;
+				if (!isset($list[$rate_key]['localtax1'])) {
+					$list[$rate_key]['localtax1'] = 0;
 				}
-				if (!isset($list[$assoc['rate']]['localtax2'])) {
-					$list[$assoc['rate']]['localtax2'] = 0;
+				if (!isset($list[$rate_key]['localtax2'])) {
+					$list[$rate_key]['localtax2'] = 0;
 				}
 
 				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 					$oldrowid = $assoc['rowid'];
-					$list[$assoc['rate']]['totalht']   += $assoc['total_ht'];
-					$list[$assoc['rate']]['vat']       += $assoc['total_vat'];
-					$list[$assoc['rate']]['localtax1'] += $assoc['total_localtax1'];
-					$list[$assoc['rate']]['localtax2'] += $assoc['total_localtax2'];
+					$list[$rate_key]['totalht']   += $assoc['total_ht'];
+					$list[$rate_key]['vat']       += $assoc['total_vat'];
+					$list[$rate_key]['localtax1'] += $assoc['total_localtax1'];
+					$list[$rate_key]['localtax2'] += $assoc['total_localtax2'];
 				}
-				$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
-				$list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
-				$list[$assoc['rate']]['datef'][] = $db->jdate($assoc['datef']);
-				$list[$assoc['rate']]['datep'][] = $db->jdate($assoc['datep']);
+				$list[$rate_key]['dtotal_ttc'][] = $assoc['total_ttc'];
+				$list[$rate_key]['dtype'][] = $assoc['dtype'];
+				$list[$rate_key]['datef'][] = $db->jdate($assoc['datef']);
+				$list[$rate_key]['datep'][] = $db->jdate($assoc['datep']);
 
-				$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
-				$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
+				$list[$rate_key]['ddate_start'][] = $db->jdate($assoc['date_start']);
+				$list[$rate_key]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-				$list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
-				$list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
-				$list[$assoc['rate']]['company_alias'][] = $assoc['company_alias'];
-				$list[$assoc['rate']]['company_email'][] = $assoc['company_email'];
-				$list[$assoc['rate']]['company_tva_intra'][] = $assoc['company_tva_intra'];
-				$list[$assoc['rate']]['company_client'][] = $assoc['company_client'];
-				$list[$assoc['rate']]['company_fournisseur'][] = $assoc['company_fournisseur'];
-				$list[$assoc['rate']]['company_customer_code'][] = $assoc['company_customer_code'];
-				$list[$assoc['rate']]['company_supplier_code'][] = $assoc['company_supplier_code'];
-				$list[$assoc['rate']]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
-				$list[$assoc['rate']]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
-				$list[$assoc['rate']]['company_status'][] = $assoc['company_status'];
+				$list[$rate_key]['company_name'][] = $assoc['company_name'];
+				$list[$rate_key]['company_id'][] = $assoc['company_id'];
+				$list[$rate_key]['company_alias'][] = $assoc['company_alias'];
+				$list[$rate_key]['company_email'][] = $assoc['company_email'];
+				$list[$rate_key]['company_tva_intra'][] = $assoc['company_tva_intra'];
+				$list[$rate_key]['company_client'][] = $assoc['company_client'];
+				$list[$rate_key]['company_fournisseur'][] = $assoc['company_fournisseur'];
+				$list[$rate_key]['company_customer_code'][] = $assoc['company_customer_code'];
+				$list[$rate_key]['company_supplier_code'][] = $assoc['company_supplier_code'];
+				$list[$rate_key]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
+				$list[$rate_key]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
+				$list[$rate_key]['company_status'][] = $assoc['company_status'];
 
-				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
-				$list[$assoc['rate']]['type'][] = $assoc['type'];
-				$list[$assoc['rate']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-				$list[$assoc['rate']]['descr'][] = $assoc['descr'];
+				$list[$rate_key]['facid'][] = $assoc['facid'];
+				$list[$rate_key]['facnum'][] = $assoc['facnum'];
+				$list[$rate_key]['type'][] = $assoc['type'];
+				$list[$rate_key]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
+				$list[$rate_key]['descr'][] = $assoc['descr'];
 
-				$list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
-				$list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
-				$list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
-				$list[$assoc['rate']]['localtax2_list'][] = $assoc['total_localtax2'];
+				$list[$rate_key]['totalht_list'][] = $assoc['total_ht'];
+				$list[$rate_key]['vat_list'][] = $assoc['total_vat'];
+				$list[$rate_key]['localtax1_list'][] = $assoc['total_localtax1'];
+				$list[$rate_key]['localtax2_list'][] = $assoc['total_localtax2'];
 
-				$list[$assoc['rate']]['pid'][] = $assoc['pid'];
-				$list[$assoc['rate']]['pref'][] = $assoc['pref'];
-				$list[$assoc['rate']]['ptype'][] = $assoc['ptype'];
+				$list[$rate_key]['pid'][] = $assoc['pid'];
+				$list[$rate_key]['pref'][] = $assoc['pref'];
+				$list[$rate_key]['ptype'][] = $assoc['ptype'];
 
-				$list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
-				$list[$assoc['rate']]['payment_ref'][] = $assoc['payment_ref'];
-				$list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
+				$list[$rate_key]['payment_id'][] = $assoc['payment_id'];
+				$list[$rate_key]['payment_ref'][] = $assoc['payment_ref'];
+				$list[$rate_key]['payment_amount'][] = $assoc['payment_amount'];
 
 				$rate = $assoc['rate'];
 			}
@@ -1056,7 +1066,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql = '';
 
 		// Count on payments date
-		$sql = "SELECT d.rowid, d.product_type as dtype, e.rowid as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
+		$sql = "SELECT d.rowid, d.product_type as dtype, e.rowid as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
 		$sql .= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
@@ -1101,55 +1111,60 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 				$rate = -1;
 				$oldrowid = '';
 				while ($assoc = $db->fetch_array($resql)) {
+					$rate_key = $assoc['rate'];
+					if ($f_rate == 'tva_tx' && !empty($assoc['vat_src_code']) && !preg_match('/\(/', $rate_key)) {
+						$rate_key .= ' (' . $assoc['vat_src_code'] . ')';
+					}
+
 					// Code to avoid warnings when array entry not defined
-					if (!isset($list[$assoc['rate']]['totalht'])) {
-						$list[$assoc['rate']]['totalht'] = 0;
+					if (!isset($list[$rate_key]['totalht'])) {
+						$list[$rate_key]['totalht'] = 0;
 					}
-					if (!isset($list[$assoc['rate']]['vat'])) {
-						$list[$assoc['rate']]['vat'] = 0;
+					if (!isset($list[$rate_key]['vat'])) {
+						$list[$rate_key]['vat'] = 0;
 					}
-					if (!isset($list[$assoc['rate']]['localtax1'])) {
-						$list[$assoc['rate']]['localtax1'] = 0;
+					if (!isset($list[$rate_key]['localtax1'])) {
+						$list[$rate_key]['localtax1'] = 0;
 					}
-					if (!isset($list[$assoc['rate']]['localtax2'])) {
-						$list[$assoc['rate']]['localtax2'] = 0;
+					if (!isset($list[$rate_key]['localtax2'])) {
+						$list[$rate_key]['localtax2'] = 0;
 					}
 
 					if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
 						$oldrowid = $assoc['rowid'];
-						$list[$assoc['rate']]['totalht']   += $assoc['total_ht'];
-						$list[$assoc['rate']]['vat'] += $assoc['total_vat'];
-						$list[$assoc['rate']]['localtax1'] += $assoc['total_localtax1'];
-						$list[$assoc['rate']]['localtax2'] += $assoc['total_localtax2'];
+						$list[$rate_key]['totalht']   += $assoc['total_ht'];
+						$list[$rate_key]['vat'] += $assoc['total_vat'];
+						$list[$rate_key]['localtax1'] += $assoc['total_localtax1'];
+						$list[$rate_key]['localtax2'] += $assoc['total_localtax2'];
 					}
 
-					$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
-					$list[$assoc['rate']]['dtype'][] = 'ExpenseReportPayment';
-					$list[$assoc['rate']]['datef'][] = $assoc['datef'];
-					$list[$assoc['rate']]['company_name'][] = '';
-					$list[$assoc['rate']]['company_id'][] = '';
-					$list[$assoc['rate']]['user_id'][] = $assoc['fk_user_author'];
-					$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
-					$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
+					$list[$rate_key]['dtotal_ttc'][] = $assoc['total_ttc'];
+					$list[$rate_key]['dtype'][] = 'ExpenseReportPayment';
+					$list[$rate_key]['datef'][] = $assoc['datef'];
+					$list[$rate_key]['company_name'][] = '';
+					$list[$rate_key]['company_id'][] = '';
+					$list[$rate_key]['user_id'][] = $assoc['fk_user_author'];
+					$list[$rate_key]['ddate_start'][] = $db->jdate($assoc['date_start']);
+					$list[$rate_key]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
-					$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-					$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
-					$list[$assoc['rate']]['type'][] = $assoc['type'];
-					$list[$assoc['rate']]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
-					$list[$assoc['rate']]['descr'][] = $assoc['descr'];
+					$list[$rate_key]['facid'][] = $assoc['facid'];
+					$list[$rate_key]['facnum'][] = $assoc['facnum'];
+					$list[$rate_key]['type'][] = $assoc['type'];
+					$list[$rate_key]['ftotal_ttc'][] = $assoc['ftotal_ttc'];
+					$list[$rate_key]['descr'][] = $assoc['descr'];
 
-					$list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
-					$list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
-					$list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
-					$list[$assoc['rate']]['localtax2_list'][] = $assoc['total_localtax2'];
+					$list[$rate_key]['totalht_list'][] = $assoc['total_ht'];
+					$list[$rate_key]['vat_list'][] = $assoc['total_vat'];
+					$list[$rate_key]['localtax1_list'][] = $assoc['total_localtax1'];
+					$list[$rate_key]['localtax2_list'][] = $assoc['total_localtax2'];
 
-					$list[$assoc['rate']]['pid'][] = $assoc['pid'];
-					$list[$assoc['rate']]['pref'][] = $assoc['pref'];
-					$list[$assoc['rate']]['ptype'][] = 'ExpenseReportPayment';
+					$list[$rate_key]['pid'][] = $assoc['pid'];
+					$list[$rate_key]['pref'][] = $assoc['pref'];
+					$list[$rate_key]['ptype'][] = 'ExpenseReportPayment';
 
-					$list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
-					$list[$assoc['rate']]['payment_ref'][] = $assoc['payment_ref'];
-					$list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
+					$list[$rate_key]['payment_id'][] = $assoc['payment_id'];
+					$list[$rate_key]['payment_ref'][] = $assoc['payment_ref'];
+					$list[$rate_key]['payment_amount'][] = $assoc['payment_amount'];
 
 					$rate = $assoc['rate'];
 				}

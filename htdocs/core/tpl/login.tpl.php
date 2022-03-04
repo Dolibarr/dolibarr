@@ -30,9 +30,16 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+// DDOS protection
+$size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
+if ($size > 10000) {
+	http_response_code(413);
+	$langs->loadLangs(array("errors", "install"));
+	accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 0, 0, 1);
+	exit;
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 
 
 header('Cache-Control: Public, must-revalidate');
@@ -87,7 +94,7 @@ if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disablenofollow = 0;
 }
 
-print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
+print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -129,7 +136,7 @@ $(document).ready(function () {
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
-<!-- Add fields to send local user information -->
+<!-- Add fields to store and send local user information. This fields are filled by the core/js/dst.js -->
 <input type="hidden" name="tz" id="tz" value="" />
 <input type="hidden" name="tz_string" id="tz_string" value="" />
 <input type="hidden" name="dst_observed" id="dst_observed" value="" />

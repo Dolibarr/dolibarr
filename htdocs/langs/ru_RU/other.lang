@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Проект создан сборщиком пи
 TicketCreatedByEmailCollector=Тикет создан сборщиком электронной почты из электронного адреса MSGID %s
 OpeningHoursFormatDesc=Используйте - для разделения часов открытия и закрытия.<br>Используйте пробел для ввода различных диапазонов.<br>Пример: 8-12 14-18
 SuffixSessionName=Суффикс имени сеанса
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Экспорт области

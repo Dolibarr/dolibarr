@@ -278,8 +278,8 @@ DescVentilExpenseReportMore=Se configura as contas contables dos tipos de inform
 DescVentilDoneExpenseReport=Consulte aquí as liñas de informes de gastos e as súas contas contables
 
 Closure=Peche anual
-DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
-OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+DescClosure=Consulte aquí o número de movementos por mes que non están validados e exercicios fiscais xa abertos
+OverviewOfMovementsNotValidated=Paso 1/ Visión xeral dos movementos non validados. (Preciso para pechar un exercicio fiscal)
 AllMovementsWereRecordedAsValidated=Todos os movementos foron rexistrados e validados
 NotAllMovementsCouldBeRecordedAsValidated=Non todos os movementos puideron ser rexistrados e validados
 ValidateMovements=Validar os movementos

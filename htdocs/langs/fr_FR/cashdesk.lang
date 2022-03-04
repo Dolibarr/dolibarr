@@ -134,3 +134,5 @@ PrintWithoutDetailsButton=Affiche le bouton "Générer sans les détails"
 PrintWithoutDetailsLabelDefault=Libellé de ligne par défaut à l'impression sans détails
 PrintWithoutDetails=Générer sans les détails
 YearNotDefined=L'année n'est pas définie
+TakeposBarcodeRuleToInsertProduct=Règle sur le code-barre pour insérer un produit
+TakeposBarcodeRuleToInsertProductDesc=Règle sous la forme "ref:NB+qu:NB+qd:NB+other:NB" où NB correpond au nombre de caractères composant la partie du code-barre avec : <ul><li><b>ref</b> : la référence du produit</li><li><b>qu</b> : la quantité (unités)<l/i><li><b>qd</b> : la quantité (décimales)</li><li><b>other</b> : autres caractères</li></ul>

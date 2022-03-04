@@ -134,4 +134,6 @@ HolidaysToApprove=அனுமதிக்க வேண்டிய விடு
 NobodyHasPermissionToValidateHolidays=விடுமுறை நாட்களை சரிபார்க்க யாருக்கும் அனுமதி இல்லை
 HolidayBalanceMonthlyUpdate=விடுமுறை இருப்பின் மாதாந்திர புதுப்பிப்பு
 XIsAUsualNonWorkingDay=%s என்பது பொதுவாக வேலை செய்யாத நாளாகும்
+BlockHolidayIfNegative=Block if balance negative
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=விடுப்பு கோரிக்கை %s வரைவாக இருக்க வேண்டும், ரத்து செய்யப்பட வேண்டும் அல்லது நீக்கப்பட மறுக்கப்பட வேண்டும்

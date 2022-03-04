@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Организация
 Version=Версия
 Publisher=Издател
@@ -343,7 +343,7 @@ StepNb=Стъпка %s
 FindPackageFromWebSite=Намерете пакет, който ви осигурява функционалността от която имате нужда (например на официалния уебсайт %s).
 DownloadPackageFromWebSite=Изтеглете пакета (например от официалния уебсайт %s).
 UnpackPackageInDolibarrRoot=Разопаковайте / разархивирайте файловете в директорията <b> %s </b> на Dolibarr
-UnpackPackageInModulesRoot=За да разположите / инсталирате външен модул, разопаковайте / разархивирайте пакетираните файлове в директорията <br> <b> %s </b> на сървъра, определена за външни модули
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Разполагането на модула е завършено. Необходимо е да активирате и настроите модула във вашата система, като отидете на страницата за настройка на модули: <a href="%s"> %s </a>.
 NotExistsDirect=Алтернативната основна директория не е дефинирана за съществуваща директория. <br>
 InfDirAlt=От версия 3 е възможно да се дефинира алтернативна основна директория. Това ви позволява да съхранявате в специална директория, добавки и персонализирани шаблони. <br> Просто създайте основна директория в Dolibarr (например: custom). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Инсталирането или създаванет
 HighlightLinesOnMouseHover=Маркиране на редове в таблица, когато мишката преминава отгоре
 HighlightLinesColor=Цвят на подчертания ред при преминаване на мишката отгоре (използвайте 'ffffff', ако не искате да се подчертава)
 HighlightLinesChecked=Цвят на подчертания ред, когато е маркиран (използвайте 'ffffff',ако не искате да се подчертава)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Цвят на текста в заглавието на страницата
 LinkColor=Цвят на връзките
 PressF5AfterChangingThis=Натиснете CTRL + F5 на клавиатурата или изчистете кеша на браузъра си след като промените тази стойност, за да стане ефективна.
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

@@ -44,10 +44,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Vorlage einer E-Mail, die nach Erhal
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Vorlage einer E-Mail, die nach Erhalt eines Standvorschlags gesendet werden soll.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = E-Mail-Vorlage, die nach der Bezahlung eines registrierten Standes gesendet wird.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = E-Mail-Vorlage, die nach der Bezahlung der Anmeldung zu einer Veranstaltung gesendet wird. 
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Vorlage der E-Mail bei Massenaktion an Teilnehmer
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Vorlage der Massenaktion-E-Mail an die Redner
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtern Sie die Auswahlliste des Drittanbieters in der Erstellungskarte / dem Formular des Teilnehmers nach Kategorie
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtern Sie die Auswahlliste des Drittanbieters in der Teilnehmererstellungskarte / dem Formular nach Kundentyp
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = E-Mail-Vorlage, die verwendet werden soll, wenn E-Mails durch Massenaktion "E-Mails senden" an Redner gesendet werden
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = E-Mail-Vorlage, die verwendet werden soll, wenn E-Mails durch Massenaktion „E-Mails senden“ an Teilnehmer gesendet werden
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Schränkt im Formular zum Erstellen/Hinzufügen eines Teilnehmers die Liste der Geschäftspartner auf diejenigen aus der Kategorie ein
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Schränkt im Formular zum Erstellen/Hinzufügen eines Teilnehmers die Liste der Geschäftspartner auf diejenigen des Typs ein
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Bezahlung Ihres Standes
 EventOrganizationEmailRegistrationPayment = Anmeldung zu einer Veranstaltung
 EventOrganizationMassEmailAttendees = Kommunikation mit den Teilnehmern
 EventOrganizationMassEmailSpeakers = Kommunikation mit den Sprechern
+ToSpeakers=An Redner
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Buchungskosten für die Teilnahme
 PriceOfRegistrationHelp=Preis für die Anmeldung/Teilnahme an der Veranstaltung
 PriceOfBooth=Buchungskosten für einen Stand
 PriceOfBoothHelp=Buchungskosten für einen Stand
-EventOrganizationICSLink=Verknüpfe ICS für Ereignisse
+EventOrganizationICSLink=Verknüpfe ICS für Vorträge
 ConferenceOrBoothInformation=Informationen zu Konferenzbeitrag oder Stand
 Attendees=Teilnehmer
 ListOfAttendeesOfEvent=Teilnehmerliste des Veranstaltungsprojekts
 DownloadICSLink = ICS-Link herunterladen
-EVENTORGANIZATION_SECUREKEY = Sicherer Schlüssel des öffentlichen Registrierungslinks zu einer Konferenz
+EVENTORGANIZATION_SECUREKEY = Seed, um den Schlüssel für die öffentliche Registrierungsseite zu sichern, die zum Vorschlagen eines Vortrags dient
 SERVICE_BOOTH_LOCATION = Service, der für die Rechnungszeile über einen Stand verwendet wird
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service, der für die Rechnungszeile über eine Teilnahmebuchung einer Konferenz verwendet wird
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service, der für die Rechnungszeile über eine Teilnahmebuchung einer Veranstaltung verwendet wird
 NbVotes=Anzahl der Stimmen
 #
 # Status

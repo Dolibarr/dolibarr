@@ -115,7 +115,6 @@ if ($id || $track_id || $ref) {
 $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 
 // Security check - Protection if external user
-$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id);
 
@@ -1480,31 +1479,6 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlright = '';
 			$help = "";
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
-			if ($object->fk_soc > 0) {
-				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-			}
-			$substitutionarray['__USER_SIGNATURE__'] = $user->signature;
-			$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
-			$substitutionarray['__TICKET_REF__'] = $object->ref;
-			$substitutionarray['__TICKET_SUBJECT__'] = $object->subject;
-			$substitutionarray['__TICKET_TYPE__'] = $object->type_code;
-			$substitutionarray['__TICKET_SEVERITY__'] = $object->severity_code;
-			$substitutionarray['__TICKET_CATEGORY__'] = $object->category_code; // For backward compatibility
-			$substitutionarray['__TICKET_ANALYTIC_CODE__'] = $object->category_code;
-			$substitutionarray['__TICKET_MESSAGE__'] = $object->message;
-			$substitutionarray['__TICKET_PROGRESSION__'] = $object->progress;
-			if ($object->fk_user_assign > 0) {
-				$userstat->fetch($object->fk_user_assign);
-				$substitutionarray['__TICKET_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
-			}
-
-			if ($object->fk_user_create > 0) {
-				$userstat->fetch($object->fk_user_create);
-				$substitutionarray['__TICKET_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
-			}
-			foreach ($substitutionarray as $key => $val) {
-				$help .= $key.' -> '.$langs->trans($val).'<br>';
-			}
 			$morehtmlright .= $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("TicketMessageSubstitutionReplacedByGenericValues").'</span>', $help, 1, 'helpclickable', '', 0, 3, 'helpsubstitution');
 
 			print '<div>';

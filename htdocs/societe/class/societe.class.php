@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
+
 /**
  *	Class to manage third parties objects (customers, suppliers, prospects...)
  */
@@ -898,8 +899,8 @@ class Societe extends CommonObject
 			$sql .= ", name_alias";
 			$sql .= ", entity";
 			$sql .= ", datec";
-			$sql .= ", fk_typent";
 			$sql .= ", fk_user_creat";
+			$sql .= ", fk_typent";
 			$sql .= ", canvas";
 			$sql .= ", status";
 			$sql .= ", ref_ext";
@@ -2329,7 +2330,7 @@ class Societe extends CommonObject
 	/**
 	 *  Return array of sales representatives
 	 *
-	 *  @param	User		$user			Object user
+	 *  @param	User		$user			Object user (not used)
 	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
 	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
@@ -2573,7 +2574,7 @@ class Societe extends CommonObject
 			$name .= ' ('.$this->name_alias.')';
 		}
 
-		$result = ''; $label = '';
+		$result = ''; $label = ''; $label2 = '';
 		$linkstart = ''; $linkend = '';
 
 		if (!empty($this->logo) && class_exists('Form')) {
@@ -2641,47 +2642,48 @@ class Societe extends CommonObject
 			}
 			$label .= '<br>'.implode('&nbsp;', $phonelist);
 		}
+
 		if (!empty($this->address)) {
-			$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
+			$label2 .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
 		} elseif (!empty($this->country_code)) {
-			$label .= '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
+			$label2 .= '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		}
 		if (!empty($this->tva_intra) || (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP) && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false)) {
-			$label .= '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
+			$label2 .= '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
 		}
 		if (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP)) {
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid1') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId1'.$this->country_code).':</b> '.$this->idprof1;
+				$label2 .= '<br><b>'.$langs->trans('ProfId1'.$this->country_code).':</b> '.$this->idprof1;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid2') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId2'.$this->country_code).':</b> '.$this->idprof2;
+				$label2 .= '<br><b>'.$langs->trans('ProfId2'.$this->country_code).':</b> '.$this->idprof2;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid3') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId3'.$this->country_code).':</b> '.$this->idprof3;
+				$label2 .= '<br><b>'.$langs->trans('ProfId3'.$this->country_code).':</b> '.$this->idprof3;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid4') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId4'.$this->country_code).':</b> '.$this->idprof4;
+				$label2 .= '<br><b>'.$langs->trans('ProfId4'.$this->country_code).':</b> '.$this->idprof4;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid5') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId5'.$this->country_code).':</b> '.$this->idprof5;
+				$label2 .= '<br><b>'.$langs->trans('ProfId5'.$this->country_code).':</b> '.$this->idprof5;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid6') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId6'.$this->country_code).':</b> '.$this->idprof6;
+				$label2 .= '<br><b>'.$langs->trans('ProfId6'.$this->country_code).':</b> '.$this->idprof6;
 			}
 		}
 		if (!empty($this->code_client) && ($this->client == 1 || $this->client == 3)) {
-			$label .= '<br><b>'.$langs->trans('CustomerCode').':</b> '.$this->code_client;
+			$label2 .= '<br><b>'.$langs->trans('CustomerCode').':</b> '.$this->code_client;
 		}
 		if (!empty($this->code_fournisseur) && $this->fournisseur) {
-			$label .= '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
+			$label2 .= '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
 		}
 		if (!empty($conf->accounting->enabled) && ($this->client == 1 || $this->client == 3)) {
-			$label .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
+			$label2 .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		}
 		if (!empty($conf->accounting->enabled) && $this->fournisseur) {
-			$label .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
+			$label2 .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
 		}
-		$label .= '</div>';
+		$label .= ($label2 ? '<br>'.$label2 : '').'</div>';
 
 		// Add type of canvas
 		$linkstart .= (!empty($this->canvas) ? '&canvas='.$this->canvas : '');
@@ -2733,7 +2735,7 @@ class Societe extends CommonObject
 		$hookmanager->initHooks(array('thirdpartydao'));
 		$parameters = array(
 			'id'=>$this->id,
-			'getnomurl'=>$result,
+			'getnomurl' => &$result,
 			'withpicto '=> $withpicto,
 			'option'=> $option,
 			'maxlen'=> $maxlen,

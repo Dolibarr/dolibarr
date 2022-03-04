@@ -204,6 +204,7 @@ $arrayfields = array(
 	'p.rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
 	'p.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
+	'thumbnail'=>array('label'=>'Photo', 'checked'=>0, 'position'=>10),
 	'p.label'=>array('label'=>"Label", 'checked'=>1, 'position'=>10),
 	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->service->enabled)), 'position'=>11),
 	'p.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled)), 'position'=>12),
@@ -249,11 +250,11 @@ $arrayfields = array(
 /*foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = dol_eval($val['visible'], 1);
+		$visible = dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position']
 		);
 	}
@@ -872,6 +873,11 @@ if ($resql) {
 		print '<input class="flat" type="text" name="search_ref_supplier" size="8" value="'.dol_escape_htmltag($search_ref_supplier).'">';
 		print '</td>';
 	}
+	// Thumbnail
+	if (!empty($arrayfields['thumbnail']['checked'])) {
+		print '<td class="liste_titre center">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['p.label']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" name="search_label" size="12" value="'.dol_escape_htmltag($search_label).'">';
@@ -1122,6 +1128,9 @@ if ($resql) {
 	if (!empty($arrayfields['pfp.ref_fourn']['checked'])) {
 		print_liste_field_titre($arrayfields['pfp.ref_fourn']['label'], $_SERVER["PHP_SELF"], "pfp.ref_fourn", "", $param, "", $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['thumbnail']['checked'])) {
+		print_liste_field_titre($arrayfields['thumbnail']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+	}
 	if (!empty($arrayfields['p.label']['checked'])) {
 		print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"], "p.label", "", $param, "", $sortfield, $sortorder);
 	}
@@ -1364,6 +1373,22 @@ if ($resql) {
 			print '<td class="tdoverflowmax200">';
 			print $product_static->getNomUrl(1);
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Thumbnail
+		if (!empty($arrayfields['thumbnail']['checked'])) {
+			$product_thumbnail_html = '';
+			if (!empty($product_static->entity)) {
+				$product_thumbnail = $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
+				if ($product_static->nbphoto > 0) {
+					$product_thumbnail_html = $product_thumbnail;
+				}
+			}
+
+			print '<td class="center">' . $product_thumbnail_html . '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

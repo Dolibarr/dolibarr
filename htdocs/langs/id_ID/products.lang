@@ -410,3 +410,4 @@ DefaultBOMDesc=BOM default direkomendasikan untuk digunakan untuk memproduksi pr
 Rank=Rank
 SwitchOnSaleStatus=Switch on sale status
 SwitchOnPurchaseStatus=Switch on purchase status
+StockMouvementExtraFields= Extra Fields (stock mouvement)
