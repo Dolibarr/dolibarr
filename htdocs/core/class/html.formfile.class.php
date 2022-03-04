@@ -981,6 +981,7 @@ class FormFile
 					$out .= '<tr class="oddeven">';
 					$out .= '<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
 					$out .= '<a data-ajax="false" href="'.$file->url.'" target="_blank" rel="noopener noreferrer">';
+					$out .= '<i class="fas fa-external-link-alt"></i> ';
 					$out .= $file->label;
 					$out .= '</a>';
 					$out .= '</td>';
