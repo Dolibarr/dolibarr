@@ -973,6 +973,91 @@ class FormFile
 
 				$this->numoffiles++;
 			}
+
+			// Set headershown to avoid to have table opened a second time later
+			$headershown = 1;
+
+			if (empty($buttonlabel)) {
+				$buttonlabel = $langs->trans('Generate');
+			}
+
+			if ($conf->browser->layout == 'phone') {
+				$urlsource .= '#' . $forname . '_form'; // So we switch to form after a generation
+			}
+			if (empty($noform)) {
+				$out .= '<form action="' . $urlsource . '" id="' . $forname . '_form" method="post">';
+			}
+			$out .= '<input type="hidden" name="action" value="builddoc">';
+			$out .= '<input type="hidden" name="page_y" value="">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+
+			//$out .= load_fiche_titre($titletoshow, '', '');
+			$out .= '<div class="div-table-responsive-no-min">';
+			$out .= '<table class="liste formdoc noborder centpercent">';
+
+			$out .= '<tr class="liste_titre">';
+
+			$addcolumforpicto = ($delallowed || $printer || $morepicto);
+			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+			$colspanmore = 0;
+
+			$out .= '<th colspan="' . $colspan . '" class="formdoc liste_titre maxwidthonsmartphone center">';
+
+			// Model
+			if (!empty($modellist)) {
+				asort($modellist);
+				$out .= '<span class="hideonsmartphone">' . $langs->trans('Model') . ' </span>';
+				if (is_array($modellist) && count($modellist) == 1) {    // If there is only one element
+					$arraykeys = array_keys($modellist);
+					$modelselected = $arraykeys[0];
+				}
+				$morecss = 'minwidth75 maxwidth200';
+				if ($conf->browser->layout == 'phone') {
+					$morecss = 'maxwidth100';
+				}
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
+				if ($conf->use_javascript_ajax) {
+					$out .= ajax_combobox('model');
+				}
+				$out .= $form->textwithpicto('', $tooltipontemplatecombo, 1, 'help', 'marginrightonly', 0, 3, '', 0);
+			} else {
+				$out .= '<div class="float">' . $langs->trans("Links") . '</div>';
+			}
+
+			// Language code (if multilang)
+			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && !empty($conf->global->MAIN_MULTILANGS) && !$forcenomultilang && (!empty($modellist) || $showempty)) {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
+				$formadmin = new FormAdmin($this->db);
+				$defaultlang = ($codelang && $codelang != 'auto') ? $codelang : $langs->getDefaultLang();
+				$morecss = 'maxwidth150';
+				if ($conf->browser->layout == 'phone') {
+					$morecss = 'maxwidth100';
+				}
+				$out .= $formadmin->select_language($defaultlang, 'lang_id', 0, null, 0, 0, 0, $morecss);
+			} else {
+				$out .= '&nbsp;';
+			}
+
+			// Button
+			$genbutton = '<input class="button buttongen reposition" id="' . $forname . '_generatebutton" name="' . $forname . '_generatebutton"';
+			$genbutton .= ' type="submit" value="' . $buttonlabel . '"';
+			if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
+				$genbutton .= ' disabled';
+			}
+			$genbutton .= '>';
+			if ($allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
+				$langs->load("errors");
+				$genbutton .= ' ' . img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
+			}
+			if (!$allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
+				$genbutton = '';
+			}
+			if (empty($modellist) && !$showempty && $modulepart != 'unpaid') {
+				$genbutton = '';
+			}
+			$out .= $genbutton;
+			$out .= '</th>';
+
 			// Loop on each link found
 			if (is_array($link_list)) {
 				$colspan = 2;
