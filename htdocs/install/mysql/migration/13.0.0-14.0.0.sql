@@ -649,3 +649,8 @@ ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode 
 
 ALTER TABLE llx_c_socialnetworks DROP INDEX idx_c_socialnetworks_code;
 ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_entity (code, entity);
+
+-- Easya 2022.5
+UPDATE llx_c_country SET eec = 0 WHERE code IN ('GB', 'UK', 'IM');
+UPDATE llx_c_country SET eec=0 WHERE eec IS NULL;
+ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
