@@ -283,8 +283,6 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 					$error++;
 				}
 			}
-
-			$result = $object->addTimeSpent($user);
 		} else {
 			$object->fetch($id, $ref);
 
