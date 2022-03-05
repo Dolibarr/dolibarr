@@ -727,7 +727,7 @@ if ($action != 'new') {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'checkdeposits');
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		if(substr($filedir, -1) == "/") $filedir = substr($filedir, 0 ,-1);
+		if (substr($filedir, -1) == "/") $filedir = substr($filedir, 0, -1);
 
 		print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
 
