@@ -469,8 +469,8 @@ class CommandeFournisseur extends CommonOrder
     	$sql .= " WHERE l.fk_commande = ".$this->id;
     	if ($only_product) $sql .= ' AND p.fk_product_type = 0';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql.= " AND pfp.rowid, l.qty >= pfp.quantity ";
-			$sql.= " GROUP BY l.rowid HAVING max_qty = MAX(pfp.quantity) ";
+			$sql.= " AND l.qty >= pfp.quantity ";
+			$sql.= " GROUP BY pfp.rowid, l.rowid HAVING max_qty = MAX(pfp.quantity) ";
 		}
     	$sql .= " ORDER BY l.rang, l.rowid";
     	//print $sql;
