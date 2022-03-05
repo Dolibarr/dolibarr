@@ -241,7 +241,8 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 
 		$langs->load("other");
 
-		$file = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'cheque').GETPOST('file');
+		$filepart = explode("/", GETPOST('file'));
+		$file = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'cheque').$filepart[sizeof($filepart)-1];
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
