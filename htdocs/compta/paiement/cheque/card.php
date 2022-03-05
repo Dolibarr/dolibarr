@@ -242,7 +242,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 		$langs->load("other");
 
 		$filepart = explode("/", GETPOST('file'));
-		$file = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'cheque').$filepart[sizeof($filepart)-1];
+		$file = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'cheque').$filepart[count($filepart)-1];
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
@@ -725,9 +725,8 @@ print '</div>';
 if ($action != 'new') {
 	if ($object->statut == 1) {
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'checkdeposits');
+		$filedir = $dir.get_exdir($object->ref, 0, 1, 1, $object, 'checkdeposits');
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		if (substr($filedir, -1) == "/") $filedir = substr($filedir, 0, -1);
 
 		print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
 
