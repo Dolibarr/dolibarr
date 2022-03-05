@@ -183,6 +183,7 @@ if (!empty($conf->global->API_RESTRICT_ON_IP)) {
 			$allowedip[$i] = gethostbyname($allowedip[$i]);
 			//  if submitted host is not an IP removes it
 		} elseif (!preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $allowedip[$i])) {
+			dol_syslog('REST API: Allowed hosts list ' . $allowedip[$i] . ' is not resolved or is not an IP, removed from allowed IP list');
 			unset($allowedip[$i]);
 		}
 	}
