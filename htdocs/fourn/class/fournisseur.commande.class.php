@@ -9,7 +9,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018-2021  Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -469,7 +469,7 @@ class CommandeFournisseur extends CommonOrder
     	$sql .= " WHERE l.fk_commande = ".$this->id;
     	if ($only_product) $sql .= ' AND p.fk_product_type = 0';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql.= " AND l.qty >= pfp.quantity ";
+			$sql.= " AND pfp.rowid, l.qty >= pfp.quantity ";
 			$sql.= " GROUP BY l.rowid HAVING max_qty = MAX(pfp.quantity) ";
 		}
     	$sql .= " ORDER BY l.rang, l.rowid";
