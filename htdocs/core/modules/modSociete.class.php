@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -463,7 +464,6 @@ class modSociete extends DolibarrModules
 			's.fax' => "Fax",
 			's.url' => "Url",
 			's.email' => "Email",
-			's.skype' => "Skype",
 			's.fk_effectif' => "Staff",
 			's.fk_typent' => "ThirdPartyType",
 			"s.fk_forme_juridique" => "JuridicalStatus",
@@ -604,7 +604,6 @@ class modSociete extends DolibarrModules
 			's.fax' => "eg. +34987654321",
 			's.url' => "e.g. https://www.mybigcompany.com",
 			's.email' => "e.g. test@mybigcompany.com",
-			's.skype' => "Skype name",
 			's.fk_effectif' => "1/2/3/5: represents one of the five ranges of employees",
 			's.fk_typent' => 'matches field "id" (1-9 etc.) OR "code" (TE_SMALL etc.) in table "'.MAIN_DB_PREFIX.'c_typent"',
 			's.fk_forme_juridique' => '1/2/3 etc...matches field "code" in table "'.MAIN_DB_PREFIX.'c_forme_juridique"',
@@ -676,7 +675,6 @@ class modSociete extends DolibarrModules
 			's.phone_mobile' => "PhoneMobile",
 			's.fax' => "Fax",
 			's.email' => "Email",
-			's.skype' => "Skype",
 			's.note_private' => "NotePrivate",
 			's.note_public' => "NotePublic"
 		);
@@ -742,7 +740,6 @@ class modSociete extends DolibarrModules
 			's.phone_mobile' => "5551144",
 			's.fax' => "5551155",
 			's.email' => "johnsmith@email.com",
-			's.skype' => "skype username",
 			's.note_private' => "My private note",
 			's.note_public' => "My public note"
 		);
