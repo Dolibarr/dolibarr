@@ -5693,12 +5693,12 @@ abstract class CommonObject
 
 			$enabled = 1;
 			if (isset($this->fields[$key]['enabled'])) {
-				$enabled = dol_eval($this->fields[$key]['enabled'], 1);
+				$enabled = dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
 			}
 			/*$perms = 1;
 			if (isset($this->fields[$key]['perms']))
 			{
-				$perms = dol_eval($this->fields[$key]['perms'], 1);
+				$perms = dol_eval($this->fields[$key]['perms'], 1, 1, '1');
 			}*/
 			if (empty($enabled)) {
 				continue;
@@ -5854,7 +5854,7 @@ abstract class CommonObject
 						if (!empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0);
+								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 							}
 						}
 					}
@@ -5985,7 +5985,7 @@ abstract class CommonObject
 
 				if (!empty($attrfieldcomputed)) {
 					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-						$value = dol_eval($attrfieldcomputed, 1, 0);
+						$value = dol_eval($attrfieldcomputed, 1, 0, '');
 						dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 						$new_array_options[$key] = $value;
 					} else {
@@ -6352,7 +6352,7 @@ abstract class CommonObject
 
 			if (!empty($attrfieldcomputed)) {
 				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-					$value = dol_eval($attrfieldcomputed, 1, 0);
+					$value = dol_eval($attrfieldcomputed, 1, 0, '');
 					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
 				} else {
@@ -7206,7 +7206,7 @@ abstract class CommonObject
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = dol_eval($computed, 1, 0);
+			$value = dol_eval($computed, 1, 0, '');
 		}
 
 		if (empty($morecss)) {
@@ -7731,7 +7731,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1);
+						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '1');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -7739,12 +7739,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
+						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '1');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
+						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '1');
 					}
 
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {

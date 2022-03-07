@@ -59,8 +59,8 @@ $backtopage = GETPOST('$backtopage', 'alpha');
 
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma') ? GETPOST('sortfield', 'aZ09comma') : "a.datep";
+$sortorder = GETPOST('sortorder', 'aZ09comma') ? GETPOST('sortorder', 'aZ09comma') : "desc";
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -820,10 +820,28 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Confirmation close
 		if ($action == 'close') {
-			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", '', '', 1);
-			if ($ret == 'html') {
-				print '<br>';
+			$thirdparty_contacts = $object->getInfosTicketExternalContact();
+			$contacts_select = array(
+				'-2' => $langs->trans('TicketNotifyAllTiersAtClose'),
+				'-3' => $langs->trans('TicketNotNotifyTiersAtClose')
+			);
+			foreach ($thirdparty_contacts as $thirdparty_contact) {
+				$contacts_select[$thirdparty_contact['id']] = $thirdparty_contact['civility'] . ' ' . $thirdparty_contact['lastname'] . ' ' . $thirdparty_contact['firstname'];
 			}
+
+			// Default select all or no contact
+			$default = (!empty($conf->global->TICKET_NOTIFY_AT_CLOSING)) ? -2 : -3;
+			$formquestion = array(
+				array(
+					'name' => 'contactid',
+					'type' => 'select',
+					'label' => $langs->trans('NotifyThirdpartyOnTicketClosing'),
+					'values' => $contacts_select,
+					'default' => $default
+				),
+			);
+
+			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_close", $formquestion, '', 1);
 		}
 		// Confirmation abandon
 		if ($action == 'abandon') {
