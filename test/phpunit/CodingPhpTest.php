@@ -207,11 +207,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'html.formmail.class.php',
 					'translate.class.php',
 					'utils.class.php',
-					'modules_product.class.php',
-					'modules_societe.class.php',
 					'TraceableDB.php',
 					'multicurrency.class.php',
-					'reception.class.php',
 					'infobox.class.php'
 				))) {
 					// Must not find $db->
