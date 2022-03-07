@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2022	Anthony Berton		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1175,5 +1176,100 @@ class Utils
 		fclose($handle);
 
 		return 1;
+	}
+
+	/**
+	 *  Make a send last backup of database or fil in param
+	 *  CAN BE A CRON TASK
+	 *
+	 *	@param 	string	$sendto              Recipients emails
+	 *	@param 	string  $from                Sender email
+	 *	@param 	string	$subject             Topic/Subject of mail
+	 *	@param 	string	$message             Message
+	 *	@param 	string	$filename		     List of files to attach (full path of filename on file system)
+	 * 	@param 	string	$filter			     Filter file send
+	 *  @return	int						     0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '')
+	{
+		global $conf, $langs;
+
+		$output = '';
+
+		if (!empty($from)) {
+			$from = dol_escape_htmltag($from);
+		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+		} else {
+			$error++;
+		}
+
+		if (!empty($sendto)) {
+			$sendto = dol_escape_htmltag($sendto);
+		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+		} else {
+			$error++;
+		}
+
+		if (!empty($subject)) {
+			$subject = dol_escape_htmltag($subject);
+		} else {
+			$subject = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
+		}
+
+		if (empty($message)) {
+			$message = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if ($filename) {
+			if (dol_is_file($conf->admin->dir_output.'/backup/'.$filename)) {
+				$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filename);
+			}
+		} else {
+			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
+		}
+		if ($tmpfiles) {
+			foreach ($tmpfiles as $key => $val) {
+				if ($key  == 'fullname') {
+					$filepath = array($val);
+					$filesize = dol_filesize($val);
+				}
+				if ($key  == 'type') {
+					$mimetype = array($val);
+				}
+				if ($key  == 'relativename') {
+					$filename = array($val);
+				}
+			}
+		}
+		if ($filepath) {
+			if ($filesize > 100000000) {
+				$error++;
+			}
+		} else {
+			$error++;
+		}
+		if (!$error) {
+			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
+			if ($mailfile->error) {
+				$error++;
+			} else {
+				$result = $mailfile->sendfile();
+			}
+		}
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$this->error = $error;
+		$this->output = $output;
+
+		if ($result == true) {
+			return 0;
+		} else {
+			return $result;
+		}
 	}
 }
