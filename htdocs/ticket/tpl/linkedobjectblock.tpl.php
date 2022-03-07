@@ -21,7 +21,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE ticket/tpl/linkedopjectblock.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE ticket/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;
