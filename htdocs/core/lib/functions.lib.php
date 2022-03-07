@@ -10142,7 +10142,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
-		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
+		if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(
@@ -10153,6 +10153,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	if (empty($html)) {
 		$html = $label;
+		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
 		$attr['aria-label'] = $label;
 	}
@@ -10166,6 +10167,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		$attr['id'] = $id;
 	}
 
+
 	// Override attr
 	if (!empty($params['attr']) && is_array($params['attr'])) {
 		foreach ($params['attr'] as $key => $value) {
@@ -10177,6 +10179,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 				$attr[$key] = $value;
 			}
 		}
+	}
+
+	// automatic add tooltip when title is detected
+	if (!empty($attr['title']) && !empty($attr['class']) && strpos($attr['class'], 'classfortooltip') === false) {
+		$attr['class'].= ' classfortooltip';
 	}
 
 	// Js Confirm button
