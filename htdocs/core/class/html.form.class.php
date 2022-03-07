@@ -5202,13 +5202,15 @@ class Form
 			$out .= '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
+            $out .= '<span class="project_head_block">';
 			if ($selected) {
 				$projet = new Project($this->db);
 				$projet->fetch($selected);
-				$out .= $projet->getNomUrl(1, '', 1);
+                $out .= $projet->getNomUrl(1, '', 1);
 			} else {
 				$out .= "&nbsp;";
 			}
+            $out .= '</span>';
 		}
 
 		if (empty($nooutput)) {
