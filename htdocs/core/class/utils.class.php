@@ -1194,7 +1194,9 @@ class Utils
 	{
 		global $conf, $langs;
 
+		$filepath = '';
 		$output = '';
+		$error = 0;
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
@@ -1244,20 +1246,31 @@ class Utils
 				}
 			}
 		}
+
 		if ($filepath) {
 			if ($filesize > 100000000) {
+				$output = 'Sorry, last backup file is too large to be send by email';
 				$error++;
 			}
 		} else {
+			$output = 'No backup file found';
 			$error++;
 		}
+
 		if (!$error) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
 			if ($mailfile->error) {
 				$error++;
-			} else {
-				$result = $mailfile->sendfile();
+				$output = $mailfile->error;
+			}
+		}
+
+		if (!$error) {
+			$result = $mailfile->sendfile();
+			if ($result <= 0) {
+				$error++;
+				$output = $mailfile->error;
 			}
 		}
 
