@@ -271,3 +271,4 @@ ErrorCantFindCodeInInventory=Impossible de trouver le code suivant dans l'invent
 QtyWasAddedToTheScannedBarcode=Succès !! La quantité a été ajoutée à tous les codes-barres demandés. Vous pouvez fermer l'outil Scanner.
 StockChangeDisabled=Changement sur stock désactivé
 NoWarehouseDefinedForTerminal=Aucun entrepôt défini pour le terminal
+IncludeSubWarehouse=Inclure les sous-entrepôts ?
