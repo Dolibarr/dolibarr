@@ -308,7 +308,7 @@ if (empty($reshook)) {
 
 			// Rename some POST variables into a generic name
 			if (GETPOST('actionmodify', 'alpha') && $value == 'topic') {
-				$_POST['topic'] = $_POST['topic-'.$rowid];
+				$_POST['topic'] = GETPOST('topic-'.$rowid);
 			}
 
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '' || GETPOST($value) == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position') {
@@ -1034,7 +1034,7 @@ if ($resql) {
 					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
 				}
 				// Test on 'enabled'
-				if (!dol_eval($obj->enabled, 1)) {
+				if (!dol_eval($obj->enabled, 1, 1, '1')) {
 					$i++;
 					continue; // Email template not qualified
 				}

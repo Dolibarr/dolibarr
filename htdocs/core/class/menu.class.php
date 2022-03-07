@@ -119,7 +119,7 @@ class Menu
 	{
 		$nb = 0;
 		foreach ($this->liste as $val) {
-			//if (dol_eval($val['enabled'], 1)) $nb++;
+			//if (dol_eval($val['enabled'], 1, 1, '1')) $nb++;
 			if (!empty($val['enabled'])) {
 				$nb++; // $val['enabled'] is already evaluated to 0 or 1, no need for dol_eval()
 			}

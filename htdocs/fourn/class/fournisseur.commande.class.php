@@ -477,15 +477,15 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.entity IN (".getEntity('product_fournisseur_price').") AND l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".((int) $this->socid);
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.entity IN (".getEntity('product_fournisseur_price').") AND l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND l.qty >= pfp.quantity AND pfp.fk_soc = ".((int) $this->socid);
 		}
 		$sql .= " WHERE l.fk_commande = ".((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
 		}
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql.= " AND l.qty >= pfp.quantity ";
-			$sql.= " GROUP BY l.rowid HAVING max_qty = MAX(pfp.quantity) ";
+			$sql.= " GROUP BY l.rowid";
+			$sql.= " HAVING (max_qty = MAX(pfp.quantity) OR max_qty IS NULL)";
 		}
 		$sql .= " ORDER BY l.rang, l.rowid";
 		//print $sql;
@@ -3132,18 +3132,19 @@ class CommandeFournisseur extends CommonOrder
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'muscadet';
-
+			$modele = '';
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 			}
 		}
-
-		$modelpath = "core/modules/supplier_order/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if (empty($modele)) {
+			return 0;
+		} else {
+			$modelpath = "core/modules/supplier_order/doc/";
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
 	}
 
 	/**
@@ -3551,11 +3552,11 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.entity IN (".getEntity('product_fournisseur_price').") AND cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.entity IN (".getEntity('product_fournisseur_price').") AND cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn AND cd.qty >= pfp.quantity";
 		}
 		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= " AND cd.qty >= pfp.quantity GROUP BY cd.rowid HAVING max_qty = MAX(pfp.quantity)";
+			$sql .= " GROUP BY cd.rowid HAVING (max_qty = MAX(pfp.quantity) OR max_qty IS NULL)";
 		}
 		$result = $this->db->query($sql);
 		if ($result) {
