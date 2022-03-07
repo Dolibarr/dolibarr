@@ -162,11 +162,11 @@ llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans($page_name), $linkback, 'multicurrency');
+print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = multicurrencyAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', '', -1, "");
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "multicurrency");
 
 
 print '<div class="div-table-responsive-no-min">';
