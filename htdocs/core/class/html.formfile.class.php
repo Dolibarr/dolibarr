@@ -1281,10 +1281,20 @@ class FormFile
 				}
 				print '<td></td>';
 				print '<td></td>';
-				if (!$disablemove) {
+				if (empty($disablemove) && count($filearray) > 1) {
 					print '<td></td>';
 				}
 				print "</tr>\n";
+			}
+
+			// Get list of files stored into database for same relative directory
+			if ($relativedir) {
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+
+				//var_dump($sortfield.' - '.$sortorder);
+				if ($sortfield && $sortorder) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+				}
 			}
 
 			print '<tr class="liste_titre nodrag nodrop">';
@@ -1299,20 +1309,10 @@ class FormFile
 			print_liste_field_titre('');
 			// Action button
 			print_liste_field_titre('');
-			if (!$disablemove) {
+			if (empty($disablemove) && count($filearray) > 1) {
 				print_liste_field_titre('');
 			}
 			print "</tr>\n";
-
-			// Get list of files stored into database for same relative directory
-			if ($relativedir) {
-				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
-
-				//var_dump($sortfield.' - '.$sortorder);
-				if ($sortfield && $sortorder) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
-				}
-			}
 
 			$nboffiles = count($filearray);
 			if ($nboffiles > 0) {
@@ -1508,18 +1508,18 @@ class FormFile
 						}
 						print "</td>";
 
-						if (empty($disablemove)) {
+						if (empty($disablemove) && count($filearray) > 1) {
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&rowid='.$line->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
-								if ($i < $nboffiles - 1) {
+								if ($i < ($nboffiles - 1)) {
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&rowid='.$line->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {
-								print '<td'.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'>';
+								print '<td'.(($conf->browser->layout != 'phone') ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'>';
 								print '</td>';
 							}
 						}
@@ -1529,7 +1529,7 @@ class FormFile
 						print '<input type="submit" class="button button-save" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 						print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
-						if (empty($disablemove)) {
+						if (empty($disablemove) && count($filearray) > 1) {
 							print '<td class="right"></td>';
 						}
 					}
@@ -1540,7 +1540,7 @@ class FormFile
 			}
 			if ($nboffiles == 0) {
 				$colspan = '6';
-				if (empty($disablemove)) {
+				if (empty($disablemove) && count($filearray) > 1) {
 					$colspan++; // 6 columns or 7
 				}
 				print '<tr class="oddeven"><td colspan="'.$colspan.'">';
@@ -2030,7 +2030,7 @@ class FormFile
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-		print '<table width="100%" class="liste noborder nobottom">';
+		print '<table class="liste noborder nobottom centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre(
 			$langs->trans("Links"),
@@ -2115,7 +2115,7 @@ class FormFile
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'&token='.newToken().'" class="editfilelink editfielda reposition" >'.img_edit().'</a>'; // id= is included into $param
 				if ($permissiontodelete) {
-					print ' &nbsp; <a class="deletefilelink" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&linkid='.$link->id.$param.'">'.img_delete().'</a>'; // id= is included into $param
+					print ' &nbsp; <a class="deletefilelink reposition" href="'.$_SERVER['PHP_SELF'].'?action=deletelink&token='.newToken().'&linkid='.((int) $link->id).$param.'">'.img_delete().'</a>'; // id= is included into $param
 				} else {
 					print '&nbsp;';
 				}
