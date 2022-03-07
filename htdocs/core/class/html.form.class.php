@@ -1667,7 +1667,7 @@ class Form
 		// We search third parties
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town";
 		if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT)) {
-			$sql .= ", sp.parent";
+			$sql .= ", sp.fk_parent";
 		}
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 			$sql .= ", s.nom as company, s.town AS company_town";
@@ -1681,7 +1681,7 @@ class Form
 			$sql .= " AND sp.fk_soc = ".((int) $socid);
 		}
 		if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && !empty($nochild)) {
-			$sql .= " AND sp.parent = ''";
+			$sql .= " AND sp.fk_parent = ''";
 		}
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND sp.statut <> 0";

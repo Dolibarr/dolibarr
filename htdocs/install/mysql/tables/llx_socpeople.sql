@@ -2,7 +2,8 @@
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2020      Open-Dsi        		<support@open-dsi.fr>
+-- Copyright (C) 2020      Open-Dsi        		  <support@open-dsi.fr>
+-- Copyright (C) 2022      Anthony Berton	  	  <anthony.berton@bb2a.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ create table llx_socpeople
   priv				smallint NOT NULL DEFAULT 0,
   fk_prospectcontactlevel  	varchar(12),                         		-- prospect level (in llx_c_prospectcontactlevel)
   fk_stcommcontact  		integer        DEFAULT 0 NOT NULL,      	-- commercial statut
-  parent 		integer        DEFAULT 0 NOT NULL,
+  fk_parent 		integer        DEFAULT 0 NOT NULL,
   fk_user_creat		integer DEFAULT 0,							-- user qui a creel'enregistrement
   fk_user_modif		integer,
   note_private		text,

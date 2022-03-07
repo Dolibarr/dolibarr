@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2021  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2022       Anthony Berton	  	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -297,7 +298,7 @@ function show_childs($conf, $langs, $db, $object)
 
 	$sql = "SELECT c.rowid, c.lastname, c.firstname, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.address, c.zip, c.town";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-	$sql .= " WHERE c.parent = ".((int) $object->id);
+	$sql .= " WHERE c.fk_parent = ".((int) $object->id);
 	$sql .= " ORDER BY c.lastname";
 
 	$result = $db->query($sql);

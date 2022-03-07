@@ -11,6 +11,7 @@
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi     			<support@open-dsi.fr>
+ * Copyright (C) 2022      	Anthony Berton	  		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
-$parent = GETPOST("parent", 'int');
+$fk_parent = GETPOST("fk_parent", 'int');
 
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
@@ -226,7 +227,7 @@ if (empty($reshook)) {
 		$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 		$object->fax = (string) GETPOST("fax", 'alpha');
 		$object->priv = GETPOST("priv", 'int');
-		$object->parent = GETPOST("parent", 'int');
+		$object->fk_parent = GETPOST("fk_parent", 'int');
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
@@ -433,7 +434,7 @@ if (empty($reshook)) {
 			$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 			$object->fax = (string) GETPOST("fax", 'alpha');
 			$object->priv = (string) GETPOST("priv", 'int');
-			$object->parent = (string) GETPOST("parent", 'int');
+			$object->fk_parent = (string) GETPOST("fk_parent", 'int');
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
@@ -856,7 +857,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
 				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 				print img_picto('', 'object_contact');
-				print $form->selectcontacts(0, $parent, 'parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
+				print $form->selectcontacts(0, $fk_parent, 'fk_parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
 				print '</td></tr>';
 			}
 
@@ -1142,10 +1143,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// parent user
 			$nbchilds = $object->nbChilds();
 			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
-				$parent = $object->parent;
+				$parent = $object->fk_parent;
 				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 				print img_picto('', 'object_contact');
-				print $form->selectcontacts(0, $parent, 'parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
+				print $form->selectcontacts(0, $fk_parent, 'fk_parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
 				print '</td></tr>';
 			}
 
@@ -1369,9 +1370,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$nbchilds = $object->nbChilds();
 		if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
 			print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
-			if ($object->parent > 0) {
+			if ($object->fk_parent > 0) {
 				$objparent = new Contact($db);
-				$objparent->fetch($object->parent);
+				$objparent->fetch($object->fk_parent);
 				print $objparent->getNomUrl(1);
 			}
 			print '</td></tr>';

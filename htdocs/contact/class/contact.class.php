@@ -11,6 +11,7 @@
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
  * Copyright (C) 2020      Open-Dsi  	               <support@open-dsi.fr>
+ * Copyright (C) 2022      Anthony Berton			   <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +114,7 @@ class Contact extends CommonObject
 		'priv' =>array('type'=>'smallint(6)', 'label'=>'ContactVisibility', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>175),
 		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'ProspectStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
 		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
-		'parent' =>array('type'=>'integer', 'label'=>'ParentContact', 'enabled'=>1, 'visible'=>-1, 'position'=>260),
+		'fk_parent' =>array('type'=>'integer', 'label'=>'ParentContact', 'enabled'=>1, 'visible'=>-1, 'position'=>260),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
@@ -308,7 +309,7 @@ class Contact extends CommonObject
 
 	public $cacheprospectstatus = array();
 	public $fk_prospectlevel;
-	public $parent;
+	public $fk_parent;
 	public $stcomm_id;
 	public $statut_commercial;
 
@@ -590,7 +591,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
-		$sql .= ", parent = ".($this->parent  > 0 ? $this->parent  : "0");
+		$sql .= ", fk_parent = ".($this->fk_parent  > 0 ? $this->fk_parent  : "0");
 		$sql .= ", fk_prospectcontactlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
@@ -970,7 +971,7 @@ class Contact extends CommonObject
 		$sql .= " c.socialnetworks,";
 		$sql .= " c.photo,";
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
-		$sql .= " c.fk_prospectcontactlevel, c.fk_stcommcontact, c.parent, st.libelle as stcomm, st.picto as stcomm_picto,";
+		$sql .= " c.fk_prospectcontactlevel, c.fk_stcommcontact, c.fk_parent, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
 		$sql .= " c.datec as date_creation, c.tms as date_modification,";
 		$sql .= " co.label as country, co.code as country_code,";
@@ -1038,7 +1039,7 @@ class Contact extends CommonObject
 				$this->statut = $obj->statut;
 
 				$this->fk_prospectlevel = $obj->fk_prospectcontactlevel;
-				$this->parent = $obj->parent;
+				$this->fk_parent = $obj->fk_parent;
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
 				$libelle = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
@@ -1940,7 +1941,7 @@ class Contact extends CommonObject
 	 */
 	public function nbChilds()
 	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE parent = ".((int) $this->id);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_parent = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nbchilds = $this->db->num_rows($resql);

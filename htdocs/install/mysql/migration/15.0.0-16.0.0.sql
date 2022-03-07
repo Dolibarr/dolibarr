@@ -271,7 +271,7 @@ ALTER TABLE llx_reception MODIFY COLUMN ref_supplier varchar(128);
 
 ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER domiciliation;
 
-ALTER TABLE llx_socpeople ADD COLUMN parent integer DEFAULT 0 NOT NULL AFTER fk_stcommcontact;
+ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL AFTER fk_stcommcontact;
 
 -- Set default ticket type to OTHER if no default exists
 UPDATE llx_c_ticket_type SET use_default=1 WHERE code='OTHER' AND NOT EXISTS(SELECT * FROM (SELECT * FROM llx_c_ticket_type) AS t WHERE use_default=1);
