@@ -67,7 +67,7 @@ $id = GETPOST("id", 'int');
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
-$hookmanager->initHooks(array('projetcardinfo'));
+$hookmanager->initHooks(array('projectcardinfo'));
 
 if (!$user->rights->projet->lire) {
 	accessforbidden();
