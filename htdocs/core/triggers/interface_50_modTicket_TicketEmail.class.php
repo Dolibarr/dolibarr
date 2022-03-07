@@ -143,7 +143,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
 					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 					if ($sendto) {
-						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs, $conf);
+						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
 					}
 				}
 
@@ -154,6 +154,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					//if contact selected send to email's contact else send to email's thirdparty
 
 					$contactid = GETPOST('contactid', 'alpha');
+					$res = 0;
 
 					if (!empty($contactid)) {
 						$contact = new Contact($this->db);
@@ -197,7 +198,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
 					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 					if ($sendto) {
-						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs, $conf);
+						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
 					}
 				}
 
@@ -211,6 +212,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					$contactid = GETPOST('contactid', 'int');
+					$res = 0;
+
 					if ($contactid > 0) {
 						$contact = new Contact($this->db);
 						$res = $contact->fetch($contactid);
@@ -249,17 +252,18 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 	/**
 	 * Composes and sends a message concerning a ticket, to be sent to admin address.
-	 * @param string $sendto			Addresses to send the mail, format "first@address.net, second@address.net," etc.
-	 * @param string $base_subject		email subject. Non-translated string.
-	 * @param string $body				email body (first line). Non-translated string.
-	 * @param Ticket $object			the ticket thet the email refers to
-	 * @param Translate $langs			the translation object
-	 * @param conf		    $conf       Object conf
 	 *
-	 * @return none
+	 * @param string 	$sendto			Addresses to send the mail, format "first@address.net, second@address.net," etc.
+	 * @param string 	$base_subject	email subject. Non-translated string.
+	 * @param string 	$body			email body (first line). Non-translated string.
+	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Translate $langs			the translation object
+	 * @return void
 	 */
-	private function composeAndSendAdminMessage($sendto, $base_subject, $body, Ticket $object, Translate $langs, $conf)
+	private function composeAndSendAdminMessage($sendto, $base_subject, $body, Ticket $object, Translate $langs)
 	{
+		global $conf;
+
 		// Init to avoid errors
 		$filepath = array();
 		$filename = array();
@@ -308,7 +312,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		if ($mailfile->error) {
 			dol_syslog($mailfile->error, LOG_DEBUG);
 		} else {
-					$result = $mailfile->sendfile();
+			$result = $mailfile->sendfile();
 		}
 		if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
@@ -317,18 +321,19 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 	/**
 	 * Composes and sends a message concerning a ticket, to be sent to customer addresses.
-	 * @param string $sendto			Addresses to send the mail, format "first@address.net, second@address.net, " etc.
-	 * @param string $base_subject		email subject. Non-translated string.
-	 * @param string $body				email body (first line). Non-translated string.
-	 * @param string $see_ticket		string indicating the ticket public address
-	 * @param Ticket $object			the ticket thet the email refers to
-	 * @param Translate $langs			the translation object
-	 * @param conf		    $conf       Object conf
 	 *
-	 * @return none
+	 * @param string 	$sendto			Addresses to send the mail, format "first@address.net, second@address.net, " etc.
+	 * @param string 	$base_subject	email subject. Non-translated string.
+	 * @param string	$body			email body (first line). Non-translated string.
+	 * @param string 	$see_ticket		string indicating the ticket public address
+	 * @param Ticket 	$object			the ticket thet the email refers to
+	 * @param Translate $langs			the translation object
+	 * @return void
 	 */
-	private function composeAndSendCustomerMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs, $conf)
+	private function composeAndSendCustomerMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs)
 	{
+		global $conf, $user;
+
 		// Init to avoid errors
 		$filepath = array();
 		$filename = array();
