@@ -3734,7 +3734,7 @@ class Commande extends CommonOrder
 
 			$target_value=array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
-				$linkclose .= ' target="'.$target.'"';
+				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
 		}
 
