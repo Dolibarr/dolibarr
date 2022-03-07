@@ -2704,9 +2704,9 @@ class Societe extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip refurl"';
-			$target_value=array('_self','_blank','_parent','_top',);
+			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
-				$linkclose .= ' target="'.$target.'"';
+				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
 
 			/*
