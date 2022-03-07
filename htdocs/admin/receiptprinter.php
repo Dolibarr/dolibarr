@@ -304,7 +304,15 @@ if ($mode == 'config' && $user->admin) {
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("Name").'</th>';
 	print '<th>'.$langs->trans("Type").'</th>';
-	print '<th>'.$langs->trans("Profile").'</th>';
+	print '<th>';
+	$htmltext = $langs->trans("PROFILE_DEFAULT").' = '.$langs->trans("PROFILE_DEFAULT_HELP").'<br>';
+	$htmltext .= $langs->trans("PROFILE_SIMPLE").' = '.$langs->trans("PROFILE_SIMPLE_HELP").'<br>';
+	$htmltext .= $langs->trans("PROFILE_EPOSTEP").' = '.$langs->trans("PROFILE_EPOSTEP_HELP").'<br>';
+	$htmltext .= $langs->trans("PROFILE_P822D").' = '.$langs->trans("PROFILE_P822D_HELP").'<br>';
+	$htmltext .= $langs->trans("PROFILE_STAR").' = '.$langs->trans("PROFILE_STAR_HELP").'<br>';
+
+	print $form->textwithpicto($langs->trans("Profile"), $htmltext);
+	print '</th>';
 	print '<th>'.$langs->trans("Parameters").'</th>';
 	print '<th></th>';
 	print "</tr>\n";
@@ -386,17 +394,6 @@ if ($mode == 'config' && $user->admin) {
 	print '</table>';
 
 	print '<br>';
-
-
-	print load_fiche_titre($langs->trans("ReceiptPrinterProfileDesc"), '', '')."\n";
-
-	print '<table class="noborder centpercent">'."\n";
-	print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_DEFAULT").':</td><td>'.$langs->trans("PROFILE_DEFAULT_HELP").'</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_SIMPLE").':</td><td>'.$langs->trans("PROFILE_SIMPLE_HELP").'</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_EPOSTEP").':</td><td>'.$langs->trans("PROFILE_EPOSTEP_HELP").'</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_P822D").':</td><td>'.$langs->trans("PROFILE_P822D_HELP").'</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_STAR").':</td><td>'.$langs->trans("PROFILE_STAR_HELP").'</td></tr>';
-	print '</table>';
 }
 
 // mode = template
