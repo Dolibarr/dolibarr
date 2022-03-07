@@ -262,14 +262,14 @@ if ($action == "setdisableParentCompagny") {
 }
 
 // Disable Parent contact
-if ($action == "setdisableParentContact") {
+if ($action == "setenableParentContact") {
 	$val = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "SOCIETE_DISABLE_PARENTCONTACT", $val, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "SOCIETE_ENABLE_PARENT_CONTACT", $val, 'yesno', 0, '', $conf->entity);
 
 	if (!($res > 0)) {
 		$error++;
 	} else {
-		$res = dolibarr_set_const($db, "SOCIETE_DISABLE_CONTACT_CHILDS", $val, 'yesno', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "SOCIETE_ENABLE_CONTACT_CHILDS", $val, 'yesno', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -920,14 +920,14 @@ print '</a></td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("DisableParentContact").'</td>';
+print '<td width="80%">'.$langs->trans("EnableParentContact").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT)) {
-	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableParentContact&token='.newToken().'&value=0">';
+if (!empty($conf->global->SOCIETE_ENABLE_PARENT_CONTACT)) {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenableParentContact&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableParentContact&token='.newToken().'&value=1">';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenableParentContact&token='.newToken().'&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';

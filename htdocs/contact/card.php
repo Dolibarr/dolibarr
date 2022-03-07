@@ -854,7 +854,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// parent user
 			$nbchilds = $object->nbChilds();
-			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
+			if (!empty($conf->global->SOCIETE_ENABLE_PARENT_CONTACT) && $nbchilds <= 0) {
 				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 				print img_picto('', 'object_contact');
 				print $form->selectcontacts(0, $fk_parent, 'fk_parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
@@ -1142,8 +1142,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// parent user
 			$nbchilds = $object->nbChilds();
-			if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
-				$parent = $object->fk_parent;
+			if (!empty($conf->global->SOCIETE_ENABLE_PARENT_CONTACT) && $nbchilds <= 0) {
+				$fk_parent = $object->fk_parent;
 				print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 				print img_picto('', 'object_contact');
 				print $form->selectcontacts(0, $fk_parent, 'fk_parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
@@ -1368,7 +1368,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// parent user
 		$nbchilds = $object->nbChilds();
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCONTACT) && $nbchilds <= 0) {
+		if (!empty($conf->global->SOCIETE_ENABLE_PARENT_CONTACT) && $nbchilds <= 0) {
 			print '<tr><td>'.$langs->trans("ParentContact").'</td><td>';
 			if ($object->fk_parent > 0) {
 				$objparent = new Contact($db);
