@@ -272,7 +272,7 @@ class Product extends CommonObject
 	public $fk_default_bom;
 
 	/**
-	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
+	 * We must manage lot/batch number, sell-by date and so on : '0':no, '1':yes, '2": yes with unique serial number
 	 *
 	 * @var int
 	 */
