@@ -3732,7 +3732,7 @@ class Commande extends CommonOrder
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip"';
 
-			$target_value=array('_self','_blank','_parent','_top',);
+			$target_value=array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.$target.'"';
 			}
