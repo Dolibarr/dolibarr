@@ -784,6 +784,8 @@ class InventoryLine extends CommonObjectLine
 		'qty_stock'     => array('type'=>'double', 'label'=>'QtyFound', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'Qty we found/want (to define during draft edition)'),
 		'qty_view'      => array('type'=>'double', 'label'=>'QtyBefore', 'visible'=>1, 'enabled'=>1, 'position'=>33, 'index'=>1, 'help'=>'Qty before (filled once movements are validated)'),
 		'qty_regulated' => array('type'=>'double', 'label'=>'QtyDelta', 'visible'=>1, 'enabled'=>1, 'position'=>34, 'index'=>1, 'help'=>'Qty aadded or removed (filled once movements are validated)'),
+		'pmp_real' => array('type'=>'double', 'label'=>'PMPReal', 'visible'=>1, 'enabled'=>1, 'position'=>35),
+		'pmp_expected' => array('type'=>'double', 'label'=>'PMPExpected', 'visible'=>1, 'enabled'=>1, 'position'=>36),
 	);
 
 	/**
@@ -800,6 +802,8 @@ class InventoryLine extends CommonObjectLine
 	public $qty_stock;
 	public $qty_view;
 	public $qty_regulated;
+	public $pmp_real;
+	public $pmp_expected;
 
 
 	/**
