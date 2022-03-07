@@ -382,7 +382,7 @@ print '<div class="divadvancedsearchfield center floatnone">';
 print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
 $newarrayoftype = array();
 foreach ($arrayoftype as $key => $val) {
-	if (dol_eval($val['enabled'], 1)) {
+	if (dol_eval($val['enabled'], 1, 1, '1')) {
 		$newarrayoftype[$key] = $arrayoftype[$key];
 	}
 	if ($val['langs']) {
@@ -443,7 +443,7 @@ if ($mode == 'grid') {
 	// YAxis
 	print '<div class="divadvancedsearchfield">';
 	foreach ($object->fields as $key => $val) {
-		if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1))) {
+		if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
 			if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) {
 				continue;
 			}
@@ -464,7 +464,7 @@ if ($mode == 'grid') {
 		// Add measure from extrafields
 		if ($object->isextrafieldmanaged) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1))) {
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 					$arrayofyaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
 				}
 			}
@@ -866,7 +866,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
-		if (!empty($val['isameasure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1))) {
+		if (!empty($val['isameasure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>';
 			$arrayofmesures[$tablealias.'.'.$key.'-average'] = img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Average").')</span>';
 			$arrayofmesures[$tablealias.'.'.$key.'-min'] = img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>';
@@ -876,7 +876,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	// Add extrafields to Measures
 	if ($object->isextrafieldmanaged) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1))) {
+			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 				$arrayofmesures[$tablealias.'e.'.$key.'-sum'] = img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>';
 				$arrayofmesures[$tablealias.'e.'.$key.'-average'] = img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Average").')</span>';
 				$arrayofmesures[$tablealias.'e.'.$key.'-min'] = img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>';
@@ -948,10 +948,10 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
+			if (isset($val['enabled']) && !dol_eval($val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
+			if (isset($val['visible']) && !dol_eval($val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
@@ -1048,10 +1048,10 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
+			if (isset($val['enabled']) && !dol_eval($val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
+			if (isset($val['visible']) && !dol_eval($val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {

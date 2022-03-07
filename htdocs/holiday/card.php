@@ -112,7 +112,7 @@ if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write &&
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'holiday', $object->id, 'holiday');
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday', '', '', 'rowid', $object->statut);
 
 
 /*
@@ -654,7 +654,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes') {
-		if (!empty($_POST['detail_refuse'])) {
+		if (GETPOST('detail_refuse')) {
 			$object->fetch($id);
 
 			// If status pending validation and validator = user
@@ -1414,7 +1414,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				// Confirmation messages
 				if ($action == 'delete') {
-					if ($user->rights->holiday->delete) {
+					if ($candelete) {
 						print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleDeleteCP"), $langs->trans("ConfirmDeleteCP"), "confirm_delete", '', 0, 1);
 					}
 				}

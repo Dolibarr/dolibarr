@@ -1406,9 +1406,13 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
+			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'none'));
+			$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
+
 			// Html header file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_HTML_HEADER', 'none'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1426,13 +1430,11 @@ if ($action == 'updatecss' && $usercanedit) {
 				// $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
 				$htmlheadercontent.= "// END PHP ?>\n";*/
 
-				$htmlheadercontent .= preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), GETPOST('WEBSITE_HTML_HEADER', 'none'));
+				$htmlheadercontent .= $dataposted."\n";
 
 				/*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
 				$htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
 				$htmlheadercontent.= "// END PHP ?>"."\n";*/
-
-				$htmlheadercontent = trim($htmlheadercontent)."\n";
 
 				$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
 				if (!$result) {
@@ -1443,10 +1445,12 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_CSS_INLINE', 'none'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Css file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_CSS_INLINE', 'none'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1466,7 +1470,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$csscontent .= "}\n";
 				$csscontent .= "// END PHP ?>\n";
 
-				$csscontent .= trim(GETPOST('WEBSITE_CSS_INLINE', 'none'))."\n";
+				$csscontent .= $dataposted."\n";
 
 				$csscontent .= '<?php // BEGIN PHP'."\n";
 				$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
@@ -1484,9 +1488,12 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
+			$dataposted = trim(GETPOST('WEBSITE_JS_INLINE', 'none'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
+
 			// Js file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_JS_INLINE', 'none'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1504,7 +1511,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$jscontent .= "header('Content-type: application/javascript');\n";
 				$jscontent .= "// END PHP ?>\n";
 
-				$jscontent .= trim(GETPOST('WEBSITE_JS_INLINE', 'none'))."\n";
+				$jscontent .= $dataposted."\n";
 
 				$jscontent .= '<?php // BEGIN PHP'."\n";
 				$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
@@ -1519,10 +1526,12 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Robot file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_ROBOT', 'restricthtml'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1540,7 +1549,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$robotcontent.= "header('Content-type: text/css');\n";
 				$robotcontent.= "// END PHP ?>\n";*/
 
-				$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
+				$robotcontent .= $dataposted."\n";
 
 				/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
 				$robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
@@ -1555,17 +1564,19 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// Htaccess file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_HTACCESS', 'restricthtml'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
 
 			if (!$errorphpcheck) {
 				$htaccesscontent = '';
-				$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
+				$htaccesscontent .= $dataposted."\n";
 
 				$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
 				if (!$result) {
@@ -1577,9 +1588,12 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
+			$dataposted = trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
+
 			// Manifest.json file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_MANIFEST_JSON', 'none'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1597,7 +1611,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
 				$manifestjsoncontent .= "// END PHP ?>\n";
 
-				$manifestjsoncontent .= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
+				$manifestjsoncontent .= $dataposted."\n";
 
 				$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
 				$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
@@ -1612,10 +1626,12 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_README', 'restricthtml'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
 
 			// README.md file
 			$phpfullcodestringold = '';
-			$phpfullcodestring = dolKeepOnlyPhpCode(GETPOST('WEBSITE_README', 'restricthtml'));
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
 
 			// Security analysis
 			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
@@ -1633,7 +1649,7 @@ if ($action == 'updatecss' && $usercanedit) {
 				   $readmecontent.= "header('Content-type: application/manifest+json');\n";
 				   $readmecontent.= "// END PHP ?>\n";*/
 
-				$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
+				$readmecontent .= $dataposted."\n";
 
 				/*$readmecontent.= '<?php // BEGIN PHP'."\n";
 				   $readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
@@ -2837,7 +2853,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print $langs->trans("PageContainer").': ';
 		print '</span>';
 
-		print '<span class="websiteselection hideonsmartphoneimp">';
+		print '<span class="websiteselection">';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=createcontainer&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a>';
 		print '</span>';
 
@@ -3398,7 +3414,8 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans('WEBSITE_CSS_INLINE'), $htmlhelp, 1, 'help', '', 0, 2, 'csstooltip');
 	print '</td><td>';
 
-	$doleditor = new DolEditor('WEBSITE_CSS_INLINE', $csscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$poscursor = array('x'=>GETPOST('WEBSITE_CSS_INLINE_x'), 'y'=>GETPOST('WEBSITE_CSS_INLINE_y'));
+	$doleditor = new DolEditor('WEBSITE_CSS_INLINE', $csscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'CSS', 'css');
 
 	print '</td></tr>';
@@ -3411,7 +3428,8 @@ if ($action == 'editcss') {
 
 	print '</td><td>';
 
-	$doleditor = new DolEditor('WEBSITE_JS_INLINE', $jscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$poscursor = array('x'=>GETPOST('WEBSITE_JS_INLINE_x'), 'y'=>GETPOST('WEBSITE_JS_INLINE_y'));
+	$doleditor = new DolEditor('WEBSITE_JS_INLINE', $jscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'JS', 'javascript');
 
 	print '</td></tr>';
@@ -3426,7 +3444,8 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($textwithhelp, $htmlhelp2, 1, 'warning', '', 0, 2, 'htmlheadertooltip2');
 	print '</td><td>';
 
-	$doleditor = new DolEditor('WEBSITE_HTML_HEADER', $htmlheadercontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$poscursor = array('x'=>GETPOST('WEBSITE_HTML_HEADER_x'), 'y'=>GETPOST('WEBSITE_HTML_HEADER_y'));
+	$doleditor = new DolEditor('WEBSITE_HTML_HEADER', $htmlheadercontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 
 	print '</td></tr>';
@@ -3436,7 +3455,8 @@ if ($action == 'editcss') {
 	print $langs->trans('WEBSITE_ROBOT');
 	print '</td><td>';
 
-	$doleditor = new DolEditor('WEBSITE_ROBOT', $robotcontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$poscursor = array('x'=>GETPOST('WEBSITE_ROBOT_x'), 'y'=>GETPOST('WEBSITE_ROBOT_y'));
+	$doleditor = new DolEditor('WEBSITE_ROBOT', $robotcontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'Robot file', 'text');
 
 	print '</td></tr>';
@@ -3446,7 +3466,8 @@ if ($action == 'editcss') {
 	print $langs->trans('WEBSITE_HTACCESS');
 	print '</td><td>';
 
-	$doleditor = new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$poscursor = array('x'=>GETPOST('WEBSITE_HTACCESS_x'), 'y'=>GETPOST('WEBSITE_HTACCESS_y'));
+	$doleditor = new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'text');
 
 	print '</td></tr>';
@@ -3458,7 +3479,9 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans('WEBSITE_MANIFEST_JSON'), $htmlhelp, 1, 'help', '', 0, 2, 'manifestjsontooltip');
 	print '</td><td>';
 	print $langs->trans("UseManifest").': '.$form->selectyesno('use_manifest', $website->use_manifest, 1).'<br>';
-	$doleditor = new DolEditor('WEBSITE_MANIFEST_JSON', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+
+	$poscursor = array('x'=>GETPOST('WEBSITE_MANIFEST_JSON_x'), 'y'=>GETPOST('WEBSITE_MANIFEST_JSON_y'));
+	$doleditor = new DolEditor('WEBSITE_MANIFEST_JSON', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' manifest.json', 'text');
 	print '</td></tr>';
 
@@ -3468,7 +3491,8 @@ if ($action == 'editcss') {
 	print $form->textwithpicto($langs->trans('WEBSITE_README'), $htmlhelp, 1, 'help', '', 0, 2, 'readmetooltip');
 	print '</td><td>';
 
-	$doleditor = new DolEditor('WEBSITE_README', $readmecontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$poscursor = array('x'=>GETPOST('WEBSITE_README_x'), 'y'=>GETPOST('WEBSITE_README_y'));
+	$doleditor = new DolEditor('WEBSITE_README', $readmecontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' README.md', 'text');
 
 	print '</td></tr>';
@@ -3517,7 +3541,7 @@ if ($action == 'createsite') {
 
 	$siteref = $sitedesc = $sitelang = $siteotherlang = '';
 	if (GETPOST('WEBSITE_REF')) {
-		$siteref = GETPOST('WEBSITE_REF', 'alpha');
+		$siteref = GETPOST('WEBSITE_REF', 'aZ09');
 	}
 	if (GETPOST('WEBSITE_DESCRIPTION')) {
 		$sitedesc = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
@@ -3982,7 +4006,8 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$htmlhelp .= dol_htmlentitiesbr($htmlheadercontentdefault);
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
-	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '');
+	$poscursor = array('x'=>GETPOST('htmlheader_x'), 'y'=>GETPOST('htmlheader_y'));
+	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
 
@@ -4126,9 +4151,10 @@ if ($action == 'editsource') {
 			$maxheightwin = $_SESSION["dol_screenheight"] - 490;
 		}
 	}
-	//var_dump($_SESSION["dol_screenheight"]);
+
+	$poscursor = array('x'=>GETPOST('PAGE_CONTENT_x'), 'y'=>GETPOST('PAGE_CONTENT_y'));
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('PAGE_CONTENT', $contentforedit, '', $maxheightwin, 'Full', '', true, true, 'ace', ROWS_5, '40%');
+	$doleditor = new DolEditor('PAGE_CONTENT', $contentforedit, '', $maxheightwin, 'Full', '', true, true, 'ace', ROWS_5, '40%', 0, $poscursor);
 	$doleditor->Create(0, '', false, 'HTML Source', 'php');
 }
 
@@ -4145,7 +4171,8 @@ if ($action == 'editsource') {
 	$contentforedit = preg_replace('/(<img.*src=")(?!http)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $contentforedit, -1, $nbrep);
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
+	$poscursor = array('x'=>GETPOST('PAGE_CONTENT_x'), 'y'=>GETPOST('PAGE_CONTENT_y'));
+	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%',$poscursor);
 	$doleditor->Create(0, '', false);
 }*/
 

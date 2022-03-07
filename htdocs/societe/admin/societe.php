@@ -626,7 +626,7 @@ foreach ($dirsociete as $dirroot) {
 					// Preview
 					print '<td class="center nowrap">';
 					if ($module->type == 'pdf') {
-						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					} else {
 						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
 					}
