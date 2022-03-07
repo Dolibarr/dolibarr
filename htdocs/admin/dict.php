@@ -218,7 +218,7 @@ $tabsql[17] = "SELECT id      as rowid, code, label, accountancy_code, active FR
 $tabsql[18] = "SELECT rowid   as rowid, code, libelle, tracking, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 $tabsql[20] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
-$tabsql[21] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.position FROM ".MAIN_DB_PREFIX."c_availability AS c";
+$tabsql[21] = "SELECT c.rowid as rowid, c.code, c.label, c.type_duration, c.number, c.active, c.position FROM ".MAIN_DB_PREFIX."c_availability AS c";
 $tabsql[22] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[24] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
@@ -265,7 +265,7 @@ $tabsqlsort[17] = "code ASC";
 $tabsqlsort[18] = "code ASC, libelle ASC";
 $tabsqlsort[19] = "id ASC";
 $tabsqlsort[20] = "code ASC, libelle ASC";
-$tabsqlsort[21] = "code ASC, label ASC, position ASC";
+$tabsqlsort[21] = "code ASC, label ASC, position ASC, type_duration ASC, number ASC";
 $tabsqlsort[22] = "code ASC, label ASC";
 $tabsqlsort[23] = "country ASC, taux ASC";
 $tabsqlsort[24] = "code ASC, label ASC";
@@ -312,7 +312,7 @@ $tabfield[17] = "code,label,accountancy_code";
 $tabfield[18] = "code,libelle,tracking";
 $tabfield[19] = "code,libelle";
 $tabfield[20] = "code,libelle";
-$tabfield[21] = "code,label,position";
+$tabfield[21] = "code,label,number,type_duration,position";
 $tabfield[22] = "code,label";
 $tabfield[23] = "country_id,country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[24] = "code,label";
@@ -359,7 +359,7 @@ $tabfieldvalue[17] = "code,label,accountancy_code";
 $tabfieldvalue[18] = "code,libelle,tracking";
 $tabfieldvalue[19] = "code,libelle";
 $tabfieldvalue[20] = "code,libelle";
-$tabfieldvalue[21] = "code,label,position";
+$tabfieldvalue[21] = "code,label,number,type_duration,position";
 $tabfieldvalue[22] = "code,label";
 $tabfieldvalue[23] = "country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[24] = "code,label";
@@ -406,7 +406,7 @@ $tabfieldinsert[17] = "code,label,accountancy_code";
 $tabfieldinsert[18] = "code,libelle,tracking";
 $tabfieldinsert[19] = "code,libelle";
 $tabfieldinsert[20] = "code,libelle";
-$tabfieldinsert[21] = "code,label,position";
+$tabfieldinsert[21] = "code,label,number,type_duration,position";
 $tabfieldinsert[22] = "code,label";
 $tabfieldinsert[23] = "fk_pays,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[24] = "code,label";
@@ -566,7 +566,7 @@ $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[35] = array();
 $tabhelp[36] = array('range_ik'=>$langs->trans('PrevRangeToThisRange'));
-$tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"), 'unit_type' => $langs->trans('MeasuringUnitTypeDesc'), 'scale' => $langs->trans('MeasuringScaleDesc'));
+$tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"), 'unit_type' => $langs->trans('Measuringtype_durationDesc'), 'scale' => $langs->trans('MeasuringScaleDesc'));
 $tabhelp[38] = array('code'=>$langs->trans("EnterAnyCode"), 'url' => $langs->trans('UrlSocialNetworksDesc'), 'icon' => $langs->trans('FafaIconSocialNetworksDesc'));
 $tabhelp[39] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[40] = array('code'=>$langs->trans("EnterAnyCode"), 'picto'=>$langs->trans("PictoHelp"));
@@ -1466,6 +1466,9 @@ if ($id) {
 			if ($value == 'block_if_negative') {
 				$valuetoshow = $langs->trans('BlockHolidayIfNegative');
 			}
+			if ($value == 'type_duration') {
+				$valuetoshow = $langs->trans('Unit');
+			}
 
 			if ($id == 2) {	// Special case for state page
 				if ($value == 'region_id') {
@@ -1818,6 +1821,9 @@ if ($id) {
 			if ($value == 'block_if_negative') {
 				$valuetoshow = $langs->trans('BlockHolidayIfNegative');
 			}
+			if ($value == 'type_duration') {
+				$valuetoshow = $langs->trans('Unit');
+			}
 
 			if ($value == 'region_id' || $value == 'country_id') {
 				$showfield = 0;
@@ -2055,6 +2061,9 @@ if ($id) {
 								$valuetoshow = $langs->trans($obj->{$value});
 							} elseif ($value == 'block_if_negative') {
 								$valuetoshow = yn($obj->{$value});
+							} elseif ($value == 'type_duration') {
+								$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+								$valuetoshow =$TDurationTypes[$obj->{$value}];
 							}
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($value == 'note' && $id == 10) {
@@ -2449,6 +2458,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		} elseif ($value == 'block_if_negative') {
 			print '<td>';
 			print $form->selectyesno("block_if_negative", (!empty($obj->{$value}) ? $obj->{$value}:''), 1);
+			print '</td>';
+		} elseif ($value == 'type_duration') {
+			print '<td>';
+			print $form->selectTypeDuration('', $obj->{$value}, array('i','h'));
 			print '</td>';
 		} else {
 			$fieldValue = isset($obj->{$value}) ? $obj->{$value}: '';
