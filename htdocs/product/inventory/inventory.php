@@ -302,7 +302,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if($action == 'confirm_deleteline'){
+	if ($action == 'confirm_deleteline') {
 		$gotopage =  $_SERVER["PHP_SELF"].'?id='.$object->id.'&page='.$page.$paramwithsearch;
 	}
 
@@ -395,7 +395,6 @@ llxHeader('', $langs->trans('Inventory'), $help_url);
 
 // Part to show record
 if ($object->id > 0) {
-
 	$res = $object->fetch_optionals();
 
 	$head = inventoryPrepareHead($object);
@@ -914,7 +913,7 @@ if ($object->id > 0) {
 		$num = $db->num_rows($resql);
 
 		if (!empty($limit != 0) || $num > $limit || $page) {
-			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num >= $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '',$limit);
+			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num >= $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '', $limit);
 		}
 
 		$i = 0;
@@ -1061,7 +1060,6 @@ if ($object->id > 0) {
 						 });
 					});
 				</script>';
-
 }
 
 // End of page
