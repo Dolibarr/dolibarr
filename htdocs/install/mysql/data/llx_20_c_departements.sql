@@ -226,10 +226,10 @@ insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201, '05','',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201, '06','',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '07','',2,'HAINAUT','Hainaut');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201, '08','',2,'LIEGE','Liège');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '08','',2,'LIEGE','Liège');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '09','',1,'LIMBOURG','Limbourg');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '10','',2,'LUXEMBOURG','Luxembourg');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201, '11','',2,'NAMUR','Namur');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '11','',2,'NAMUR','Namur');
 
 
 -- Brazil Provinces (id country=56)
@@ -586,7 +586,7 @@ insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (307, 'LT', NULL, NULL, NULL, 'LATINA');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (313, 'LE', NULL, NULL, NULL, 'LECCE');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (309, 'LC', NULL, NULL, NULL, 'LECCO');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (314, 'LI', NULL, NULL, NULL, 'LIVORNO');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (316, 'LI', NULL, NULL, NULL, 'LIVORNO');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (309, 'LO', NULL, NULL, NULL, 'LODI');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (316, 'LU', NULL, NULL, NULL, 'LUCCA');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (310, 'MC', NULL, NULL, NULL, 'MACERATA');

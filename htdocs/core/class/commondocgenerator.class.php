@@ -399,7 +399,7 @@ abstract class CommonDocGenerator
 
 		$sumpayed = $sumdeposit = $sumcreditnote = '';
 		$already_payed_all = 0;
-		$remain_to_pay = 0;
+
 		if ($object->element == 'facture') {
 			$invoice_source = new Facture($this->db);
 			if ($object->fk_facture_source > 0) {
@@ -409,7 +409,6 @@ abstract class CommonDocGenerator
 			$sumdeposit = $object->getSumDepositsUsed();
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
-			$remain_to_pay = $sumpayed - $sumdeposit - $sumcreditnote;
 
 			if ($object->fk_account > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -421,79 +420,79 @@ abstract class CommonDocGenerator
 		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
 
 		$resarray = array(
-		$array_key.'_id'=>$object->id,
-		$array_key.'_ref'=>$object->ref,
-		$array_key.'_ref_ext'=>$object->ref_ext,
-		$array_key.'_ref_customer'=>(!empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
-		$array_key.'_ref_supplier'=>(!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
-		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
-		// Dates
-		$array_key.'_hour'=>dol_print_date($date, 'hour'),
-		$array_key.'_date'=>dol_print_date($date, 'day'),
-		$array_key.'_date_rfc'=>dol_print_date($date, 'dayrfc'),
-		$array_key.'_date_limit'=>(!empty($object->date_lim_reglement) ?dol_print_date($object->date_lim_reglement, 'day') : ''),
-		$array_key.'_date_end'=>(!empty($object->fin_validite) ?dol_print_date($object->fin_validite, 'day') : ''),
-		$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
-		$array_key.'_date_modification'=>(!empty($object->date_modification) ?dol_print_date($object->date_modification, 'day') : ''),
-		$array_key.'_date_validation'=>(!empty($object->date_validation) ?dol_print_date($object->date_validation, 'dayhour') : ''),
-		$array_key.'_date_delivery_planed'=>(!empty($object->date_livraison) ?dol_print_date($object->date_livraison, 'day') : ''),
-		$array_key.'_date_close'=>(!empty($object->date_cloture) ?dol_print_date($object->date_cloture, 'dayhour') : ''),
+			$array_key.'_id'=>$object->id,
+			$array_key.'_ref'=>$object->ref,
+			$array_key.'_ref_ext'=>$object->ref_ext,
+			$array_key.'_ref_customer'=>(!empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
+			$array_key.'_ref_supplier'=>(!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
+			$array_key.'_source_invoice_ref'=>$invoice_source->ref,
+			// Dates
+			$array_key.'_hour'=>dol_print_date($date, 'hour'),
+			$array_key.'_date'=>dol_print_date($date, 'day'),
+			$array_key.'_date_rfc'=>dol_print_date($date, 'dayrfc'),
+			$array_key.'_date_limit'=>(!empty($object->date_lim_reglement) ?dol_print_date($object->date_lim_reglement, 'day') : ''),
+			$array_key.'_date_end'=>(!empty($object->fin_validite) ?dol_print_date($object->fin_validite, 'day') : ''),
+			$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
+			$array_key.'_date_modification'=>(!empty($object->date_modification) ?dol_print_date($object->date_modification, 'day') : ''),
+			$array_key.'_date_validation'=>(!empty($object->date_validation) ?dol_print_date($object->date_validation, 'dayhour') : ''),
+			$array_key.'_date_delivery_planed'=>(!empty($object->date_livraison) ?dol_print_date($object->date_livraison, 'day') : ''),
+			$array_key.'_date_close'=>(!empty($object->date_cloture) ?dol_print_date($object->date_cloture, 'dayhour') : ''),
 
-		$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
-		$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
-		$array_key.'_payment_term_code'=>$object->cond_reglement_code,
-		$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
+			$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
+			$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
+			$array_key.'_payment_term_code'=>$object->cond_reglement_code,
+			$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
 
-		$array_key.'_incoterms'=>(method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
+			$array_key.'_incoterms'=>(method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
-		$array_key.'_bank_iban'=>$bank_account->iban,
-		$array_key.'_bank_bic'=>$bank_account->bic,
-		$array_key.'_bank_label'=>$bank_account->label,
-		$array_key.'_bank_number'=>$bank_account->number,
-		$array_key.'_bank_proprio'=>$bank_account->proprio,
+			$array_key.'_bank_iban'=>$bank_account->iban,
+			$array_key.'_bank_bic'=>$bank_account->bic,
+			$array_key.'_bank_label'=>$bank_account->label,
+			$array_key.'_bank_number'=>$bank_account->number,
+			$array_key.'_bank_proprio'=>$bank_account->proprio,
 
-		$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
-		$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
-		$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
-		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
-		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
+			$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
+			$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
+			$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
+			$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
+			$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
 
-		$array_key.'_total_ht'=>price2num($object->total_ht),
-		$array_key.'_total_vat'=>(!empty($object->total_vat) ?price2num($object->total_vat) : price2num($object->total_tva)),
-		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
-		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
-		$array_key.'_total_ttc'=>price2num($object->total_ttc),
+			$array_key.'_total_ht'=>price2num($object->total_ht),
+			$array_key.'_total_vat'=>(!empty($object->total_vat) ?price2num($object->total_vat) : price2num($object->total_tva)),
+			$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
+			$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
+			$array_key.'_total_ttc'=>price2num($object->total_ttc),
 
-		$array_key.'_multicurrency_code' => $object->multicurrency_code,
-		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
-		$array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
-		$array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
-		$array_key.'_multicurrency_total_ttc' => price2num($object->multicurrency_total_ttc),
-		$array_key.'_multicurrency_total_ht_locale' => price($object->multicurrency_total_ht, 0, $outputlangs),
-		$array_key.'_multicurrency_total_tva_locale' => price($object->multicurrency_total_tva, 0, $outputlangs),
-		$array_key.'_multicurrency_total_ttc_locale' => price($object->multicurrency_total_ttc, 0, $outputlangs),
+			$array_key.'_multicurrency_code' => $object->multicurrency_code,
+			$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
+			$array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
+			$array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
+			$array_key.'_multicurrency_total_ttc' => price2num($object->multicurrency_total_ttc),
+			$array_key.'_multicurrency_total_ht_locale' => price($object->multicurrency_total_ht, 0, $outputlangs),
+			$array_key.'_multicurrency_total_tva_locale' => price($object->multicurrency_total_tva, 0, $outputlangs),
+			$array_key.'_multicurrency_total_ttc_locale' => price($object->multicurrency_total_ttc, 0, $outputlangs),
 
-		$array_key.'_note_private'=>$object->note,
-		$array_key.'_note_public'=>$object->note_public,
-		$array_key.'_note'=>$object->note_public, // For backward compatibility
+			$array_key.'_note_private'=>$object->note,
+			$array_key.'_note_public'=>$object->note_public,
+			$array_key.'_note'=>$object->note_public, // For backward compatibility
 
-		// Payments
-		$array_key.'_already_payed_locale'=>price($sumpayed, 0, $outputlangs),
-		$array_key.'_already_payed'=>price2num($sumpayed),
-		$array_key.'_already_deposit_locale'=>price($sumdeposit, 0, $outputlangs),
-		$array_key.'_already_deposit'=>price2num($sumdeposit),
-		$array_key.'_already_creditnote_locale'=>price($sumcreditnote, 0, $outputlangs),
-		$array_key.'_already_creditnote'=>price2num($sumcreditnote),
+			// Payments
+			$array_key.'_already_payed_locale'=>price($sumpayed, 0, $outputlangs),
+			$array_key.'_already_payed'=>price2num($sumpayed),
+			$array_key.'_already_deposit_locale'=>price($sumdeposit, 0, $outputlangs),
+			$array_key.'_already_deposit'=>price2num($sumdeposit),
+			$array_key.'_already_creditnote_locale'=>price($sumcreditnote, 0, $outputlangs),
+			$array_key.'_already_creditnote'=>price2num($sumcreditnote),
 
-		$array_key.'_already_payed_all_locale'=>price(price2num($already_payed_all, 'MT'), 0, $outputlangs),
-		$array_key.'_already_payed_all'=> price2num($already_payed_all, 'MT'),
+			$array_key.'_already_payed_all_locale'=>price(price2num($already_payed_all, 'MT'), 0, $outputlangs),
+			$array_key.'_already_payed_all'=> price2num($already_payed_all, 'MT'),
 
-		// Remain to pay with all know information (except open direct debit requests)
-		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $remain_to_pay, 'MT'), 0, $outputlangs),
-		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $remain_to_pay, 'MT')
+			// Remain to pay with all known information (except open direct debit requests)
+			$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $already_payed_all, 'MT'), 0, $outputlangs),
+			$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $already_payed_all, 'MT')
 		);
 
-		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
+		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
 			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
 		} else {
@@ -517,8 +516,9 @@ abstract class CommonDocGenerator
 		// Add vat by rates
 		if (is_array($object->lines) && count($object->lines) > 0) {
 			$totalUp = 0;
+			// Set substitution keys for different VAT rates
 			foreach ($object->lines as $line) {
-				// $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward compatibility
+				// $line->tva_tx format depends on database field accuracy, no reliable. This is kept for backward compatibility
 				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) {
 					$resarray[$array_key.'_total_vat_'.$line->tva_tx] = 0;
 				}
@@ -539,7 +539,7 @@ abstract class CommonDocGenerator
 			// Note that this added fields does not match a field into database in Dolibarr (Dolibarr manage discount on lines not as a global property of object)
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
-			if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
+			if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
 				$totalDiscount = $object->getTotalDiscount();
 			} else {
 				$totalDiscount = 0;
@@ -653,7 +653,7 @@ abstract class CommonDocGenerator
 
 				if ($columns != "") {
 					$columns = substr($columns, 0, strlen($columns) - 2);
-					$resql = $this->db->query("SELECT ".$columns." FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields AS ex INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '".$this->db->escape($line->ref_supplier)."'");
+					$resql = $this->db->query("SELECT ".$columns." FROM ".$this->db->prefix()."product_fournisseur_price_extrafields AS ex INNER JOIN ".$this->db->prefix()."product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '".$this->db->escape($line->ref_supplier)."'");
 
 					if ($this->db->num_rows($resql) > 0) {
 						$resql = $this->db->fetch_object($resql);

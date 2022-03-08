@@ -95,11 +95,13 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
+	} elseif ($table_element_line == 'facture_fourn_det_rec' && $user->rights->fournisseur->facture->creer) {
+		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
 		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
 		$perm = 1;
-	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && !empty($user->rights->produit->creer)) {
+	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
 		$perm = 1;
 	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
 		$perm = 1;

@@ -276,7 +276,7 @@ function DisplayPositionCard(&$object)
 		$morehtmlref = '<div class="refidno">';
 		$u_position = new User(($db));
 		$u_position->fetch($object->fk_user);
-		$morehtmlref .= $langs->trans('Employee').' : '.$u_position->getNomUrl(1);
+		$morehtmlref .= $langs->trans('Employee').' : '.($u_position->id > 0 ? $u_position->getNomUrl(1) : '');
 		$job = new Job($db);
 		$job->fetch($object->fk_job);
 		$morehtmlref .= '<br>'.$langs->trans('Job').' : '.$job->getNomUrl(1);
@@ -377,13 +377,12 @@ if ($action !== 'edit' && $action !== 'create') {
 
 	$MAXEVENT = 10;
 
-	$morehtmlright = '<a href="' . dol_buildpath('/hrm/position_agenda.php', 1) . '?id=' . $object->id . '">';
-	$morehtmlright .= $langs->trans("SeeAll");
-	$morehtmlright .= '</a>';
+	$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/hrm/position_agenda.php?id='.$object->id);
+
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, $object->element . '@' . $object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
+	$somethingshown = $formactions->showactions($object, $object->element . '@' . $object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 	print '</div></div>';
 }

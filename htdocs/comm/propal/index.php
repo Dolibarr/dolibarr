@@ -100,8 +100,8 @@ if (!empty($conf->propal->enabled)) {
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("DraftPropals", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
+		$total = 0;
 		if ($num) {
-			$total = 0;
 			$i = 0;
 
 			while ($i < $nbofloop) {

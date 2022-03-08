@@ -275,8 +275,7 @@ print '<br><br>';
 /*
  * Document templates generators
  */
-//if (! empty($conf->global->MAIN_FEATURES_LEVEL))
-//{
+
 print load_fiche_titre($langs->trans("BankAccountModelModule"), '', '');
 
 // Load array def with activated templates
@@ -466,8 +465,7 @@ print '<br><br>';
 /*
  * Document templates generators
  */
-//if (! empty($conf->global->MAIN_FEATURES_LEVEL))
-//{
+
 print load_fiche_titre($langs->trans("Other"), '', '');
 
 print "<table class=\"noborder\" width=\"100%\">\n";

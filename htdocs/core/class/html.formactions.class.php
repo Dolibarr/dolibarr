@@ -352,14 +352,14 @@ class FormActions
 	 *  @param	array|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
 	 *  @param  string		    $htmlname       Name of select field
 	 *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
-	 *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
+	 *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual", -2=Combined line is disabled (not implemented yet)
 	 *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
 	 *  @param  int		        $multiselect    1=Allow multiselect of action type
 	 *  @param  int             $nooutput       1=No output
 	 *  @param	string			$morecss		More css to add to SELECT component.
 	 * 	@return	string
 	 */
-	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = '')
+	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300')
 	{
 		// phpcs:enable
 		global $langs, $user, $form, $conf;
@@ -373,7 +373,7 @@ class FormActions
 		$caction = new CActionComm($this->db);
 
 		// Suggest a list with manual events or all auto events
-		$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
+		$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot, '', 0);		// If we use param 'all' instead of 'code', there is no group by include in answer but the key 'type' of answer array contains the key for the group by.
 		if (empty($multiselect)) {
 			// Add empty line at start only if no multiselect
 			array_unshift($arraylist, '&nbsp;');
@@ -399,7 +399,7 @@ class FormActions
 			}
 			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		} else {
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300'.($morecss ? ' '.$morecss : ''), 1);
+			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) {

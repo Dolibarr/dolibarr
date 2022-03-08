@@ -83,7 +83,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+				$amounts[$other_chid] = price2num(GETPOST($key));
 			}
 		}
 
@@ -154,7 +154,7 @@ if ($action == 'create') {
 
 	$total = $charge->amount;
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';

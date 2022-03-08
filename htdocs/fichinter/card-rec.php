@@ -68,7 +68,7 @@ if ($page == -1) {
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 if ($sortorder == "") {
 	$sortorder = "DESC";
@@ -507,10 +507,10 @@ if ($action == 'create') {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'"';
-						$morehtmlref .= 'title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}

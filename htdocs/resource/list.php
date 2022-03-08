@@ -38,7 +38,7 @@ $element        = GETPOST('element', 'alpha');
 $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
-$sortorder      = GETPOST('sortorder', 'alpha');
+$sortorder      = GETPOST('sortorder', 'aZ09comma');
 $sortfield      = GETPOST('sortfield', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -61,49 +61,7 @@ $search_type = GETPOST("search_type", 'alpha');
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
-
 $filter = array();
-
-$param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
-}
-
-if ($search_ref != '') {
-	$param .= '&search_ref='.urlencode($search_ref);
-	$filter['t.ref'] = $search_ref;
-}
-if ($search_type != '') {
-	$param .= '&search_type='.urlencode($search_type);
-	$filter['ty.label'] = $search_type;
-}
-
-// Add $param from extra fields
-foreach ($search_array_options as $key => $val) {
-	$crit = $val;
-	$tmpkey = preg_replace('/search_options_/', '', $key);
-	$typ = $extrafields->attributes[$object->table_element]['type'][$tmpkey];
-	if ($val != '') {
-		$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
-	}
-	$mode_search = 0;
-	if (in_array($typ, array('int', 'double', 'real'))) {
-		$mode_search = 1; // Search on a numeric
-	}
-	if (in_array($typ, array('sellist', 'link')) && $crit != '0' && $crit != '-1') {
-		$mode_search = 2; // Search on a foreign key int
-	}
-	if ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0') && (!in_array($typ, array('link')) || $crit != '-1')) {
-		$filter['ef.'.$tmpkey] = natural_search('ef.'.$tmpkey, $crit, $mode_search);
-	}
-}
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-
 
 $hookmanager->initHooks(array('resourcelist'));
 
@@ -159,8 +117,16 @@ if (empty($user->rights->resource->read)) {
 
 
 /*
- * Action
+ * Actions
  */
+
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -175,8 +141,42 @@ if ($reshook < 0) {
 
 $form = new Form($db);
 
+//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
+$help_url = '';
 $pagetitle = $langs->trans('ResourcePageIndex');
-llxHeader('', $pagetitle, '');
+llxHeader('', $pagetitle, $help_url);
+
+
+$sql = '';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
+$param = '';
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.urlencode($limit);
+}
+
+if ($search_ref != '') {
+	$param .= '&search_ref='.urlencode($search_ref);
+	$filter['t.ref'] = $search_ref;
+}
+if ($search_type != '') {
+	$param .= '&search_type='.urlencode($search_type);
+	$filter['ty.label'] = $search_type;
+}
+
+// Including the previous script generate the correct SQL filter for all the extrafields
+// we are playing with the behaviour of the Dolresource::fetch_all() by generating a fake
+// extrafields filter key to make it works
+$filter['ef.resource'] = $sql;
+
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
 
 // Confirmation suppression resource line
 if ($action == 'delete_resource') {
@@ -185,6 +185,7 @@ if ($action == 'delete_resource') {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
+
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {

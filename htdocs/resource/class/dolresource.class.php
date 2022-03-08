@@ -933,7 +933,7 @@ class Dolresource extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result = '';
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
@@ -986,6 +986,15 @@ class Dolresource extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -1015,5 +1024,36 @@ class Dolresource extends CommonObject
 		global $langs;
 
 		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 if KO, >0 if OK
+	 */
+	public function load_state_board()
+	{
+		// phpcs:enable
+		global $conf;
+
+		$this->nb = array();
+
+		$sql = "SELECT count(r.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."resource as r";
+		$sql .= " WHERE r.entity IN (".getEntity('resource').")";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->nb["dolresource"] = $obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
 	}
 }

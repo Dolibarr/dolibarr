@@ -155,7 +155,7 @@ print '</div><div class="fichetwothirdright">';
 
 $max = 5;
 
-$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
+$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status, a.fk_product";
 $sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
 $sql .= " WHERE a.entity IN (".getEntity('bom').")";
 $sql .= $db->order("a.tms", "DESC");
@@ -176,6 +176,7 @@ if ($resql) {
 
 			$staticbom->id = $obj->rowid;
 			$staticbom->ref = $obj->ref;
+			$staticbom->fk_product = $obj->fk_product;
 			$staticbom->date_modification = $obj->datem;
 			$staticbom->status = $obj->status;
 

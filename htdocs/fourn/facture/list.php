@@ -126,8 +126,8 @@ if ($option == 'late') {
 $filter = GETPOST('filtre', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if ($page == -1 || $page == null || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
@@ -564,7 +564,7 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_login) {
-	$sql .= natural_search('u.login', $search_login);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND f.fk_statut = ".((int) $search_status);
@@ -655,7 +655,7 @@ if (!$search_all) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= !empty($hookmanager->resPrint) ? (" HAVING 1=1 " . $hookmanager->resPrint) : "";
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -936,7 +936,7 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
 
@@ -975,13 +975,13 @@ if ($resql) {
 	// Ref
 	if (!empty($arrayfields['f.ref']['checked'])) {
 		print '<td class="liste_titre left">';
-		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.$search_ref.'">';
+		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	// Ref supplier
 	if (!empty($arrayfields['f.ref_supplier']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth50" type="text" name="search_refsupplier" value="'.$search_refsupplier.'">';
+		print '<input class="flat maxwidth75" type="text" name="search_refsupplier" value="'.dol_escape_htmltag($search_refsupplier).'">';
 		print '</td>';
 	}
 	// Type
@@ -1006,7 +1006,7 @@ if ($resql) {
 	// Label
 	if (!empty($arrayfields['f.label']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat maxwidth75" type="text" name="search_label" value="'.$search_label.'">';
+		print '<input class="flat maxwidth75" type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
 		print '</td>';
 	}
 	// Date invoice
@@ -1037,11 +1037,11 @@ if ($resql) {
 	}
 	// Project
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 	}
 	// Thirpdarty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.$search_company.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1096,13 +1096,13 @@ if ($resql) {
 	if (!empty($arrayfields['f.total_localtax1']['checked'])) {
 		// Amount tax 1
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.dol_escape_htmltag($search_montant_localtax1).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_localtax2']['checked'])) {
 		// Amount tax 2
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.dol_escape_htmltag($search_montant_localtax2).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_ttc']['checked'])) {
@@ -1367,11 +1367,11 @@ if ($resql) {
 
 			print '<tr class="oddeven">';
 			if (!empty($arrayfields['f.ref']['checked'])) {
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				// Picto + Ref
-				print '<td class="nobordernopadding nowrap">';
+				print '<td class="nobordernopadding nowraponall">';
 				print $facturestatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 
 				$filename = dol_sanitizeFileName($obj->ref);

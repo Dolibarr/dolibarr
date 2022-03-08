@@ -145,6 +145,8 @@ print "<!-- Dump of a server -->\n";
 print '<form method="post" action="export.php" name="dump">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
+print '<input type="hidden" name="page_y" value="" />';
+
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
 print '<span class="opacitymedium">';
@@ -160,14 +162,15 @@ $title = $langs->trans("BackupDumpWizard");
 
 print load_fiche_titre($title);
 
-print '<table class="'.(!empty($useinecm) ? 'nobordernopadding' : 'liste noborderbottom').' nohover centpercent">';
+print '<table class="liste nohover centpercent noborderbottom">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
 print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
-print '<table class="centpercent">';
+
+print '<table class="centpercent noborderbottom">';
 print '<tr>';
 print '<td class="tdtop">';
 
@@ -398,10 +401,12 @@ print '</tr>';
 print '</table>';
 
 
+
+
 print '<!--<fieldset>';
 print '<legend>'.$langs->trans("Destination").'</legend> -->';
 print '<br>';
-print '<label for="filename_template">'.$langs->trans("FileNameToGenerate").'</label>';
+print '<label for="filename_template" class="line-height-large">'.$langs->trans("FileNameToGenerate").'</label>';
 print '<br>';
 $prefix = 'dump';
 $ext = '.sql';
@@ -437,9 +442,9 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	//     'label' => $langs->trans("FormatZip")
 	// );
 	$compression['bz'] = array(
-		'function' => 'bzopen',
-		'id' => 'radio_compression_bzip',
-		'label' => $langs->trans("Bzip2")
+	'function' => 'bzopen',
+	'id' => 'radio_compression_bzip',
+	'label' => $langs->trans("Bzip2")
 	);
 	$compression['zstd'] = array(
 		'function' => 'zstd_compress',
@@ -498,7 +503,6 @@ print "<!--</fieldset>--> <!-- End destination -->\n";
 print '<br>';
 print '<div class="center">';
 print '<input type="submit" class="button reposition" value="'.$langs->trans("GenerateBackup").'" id="buttonGo">';
-print '<input type="hidden" name="page_y" value="'.GETPOST('page_y', 'int').'">';
 print '<br>';
 print '<br>';
 
@@ -549,6 +553,7 @@ print '</form>';
 print '</fieldset>';
 
 
+$title = $langs->trans("BackupZipWizard");
 
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
@@ -567,9 +572,9 @@ print '</span>';
 
 print '<div id="backupfilesleft" class="fichehalfleft">';
 
-print load_fiche_titre($title ? $title : $langs->trans("BackupZipWizard"));
+print load_fiche_titre($title);
 
-print '<label for="zipfilename_template">'.$langs->trans("FileNameToGenerate").'</label><br>';
+print '<label for="zipfilename_template" class="line-height-large paddingbottom">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix = 'documents';
 $ext = 'zip';
 $file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M");
@@ -617,7 +622,7 @@ print '</div>';
 
 print '</div>';
 
-print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
+print '<div id="backupfileright" class="fichehalfright" style="height:250px; overflow: auto;">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));

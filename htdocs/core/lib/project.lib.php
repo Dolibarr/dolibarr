@@ -471,14 +471,6 @@ function project_timesheet_prepare_head($mode, $fuser = null)
 		$h++;
 	}
 
-	/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perline.php".($param?'?'.$param:'');
-		$head[$h][1] = $langs->trans("InputDetail");
-		$head[$h][2] = 'inputperline';
-		$h++;
-	}*/
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_timesheet');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_timesheet', 'remove');
@@ -517,7 +509,7 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
-	if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$langs->load("members");
 
 		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
@@ -687,22 +679,23 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Title of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
-					print '<td>';
+					$labeltoshow = '';
 					if ($showlineingray) {
-						print '<i>';
+						$labeltoshow .= '<i>';
 					}
 					//else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'&withproject=1">';
 					for ($k = 0; $k < $level; $k++) {
-						print '<div class="marginleftonly">';
+						$labeltoshow .= '<div class="marginleftonly">';
 					}
-					print $lines[$i]->label;
+					$labeltoshow .= dol_escape_htmltag($lines[$i]->label);
 					for ($k = 0; $k < $level; $k++) {
-						print '</div>';
+						$labeltoshow .= '</div>';
 					}
 					if ($showlineingray) {
-						print '</i>';
+						$labeltoshow .= '</i>';
 					}
-					//else print '</a>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($labeltoshow).'">';
+					print $labeltoshow;
 					print "</td>\n";
 				}
 
@@ -830,29 +823,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
-				// Contacts of tasks. Disabled, because available by default just after
-				/*
-				if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-					print '<td>';
-					foreach (array('internal', 'external') as $source) {
-						$tab = $lines[$i]->liste_contact(-1, $source);
-						$num = count($tab);
-						if (!empty($num)) {
-							foreach ($tab as $contacttask) {
-								//var_dump($contacttask);
-								if ($source == 'internal') {
-									$c = new User($db);
-								} else {
-									$c = new Contact($db);
-								}
-								$c->fetch($contacttask['id']);
-								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
-							}
-						}
-					}
-					print '</td>';
-				}*/
-				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
 					print '<td class="center">';
 					print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 					$total_budget_amount += $lines[$i]->budget_amount;
@@ -862,10 +833,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Contacts of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 					print '<td class="center">';
+					$ifisrt = 1;
 					foreach (array('internal', 'external') as $source) {
 						$tab = $lines[$i]->liste_contact(-1, $source);
-						$num = count($tab);
-						if (!empty($num)) {
+						$numcontact = count($tab);
+						if (!empty($numcontact)) {
 							foreach ($tab as $contacttask) {
 								//var_dump($contacttask);
 								if ($source == 'internal') {
@@ -875,14 +847,19 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								}
 								$c->fetch($contacttask['id']);
 								if (!empty($c->photo)) {
-									print $c->getNomUrl(-2).'&nbsp;';
+									if (get_class($c) == 'User') {
+										print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+									} else {
+										print $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+									}
 								} else {
 									if (get_class($c) == 'User') {
-										print $c->getNomUrl(2, '', 0, 0, 24, 1);//.'&nbsp;';
+										print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
 									} else {
-										print $c->getNomUrl(2);//.'&nbsp;';
+										print $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
 									}
 								}
+								$ifisrt = 0;
 							}
 						}
 					}

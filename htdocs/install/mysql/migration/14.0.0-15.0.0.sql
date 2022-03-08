@@ -72,13 +72,42 @@ ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskConf)',       10, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskConf)__', '__(Hello)__,<br /><br />__(OrganizationEventConfRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskBooth)',      20, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskBooth)__', '__(Hello)__,<br /><br />__(OrganizationEventBoothRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 -- TODO Add message for registration only to event  __ONLINE_PAYMENT_TEXT_AND_URL__
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailSubsBooth)',     30, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailBoothPayment)__', '__(Hello)__,<br /><br />__(OrganizationEventPaymentOfBoothWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailSubsEvent)',     40, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailRegistrationPayment)__', '__(Hello)__,<br /><br />__(OrganizationEventPaymentOfRegistrationWasReceived)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailBoothPayment)',  30, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailBoothPayment)__', '__(Hello)__,<br /><br />__(OrganizationEventPaymentOfBoothWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailRegistrationPayment)', 40, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailRegistrationPayment)__', '__(Hello)__,<br /><br />__(OrganizationEventPaymentOfRegistrationWasReceived)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationMassEmailAttendees)', 50, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailAttendees)__', '__(Hello)__,<br /><br />__(OrganizationEventBulkMailToAttendees)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationMassEmailSpeakers)',  60, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailSpeakers)__', '__(Hello)__,<br /><br />__(OrganizationEventBulkMailToSpeakers)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 
+UPDATE llx_c_email_templates SET label = '(EventOrganizationEmailBoothPayment)' WHERE label = '(EventOrganizationEmailSubsBooth)';
+UPDATE llx_c_email_templates SET label = '(EventOrganizationEmailRegistrationPayment)' WHERE label = '(EventOrganizationEmailSubsEvent)';
+
+
+--Fix bad sign on multicompany column for customer invoice lines
+UPDATE llx_facturedet SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and subprice > 0) OR (multicurrency_subprice > 0 and subprice < 0));
+UPDATE llx_facturedet SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facturedet SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0)); 
+UPDATE llx_facturedet SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicompany column for customer invoices
+UPDATE llx_facture SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
+UPDATE llx_facture SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
+UPDATE llx_facture SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicurrency column for supplier invoice lines
+UPDATE llx_facture_fourn_det SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and pu_ht > 0) OR (multicurrency_subprice > 0 and pu_ht < 0));
+UPDATE llx_facture_fourn_det SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facture_fourn_det SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and tva > 0) OR (multicurrency_total_tva > 0 and tva < 0)); 
+UPDATE llx_facture_fourn_det SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+--Fix bad sign on multicompany column for customer invoices
+UPDATE llx_facture_fourn SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
+UPDATE llx_facture_fourn SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
+UPDATE llx_facture_fourn SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+
+ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);
+
 
 -- v15
+
+ALTER TABLE llx_c_partnership_type ADD UNIQUE INDEX uk_c_partnership_type(entity, code);
+
+ALTER TABLE llx_partnership ADD COLUMN fk_type integer DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_c_holiday_types CHANGE COLUMN newByMonth newbymonth double(8,5) DEFAULT 0 NOT NULL;
 
@@ -86,6 +115,9 @@ ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
 
 ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
 ALTER TABLE llx_holiday ADD COLUMN fk_user_approve integer DEFAULT NULL;
+
+ALTER TABLE llx_ticket MODIFY COLUMN progress integer;
+
 
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
@@ -154,6 +186,8 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2010', '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2011', 'Ideell förening');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2012', 'Stiftelse');
 
+ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
+
 -- Deposit generation helper with specific payment terms
 ALTER TABLE llx_c_payment_term ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER decalage;
 ALTER TABLE llx_societe ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER cond_reglement;
@@ -165,24 +199,23 @@ INSERT INTO llx_c_payment_term(code, sortorder, active, libelle, libelle_facture
 -- START  GRH/HRM MODULE
 
 
-CREATE TABLE llx_hrm_evaluation(
-    -- BEGIN MODULEBUILDER FIELDS
-                                   rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                                   ref varchar(128) DEFAULT '(PROV)' NOT NULL,
-                                   label varchar(255),
-                                   description text,
-                                   note_public text,
-                                   note_private text,
-                                   date_creation datetime NOT NULL,
-                                   tms timestamp,
-                                   fk_user_creat integer NOT NULL,
-                                   fk_user_modif integer,
-                                   import_key varchar(14),
-                                   status smallint NOT NULL,
-                                   date_eval date,
-                                   fk_user integer NOT NULL,
-                                   fk_job integer NOT NULL
-    -- END MODULEBUILDER FIELDS
+CREATE TABLE llx_hrm_evaluation
+(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    ref varchar(128) DEFAULT '(PROV)' NOT NULL,
+    label varchar(255),
+    description text,
+    note_public text,
+    note_private text,
+    date_creation datetime NOT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    import_key varchar(14),
+    status smallint NOT NULL,
+    date_eval date,
+    fk_user integer NOT NULL,
+    fk_job integer NOT NULL
 ) ENGINE=innodb;
 ALTER TABLE llx_hrm_evaluation ADD INDEX idx_hrm_evaluation_rowid (rowid);
 ALTER TABLE llx_hrm_evaluation ADD INDEX idx_hrm_evaluation_ref (ref);
@@ -193,7 +226,7 @@ ALTER TABLE llx_hrm_evaluation ADD INDEX idx_hrm_evaluation_status (status);
 create table llx_hrm_evaluation_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -201,19 +234,19 @@ create table llx_hrm_evaluation_extrafields
 ALTER TABLE llx_hrm_evaluation_extrafields ADD INDEX idx_evaluation_fk_object(fk_object);
 
 
-CREATE TABLE llx_hrm_evaluationdet(
+CREATE TABLE llx_hrm_evaluationdet
+(
     -- BEGIN MODULEBUILDER FIELDS
-                                      rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                                      date_creation datetime NOT NULL,
-                                      tms timestamp,
-                                      fk_user_creat integer NOT NULL,
-                                      fk_user_modif integer,
-                                      fk_skill integer NOT NULL,
-                                      fk_evaluation integer NOT NULL,
-                                      rank integer NOT NULL,
-                                      required_rank integer NOT NULL,
-                                      import_key varchar(14)
-    -- END MODULEBUILDER FIELDS
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    date_creation datetime NOT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    fk_skill integer NOT NULL,
+    fk_evaluation integer NOT NULL,
+    rankorder integer NOT NULL,
+    required_rank integer NOT NULL,
+    import_key varchar(14)
 ) ENGINE=innodb;
 
 ALTER TABLE llx_hrm_evaluationdet ADD INDEX idx_hrm_evaluationdet_rowid (rowid);
@@ -225,7 +258,7 @@ ALTER TABLE llx_hrm_evaluationdet ADD INDEX idx_hrm_evaluationdet_fk_evaluation 
 create table llx_hrm_evaluationdet_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -234,20 +267,18 @@ ALTER TABLE llx_hrm_evaluationdet_extrafields ADD INDEX idx_evaluationdet_fk_obj
 
 
 
-
-CREATE TABLE llx_hrm_job(
-
-                            rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                            label varchar(255) NOT NULL,
-                            description text,
-                            date_creation datetime NOT NULL,
-                            tms timestamp,
-                            deplacement varchar(255),
-                            note_public text,
-                            note_private text,
-                            fk_user_creat integer,
-                            fk_user_modif integer
-
+CREATE TABLE llx_hrm_job
+(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    label varchar(255) NOT NULL,
+    description text,
+    date_creation datetime NOT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deplacement varchar(255),
+    note_public text,
+    note_private text,
+    fk_user_creat integer,
+    fk_user_modif integer
 ) ENGINE=innodb;
 
 ALTER TABLE llx_hrm_job ADD INDEX idx_hrm_job_rowid (rowid);
@@ -257,7 +288,7 @@ ALTER TABLE llx_hrm_job ADD INDEX idx_hrm_job_label (label);
 create table llx_hrm_job_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -267,57 +298,45 @@ ALTER TABLE llx_hrm_job_extrafields ADD INDEX idx_job_fk_object(fk_object);
 
 
 CREATE TABLE llx_hrm_job_user(
-    -- BEGIN MODULEBUILDER FIELDS
-                                 rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                                 -- ref varchar(128) NOT NULL,
-                                 description text,
-                                 date_creation datetime NOT NULL,
-                                 tms timestamp,
-                                 fk_contrat integer,
-                                 fk_user integer NOT NULL,
-                                 fk_job integer NOT NULL,
-                                 date_start date,
-                                 date_end date,
-                                 commentaire_abandon varchar(255),
-                                 note_public text,
-                                 note_private text,
-                                 fk_user_creat integer,
-                                 fk_user_modif integer
-    -- END MODULEBUILDER FIELDS
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    -- ref varchar(128) NOT NULL,
+    description text,
+    date_creation datetime NOT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_contrat integer,
+    fk_user integer,
+    fk_job integer NOT NULL,
+    date_start date,
+    date_end date,
+    abort_comment varchar(255),
+    note_public text,
+    note_private text,
+    fk_user_creat integer,
+    fk_user_modif integer
 ) ENGINE=innodb;
+
+ALTER TABLE llx_hrm_job_user ADD COLUMN abort_comment varchar(255);
 
 ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_rowid (rowid);
 -- ALTER TABLE llx_hrm_job_user ADD INDEX idx_hrm_job_user_ref (ref);
 
 
-create table llx_hrm_job_user_extrafields
+
+CREATE TABLE llx_hrm_skill
 (
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_job_user_extrafields ADD INDEX idx_position_fk_object(fk_object);
-
-
-
-CREATE TABLE llx_hrm_skill(
-    -- BEGIN MODULEBUILDER FIELDS
-                              rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                              label varchar(255),
-                              description text,
-                              date_creation datetime NOT NULL,
-                              tms timestamp,
-                              fk_user_creat integer NOT NULL,
-                              fk_user_modif integer,
-                              required_level integer NOT NULL,
-                              date_validite integer NOT NULL,
-                              temps_theorique double(24,8) NOT NULL,
-                              skill_type integer NOT NULL,
-                              note_public text,
-                              note_private text
-    -- END MODULEBUILDER FIELDS
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    label varchar(255),
+    description text,
+    date_creation datetime NOT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    required_level integer NOT NULL,
+    date_validite integer NOT NULL,
+    temps_theorique double(24,8) NOT NULL,
+    skill_type integer NOT NULL,
+    note_public text,
+    note_private text
 ) ENGINE=innodb;
 
 ALTER TABLE llx_hrm_skill ADD INDEX idx_hrm_skill_rowid (rowid);
@@ -327,7 +346,7 @@ ALTER TABLE llx_hrm_skill ADD INDEX idx_hrm_skill_skill_type (skill_type);
 create table llx_hrm_skill_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -335,43 +354,32 @@ create table llx_hrm_skill_extrafields
 ALTER TABLE llx_hrm_skill_extrafields ADD INDEX idx_skill_fk_object(fk_object);
 
 
-CREATE TABLE llx_hrm_skilldet(
-    -- BEGIN MODULEBUILDER FIELDS
-                                 rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                                 description text,
-                                 fk_user_creat integer NOT NULL,
-                                 fk_user_modif integer,
-                                 fk_skill integer NOT NULL,
-                                 rank integer
-    -- END MODULEBUILDER FIELDS
+CREATE TABLE llx_hrm_skilldet
+(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    description text,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    fk_skill integer NOT NULL,
+    rankorder integer
 ) ENGINE=innodb;
+
+ALTER TABLE llx_hrm_skilldet ADD COLUMN rankorder integer NOT NULL DEFAULT '1';
 
 ALTER TABLE llx_hrm_skilldet ADD INDEX idx_hrm_skilldet_rowid (rowid);
 ALTER TABLE llx_hrm_skilldet ADD CONSTRAINT llx_hrm_skilldet_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 
-create table llx_hrm_skilldet_extrafields
+CREATE TABLE llx_hrm_skillrank
 (
-    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
-    fk_object                 integer NOT NULL,
-    import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
-ALTER TABLE llx_hrm_skilldet_extrafields ADD INDEX idx_skilldet_fk_object(fk_object);
-
-
-CREATE TABLE llx_hrm_skillrank(
-    -- BEGIN MODULEBUILDER FIELDS
-                                  rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-                                  fk_skill integer NOT NULL,
-                                  rank integer NOT NULL,
-                                  fk_object integer NOT NULL,
-                                  date_creation datetime NOT NULL,
-                                  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                  fk_user_creat integer NOT NULL,
-                                  fk_user_modif integer,
-                                  objecttype varchar(128) NOT NULL
-    -- END MODULEBUILDER FIELDS
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_skill integer NOT NULL,
+    rankorder integer NOT NULL,
+    fk_object integer NOT NULL,
+    date_creation datetime NOT NULL,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    objecttype varchar(128) NOT NULL
 ) ENGINE=innodb;
 
 ALTER TABLE llx_hrm_skillrank ADD INDEX idx_hrm_skillrank_rowid (rowid);
@@ -437,4 +445,99 @@ ALTER TABLE llx_socpeople DROP COLUMN googleplus;
 ALTER TABLE llx_socpeople DROP COLUMN youtube;
 ALTER TABLE llx_socpeople DROP COLUMN whatsapp;
 
-  
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'KLA', 'Klarna',     1, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (101, 'SOF', 'Sofort',     1, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (102, 'BAN', 'Bancontact', 1, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (103, 'IDE', 'iDeal',      1, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (104, 'GIR', 'Giropay',    1, 0);
+
+ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
+
+
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_commande MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_commandedet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_contratdet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_expensereport_det MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_expensereport MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facture_fourn MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facture_rec MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facture MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_facturedet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_paiement_facture MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_paiementfourn_facturefourn MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_product_fournisseur_price_log MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_product_price_by_qty MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_product_price MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_propal MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_propaldet MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_societe MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_supplier_proposal MODIFY COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_supplier_proposaldet MODIFY COLUMN multicurrency_code varchar(3);
+
+ALTER TABLE llx_propal ADD COLUMN online_sign_ip varchar(48);
+ALTER TABLE llx_propal ADD COLUMN online_sign_name varchar(64);
+
+ALTER TABLE llx_entrepot ADD COLUMN warehouse_usage integer DEFAULT 1;
+
+ALTER TABLE llx_session MODIFY COLUMN user_agent VARCHAR(255) NULL;
+
+ALTER TABLE llx_inventorydet ADD COLUMN fk_movement integer NULL;
+
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN origintype varchar(64);
+
+ALTER TABLE llx_intracommreport CHANGE COLUMN period periods varchar(32);
+
+UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
+
+
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_CREATE','User created','Executed when a user is created','user',301);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_MODIFY','User update','Executed when a user is updated','user',302);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_DELETE','User update','Executed when a user is deleted','user',303);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_NEW_PASSWORD','User update','Executed when a user is change password','user',304);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_ENABLEDISABLE','User update','Executed when a user is enable or disable','user',305);
+
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_CREATE','Holiday created','Executed when a holiday is created','holiday',800);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_MODIFY','Holiday modified','Executed when a holiday is modified','holiday',801);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Holiday validated','Executed when a holiday is validated','holiday',802);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Holiday aprouved','Executed when a holiday is aprouved','holiday',803);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_CANCEL','Holiday canceled','Executed when a holiday is canceled','holiday',802);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_DELETE','Holiday deleted','Executed when a holiday is deleted','holiday',804);
+
+
+-- We do not delete old mexican legal forms because they may have been used. User will have to insert the new one manually not inserted because of conflict if he need them.
+--DELETE FROM llx_c_forme_juridique WHERE code IN ('15401', '15402', '15403', '15404', '15405', '15406');
+
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15401', '601 - General de Ley Personas Morales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15402', '603 - Personas Morales con Fines no Lucrativos', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15403', '605 - Sueldos y Salarios e Ingresos Asimilados a Salarios', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15404', '606 - Arrendamiento', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15405', '607 - Régimen de Enajenación o Adquisición de Bienes', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15406', '608 - Demás ingresos', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15407', '610 - Residentes en el Extranjero sin Establecimiento Permanente en México', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15408', '611 - Ingresos por Dividendos (socios y accionistas)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15409', '612 - Personas Físicas con Actividades Empresariales y Profesionales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15410', '614 - Ingresos por intereses', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15411', '615 - Régimen de los ingresos por obtención de premios', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15412', '616 - Sin obligaciones fiscales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15413', '620 - Sociedades Cooperativas de Producción que optan por diferir sus ingresos', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15414', '621 - Incorporación Fiscal', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15415', '622 - Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15416', '623 - Opcional para Grupos de Sociedades', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15417', '624 - Coordinados', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15418', '625 - Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15419', '626 - Régimen Simplificado de Confianza', 1);
+
+-- VMYSQL4.3 ALTER TABLE llx_user MODIFY COLUMN fk_soc integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_user ALTER COLUMN fk_soc DROP NOT NULL;
+

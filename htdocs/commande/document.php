@@ -46,8 +46,8 @@ $ref		= GETPOST('ref');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -153,9 +153,10 @@ if ($id > 0 || !empty($ref)) {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}

@@ -111,8 +111,8 @@ $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -343,6 +343,7 @@ if (empty($reshook)) {
 		$search_town = "";
 		$search_zip = "";
 		$search_state = "";
+		$search_region = "";
 		$search_country = '';
 		$search_email = '';
 		$search_phone = '';
@@ -492,7 +493,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
 if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
@@ -773,6 +774,9 @@ if ($search_url != '') {
 }
 if ($search_state != '') {
 	$param .= "&search_state=".urlencode($search_state);
+}
+if ($search_region != '') {
+	$param .= "&search_region=".urlencode($search_region);
 }
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode($search_country);
@@ -1235,7 +1239,7 @@ if (!empty($arrayfields['s.import_key']['checked'])) {
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre center">';
+print '<td class="liste_titre center actioncolumn">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -1243,10 +1247,10 @@ print '</td>';
 print "</tr>\n";
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['s.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, 'actioncolumn ');
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, ' data-key="ref"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, ' data-key="ref"', $sortfield, $sortorder, 'actioncolumn ');
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
@@ -1327,7 +1331,7 @@ if (!empty($arrayfields['s.tva_intra']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 }
 if (!empty($arrayfields['customerorsupplier']['checked'])) {
-	print_liste_field_titre(''); // type of customer
+	print_liste_field_titre($arrayfields['customerorsupplier']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center '); // type of customer
 }
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 	print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1338,7 +1342,6 @@ if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 if (!empty($arrayfields['s2.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER["PHP_SELF"], "s2.nom", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1357,7 +1360,7 @@ if (!empty($arrayfields['s.status']['checked'])) {
 if (!empty($arrayfields['s.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['s.import_key']['label'], $_SERVER["PHP_SELF"], "s.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 print "</tr>\n";
 
 
@@ -1601,11 +1604,11 @@ while ($i < min($num, $limit)) {
 	}
 	// VAT
 	if (!empty($arrayfields['s.tva_intra']['checked'])) {
-		print "<td>";
-		print $obj->tva_intra;
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->tva_intra).'">';
 		if ($obj->tva_intra && !isValidVATID($companystatic)) {
-			print img_warning("BadVATNumber", '', '');
+			print img_warning("BadVATNumber", '', 'pictofixedwidth');
 		}
+		print $obj->tva_intra;
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1703,7 +1706,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
-	print '<td class="nowrap center">';
+	print '<td class="nowrap center actioncolumn">';
 	if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
 		if (in_array($obj->rowid, $arrayofselected)) {

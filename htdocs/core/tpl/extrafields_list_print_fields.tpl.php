@@ -38,7 +38,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
 					//var_dump($obj);
 					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
-					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1);
+					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '0');
 					//var_dump($value);
 				}
 
@@ -53,6 +53,9 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				print '</td>';
 
 				if (!$i) {
+					if (empty($totalarray)) {
+						$totalarray['nbfield'] = 0;
+					}
 					$totalarray['nbfield']++;
 				}
 

@@ -194,14 +194,11 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$bulkaction = $massaction;
 	$error = 0;
 
-
-
 	$db->begin();
 
 	foreach ($toselect as $prodid) {
 		// need create new of Product to prevent rename dir behavior
 		$prodstatic = new Product($db);
-
 		if ($prodstatic->fetch($prodid) < 0) {
 			continue;
 		}
@@ -209,33 +206,50 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		if ($bulkaction == 'on_sell') {
 			$prodstatic->status = 1;
 			$res = $prodstatic->update($prodstatic->id, $user);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} elseif ($bulkaction == 'on_buy') {
 			$prodstatic->status_buy = 1;
 			$res = $prodstatic->update($prodstatic->id, $user);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} elseif ($bulkaction == 'not_sell') {
 			$prodstatic->status = 0;
 			$res = $prodstatic->update($prodstatic->id, $user);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} elseif ($bulkaction == 'not_buy') {
 			$prodstatic->status_buy = 0;
 			$res = $prodstatic->update($prodstatic->id, $user);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} elseif ($bulkaction == 'delete') {
 			$res = $prodstatic->delete($user, $prodstatic->id);
+			if ($res <= 0) {
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+				$error++;
+				break;
+			}
 		} else {
-			break;
-		}
-
-		if ($res <= 0) {
-			$error++;
 			break;
 		}
 	}
 
 	if ($error) {
 		$db->rollback();
-
-		if ($prodstatic->error) {
-			setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
-		} else {
+		if (empty($prodstatic->error)) {
 			setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 		}
 	} else {
@@ -248,7 +262,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		exit();
 	}
 
-	$prodcomb->variation_weight = $weight_impact;
+	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
 	if ($conf->global->PRODUIT_MULTIPRICES) {
@@ -834,7 +848,7 @@ if (!empty($id) || !empty($ref)) {
 			$aaa .= '	<option value="on_sell">'.$langs->trans('ProductStatusOnSell').'</option>';
 			$aaa .= '	<option value="delete">'.$langs->trans('Delete').'</option>';
 			$aaa .= '</select>';
-			$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button">';
+			$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button small">';
 		}
 		$massactionbutton = $aaa;
 

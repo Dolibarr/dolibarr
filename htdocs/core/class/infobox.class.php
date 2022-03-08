@@ -37,7 +37,7 @@ class InfoBox
 	{
 		global $conf;
 
-		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 			return array(
 				0 => 'Home',
 				1 => 'UsersHome',
@@ -83,7 +83,7 @@ class InfoBox
 	/**
 	 *  Return array of boxes qualified for area and user
 	 *
-	 *  @param	DoliDB		$dbs				Database handler
+	 *  @param	DoliDB		$dbs			Database handler
 	 *  @param	string		$mode			'available' or 'activated'
 	 *  @param	int			$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
 	 *  @param  User|null   $user	  		Object user to filter
@@ -100,7 +100,7 @@ class InfoBox
 		if ($mode == 'activated') {	// activated
 			$sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
-			$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
+			$sql .= " FROM ".$dbs->prefix()."boxes as b, ".$dbs->prefix()."boxes_def as d";
 			$sql .= " WHERE b.box_id = d.rowid";
 			$sql .= " AND b.entity IN (0,".$conf->entity.")";
 			if ($zone >= 0) {
@@ -114,7 +114,7 @@ class InfoBox
 			$sql .= " ORDER BY b.box_order";
 		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
-			$sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
+			$sql .= " FROM ".$dbs->prefix()."boxes_def as d";
 			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
 		}
 
@@ -251,7 +251,7 @@ class InfoBox
 		}
 
 		// Delete all lines
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
+		$sql = "DELETE FROM ".$dbs->prefix()."boxes";
 		$sql .= " WHERE entity = ".$conf->entity;
 		$sql .= " AND fk_user = ".((int) $userid);
 		$sql .= " AND position = ".((int) $zone);
@@ -274,7 +274,7 @@ class InfoBox
 						$i++;
 						$ii = sprintf('%02d', $i);
 
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
+						$sql = "INSERT INTO ".$dbs->prefix()."boxes";
 						$sql .= "(box_id, position, box_order, fk_user, entity)";
 						$sql .= " values (";
 						$sql .= " ".((int) $id).",";

@@ -63,10 +63,9 @@ $error = 0;
 $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['search_fourn_id'])) {
+if (GETPOST('search_fourn_id', 'int')) {
 	$_GET['id_fourn'] = GETPOST('search_fourn_id', 'int');
 	$_POST['id_fourn'] = GETPOST('search_fourn_id', 'int');
-	$_REQUEST['id_fourn'] = GETPOST('search_fourn_id', 'int');
 }
 
 // Security check
@@ -81,8 +80,8 @@ if (empty($user->rights->fournisseur->lire)) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -518,7 +517,7 @@ if ($id > 0 || $ref) {
 				} else {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
-					print $form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
+					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
 
 					$parameters = array('filtre'=>"fournisseur=1", 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
@@ -613,7 +612,7 @@ if ($id > 0 || $ref) {
 						$default_vat = $object->tva_tx;
 					}
 				}
-				$vattosuggest = (GETPOST("tva_tx") ?vatrate(GETPOST("tva_tx")) : ($default_vat != '' ?vatrate($default_vat) : ''));
+				$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ?vatrate($default_vat) : ''));
 				$vattosuggest = preg_replace('/\s*\(.*\)$/', '', $vattosuggest);
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
@@ -931,7 +930,7 @@ END;
 					'pfp.fk_availability'=>array('label'=>$langs->trans("Availability"), 'enabled' => !empty($conf->global->FOURN_PRODUCT_AVAILABILITY), 'checked'=>0, 'position'=>4),
 					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
 					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
-					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => $conf->multicurrency->enabled, 'checked'=>0, 'position'=>10),
+					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => (!empty($conf->multicurrency->enabled)), 'checked'=>0, 'position'=>10),
 					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>1, 'position'=>13),
 					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>1, 'position'=>14),
 					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>15),
@@ -942,14 +941,19 @@ END;
 
 				// fetch optionals attributes and labels
 				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
-				$extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
+				if ($extrafields->attributes["product_fournisseur_price"] && array_key_exists('label', $extrafields->attributes["product_fournisseur_price"])) {
+					$extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
 
-				if (!empty($extralabels)) {
-					foreach ($extralabels as $key => $value) {
-						// Show field if not hidden
-						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-							$extratitle = $langs->trans($value);
-							$arrayfields['ef.'.$key] = array('label'=>$extratitle, 'checked'=>0, 'position'=>(end($arrayfields)['position'] + 1), 'langfile'=>$extrafields->attributes["product_fournisseur_price"]['langfile'][$key], 'help'=>$extrafields->attributes["product_fournisseur_price"]['help'][$key]);
+					if (!empty($extralabels)) {
+						foreach ($extralabels as $key => $value) {
+							// Show field if not hidden
+							if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+								$extratitle = $langs->trans($value);
+								$arrayfields['ef.' . $key] = array('label'    => $extratitle, 'checked' => 0,
+																   'position' => (end($arrayfields)['position'] + 1),
+																   'langfile' => $extrafields->attributes["product_fournisseur_price"]['langfile'][$key],
+																   'help'     => $extrafields->attributes["product_fournisseur_price"]['help'][$key]);
+							}
 						}
 					}
 				}
@@ -1023,29 +1027,31 @@ END;
 
 				// fetch optionals attributes and labels
 				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
-				$extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
+				if ($extrafields->attributes["product_fournisseur_price"] && array_key_exists('label', $extrafields->attributes["product_fournisseur_price"])) {
+					$extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
 
-				if (!empty($extralabels)) {
-					foreach ($extralabels as $key => $value) {
-						// Show field if not hidden
-						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-							if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) {
-								$langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
-							}
-							if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) {
-								$extratitle = $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
-							} else {
-								$extratitle = $langs->trans($value);
-							}
-							if (!empty($arrayfields['ef.'.$key]['checked'])) {
-								print_liste_field_titre($extratitle, $_SERVER["PHP_SELF"], 'ef.'.$key, '', $param, '', $sortfield, $sortorder, 'right ');
+					if (!empty($extralabels)) {
+						foreach ($extralabels as $key => $value) {
+							// Show field if not hidden
+							if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+								if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) {
+									$langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+								}
+								if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) {
+									$extratitle = $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
+								} else {
+									$extratitle = $langs->trans($value);
+								}
+								if (!empty($arrayfields['ef.' . $key]['checked'])) {
+									print_liste_field_titre($extratitle, $_SERVER["PHP_SELF"], 'ef.' . $key, '', $param, '', $sortfield, $sortorder, 'right ');
+								}
 							}
 						}
 					}
 				}
 
 				if (is_object($hookmanager)) {
-					$parameters = array('id_fourn'=>$id_fourn, 'prod_id'=>$object->id);
+					$parameters = array('id_fourn'=>(!empty($id_fourn)?$id_fourn:''), 'prod_id'=>$object->id);
 					$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 				}
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -1204,7 +1210,7 @@ END;
 									$obj = $db->fetch_object($resql);
 									foreach ($extralabels as $key => $value) {
 										if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-											print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key})."</td>";
+											print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_fournisseur_price')."</td>";
 										}
 									}
 								}
@@ -1213,7 +1219,7 @@ END;
 						}
 
 						if (is_object($hookmanager)) {
-							$parameters = array('id_pfp'=>$productfourn->product_fourn_price_id, 'id_fourn'=>$id_fourn, 'prod_id'=>$object->id);
+							$parameters = array('id_pfp'=>$productfourn->product_fourn_price_id, 'id_fourn'=>(!empty($id_fourn)?$id_fourn:''), 'prod_id'=>$object->id);
 							$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 

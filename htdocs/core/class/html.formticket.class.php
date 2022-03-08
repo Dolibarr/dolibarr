@@ -1,17 +1,18 @@
 <?php
-/* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Juanjo Menent			<jmenent@2byte.es>
+/* Copyright (C) 2013-2015 Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2016      Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019      Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -365,7 +366,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript" language="javascript">';
+			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
@@ -508,11 +509,13 @@ class FormTicket
 			print '</tr>';
 		}
 
-		if (!empty($conf->projet->enabled) && !$this->ispublic) {
-			$formproject = new FormProjets($this->db);
-			print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
-			print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
-			print '</td></tr>';
+		if ($subelement != 'project') {
+			if (!empty($conf->projet->enabled) && !$this->ispublic) {
+				$formproject = new FormProjets($this->db);
+				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
+				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print '</td></tr>';
+			}
 		}
 
 		// Other attributes
@@ -759,13 +762,13 @@ class FormTicket
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
-				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
+				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					$selectedgroups[] = $obj->code;
 					while ($obj->fk_parent > 0) {
-						$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc WHERE ctc.rowid ='".$this->db->escape($obj->fk_parent)."'";
+						$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.rowid ='".$this->db->escape($obj->fk_parent)."'";
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$obj = $this->db->fetch_object($resql);
@@ -785,7 +788,7 @@ class FormTicket
 
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ";
 			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
-			$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
+			$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc";
 			$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
 			if ($filtertype == 'public=1') {
 				$sql .= " AND ctc.public = 1";
@@ -844,8 +847,8 @@ class FormTicket
 				$stringtoprint .= '<option value="">&nbsp;</option>';
 
 				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ctcjoin.code as codefather";
-				$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
-				$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
+				$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc";
+				$sql .= " JOIN ".$this->db->prefix()."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
 				$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
 				$sql .= " AND ctc.rowid NOT IN (".$this->db->sanitize(join(',', $arrayidusedconcat)).")";
 
@@ -1201,7 +1204,7 @@ class FormTicket
 		$send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 
 		// Example 1 : Adding jquery code
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			send_email=' . $send_email.';
 			if (send_email) {
@@ -1258,7 +1261,7 @@ class FormTicket
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
 				print '<tr class="email_line"><td></td><td colspan="2"><div style="padding: 3px 0 3px 0">'."\n";
-				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1);
+				 print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1, 0, "", "", 0, 0, 0, '', 'minwidth200');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
@@ -1319,6 +1322,7 @@ class FormTicket
 
 				// Print recipient list
 				if (is_array($sendto) && count($sendto) > 0) {
+					print img_picto('', 'email', 'class="pictofixedwidth"');
 					print implode(', ', $sendto);
 				} else {
 					print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
@@ -1360,7 +1364,7 @@ class FormTicket
 		} elseif (!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$defaultmessage = dol_nl2br($defaultmessage);
 		}
-		if (GETPOSTISSET("message") && !$_POST['modelselected']) {
+		if (GETPOSTISSET("message") && !GETPOST('modelselected')) {
 			$defaultmessage = GETPOST('message', 'restricthtml');
 		} else {
 			$defaultmessage = make_substitutions($defaultmessage, $this->substit);
@@ -1401,7 +1405,7 @@ class FormTicket
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript" language="javascript">';
+			$out .= '<script type="text/javascript">';
 			$out .= 'jQuery(document).ready(function () {';
 			$out .= '    jQuery(".removedfile").click(function() {';
 			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';

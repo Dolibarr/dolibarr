@@ -488,7 +488,13 @@ class ProductCombination
 
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
-		$child->status = $parent->status;
+		// Only when Parent Status are updated
+		if ($parent->oldcopy && ($parent->status != $parent->oldcopy->status)) {
+			$child->status = $parent->status;
+		}
+		if ($parent->oldcopy && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+			$child->status_buy = $parent->status_buy;
+		}
 
 		if ($this->variation_weight) {	// If we must add a delta on weight
 			$child->weight = ($child->weight ? $child->weight : 0) + $this->variation_weight;
@@ -511,7 +517,7 @@ class ProductCombination
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
-						$new_type = $parent->multiprices_base_type[$i];
+						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
 						$variation_price = floatval(!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
 						$variation_price_percentage = floatval(!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
@@ -1055,37 +1061,33 @@ class ProductCombinationLevel
 	 */
 	public function fetchAll($fk_product_attribute_combination, $fk_price_level = 0)
 	{
+		$result = array();
 
 		$sql = "SELECT rowid, fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE fk_product_attribute_combination = ".intval($fk_product_attribute_combination);
-
 		if (!empty($fk_price_level)) {
 			$sql .= ' AND fk_price_level = '.intval($fk_price_level);
 		}
 
-		$combination_price_levels = $this->db->getRows($sql);
-
-		if (!is_array($combination_price_levels)) {
-			return -1;
-		}
-
-		$result = array();
-
-		if (!empty($combination_price_levels)) {
-			// For more simple usage set level as array key
-			foreach ($combination_price_levels as $k => $row) {
-				$productCombinationLevel = new ProductCombinationLevel($this->db);
-				$productCombinationLevel->fetchFormObj($row);
-				$result[$row->fk_price_level] = $productCombinationLevel;
+		$res = $this->db->query($sql);
+		if ($res) {
+			if ($this->db->num_rows($res) > 0) {
+				while ($obj = $this->db->fetch_object($res)) {
+					$productCombinationLevel = new ProductCombinationLevel($this->db);
+					$productCombinationLevel->fetchFormObj($obj);
+					$result[$obj->fk_price_level] = $productCombinationLevel;
+				}
 			}
+		} else {
+			return -1;
 		}
 
 		return $result;
 	}
 
 	/**
-	 * assign vars form an stdclass like sql obj
+	 * Assign vars form an stdclass like sql obj
 	 *
 	 * @param 	int 	$obj		Object resultset
 	 * @return 	int 				<0 KO, >0 OK

@@ -747,7 +747,7 @@ class Project extends CommonObject
 			'fk_projet' => $projectkey,
 			'ids' => $ids,
 		);
-		$reshook = $hookmanager->executeHooks('getElementList', $parameters, $object, $action);
+		$reshook = $hookmanager->executeHooks('getElementList', $parameters);
 		if ($reshook > 0) {
 			$sql = $hookmanager->resPrint;
 		} else {
@@ -1183,7 +1183,7 @@ class Project extends CommonObject
 
 		$label = '';
 		if ($option != 'nolink') {
-			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+			$label = img_picto('', $this->picto, 'class="pictofixedwidth"').' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
 		}
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
@@ -1252,7 +1252,7 @@ class Project extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip pictofixedwidth"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1264,7 +1264,7 @@ class Project extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('projectdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

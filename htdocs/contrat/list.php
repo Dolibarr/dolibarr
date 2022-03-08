@@ -79,8 +79,8 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -229,6 +229,7 @@ $formother = new FormOther($db);
 $socstatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $contracttmp = new Contrat($db);
+$title = "";
 
 $sql = 'SELECT';
 $sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
@@ -259,7 +260,7 @@ if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contrat as c";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (c.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
@@ -492,7 +493,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $url = DOL_URL_ROOT.'/contrat/card.php?action=create';
 if (!empty($socid)) {
-	$url .= '&socid='.$socid;
+	$url .= '&socid='.((int) $socid);
 }
 $newcardbutton = dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->rights->contrat->creer);
 
@@ -600,11 +601,11 @@ if (!empty($arrayfields['s.email']['checked'])) {
 }
 // Town
 if (!empty($arrayfields['s.town']['checked'])) {
-	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 }
 // Zip
 if (!empty($arrayfields['s.zip']['checked'])) {
-	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
 }
 // State
 if (!empty($arrayfields['state.nom']['checked'])) {
@@ -795,11 +796,12 @@ while ($i < min($num, $limit)) {
 		print '</td>';
 	}
 
+	// Ref thirdparty
 	if (!empty($arrayfields['c.ref_customer']['checked'])) {
-		print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag(dol_string_nohtmltag($contracttmp->getFormatedCustomerRef($obj->ref_customer))).'">'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
 	}
 	if (!empty($arrayfields['c.ref_supplier']['checked'])) {
-		print '<td>'.$obj->ref_supplier.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="tdoverflowmax150">';
@@ -809,8 +811,9 @@ while ($i < min($num, $limit)) {
 		}
 		print '</td>';
 	}
+	// Email
 	if (!empty($arrayfields['s.email']['checked'])) {
-		print '<td>'.$obj->email.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 0, 0, 1, 1).'</td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {

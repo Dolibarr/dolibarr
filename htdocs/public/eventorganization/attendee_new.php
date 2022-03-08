@@ -19,16 +19,6 @@
  *	\file       htdocs/public/eventorganization/attendee_new.php
  *	\ingroup    project
  *	\brief      Example of form to subscribe to an event
- *
- *  Note that you can add following constant to change behaviour of page
- *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
- *  MEMBER_NEWFORM_EDITAMOUNT           0 or 1 = Amount can be edited
- *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
- *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
- *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
- *  MEMBER_NEWFORM_FORCETYPE            Force type of member
- *  MEMBER_NEWFORM_FORCEMORPHY          Force nature of member (mor/phy)
- *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
  */
 
 if (!defined('NOLOGIN')) {
@@ -66,7 +56,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-global $dolibarr_main_instance_unique_id;
 global $dolibarr_main_url_root;
 
 // Init vars
@@ -268,6 +257,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		} else {
 			// Need to create a confattendee
 			$confattendee->date_creation = dol_now();
+			$confattendee->date_subscription = dol_now();
 			$confattendee->email = $email;
 			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;

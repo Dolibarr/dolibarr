@@ -17,7 +17,7 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Tedarikçi faturası doğrulandığında (ve faturanın tutarı bağlantılı teklifin toplam tutarı ile aynı ise) bağlantılı kaynak tedarikçi teklifini "faturalandı" olarak sınıflandır
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Tedarikçi faturası doğrulandığında (ve faturanın tutarı bağlantılı siparişin toplam tutarı ile aynı ise) bağlantılı kaynak tedarikçi siparişini "faturalandı" olarak sınıflandır
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Bağlantılı bir tedarikçi siparişi doğrulandığında alımları "faturalandırıldı" olarak sınıflandırın
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Otomatik oluşturma

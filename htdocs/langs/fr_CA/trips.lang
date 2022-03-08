@@ -63,7 +63,6 @@ ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir cloner ce rapport de dépen
 expenseReportRangeMoreThan=plus que 1%d
 expenseReportCoefUndefined=(Valeur non définie)
 ExpenseReportDateEnd=Date de fin
-ExpenseReportLimitAmount=Montant de la limite
 byEX_DAY=par jour (limite à 1%s)
 byEX_MON=par mois (limite à 1%s)
 byEX_YEA=par année (limite à 1%s)

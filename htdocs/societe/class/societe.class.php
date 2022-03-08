@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
+
 /**
  *	Class to manage third parties objects (customers, suppliers, prospects...)
  */
@@ -210,10 +211,10 @@ class Societe extends CommonObject
 		'cond_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
 		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>301),
 		'mode_reglement_supplier' =>array('type'=>'integer', 'label'=>'Mode reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>305),
+		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>308),
 		'outstanding_limit' =>array('type'=>'double(24,8)', 'label'=>'OutstandingBill', 'enabled'=>1, 'visible'=>-1, 'position'=>310, 'isameasure'=>1),
 		'order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>315, 'isameasure'=>1),
 		'supplier_order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Supplier order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>320, 'isameasure'=>1),
-		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>325),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'Fk shipping method', 'enabled'=>1, 'visible'=>-1, 'position'=>330),
 		'tva_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Tva assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
 		'localtax1_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax1 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>340),
@@ -558,13 +559,14 @@ class Societe extends CommonObject
 	 * Accounting code for client
 	 * @var string
 	 */
-	public $code_compta;
+	public $code_compta_client;
 
 	/**
-	 * Accounting code for client
+	 * Duplicate of code_compta_client (for backward compatibility)
 	 * @var string
 	 */
-	public $code_compta_client;
+	public $code_compta;
+
 
 	/**
 	 * Accounting code for customer
@@ -583,6 +585,14 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $accountancy_code_supplier;
+
+
+	/**
+	 * Accounting code for product (for level 3 of suggestion of prouct accounting account)
+	 * @var string
+	 */
+	public $code_compta_product;
+
 
 	/**
 	 * @var string
@@ -893,8 +903,8 @@ class Societe extends CommonObject
 			$sql .= ", name_alias";
 			$sql .= ", entity";
 			$sql .= ", datec";
-			$sql .= ", fk_typent";
 			$sql .= ", fk_user_creat";
+			$sql .= ", fk_typent";
 			$sql .= ", canvas";
 			$sql .= ", status";
 			$sql .= ", ref_ext";
@@ -909,8 +919,8 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_sell";
 			}
 			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
+			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".((int) $this->status);
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -1827,7 +1837,8 @@ class Societe extends CommonObject
 				$this->code_client = $obj->code_client;
 				$this->code_fournisseur = $obj->code_fournisseur;
 
-				$this->code_compta = $obj->code_compta;
+				$this->code_compta = $obj->code_compta;			// For backward compatibility
+				$this->code_compta_client = $obj->code_compta;
 				$this->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				$this->barcode = $obj->barcode;
@@ -2325,7 +2336,7 @@ class Societe extends CommonObject
 	/**
 	 *  Return array of sales representatives
 	 *
-	 *  @param	User		$user			Object user
+	 *  @param	User		$user			Object user (not used)
 	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
 	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
@@ -2524,9 +2535,10 @@ class Societe extends CommonObject
 	 *		@param	int		$maxlen			          Max length of name
 	 *      @param	int  	$notooltip		          1=Disable tooltip
 	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *      @param	int		$noaliasinname			  1=Do not add alias into the link ref
 	 *		@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2564,17 +2576,18 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (!empty($this->name_alias)) {
+		if (!empty($this->name_alias) && empty($noaliasinname)) {
 			$name .= ' ('.$this->name_alias.')';
 		}
 
-		$result = ''; $label = '';
+		$result = ''; $label = ''; $label2 = '';
 		$linkstart = ''; $linkend = '';
 
 		if (!empty($this->logo) && class_exists('Form')) {
-			$label .= '<div class="photointooltip">';
-			$label .= Form::showphoto('societe', $this, 0, 40, 0, '', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
-			$label .= '</div><div style="clear: both;"></div>';
+			$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('societe', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
 		} elseif (!empty($this->logo_squarred) && class_exists('Form')) {
 			/*$label.= '<div class="photointooltip">';
 			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
@@ -2635,47 +2648,48 @@ class Societe extends CommonObject
 			}
 			$label .= '<br>'.implode('&nbsp;', $phonelist);
 		}
+
 		if (!empty($this->address)) {
-			$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
+			$label2 .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
 		} elseif (!empty($this->country_code)) {
-			$label .= '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
+			$label2 .= '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		}
 		if (!empty($this->tva_intra) || (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP) && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false)) {
-			$label .= '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
+			$label2 .= '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
 		}
 		if (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP)) {
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid1') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId1'.$this->country_code).':</b> '.$this->idprof1;
+				$label2 .= '<br><b>'.$langs->trans('ProfId1'.$this->country_code).':</b> '.$this->idprof1;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid2') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId2'.$this->country_code).':</b> '.$this->idprof2;
+				$label2 .= '<br><b>'.$langs->trans('ProfId2'.$this->country_code).':</b> '.$this->idprof2;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid3') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId3'.$this->country_code).':</b> '.$this->idprof3;
+				$label2 .= '<br><b>'.$langs->trans('ProfId3'.$this->country_code).':</b> '.$this->idprof3;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid4') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId4'.$this->country_code).':</b> '.$this->idprof4;
+				$label2 .= '<br><b>'.$langs->trans('ProfId4'.$this->country_code).':</b> '.$this->idprof4;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid5') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId5'.$this->country_code).':</b> '.$this->idprof5;
+				$label2 .= '<br><b>'.$langs->trans('ProfId5'.$this->country_code).':</b> '.$this->idprof5;
 			}
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid6') !== false) {
-				$label .= '<br><b>'.$langs->trans('ProfId6'.$this->country_code).':</b> '.$this->idprof6;
+				$label2 .= '<br><b>'.$langs->trans('ProfId6'.$this->country_code).':</b> '.$this->idprof6;
 			}
 		}
 		if (!empty($this->code_client) && ($this->client == 1 || $this->client == 3)) {
-			$label .= '<br><b>'.$langs->trans('CustomerCode').':</b> '.$this->code_client;
+			$label2 .= '<br><b>'.$langs->trans('CustomerCode').':</b> '.$this->code_client;
 		}
 		if (!empty($this->code_fournisseur) && $this->fournisseur) {
-			$label .= '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
+			$label2 .= '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
 		}
 		if (!empty($conf->accounting->enabled) && ($this->client == 1 || $this->client == 3)) {
-			$label .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
+			$label2 .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		}
 		if (!empty($conf->accounting->enabled) && $this->fournisseur) {
-			$label .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
+			$label2 .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
 		}
-		$label .= '</div>';
+		$label .= ($label2 ? '<br>'.$label2 : '').'</div>';
 
 		// Add type of canvas
 		$linkstart .= (!empty($this->canvas) ? '&canvas='.$this->canvas : '');
@@ -2727,7 +2741,7 @@ class Societe extends CommonObject
 		$hookmanager->initHooks(array('thirdpartydao'));
 		$parameters = array(
 			'id'=>$this->id,
-			'getnomurl'=>$result,
+			'getnomurl' => &$result,
 			'withpicto '=> $withpicto,
 			'option'=> $option,
 			'maxlen'=> $maxlen,
@@ -3768,7 +3782,7 @@ class Societe extends CommonObject
 			}
 
 			if ($url) {
-				return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+				return '<a target="_blank" rel="noopener noreferrer" href="'.$url.'">'.$langs->trans("Check").'</a>';
 			}
 		} else {
 			return $hookmanager->resPrint;
@@ -4075,7 +4089,7 @@ class Societe extends CommonObject
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
 			} else { // For backward compatibility
-				dol_syslog("Your setup of State an old syntax (entity=".$conf->entity."). Go in Home - Setup - Organization then Save should remove this error.", LOG_ERR);
+				dol_syslog("Your setup of State has an old syntax (entity=".$conf->entity."). Go in Home - Setup - Organization then Save should remove this error.", LOG_ERR);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$state_code = getState($state_id, 2, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
 				$state_label = getState($state_id, 0, $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
@@ -4758,12 +4772,12 @@ class Societe extends CommonObject
 	 * Function used to replace a thirdparty id with another one.
 	 * It must be used within a transaction to avoid trouble
 	 *
-	 * @param 	DoliDB 	$db 		Database handler
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
 	 * @param 	int 	$origin_id 	Old thirdparty id (will be removed)
 	 * @param 	int 	$dest_id 	New thirdparty id
 	 * @return 	bool				True if success, False if error
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		if ($origin_id == $dest_id) {
 			dol_syslog('Error: Try to merge a thirdparty into itself');
@@ -4780,9 +4794,9 @@ class Societe extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $origin_id.') ';
 
-		$resql = $db->query($sql);
-		while ($obj = $db->fetch_object($resql)) {
-			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
+		$resql = $dbs->query($sql);
+		while ($obj = $dbs->fetch_object($resql)) {
+			$dbs->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
 		/**
@@ -4798,7 +4812,7 @@ class Societe extends CommonObject
 			'societe_rib'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -4864,7 +4878,7 @@ class Societe extends CommonObject
 	{
 		global $langs;
 
-		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 
 		$this->partnerships[] = array();

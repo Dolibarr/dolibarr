@@ -87,11 +87,11 @@ class AccountancyExport
 	 *
 	 * @param DoliDb $db Database handler
 	 */
-	public function __construct(DoliDB &$db)
+	public function __construct(DoliDB $db)
 	{
 		global $conf;
 
-		$this->db = &$db;
+		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : ($conf->global->ACCOUNTING_EXPORT_ENDLINE == 1 ? "\n" : "\r\n");
 	}
@@ -915,7 +915,7 @@ class AccountancyExport
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
 		print "DateLimitReglmt".$separator;
-		print "NumFacture".$separator;
+		print "NumFacture";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -928,17 +928,18 @@ class AccountancyExport
 				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
+				$refInvoice = '';
 				if ($line->doc_type == 'customer_invoice') {
 					// Customer invoice
 					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-					$invoice = new Facture($db);
+					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
 					$refInvoice = $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-					$invoice = new FactureFournisseur($db);
+					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
 					$refInvoice = $invoice->ref_supplier;
@@ -996,13 +997,13 @@ class AccountancyExport
 				print $line->multicurrency_amount . $separator;
 
 				// FEC:Idevise
-				print $line->multicurrency_code.$separator;
+				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
+				print $date_limit_payment . $separator;
 
 				// FEC_suppl:NumFacture
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1) . $separator;
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
 				print $end_line;
 			}
@@ -1041,7 +1042,7 @@ class AccountancyExport
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
 		print "DateLimitReglmt".$separator;
-		print "NumFacture".$separator;
+		print "NumFacture";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -1054,17 +1055,18 @@ class AccountancyExport
 				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
+				$refInvoice = '';
 				if ($line->doc_type == 'customer_invoice') {
 					// Customer invoice
 					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-					$invoice = new Facture($db);
+					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
 					$refInvoice = $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-					$invoice = new FactureFournisseur($db);
+					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
 					$refInvoice = $invoice->ref_supplier;
@@ -1125,10 +1127,10 @@ class AccountancyExport
 				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
+				print $date_limit_payment . $separator;
 
 				// FEC_suppl:NumFacture
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1) . $separator;
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
 
 				print $end_line;

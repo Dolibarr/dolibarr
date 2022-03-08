@@ -198,15 +198,15 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($value == 'ref') {
-				$_POST[$listfieldvalue[$i]] = strtolower($_POST[$listfieldvalue[$i]]);
+				$_POST[$listfieldvalue[$i]] = strtolower(GETPOST($listfieldvalue[$i]));
 			}
 			if ($i) {
 				$sql .= ",";
 			}
-			if ($_POST[$listfieldvalue[$i]] == '') {
+			if (GETPOST($listfieldvalue[$i]) == '') {
 				$sql .= "null";
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -259,7 +259,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($_POST[$listfieldvalue[$i]] == '') {
 				$sql .= "null";
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -460,7 +460,7 @@ if ($id) {
 			if ($valuetoshow != '') {
 				print '<td class="'.$align.'">';
 				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+					print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				} elseif (!empty($tabhelp[$id][$value])) {
 					if ($value == 'virtualhost') {
 						print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltipvirtual');

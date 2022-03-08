@@ -107,10 +107,12 @@ class DolGraph
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor;
 
+		// Some default values for the case it is not defined into the theme later.
 		$this->bordercolor = array(235, 235, 224);
 		$this->datacolor = array(array(120, 130, 150), array(160, 160, 180), array(190, 190, 220));
 		$this->bgcolor = array(235, 235, 224);
 
+		// Load color of the theme
 		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
 		if (is_readable($color_file)) {
 			include $color_file;
@@ -1415,19 +1417,27 @@ class DolGraph
 					$color = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ', 0.9)';
 					$bordercolor = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ')';
 				} else { // We do not use a 'group by'
-					if (!empty($this->bordercolor[$i]) && is_array($this->datacolor[$i])) {
+					if (!empty($this->datacolor[$i]) && is_array($this->datacolor[$i])) {
 						$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)';
 					} else {
 						$color = $this->datacolor[$i];
 					}
 					if (!empty($this->bordercolor[$i]) && is_array($this->bordercolor[$i])) {
-						$color = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
+						$bordercolor = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
 					} else {
 						if ($type != 'horizontalBar') {
 							$bordercolor = $color;
 						} else {
 							$bordercolor = $this->bordercolor[$i];
 						}
+					}
+
+					// For negative colors, we invert border and background
+					$tmp = str_replace('#', '', $color);
+					if (strpos($tmp, '-') !== false) {
+						$foundnegativecolor++;
+						$bordercolor = str_replace('-', '', $color);
+						$color = '#FFFFFF'; // If $val is '-123'
 					}
 				}
 				if ($i > 0) {

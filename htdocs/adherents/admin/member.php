@@ -196,6 +196,9 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
+
+// Mains options
+
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -286,51 +289,15 @@ print '</div>';
 
 print '</form>';
 
-print '<br>';
-
-
-/*
- * Edit info of model document
- */
-$constantes = array(
-		'ADHERENT_CARD_TYPE',
-		//'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
-);
-
-print load_fiche_titre($langs->trans("MembersCards"), '', '');
-
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
-
-form_constantes($constantes, 0, $helptext);
 
 print '<br>';
 
 
-/*
- * Edit info of model document
- */
-$constantes = array('ADHERENT_ETIQUETTE_TYPE', 'ADHERENT_ETIQUETTE_TEXT');
-
-print load_fiche_titre($langs->trans("MembersTickets"), '', '');
-
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
-
-form_constantes($constantes, 0, $helptext);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // Defined model definition table
 $def = array();
-$sql = "SELECT nom";
+$sql = "SELECT nom as name";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
@@ -339,13 +306,14 @@ if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		$obj = $db->fetch_object($resql);
+		array_push($def, $obj->name);
 		$i++;
 	}
 } else {
 	dol_print_error($db);
 }
+
 
 print load_fiche_titre($langs->trans("MembersDocModules"), '', '');
 
@@ -459,6 +427,55 @@ foreach ($dirmodels as $reldir) {
 
 print '</table>';
 print '</div>';
+
+
+
+/*
+TODO Use a global form instead of embeded form into table
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateall">';
+*/
+
+/*
+ * Edit info of model document
+ */
+$constantes = array(
+		'ADHERENT_CARD_TYPE',
+		//'ADHERENT_CARD_BACKGROUND',
+		'ADHERENT_CARD_HEADER_TEXT',
+		'ADHERENT_CARD_TEXT',
+		'ADHERENT_CARD_TEXT_RIGHT',
+		'ADHERENT_CARD_FOOTER_TEXT'
+);
+
+print load_fiche_titre($langs->trans("MembersCards"), '', '');
+
+$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext .= '__YEAR__, __MONTH__, __DAY__';
+
+form_constantes($constantes, 0, $helptext);
+
+print '<br>';
+
+
+/*
+ * Edit info of model document
+ */
+$constantes = array('ADHERENT_ETIQUETTE_TYPE', 'ADHERENT_ETIQUETTE_TEXT');
+
+print load_fiche_titre($langs->trans("MembersTickets"), '', '');
+
+$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext .= '__YEAR__, __MONTH__, __DAY__';
+
+form_constantes($constantes, 0, $helptext);
+
+//print '</form>';
 
 print "<br>";
 

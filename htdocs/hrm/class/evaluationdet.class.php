@@ -111,7 +111,7 @@ class Evaluationline extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'fk_skill' => array('type'=>'integer:Skill:hrm/class/skill.class.php:1', 'label'=>'Skill', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
 		'fk_evaluation' => array('type'=>'integer:Evaluation:hrm/class/evaluation.class.php:1', 'label'=>'Evaluation', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
-		'rank' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>1,),
+		'rankorder' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>1,),
 		'required_rank' => array('type'=>'integer', 'label'=>'requiredRank', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 	);
@@ -780,7 +780,7 @@ class Evaluationline extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('evaluationlinedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

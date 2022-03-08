@@ -23,4 +23,3 @@ ShowLogOfMovementIfLot=Exibir o registro de movimentações para o produto/lote
 SerialNumberAlreadyInUse=O número de série %s já é usado para o produto %s
 TooManyQtyForSerialNumber=Você só pode ter um produto %s para o número de série %s
 ManageLotMask=Máscara personalizada
-QtyToAddAfterBarcodeScan=Quantidade a adicionar para cada código de barras / lote / série digitalizada

@@ -61,6 +61,9 @@ create table llx_propal
   deposit_percent		varchar(63) DEFAULT NULL,		-- default deposit % if payment term needs it
   fk_mode_reglement		integer,						-- mode de reglement (Virement, Prelevement)
  
+  online_sign_ip		varchar(48),
+  online_sign_name		varchar(64),
+  
   note_private			text,
   note_public			text,
   
@@ -79,7 +82,7 @@ create table llx_propal
   fk_delivery_address	integer,							-- delivery address (deprecated)
   
   fk_multicurrency			integer,
-  multicurrency_code		varchar(255),
+  multicurrency_code		varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

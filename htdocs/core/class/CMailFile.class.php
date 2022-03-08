@@ -127,7 +127,7 @@ class CMailFile
 	 *	@param 	array	$filename_list       List of files to attach (full path of filename on file system)
 	 *	@param 	array	$mimetype_list       List of MIME type of attached files
 	 *	@param 	array	$mimefilename_list   List of attached file name in message
-	 *	@param 	string	$addr_cc             Email cc
+	 *	@param 	string	$addr_cc             Email cc (Example: 'abc@def.com, ghk@lmn.com')
 	 *	@param 	string	$addr_bcc            Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
 	 *	@param 	int		$deliveryreceipt     Ask a delivery receipt
 	 *	@param 	int		$msgishtml           1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
@@ -149,31 +149,7 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
-		}
-
-		$this->subject = $subject;
-		$this->addr_to = $to;
-		$this->addr_from = $from;
-		$this->msg = $msg;
-		$this->filename_list = $filename_list;
-		$this->mimetype_list = $mimetype_list;
-		$this->mimefilename_list = $mimefilename_list;
-		$this->addr_cc = $addr_cc;
-		$this->addr_bcc = $addr_bcc;
-		$this->deliveryreceipt = $deliveryreceipt;
-		if (empty($replyto)) {
-			$replyto = $from;
-		}
-		$this->reply_to = $replyto;
-		$this->errors_to = $errors_to;
-		$this->trackid = $trackid;
 		$this->sendcontext = $sendcontext;
-		$this->filename_list = $filename_list;
-		$this->mimetype_list = $mimetype_list;
-		$this->mimefilename_list = $mimefilename_list;
 
 		// Define this->sendmode
 		$this->sendmode = '';
@@ -186,10 +162,7 @@ class CMailFile
 			}
 		}
 		if (empty($this->sendmode)) {
-			$this->sendmode = $conf->global->MAIN_MAIL_SENDMODE;
-		}
-		if (empty($this->sendmode)) {
-			$this->sendmode = 'mail';
+			$this->sendmode = (!empty($conf->global->MAIN_MAIL_SENDMODE) ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
 		}
 
 		// We define end of line (RFC 821).
@@ -283,15 +256,25 @@ class CMailFile
 			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 		}
 
+		$this->subject = $subject;
 		$this->addr_to = $to;
+		$this->addr_from = $from;
+		$this->msg = $msg;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
 		$this->addr_cc = $addr_cc;
 		$this->addr_bcc = $addr_bcc;
-		$this->reply_to = $replyto;
-		$this->addr_from = $from;
-		$this->subject = $subject;
-		$this->errors_to = $errors_to;
 		$this->deliveryreceipt = $deliveryreceipt;
+		if (empty($replyto)) {
+			$replyto = $from;
+		}
+		$this->reply_to = $replyto;
+		$this->errors_to = $errors_to;
 		$this->trackid = $trackid;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
 
 		if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
 			$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;

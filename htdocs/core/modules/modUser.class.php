@@ -239,7 +239,7 @@ class modUser extends DolibarrModules
 			'u.accountancy_code'=>'Text',
 			'u.address'=>"Text", 'u.zip'=>"Text", 'u.town'=>"Text",
 			'u.office_phone'=>'Text', 'u.user_mobile'=>'Text', 'u.office_fax'=>'Text',
-			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.datelastlogin'=>'Date',
+			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.signature'=>"Text", 'u.datelastlogin'=>'Date',
 			'u.fk_user'=>"List:user:login",
 			'u.birth'=>'Date',
 			'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname",
@@ -298,7 +298,7 @@ class modUser extends DolibarrModules
 			'u.statut'=>'Status'
 		);
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'user' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {

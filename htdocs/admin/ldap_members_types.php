@@ -188,7 +188,7 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1') {
+if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroMemberType");
 	$testlabel = 'testmembertype';
 	$key = $conf->global->LDAP_KEY_MEMBERS_TYPES;

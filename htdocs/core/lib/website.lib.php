@@ -31,6 +31,8 @@
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
+	$str = str_replace('<?=', '<?php', $str);
+
 	$newstr = '';
 
 	//split on each opening tag
@@ -71,6 +73,8 @@ function dolStripPhpCode($str, $replacewith = '')
  */
 function dolKeepOnlyPhpCode($str)
 {
+	$str = str_replace('<?=', '<?php', $str);
+
 	$newstr = '';
 
 	//split on each opening tag
@@ -467,7 +471,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}
-		header("Location: ".$newurl);
+		header("Location: ".$newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]));
 		exit;
 	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
@@ -836,7 +840,7 @@ function getSocialNetworkSharingLinks()
 
 		// Reddit
 		$out .= '<div class="dol-social-share-reddit">'."\n";
-		$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
+		$out .= '<a href="https://www.reddit.com/submit" target="_blank" rel="noopener noreferrer external" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
 		$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
 		$out .= '</a>';
 		$out .= '</div>'."\n";

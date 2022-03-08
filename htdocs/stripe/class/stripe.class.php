@@ -409,6 +409,9 @@ class Stripe extends CommonObject
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
 				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
 			}
+			if (!empty($conf->global->STRIPE_KLARNA)) {
+				$paymentmethodtypes[] = "klarna";
+			}
 			if (!empty($conf->global->STRIPE_BANCONTACT)) {
 				$paymentmethodtypes[] = "bancontact";
 			}
@@ -450,7 +453,9 @@ class Stripe extends CommonObject
 			if (!empty($conf->global->STRIPE_GIROPAY)) {
 				unset($dataforintent['setup_future_usage']);
 			}
-
+			if (!empty($conf->global->STRIPE_KLARNA)) {
+				unset($dataforintent['setup_future_usage']);
+			}
 			if (!is_null($payment_method)) {
 				$dataforintent["payment_method"] = $payment_method;
 				$description .= ' - '.$payment_method;

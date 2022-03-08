@@ -9,8 +9,8 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Ferran Marcet         	<fmarcet@2byte.es>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Ferran Marcet         	<fmarcet@2byte.es>
  * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -472,16 +472,20 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " l.date_start, l.date_end,";
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging";
+			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging, MAX(pfp.quantity) as max_qty";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".((int) $this->socid);
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.entity IN (".getEntity('product_fournisseur_price').") AND l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".((int) $this->socid);
 		}
 		$sql .= " WHERE l.fk_commande = ".((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
+		}
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+			$sql.= " AND l.qty >= pfp.quantity ";
+			$sql.= " GROUP BY l.rowid HAVING max_qty = MAX(pfp.quantity) ";
 		}
 		$sql .= " ORDER BY l.rang, l.rowid";
 		//print $sql;
@@ -770,6 +774,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		}
+
 		return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
 	}
 
@@ -786,7 +791,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
 		$result = '';
 
@@ -868,6 +873,15 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -1008,7 +1022,7 @@ class CommandeFournisseur extends CommonOrder
 			if (empty($secondlevel)) {	// standard or first level approval
 				$sql .= " date_approve='".$this->db->idate($now)."',";
 				$sql .= " fk_user_approve = ".$user->id;
-				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
+				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
 					if (empty($this->user_approve_id2)) {
 						$movetoapprovestatus = false; // second level approval not done
 						$comment = ' (first level)';
@@ -1369,29 +1383,35 @@ class CommandeFournisseur extends CommonOrder
 
 				// insert products details into database
 				for ($i = 0; $i < $num; $i++) {
-					$this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
+										$line = $this->lines[$i];
+					if (!is_object($line)) {
+						$line = (object) $line;
+					}
+
+
+					$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
 					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 					$result = $this->addline(
-						$this->lines[$i]->desc,
-						$this->lines[$i]->subprice,
-						$this->lines[$i]->qty,
-						$this->lines[$i]->tva_tx,
-						$this->lines[$i]->localtax1_tx,
-						$this->lines[$i]->localtax2_tx,
-						$this->lines[$i]->fk_product,
+						$line->desc,
+						$line->subprice,
+						$line->qty,
+						$line->tva_tx,
+						$line->localtax1_tx,
+						$line->localtax2_tx,
+						$line->fk_product,
 						0,
-						$this->lines[$i]->ref_fourn, // $this->lines[$i]->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
-						$this->lines[$i]->remise_percent,
+						$line->ref_fourn, // $line->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
+						$line->remise_percent,
 						'HT',
 						0,
-						$this->lines[$i]->product_type,
-						$this->lines[$i]->info_bits,
+						$line->product_type,
+						$line->info_bits,
 						false,
-						$this->lines[$i]->date_start,
-						$this->lines[$i]->date_end,
-						$this->lines[$i]->array_options,
-						$this->lines[$i]->fk_unit
+						$line->date_start,
+						$line->date_end,
+						$line->array_options,
+						$line->fk_unit
 						);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functionnal error
@@ -2011,6 +2031,8 @@ class CommandeFournisseur extends CommonOrder
 				if ($product > 0) {
 					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 					$mouv->origin = &$this;
+					$mouv->origin_type = $this->element;
+					$mouv->origin_id = $this->id;
 					$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
 					if ($result < 0) {
 						$this->error = $mouv->error;
@@ -2093,7 +2115,7 @@ class CommandeFournisseur extends CommonOrder
 
 		// Test we can delete
 		$this->fetchObjectLinked(null, 'order_supplier');
-		if (!empty($this->linkedObjects)) {
+		if (!empty($this->linkedObjects) && array_key_exists('reception', $this->linkedObjects)) {
 			foreach ($this->linkedObjects['reception'] as $element) {
 				if ($element->statut >= 0) {
 					$this->errors[] = $langs->trans('ReceptionExist');
@@ -2274,7 +2296,6 @@ class CommandeFournisseur extends CommonOrder
 		return $ret;
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Set a delivery in database for this supplier order
@@ -2295,7 +2316,14 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::Livraison");
 
-		if ($user->rights->fournisseur->commande->receptionner) {
+		$usercanreceive = 0;
+		if (empty($conf->reception->enabled)) {
+			$usercanreceive = $user->rights->fournisseur->commande->receptionner;
+		} else {
+			$usercanreceive = $user->rights->reception->creer;
+		}
+
+		if ($usercanreceive) {
 			// Define the new status
 			if ($type == 'par') {
 				$statut = self::STATUS_RECEIVED_PARTIALLY;
@@ -2999,16 +3027,12 @@ class CommandeFournisseur extends CommonOrder
 		// phpcs:enable
 		global $conf, $langs;
 
-		$clause = " WHERE";
-
-		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date";
+		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date, c.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = " AND";
+			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
-		$sql .= $clause." c.entity = ".$conf->entity;
+		$sql .= " WHERE c.entity = ".$conf->entity;
 		if ($mode === 'awaiting') {
 			$sql .= " AND c.fk_statut IN (".self::STATUS_ORDERSENT.", ".self::STATUS_RECEIVED_PARTIALLY.")";
 		} else {
@@ -3036,11 +3060,12 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
 				$commandestatic->delivery_date = $this->db->jdate($obj->delivery_date);
 				$commandestatic->date_commande = $this->db->jdate($obj->date_commande);
 				$commandestatic->statut = $obj->fk_statut;
+
+				$response->nbtodo++;
+				$response->total += $obj->total_ht;
 
 				if ($commandestatic->hasDelay()) {
 					$response->nbtodolate++;
@@ -3107,18 +3132,19 @@ class CommandeFournisseur extends CommonOrder
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'muscadet';
-
+			$modele = '';
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 			}
 		}
-
-		$modelpath = "core/modules/supplier_order/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if (empty($modele)) {
+			return 0;
+		} else {
+			$modelpath = "core/modules/supplier_order/doc/";
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
 	}
 
 	/**
@@ -3521,14 +3547,17 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging";
+			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging, MAX(pfp.quantity) as max_qty";
 		}
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.entity IN (".getEntity('product_fournisseur_price').") AND cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
 		}
 		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+			$sql .= " AND cd.qty >= pfp.quantity GROUP BY cd.rowid HAVING max_qty = MAX(pfp.quantity)";
+		}
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);

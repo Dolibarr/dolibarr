@@ -126,7 +126,7 @@ create table llx_societe
   fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info
 
   fk_multicurrency		   integer,
-  multicurrency_code	   varchar(255),
+  multicurrency_code	   varchar(3),
 
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

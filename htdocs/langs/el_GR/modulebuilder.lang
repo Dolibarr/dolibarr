@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Αυτό το εργαλείο πρέπει να χρησιμοποιείται μόνο από έμπειρους χρήστες ή προγραμματιστές. Παρέχει βοηθητικά προγράμματα για την κατασκευή ή την επεξεργασία της δικής σας μονάδας. Η τεκμηρίωση για την εναλλακτική <a href="%s" target="_blank">χειρωνακτική ανάπτυξη είναι εδώ</a> .
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Εισαγάγετε το όνομα της ενότητας / εφαρμογής για να δημιουργήσετε χωρίς κενά. Χρησιμοποιήστε κεφαλαία για να διαχωρίσετε λέξεις (Για παράδειγμα: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Εισαγάγετε το όνομα του αντικειμένου που θέλετε να δημιουργήσετε χωρίς κενά. Χρησιμοποιήστε κεφαλαία για να διαχωρίσετε λέξεις (Για παράδειγμα: MyObject, Student, Teacher ...). Θα δημιουργηθεί το αρχείο κλάσης CRUD, αλλά και το αρχείο API, οι σελίδες που θα απαριθμήσουν / προσθέσουν / επεξεργαστούν / διαγράψουν το αντικείμενο και τα αρχεία SQL.
 ModuleBuilderDesc2=Διαδρομή όπου παράγονται / επεξεργάζονται μονάδες (πρώτος κατάλογος για εξωτερικές μονάδες που ορίζονται στο %s): <strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Τα μενού που παρέχονται από την ε
 DictionariesDefDescTooltip=Τα λεξικά που παρέχονται από την υπομονάδα / εφαρμογή σας καθορίζονται στη συστοιχία <strong>$ this-&gt; λεξικά</strong> στο αρχείο περιγραφής του module. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br><br> Σημείωση: Αφού οριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα λεξικά είναι επίσης ορατά στην περιοχή εγκατάστασης σε χρήστες διαχειριστή στο %s.
 PermissionsDefDescTooltip=Τα δικαιώματα που παρέχονται από την ενότητα/εφαρμογή σας καθορίζονται στη συστοιχία <strong> $ this-> rights </strong> στην ενότητα περιγραφής αρχείου. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br> <br> Σημείωση: Μόλις οριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα δικαιώματα είναι ορατά στην προεπιλεγμένη ρύθμιση %s.
 HooksDefDesc=Ορίστε στην <b>ιδιότητα module_parts [&#39;hooks&#39;]</b> , στον περιγραφέα της μονάδας, το πλαίσιο των άγκιστρων που θέλετε να διαχειριστείτε (η λίστα των πλαισίων μπορεί να βρεθεί από μια αναζήτηση στο &#39; <b>initHooks</b> &#39; <b>(</b> &#39;in core code). <br> Επεξεργαστείτε το αρχείο αγκίστρου για να προσθέσετε τον κώδικα των αγκιστρωμένων λειτουργιών σας (οι συναρπαστικές λειτουργίες μπορούν να βρεθούν με μια αναζήτηση στο &#39; <b>executeHooks</b> &#39; στον βασικό κώδικα).
-TriggerDefDesc=Ορίστε στο αρχείο σκανδάλης τον κώδικα που θέλετε να εκτελέσετε για κάθε εκδήλωση που εκτελείται.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Δείτε τα αναγνωριστικά που χρησιμοποιούνται στην εγκατάσταση σας
 SeeReservedIDsRangeHere=Δείτε το φάσμα των αποκλειστικών αναγνωριστικών
 ToolkitForDevelopers=Εργαλειοθήκη για προγραμματιστές Dolibarr
@@ -144,3 +144,4 @@ AsciiToPdfConverter=Μεταροπέας από Ascii σε PDF
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
 ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

@@ -297,7 +297,7 @@ foreach ($dirmodels as $reldir)
 							$module = new $classname($db);
 
 							$modulequalified=1;
-							if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
 							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
 							if ($modulequalified) {

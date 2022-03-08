@@ -164,8 +164,8 @@ class FormProjets
 		}
 
 		// Search all projects
-		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
+		$sql = "SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias";
+		$sql .= " FROM ".$this->db->prefix()."projet as p LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = p.fk_soc";
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		if ($projectsListId !== false) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
@@ -338,12 +338,12 @@ class FormProjets
 		}
 
 		// Search all projects
-		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, t.progress,';
-		$sql .= ' p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, p.usage_task,';
-		$sql .= ' s.nom as name';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
-		$sql .= ' '.MAIN_DB_PREFIX.'projet_task as t';
+		$sql = "SELECT t.rowid, t.ref as tref, t.label as tlabel, t.progress,";
+		$sql .= " p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, p.usage_task,";
+		$sql .= " s.nom as name";
+		$sql .= " FROM ".$this->db->prefix()."projet as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = p.fk_soc,";
+		$sql .= " ".$this->db->prefix()."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		$sql .= " AND t.fk_projet = p.rowid";
 		if ($projectsListId) {
@@ -502,9 +502,10 @@ class FormProjets
 	 *    @param	string		$morecss			More CSS
 	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
 	 *    @param	string		$projectkey			Equivalent key  to fk_projet for actual table_element
+	 *    @param	string		$placeholder		Placeholder
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	public function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet")
+	public function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet", $placeholder = '')
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -514,7 +515,17 @@ class FormProjets
 		}
 
 		$linkedtothirdparty = false;
-		if (!in_array($table_element, array('don', 'expensereport_det', 'expensereport', 'loan', 'stock_mouvement', 'payment_salary', 'payment_various', 'chargesociales', 'entrepot'))) {
+		if (!in_array($table_element, array(
+			'don',
+			'expensereport_det',
+			'expensereport', 'loan',
+			'stock_mouvement',
+			'payment_salary',
+			'payment_various',
+			'salary',
+			'chargesociales',
+			'entrepot')
+		)) {
 			$linkedtothirdparty = true;
 		}
 
@@ -555,7 +566,7 @@ class FormProjets
 				$sql = "SELECT t.rowid, t.ref";
 				break;
 			case 'stock_mouvement':
-				$sql = 'SELECT t.rowid, t.label as ref';
+				$sql = "SELECT t.rowid, t.label as ref";
 				$projectkey = 'fk_origin';
 				break;
 			case "payment_salary":
@@ -572,9 +583,9 @@ class FormProjets
 		if ($linkedtothirdparty) {
 			$sql .= ", s.nom as name";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$table_element." as t";
+		$sql .= " FROM ".$this->db->prefix().$table_element." as t";
 		if ($linkedtothirdparty) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+			$sql .= ", ".$this->db->prefix()."societe as s";
 		}
 		$sql .= " WHERE ".$projectkey." is null";
 		if (!empty($socid) && $linkedtothirdparty) {
@@ -602,7 +613,7 @@ class FormProjets
 			$i = 0;
 			if ($num > 0) {
 				$sellist = '<select class="flat elementselect css'.$table_element.($morecss ? ' '.$morecss : '').'" name="elementselect">';
-				$sellist .= '<option value="-1"></option>';
+				$sellist .= '<option value="-1"'.($placeholder ? ' class="optiongrey"' : '').'>'.$placeholder.'</option>';
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$ref = $obj->ref ? $obj->ref : $obj->rowid;
@@ -655,7 +666,7 @@ class FormProjets
 		global $conf, $langs, $user;
 
 		$sql = "SELECT rowid, code, label, percent";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_lead_status';
+		$sql .= " FROM ".$this->db->prefix().'c_lead_status';
 		$sql .= " WHERE active = 1";
 		$sql .= " ORDER BY position";
 

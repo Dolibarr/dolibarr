@@ -1870,40 +1870,40 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					// Brut Weight
 					print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-					print '<input name="weight" size="5" value="'.$object->weight.'"> ';
-					print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
+					print '<input name="weight" size="5" value="'.(GETPOSTISSET('weight') ? GETPOST('weight') : $object->weight).'"> ';
+					print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units') : $object->weight_units, 0, 2);
 					print '</td></tr>';
 				}
 
 				if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
 					// Brut Length
 					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
-					print '<input name="size" size="5" value="'.$object->length.'">x';
-					print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
-					print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
-					print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units, 0, 2);
+					print '<input name="size" size="5" value="'.(GETPOSTISSET('size') ? GETPOST('size') : $object->length).'">x';
+					print '<input name="sizewidth" size="5" value="'.(GETPOSTISSET('sizewidth') ? GETPOST('sizewidth') : $object->width).'">x';
+					print '<input name="sizeheight" size="5" value="'.(GETPOSTISSET('sizeheight') ? GETPOST('sizeheight') : $object->height).'"> ';
+					print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units') : $object->length_units, 0, 2);
 					print '</td></tr>';
 				}
 				if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
 					// Brut Surface
 					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
-					print '<input name="surface" size="5" value="'.$object->surface.'"> ';
-					print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units, 0, 2);
+					print '<input name="surface" size="5" value="'.(GETPOSTISSET('surface') ? GETPOST('surface') : $object->surface).'"> ';
+					print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units') : $object->surface_units, 0, 2);
 					print '</td></tr>';
 				}
 				if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
 					// Brut Volume
 					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
-					print '<input name="volume" size="5" value="'.$object->volume.'"> ';
-					print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units, 0, 2);
+					print '<input name="volume" size="5" value="'.(GETPOSTISSET('volume') ? GETPOST('volume') : $object->volume).'"> ';
+					print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units') : $object->volume_units, 0, 2);
 					print '</td></tr>';
 				}
 
 				if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
 					// Net Measure
 					print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
-					print '<input name="net_measure" size="5" value="'.$object->net_measure.'"> ';
-					print $formproduct->selectMeasuringUnits("net_measure_units", "", $object->net_measure_units, 0, 0);
+					print '<input name="net_measure" size="5" value="'.(GETPOSTISSET('net_measure') ? GETPOST('net_measure') : $object->net_measure).'"> ';
+					print $formproduct->selectMeasuringUnits("net_measure_units", "", GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units') : $object->net_measure_units, 0, 0);
 					print '</td></tr>';
 				}
 			}
@@ -2178,8 +2178,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
-					if ((($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-						|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+					if ((($object->status_batch == '1' && !empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
+						|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && !empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)))) {
 						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td>';
 						print $object->batch_mask;
 						print '</td></tr>';
@@ -2689,7 +2689,6 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 
 	// Documents
 	$objectref = dol_sanitizeFileName($object->ref);
-	$relativepath = $comref.'/'.$objectref.'.pdf';
 	if (!empty($conf->product->multidir_output[$object->entity])) {
 		$filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
 	} else {
@@ -2699,21 +2698,19 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;
 
-	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->getDefaultLang(), '', $object);
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
-	$morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
-	$morehtmlright .= $langs->trans("SeeAll");
-	$morehtmlright .= '</a>';
+	$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/product/agenda.php?id='.$object->id);
 
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
+	$somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
 
 	print '</div></div>';
 }

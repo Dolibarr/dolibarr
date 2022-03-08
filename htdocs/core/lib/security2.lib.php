@@ -157,7 +157,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Note: $conf->css looks like '/theme/eldy/style.css.php'
 		/*
-		$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
+		$conf->css = "/theme/".(GETPOST('theme','aZ09')?GETPOST('theme','aZ09'):$conf->theme)."/style.css.php";
 		$themepath=dol_buildpath($conf->css,1);
 		if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
 		{
@@ -187,7 +187,8 @@ if (!function_exists('dol_loginfunction')) {
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 
-		// Set cookie for timeout management
+		// Set cookie for timeout management. We set it as a cookie so we will be able to use it to set timeout on next page before the session start
+		// and the conf file is loaded.
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
@@ -215,14 +216,19 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Execute hook getLoginPageOptions (for table)
-		$parameters = array('entity' => GETPOST('entity', 'int'));
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
 		$reshook = $hookmanager->executeHooks('getLoginPageOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$morelogincontent = $hookmanager->resPrint;
 
 		// Execute hook getLoginPageExtraOptions (eg for js)
-		$parameters = array('entity' => GETPOST('entity', 'int'));
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
 		$reshook = $hookmanager->executeHooks('getLoginPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$moreloginextracontent = $hookmanager->resPrint;
+
+		//Redirect after connection
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$reshook = $hookmanager->executeHooks('redirectAfterConnection', $parameters); // Note that $action and $object may have been modified by some hooks.
+		$php_self = $hookmanager->resPrint;
 
 		// Login
 		$login = (!empty($hookmanager->resArray['username']) ? $hookmanager->resArray['username'] : (GETPOST("username", "alpha") ? GETPOST("username", "alpha") : $demologin));

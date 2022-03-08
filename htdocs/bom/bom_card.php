@@ -148,8 +148,17 @@ if (empty($reshook)) {
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$idprod = (int) GETPOST('idprod', 'int');
-		$bom_child = (int) GETPOST('bom_select', 'int');
+		$bom_child_id = (int) GETPOST('bom_id', 'int');
+		if ($bom_child_id > 0) {
+			$bom_child = new BOM($db);
+			$res = $bom_child->fetch($bom_child_id);
+			if ($res) {
+				$idprod = $bom_child->fk_product;
+			}
+		} else {
+			$idprod = (int) GETPOST('idprod', 'int');
+		}
+
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
@@ -173,7 +182,7 @@ if (empty($reshook)) {
 			$bomline = new BOMLine($db);
 			$bomline->fk_bom = $id;
 			$bomline->fk_product = $idprod;
-			$bomline->fk_bom_child = $bom_child;
+			$bomline->fk_bom_child = $bom_child_id;
 			$bomline->qty = $qty;
 			$bomline->qty_frozen = (int) $qty_frozen;
 			$bomline->disable_stock_change = (int) $disable_stock_change;
@@ -242,7 +251,7 @@ if (empty($reshook)) {
 	}
 }
 
-$conf->global->BOM_SUB_BOM=1;
+
 
 /*
  * View
@@ -354,8 +363,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		if (!empty($conf->bom->enabled)) {
 			$langs->load("mrp");
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
 			$forcecombo = 0;
 			if ($conf->browser->name == 'ie') {
 				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
@@ -384,8 +391,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		if (!empty($conf->bom->enabled)) {
 			$langs->load("mrp");
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
 			$forcecombo = 0;
 			if ($conf->browser->name == 'ie') {
 				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
@@ -415,7 +420,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($conf->bom->enabled)) {
 			$langs->load("mrp");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
 			$forcecombo = 0;
 			if ($conf->browser->name == 'ie') {
 				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
@@ -514,7 +518,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Common attributes
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
-
+	$object->calculateCosts();
 	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td>'.price($object->total_cost).'</td></tr>';
 	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
 
@@ -585,13 +589,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$(".collapse_bom").click(function() {
 					console.log("We click on collapse");
 					var id_bom_line = $(this).attr('id').replace('collapse-', '');
-					if($(this).text().indexOf('+') > 0) {
+					console.log($(this).html().indexOf('folder-open'));
+					if($(this).html().indexOf('folder-open') <= 0) {
 						$('[parentid="'+ id_bom_line +'"]').show();
-						$(this).html('(-)&nbsp;');
+						$(this).html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
 					}
 					else {
 						$('[parentid="'+ id_bom_line +'"]').hide();
-						$(this).html('(+)&nbsp;');
+						$(this).html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
 					}
 
 					return false;
@@ -601,7 +606,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$("#show_all").click(function() {
 					console.log("We click on show all");
 					$("[class^=sub_bom_lines]").show();
-					$("[class^=collapse_bom]").html('(-)&nbsp;');
+					$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
 					return false;
 				});
 
@@ -609,7 +614,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$("#hide_all").click(function() {
 					console.log("We click on hide all");
 					$("[class^=sub_bom_lines]").hide();
-					$("[class^=collapse_bom]").html('(+)&nbsp;');
+					$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
 					return false;
 				});
 
@@ -737,14 +742,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.DOL_URL_ROOT.'/bom/bom_agenda.php?id='.$object->id.'">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/bom/bom_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, $object->element, 0, 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div></div>';
 	}

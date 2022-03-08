@@ -102,11 +102,13 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
+		$texte .= '<!-- form for option of ODT templates -->';
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -141,7 +143,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texte .= '</textarea>';
 		$texte .= '</td>';
 		$texte .= '<td class="center">&nbsp; ';
-		$texte .= '<input type="submit" class="button small" name="Button"value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
@@ -160,19 +162,23 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
+				$texte .= '- '.$file['name'].' &nbsp; <a class="reposition" href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=thirdparties/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=COMPANY_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -320,17 +326,22 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
-							$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
-							foreach ($tmparray as $key => $val) {
-								try {
-									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								} catch (SegmentException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
+							if ((int) $res_contact > 0) {
+								$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
+								foreach ($tmparray as $key => $val) {
+									try {
+										$listlines->setVars($key, $val, true, 'UTF-8');
+									} catch (OdfException $e) {
+										dol_syslog($e->getMessage(), LOG_INFO);
+									} catch (SegmentException $e) {
+										dol_syslog($e->getMessage(), LOG_INFO);
+									}
 								}
+								$listlines->merge();
+							} else {
+								$this->error = $contactstatic->error;
+								dol_syslog($this->error, LOG_WARNING);
 							}
-							$listlines->merge();
 						}
 						$odfHandler->mergeSegment($listlines);
 					} catch (OdfException $e) {

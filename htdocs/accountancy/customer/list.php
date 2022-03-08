@@ -413,6 +413,9 @@ if ($result) {
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
+	if ($search_label) {
+		$param .= '&search_label='.urlencode($search_label);
+	}
 	if ($search_desc) {
 		$param .= '&search_desc='.urlencode($search_desc);
 	}
@@ -475,7 +478,6 @@ if ($result) {
 	print '</div>';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
@@ -491,7 +493,7 @@ if ($result) {
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
-	print '</tr>';
+	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
@@ -525,21 +527,26 @@ if ($result) {
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
+		// product_type: 0 = service, 1 = product
+		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
+		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
 		$code_sell_l = '';
 		$code_sell_p = '';
+		$code_sell_t = '';
 
 		$thirdpartystatic->id = $objp->socid;
 		$thirdpartystatic->name = $objp->name;
 		$thirdpartystatic->client = $objp->client;
 		$thirdpartystatic->fournisseur = $objp->fournisseur;
 		$thirdpartystatic->code_client = $objp->code_client;
+		$thirdpartystatic->code_compta = $objp->code_compta_client;		// For backward compatibility
 		$thirdpartystatic->code_compta_client = $objp->code_compta_client;
 		$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 		$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 		$thirdpartystatic->email = $objp->email;
 		$thirdpartystatic->country_code = $objp->country_code;
 		$thirdpartystatic->tva_intra = $objp->tva_intra;
-		$thirdpartystatic->code_compta = $objp->company_code_sell;
+		$thirdpartystatic->code_compta_product = $objp->company_code_sell;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -558,7 +565,7 @@ if ($result) {
 		$facture_static->ref = $objp->ref;
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
-		$facture_static->date = $objp->datef;
+		$facture_static->date = $db->jdate($objp->datef);
 
 		$facture_static_det->id = $objp->rowid;
 		$facture_static_det->total_ht = $objp->total_ht;
@@ -576,6 +583,8 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$code_sell_t_notset = '';
 
+		$suggestedid = 0;
+
 		$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
 		if (!is_array($return) && $return<0) {
 			setEventMessage($accountingAccount->error, 'errors');
@@ -583,9 +592,9 @@ if ($result) {
 			$suggestedid=$return['suggestedid'];
 			$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
 			$suggestedaccountingaccountbydefaultfor=$return['suggestedaccountingaccountbydefaultfor'];
-			$code_sell_l=$return['code_sell_l'];
-			$code_sell_p=$return['code_sell_p'];
-			$code_sell_t=$return['code_sell_t'];
+			$code_sell_l=$return['code_l'];
+			$code_sell_p=$return['code_p'];
+			$code_sell_t=$return['code_t'];
 		}
 		//var_dump($return);
 
@@ -604,6 +613,7 @@ if ($result) {
 		// $code_sell_l is now default code of product/service
 		// $code_sell_p is now code of product/service
 		// $code_sell_t is now code of thirdparty
+		//var_dump($code_sell_l.' - '.$code_sell_p.' - '.$code_sell_t.' -> '.$suggestedid.' ('.$suggestedaccountingaccountbydefaultfor.' '.$suggestedaccountingaccountfor.')');
 
 		print '<tr class="oddeven">';
 
@@ -613,7 +623,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">'.$facture_static->getNomUrl(1).'</td>';
 
-		print '<td class="center">'.dol_print_date($db->jdate($facture_static->date), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($facture_static->date, 'day').'</td>';
 
 		// Ref Product
 		print '<td class="tdoverflowmax150">';
@@ -621,7 +631,7 @@ if ($result) {
 			print $product_static->getNomUrl(1);
 		}
 		if ($product_static->label) {
-			print '<br><span class="opacitymedium small">'.$product_static->label.'</span>';
+			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($product_static->label).'</span>';
 		}
 		print '</td>';
 
@@ -637,11 +647,11 @@ if ($result) {
 		print '</td>';
 
 		// Vat rate
-		$code_vat_differ='';
-		if ($product_static->tva_tx !== $facture_static_det->tva_tx && ! empty($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
-			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		$code_vat_differ = '';
+		if ($product_static->tva_tx !== $facture_static_det->tva_tx && price2num($product_static->tva_tx) && price2num($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
+			$code_vat_differ = 'warning bold';
 		}
-		print '<td style="'.$code_vat_differ.'" class="right">';
+		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
 		print vatrate($facture_static_det->tva_tx.($facture_static_det->vat_src_code ? ' ('.$facture_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
@@ -655,7 +665,7 @@ if ($result) {
 		print '</td>';
 
 		// VAT Num
-		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
+		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
 		// Found accounts
 		print '<td class="small">';
@@ -707,12 +717,11 @@ if ($result) {
 
 		// Column with checkbox
 		print '<td class="center">';
-		if (!empty($suggestedid) && $suggestedaccountingaccountfor<>'') {
-			$ischecked=1;
-		} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
-			$ischecked = 0;
+		$ischecked = 0;
+		if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
+			$ischecked = 1;
 		}
-		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facture_static_det->id.'" name="toselect[]" value="'.$facture_static_det->id."_".$i.'"'.($ischecked ? "checked" : "").'/>';
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facture_static_det->id.'" name="toselect[]" value="'.$facture_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
 		print '</td>';
 
 		print '</tr>';
@@ -730,7 +739,7 @@ if ($db->type == 'mysqli') {
 }
 
 // Add code to auto check the box when we select an account
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".codeventil").change(function() {
 		var s=$(this).attr("id").replace("codeventil", "")

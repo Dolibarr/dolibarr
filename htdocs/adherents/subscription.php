@@ -40,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
 
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('rowid', 'int') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
@@ -485,7 +487,11 @@ if ($rowid > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'rowid', $linkback);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -838,7 +844,7 @@ if ($rowid > 0) {
 
 		if ($conf->use_javascript_ajax) {
 			//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print '$(document).ready(function () {
 						$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
 						$("#none, #invoiceonly").click(function() {
@@ -943,8 +949,10 @@ if ($rowid > 0) {
 		}
 		if (!$datefrom) {
 			$datefrom = $object->datevalid;
-			if ($object->datefin > 0) {
+			if ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > dol_now()) {
 				$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
+			} else {
+				$datefrom = dol_get_first_day(dol_print_date(time(), "%Y"));
 			}
 		}
 		print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
@@ -1157,9 +1165,13 @@ if ($rowid > 0) {
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+		if (empty($reshook)) {
+			print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		}
 		print '</div>';
 
 		print '</form>';

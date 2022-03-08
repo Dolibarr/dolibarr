@@ -50,6 +50,8 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
@@ -79,10 +81,12 @@ if ($action == 'update') {
 	if (!empty($max_rank)) {
 		$static_skill = new Skill($db);
 		$TAllSkills = $static_skill->fetchAll();
-		foreach ($TAllSkills as &$skill) {
-			if (empty($skill->lines)) $skill->fetchLines();
-			if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
-				$skill->createSkills(count($skill->lines) + 1);
+		if (is_array($TAllSkills)) {
+			foreach ($TAllSkills as &$skill) {
+				if (empty($skill->lines)) $skill->fetchLines();
+				if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
+					$skill->createSkills(count($skill->lines) + 1);
+				}
 			}
 		}
 	}
@@ -467,13 +471,17 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 print load_fiche_titre($langs->trans('OtherOptions'), '', '');
 
+if (empty($conf->global->HRM_MAXRANK)) {
+	$conf->global->HRM_MAXRANK = Skill::DEFAULT_MAX_RANK_PER_SKILL;
+}
+
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
@@ -569,7 +577,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled']==1) {

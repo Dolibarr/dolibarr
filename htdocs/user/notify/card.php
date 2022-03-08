@@ -41,8 +41,8 @@ $action = GETPOST('action', 'aZ09');
 $actionid = GETPOST('actionid', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) {
 	$sortorder = "DESC";
@@ -361,21 +361,17 @@ if ($result > 0) {
 		foreach($conf->global as $key => $val) {
 			if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
 			print '<tr class="oddeven"><td>';
-			$listtmp=explode(',',$val);
+			$listtmp=explode(',', $val);
 			$first=1;
-			foreach($listtmp as $keyemail => $valemail)
-			{
+			foreach($listtmp as $keyemail => $valemail) {
 				if (! $first) print ', ';
 				$first=0;
 				$valemail=trim($valemail);
 				//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
-				if (isValidEmail($valemail, 1))
-				{
+				if (isValidEmail($valemail, 1)) {
 					if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
 					else print ' &lt;'.$valemail.'&gt;';
-				}
-				else
-				{
+				} else {
 					print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
 				}
 			}
@@ -385,8 +381,7 @@ if ($result > 0) {
 			$notifcodecond=preg_replace('/^.*_(THRESHOLD_)/','$1',$reg[1]);
 			$label=($langs->trans("Notify_".$notifcode)!="Notify_".$notifcode?$langs->trans("Notify_".$notifcode):$notifcode);
 			print $label;
-			if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0))
-			{
+			if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0)) {
 				print ' - '.$langs->trans("IfAmountHigherThan",$regcond[1]);
 			}
 			print '</td>';
@@ -396,9 +391,7 @@ if ($result > 0) {
 			print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 			print '</tr>';
 		}*/
-		/*if ($user->admin)
-		{
-			$var = ! $var;
+		/*if ($user->admin) {
 			print '<tr class="oddeven"><td colspan="4">';
 			print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
 			print '</td></tr>';
@@ -415,7 +408,7 @@ if ($result > 0) {
 
 	// List
 	$sql = "SELECT n.rowid, n.daten, n.email, n.objet_type as object_type, n.objet_id as object_id, n.type,";
-	$sql .= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail,";
+	$sql .= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail, c.statut as status,";
 	$sql .= " a.code, a.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
 	$sql .= " ".MAIN_DB_PREFIX."notify as n";
@@ -489,6 +482,8 @@ if ($result > 0) {
 				$userstatic->id = $obj->id;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
+				$userstatic->statut = $obj->status;
+				$userstatic->email = $obj->email;
 				print $userstatic->getNomUrl(1);
 				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
 			} else {
@@ -509,13 +504,12 @@ if ($result > 0) {
 			print '</td>';
 			// TODO Add link to object here for other types
 			/*print '<td>';
-			if ($obj->object_type == 'order')
-			{
+			if ($obj->object_type == 'order') {
 				$orderstatic->id=$obj->object_id;
 				$orderstatic->ref=...
 				print $orderstatic->getNomUrl(1);
 			}
-			   print '</td>';*/
+			print '</td>';*/
 			// print
 			print'<td class="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
 			print '</tr>';

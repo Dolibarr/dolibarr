@@ -831,7 +831,7 @@ class EcmFiles extends CommonObject
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $menumanager, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -868,6 +868,16 @@ class EcmFiles extends CommonObject
 			}
 		}
 		$result .= $linkstart.$this->ref.$linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

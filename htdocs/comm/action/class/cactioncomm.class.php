@@ -145,7 +145,7 @@ class CActionComm
 	 *  @param  string|int  $active         1 or 0 to filter on event state active or not ('' by default = no filter)
 	 *  @param  string      $idorcode       'id' or 'code' or 'all'
 	 *  @param  string      $excludetype    Type to exclude ('system' or 'systemauto')
-	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
+	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1 or -2=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
 	 *  @param  string      $morefilter     Add more SQL filter
 	 *  @param  int         $shortlabel     1=Get short label instead of long label
 	 *  @return mixed                       Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
@@ -241,7 +241,7 @@ class CActionComm
 							$transcode = $langs->trans($keyfortrans);
 						}
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
-						if ($onlyautoornot == -1 && !empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+						if (($onlyautoornot == -1 || $onlyautoornot == -2) && !empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 							if ($typecalendar == 'system') {
 								$label = '&nbsp;&nbsp; '.$label;
 								$repid[-99] = $langs->trans("ActionAC_MANUAL");

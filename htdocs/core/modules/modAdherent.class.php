@@ -349,7 +349,7 @@ class modAdherent extends DolibarrModules
 			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {

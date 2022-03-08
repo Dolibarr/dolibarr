@@ -683,6 +683,8 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("SOCIETE_ASK_FOR_WAREHOUSE", $arrval, $conf->global->SOCIETE_ASK_FOR_WAREHOUSE);
 }
+print "</td>";
+print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAskWarehouseDuringPropal").'</td>';
@@ -693,6 +695,9 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL);
 }
+print "</td>";
+print "</tr>\n";
+
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAskWarehouseDuringOrder").'</td>';
 print '<td class="right">';
@@ -702,9 +707,22 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER);
 }
-print "</td>";
 print '</td>';
 print "</tr>\n";
+
+/*
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseDuringProject").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT);
+}
+print '</td>';
+print "</tr>\n";
+*/
 
 print '<tr class="oddeven">';
 print '<td>';

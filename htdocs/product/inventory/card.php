@@ -109,6 +109,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	$savaction = $action;
 	$error = 0;
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
@@ -152,6 +153,12 @@ if (empty($reshook)) {
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_INVENTORY_TO';
 	$trackid = 'stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	if (!$error && $savaction == 'confirm_validate' && $action == '' && $object->id > 0) {
+		// Switch to the tab inventory
+		header("Location: ".DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id);
+		exit;
+	}
 }
 
 
@@ -189,9 +196,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
-
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
@@ -199,6 +203,8 @@ if ($action == 'create') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+	//print '<tr><td class="titlefield fieldname_invcode">'.$langs->trans("InventoryCode").'</td><td>INV'.$object->id.'</td></tr>';
 
 	print '</table>'."\n";
 
@@ -455,14 +461,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.dol_buildpath('/product/inventory/inventory_info.php', 1).'?id='.$object->id.'">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
+		//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/product/inventory/inventory_info.php?id='.$object->id);
+		$morehtmlcenter = '';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element, 0, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, $object->element, 0, 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div></div>';
 	}

@@ -46,6 +46,9 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
+$sortfield=GETPOST('sortfield', 'alpha');
+$sortorder=GETPOST('sortorder', 'alpha');
+
 $module = GETPOST('module', 'alpha');
 $tab = GETPOST('tab', 'aZ09');
 $tabobj = GETPOST('tabobj', 'alpha');
@@ -262,6 +265,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 
 		// Delete some files related to Object (because the previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
+		dol_delete_file($destdir.'/myobject_contact.php');
 		dol_delete_file($destdir.'/myobject_note.php');
 		dol_delete_file($destdir.'/myobject_document.php');
 		dol_delete_file($destdir.'/myobject_agenda.php');
@@ -337,6 +341,14 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		setEventMessages('ModuleInitialized', null);
 		$module = $modulename;
 		$modulename = '';
+
+		clearstatcache(true);
+		if (function_exists('opcache_invalidate')) {
+			opcache_reset();	// remove the include cache hell !
+		}
+
+		header("Location: ".$_SERVER["PHP_SELF"].'?module='.$modulename);
+		exit;
 	}
 }
 
@@ -733,9 +745,9 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 		// Dir for module
 		$diroflang = dol_buildpath($modulelowercase, 0);
 
-		if ($diroflang == $dirread.'/'.$modulelowercase) {
+		if ($diroflang == $dolibarr_main_document_root.'/'.$modulelowercase) {
 			// This is not a custom module, we force diroflang to htdocs root
-			$diroflang = $dirread;
+			$diroflang = $dolibarr_main_document_root;
 
 			$srcfile = $diroflang.'/langs/en_US/'.$modulelowercase.'.lang';
 			$destfile = $diroflang.'/langs/'.$newlangcode.'/'.$modulelowercase.'.lang';
@@ -758,7 +770,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 
 // remove/delete File
 if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
-	$relativefilename = dol_sanitizePathName(GETPOST('file', 'none'));
+	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 	if ($relativefilename) {
 		$dirnametodelete = dirname($relativefilename);
 		$filetodelete = $dirins.'/'.$relativefilename;
@@ -953,7 +965,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			if ($notnull) {
 				$string .= ", 'notnull'=>".$notnull;
 			}
-			if ($fieldname == 'ref') {
+			if ($fieldname == 'ref' || $fieldname == 'code') {
 				$string .= ", 'showoncombobox'=>1";
 			}
 			$string .= ", 'position'=>".$position;
@@ -1417,6 +1429,14 @@ if ($dirins && $action == 'confirm_deletemodule') {
 
 		if ($result > 0) {
 			setEventMessages($langs->trans("DirWasRemoved", $modulelowercase), null);
+
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+
+			header("Location: ".$_SERVER["PHP_SELF"].'?module=deletemodule');
+			exit;
 		} else {
 			setEventMessages($langs->trans("PurgeNothingToDelete"), null, 'warnings');
 		}
@@ -1707,8 +1727,8 @@ print load_fiche_titre($text, '', 'title_setup');
 
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
 
-print $textforlistofdirs;
-print '<br>';
+//print $textforlistofdirs;
+//print '<br>';
 //var_dump($listofmodules);
 
 
@@ -1733,7 +1753,7 @@ if ($message) {
 }
 
 //print $langs->trans("ModuleBuilderDesc3", count($listofmodules), $FILEFLAG).'<br>';
-$infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc3", count($listofmodules)).'</span>', $langs->trans("ModuleBuilderDesc4", $FILEFLAG)).'</div>';
+$infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc3", count($listofmodules)).'</span>', $langs->trans("ModuleBuilderDesc4", $FILEFLAG).'<br>'.$textforlistofdirs).'</div>';
 
 
 // Load module descriptor
@@ -1757,6 +1777,10 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 		$loadclasserrormessage = $e->getMessage()."<br>\n";
 		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
 		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
+	} catch (Exception $e) {
+		$loadclasserrormessage = $e->getMessage()."<br>\n";
+		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
+		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
 	}
 
 	if (class_exists($class)) {
@@ -1771,6 +1795,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 			$error++;
 		}
 		$langs->load("errors");
+		print '<!-- ErrorFailedToLoadModuleDescriptorForXXX -->';
 		print img_warning('').' '.$langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
 		print $loadclasserrormessage;
 	}
@@ -2045,8 +2070,8 @@ if ($module == 'initmodule') {
 					print $langs->trans("Numero");
 					print '</td><td>';
 					print $moduleobj->numero;
-					print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info" target="_blank">'.$langs->trans("SeeIDsInUse").'</a>';
-					print ' - <a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank">'.$langs->trans("SeeReservedIDsRangeHere").'</a>)';
+					print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeIDsInUse").'</a>';
+					print ' - <a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>)';
 					print '</td></tr>';
 
 					print '<tr><td>';
@@ -2274,7 +2299,7 @@ if ($module == 'initmodule') {
 				print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print "</tr>\n";
 
-				if (is_array($dicts) && is_array($dicts['tabname'])) {
+				if (!empty($dicts) && is_array($dicts) && !empty($dicts['tabname']) && is_array($dicts['tabname'])) {
 					$i = 0;
 					$maxi = count($dicts['tabname']);
 					while ($i < $maxi) {
@@ -2423,8 +2448,8 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("EnterNameOfObjectDesc").'</span><br><br>';
 
 				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('objectname', 'alpha') ? GETPOST('objectname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'"><br>';
-				print '<input type="checkbox" name="includerefgeneration" value="includerefgeneration"> '.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'<br>';
-				print '<input type="checkbox" name="includedocgeneration" value="includedocgeneration"> '.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'<br>';
+				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
+				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="submit" class="button smallpaddingimp" name="create" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
 				print '<br>';
@@ -2633,6 +2658,7 @@ if ($module == 'initmodule') {
 
 						print '<br><br><br>';
 
+						clearstatcache(true);
 						if (function_exists('opcache_invalidate')) {
 							opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
 						}
@@ -2674,7 +2700,7 @@ if ($module == 'initmodule') {
 							print '<table class="noborder small">';
 							print '<tr class="liste_titre">';
 							print '<th>'.$langs->trans("Property");
-							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("SeeExamples").'</a>)';
+							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeExamples").'</a>)';
 							print '</th>';
 							print '<th>';
 							print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
@@ -2755,25 +2781,25 @@ if ($module == 'initmodule') {
 									$propname = $propkey;
 									$proplabel = $propval['label'];
 									$proptype = $propval['type'];
-									$proparrayofkeyval = $propval['arrayofkeyval'];
+									$proparrayofkeyval = !empty($propval['arrayofkeyval'])?$propval['arrayofkeyval']:'';
 									$propnotnull = $propval['notnull'];
-									$propdefault = $propval['default'];
-									$propindex = $propval['index'];
-									$propforeignkey = $propval['foreignkey'];
+									$propdefault = !empty($propval['default'])?$propval['default']:'';
+									$propindex = !empty($propval['index'])?$propval['index']:'';
+									$propforeignkey = !empty($propval['foreignkey'])?$propval['foreignkey']:'';
 									$propposition = $propval['position'];
 									$propenabled = $propval['enabled'];
 									$propvisible = $propval['visible'];
-									$propnoteditable = $propval['noteditable'];
-									$propsearchall = $propval['searchall'];
-									$propisameasure = $propval['isameasure'];
-									$propcss = $propval['css'];
-									$propcssview = $propval['cssview'];
-									$propcsslist = $propval['csslist'];
-									$prophelp = $propval['help'];
-									$propshowoncombobox = $propval['showoncombobox'];
+									$propnoteditable = !empty($propval['noteditable'])?$propval['noteditable']:0;
+									$propsearchall = !empty($propval['searchall'])?$propval['searchall']:0;
+									$propisameasure = !empty($propval['isameasure'])?$propval['isameasure']:0;
+									$propcss = !empty($propval['css'])?$propval['css']:'';
+									$propcssview = !empty($propval['cssview'])?$propval['cssview']:'';
+									$propcsslist = !empty($propval['csslist'])?$propval['csslist']:'';
+									$prophelp = !empty($propval['help'])?$propval['help']:'';
+									$propshowoncombobox = !empty($propval['showoncombobox'])?$propval['showoncombobox']:0;
 									//$propdisabled=$propval['disabled'];
-									$propvalidate = $propval['validate'];
-									$propcomment = $propval['comment'];
+									$propvalidate = !empty($propval['validate'])?$propval['validate']:0;
+									$propcomment = !empty($propval['comment'])?$propval['comment']:'';
 
 									print '<tr class="oddeven">';
 
@@ -3332,7 +3358,8 @@ if ($module == 'initmodule') {
 					}
 				} else {
 					print '<tr><td>';
-					print '<span class="fa fa-file-o"></span> '.$langs->trans("NoTrigger");
+					print '<span class="fa fa-file-o"></span> '.$langs->trans("TriggersFile");
+					print ' : <span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
 					print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=inittrigger&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a></td>';
 					print '<td></td>';
 					print '</tr>';
@@ -3816,7 +3843,7 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
 			} else {
 				print '<strong>';
-				print '<a href="'.$outputfiledocurl.'" target="_blank">';
+				print '<a href="'.$outputfiledocurl.'" target="_blank" rel="noopener noreferrer">';
 				print $outputfiledoc;
 				print '</a>';
 				print '</strong>';
@@ -3830,7 +3857,7 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
 			} else {
 				print '<strong>';
-				print '<a href="'.$outputfiledocurlpdf.'" target="_blank">';
+				print '<a href="'.$outputfiledocurlpdf.'" target="_blank" rel="noopener noreferrer">';
 				print $outputfiledocpdf;
 				print '</a>';
 				print '</strong>';

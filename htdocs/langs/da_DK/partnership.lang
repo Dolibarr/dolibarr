@@ -19,7 +19,7 @@
 ModulePartnershipName=Partnerskabsledelse
 PartnershipDescription=Ledelse af modulpartnerskab
 PartnershipDescriptionLong= Ledelse af modulpartnerskab
-
+Partnership=Partnerskab
 AddPartnership=Tilføj partnerskab
 CancelPartnershipForExpiredMembers=Partnerskab: Annuller partnerskab med medlemmer med udløbne abonnementer
 PartnershipCheckBacklink=Partnerskab: Tjek henvisende backlink
@@ -58,6 +58,7 @@ ManagePartnership=Administrer partnerskab
 BacklinkNotFoundOnPartnerWebsite=Backlink ikke fundet på partnerwebstedet
 ConfirmClosePartnershipAsk=Er du sikker på, at du vil annullere dette partnerskab?
 PartnershipType=Partnerskabstype
+PartnershipRefApproved=Partnerskab %s godkendt
 
 #
 # Template Mail

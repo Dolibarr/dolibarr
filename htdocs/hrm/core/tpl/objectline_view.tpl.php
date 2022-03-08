@@ -57,11 +57,6 @@ $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
-$sign = 1;
-if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
-	$sign = -1;
-}
-
 $coldisplay = 0;
 ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -98,7 +93,7 @@ print '</td>';
 <?php
 global $permissiontoadd;
 
-		print displayRankInfos($line->rank, $line->fk_skill, 'TNote', ($this->status == 0 && $permissiontoadd) ? 'edit' : 'view');
+		print displayRankInfos($line->rankorder, $line->fk_skill, 'TNote', ($this->status == 0 && $permissiontoadd) ? 'edit' : 'view');
 
 ?>
 

@@ -64,12 +64,12 @@ create table llx_user
   --module_comm       smallint DEFAULT 1,
   --module_compta     smallint DEFAULT 1,
   
-  fk_soc			integer,					-- id thirdparty if user linked to a company (external user)
-  fk_socpeople      integer,					-- id contact origin if user linked to a contact
-  fk_member         integer,					-- if member if suer linked to a member
-  fk_user           integer,					-- Supervisor, hierarchic parent
-  fk_user_expense_validator           integer,
-  fk_user_holiday_validator           integer,
+  fk_soc			integer NULL,					-- id thirdparty if user linked to a company (external user)
+  fk_socpeople      integer NULL,					-- id contact origin if user linked to a contact
+  fk_member         integer NULL,					-- if member if suer linked to a member
+  fk_user           integer NULL,					-- Supervisor, hierarchic parent
+  fk_user_expense_validator           integer NULL,
+  fk_user_holiday_validator           integer NULL,
   
   idpers1			varchar(128),
   idpers2			varchar(128),
