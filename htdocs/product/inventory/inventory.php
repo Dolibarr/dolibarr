@@ -393,28 +393,6 @@ $help_url = '';
 llxHeader('', $langs->trans('Inventory'), $help_url);
 
 
-// Disable button Generate movement if data were modified and not saved
-print '<script type="text/javascript">
-function disablebuttonmakemovementandclose() {
-	console.log("Disable button idbuttonmakemovementandclose until we save");
-	jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'title\',\''.dol_escape_js($langs->trans("SaveQtyFirst")).'\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
-};
-
-jQuery(document).ready(function() {
-	jQuery(".realqty").keyup(function() {
-		console.log("keyup on realqty");
-		disablebuttonmakemovementandclose();
-	});
-	jQuery(".realqty").change(function() {
-		console.log("change on realqty");
-		disablebuttonmakemovementandclose();
-	});
-});
-</script>';
-
-
 // Part to show record
 if ($object->id > 0) {
 
@@ -607,7 +585,6 @@ if ($object->id > 0) {
 								objecttofill.value = object.innerText;
 							})
 							console.log("Values filled (after click on fillwithexpected)");
-							disablebuttonmakemovementandclose();
 							return false;
 				        });';
 				print '});';
@@ -858,7 +835,6 @@ if ($object->id > 0) {
 			id = id.split("_")[1];
 			tmpvalue = $("#id_"+id+"_input_tmp").val()
 			$("#id_"+id+"_input")[0].value = tmpvalue;
-			disablebuttonmakemovementandclose();
 			return false;	/* disable submit */
 		});
 	});';
@@ -1052,16 +1028,6 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-	// Call method to disable the button if no qty entered yet for inventory
-
-	if ($object->status != $object::STATUS_VALIDATED || !$hasinput) {
-		print '<script type="text/javascript">
-					jQuery(document).ready(function() {
-						console.log("Call disablebuttonmakemovementandclose because status = '.((int) $object->status).' or $hasinput = '.((int) $hasinput).'");
-						disablebuttonmakemovementandclose();
-					});
-				</script>';
-	}
 	print '</form>';
 
 
