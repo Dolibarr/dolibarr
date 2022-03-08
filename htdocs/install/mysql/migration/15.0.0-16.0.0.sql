@@ -282,11 +282,11 @@ ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_c_availability ADD COLUMN type_duration char(1);
 ALTER TABLE llx_c_availability ADD COLUMN number real DEFAULT 0;
 
-INSERT INTO llx_c_availability (rowid,code,label,type_duration,number,active,position) VALUES (1, 'AV_NOW', 'Immediate', null, 0, 1, 10);
-INSERT INTO llx_c_availability (rowid,code,label,type_duration,number,active,position) VALUES (2, 'AV_1W',  '1 week', 'w', 1, 1, 20);
-INSERT INTO llx_c_availability (rowid,code,label,type_duration,number,active,position) VALUES (3, 'AV_2W',  '2 weeks', 'w', 2, 1, 30);
-INSERT INTO llx_c_availability (rowid,code,label,type_duration,number,active,position) VALUES (4, 'AV_3W',  '3 weeks', 'w', 3, 1, 40);
-INSERT INTO llx_c_availability (rowid,code,label,type_duration,number,active,position) VALUES (5, 'AV_4W',  '4 weeks', 'w', 4, 1, 50);
+INSERT INTO llx_c_availability (code,label,type_duration,number,active,position) VALUES ( 'AV_NOW', 'Immediate', null, 0, 1, 10);
+INSERT INTO llx_c_availability (code,label,type_duration,number,active,position) VALUES ( 'AV_1W',  '1 week', 'w', 1, 1, 20);
+INSERT INTO llx_c_availability (code,label,type_duration,number,active,position) VALUES ( 'AV_2W',  '2 weeks', 'w', 2, 1, 30);
+INSERT INTO llx_c_availability (code,label,type_duration,number,active,position) VALUES ( 'AV_3W',  '3 weeks', 'w', 3, 1, 40);
+INSERT INTO llx_c_availability (code,label,type_duration,number,active,position) VALUES ( 'AV_4W',  '4 weeks', 'w', 4, 1, 50);
 UPDATE llx_c_availability SET type_duration = null, number = 0 WHERE code = 'AV_NOW';
 UPDATE llx_c_availability SET type_duration = 'w', number = 1 WHERE code = 'AV_1W';
 UPDATE llx_c_availability SET type_duration = 'w', number = 2 WHERE code = 'AV_2W';
