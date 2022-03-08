@@ -1579,17 +1579,20 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
-		if ($result>0) {
-			if ($objecttmp->statut == Holiday::STATUS_VALIDATED && $user->id == $objecttmp->fk_validator) {
+		if ($result > 0) {
+			if ($objecttmp->statut != Holiday::STATUS_VALIDATED) {
+				setEventMessages($langs->trans('StatusOfRefMustBe', $objecttmp->ref, $langs->transnoentitiesnoconv('Validated')), null, 'warnings');
+				continue;
+			}
+			if ($user->id == $objecttmp->fk_validator) {
 				$objecttmp->oldcopy = dol_clone($objecttmp);
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
 				$objecttmp->statut = Holiday::STATUS_APPROVED;
 
-				$db->begin();
-
 				$verif = $objecttmp->approve($user);
+
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
@@ -1664,14 +1667,9 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 						}
 					}
 				}
-
-				if (!$error) {
-					$db->commit();
-					$nbok++;
-				} else {
-					$db->rollback();
-					$action = '';
-				}
+			} else {
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorNotApproverForHoliday', $objecttmp->ref), null, 'errors');
 			}
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1683,7 +1681,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	if (!$error) {
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsApproved", $nbok), null, 'mesgs');
-		} else {
+		} elseif ($nbok == 1) {
 			setEventMessages($langs->trans("RecordAproved"), null, 'mesgs');
 		}
 		$db->commit();

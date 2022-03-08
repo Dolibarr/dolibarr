@@ -203,6 +203,12 @@ if ($action == 'setvarother') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 
@@ -527,6 +533,21 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Auto notify contacts when closing the ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoNotifyClose").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_NOTIFY_AT_CLOSING');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("TICKET_NOTIFY_AT_CLOSING", $arrval, $conf->global->TICKET_NOTIFY_AT_CLOSING);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
