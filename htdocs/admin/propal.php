@@ -198,9 +198,9 @@ if ($action == 'updateMask') {
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "PROPALE_ADDON", $value, 'chaine', 0, '', $conf->entity);
-} elseif (preg_match('/set_(.*)/',$action,$reg)) {
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
 
 	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
@@ -214,7 +214,7 @@ if ($action == 'updateMask') {
 		header("Location: " . $_SERVER["PHP_SELF"]);
 		exit();
 	}
-} elseif (preg_match('/del_(.*)/',$action,$reg)) {
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 	$res = dolibarr_del_const($db, $code, $conf->entity);
 
