@@ -3971,42 +3971,45 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      print list of payment modes.
-	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
-	 *      See instead to force the default value by the caller.
+	 *	print list of payment modes.
+	 *	Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *	See instead to force the default value by the caller.
 	 *
-	 *      @param	int		$selected			Id of payment term to preselect by default
-	 *      @param	string	$htmlname			Nom de la zone select
-	 *      @param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 *		@param	int		$addempty			Add an empty entry
-	 * 		@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
-	 * 		@param	string	$morecss			Add more CSS on select tag
-	 * 		@param	string	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
-	 *											0 : use default deposit percentage from entry
-	 *											> 0 : force deposit percentage (for example, from company object)
-	 *		@return	void
+	 *	@param	int		$selected			Id of payment term to preselect by default
+	 *	@param	string	$htmlname			Nom de la zone select
+	 *	@param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
+	 *	@param	int		$addempty			Add an empty entry
+	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
+	 *	@param	string	$morecss			Add more CSS on select tag
+	 *	@param	string	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 *										0 : use default deposit percentage from entry
+	 *										> 0 : force deposit percentage (for example, from company object)
+	 *	@return	void
 	 */
 	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
 		// phpcs:enable
-		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss);
+		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss, $deposit_percent = -1);
 	}
 
 
 	/**
-	 *      Return list of payment modes.
-	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
-	 *      See instead to force the default value by the caller.
+	 *	Return list of payment modes.
+	 *	Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
+	 *	See instead to force the default value by the caller.
 	 *
-	 *      @param	int		$selected		Id of payment term to preselect by default
-	 *      @param	string	$htmlname		Nom de la zone select
-	 *      @param	int		$filtertype		Not used
-	 *		@param	int		$addempty		Add an empty entry
-	 * 		@param	int		$noinfoadmin	0=Add admin info, 1=Disable admin info
-	 * 		@param	string	$morecss		Add more CSS on select tag
-	 *		@return	void
+	 *	@param	int		$selected			Id of payment term to preselect by default
+	 *	@param	string	$htmlname			Nom de la zone select
+	 *	@param	int		$filtertype			If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
+	 *	@param	int		$addempty			Add an empty entry
+	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
+	 *	@param	string	$morecss			Add more CSS on select tag
+	 * 	@param	string	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 *										0 : use default deposit percentage from entry
+	 *										> 0 : force deposit percentage (for example, from company object)
+	 *	@return	string
 	 */
-	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
+	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $deposit_percent = -1)
 	{
 
 		global $langs, $user, $conf;
@@ -4024,16 +4027,19 @@ class Form
 		if ($addempty) {
 			$out.=  '<option value="0">&nbsp;</option>';
 		}
+
 		$selectedDepositPercent = null;
+
 		foreach ($this->cache_conditions_paiements as $id => $arrayconditions) {
 			if ($filtertype <= 0 && ! empty($arrayconditions['deposit_percent'])) {
 				continue;
 			}
+
 			if ($selected == $id) {
 				$selectedDepositPercent = $deposit_percent > 0 ? $deposit_percent : $arrayconditions['deposit_percent'];
-				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '" selected>';
+				$out .= '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '" selected>';
 			} else {
-				print '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '">';
+				$out .= '<option value="'.$id.'" data-deposit_percent="' . $arrayconditions['deposit_percent'] . '">';
 			}
 			$label = $arrayconditions['label'];
 
@@ -4041,20 +4047,21 @@ class Form
 				$label = str_replace('__DEPOSIT_PERCENT__', $deposit_percent > 0 ? $deposit_percent : $arrayconditions['deposit_percent'], $label);
 			}
 
-			$out.=  $label;
-			$out.=  '</option>';
+			$out.= $label;
+			$out.= '</option>';
 		}
 		$out.=  '</select>';
 		if ($user->admin && empty($noinfoadmin)) {
 			$out.=  info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		$out.=  ajax_combobox($htmlname);
+
 		if ($deposit_percent >= 0) {
-			print ' <span id="'.$htmlname.'_deposit_percent_container"' . (empty($selectedDepositPercent) ? ' style="display: none"' : '') . '>';
-			print $langs->trans('DepositPercent') . ' : ';
-			print '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . strval($deposit_percent) . '" />';
-			print '</span>';
-			print '
+			$out .= ' <span id="'.$htmlname.'_deposit_percent_container"' . (empty($selectedDepositPercent) ? ' style="display: none"' : '') . '>';
+			$out .= $langs->trans('DepositPercent') . ' : ';
+			$out .= '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . strval($deposit_percent) . '" />';
+			$out .= '</span>';
+			$out .= '
 				<script>
 					$(document).ready(function () {
 						$("#' . $htmlname . '").change(function () {
@@ -4072,6 +4079,7 @@ class Form
 					});
 				</script>';
 		}
+
 		return $out;
 	}
 
