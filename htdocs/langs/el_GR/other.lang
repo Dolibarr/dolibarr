@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Μόνο 1 πεδίο είναι επί του π
 AtLeastOneMeasureIsRequired=Απαιτείται τουλάχιστον 1 πεδίο για μέτρηση
 AtLeastOneXAxisIsRequired=Απαιτείται τουλάχιστον 1 πεδίο για τον άξονα Χ
 LatestBlogPosts=Τελευταίες δημοσιεύσεις ιστολογίου
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Η εντολή πώλησης έχει επικυρωθεί
 Notify_ORDER_SENTBYMAIL=Η εντολή πωλήσεων αποστέλλεται μέσω ταχυδρομείου
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Η εντολή αγοράς στάλθηκε μέσω ηλεκτρονικού ταχυδρομείου
@@ -291,3 +294,7 @@ PopuCom=Προϊόντα / Υπηρεσίες κατά δημοτικότητα 
 ProductStatistics=Στατιστικά Προϊόντων / Υπηρεσιών
 NbOfQtyInOrders=Ποσότητα σε παραγγελίες
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Κλείσιμο

@@ -553,6 +553,12 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as c";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' WHERE p.fk_soc = s.rowid';
 $sql .= ' AND p.entity IN ('.getEntity('propal').')';
 if (!$user->rights->societe->client->voir && !$socid) { //restriction
@@ -689,6 +695,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= !empty($hookmanager->resPrint) ? (' HAVING 1=1 ' . $hookmanager->resPrint) : '';
 
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= ', p.ref DESC';
@@ -896,6 +907,10 @@ if ($resql) {
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 	// List of mass actions available
 	$arrayofmassactions = array(

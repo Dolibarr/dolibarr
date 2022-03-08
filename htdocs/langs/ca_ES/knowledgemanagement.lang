@@ -47,3 +47,4 @@ KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Camps extra per a l'article
 GroupOfTicket=Grup de tiquets
 YouCanLinkArticleToATicketCategory=Podeu adjuntar un article a un grup de tiquets (per tant, l'article es suggerirà durant la qualificació dels nous tiquets)
+SuggestedForTicketsInGroup=Suggerit per a entrades quan el grup està

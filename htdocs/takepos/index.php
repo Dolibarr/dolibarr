@@ -768,7 +768,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=LIQ", function() {
 	});
 }
 
@@ -799,9 +799,11 @@ $( document ).ready(function() {
 	if ($_SESSION["takeposterminal"] == "") {
 		print "ModalBox('ModalTerminal');";
 	}
+
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-		$sql .= " entity = ".$conf->entity." AND ";
+		$sql .= " entity = ".((int) $conf->entity)." AND ";
+		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -862,7 +864,8 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);" placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT.'/'; ?>';"><span class="fas fa-home"></span></a>
+				<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
+				<span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>
 				<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 				<?php } ?>
@@ -1081,8 +1084,10 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 }
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-$sql .= " entity = ".$conf->entity." AND ";
+$sql .= " entity = ".((int) $conf->entity)." AND ";
+$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

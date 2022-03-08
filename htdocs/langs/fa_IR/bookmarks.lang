@@ -18,3 +18,5 @@ SetHereATitleForLink=یک نام برای نشانه انتخاب کنید
 UseAnExternalHttpLinkOrRelativeDolibarrLink=یک پیوند خارجی/مطلق  (https://URL) یا یک پیوند داخلی/نسبی (/DOLIBARR_ROOT/htdocs/...) استفاده کنید
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=صفحۀ پیوند شده در پنجرۀ جدیدی نمایش داده شود یا همان پنچره
 BookmarksManagement=مدیریت نشانه‌ها
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

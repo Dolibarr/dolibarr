@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Doğrudan Yazdırma
-Module64000Desc=Doğrudan Yazdırma Sistemini etkinleştir
-PrintingSetup=Doğrudan Yazdırma Sistemi Ayarları
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer without needing to open the document in another application.
-MenuDirectPrinting=Doğrudan Yazdırma işleri
-DirectPrint=Doğrudan yazdır
+Module64000Name=One click Printing
+Module64000Desc=Enable One click Printing System
+PrintingSetup=Setup of One click Printing System
+PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
+MenuDirectPrinting=One click Printing jobs
+DirectPrint=One click Print
 PrintingDriverDesc=Yazıcı sürücüsü değişkenlerinin ayarları
 ListDrivers=Sürücü listesi
 PrintTestDesc=Yazıcı Listesi

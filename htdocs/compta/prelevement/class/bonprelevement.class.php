@@ -334,74 +334,6 @@ class BonPrelevement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Set credite and set status of linked invoices. Still used ??
-	 *
-	 * @return		int		<0 if KO, >=0 if OK
-	 */
-	public function set_credite()
-	{
-		// phpcs:enable
-		global $user, $conf;
-
-		$error = 0;
-
-		if ($this->db->begin()) {
-			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-			$sql .= " SET statut = ".self::STATUS_TRANSFERED;
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $conf->entity);
-
-			$result = $this->db->query($sql);
-			if (!$result) {
-				dol_syslog(get_class($this)."::set_credite Erreur 1");
-				$error++;
-			}
-
-			if (!$error) {
-				$facs = array();
-				$facs = $this->getListInvoices();
-
-				$num = count($facs);
-				for ($i = 0; $i < $num; $i++) {
-					/* Tag invoice as paid */
-					dol_syslog(get_class($this)."::set_credite set_paid fac ".$facs[$i]);
-					$fac = new Facture($this->db);
-					$fac->fetch($facs[$i]);
-					$result = $fac->setPaid($user);
-				}
-			}
-
-			if (!$error) {
-				$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
-				$sql .= " SET statut = 2";
-				$sql .= " WHERE fk_prelevement_bons = ".((int) $this->id);
-
-				if (!$this->db->query($sql)) {
-					dol_syslog(get_class($this)."::set_credite Erreur 1");
-					$error++;
-				}
-			}
-
-			/*
-			 * End of procedure
-			 */
-			if (!$error) {
-				$this->db->commit();
-				return 0;
-			} else {
-				$this->db->rollback();
-				dol_syslog(get_class($this)."::set_credite ROLLBACK ");
-
-				return -1;
-			}
-		} else {
-			dol_syslog(get_class($this)."::set_credite Ouverture transaction SQL impossible ");
-			return -2;
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 *	Set direct debit or credit transfer order to "paid" status.
 	 *
 	 *	@param	User	$user			Id of user
@@ -1325,7 +1257,6 @@ class BonPrelevement extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('banktransferdao'));
@@ -1898,7 +1829,7 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '			<DrctDbtTxInf>'.$CrLf;
 			$XML_DEBITOR .= '				<PmtId>'.$CrLf;
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
-			$XML_DEBITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('DD-'.dol_trunc($row_idfac.'-'.$row_ref, 20)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+			$XML_DEBITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('DD-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_DEBITOR .= '				</PmtId>'.$CrLf;
 			$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_DEBITOR .= '				<DrctDbtTx>'.$CrLf;
@@ -1920,10 +1851,10 @@ class BonPrelevement extends CommonObject
 			$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
 			$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
 			if (trim($addressline1)) {
-				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			if (trim($addressline2)) {
-				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			$XML_DEBITOR .= '					</PstlAdr>'.$CrLf;
 			$XML_DEBITOR .= '				</Dbtr>'.$CrLf;
@@ -1934,7 +1865,7 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '				</DbtrAcct>'.$CrLf;
 			$XML_DEBITOR .= '				<RmtInf>'.$CrLf;
 			// A string with some information on payment - 140 max
-			$XML_DEBITOR .= '					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "") ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135)).'</Ustrd>'.$CrLf; // 140 max
+			$XML_DEBITOR .= '					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "") ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135, 'right', 'UTF-8', 1)).'</Ustrd>'.$CrLf; // 140 max
 			$XML_DEBITOR .= '				</RmtInf>'.$CrLf;
 			$XML_DEBITOR .= '			</DrctDbtTxInf>'.$CrLf;
 			return $XML_DEBITOR;
@@ -1944,7 +1875,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '			<CdtTrfTxInf>'.$CrLf;
 			$XML_CREDITOR .= '				<PmtId>'.$CrLf;
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
-			$XML_CREDITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('CT-'.dol_trunc($row_idfac.'-'.$row_ref, 20)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+			$XML_CREDITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('CT-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_CREDITOR .= '				</PmtId>'.$CrLf;
 			$XML_CREDITOR .= '				<Amt>'.$CrLf;
 			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
@@ -1971,10 +1902,10 @@ class BonPrelevement extends CommonObject
 			$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
 			$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
 			if (trim($addressline1)) {
-				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			if (trim($addressline2)) {
-				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			$XML_CREDITOR .= '					</PstlAdr>'.$CrLf;
 			$XML_CREDITOR .= '				</Cdtr>'.$CrLf;
@@ -1985,7 +1916,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '				</CdtrAcct>'.$CrLf;
 			$XML_CREDITOR .= '				<RmtInf>'.$CrLf;
 			// A string with some information on payment - 140 max
-			$XML_CREDITOR .= '					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "") ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135)).'</Ustrd>'.$CrLf; // 140 max
+			$XML_CREDITOR .= '					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "") ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135, 'right', 'UTF-8', 1)).'</Ustrd>'.$CrLf; // 140 max
 			$XML_CREDITOR .= '				</RmtInf>'.$CrLf;
 			$XML_CREDITOR .= '			</CdtTrfTxInf>'.$CrLf;
 			return $XML_CREDITOR;

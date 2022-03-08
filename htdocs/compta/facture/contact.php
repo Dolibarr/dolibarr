@@ -100,16 +100,6 @@ if ($action == 'addcontact' && $user->rights->facture->creer) {
  * View
  */
 
-if (empty($object->id)) {
-	llxHeader();
-	$head = facture_prepare_head($object);
-	$langs->load('errors');
-	echo dol_get_fiche_head($head, 'contact', $langs->trans("InvoiceCustomer"), -1, 'bill'),
-		'<div class="error">' . $langs->trans("ErrorRecordNotFound") . '</div>';
-	llxFooter();
-	exit;
-}
-
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('ContactsAddresses');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);

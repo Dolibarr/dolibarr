@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=عادی
 TicketSeverityShortHIGH=زیاد
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=سایر
+
 ErrorBadEmailAddress=بخش '%s' نادرست است
 MenuTicketMyAssign=برگه‌ها من
 MenuTicketMyAssignNonClosed=برگه‌های باز من
@@ -66,7 +68,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=پاسخ داده شده
 Waiting=در انتظار
-Closed=بسته
+SolvedClosed=Solved
 Deleted=حذف شده
 
 # Dict
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=برگه اضافه شد
 TicketMessageSuccessfullyAdded=پیام با موفقیت افزوده شد
 TicketMessagesList=فهرست پیام‌ها
 NoMsgForThisTicket=پیامی برای این برگه وجود ندارد
-Properties=طبقه‌بندی
+TicketProperties=طبقه‌بندی
 LatestNewTickets=آخرین %s برگۀ‌پشتیبانی جدید (خوانده نشده)
 TicketSeverity=درجۀ اهمیت
 ShowTicket=نمایش برگه
 RelatedTickets=برگه‌های مرتبط
 TicketAddIntervention=ایجاد پادرمیانی
-CloseTicket=بستن برگه
-CloseATicket=بستن یک برگۀ پشتیبانی
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=توقف پشتیبانی را تائید کنید
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=لطفا حذف برگۀ‌پشتیبانی را تائید کنید
 TicketDeletedSuccess=حذف برگه با موفقیت انجام شد
 TicketMarkedAsClosed=برگۀ‌پشتیبانی به حالت بسته درآمد
@@ -314,6 +318,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

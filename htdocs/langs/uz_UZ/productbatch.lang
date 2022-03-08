@@ -27,9 +27,9 @@ StockDetailPerBatch=Har bir lot uchun birja tafsilotlari
 SerialNumberAlreadyInUse=%s mahsuloti uchun seriya raqami %s allaqachon ishlatilgan
 TooManyQtyForSerialNumber=Sizda seriya raqami %s uchun faqat bitta mahsulot mavjud bo'lishi mumkin %s
 ManageLotMask=Maxsus niqob
-CustomMasks=Option to define a different numbering mask for each product
-BatchLotNumberingModules=Numbering rule for automatic generation of lot number
-BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
+CustomMasks=Har bir mahsulot uchun boshqa raqamlash niqobini tanlash imkoniyati
+BatchLotNumberingModules=Lot raqamini avtomatik ravishda ishlab chiqarish uchun raqamlash qoidasi
+BatchSerialNumberingModules=Seriya raqamini avtomatik ishlab chiqarish uchun raqamlash qoidasi (har bir mahsulot uchun 1 ta noyob lot/seriyali mahsulotlar uchun)
 QtyToAddAfterBarcodeScan=Har bir shtrix / lot / ketma-ket skanerlash uchun qo'shish uchun miqdor
 LifeTime=Hayot davomiyligi (kunlar ichida)
 EndOfLife=Hayotning oxiri
@@ -37,7 +37,8 @@ ManufacturingDate=Ishlab chiqarilgan sana
 DestructionDate=Yo'q qilish sanasi
 FirstUseDate=Birinchi foydalanish sanasi
 QCFrequency=Sifatni nazorat qilish chastotasi (kunlar ichida)
-
+ShowAllLots=Show all lots
+HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Ishdan chiqdi
 InWorkingOrder=Ish tartibida

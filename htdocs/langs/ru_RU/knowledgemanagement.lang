@@ -33,17 +33,18 @@ KnowledgeManagementSetupPage = Страница настройки систем�
 #
 # About page
 #
-About = О
+About = О системе
 KnowledgeManagementAbout = Об управлении знаниями
-KnowledgeManagementAboutPage = Управление знаниями о странице
+KnowledgeManagementAboutPage = Страница управления знаниями
 
 KnowledgeManagementArea = Управление знаниями
 MenuKnowledgeRecord = База знаний
-ListKnowledgeRecord = Список статей
-NewKnowledgeRecord = Новая статья
+ListKnowledgeRecord = Список записей
+NewKnowledgeRecord = Новая запись
 ValidateReply = Проверить решение
-KnowledgeRecords = Статьи
-KnowledgeRecord = Статья
-KnowledgeRecordExtraFields = Дополнительные поля для статьи
-GroupOfTicket=Группа билетов
-YouCanLinkArticleToATicketCategory=Вы можете привязать статью к группе заявок (чтобы статья предлагалась во время квалификации новых билетов)
+KnowledgeRecords = Записи
+KnowledgeRecord = Запись
+KnowledgeRecordExtraFields = Дополнительные поля для записи
+GroupOfTicket=Группа тикетов
+YouCanLinkArticleToATicketCategory=Вы можете привязать запись к группе тикетов (чтобы запись предлагалась во время квалификации новых тикетов)
+SuggestedForTicketsInGroup=Предлагается для тикетов, когда группа

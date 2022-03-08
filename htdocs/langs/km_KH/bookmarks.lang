@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
 BookmarksManagement=Bookmarks management
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

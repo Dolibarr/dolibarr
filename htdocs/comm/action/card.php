@@ -585,7 +585,7 @@ if (empty($reshook) && $action == 'update') {
 		}
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 		if ($ret < 0) {
 			$error++;
 		}
@@ -1223,7 +1223,11 @@ if ($action == 'create') {
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
 		}
-		$tid = GETPOST("projecttaskid") ? GETPOST("projecttaskid") : '';
+		if ($origin=='task') {
+			$tid= GETPOST("originid");
+		} else {
+			$tid = GETPOST("projecttaskid") ? GETPOST("projecttaskid") : '';
+		}
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}

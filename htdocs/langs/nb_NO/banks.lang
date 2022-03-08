@@ -182,3 +182,4 @@ BankColorizeMovementName2=Bakgrunnsfarge for kredittbevegelse
 IfYouDontReconcileDisableProperty=Hvis du ikke foretar bankavstemninger på noen bankkontoer, deaktiverer du egenskapen"%s" for å fjerne denne advarselen.
 NoBankAccountDefined=Ingen bankkonto definert
 NoRecordFoundIBankcAccount=Ingen poster funnet på bankkontoen. Vanligvis skjer dette når en post er slettet manuelt fra listen over transaksjoner på bankkontoen (for eksempel under en avstemming av bankkontoen). En annen årsak er at betalingen ble registrert da modulen "%s" ble deaktivert.
+AlreadyOneBankAccount=Already one bank account defined

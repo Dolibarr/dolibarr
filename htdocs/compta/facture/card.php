@@ -247,6 +247,8 @@ if (empty($reshook)) {
 
 		$result = $object->deleteline(GETPOST('lineid', 'int'));
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -970,10 +972,13 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0) {
 			$paiement = new Paiement($db);
-			$result = $paiement->fetch(GETPOST('paiement_id'));
+			$result = $paiement->fetch(GETPOST('paiement_id', 'int'));
 			if ($result > 0) {
 				$result = $paiement->delete(); // If fetch ok and found
-				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+				if ($result >= 0) {
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					exit;
+				}
 			}
 			if ($result < 0) {
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
@@ -1104,6 +1109,8 @@ if (empty($reshook)) {
 						$facture_source->fetchPreviousNextSituationInvoice();
 					}
 				}
+
+
 				$id = $object->create($user);
 				if ($id < 0) {
 					$error++;
@@ -1231,6 +1238,7 @@ if (empty($reshook)) {
 							$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
 							$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
+							$line->context['createcreditnotefrominvoice'] = 1;
 							$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
 
 							$object->lines[] = $line; // insert new line in current object
@@ -1645,6 +1653,11 @@ if (empty($reshook)) {
 										$discount->tva_tx = $lines[$i]->tva_tx;
 										$discount->fk_user = $user->id;
 										$discount->description = $desc;
+										$discount->multicurrency_subprice = abs($lines[$i]->multicurrency_subprice);
+										$discount->multicurrency_amount_ht = abs($lines[$i]->multicurrency_total_ht);
+										$discount->multicurrency_amount_tva = abs($lines[$i]->multicurrency_total_tva);
+										$discount->multicurrency_amount_ttc = abs($lines[$i]->multicurrency_total_ttc);
+
 										$discountid = $discount->create($user);
 										if ($discountid > 0) {
 											$result = $object->insert_discount($discountid); // This include link_to_invoice
@@ -2358,9 +2371,9 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code');
-		if (!GETPOST('qty')) {
-			$special_code = 3;
+		$special_code = GETPOST('special_code', 'int');
+		if ($special_code == 3) {
+			$special_code = 0;	// Options should not exists on invoices
 		}
 
 		$line = new FactureLigne($db);
@@ -2831,15 +2844,6 @@ if (empty($reshook)) {
  * View
  */
 
-if (empty($object->id)) {
-	llxHeader();
-	$head = facture_prepare_head($object);
-	$langs->load('errors');
-	echo dol_get_fiche_head($head, 'compta', $langs->trans("InvoiceCustomer"), -1, 'bill'),
-		'<div class="error">' . $langs->trans("ErrorRecordNotFound") . '</div>';
-	llxFooter();
-	exit;
-}
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -2893,6 +2897,9 @@ if ($action == 'create') {
 			}
 			if (empty($mode_reglement_id)) {
 				$mode_reglement_id = $soc->mode_reglement_id;
+			}
+			if (empty($fk_account)) {
+				$fk_account = $soc->fk_account;
 			}
 			if (!$remise_percent) {
 				$remise_percent = $soc->remise_percent;
@@ -3000,6 +3007,9 @@ if ($action == 'create') {
 	if (empty($mode_reglement_id)) {
 		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
+
+	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	$fk_account = GETPOSTISSET("fk_account") ? GETPOST("fk_account", 'int') : $fk_account;
 
 	if (!empty($soc->id)) {
 		$absolute_discount = $soc->getAvailableDiscounts();
@@ -3603,8 +3613,8 @@ if ($action == 'create') {
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$fk_account = GETPOST('fk_account', 'int');
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
@@ -3816,8 +3826,16 @@ if ($action == 'create') {
 		print '</table>';
 	}
 
-	print '</form>';
+	print "</form>\n";
 } elseif ($id > 0 || !empty($ref)) {
+	if (empty($object->id)) {
+		llxHeader();
+		$langs->load('errors');
+		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+		llxFooter();
+		exit;
+	}
+
 	/*
 	 * Show object in view mode
 	 */
@@ -3846,7 +3864,7 @@ if ($action == 'create') {
 	$totalpaye = $object->getSommePaiement();
 	$totalcreditnotes = $object->getSumCreditNotesUsed();
 	$totaldeposits = $object->getSumDepositsUsed();
-	// print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits."
+	//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits."
 	// selleruserrevenuestamp=".$selleruserevenustamp;
 
 	// We can also use bcadd to avoid pb with floating points
@@ -3861,7 +3879,10 @@ if ($action == 'create') {
 		$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
 		$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
 		$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaye - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
-		$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+		// Code to fix case of corrupted data
+		if ($resteapayer == 0 && $multicurrency_resteapayer != 0) {
+			$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+		}
 	}
 
 	if ($object->paye) {
@@ -5090,7 +5111,7 @@ if ($action == 'create') {
 		print '<span class="opacitymedium">';
 		print $langs->trans('RemainderToPay');
 		if ($resteapayeraffiche < 0) {
-			print ' ('.$langs->trans('ExcessReceived').')';
+			print ' ('.$langs->trans('NegativeIfExcessReceived').')';
 		}
 		print '</span>';
 		print '</td>';
@@ -5118,23 +5139,24 @@ if ($action == 'create') {
 			print ' :</td><td align="right">'.price($retainedWarranty).'</td><td>&nbsp;</td></tr>';
 		}
 	} else { // Credit note
+		$resteapayeraffiche = $resteapayer;
 		$cssforamountpaymentcomplete = 'amountpaymentneutral';
 
 		// Total already paid back
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
-		print $langs->trans('AlreadyPaidBack');
-		print ' :</td><td class="right"><span class="amount">'.price($sign * $totalpaye).'</span></td><td>&nbsp;</td></tr>';
+		print '<span class="opacitymedium">'.$langs->trans('AlreadyPaidBack').'</span>';
+		print '</td><td class="right"><span class="amount">'.price($sign * $totalpaye).'</span></td><td>&nbsp;</td></tr>';
 
 		// Billed
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("Billed").' :</td><td class="right">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
+		print '<tr><td colspan="'.$nbcols.'" class="right"><span class="opacitymedium">'.$langs->trans("Billed").'</span></td><td class="right">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
 
 		// Remainder to pay back
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
-		print $langs->trans('RemainderToPayBack');
+		print '<span class="opacitymedium">'.$langs->trans('RemainderToPayBack');
 		if ($resteapayeraffiche > 0) {
-			print ' ('.$langs->trans('ExcessPaid').')';
+			print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 		}
-		print ' :</td>';
+		print '</span></td>';
 		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
@@ -5291,7 +5313,7 @@ if ($action == 'create') {
 			$discount = new DiscountAbsolute($db);
 			$result = $discount->fetch(0, $object->id);
 
-			// Reopen a standard paid invoice
+			// Reopen an invoice
 			if ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)
 				|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
 				|| ($object->type == Facture::TYPE_DEPOSIT && empty($discount->id))
@@ -5356,13 +5378,18 @@ if ($action == 'create') {
 				if ($objectidnext) {
 					print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</span>';
 				} else {
-					//if ($resteapayer == 0) {		// Sometimes we can receive more, so we accept to enter more and will offer a button to convert into discount (but it is not a credit note, just a prepayment done)
-					//	print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
-					//} else {
+					if ($object->type == Facture::TYPE_DEPOSIT && $resteapayer == 0) {
+						// For down payment, we refuse to receive more than amount to pay.
+						print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span>';
+					} else {
+						// Sometimes we can receive more, so we accept to enter more and will offer a button to convert into discount (but it is not a credit note, just a prepayment done)
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';
-					//}
+					}
 				}
 			}
+
+			$sumofpayment = $totalpaye;
+			$sumofpaymentall = $totalpaye + $totalcreditnotes + $totaldeposits;
 
 			// Reverse back money or convert to reduction
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
@@ -5381,24 +5408,34 @@ if ($action == 'create') {
 				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
-					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $sumofpayment == 0)
 					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > 0 && empty($discount->id)) {
-					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
+				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > Facture::STATUS_DRAFT && empty($discount->id)) {
+					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT')) {
+						// We can close a down payment only if paid amount is same than amount of down payment (by definition)
+						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
+					} else {
+						print '<span class="butActionRefused" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ConvertToReduc').'</span>';
+					}
 				}
 			}
 
 			// Classify paid
-			if (($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
-				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $usercanissuepayment && empty($discount->id))
+			if (($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment
+				&& (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0) || ($object->type == Facture::TYPE_DEPOSIT && $object->total_ttc > 0)))
 			) {
-				print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
+				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') != price2num($sumofpaymentall, 'MT')) {
+					// We can close a down payment only if paid amount is same than amount of down payment (by definition)
+					print '<span class="butActionRefused" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ClassifyPaid').'</span>';
+				} else {
+					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
+				}
 			}
 
-			// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
+			// Classify 'closed not completely paid' (possible if validated and not yet set paid)
 			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && $usercanissuepayment) {
 				if ($totalpaye > 0 || $totalcreditnotes > 0) {
 					// If one payment or one credit note was linked to this invoice

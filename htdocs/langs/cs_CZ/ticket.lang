@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normální
 TicketSeverityShortHIGH=Vysoký
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=Jiný
+
 ErrorBadEmailAddress=Pole '%s' nesprávné
 MenuTicketMyAssign=Moje jízdenky
 MenuTicketMyAssignNonClosed=Moje otevřené vstupenky
@@ -66,7 +68,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Odpovězeno
 Waiting=Čekání
-Closed=Zavřeno
+SolvedClosed=Solved
 Deleted=Smazáno
 
 # Dict
@@ -180,15 +182,17 @@ MessageSuccessfullyAdded=Přidána vstupenka
 TicketMessageSuccessfullyAdded=Zpráva byla úspěšně přidána
 TicketMessagesList=Seznam zpráv
 NoMsgForThisTicket=Žádná zpráva pro tuto letenku
-Properties=Klasifikace
+TicketProperties=Klasifikace
 LatestNewTickets=Nejnovější %s nejnovější vstupenky (nečtené)
 TicketSeverity=Vážnost
 ShowTicket=Viz lístek
 RelatedTickets=Související vstupenky
 TicketAddIntervention=Vytvořit intervenci
-CloseTicket=Zavřete lístek
-CloseATicket=Zavřete lístek
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Potvrďte uzavření lístku
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Potvrďte prosím vymazání lístku
 TicketDeletedSuccess=Lístek byl vymazán s úspěchem
 TicketMarkedAsClosed=Lístek označený jako zavřený
@@ -314,6 +318,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

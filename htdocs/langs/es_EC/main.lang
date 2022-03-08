@@ -555,3 +555,5 @@ ContactDefault_order_supplier=Orden de compra
 ContactDefault_propal=Propuesta
 ContactDefault_supplier_proposal=Propuesta de proveedor
 ContactAddedAutomatically=Contacto agregado de roles de terceros de contacto
+Properties=Properties
+ClientTZ=Zona horaria del cliente

@@ -76,6 +76,6 @@ NoLimit=制限なし
 ToOfferALinkForOnlineSignature=オンライン署名へのリンク
 WelcomeOnOnlineSignaturePage=%sからの売買契約提案書sを受諾するページへようこそ
 ThisScreenAllowsYouToSignDocFrom=この画面では、見積書/売買契約提案書を受諾して署名するか、拒否することができる
-ThisIsInformationOnDocumentToSign=これは、承認または拒否するドキュメントに関する情報です。
+ThisIsInformationOnDocumentToSign=これは、承認または拒否するドキュメントに関する情報。
 SignatureProposalRef=見積書/売買契約提案書%s の署名
 FeatureOnlineSignDisabled=オンライン署名の機能が無効になっているか、機能が有効になる前にドキュメントが生成されました

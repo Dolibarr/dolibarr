@@ -67,5 +67,5 @@ StripePayoutList=Список выплат Stripe
 ToOfferALinkForTestWebhook=Ссылка на настройку Stripe WebHook для вызова IPN (тестовый режим)
 ToOfferALinkForLiveWebhook=Ссылка на настройку Stripe WebHook для вызова IPN (режим реального времени)
 PaymentWillBeRecordedForNextPeriod=Выплата будет записана за следующий период.
-ClickHereToTryAgain= <a href="%s"> Нажмите здесь, чтобы попробовать еще раз ... </a>
+ClickHereToTryAgain=<a href="%s"> Нажмите здесь, чтобы попробовать еще раз ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Из-за правил строгой аутентификации клиентов создание карты должно производиться из бэк-офиса Stripe. Вы можете щелкнуть здесь, чтобы включить запись клиента Stripe: %s

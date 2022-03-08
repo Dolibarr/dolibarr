@@ -22,7 +22,7 @@ ProductService=Produit ou Service
 AllProducts=Tous les produits et services
 ChooseProduct/Service=Choisissez le produit ou le service
 ForceBuyingPriceIfNull=Forcer le prix d'achat au prix de vente si non renseigné
-ForceBuyingPriceIfNullDetails=Si le prix d'achat/revient n'est pas défini quand on ajouter une nouvelle ligne, et que cette option est "ON", la marge sera de 0 sur la nouvelle ligne (le prix d'achat/revient = prix de vente). Si l'option est à "OFF" (recommandé), la marge sera égale à la valeur suggérée par défaut (et peut être 100% si aucune valeur par défaut n'est trouvé).
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Méthode de gestion des remises globales
 UseDiscountAsProduct=Comme un produit
 UseDiscountAsService=Comme un service

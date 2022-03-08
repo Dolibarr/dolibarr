@@ -58,6 +58,7 @@ ManagePartnership=Manage partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink ble ikke funnet på partnerens nettsted
 ConfirmClosePartnershipAsk=Er du sikker på at du vil avbryte dette partnerskapet?
 PartnershipType=Partnership type
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
@@ -76,6 +77,10 @@ YourPartnershipWillSoonBeCanceledContent=Vi informerer deg om at partnerskapet d
 YourPartnershipRefusedContent=Vi informerer deg om at partnerskapsforespørselen din har blitt avslått.
 YourPartnershipAcceptedContent=Vi informerer deg om at din forespørsel om partnerskap er godtatt.
 YourPartnershipCanceledContent=Vi informerer deg om at partnerskapet ditt er kansellert.
+
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Avvis grunn
 
 #
 # Status

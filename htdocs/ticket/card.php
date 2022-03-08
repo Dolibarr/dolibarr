@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016 Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2016 Jean-François FERRY  <hello@librethic.io>
+ * Copyright (C) 2016      Christophe Battarel  <christophe@altairis.fr>
+ * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,6 +209,12 @@ if (empty($reshook)) {
 				}
 
 				// Link ticket to project
+				if (GETPOST('origin', 'alpha') == 'projet') {
+					$projectid = GETPOST('originid', 'int');
+				} else {
+					$projectid = GETPOST('projectid', 'int');
+				}
+
 				if ($projectid > 0) {
 					$object->setProject($projectid);
 				}
@@ -561,7 +568,7 @@ if (empty($reshook)) {
 			if ($ret > 0) {
 				$log_action = $langs->trans('TicketInitialMessageModified')." \n";
 				// include the Diff class
-				dol_include_once('/ticket/class/utils_diff.class.php');
+				dol_include_once('/core/class/utils_diff.class.php');
 				// output the result of comparing two files as plain text
 				$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
@@ -1441,17 +1448,17 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlright = '';
 
 			$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
-			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fal fa-list-alt imgforviewmode', $messagingUrl, '', 1);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1);
 
 			// Show link to add a message (if read and not closed)
 			$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message";
 			$url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init';
-			$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fal fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 			// Show link to add event (if read and not closed)
 			$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message"; ;
 			$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
-			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fal fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
 			print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 

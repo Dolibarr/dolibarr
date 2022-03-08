@@ -58,6 +58,7 @@ ManagePartnership=パートナーシップを管理する
 BacklinkNotFoundOnPartnerWebsite=パートナーのウェブサイトにバックリンクが見つからない
 ConfirmClosePartnershipAsk=このパートナーシップをキャンセルしてもよいか？
 PartnershipType=パートナーシップの種類
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
@@ -76,6 +77,10 @@ YourPartnershipWillSoonBeCanceledContent=パートナーシップはまもなく
 YourPartnershipRefusedContent=パートナーシップのリクエストが拒否されたことをお知らせする。
 YourPartnershipAcceptedContent=パートナーシップのリクエストが受理されたことをお知らせする。
 YourPartnershipCanceledContent=パートナーシップがキャンセルされたことをお知らせする。
+
+CountLastUrlCheckError=最後のURLチェックのエラー数
+LastCheckBacklink=最後のURLチェックの日付
+ReasonDeclineOrCancel=断りの理由
 
 #
 # Status

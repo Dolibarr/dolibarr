@@ -2,6 +2,160 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 14.0.5 compared to 14.0.4 *****
+
+FIX: 13.0: printFieldListWhere called twice on same query
+FIX: 14.0.4 fatal error on cron list.
+FIX: #19476
+FIX: #19564
+FIX: #19651
+FIX: Accountancy - SQL error on subledger account search in journal
+FIX: apply eldy's suggestion to not overwrite existing extrafields of $line
+FIX: Can't close a down payment if paid with credit notes.
+FIX: better compatibility with multicompany
+FIX: contact card: bad colspan value for separator extrafield in creation/modification form
+FIX: discounts are applied both when fetching the best supplier price and when displaying it
+FIX: double display for contact categorie on societe create card
+FIX: fatal error on cron list.
+FIX: holiday list: only mass delete if leave request is not in draft, canceled or refused, like in card
+FIX: holiday mass deletion: correct return of record deleted
+FIX: Holiday month report
+FIX: info tab on customer invoice record not found
+FIX: line extrafields are inoperative in dispatch cards even when they exist
+FIX: list of categories in stats of supplier invoices
+FIX: missing default value for more comprehensive
+FIX: multicurrency: fields in discount unitialized when creating deposit
+FIX: Navigation on bank transaction list
+FIX: Can't edit a bank transaction due to bad permission check.
+FIX: Option MAIN_DIRECT_STATUS_UPDATE broken. Ajax on/off not saving value in DB after updating to version >=12
+FIX: postgresql compatibility, "" as is not authorized
+FIX: printFieldListWhere called twice (at different locations) for the same SQL query, can result in syntax errors
+FIX: select too large into addrights (pb of missing parenthesis)
+FIX: set optional from post, we can't untick boolean field on product card
+FIX: Take into consideration work leave over serveral months
+FIX: test if method exist on wrong object
+FIX: title for nature of third party in company list
+FIX: Urgent onglet contact inaccessible depuis une facture
+FIX: wrong syntax of sql request
+
+***** ChangeLog for 14.0.4 compared to 14.0.3 *****
+
+FIX: $totalarray is overwritten, totals were lost
+FIX: 13.0 - due to a typo in the 'mode' parameter, the "first name" column of the list of members displays the full name
+FIX: 13.0: end date required to edit a ticket message
+FIX: 13.0 feedback of PR #18993: make ticket messages punctual events with attr percentage = -1
+FIX: 13.0 PR #18993: add comment on modified part
+FIX: 13.0: sometimes firstname was mistyped as fistname
+FIX: 14.0 - civility field of private third party creation form has inadequate width
+FIX: 14.0 - civility field width inadequate due to select2 calculating the width while the field has no width (display: none)
+FIX: 14.0 - due to a typo in the 'mode' parameter, the "first name" co…
+FIX: #18634 : Problem of virtual stock with reception module enabled
+FIX: #18695 Added ref_ext to supplier invoice
+FIX: #18698 Supplier invoice list - "alert" checkbox not working
+FIX: #18735
+FIX: #18767 : Adherent delete
+FIX: #18797
+FIX: #18854
+FIX: #18875 in v14
+FIX: #18910
+FIX: #18910 : MRP List SQL query syntax error with more than one extrafileds.
+FIX: #18912 Accountancy - SQL error when custom group is added without country defined
+FIX: #18934 on-registration in the extrafieldsline database for deliveries
+FIX: #18968
+FIX: #19008
+FIX: #19014 - the properties of some fields are not updated when you submit the form
+FIX: #19210
+FIX: #19214 : PostgreSQL error on admin/limits.php
+FIX: #19241 Project - Fix display salary in overview
+FIX: #19305
+FIX: 2 columns for total labels
+FIX: Accountancy - Format Quadra export - Missing line type C to create automaticly a subledger account with label
+FIX: Accountancy - If deposit invoice is used, force binding in deposit accounting account to solve transaction
+FIX: Accountancy - Missing specific filename for export on format FEC2, Ciel & repare it
+FIX: Accountancy - Option of export popup are inverted
+FIX: Accountancy - PHP8
+FIX: Accountancy - Product admin - SQL error when we affect accounting account with product_perentity activated
+FIX: Accountancy simplified - Salaries are not present in report
+FIX: Accountancy - Some correction on export name
+FIX: Accountancy - Trunc code_journal to 2 in format XIMPORT (Ciel, Sage50)
+FIX: add warehouse in projects' overview count
+FIX: also on customer index for automatic binding
+FIX: Attachment of pdf into shipment when sending email
+FIX: autocalculation of the supplier price in main currency.
+FIX: avoid warning if $categories is an id
+FIX: bad sign of amount stored for multicurrency columns on credit notes
+FIX: Bad use of a forced contact of another company on PDF/ODT documents
+FIX: Bad use of dol_concatdesc()
+FIX: Button text on proposal card for create a invoice
+FIX: calculateCosts of BOM must not be included into fetch
+FIX: calculation of balance in conciliation page on desc sorting.
+FIX: card.php
+FIX: Change date format of the inventorycode to be equal as mass stock transfert
+FIX: check if greater 0
+FIX: close cash with some terminals in TakePOS
+FIX: compatibility with Multicompany
+FIX: consistent UX when calling a tab from the invoice card with empty ref/id
+FIX: default language defined for IN country
+FIX: Expense report - In edit mode, field qty doesn't accept decimal unlike the create mode
+FIX: fetch of product with modulebuilder load too much data
+FIX: filter for export of accounting documents
+FIX: Filter on categories
+FIX: generate documents with PDF options
+FIX: indentation
+FIX: init hookmanager after loading $conf values
+FIX: invoice: inpossible to create an invoice because of very bad check + warnings when trying to print tabs for invoice with no ID
+FIX: legal issue on expense report pdf (must also show price without tax)
+FIX: list of categories in stats of supplier invoices
+FIX: load tranlate array after setting lang
+FIX: lost superadmin grade after edit user card
+FIX: missing filter status=1 on rss feeds
+FIX: missing permission check reported by me@lainwir3d.net on product api
+FIX: missing return status
+FIX: missing sql filter by entity
+FIX: move fetch_optionnal into $ac_static->fetch()
+FIX: only a superadmin can modify entity
+FIX: only ones value is return for dictionaries
+FIX: optional visibility on create card
+FIX: payment style and html5 tags
+FIX: payment using wrong type in takepos when too many payment mode
+FIX: PR#18931 Remove useless explicit call to dol_shutdown
+FIX: Product accountancy affectation with product_perentity activated (PR #18620)
+FIX: products/services card: hidden extrafields were overridden
+FIX: project task list: extrafields could not be displayed
+FIX: Propal list - Problem of pagination on date
+FIX: reload user lang
+FIX: Remove not complete order from the virtual stock
+FIX: Replenish: SQL error when no warehouse has been created + Warning when there are no warehouses
+FIX: resource list : Use standard code to handle list filters
+FIX: restrictedArea for payment delete
+FIX: Ret PR
+FIX: second approval back in stable feature as is the setting for minimum amount (last part from PR#14286)
+FIX: selected lines on supplier invoice create
+FIX: Selection of type "people" for membership must hide the company
+FIX: select list of orders not complete when field type of company is on
+FIX: show end hours in events linked to objects
+FIX: support of localtax on expense report
+FIX: task time: can't filter by user with pgsql + show error message
+FIX: task time: keep on using natural_search
+FIX: tcpdf vulnerability to roman numeral bomb, cf. tecnickom/TCPDF issue #315
+FIX: Test when date of invoie is in future (pb with TZ and offset)
+FIX: Ticket - Card - Wrong font awesome library
+FIX: Ticket - Duplicate field project when we create ticket from project
+FIX: translation into email for member at membership validation.
+FIX: Travis Sanitize SQL
+FIX: unprivileged user can see task associated with a not allowed project
+FIX: URGENT: impossible to create an invoice
+FIX: Use of accent into filename of GED
+FIX: user date timezone offset
+FIX: User salary card - translation problem
+FIX: user without permission can set ticket subject
+FIX: We need a default price base type in variant creation case with multiprices when parent has been created with only one level price
+FIX: wrong array key value
+FIX: wrong check
+FIX: wrong position of error message
+Sync transifex.
+
 ***** ChangeLog for 14.0.3 compared to 14.0.2 *****
 
 FIX: #18698 Supplier invoice list - "alert" checkbox not working
@@ -356,7 +510,8 @@ Following changes may create regressions for some external modules, but were nec
 * Removed deprecated substitution key  __REFCLIENT__  (replaced with __REF_CLIENT__)
 * Removed constant MAIN_COUNTRIES_IN_EEC. You can now set if country is in Europe or not from the dictionary of countries.
 * v14 seems to work correctly on PHP v8 but it generates a lot of verbose warnings. Currently, v14 i snot yet officialy supported with PHP 8.
-
+* To execute shell or command line command, your code must never use method like exec, shell_exec, popen, .. but must use the built-in 
+  method executeCLI() available into core/class/utils.class.php  
 
 
 ***** ChangeLog for 13.0.5 compared to 13.0.4 *****

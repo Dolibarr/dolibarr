@@ -807,6 +807,8 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 				// using a non coventionnel way to be encoded, to not have them sanitized just after)
 				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+				//$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) { return realCharForNumericEntities($m); }, $out);
+
 
 				// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
@@ -2266,6 +2268,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 {
 	global $conf, $langs;
 
+	// If date undefined or "", we return ""
+	if (dol_strlen($time) == 0) {
+		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
+	}
+
 	if ($tzoutput === 'auto') {
 		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
 	}
@@ -2289,7 +2296,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 					$user_date_tz = new DateTimeZone($offsettzstring);
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
-					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : $time);
+					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
 					$offsettz = $user_dt->getOffset();
 				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
 					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
@@ -2355,11 +2362,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if ($reduceformat) {
 		$format = str_replace('%Y', '%y', $format);
 		$format = str_replace('yyyy', 'yy', $format);
-	}
-
-	// If date undefined or "", we return ""
-	if (dol_strlen($time) == 0) {
-		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
 	}
 
 	// Clean format
@@ -3604,7 +3606,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
-				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
+				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'website', 'workstation',
@@ -3650,7 +3652,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house',
+				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house', 'recurring'=>'history',
 				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
@@ -5329,13 +5331,16 @@ function price2num($amount, $rounding = '', $option = 0)
 		if ($thousand != ',' && $thousand != '.') {
 			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
 		}
+
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
+
+		$amount = preg_replace('/[^0-9\-\.]/', '', $amount);	// Clean non numeric chars (so it clean some UTF8 spaces for example.
 	}
 	//print ' XX'.$amount.' '.$rounding;
 
-	// Now, make a rounding if required
+	// Now, $amount is a real PHP float number. We make a rounding if required.
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
@@ -5343,7 +5348,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif ($rounding == 'MT') {
 			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
 		} elseif ($rounding == 'MS') {
-			$nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
+			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
 		} elseif ($rounding == 'CU') {
 			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_UNIT, 8);	// TODO Use param of currency
 		} elseif ($rounding == 'CT') {
@@ -5351,6 +5356,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
+
 		//print " RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) {
 			$amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
@@ -5375,9 +5381,12 @@ function price2num($amount, $rounding = '', $option = 0)
 		if ($thousand != ',' && $thousand != '.') {
 			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
 		}
+
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
+
+		$amount = preg_replace('/[^0-9\-\.]/', '', $amount);	// Clean non numeric chars (so it clean some UTF8 spaces for example.
 	}
 
 	return $amount;
@@ -8076,7 +8085,7 @@ function verifCond($strRights)
 
 	//print $strRights."<br>\n";
 	$rights = true;
-	if ($strRights != '') {
+	if (isset($strRights) && $strRights !== '') {
 		$str = 'if(!('.$strRights.')) { $rights = false; }';
 		dol_eval($str); // The dol_eval must contains all the global $xxx used into a condition
 	}

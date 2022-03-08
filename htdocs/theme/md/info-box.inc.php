@@ -28,7 +28,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 ?>
 
 .customer-back {
-	background-color: #99a17d !important;
+	background-color: #65953d !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;
@@ -56,15 +56,11 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-action{
 	<?php echo $prefix; ?>color: #a47080  !important;
 }
-.bg-infobox-propal,
-.bg-infobox-facture,
-.bg-infobox-commande{
-	<?php echo $prefix; ?>color: #99a17d  !important;
+.bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
+	<?php echo $prefix; ?>color: #65953d !important;
 }
-.bg-infobox-supplier_proposal,
-.bg-infobox-invoice_supplier,
-.bg-infobox-order_supplier{
-	<?php echo $prefix; ?>color: #599caf  !important;
+.bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
+	<?php echo $prefix; ?>color: #599caf !important;
 }
 .bg-infobox-contrat, .bg-infobox-ticket{
 	<?php echo $prefix; ?>color: #46a676  !important;
@@ -92,16 +88,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .infobox-action{
 	color: #a47080 !important;
 }
-.infobox-propal,
-.infobox-facture,
-.infobox-commande{
-	color: #99a17d !important;
+/* Color for customer object */
+.infobox-propal:not(.pictotitle):not(.error),
+.infobox-facture:not(.pictotitle):not(.error),
+.infobox-commande:not(.pictotitle):not(.error) {
+	color: #65953d !important;
 }
-.infobox-supplier_proposal,
-.infobox-invoice_supplier,
-.infobox-order_supplier{
+/* Color for vendor object */
+.infobox-supplier_proposal:not(.pictotitle):not(.error),
+.infobox-invoice_supplier:not(.pictotitle):not(.error),
+.infobox-order_supplier:not(.pictotitle):not(.error) {
 	color: #599caf !important;
 }
+
 .infobox-contrat, .infobox-ticket{
 	color: #46a676 !important;
 }

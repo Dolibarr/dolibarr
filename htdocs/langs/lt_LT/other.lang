@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Only 1 field is currently possible as X-Axis. Onl
 AtLeastOneMeasureIsRequired=At least 1 field for measure is required
 AtLeastOneXAxisIsRequired=At least 1 field for X-Axis is required
 LatestBlogPosts=Latest Blog Posts
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Sales order validated
 Notify_ORDER_SENTBYMAIL=Sales order sent by mail
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Purchase order sent by email
@@ -291,3 +294,7 @@ PopuCom=Products/Services by popularity in Orders
 ProductStatistics=Products/Services Statistics
 NbOfQtyInOrders=Qty in orders
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Uždaryti

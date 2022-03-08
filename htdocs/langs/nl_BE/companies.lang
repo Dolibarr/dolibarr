@@ -17,7 +17,6 @@ NatureOfThirdParty=Aard van derden
 StateShort=Staat
 PhoneShort=Telefoonnummer
 No_Email=Weiger bulk e-mailings
-VATIsUsedWhenSelling=Dit bepaalt of deze derde een BTW omvat of niet wanneer hij een factuur aan zijn eigen klanten maakt
 CopyAddressFromSoc=Adres kopiëren van gegevens van derden
 ThirdpartyNotCustomerNotSupplierSoNoRef=Derden noch klant, noch verkoper, geen beschikbare verwijzende objecten
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Derden noch klant, noch verkoper, kortingen zijn niet beschikbaar

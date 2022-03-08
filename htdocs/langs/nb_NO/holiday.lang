@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=Fritekst på PDF
 WatermarkOnDraftHolidayCards=Vannmerke på permisjonsutkast 
 HolidaysToApprove=Ferier til godkjenning
 NobodyHasPermissionToValidateHolidays=Ingen har tillatelse til å validere ferier
+HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
+XIsAUsualNonWorkingDay=%s is usualy a NON working day

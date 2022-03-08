@@ -250,6 +250,8 @@ if (empty($reshook)) {
 		// Remove a product line
 		$result = $object->deleteline($lineid);
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			/*$outputlangs = $langs;
 			$newlang = '';
@@ -527,9 +529,9 @@ if (empty($reshook)) {
 				if ($line->product_type < 9 && $line->total_ht != 0) { // Remove lines with product_type greater than or equal to 9 and no need to create discount if amount is null
 					$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
 
-					$amount_ht[$line->tva_tx] += $line->total_ht;
-					$amount_tva[$line->tva_tx] += $line->total_tva;
-					$amount_ttc[$line->tva_tx] += $line->total_ttc;
+					$amount_ht[$keyforvatrate] += $line->total_ht;
+					$amount_tva[$keyforvatrate] += $line->total_tva;
+					$amount_ttc[$keyforvatrate] += $line->total_ttc;
 					$multicurrency_amount_ht[$keyforvatrate] += $line->multicurrency_total_ht;
 					$multicurrency_amount_tva[$keyforvatrate] += $line->multicurrency_total_tva;
 					$multicurrency_amount_ttc[$keyforvatrate] += $line->multicurrency_total_ttc;
@@ -2412,7 +2414,10 @@ if ($action == 'create') {
 			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
 			$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
 			$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaye - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
-			$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+			// Code to fix case of corrupted data
+			if ($resteapayer == 0 && $multicurrency_resteapayer != 0) {
+				$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+			}
 		}
 
 		if ($object->paye) {

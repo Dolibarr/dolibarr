@@ -2366,7 +2366,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 							}
 							if ($tmpshortlangcode != $shortlangcode) {
 								$xhtmllink = $domtree->createElement('xhtml:link', '');
-								$xhtmllink->setAttribute("rel", "alternante");
+								$xhtmllink->setAttribute("rel", "alternate");
 								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
 								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php'));
 								$url->appendChild($xhtmllink);

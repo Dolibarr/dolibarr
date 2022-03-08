@@ -341,7 +341,7 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_login) {
-	$sql .= natural_search('u.login', $search_login);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
 }
 if ($search_montant_ht) {
 	$sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);

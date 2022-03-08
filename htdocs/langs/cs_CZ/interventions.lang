@@ -64,5 +64,5 @@ InterLineDuration=Linka trvání intervence
 InterLineDesc=Linka popis intervence
 RepeatableIntervention=Šablona intervence
 ToCreateAPredefinedIntervention=Chcete-li vytvořit předdefinovaný nebo opakující se zásah, vytvořte společný zásah a převeďte jej na intervenční šablonu
-Reopen=Znovu otevřeno
 ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?
+GenerateInter=Generate intervention

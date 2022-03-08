@@ -343,6 +343,7 @@ if (empty($reshook)) {
 		$search_town = "";
 		$search_zip = "";
 		$search_state = "";
+		$search_region = "";
 		$search_country = '';
 		$search_email = '';
 		$search_phone = '';
@@ -492,7 +493,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
 if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
@@ -773,6 +774,9 @@ if ($search_url != '') {
 }
 if ($search_state != '') {
 	$param .= "&search_state=".urlencode($search_state);
+}
+if ($search_region != '') {
+	$param .= "&search_region=".urlencode($search_region);
 }
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode($search_country);
@@ -1321,7 +1325,7 @@ if (!empty($arrayfields['s.tva_intra']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 }
 if (!empty($arrayfields['customerorsupplier']['checked'])) {
-	print_liste_field_titre(''); // type of customer
+	print_liste_field_titre($arrayfields['customerorsupplier']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center '); // type of customer
 }
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 	print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1332,7 +1336,6 @@ if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 if (!empty($arrayfields['s2.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER["PHP_SELF"], "s2.nom", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields

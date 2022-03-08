@@ -657,8 +657,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 			// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 			$objecttmp->socid = $cmd->socid;
 			$objecttmp->type = $objecttmp::TYPE_STANDARD;
-			$objecttmp->cond_reglement_id	= ($cmd->cond_reglement_id || $cmd->thirdparty->cond_reglement_id);
-			$objecttmp->mode_reglement_id	= ($cmd->mode_reglement_id || $cmd->thirdparty->mode_reglement_id);
+			$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
+			$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
 
 			$objecttmp->fk_project = $cmd->fk_project;
 			$objecttmp->multicurrency_code = $cmd->multicurrency_code;
@@ -1298,6 +1298,12 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				continue;
 			}
 
+			if ($objectclass == 'Holiday' && ! in_array($objecttmp->statut, array(Holiday::STATUS_DRAFT, Holiday::STATUS_CANCELED, Holiday::STATUS_REFUSED))) {
+				$nbignored++;
+				$resaction .= '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
+				continue;
+			}
+
 			if ($objectclass == "Task" && $objecttmp->hasChildren() > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET fk_task_parent = 0 WHERE fk_task_parent = ".((int) $objecttmp->id);
 				$res = $db->query($sql);
@@ -1331,8 +1337,10 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	if (!$error) {
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
+		} elseif ($nbok > 0) {
+			setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
 		} else {
-			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+			setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {

@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Použijte externí/absolutní odkaz 
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Zvolte, zda se má odkazovaná stránka otevřít na aktuální kartě nebo na nové kartě
 BookmarksManagement=Záložky řízení
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

@@ -1963,6 +1963,12 @@ class Categorie extends CommonObject
 		if ($type == 'bank_account') {
 			$type = 'account';
 		}
+		if ($type == 'customer') {
+			$type = 'societe';
+		}
+		if ($type == 'supplier') {
+			$type = 'fournisseur';
+		}
 
 		if (empty($searchList) && !is_array($searchList)) {
 			return "";

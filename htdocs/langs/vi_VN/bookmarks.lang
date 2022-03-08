@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Sử dụng liên kết ngoài / tuy
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Chọn nếu trang được liên kết sẽ mở trong tab hiện tại hoặc tab mới
 BookmarksManagement=Quản lý dấu trang
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

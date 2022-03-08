@@ -261,7 +261,7 @@ class Ldap
 						}
 						// Try in anonymous
 						if (!$this->bind) {
-							dol_syslog(get_class($this)."::connect_bind try bind on ".$host, LOG_DEBUG);
+							dol_syslog(get_class($this)."::connect_bind try bind anonymously on ".$host, LOG_DEBUG);
 							$result = $this->bind();
 							if ($result) {
 								$this->bind = $this->result;
@@ -301,7 +301,8 @@ class Ldap
 	 */
 	public function close()
 	{
-		if ($this->connection && !@ldap_close($this->connection)) {
+		$r_type = get_resource_type($this->connection);
+		if ($this->connection && ($r_type === "Unknown" || !@ldap_close($this->connection))) {
 			return false;
 		} else {
 			return true;

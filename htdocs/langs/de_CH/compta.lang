@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
+OptionModeTrue=Option Eingang-Ausgang
 FeatureIsSupportedInInOutModeOnly=Dieses Feautre ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
 PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch mit keinem Geschäftspartner verbunden
 Balance=Bilanz
@@ -19,12 +20,17 @@ NoWaitingChecks=Keine Schecks warten auf Einlösung.
 CalcModeVATDebt=Modus <b>%s Mwst. auf Engagement Rechnungslegung %s</b>.
 CalcModeLT2Rec=Modus <b>%sIRPF aufLieferantenrechnungen%s</b>
 LT2ReportByCustomersES=Bericht von Geschäftspartner EKSt.
+VATReportByThirdParties=Sales tax report by third party
 VATReportByCustomersInInputOutputMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden
-SeeVATReportInInputOutputMode=Siehe <b>%sMwSt.-Einnahmen%s</b>-Bericht für eine standardmässige Berechnung
-SeeVATReportInDueDebtMode=Siehe <b>%sdynamischen MwSt.%s</b>-Bericht für eine Berechnung mit dynamischer Option
 ThirdPartyMustBeEditAsCustomer=Geschäftspartner muss als Kunde definiert werden
 Pcg_type=PCG Typ
 Pcg_subtype=PCG Subtyp
 InvoiceLinesToDispatch=versandbereite Rechnungszeilen
 CalculationRuleDesc=Zur Berechnung der Gesamt-MwSt. gibt es zwei Methoden: <br>Methode 1 rundet die Steuer in jeder Zeile und addiert zum Schluss. <br>Methode 2 summiert alle Steuer-Zeilen und rundet am Ende. <br>Das endgültige Ergebnis kann sich in wenigen Cent unterscheiden. Standardmodus ist <b>Modus %s.</b>
 LinkedFichinter=Mit einem Eingriff verknüpfen
+InvoiceLate30Days =Invoices late (> 30 days)
+InvoiceLate15Days =Invoices late (15 to 30 days)
+InvoiceLateMinus15Days =Invoices late (< 15 days)
+InvoiceNotLate =To be collected (< 15 days)
+InvoiceNotLate15Days =To be collected (15 to 30 days)
+InvoiceNotLate30Days =To be collected (> 30 days)

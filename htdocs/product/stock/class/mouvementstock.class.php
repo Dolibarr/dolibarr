@@ -140,7 +140,7 @@ class MouvementStock extends CommonObject
 	 *	@param		int				$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string			$label				Label of stock movement
 	 *	@param		string			$inventorycode		Inventory code
-	 *	@param		string			$datem				Force date of movement
+	 *	@param		integer|string	$datem				Force date of movement
 	 *	@param		integer|string	$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		integer|string	$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		string			$batch				batch number
@@ -428,7 +428,7 @@ class MouvementStock extends CommonObject
 			$sql .= " datem, fk_product, batch, eatby, sellby,";
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ";
+			$sql .= " VALUES ('".$this->db->idate($this->datem)."', ".$this->product_id.", ";
 			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
@@ -755,19 +755,19 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Decrease stock for product and subproducts
 	 *
-	 * 	@param 		User	$user			    Object user
-	 * 	@param		int		$fk_product		    Id product
-	 * 	@param		int		$entrepot_id	    Warehouse id
-	 * 	@param		int		$qty			    Quantity
-	 * 	@param		int		$price			    Price
-	 * 	@param		string	$label			    Label of stock movement
-	 * 	@param		string	$datem			    Force date of movement
-	 *	@param		integer	$eatby			    eat-by date
-	 *	@param		integer	$sellby			    sell-by date
-	 *	@param		string	$batch			    batch number
-	 * 	@param		int		$id_product_batch	Id product_batch
-	 *  @param      string  $inventorycode      Inventory code
-	 * 	@return		int						    <0 if KO, >0 if OK
+	 * 	@param 		User			$user			    Object user
+	 * 	@param		int				$fk_product		    Id product
+	 * 	@param		int				$entrepot_id	    Warehouse id
+	 * 	@param		int				$qty			    Quantity
+	 * 	@param		int				$price			    Price
+	 * 	@param		string			$label			    Label of stock movement
+	 * 	@param		integer|string	$datem			    Force date of movement
+	 *	@param		integer			$eatby			    eat-by date
+	 *	@param		integer			$sellby			    sell-by date
+	 *	@param		string			$batch			    batch number
+	 * 	@param		int				$id_product_batch	Id product_batch
+	 *  @param      string  		$inventorycode      Inventory code
+	 * 	@return		int								    <0 if KO, >0 if OK
 	 */
 	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '')
 	{
@@ -790,7 +790,7 @@ class MouvementStock extends CommonObject
 	 *	@param		integer|string	$eatby			     eat-by date
 	 *	@param		integer|string	$sellby			     sell-by date
 	 *	@param		string			$batch			     batch number
-	 * 	@param		string			$datem			     Force date of movement
+	 * 	@param		integer|string	$datem			     Force date of movement
 	 * 	@param		int				$id_product_batch    Id product_batch
 	 *  @param      string			$inventorycode       Inventory code
 	 *	@return		int								     <0 if KO, >0 if OK
@@ -803,28 +803,6 @@ class MouvementStock extends CommonObject
 
 		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
 	}
-
-
-	// /**
-	//  * Return nb of subproducts lines for a product
-	//  *
-	//  * @param      int		$id				Id of product
-	//  * @return     int						<0 if KO, nb of subproducts if OK
-	//  * @deprecated A count($product->getChildsArbo($id,1)) is same. No reason to have this in this class.
-	//  */
-	// public function nbOfSubProducts($id)
-	// {
-	// 	$nbSP=0;
-
-	// 	$resql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_association";
-	// 	$resql.= " WHERE fk_product_pere = ".((int) $id);
-	// 	if ($this->db->query($resql))
-	// 	{
-	// 		$obj=$this->db->fetch_object($resql);
-	// 		$nbSP=$obj->nb;
-	// 	}
-	// 	return $nbSP;
-	// }
 
 	/**
 	 * Count number of product in stock before a specific date
@@ -864,7 +842,9 @@ class MouvementStock extends CommonObject
 	 */
 	private function createBatch($dluo, $qty)
 	{
-		global $user;
+		global $user, $langs;
+
+		$langs->load('productbatch');
 
 		$pdluo = new Productbatch($this->db);
 
@@ -875,7 +855,7 @@ class MouvementStock extends CommonObject
 			$result = $pdluo->fetch($dluo);
 			if (empty($pdluo->id)) {
 				// We didn't find the line. May be it was deleted before by a previous move in same transaction.
-				$this->error = 'Error. You ask a move on a record for a serial that does not exists anymore. May be you take the same serial on same warehouse several times in same shipment or it was used by another shipment. Remove this shipment and prepare another one.';
+				$this->error = $langs->trans('CantMoveNonExistantSerial');
 				$this->errors[] = $this->error;
 				$result = -2;
 			}

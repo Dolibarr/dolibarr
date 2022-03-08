@@ -169,7 +169,7 @@ if ($action == 'create') {
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste = array(0=>$langs->trans("ReplaceWindow"), 1=>$langs->trans("OpenANewWindow"));
-	print $form->selectarray('target', $liste, 1);
+	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOST('target', 'int') : 1);
 	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
 
 	// Owner

@@ -729,7 +729,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';

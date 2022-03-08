@@ -89,4 +89,11 @@ IdProposal=ID del pressupost
 IdProduct=ID de producte
 PrParentLine=Línia de pressupost origen
 LineBuyPriceHT=Preu de compra sense impostos per línia
-
+SignPropal=Accept proposal
+RefusePropal=Refuse proposal
+Sign=Sign
+PropalAlreadySigned=Proposal already accepted
+PropalAlreadyRefused=Proposal already refused
+PropalSigned=Proposal accepted
+PropalRefused=Proposal refused
+ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?

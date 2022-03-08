@@ -206,7 +206,7 @@ MigrationUserPhotoPath=Lietotāju fotoattēlu migrēšana
 MigrationFieldsSocialNetworks=Lietotāju lauku migrācija sociālajos tīklos (%s)
 MigrationReloadModule=Reload module %s
 MigrationResetBlockedLog=Atjaunot moduli BlockedLog par v7 algoritmu
-MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
+MigrationImportOrExportProfiles=Importa vai eksporta profilu migrēšana (%s)
 ShowNotAvailableOptions=Parādīt nepieejamās iespējas
 HideNotAvailableOptions=Slēpt nepieejamās iespējas
 ErrorFoundDuringMigration=Migrēšanas laikā tika ziņots par kļūdu (-ēm), tāpēc nākamais solis nav pieejams. Lai ignorētu kļūdas, varat <a href="%s"> noklikšķināt šeit </a>, bet lietojumprogramma vai dažas funkcijas var nedarboties pareizi, līdz kļūdas nav atrisinātas.

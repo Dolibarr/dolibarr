@@ -2483,7 +2483,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
-		if ($fuser->rights->categorie->{$lire}) {
+		if ($fuser->rights->categorie->{$lire} || $fuser->rights->takepos->run) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->categorie->multidir_output[$entity].'/'.$original_file;
@@ -2660,7 +2660,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
 				$tmptask->fetch('', $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;

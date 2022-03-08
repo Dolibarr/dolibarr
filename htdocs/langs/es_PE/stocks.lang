@@ -2,13 +2,12 @@
 MovementId=ID de Movimiento
 StockMovementForId=ID de Movimiento %d
 ListMouvementStockProject=Lista de movimientos de stock asociados al proyecto
-WarehouseAskWarehouseOnThirparty=Set a warehouse on third-party
+WarehouseAskWarehouseDuringOrder=Set a warehouse on Sales Orders
 QtyDispatchedShort=Cant. despachada
 MassMovement=Movimiento masivo
 StockMovementRecorded=Movimiento de stock grabado
 MovementLabel=Etiqueta de movimiento
 MovementCorrectStock=Corrección de stock del producto %s
-OpenInternal=Open only for internal actions
 inventoryEdit=Editar
 AddProduct=Agregar
 ListInventory=Lista

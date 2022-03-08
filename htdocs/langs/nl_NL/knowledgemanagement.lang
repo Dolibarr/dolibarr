@@ -37,15 +37,7 @@ About = Over
 KnowledgeManagementAbout = Over Kennis Management
 KnowledgeManagementAboutPage = Over Kennis Management pagina
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Kennis Management
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = Kennis basis
 ListKnowledgeRecord = Lijst met artikelen
 NewKnowledgeRecord = Nieuw artikel
@@ -53,3 +45,6 @@ ValidateReply = Valideer oplossing
 KnowledgeRecords = Lidwoord
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extravelden voor Artikel
+GroupOfTicket=Groep van tickets
+YouCanLinkArticleToATicketCategory=Je kunt een artikel linken naar een ticket groep (dan wordt dit artikel als suggestie gegeven bij een nieuwe ticket)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

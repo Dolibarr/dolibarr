@@ -43,8 +43,6 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'web
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$search_status = GETPOST('search_status');
-
 // Security check
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 if ($user->socid) {
@@ -159,7 +157,7 @@ if (empty($reshook)) {
 	$objectlabel = 'WebsiteAccount';
 	$permissiontoread = $user->rights->societe->lire;
 	$permissiontodelete = $user->rights->societe->supprimer;
-	$uploaddir = $conf->societe->dir_output;
+	$uploaddir = $conf->societe->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

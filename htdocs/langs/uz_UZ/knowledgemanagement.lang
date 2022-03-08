@@ -47,3 +47,4 @@ KnowledgeRecord = Maqola
 KnowledgeRecordExtraFields = Maqola uchun qo'shimcha joylar
 GroupOfTicket=Chiptalar guruhi
 YouCanLinkArticleToATicketCategory=Siz maqolani chiptalar guruhiga bog'lashingiz mumkin (shuning uchun maqola yangi chiptalarni saralash paytida taklif qilinadi)
+SuggestedForTicketsInGroup=Guruh bo'lganda chiptalar taklif etiladi

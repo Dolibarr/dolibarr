@@ -170,6 +170,8 @@ if ($action == 'validatehistory') {
 	} else {
 		$num_lines = $db->num_rows($result);
 
+		$facture_static = new Facture($db);
+
 		$isSellerInEEC = isInEEC($mysoc);
 
 		$i = 0;
@@ -210,6 +212,18 @@ if ($action == 'validatehistory') {
 					$objp->code_sell_t = $objp->company_code_sell;
 					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
 					$suggestedaccountingaccountfor = '';
+				}
+			}
+
+			// Manage Deposit
+			if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT)) {
+				if ($objp->description == "(DEPOSIT)" || $objp->ftype == $facture_static::TYPE_DEPOSIT) {
+					$accountdeposittoventilated = new AccountingAccount($db);
+					$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+					$objp->code_sell_l = $accountdeposittoventilated->ref;
+					$objp->code_sell_p = '';
+					$objp->code_sell_t = '';
+					$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
 				}
 			}
 
@@ -389,6 +403,7 @@ if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
+$sql .= ' ORDER BY aa.account_number';
 
 dol_syslog('htdocs/accountancy/customer/index.php');
 $resql = $db->query($sql);
@@ -506,16 +521,23 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 			print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 		}
 		print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
-
 		$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
 		for ($i = 1; $i <= 12; $i++) {
 			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 			if ($j > 12) {
 				$j -= 12;
 			}
-			$sql .= "  SUM(".$db->ifsql('MONTH(f.datef)='.$j, '(fd.total_ht-(fd.qty * fd.buy_price_ht))', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+			$sql .= '
+			SUM('.$db->ifsql('MONTH(f.datef)='.$j,
+						' ('.
+							$db->ifsql('fd.total_ht < 0',
+							' (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))',
+								'  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))'
+							  ).')',
+						 0).') AS month'.str_pad($j, 2, '0', STR_PAD_LEFT).',';
 		}
 		$sql .= "  SUM((fd.total_ht-(fd.qty * fd.buy_price_ht))) as total";
+
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 		$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 		$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
@@ -532,7 +554,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		} else {
 			$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.", ".Facture::TYPE_REPLACEMENT.", ".Facture::TYPE_CREDIT_NOTE.", ".Facture::TYPE_DEPOSIT.", ".Facture::TYPE_SITUATION.")";
 		}
-
 		dol_syslog('htdocs/accountancy/customer/index.php');
 		$resql = $db->query($sql);
 		if ($resql) {

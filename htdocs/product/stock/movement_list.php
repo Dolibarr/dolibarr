@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -543,7 +543,7 @@ if ($search_warehouse != '' && $search_warehouse != '-1') {
 	$sql .= natural_search('e.rowid', $search_warehouse, 2);
 }
 if (!empty($search_user)) {
-	$sql .= natural_search('u.login', $search_user);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 }
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);
@@ -1130,6 +1130,24 @@ if ($resql) {
 		$userstatic->email = $objp->user_email;
 		$userstatic->statut = $objp->user_status;
 
+		// Multilangs
+		if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+			// TODO Use a cache
+			$sql = "SELECT label";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+			$sql .= " WHERE fk_product=".$objp->rowid;
+			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " LIMIT 1";
+
+			$result = $db->query($sql);
+			if ($result) {
+				$objtp = $db->fetch_object($result);
+				if (!empty($objtp->label)) {
+					$objp->produit = $objtp->label;
+				}
+			}
+		}
+
 		$productstatic->id = $objp->rowid;
 		$productstatic->ref = $objp->product_ref;
 		$productstatic->label = $objp->produit;
@@ -1163,10 +1181,10 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
-			print '<td>';
+			print '<td class="nowraponall">';
 			print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 			print $objp->mid;
-			print '</td>'; // This is primary not movement id
+			print '</td>'; // This is primary key not movement ref
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date

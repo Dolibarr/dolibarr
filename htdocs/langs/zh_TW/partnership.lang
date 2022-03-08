@@ -58,6 +58,7 @@ ManagePartnership=管理合作夥伴
 BacklinkNotFoundOnPartnerWebsite=在合作夥伴網站上找不到反向連結
 ConfirmClosePartnershipAsk=您確定要取消此合作關係嗎？
 PartnershipType=合作夥伴類型
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
@@ -76,6 +77,10 @@ YourPartnershipWillSoonBeCanceledContent=我們通知您，您的合作夥伴關
 YourPartnershipRefusedContent=我們通知您，您的合作請求已被拒絕。
 YourPartnershipAcceptedContent=我們通知您，您的合作請求已被接受。
 YourPartnershipCanceledContent=我們通知您，您的合作夥伴關係已被取消。
+
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=拒絕原因
 
 #
 # Status

@@ -182,3 +182,4 @@ BankColorizeMovementName2=لون الخلفية لحركة الائتمان
 IfYouDontReconcileDisableProperty=إذا لم تقم بإجراء التسويات البنكية على بعض الحسابات المصرفية ، فقم بتعطيل الخاصية "%s" عليها لإزالة هذا التحذير.
 NoBankAccountDefined=لم يتم تحديد حساب مصرفي
 NoRecordFoundIBankcAccount=لا يوجد سجل في الحساب المصرفي. عادةً ما يحدث هذا عندما يتم حذف سجل يدويًا من قائمة المعاملات في الحساب المصرفي (على سبيل المثال أثناء تسوية الحساب المصرفي). سبب آخر هو أنه تم تسجيل الدفعة عندما تم تعطيل الوحدة النمطية "%s".
+AlreadyOneBankAccount=Already one bank account defined

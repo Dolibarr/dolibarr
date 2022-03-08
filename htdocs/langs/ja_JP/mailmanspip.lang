@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - mailmanspip
-MailmanSpipSetup=MailmanとSPIPモジュールのセットアップ
+MailmanSpipSetup=MailmanとSPIPモジュールの設定
 MailmanTitle=Mailmanメーリングリストシステム
 TestSubscribe=Mailmanリストへのサブスクリプションをテストするには
 TestUnSubscribe=Mailmanリストからの退会をテストするには

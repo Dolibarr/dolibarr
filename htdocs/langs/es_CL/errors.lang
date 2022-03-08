@@ -61,6 +61,7 @@ ErrorLDAPMakeManualTest=Se ha generado un archivo .ldif en el directorio %s. Int
 ErrorCantSaveADoneUserWithZeroPercentage=No se puede guardar una acción con &quot;estado no iniciado&quot; si el campo &quot;hecho por&quot; también se llena.
 ErrorPleaseTypeBankTransactionReportName=Ingrese el nombre del extracto bancario donde se debe informar la entrada (Formato AAAAMM o AAAAMMDD)
 ErrorRecordHasChildren=Error al eliminar el registro ya que tiene algunos registros secundarios.
+ErrorRecordHasAtLeastOneChildOfType=Object %s has at least one child of type %s
 ErrorRecordIsUsedCantDelete=No se puede borrar el registro. Ya está usado o incluido en otro objeto.
 ErrorModuleRequireJavascript=Javascript no debe deshabilitarse para que esta característica funcione. Para activar / desactivar Javascript, vaya al menú Inicio-> Configuración-> Pantalla.
 ErrorPasswordsMustMatch=Ambas contraseñas mecanografiadas deben coincidir

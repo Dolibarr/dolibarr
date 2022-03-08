@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=Texte libre sur PDF
 WatermarkOnDraftHolidayCards=Filigranes sur les demandes de congés brouillons
 HolidaysToApprove=Vacances à approuver
 NobodyHasPermissionToValidateHolidays=Aucun utilisateur ne dispose des permissions pour valider les demandes de congés
+HolidayBalanceMonthlyUpdate=Mise à jour mensuelle du solde des congés
+XIsAUsualNonWorkingDay=%s est généralement un jour NON ouvrable

@@ -132,3 +132,5 @@ FreeLegalTextOnHolidays=Vrije tekst op PDF
 WatermarkOnDraftHolidayCards=Watermerken op ontwerp verlofaanvragen
 HolidaysToApprove=Vakanties goed te keuren
 NobodyHasPermissionToValidateHolidays=Niemand heeft toestemming om vakanties te valideren
+HolidayBalanceMonthlyUpdate=Maandelijkse update van de vrije dagen
+XIsAUsualNonWorkingDay=%s is usualy a NON working day

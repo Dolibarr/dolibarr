@@ -900,7 +900,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$id = $socid;
-	$upload_dir = $conf->societe->dir_output;
+	$upload_dir = $conf->societe->multidir_output[$object->entity];
 	$permissiontoadd = $user->rights->societe->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -1613,13 +1613,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print img_picto('', 'category').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 			//}
-
-			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
-				print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
-				print img_picto('', 'category').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
-				print "</td></tr>";
-			}
 
 			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
 				print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
@@ -3006,7 +2999,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Presend form
 		$modelmail = 'thirdparty';
 		$defaulttopic = 'Information';
-		$diroutput = $conf->societe->dir_output;
+		$diroutput = $conf->societe->multidir_output[$object->entity];
 		$trackid = 'thi'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

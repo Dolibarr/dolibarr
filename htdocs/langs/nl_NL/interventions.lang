@@ -64,5 +64,5 @@ InterLineDuration=Duur regel interventie
 InterLineDesc=Opmerking regel interventie
 RepeatableIntervention=Sjabloon voor interventie
 ToCreateAPredefinedIntervention=Als u een vooraf gedefinieerde of terugkerende interventie wilt maken, maakt u een gemeenschappelijke interventie en converteert u deze naar een interventiesjabloon
-Reopen=Heropenen
 ConfirmReopenIntervention=Weet u zeker dat u de interventie <b>%s</b> weer wilt openen?
+GenerateInter=Genereer interventie

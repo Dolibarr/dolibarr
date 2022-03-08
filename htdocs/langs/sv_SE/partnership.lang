@@ -22,7 +22,7 @@ PartnershipDescriptionLong= Partnerskapshanteringsmodul
 
 AddPartnership=Lägg till partnerskap
 CancelPartnershipForExpiredMembers=Partnerskap: Avbryt partnerskap med inaktiva abonnemang
-PartnershipCheckBacklink=Partnership: Check referring backlink
+PartnershipCheckBacklink=Partnerskap: Kontrollera hänvisningslänk
 
 #
 # Menu
@@ -36,11 +36,11 @@ ListOfPartnerships=Lista över partnerskap
 PartnershipSetup=Partnerskapsupplägg
 PartnershipAbout=Om partnerskap
 PartnershipAboutPage=Om partnerskapssidan
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
+partnershipforthirdpartyormember=Partnerstatus måste ställas in på "tredje part" eller "medlem"
 PARTNERSHIP_IS_MANAGED_FOR=Partnerskap hanterad för
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
+PARTNERSHIP_BACKLINKS_TO_CHECK=Bakåtlänkar att kontrollera
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dagar innan partnerskap avbryts när ett abonnemang har löpt ut
-ReferingWebsiteCheck=Check of website referring
+ReferingWebsiteCheck=Kontroll av webbplatsens hänvisning
 ReferingWebsiteCheckDesc=Du kan aktivera en funktion för att kontrollera om din partner har länkat tillbaka till er hemsida via deras egen hemsida.
 
 #
@@ -48,16 +48,17 @@ ReferingWebsiteCheckDesc=Du kan aktivera en funktion för att kontrollera om din
 #
 DeletePartnership=Ta bort partnerskap
 PartnershipDedicatedToThisThirdParty=Partnerskap dedikerat till denna kund/leverantör
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+PartnershipDedicatedToThisMember=Partnerskap tillägnad denna medlem
 DatePartnershipStart=Startdatum
 DatePartnershipEnd=Slutdatum
 ReasonDecline=Avslagsanledning
 ReasonDeclineOrCancel=Avslagsanledning
 PartnershipAlreadyExist=Partnerskap finns redan
 ManagePartnership=Hantera partnerskap
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
+BacklinkNotFoundOnPartnerWebsite=Backlink hittades inte på partnerwebbplatsen
 ConfirmClosePartnershipAsk=Är du säker på att du vill avbryta detta partnerskap?
 PartnershipType=Partnerskapstyp
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
@@ -72,16 +73,20 @@ YourPartnershipRefusedTopic=Partnerskap nekat
 YourPartnershipAcceptedTopic=Partnerskap accepterat
 YourPartnershipCanceledTopic=Partnerskap avbrutet
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
+YourPartnershipWillSoonBeCanceledContent=Vi informerar dig om att ditt partnerskap snart kommer att avbrytas (Backlink hittades inte)
 YourPartnershipRefusedContent=Vi vill informera dig om att parnterskapsförfrågan har blivit nekad.
 YourPartnershipAcceptedContent=Vi vill informera dig om att partnerskapsförfrågan har blivit accepterad
 YourPartnershipCanceledContent=Vi vill informera dig om att partnerskapsförfrågan har blivit avbruten
+
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Avslagsanledning
 
 #
 # Status
 #
 PartnershipDraft=Utkast
-PartnershipAccepted=Accepted
+PartnershipAccepted=Accepterad
 PartnershipRefused=Refused
 PartnershipCanceled=Annullerad
 PartnershipManagedFor=Partnerutrymme

@@ -10,7 +10,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Geef de prefix voor het bestand
 Journals=Dagboeken
 JournalFinancial=Financiële dagboeken
 BackToChartofaccounts=Geef kaart van accounts terug
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 Selectchartofaccounts=Selecteer actieve grafieken van accounts
 Addanaccount=Voeg een boekhoudkundige rekening toe
 AccountAccounting=Boekhoudkundige rekening

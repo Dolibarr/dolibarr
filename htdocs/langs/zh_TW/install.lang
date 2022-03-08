@@ -203,10 +203,10 @@ MigrationRemiseExceptEntity=更新llx_societe_remise_except實體欄位數值
 MigrationUserRightsEntity=更新llx_user_rights實體欄位數值
 MigrationUserGroupRightsEntity=更新llx_usergroup_rights實體欄位數值
 MigrationUserPhotoPath=移轉用戶照片路徑
-MigrationFieldsSocialNetworks=移轉用戶領域社交網絡（%s）
+MigrationFieldsSocialNetworks=用戶社群網路欄位（%s）轉移
 MigrationReloadModule=重新載入模組%s
 MigrationResetBlockedLog=為v7 algorithm重置模組"被阻止的日誌(Blocked log)"
-MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
+MigrationImportOrExportProfiles=匯入或匯出設定的遷移(%s)
 ShowNotAvailableOptions=顯示不可用的選項
 HideNotAvailableOptions=隱藏不可用的選項
 ErrorFoundDuringMigration=在移轉過程中出現了錯誤，因此無法進行下一步。要忽略錯誤，可以<a href="%s">點擊此處</a> ，但是在解決錯誤之前，該應用程序或某些功能可能無法正常運行。

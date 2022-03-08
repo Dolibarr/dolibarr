@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Gunakan tautan eksternal/tautan abso
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Pilih jika halaman tautan harus terbuka di tab saat ini atau tab baru
 BookmarksManagement=Manajemen penanda
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined
