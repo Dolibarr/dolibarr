@@ -1419,7 +1419,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						data: {
 							action: "updateselectwarehousebybatch",
 							permissiontoproduce: <?php echo $permissiontoproduce ?>,
-							batch_id: $(this).val(),
+							batch: $(this).val(),
 							product_id: $("input[name='" + product_element_name + "']").val()
 						}
 					}).done(function (data) {

@@ -28,7 +28,7 @@ global $db, $langs;
 require '../../main.inc.php'; // Load $user and permissions
 
 $warehouse_id = GETPOST('warehouse_id', 'int');
-$batch_id = GETPOST('batch_id', 'int');
+$batch = GETPOST('batch', 'alphanohtml');
 $fk_product = GETPOST('product_id', 'int');
 $action = GETPOST('action', 'alphanohtml');
 $permissiontoproduce = GETPOST('permissiontoproduce', 'int');
@@ -61,7 +61,7 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 	$sql .= " JOIN " . MAIN_DB_PREFIX . "product_stock as ps on ps.rowid = pb.fk_product_stock";
 	$sql .= " JOIN " . MAIN_DB_PREFIX . "entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (" . getEntity('stock') . ")";
 	$sql .= " WHERE ps.fk_product = " .((int) $fk_product);
-	if ($batch_id > 0) $sql.= " AND pb.batch = '" . ((int) $batch_id) . "'";
+	if ($batch) $sql.= " AND pb.batch = '" . $batch . "'";
 	$sql .= " ORDER BY e.ref, pb.batch";
 
 	$resql = $db->query($sql);
