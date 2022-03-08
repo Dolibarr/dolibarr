@@ -1979,7 +1979,10 @@ class Product extends CommonObject
 				$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
 				$sql .= " pfp.packaging";
 				$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
-				$sql .= " WHERE pfp.fk_product = ".((int) $product_id);
+				$sql .= " WHERE 1 = 1";
+				if ($product_id > 0) {
+					$sql .= " AND pfp.fk_product = ".((int) $product_id);
+				}
 				if ($fourn_ref != 'none') {
 					$sql .= " AND pfp.ref_fourn = '".$this->db->escape($fourn_ref)."'";
 				}

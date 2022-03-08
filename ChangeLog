@@ -21,11 +21,12 @@ For developers:
 ---------------
 
 NEW: 
+
+
  
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * verifCond('stringtoevaluate') now return false when string contains a bad syntax content instead of true. 
-
-
+* The deprecated mdethod thirdparty_doc_create() has been removed. You can use the generateDocument() instead.
 
 
 
