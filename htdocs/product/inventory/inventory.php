@@ -516,7 +516,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 
-	print '<form id="formrecord" name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form id="formrecord" name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'?page='.$page.$paramwithsearch.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updateinventorylines">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
