@@ -1804,7 +1804,7 @@ class Product extends CommonObject
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
                 $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
                 $sql .= " WHERE 1 = 1";
-                if ($product_id > 0) { 
+                if ($product_id > 0) {
 					$sql .= " AND pfp.fk_product = ".((int) $product_id);
                 }
                 if ($fourn_ref != 'none') { $sql .= " AND pfp.ref_fourn = '".$fourn_ref."'";
