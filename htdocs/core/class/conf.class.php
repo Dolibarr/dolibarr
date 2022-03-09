@@ -165,7 +165,7 @@ class Conf
 
 	/**
 	 * Load setup values into conf object (read llx_const) for a specified entity
-	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
+	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setEntityValues is called.
 	 *
 	 * @param	DoliDB	$db			Database handler
 	 * @param	int		$entity		Entity to get
