@@ -90,8 +90,25 @@ class InterfaceNotification extends DolibarrTriggers
 	public function getListOfManagedEvents()
 	{
 		global $conf;
+		global $hookmanager;
+
+
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('notification'));
+
+		$parameters = array('arrayofnotifsupported'=>$arrayofnotifsupported);
+		$reshook = $hookmanager->executeHooks('notifsupported', $parameters);
+		if (empty($reshook)) {
+			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
+				$this->listofmanagedevents = array_merge($this->listofmanagedevents, $hookmanager->resArray['arrayofnotifsupported']);
+			}
+		}
 
 		$ret = array();
+
 
 		$sql = "SELECT rowid, code, label, description, elementtype";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
