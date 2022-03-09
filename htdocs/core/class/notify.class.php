@@ -375,7 +375,7 @@ class Notify
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		
+
 		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
 		$langs->load("other");
