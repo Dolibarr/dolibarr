@@ -69,7 +69,9 @@ class Notify
 		'ORDER_CREATE',
 		'ORDER_VALIDATE',
 		'PROPAL_VALIDATE',
+		'PROPAL_CLOSE_REFUSED',
 		'PROPAL_CLOSE_SIGNED',
+		'PROPAL_SENTBYMAIL',
 		'FICHINTER_VALIDATE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
@@ -80,7 +82,8 @@ class Notify
 		'EXPENSE_REPORT_APPROVE',
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
-		'ACTION_CREATE'
+		'ACTION_CREATE',
+		'FUNDING_SENTBYMAIL',
 	);
 
 	/**
@@ -577,6 +580,13 @@ class Notify
 								$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
+							default:
+								$object_type = $object->element;
+								$dir_output = $conf->$object_type->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, $object_type);
+								$template = $notifcode.'_TEMPLATE';
+								$labeltouse = $conf->global->$template;
+								$mesg = $outputlangs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$newref.' '.$dir_output;
+							break;
 						}
 
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -812,9 +822,14 @@ class Notify
 						$object_type = 'action';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 						break;
+					default:
+						$object_type = $object->element;
+						$dir_output = $conf->$object_type->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, $object_type);
+						$mesg = $langs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$newref;
+						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
-				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
+				$pdf_path = $dir_output."/".$ref.".pdf";
 				if (!dol_is_file($pdf_path)) {
 					// We can't add PDF as it is not generated yet.
 					$filepdf = '';
