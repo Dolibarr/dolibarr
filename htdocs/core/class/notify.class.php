@@ -71,7 +71,6 @@ class Notify
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_REFUSED',
 		'PROPAL_CLOSE_SIGNED',
-		'PROPAL_SENTBYMAIL',
 		'FICHINTER_VALIDATE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
@@ -83,7 +82,6 @@ class Notify
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
 		'ACTION_CREATE',
-		'FUNDING_SENTBYMAIL',
 	);
 
 	/**
@@ -358,17 +356,26 @@ class Notify
 		global $dolibarr_main_url_root;
 		global $action;
 
-		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
-			return 0;
-		}
-
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('notification'));
 
+
+		$reshook = $hookmanager->executeHooks('notifsupported');
+		if (empty($reshook)) {
+			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
+				Notify::$arrayofnotifsupported = array_merge(Notify::$arrayofnotifsupported, $hookmanager->resArray['arrayofnotifsupported']);
+			}
+		}
+
+		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		
 		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
 		$langs->load("other");
