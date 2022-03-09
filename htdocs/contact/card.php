@@ -570,7 +570,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// Confirm deleting contact
 	if ($user->rights->societe->contact->supprimer) {
 		if ($action == 'delete') {
-			$backtopage = DOL_URL_ROOT . '/contact/list.php';
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage ? '&backtopage='.$backtopage : ''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 		}
 	}
@@ -1524,7 +1523,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Delete
 			if ($user->rights->societe->contact->supprimer) {
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, $params);
+				$url = $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken();
+				$url.= '&backtopage='.urlencode(DOL_URL_ROOT . '/contact/list.php');
+				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $url, '', true, $params);
 			}
 		}
 
