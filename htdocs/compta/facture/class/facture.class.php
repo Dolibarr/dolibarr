@@ -5138,11 +5138,11 @@ class Facture extends CommonInvoice
 	public function willBeLastOfSameType()
 	{
 		// get date of last validated invoices of same type
-		$sql  = 'SELECT datef';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture';
-		$sql .= ' WHERE type = ' . (int) $this->type ;
-		$sql .= ' AND date_valid IS NOT NULL';
-		$sql .= ' ORDER BY datef DESC LIMIT 1';
+		$sql  = "SELECT datef";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql .= " WHERE type = " . (int) $this->type ;
+		$sql .= " AND date_valid IS NOT NULL";
+		$sql .= " ORDER BY datef DESC LIMIT 1";
 
 		$result = $this->db->query($sql);
 		if ($result) {
