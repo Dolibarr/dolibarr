@@ -570,6 +570,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// Confirm deleting contact
 	if ($user->rights->societe->contact->supprimer) {
 		if ($action == 'delete') {
+			$backtopage = DOL_URL_ROOT . '/contact/list.php';
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage ? '&backtopage='.$backtopage : ''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 		}
 	}
@@ -1480,13 +1481,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && $action != 'presend') {
-			$params = array(
-				'attr' => array(
-					'title' => '',
-					'class' => 'classfortooltip'
-				)
-			);
 			if (empty($user->socid)) {
+				$params = array(
+					'attr' => array(
+						'title' => '',
+						'class' => 'classfortooltip'
+					)
+				);
 				if (!empty($object->email)) {
 					$langs->load("mails");
 					print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
@@ -1497,6 +1498,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
+			$params = array(
+				'attr' => array(
+					'title' => '',
+					'class' => 'classfortooltip'
+				)
+			);
 			if ($user->rights->societe->contact->creer) {
 				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken(), '', true, $params);
 			}
