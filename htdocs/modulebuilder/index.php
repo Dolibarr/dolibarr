@@ -2815,7 +2815,7 @@ if ($module == 'initmodule') {
 										print '<td class="tdoverflowmax200">';
 										print '<input name="proparrayofkeyval" value="';
 										if (isset($proparrayofkeyval)) {
-											print dol_escape_htmltag(json_encode($proparrayofkeyval));
+											print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
 										}
 										print '">';
 										print '</input>';
@@ -2881,8 +2881,8 @@ if ($module == 'initmodule') {
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										if ($proparrayofkeyval) {
-											print '<span title="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
-											print dol_escape_htmltag(json_encode($proparrayofkeyval));
+											print '<span title="'.dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE)).'">';
+											print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
 											print '</span>';
 										}
 										print '</td>';
