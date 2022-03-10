@@ -549,7 +549,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Description
 		print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
-        print dol_htmlentitiesbr($object->description);
+		print dol_htmlentitiesbr($object->description);
 		print '</td></tr>';
 
 		print '</table>';
