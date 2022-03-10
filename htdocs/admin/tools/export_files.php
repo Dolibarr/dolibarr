@@ -137,6 +137,7 @@ $dirtocompress = basename($fulldirtocompress);
 
 if ($compression == 'zip') {
 	$file .= '.zip';
+
 	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\])/i';
 
 	//var_dump($fulldirtocompress);
