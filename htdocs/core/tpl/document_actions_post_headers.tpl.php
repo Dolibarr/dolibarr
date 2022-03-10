@@ -74,7 +74,7 @@ if ($action == 'deletefile') {
 		$langs->trans('ConfirmDeleteFile'),
 		'confirm_deletefile',
 		'',
-		0,
+		'',
 		1
 	);
 }

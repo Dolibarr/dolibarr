@@ -83,8 +83,8 @@ if ($search_status < -2) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -307,7 +307,7 @@ $memberstatic = new Adherent($db);
 
 $now = dol_now();
 
-if (!empty($search_categ) || !empty($catid)) {
+if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 	$sql = "SELECT DISTINCT";
 } else {
 	$sql = "SELECT";
@@ -336,7 +336,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
-if (!empty($search_categ) || !empty($catid)) {
+if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 	// We need this table joined to the select in order to filter by categ
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member";
 }
@@ -540,7 +540,7 @@ if ($search_login) {
 if ($search_email) {
 	$param .= "&search_email=".urlencode($search_email);
 }
-if ($search_categ) {
+if ($search_categ > 0 || $search_categ == -2) {
 	$param .= "&search_categ=".urlencode($search_categ);
 }
 if ($search_company) {
@@ -573,7 +573,7 @@ if ($search_phone_mobile != '') {
 if ($search_filter && $search_filter != '-1') {
 	$param .= "&search_filter=".urlencode($search_filter);
 }
-if ($search_status != "" && $search_status != Adherent::STATUS_DRAFT) {
+if ($search_status != "" && $search_status != -3) {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_type > 0) {

@@ -48,8 +48,8 @@ $socid = GETPOSTINT("socid");
 // if ($user->socid) $socid=$user->socid;
 
 $limit = GETPOSTISSET('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == - 1) {
 	$page = 0;
@@ -157,7 +157,7 @@ $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
 $sql .= " bk.credit, bk.montant, bk.sens, bk.code_journal, bk.piece_num, bk.lettering_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as bk";
-$sql .= " WHERE (bk.subledger_account =  '".$db->escape($object->code_compta)."' AND bk.numero_compte = '".$db->escape($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)."' )";
+$sql .= " WHERE (bk.subledger_account = '".$db->escape($object->code_compta)."' AND bk.numero_compte = '".$db->escape($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)."' )";
 
 /*
 if (dol_strlen($search_date_start) || dol_strlen($search_date_end)) {

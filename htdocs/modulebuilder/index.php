@@ -46,6 +46,9 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
+$sortfield=GETPOST('sortfield', 'alpha');
+$sortorder=GETPOST('sortorder', 'alpha');
+
 $module = GETPOST('module', 'alpha');
 $tab = GETPOST('tab', 'aZ09');
 $tabobj = GETPOST('tabobj', 'alpha');
@@ -742,9 +745,9 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 		// Dir for module
 		$diroflang = dol_buildpath($modulelowercase, 0);
 
-		if ($diroflang == $dirread.'/'.$modulelowercase) {
+		if ($diroflang == $dolibarr_main_document_root.'/'.$modulelowercase) {
 			// This is not a custom module, we force diroflang to htdocs root
-			$diroflang = $dirread;
+			$diroflang = $dolibarr_main_document_root;
 
 			$srcfile = $diroflang.'/langs/en_US/'.$modulelowercase.'.lang';
 			$destfile = $diroflang.'/langs/'.$newlangcode.'/'.$modulelowercase.'.lang';
@@ -767,7 +770,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 
 // remove/delete File
 if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
-	$relativefilename = dol_sanitizePathName(GETPOST('file', 'none'));
+	$relativefilename = dol_sanitizePathName(GETPOST('file', 'restricthtml'));
 	if ($relativefilename) {
 		$dirnametodelete = dirname($relativefilename);
 		$filetodelete = $dirins.'/'.$relativefilename;
@@ -2296,7 +2299,7 @@ if ($module == 'initmodule') {
 				print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print "</tr>\n";
 
-				if (is_array($dicts) && is_array($dicts['tabname'])) {
+				if (!empty($dicts) && is_array($dicts) && !empty($dicts['tabname']) && is_array($dicts['tabname'])) {
 					$i = 0;
 					$maxi = count($dicts['tabname']);
 					while ($i < $maxi) {
@@ -2778,25 +2781,25 @@ if ($module == 'initmodule') {
 									$propname = $propkey;
 									$proplabel = $propval['label'];
 									$proptype = $propval['type'];
-									$proparrayofkeyval = $propval['arrayofkeyval'];
+									$proparrayofkeyval = !empty($propval['arrayofkeyval'])?$propval['arrayofkeyval']:'';
 									$propnotnull = $propval['notnull'];
-									$propdefault = $propval['default'];
-									$propindex = $propval['index'];
-									$propforeignkey = $propval['foreignkey'];
+									$propdefault = !empty($propval['default'])?$propval['default']:'';
+									$propindex = !empty($propval['index'])?$propval['index']:'';
+									$propforeignkey = !empty($propval['foreignkey'])?$propval['foreignkey']:'';
 									$propposition = $propval['position'];
 									$propenabled = $propval['enabled'];
 									$propvisible = $propval['visible'];
-									$propnoteditable = $propval['noteditable'];
-									$propsearchall = $propval['searchall'];
-									$propisameasure = $propval['isameasure'];
-									$propcss = $propval['css'];
-									$propcssview = $propval['cssview'];
-									$propcsslist = $propval['csslist'];
-									$prophelp = $propval['help'];
-									$propshowoncombobox = $propval['showoncombobox'];
+									$propnoteditable = !empty($propval['noteditable'])?$propval['noteditable']:0;
+									$propsearchall = !empty($propval['searchall'])?$propval['searchall']:0;
+									$propisameasure = !empty($propval['isameasure'])?$propval['isameasure']:0;
+									$propcss = !empty($propval['css'])?$propval['css']:'';
+									$propcssview = !empty($propval['cssview'])?$propval['cssview']:'';
+									$propcsslist = !empty($propval['csslist'])?$propval['csslist']:'';
+									$prophelp = !empty($propval['help'])?$propval['help']:'';
+									$propshowoncombobox = !empty($propval['showoncombobox'])?$propval['showoncombobox']:0;
 									//$propdisabled=$propval['disabled'];
-									$propvalidate = $propval['validate'];
-									$propcomment = $propval['comment'];
+									$propvalidate = !empty($propval['validate'])?$propval['validate']:0;
+									$propcomment = !empty($propval['comment'])?$propval['comment']:'';
 
 									print '<tr class="oddeven">';
 

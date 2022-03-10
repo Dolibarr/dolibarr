@@ -134,6 +134,14 @@ if ($object->id > 0) {
 	}
 }
 
+$candelete = 0;
+if (!empty($user->rights->expensereport->supprimer)) {
+	$candelete = 1;
+}
+if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->rights->expensereport->write && in_array($object->fk_user_author, $childids)) {
+	$candelete = 1;
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -226,7 +234,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->supprimer) {
+	if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $candelete) {
 		$object = new ExpenseReport($db);
 		$result = $object->fetch($id);
 		$result = $object->delete($user);
@@ -1098,6 +1106,7 @@ if (empty($reshook)) {
 			$arrayoffiles = GETPOST('attachfile', 'array');
 			if (is_array($arrayoffiles) && !empty($arrayoffiles[0])) {
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+				$entityprefix = ($conf->entity != '1') ? $conf->entity.'/' : '';
 				$relativepath = 'expensereport/'.$object->ref.'/'.$arrayoffiles[0];
 				$ecmfiles = new EcmFiles($db);
 				$ecmfiles->fetch(0, '', $relativepath);
@@ -2093,8 +2102,23 @@ if ($action == 'create') {
 							print '</td>';
 						}
 
+						$titlealt = '';
+						if (!empty($conf->accounting->enabled)) {
+							require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+							$accountingaccount = new AccountingAccount($db);
+							$resaccountingaccount = $accountingaccount->fetch(0, $line->type_fees_accountancy_code, 1);
+							//$titlealt .= '<span class="opacitymedium">';
+							$titlealt .= $langs->trans("AccountancyCode").': ';
+							if ($resaccountingaccount > 0) {
+								$titlealt .= $accountingaccount->account_number;
+							} else {
+								$titlealt .= $langs->trans("NotFound");
+							}
+							//$titlealt .= '</span>';
+						}
+
 						// Type of fee
-						print '<td class="center">';
+						print '<td class="center" title="'.dol_escape_htmltag($titlealt).'">';
 						$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 						print $labeltype;
 						print '</td>';
@@ -2108,8 +2132,10 @@ if ($action == 'create') {
 
 						// Comment
 						print '<td class="left">'.dol_nl2br($line->comments).'</td>';
+
 						// VAT rate
 						print '<td class="right">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
+
 						// Unit price HT
 						print '<td class="right">';
 						if (!empty($line->value_unit_ht)) {
@@ -2250,7 +2276,7 @@ if ($action == 'create') {
 						}
 
 						print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
-						print '<script language="javascript">'."\n";
+						print '<script type="text/javascript">'."\n";
 						print '$(document).ready(function() {
         				        $( ".auploadnewfilenow" ).click(function() {
         				            jQuery(".truploadnewfilenow").toggle();
@@ -2405,7 +2431,7 @@ if ($action == 'create') {
 				}
 
 				print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
-				print '<script language="javascript">'."\n";
+				print '<script type="text/javascript">'."\n";
 				print '$(document).ready(function() {
 				        $( ".auploadnewfilenow" ).click(function() {
 							console.log("We click on toggle of auploadnewfilenow");
@@ -2719,7 +2745,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED) {
 		// Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
-	} elseif ($user->rights->expensereport->supprimer && $object->status != ExpenseReport::STATUS_CLOSED) {
+	} elseif ($candelete && $object->status != ExpenseReport::STATUS_CLOSED) {
 		// Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}

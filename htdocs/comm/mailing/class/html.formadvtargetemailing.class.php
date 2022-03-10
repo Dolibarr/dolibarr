@@ -230,7 +230,7 @@ class FormAdvTargetEmailing extends Form
 			$InfoFieldList = explode(":", $param_list [0]);
 
 			// 0 1 : tableName
-			// 1 2 : label field name Nom du champ contenant le libelle
+			// 1 2 : label field name 	Name of field that contains the label
 			// 2 3 : key fields name (if differ of rowid)
 			// 3 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 
@@ -304,7 +304,7 @@ class FormAdvTargetEmailing extends Form
 			if ($num) {
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					// If a translation exists, we use it, else we use the default label
 					$label = ($langs->trans("Civility".$obj->code) != "Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite != '-' ? $obj->civilite : ''));
 
 					$options_array[$obj->code] = $label;

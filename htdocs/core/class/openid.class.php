@@ -325,43 +325,6 @@ class SimpleOpenID
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * CURL_Request
-	 *
-	 * @param 	string	$url		URL
-	 * @param 	string	$method		Method
-	 * @param 	string	$params		Params
-	 * @return string
-	 */
-	public function CURL_Request($url, $method = "GET", $params = "")
-	{
-		// phpcs:enable
-		// Remember, SSL MUST BE SUPPORTED
-		if (is_array($params)) {
-			$params = $this->array2url($params);
-		}
-
-		$curl = curl_init($url.($method == "GET" && $params != "" ? "?".$params : ""));
-		@curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($curl, CURLOPT_HEADER, false);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_HTTPGET, ($method == "GET"));
-		curl_setopt($curl, CURLOPT_POST, ($method == "POST"));
-		if ($method == "POST") {
-			curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-		}
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($curl);
-
-		if (curl_errno($curl) == 0) {
-			$response;
-		} else {
-			$this->ErrorStore('OPENID_CURL', curl_error($curl));
-		}
-		return $response;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 * HTML2OpenIDServer
 	 *
 	 * @param string	$content	Content
@@ -371,6 +334,8 @@ class SimpleOpenID
 	{
 		// phpcs:enable
 		$get = array();
+
+		$matches1 = array(); $matches2 = array();
 
 		// Get details of their OpenID server and (optional) delegate
 		preg_match_all('/<link[^>]*rel=[\'"]openid.server[\'"][^>]*href=[\'"]([^\'"]+)[\'"][^>]*\/?>/i', $content, $matches1);
@@ -457,7 +422,7 @@ class SimpleOpenID
 		// phpcs:enable
 		$redirect_to = $this->GetRedirectURL();
 		if (headers_sent()) { // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
-			echo '<script language="JavaScript" type="text/javascript">window.location=\'';
+			echo '<script type="text/javascript">window.location=\'';
 			echo $redirect_to;
 			echo '\';</script>';
 		} else {	// Default Header Redirect
@@ -495,7 +460,15 @@ class SimpleOpenID
 		if ($openid_server == false) {
 			return false;
 		}
-		$response = $this->CURL_Request($openid_server, 'POST', $params);
+
+		if (is_array($params)) {
+			$params = $this->array2url($params);
+		}
+
+		$result = getURLContent($openid_server, 'POST', $params);
+
+		$response = $result['content'];
+
 		$data = $this->splitResponse($response);
 		if ($data['is_valid'] == "true") {
 			return true;

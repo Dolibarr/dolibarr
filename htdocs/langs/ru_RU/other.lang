@@ -258,6 +258,10 @@ PassEncoding=Кодировка пароля
 PermissionsAdd=Разрешения добавлены
 PermissionsDelete=Разрешения удалены
 YourPasswordMustHaveAtLeastXChars=Ваш пароль должен содержать не менее <strong>%s</strong> символов.
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Ваш пароль был успешно сброшен
 ApplicantIpAddress=IP-адрес заявителя
 SMSSentTo=SMS отправлено на %s
@@ -268,6 +272,7 @@ ProjectCreatedByEmailCollector=Проект создан сборщиком пи
 TicketCreatedByEmailCollector=Тикет создан сборщиком электронной почты из электронного адреса MSGID %s
 OpeningHoursFormatDesc=Используйте - для разделения часов открытия и закрытия.<br>Используйте пробел для ввода различных диапазонов.<br>Пример: 8-12 14-18
 SuffixSessionName=Суффикс имени сеанса
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Экспорт области

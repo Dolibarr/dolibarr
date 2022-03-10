@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -247,6 +248,10 @@ if (empty($reshook)) {
 				}
 				if ($element == 'propal') {
 					$element = 'comm/propal'; $subelement = 'propal';
+				}
+				if ($element == 'invoice' || $element == 'facture') {
+					$element = 'compta/facture';
+					$subelement = 'facture';
 				}
 
 				$object->origin    = $origin;
@@ -529,9 +534,9 @@ if (empty($reshook)) {
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
 			// ajout prix achat
-			$fk_fournprice = $_POST['fournprice'];
-			if (!empty($_POST['buying_price'])) {
-				$pa_ht = $_POST['buying_price'];
+			$fk_fournprice = GETPOST('fournprice');
+			if (GETPOST('buying_price')) {
+				$pa_ht = GETPOST('buying_price');
 			} else {
 				$pa_ht = null;
 			}
@@ -916,6 +921,8 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	$upload_dir = $conf->contrat->multidir_output[$object->entity];
@@ -1038,6 +1045,10 @@ if ($action == 'create') {
 			if ($element == 'propal') {
 				$element = 'comm/propal'; $subelement = 'propal';
 			}
+			if ($element == 'invoice' || $element == 'facture') {
+				$element = 'compta/facture';
+				$subelement = 'facture';
+			}
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -1121,18 +1132,16 @@ if ($action == 'create') {
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 		if ($soc->remise_percent) {
-			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
+			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent).' ';
 		} else {
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoRelativeDiscount").'. </span>';
 		}
-		print '. ';
 		$absolute_discount = $soc->getAvailableDiscounts();
 		if ($absolute_discount) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency)).'.';
 		} else {
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoAbsoluteDiscount").'.</span>';
 		}
-		print '.';
 		print '</td></tr>';
 	}
 
@@ -1359,18 +1368,16 @@ if ($action == 'create') {
 		// Line info of thirdparty discounts
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
 		if ($object->thirdparty->remise_percent) {
-			print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
+			print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent).'. ';
 		} else {
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoRelativeDiscount").'. </span>';
 		}
 		$absolute_discount = $object->thirdparty->getAvailableDiscounts();
-		print '. ';
 		if ($absolute_discount) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency)).'.';
 		} else {
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoAbsoluteDiscount").'.</span>';
 		}
-		print '.';
 		print '</td></tr>';
 
 		// Date
@@ -1535,11 +1542,11 @@ if ($action == 'create') {
 
 					// Margin
 					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
-						print '<td class="right nowrap">'.price($objp->pa_ht).'</td>';
+						print '<td class="right nowraponall">'.price($objp->pa_ht).'</td>';
 					}
 
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
-					print '<td class="nowrap right">';
+					print '<td class="nowraponall right">';
 					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0)) {
 						print '<!-- link to move service line into another contract -->';
 						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=move&token='.newToken().'&rowid='.$objp->rowid.'">';

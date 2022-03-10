@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,7 +328,7 @@ class modSociete extends DolibarrModules
 			'payterm.libelle'=>'Text', 'paymode.libelle'=>'Text',
 			's.outstanding_limit'=>'Numeric', 'pbacc.ref'=>'Text', 'incoterm.code'=>'Text',
 			'u.login'=>'Text', 'u.firstname'=>'Text', 'u.lastname'=>'Text',
-			's.entity'=>'Numeric', 's.price_level'=>'Numeric',
+			's.entity'=>'List:entity:label:rowid', 's.price_level'=>'Numeric',
 			's.accountancy_code_sell'=>'Text', 's.accountancy_code_buy'=>'Text'
 		);
 
@@ -376,6 +377,20 @@ class modSociete extends DolibarrModules
 			's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
 			't.libelle'=>"ThirdPartyType"
 		);
+		// Add multicompany field
+		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+			if (!empty($conf->multicompany->enabled)) {
+				$nbofallowedentities = count(explode(',', getEntity('socpeople')));
+				if ($nbofallowedentities > 1) {
+					$this->export_fields_array[$r]['c.entity'] = 'Entity';
+				}
+
+				$nbofallowedentities = count(explode(',', getEntity('societe')));
+				if ($nbofallowedentities > 1) {
+					$this->export_fields_array[$r]['s.entity'] = 'Entity';
+				}
+			}
+		}
 		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
 		$this->export_TypeFields_array[$r] = array(
 			'c.civility'=>"List:c_civility:label:code", 'c.lastname'=>'Text', 'c.firstname'=>'Text', 'c.poste'=>'Text', 'c.datec'=>"Date", 'c.priv'=>"Boolean",
@@ -386,14 +401,17 @@ class modSociete extends DolibarrModules
 			's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
 			's.client'=>"Text", 's.fournisseur'=>"Text",
 			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
-			't.libelle'=>"Text"
+			't.libelle'=>"Text",
+			'c.entity'=>'List:entity:label:rowid',
+			's.entity'=>'List:entity:label:rowid',
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company", 's.code_fournisseur'=>"company",
 			's.code_compta'=>"company", 's.code_compta_fournisseur'=>"company",
 			's.client'=>"company", 's.fournisseur'=>"company",
 			's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
-			't.libelle'=>"company"
+			't.libelle'=>"company",
+			's.entity'=>'company',
 		); // We define here only fields that use another picto
 		if (empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
@@ -463,7 +481,6 @@ class modSociete extends DolibarrModules
 			's.fax' => "Fax",
 			's.url' => "Url",
 			's.email' => "Email",
-			's.skype' => "Skype",
 			's.fk_effectif' => "Staff",
 			's.fk_typent' => "ThirdPartyType",
 			"s.fk_forme_juridique" => "JuridicalStatus",
@@ -604,7 +621,6 @@ class modSociete extends DolibarrModules
 			's.fax' => "eg. +34987654321",
 			's.url' => "e.g. https://www.mybigcompany.com",
 			's.email' => "e.g. test@mybigcompany.com",
-			's.skype' => "Skype name",
 			's.fk_effectif' => "1/2/3/5: represents one of the five ranges of employees",
 			's.fk_typent' => 'matches field "id" (1-9 etc.) OR "code" (TE_SMALL etc.) in table "'.MAIN_DB_PREFIX.'c_typent"',
 			's.fk_forme_juridique' => '1/2/3 etc...matches field "code" in table "'.MAIN_DB_PREFIX.'c_forme_juridique"',
@@ -676,7 +692,6 @@ class modSociete extends DolibarrModules
 			's.phone_mobile' => "PhoneMobile",
 			's.fax' => "Fax",
 			's.email' => "Email",
-			's.skype' => "Skype",
 			's.note_private' => "NotePrivate",
 			's.note_public' => "NotePublic"
 		);
@@ -742,7 +757,6 @@ class modSociete extends DolibarrModules
 			's.phone_mobile' => "5551144",
 			's.fax' => "5551155",
 			's.email' => "johnsmith@email.com",
-			's.skype' => "skype username",
 			's.note_private' => "My private note",
 			's.note_public' => "My public note"
 		);

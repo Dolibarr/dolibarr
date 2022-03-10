@@ -265,7 +265,6 @@ class modMultiCurrency extends DolibarrModules
 	{
 		$sql = array();
 
-		//$this->_load_tables('/multicurrency/sql/');
 		$res = $this->_init($sql, $options);
 
 		if ($res) {

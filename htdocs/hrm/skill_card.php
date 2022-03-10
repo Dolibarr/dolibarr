@@ -21,8 +21,8 @@
 
 /**
  *    \file       skill_card.php
- *        \ingroup    hrm
- *        \brief      Page to create/edit/view skill
+ *    \ingroup    hrm
+ *    \brief      Page to create/edit/view skill
  */
 
 
@@ -84,6 +84,8 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 if (empty($conf->hrm->enabled)) accessforbidden();
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
 
+$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
+
 
 /*
  * Actions
@@ -98,14 +100,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/hrm/skill_list.php', 1);
+	$backurlforlist = DOL_URL_ROOT.'/hrm/skill_list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . ($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/hrm/skill_card.php?id=' . ($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
@@ -166,8 +168,6 @@ if (empty($reshook)) {
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -186,18 +186,15 @@ if ($action == 'create') {
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="add">';
-	$backtopage .= "&objecttype=job";
+	$backtopage .= (strpos($backtopage, '?') > 0 ? '&' : '?' ) ."objecttype=job";
 	if ($backtopage) {
-		print '<input type="hidden" name="backtopage" value="' . $backtopage . ' &objecttype=job ">';
+		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	}
 	if ($backtopageforcancel) {
 		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">' . "\n";
 
@@ -254,12 +251,17 @@ if (($id || $ref) && $action == 'edit') {
 	// SKILLDET
 
 	print dol_get_fiche_head(array(), '');
+
 	$SkilldetRecords = $object->fetchLines();
+
+	if (is_array($SkilldetRecords) && count($SkilldetRecords) == 0) {
+		$object->createSkills(1);
+	}
+
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) > 0) {
 		print '<table>';
 		foreach ($SkilldetRecords as $sk) {
-			$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
-			if ($sk->rank > $MaxNumberSkill) {
+			if ($sk->rankorder > $MaxNumberSkill) {
 				continue;
 			}
 
@@ -286,7 +288,7 @@ if (($id || $ref) && $action == 'edit') {
 				//              if (!empty($val['help'])) {
 				//                  print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 				//              } else {
-					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rank;
+					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
 				//              }
 				print '</td>';
 				print '<td class="valuefieldcreate">';
@@ -397,7 +399,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' . dol_buildpath('/hrm/skill_list.php', 1) . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT.'/hrm/skill_list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 	$morehtmlref = '<div class="refid">';
@@ -533,11 +535,11 @@ if ($action != "create" && $action != "edit") {
 	foreach ($objectline->fields as $key => $val) {
 		// If $val['visible']==0, then we never show the field
 		if (!empty($val['visible'])) {
-			$visible = (int) dol_eval($val['visible'], 1);
+			$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => ($visible != 3 && dol_eval($val['enabled'], 1)),
+				'enabled' => ($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 				'position' => $val['position'],
 				'help' => isset($val['help']) ? $val['help'] : ''
 			);
@@ -691,8 +693,7 @@ if ($action != "create" && $action != "edit") {
 			break; // Should not happen
 		}
 
-		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
-		if ($obj->rank > $MaxNumberSkill) {
+		if ($obj->rankorder > $MaxNumberSkill) {
 			continue;
 		}
 

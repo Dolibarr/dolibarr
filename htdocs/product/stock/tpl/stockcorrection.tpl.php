@@ -41,7 +41,7 @@ if (empty($id)) {
 	$id = $object->id;
 }
 
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			function init_price()
 			{
@@ -178,6 +178,9 @@ print '<td>';
 print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
 print '</td>';
 print '</tr>';
+
+// Extrafield template
+include 'extrafields_add.tpl.php';
 
 print '</table>';
 

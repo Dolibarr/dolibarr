@@ -56,7 +56,7 @@ class FormCompany extends Form
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
+		$sql .= " FROM ".$this->db->prefix()."c_typent";
 		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id) ? '0' : $mysoc->country_id).")";
 		if ($filter) {
 			$sql .= " ".$filter;
@@ -105,7 +105,7 @@ class FormCompany extends Form
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
+		$sql .= " FROM ".$this->db->prefix()."c_effectif";
 		$sql .= " WHERE active = 1";
 		if ($filter) {
 			$sql .= " ".$filter;
@@ -155,7 +155,7 @@ class FormCompany extends Form
 
 		dol_syslog(get_class($this).'::form_prospect_level', LOG_DEBUG);
 		$sql = "SELECT code, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+		$sql .= " FROM ".$this->db->prefix()."c_prospectlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
@@ -206,7 +206,7 @@ class FormCompany extends Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$sql = "SELECT code, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
+		$sql .= " FROM ".$this->db->prefix()."c_prospectcontactlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
@@ -266,10 +266,11 @@ class FormCompany extends Form
 	 *    @param	int		$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
+	 *    @param	string	$morecss			Add more css
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country()
 	 */
-	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id')
+	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -282,7 +283,7 @@ class FormCompany extends Form
 
 		// Serch departements/cantons/province active d'une region et pays actif
 		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
-		$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " ".$this->db->prefix()."c_departements as d, ".$this->db->prefix()."c_regions as r,".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
 		if ($country_codeid && is_numeric($country_codeid)) {
@@ -296,7 +297,7 @@ class FormCompany extends Form
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!empty($htmlname)) {
-				$out .= '<select id="'.$htmlname.'" class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'">';
+				$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			}
 			if ($country_codeid) {
 				$out .= '<option value="0">&nbsp;</option>';
@@ -384,7 +385,7 @@ class FormCompany extends Form
 		$langs->load("dict");
 
 		$sql = "SELECT r.rowid, r.code_region as code, r.nom as label, r.active, c.code as country_code, c.label as country";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " FROM ".$this->db->prefix()."c_regions as r, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE r.fk_pays=c.rowid AND r.active = 1 and c.active = 1";
 		$sql .= " ORDER BY c.code, c.label ASC";
 
@@ -443,7 +444,7 @@ class FormCompany extends Form
 
 		$out = '';
 
-		$sql = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_civility";
+		$sql = "SELECT rowid, code, label, active FROM ".$this->db->prefix()."c_civility";
 		$sql .= " WHERE active = 1";
 
 		dol_syslog("Form::select_civility", LOG_DEBUG);
@@ -524,7 +525,7 @@ class FormCompany extends Form
 
 		// On recherche les formes juridiques actives des pays actifs
 		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, c.label as country, c.code as country_code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " FROM ".$this->db->prefix()."c_forme_juridique as f, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE f.fk_pays=c.rowid";
 		$sql .= " AND f.active = 1 AND c.active = 1";
 		if ($country_codeid) {
@@ -708,9 +709,9 @@ class FormCompany extends Form
 				$sql .= ", s.address, s.zip, s.town";
 				$sql .= ", dictp.code as country_code";
 			}
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " FROM ".$this->db->prefix()."societe as s";
 			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
+				$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as dictp ON dictp.rowid = s.fk_pays";
 			}
 			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later

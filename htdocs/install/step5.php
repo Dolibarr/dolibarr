@@ -166,7 +166,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 		$objMod = new $modName($db);
 		$result = $objMod->init();
 		if (!$result) {
-			print 'ERROR in activating module file='.$file;
+			print "ERROR: failed to init module file = ".$file;
 		}
 
 		if ($db->connected) {
@@ -214,7 +214,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			$newuser->admin = 1;
 			$newuser->entity = 0;
 
-			$conf->global->USER_MAIL_REQUIRED = 0; // Force global option to be sure to create a new user with no email
+			$conf->global->USER_MAIL_REQUIRED = 0; 			// Force global option to be sure to create a new user with no email
+			$conf->global->USER_PASSWORD_GENERATED = '';	// To not use any rule for password validation
+
 			$result = $newuser->create($createuser, 1);
 			if ($result > 0) {
 				print $langs->trans("AdminLoginCreatedSuccessfuly", $login)."<br>";
@@ -226,7 +228,10 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					$success = 1;
 				} else {
 					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
-					print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'</div><br><br>';
+					setEventMessage($langs->trans("FailedToCreateAdminLogin").' '.$newuser->error, null, 'errors');
+					//header("Location: step4.php?error=3&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
+					print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").': '.$newuser->error.'</div><br><br>';
+					print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 				}
 			}
 
@@ -286,7 +291,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 
 						$res = activateModule($modtoactivatenew, 1);
 						if (!empty($res['errors'])) {
-							print 'ERROR in activating module file='.$file;
+							print 'ERROR: failed to activateModule() file='.$file;
 						}
 					}
 				}
@@ -357,54 +362,56 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 // Create lock file
 
 // If first install
-if ($action == "set" && $success) {
-	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
-		// Install is finished
-		print $langs->trans("SystemIsInstalled")."<br>";
+if ($action == "set") {
+	if ($success) {
+		if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
+			// Install is finished
+			print '<br>'.$langs->trans("SystemIsInstalled")."<br>";
 
-		$createlock = 0;
+			$createlock = 0;
 
-		if (!empty($force_install_lockinstall) || !empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)) {
-			// Install is finished, we create the lock file
-			$lockfile = DOL_DATA_ROOT.'/install.lock';
-			$fp = @fopen($lockfile, "w");
-			if ($fp) {
-				if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
-					$force_install_lockinstall = 444; // For backward compatibility
+			if (!empty($force_install_lockinstall) || !empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)) {
+				// Install is finished, we create the lock file
+				$lockfile = DOL_DATA_ROOT.'/install.lock';
+				$fp = @fopen($lockfile, "w");
+				if ($fp) {
+					if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) {
+						$force_install_lockinstall = 444; // For backward compatibility
+					}
+					fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
+					fclose($fp);
+					@chmod($lockfile, octdec($force_install_lockinstall));
+					$createlock = 1;
 				}
-				fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
-				fclose($fp);
-				@chmod($lockfile, octdec($force_install_lockinstall));
-				$createlock = 1;
 			}
+			if (empty($createlock)) {
+				print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+			}
+
+			print "<br>";
+
+			print $langs->trans("YouNeedToPersonalizeSetup")."<br><br><br>";
+
+			print '<div class="center">&gt; <a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($login) ? '&username='.urlencode($login) : '').'">';
+			print '<span class="fas fa-external-link-alt"></span> '.$langs->trans("GoToSetupArea");
+			print '</a></div><br>';
+		} else {
+			// If here MAIN_VERSION_LAST_UPGRADE is not empty
+			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
+			print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b><br>';
+			print $langs->trans("MigrationNotFinished").'<br>';
+			print "<br>";
+
+			print '<div class="center"><a href="'.$dolibarr_main_url_root.'/install/index.php">';
+			print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
+			print '</a></div>';
 		}
-		if (empty($createlock)) {
-			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
-		}
-
-		print "<br>";
-
-		print $langs->trans("YouNeedToPersonalizeSetup")."<br><br><br>";
-
-		print '<div class="center"><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($login) ? '&username='.urlencode($login) : '').'">';
-		print '<span class="fas fa-external-link-alt"></span> '.$langs->trans("GoToSetupArea");
-		print '</a></div>';
-	} else {
-		// If here MAIN_VERSION_LAST_UPGRADE is not empty
-		print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
-		print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b><br>';
-		print $langs->trans("MigrationNotFinished").'<br>';
-		print "<br>";
-
-		print '<div class="center"><a href="'.$dolibarr_main_url_root.'/install/index.php">';
-		print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
-		print '</a></div>';
 	}
 } elseif (empty($action) || preg_match('/upgrade/i', $action)) {
 	// If upgrade
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
 		// Upgrade is finished
-		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration"> '.$langs->trans("SystemIsUpgraded")."<br>";
+		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration"> <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
 
 		$createlock = 0;
 

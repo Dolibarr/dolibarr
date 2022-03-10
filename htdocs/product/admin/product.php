@@ -46,6 +46,8 @@ if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->en
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'product';
@@ -148,25 +150,8 @@ if ($action == 'other') {
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-	if ($value) {
-		$sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
-		$resql = $db->query($sql_test);
-		if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') { // if the field does not exist, we create it
-			$sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN desc_fourn text";
-			$resql_new = $db->query($sql_new);
-		}
-	}
-
 	$value = GETPOST('activate_useProdSupplierPackaging', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
-	if ($value) {
-		$sql_test = "SELECT count(packaging) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
-		$resql = $db->query($sql_test);
-		if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') { // if the field does not exist, we create it
-			$sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN packaging double(24,8) DEFAULT 1";
-			$resql_new = $db->query($sql_new);
-		}
-	}
 }
 
 if ($action == 'specimen') { // For products

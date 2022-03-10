@@ -30,7 +30,7 @@ ManageLotMask=Brugerdefineret maske
 CustomMasks=Mulighed for at definere en anden nummereringsmaske for hvert produkt
 BatchLotNumberingModules=Nummereringsregel til automatisk generering af partinummer
 BatchSerialNumberingModules=Nummereringsregel til automatisk generering af serienummer (for produkter med ejendom 1 unikt parti / serienummer for hvert produkt)
-QtyToAddAfterBarcodeScan=Mængde, der skal tilføjes for hver stregkode / parti / seriel scannet
+QtyToAddAfterBarcodeScan=Antal til %s for hver scannet stregkode/parti/serie
 LifeTime=Levetid (i dage)
 EndOfLife=udløbet på dato
 ManufacturingDate=produktionsdato
@@ -42,3 +42,4 @@ HideLots=Skjul masser
 #Traceability - qc status
 OutOfOrder=Virker ikke
 InWorkingOrder=I funktionsdygtig stand
+ToReplace=Erstatte

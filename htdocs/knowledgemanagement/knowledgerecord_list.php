@@ -34,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
 // for other modules
+if (!empty($conf->categorie->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
@@ -51,6 +54,13 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 
 $id = GETPOST('id', 'int');
 
+$searchCategoryKnowledgemanagementList = GETPOST('search_category_knowledgemanagement_list', 'array');
+$searchCategoryKnowledgemanagementOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryKnowledgemanagementOperator = GETPOST('search_category_knowledgemanagement_operator', 'int');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategoryKnowledgemanagementOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -114,11 +124,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -186,6 +196,10 @@ if (empty($reshook)) {
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+		$searchCategoryKnowledgemanagementOperator = 0;
+		$searchCategoryKnowledgemanagementList = array();
+	}
 
 	// Mass actions
 	$objectclass = 'KnowledgeRecord';
@@ -229,8 +243,11 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= preg_replace('/^,/', ',', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+}
+if (!empty($searchCategoryKnowledgemanagementList) || !empty($catid)) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_knowledgemanagement as ck ON t.rowid = ck.fk_knowledgemanagement"; // We'll need this table joined to the select in order to filter by categ
 }
 // Add table from hooks
 $parameters = array();
@@ -270,6 +287,32 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
+//Search for tag/category
+$searchCategoryKnowledgemanagementSqlList = array();
+if ($searchCategoryKnowledgemanagementOperator == 1) {
+	foreach ($searchCategoryKnowledgemanagementList as $searchCategoryKnowledgemanagement) {
+		if (intval($searchCategoryKnowledgemanagement) == -2) {
+			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie IS NULL";
+		} elseif (intval($searchCategoryKnowledgemanagement) > 0) {
+			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie = ".$db->escape($searchCategoryKnowledgemanagement);
+		}
+	}
+	if (!empty($searchCategoryKnowledgemanagementSqlList)) {
+		$sql .= " AND (".implode(' OR ', $searchCategoryKnowledgemanagementSqlList).")";
+	}
+} else {
+	foreach ($searchCategoryKnowledgemanagementList as $searchCategoryKnowledgemanagement) {
+		if (intval($searchCategoryKnowledgemanagement) == -2) {
+			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie IS NULL";
+		} elseif (intval($searchCategoryKnowledgemanagement) > 0) {
+			$searchCategoryKnowledgemanagementSqlList[] = "t.rowid IN (SELECT fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement WHERE fk_categorie = ".((int) $searchCategoryKnowledgemanagement).")";
+		}
+	}
+	if (!empty($searchCategoryKnowledgemanagementSqlList)) {
+		$sql .= " AND (".implode(' AND ', $searchCategoryKnowledgemanagementSqlList).")";
+	}
+}
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -379,6 +422,11 @@ $arrayofmassactions = array(
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
+
+if ($user->rights->knowledgemanagement->knowledgerecord->write) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
+
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
@@ -417,6 +465,18 @@ $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
 $moreforfilter.= '</div>';*/
+
+// Filter on categories
+$moreforfilter = '';
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
+	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 1);
+	$categoriesKnowledgeArr[-2] = '- '.$langs->trans('NotCategorized').' -';
+	$moreforfilter .= Form::multiselectarray('search_category_knowledgemanagement_list', $categoriesKnowledgeArr, $searchCategoryKnowledgemanagementList, 0, 0, 'minwidth300');
+	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_knowledgemanagement_operator" name="search_category_knowledgemanagement_operator" value="1"'.($searchCategoryKnowledgemanagementOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="search_category_knowledgemanagement_operator">'.$langs->trans('UseOrOperatorForCategories').'</label>';
+	$moreforfilter .= '</div>';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -547,6 +607,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Show here line of result
 	print '<tr class="oddeven">';
+	$totalarray['nbfield'] = 0;
 	foreach ($object->fields as $key => $val) {
 		$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {

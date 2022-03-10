@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Configuració mòdul PayBox
-PayBoxDesc=Aquest mòdul ofereix una pàgina de pagament a través del proveïdor <a href="http://www.paybox.com" target="_blank">Paybox</a> per realitzar qualsevol pagament o un pagament en relació amb un objecte Dolibarr (factures, comandes ...)
+PayBoxDesc=Aquest mòdul ofereix pàgines per permetre el pagament a <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> per part dels clients. Això es pot utilitzar per a un pagament gratuït o per a un pagament d'un objecte Dolibarr concret (factura, comanda, ...)
 FollowingUrlAreAvailableToMakePayments=Les següents URL estan disponibles per a permetre a un client fer un cobrament en objectes de Dolibarr
 PaymentForm=Formulari de pagament
 WelcomeOnPaymentPage=Benvingut als nostres serveis de pagament en línia

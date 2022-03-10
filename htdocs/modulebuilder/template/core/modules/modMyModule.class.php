@@ -411,6 +411,7 @@ class modMyModule extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		//$result = $this->_load_tables('/install/mysql/tables/', 'mymodule');
 		$result = $this->_load_tables('/mymodule/sql/');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
@@ -431,7 +432,7 @@ class modMyModule extends DolibarrModules
 		$sql = array();
 
 		// Document templates
-		$moduledir = 'mymodule';
+		$moduledir = dol_sanitizeFileName('mymodule');
 		$myTmpObjects = array();
 		$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
@@ -440,8 +441,8 @@ class modMyModule extends DolibarrModules
 				continue;
 			}
 			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/mymodule';
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_myobjects.odt';
+				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
 				$dest = $dirodt.'/template_myobjects.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {

@@ -1,7 +1,7 @@
-Module68000Name = Intracomm レポート
-Module68000Desc = Intracomm レポート管理(フランス語のDEB / DES形式のサポート)
-IntracommReportSetup = Intracommreportモジュールの設定
-IntracommReportAbout = Intracomm レポートについて
+Module68000Name = 域内報告書
+Module68000Desc = 域内報告書管理(フランス語のDEB / DES形式のサポート)
+IntracommReportSetup = 域内報告書モジュールの設定
+IntracommReportAbout = 域内報告書について
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numérod'agrément(délivréparleCISD de rattachement)
@@ -14,7 +14,7 @@ INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégoriedeservicesdetype「Fraisdeport」
 INTRACOMMREPORT_NUM_DECLARATION=Numérodedéclarant
 
 # Menu
-MenuIntracommReport=Intracomm レポート
+MenuIntracommReport=域内報告書
 MenuIntracommReportNew=新規宣言
 MenuIntracommReportList=リスト
 

@@ -258,6 +258,10 @@ PassEncoding=Рамзгузории парол
 PermissionsAdd=Иҷозатҳо илова карда шуданд
 PermissionsDelete=Иҷозатҳо хориҷ карда шуданд
 YourPasswordMustHaveAtLeastXChars=Пароли шумо бояд ҳадди аққал <strong> %s </strong> аломат дошта бошад
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Пароли шумо бомуваффақият барқарор карда шуд
 ApplicantIpAddress=Суроғаи IP -и довталаб
 SMSSentTo=SMS ба %s фиристода шуд
@@ -268,6 +272,7 @@ ProjectCreatedByEmailCollector=Лоиҳа аз ҷониби коллекторҳ
 TicketCreatedByEmailCollector=Чипта аз ҷониби коллекторҳои почтаи электронӣ аз почтаи MSGID %s сохта шудааст
 OpeningHoursFormatDesc=Барои ҷудо кардани соатҳои кушодан ва пӯшидани a - истифода баред. <br> Барои ворид кардани диапазонҳои гуногун фосила истифода баред. <br> Мисол: 8-12 14-18
 SuffixSessionName=Суффикс барои номи сессия
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Минтақаи содирот

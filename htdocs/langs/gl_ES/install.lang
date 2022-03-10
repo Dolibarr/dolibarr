@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=A súa instalación de PHP non admite Curl.
 ErrorPHPDoesNotSupportCalendar=A súa instalación de PHP non admite extensións do calendario php.
 ErrorPHPDoesNotSupportUTF8=A súa instalación de PHP non admite funcións UTF8. Dolibarr non pode funcionar correctamente. Resolva isto antes de instalar Dolibarr.
 ErrorPHPDoesNotSupportIntl=​​= A súa instalación de PHP non admite funcións Intl.
+ErrorPHPDoesNotSupportMbstring=A súa instalación de PHP non admite funcións mbstring.
 ErrorPHPDoesNotSupportxDebug=A súa instalación de PHP non admite funcións de depuración extensivas.
 ErrorPHPDoesNotSupport=A súa instalación de PHP non admite funcións de %s.
 ErrorDirDoesNotExists=O directorio %s non existe.

@@ -704,6 +704,17 @@ class Holiday extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$error = 0;
 
+		$checkBalance = getDictionaryValue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
+
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id)) {
 			$num = $this->getNextNumRef(null);
@@ -805,6 +816,17 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$checkBalance = getDictionaryValue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -913,6 +935,17 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$checkBalance = getDictionaryValue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -1237,7 +1270,7 @@ class Holiday extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1, $notooltip = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -1272,7 +1305,15 @@ class Holiday extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -1470,11 +1511,11 @@ class Holiday extends CommonObject
 			$monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
 			//print 'month: '.$month.' lastUpdate:'.$lastUpdate.' monthLastUpdate:'.$monthLastUpdate;exit;
 
-			// Si la date du mois n'est pas la même que celle sauvegardée, on met à jour le timestamp
+			// If month date is not same than the one of last update (the one we saved in database), then we update the timestamp and balance of each open user.
 			if ($month != $monthLastUpdate) {
 				$this->db->begin();
 
-				$users = $this->fetchUsers(false, false);
+				$users = $this->fetchUsers(false, false, ' AND u.statut > 0');
 				$nbUser = count($users);
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
@@ -1675,7 +1716,7 @@ class Holiday extends CommonObject
 	 *
 	 *    @param      boolean			$stringlist	    If true return a string list of id. If false, return an array with detail.
 	 *    @param      boolean   		$type			If true, read Dolibarr user list, if false, return vacation balance list.
-	 *    @param      string            $filters        Filters
+	 *    @param      string            $filters        Filters. Warning: This must not contains data from user input.
 	 *    @return     array|string|int      			Return an array
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
@@ -1776,7 +1817,7 @@ class Holiday extends CommonObject
 			// Si faux donc return array
 			// List for Dolibarr users
 			if ($type) {
-								// If user of Dolibarr
+				// If we need users of Dolibarr
 				$sql = "SELECT";
 				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					$sql .= " DISTINCT";
