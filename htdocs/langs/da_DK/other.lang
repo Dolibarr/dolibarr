@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Projekt skabt via e-mail indsamler fra mail MSGID
 TicketCreatedByEmailCollector=Billet skabt via e-mail indsamler fra mail MSGID %s
 OpeningHoursFormatDesc=Brug et - til separat åbning og lukning timer. <br> brug en mellemrum"Space" til at indtaste forskellige område. <br> Eksempel: 8-12 14-18
 SuffixSessionName=Suffiks til sessionens navn
+LoginWith=Log ind med %s
 
 ##### Export #####
 ExportsArea=Eksport område

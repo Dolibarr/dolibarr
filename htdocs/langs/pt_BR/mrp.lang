@@ -20,7 +20,6 @@ FreeLegalTextOnMOs=Texto livre no documento do MO
 WatermarkOnDraftMOs=Marca d'água no rascunho MO
 ConfirmCloneMo=Tem certeza de que deseja clonar a ordem de fabricação %s?
 ManufacturingEfficiency=Eficiência de fabricação
-ValueOfMeansLoss=Valor de 0,95 significa uma média de 5 %% de perda durante a produção
 ValueOfMeansLossForProductProduced=Valor de 0,95 significa uma média de 5 %% de perda na produção do produto
 DeleteBillOfMaterials=Excluir lista de materiais
 DeleteMo=Excluir ordem de fabricação

@@ -76,11 +76,14 @@ if ($complete == 'na' || $complete == -2) {
 }
 
 if ($fulldayevent) {
-	$datep = dol_mktime('00', '00', 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
-	$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+	$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+	// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
+	$datep = dol_mktime('00', '00', 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	//print $db->idate($datep); exit;
 } else {
-	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
-	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
+	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 }
 
 // Security check
@@ -252,8 +255,15 @@ if (empty($reshook) && $action == 'add') {
 	$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOST("percentage", 'int')); // If status is -1 or 100, percentage is not defined and we must use status
 
 	// Clean parameters
-	$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
-	$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
+	if ($fulldayevent) {
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+		// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
+		$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+		$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+	} else {
+		$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
+		$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
+	}
 
 	// Check parameters
 	if (!$datef && $percentage == 100) {
@@ -280,7 +290,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Initialisation objet actioncomm
 		$object->priority = GETPOSTISSET("priority") ? GETPOST("priority", "int") : 0;
-		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
+		$object->fulldayevent = ($fulldayevent ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
 		$object->label = GETPOST('label', 'alphanohtml');
 
@@ -513,8 +523,16 @@ if (empty($reshook) && $action == 'update') {
 		$object->fetch_userassigned();
 		$object->oldcopy = clone $object;
 
-		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
-		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
+		// Clean parameters
+		if ($fulldayevent) {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
+			$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+		} else {
+			$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
+			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
+		}
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
@@ -1005,11 +1023,11 @@ if ($action == 'create') {
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
 	if (GETPOST('datep', 'int', 1)) {
-		$datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
+		$datep = dol_stringtotime(GETPOST('datep', 'int', 1), 'tzuser');
 	}
 	$datef = ($datef ? $datef : $object->datef);
 	if (GETPOST('datef', 'int', 1)) {
-		$datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
+		$datef = dol_stringtotime(GETPOST('datef', 'int', 1), 'tzuser');
 	}
 	if (empty($datef) && !empty($datep)) {
 		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
@@ -1024,16 +1042,16 @@ if ($action == 'create') {
 	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
 	print '</td><td>';
 	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart'); // Empty value not allowed for start date and hours if "todo"
+		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
 	} else {
-		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
+		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
 	}
 	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
 	//print ' - ';
 	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
 	} else {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
 	}
 	print '</td></tr>';
 
@@ -1518,20 +1536,21 @@ if ($id > 0) {
 
 		// Date start - end
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuser') : 'tzuser');
 		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuser') : 'tzuser');
 		} else {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuser') : 'tzuser');
 		}
 		print ' - ';
 		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuser') : 'tzuser');
 		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuser') : 'tzuser');
 		} else {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuser') : 'tzuser');
 		}
 		print '</td></tr>';
 
@@ -1960,7 +1979,7 @@ if ($id > 0) {
 		}
 
 		// Full day event
-		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent, 3).'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
 		$rowspan = 4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
@@ -1969,10 +1988,11 @@ if ($id > 0) {
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
-		if (!$object->fulldayevent) {
+		if (empty($object->fulldayevent)) {
 			print dol_print_date($object->datep, 'dayhour', 'tzuser');
 		} else {
-			print dol_print_date($object->datep, 'day', 'tzuser');
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($object->datep, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 		}
 		if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) {
 			print img_warning($langs->trans("Late"));
@@ -1982,10 +2002,11 @@ if ($id > 0) {
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-		if (!$object->fulldayevent) {
+		if (empty($object->fulldayevent)) {
 			print dol_print_date($object->datef, 'dayhour', 'tzuser');
 		} else {
-			print dol_print_date($object->datef, 'day', 'tzuser');
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($object->datef, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 		}
 		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) {
 			print img_warning($langs->trans("Late"));

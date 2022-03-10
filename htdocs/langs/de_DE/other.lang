@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Projekt durch das Modul E-Mail-Sammler aus der E-
 TicketCreatedByEmailCollector=Ticket durch das Modul E-Mail-Sammler aus der E-Mail erstellt. MSGID %s
 OpeningHoursFormatDesc=Benutze unterschiedliche von - bis Öffnungs- und Schließzeiten.<br>Leerzeichen trennt unterschiedliche Bereiche.<br>Beispiel: 8-12 14-18
 SuffixSessionName=Suffix für Sitzungsnamen
+LoginWith=Melden Sie sich mit %s an
 
 ##### Export #####
 ExportsArea=Exportübersicht

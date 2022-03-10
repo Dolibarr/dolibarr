@@ -49,10 +49,11 @@ if (empty($conf->global->AGENDA_EXT_NB)) {
 }
 $MAXAGENDA = $conf->global->AGENDA_EXT_NB;
 
-$filter = GETPOST("search_filter", 'alpha', 3) ?GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3) ?GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3) ?GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
-$showbirthday = empty($conf->use_javascript_ajax) ?GETPOST("showbirthday", "int") : 1;
+$check_holiday = GETPOST('check_holiday', 'int');
+$filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
+$filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
+$usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
+$showbirthday = empty($conf->use_javascript_ajax) ? GETPOST("showbirthday", "int") : 1;
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
@@ -207,16 +208,16 @@ if (GETPOST("viewperuser", 'alpha') || $mode == 'show_peruser') {
 }
 
 /*
-if ($action == 'delete_action' && $user->rights->agenda->delete) {
-	$event = new ActionComm($db);
-	$event->fetch($actionid);
-	$event->fetch_optionals();
-	$event->fetch_userassigned();
-	$event->oldcopy = clone $event;
+ if ($action == 'delete_action' && $user->rights->agenda->delete) {
+ $event = new ActionComm($db);
+ $event->fetch($actionid);
+ $event->fetch_optionals();
+ $event->fetch_userassigned();
+ $event->oldcopy = clone $event;
 
-	$result = $event->delete();
-}
-*/
+ $result = $event->delete();
+ }
+ */
 
 
 /*
@@ -545,7 +546,8 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
 	$newparam .= '&month='.((int) $month).'&year='.((int) $tmpforcreatebutton['year']).'&mode='.urlencode($mode);
 
 	//$param='month='.$monthshown.'&year='.$year;
-	$hourminsec = '100000';
+	$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
+
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
 }
 
@@ -578,10 +580,10 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '</script>'."\n";
 
 	// Local calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" value="1" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
 
 	// Holiday calendar
-	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" class="check_holiday"><label for="check_holiday"> <span class="check_holiday_text">'.$langs->trans("Holidays").'</span></label> &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_holiday" name="check_holiday" value="1" class="check_holiday"'.($check_holiday ? ' checked' : '').'><label for="check_holiday"> <span class="check_holiday_text">'.$langs->trans("Holidays").'</span></label> &nbsp; </div>';
 
 	// External calendars
 	if (is_array($showextcals) && count($showextcals) > 0) {
@@ -606,13 +608,13 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		foreach ($showextcals as $val) {
 			$htmlname = md5($val['name']);
 
-			if (!empty($val['default'])) {
+			if (!empty($val['default']) || GETPOST('check_ext'.$htmlname, 'int')) {
 				$default = "checked";
 			} else {
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" '.$default.'> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
 		}
 	}
 
@@ -808,11 +810,21 @@ if ($resql) {
 		$event->id = $obj->id;
 		$event->ref = $event->id;
 
-		$event->datep = $db->jdate($obj->datep); // datep and datef are GMT date. Example: 1970-01-01 01:00:00, jdate will return 0 if TZ of PHP server is Europe/Berlin
-		$event->datef = $db->jdate($obj->datep2);
+		$event->fulldayevent = $obj->fulldayevent;
+
+		// event->datep and event->datef must be GMT date.
+		if ($event->fulldayevent) {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			$event->datep = $db->jdate($obj->datep, $tzforfullday ? 'tzuser' : 'tzserver');	// If saved in $tzforfullday = gmt, we must invert date to be in user tz
+			$event->datef = $db->jdate($obj->datep2, $tzforfullday ? 'tzuser' : 'tzserver');
+		} else {
+			// Example: $obj->datep = '1970-01-01 01:00:00', jdate will return 0 if TZ of PHP server is Europe/Berlin (+1)
+			$event->datep = $db->jdate($obj->datep, 'tzserver');
+			$event->datef = $db->jdate($obj->datep2, 'tzserver');
+		}
 		//$event->datep_formated_gmt = dol_print_date($event->datep, 'dayhour', 'gmt');
-		//var_dump($obj->datep);
-		//var_dump($event->datep);
+		//var_dump($obj->id.' '.$obj->datep.' '.dol_print_date($obj->datep, 'dayhour', 'gmt'));
+		//var_dump($obj->id.' '.$event->datep.' '.dol_print_date($event->datep, 'dayhour', 'gmt'));
 
 		$event->type_code = $obj->type_code;
 		$event->type_label = $obj->type_label;
@@ -829,7 +841,6 @@ if ($resql) {
 		$event->fetch_userassigned(); // This load $event->userassigned
 
 		$event->priority = $obj->priority;
-		$event->fulldayevent = $obj->fulldayevent;
 		$event->location = $obj->location;
 		$event->transparency = $obj->transparency;
 		$event->fk_element = $obj->fk_element;
@@ -838,6 +849,7 @@ if ($resql) {
 		$event->fk_project = $obj->fk_project;
 
 		$event->socid = $obj->fk_soc;
+		$event->thirdparty_id = $obj->fk_soc;
 		$event->contact_id = $obj->fk_contact;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -865,25 +877,43 @@ if ($resql) {
 			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
 			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
 			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+
+			$daycursorend = $event->date_end_in_calendar;
+			$anneeend = dol_print_date($daycursorend, '%Y', 'tzuserrel');
+			$moisend = dol_print_date($daycursorend, '%m', 'tzuserrel');
+			$jourend = dol_print_date($daycursorend, '%d', 'tzuserrel');
+
 			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));	// Hour at greenwich
 			//var_dump($annee.'-'.$mois.'-'.$jour);
+			//print 'annee='.$annee.' mois='.$mois.' jour='.$jour.'<br>';
 
 			// Loop on each day covered by action to prepare an index to show on calendar
 			$loop = true; $j = 0;
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');	// $mois, $jour, $annee has been set for user tz
+			$daykeyend = dol_mktime(0, 0, 0, $moisend, $jourend, $anneeend, 'gmt');	// $moisend, $jourend, $anneeend has been set for user tz
+			/*
+			 print 'GMT '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt').'<br>';
+			 print 'TZSERVER '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'tzserver').'<br>';
+			 print 'TZUSERREL '.$event->date_start_in_calendar.' '.dol_print_date($event->date_start_in_calendar, 'dayhour', 'tzuserrel').'<br>';
+			 print 'GMT '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'gmt').'<br>';
+			 print 'TZSERVER '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'tzserver').'<br>';
+			 print 'TZUSER '.$event->date_end_in_calendar.' '.dol_print_date($event->date_end_in_calendar, 'dayhour', 'tzuserrel').'<br>';
+			 */
 			do {
 				//if ($event->id==408)
-				//print 'daykey='.$daykey.' '.dol_print_date($daykey, 'dayhour', 'gmt').' '.$event->datep.' '.$event->datef.'<br>';
+				//print 'daykey='.$daykey.' daykeyend='.$daykeyend.' '.dol_print_date($daykey, 'dayhour', 'gmt').' - '.dol_print_date($event->datep, 'dayhour', 'gmt').' '.dol_print_date($event->datef, 'dayhour', 'gmt').'<br>';
+				//print 'daykey='.$daykey.' daykeyend='.$daykeyend.' '.dol_print_date($daykey, 'dayhour', 'tzuserrel').' - '.dol_print_date($event->datep, 'dayhour', 'tzuserrel').' '.dol_print_date($event->datef, 'dayhour', 'tzuserrel').'<br>';
 
 				$eventarray[$daykey][] = $event;
 				$j++;
 
 				$daykey += 60 * 60 * 24;
-				if ($daykey > $event->date_end_in_calendar) {
+				//if ($daykey > $event->date_end_in_calendar) {
+				if ($daykey > $daykeyend) {
 					$loop = false;
 				}
 			} while ($loop);
-
+			//var_dump($eventarray);
 			//print 'Event '.$i.' id='.$event->id.' (start='.dol_print_date($event->datep).'-end='.dol_print_date($event->datef);
 			//print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
 		}
@@ -1805,12 +1835,16 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$cssclass .= " unmovable";
 					} elseif ($event->type_code == 'ICALEVENT') {
 						$cssclass .= " unmovable";
-					} elseif ($event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
-						$tmpyearend    = date('Y', $event->date_end_in_calendar);
-						$tmpmonthend   = date('m', $event->date_end_in_calendar);
-						$tmpdayend     = date('d', $event->date_end_in_calendar);
+					} elseif ($event->date_start_in_calendar && $event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
+						// If the event is on several days
+						$tmpyearend = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
+						$tmpmonthend = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
+						$tmpdayend = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
+						//var_dump($tmpyearend.' '.$tmpmonthend.' '.$tmpdayend);
 						if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour) {
-							$cssclass .= " unmovable";
+							$cssclass .= " unmovable unmovable-mustusefirstdaytodrag";
+						} else {
+							$cssclass .= ' movable cursormove';
 						}
 					} else {
 						if ($user->rights->agenda->allactions->create ||

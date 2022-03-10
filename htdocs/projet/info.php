@@ -62,6 +62,8 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
+$hookmanager->initHooks(array('projectcardinfo'));
+
 // Security check
 $id = GETPOST("id", 'int');
 $socid = 0;

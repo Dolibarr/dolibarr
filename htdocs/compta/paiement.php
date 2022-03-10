@@ -75,6 +75,12 @@ $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
 $formquestion = array();
 
+$usercanissuepayment = !empty($user->rights->facture->paiement);
+
+$fieldid = 'rowid';
+$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
+
 
 /*
  * Actions
@@ -87,7 +93,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+	if (($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $usercanissuepayment) {
 		$error = 0;
 
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -127,7 +133,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => $_POST[$key]);
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
 				$cursorfacid = substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
@@ -202,7 +208,7 @@ if (empty($reshook)) {
 	/*
 	 * Action confirm_paiement
 	 */
-	if ($action == 'confirm_paiement' && $confirm == 'yes') {
+	if ($action == 'confirm_paiement' && $confirm == 'yes' && $usercanissuepayment) {
 		$error = 0;
 
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -486,7 +492,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
 			}
 			print '<td>';
-			$form->select_comptes($accountid, 'accountid', 0, '', 2);
+			print $form->select_comptes($accountid, 'accountid', 0, '', 2, '', 0, '', 1);
 			print '</td>';
 		} else {
 			print '<td>&nbsp;</td>';
@@ -702,11 +708,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								if (!empty($conf->use_javascript_ajax)) {
 									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 								}
-								print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+								print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 								print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 							} else {
-								print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-								print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+								print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
+								print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							}
 						}
 						print "</td>";

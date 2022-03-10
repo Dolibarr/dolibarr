@@ -84,6 +84,9 @@ UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'a
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
 DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging varchar(64) DEFAULT NULL;
+
 
 -- For v14
 
@@ -649,3 +652,5 @@ ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode 
 
 ALTER TABLE llx_c_socialnetworks DROP INDEX idx_c_socialnetworks_code;
 ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_entity (code, entity);
+
+ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);

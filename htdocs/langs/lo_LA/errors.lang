@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=ລາຍຊື່ຜູ້ຕິດ�
 ErrorCashAccountAcceptsOnlyCashMoney=ບັນຊີທະນາຄານນີ້ເປັນບັນຊີເງິນສົດ, ສະນັ້ນມັນຮັບເອົາການຊໍາລະດ້ວຍເງິນສົດປະເພດເທົ່ານັ້ນ.
 ErrorFromToAccountsMustDiffers=ບັນຊີທະນາຄານແຫຼ່ງທີ່ມາແລະເປົ້າmustາຍຕ້ອງແຕກຕ່າງກັນ.
 ErrorBadThirdPartyName=ຄ່າບໍ່ຖືກຕ້ອງ ສຳ ລັບຊື່ພາກສ່ວນທີສາມ
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s ແມ່ນເປັນການບັງຄັບ
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=ໄວຍະກອນບໍ່ດີ ສຳ ລັບລະຫັດລູກຄ້າ
 ErrorBadBarCodeSyntax=ໄວຍະກອນບໍ່ຖືກຕ້ອງ ສຳ ລັບບາໂຄດ. ບາງທີເຈົ້າອາດຈະຕັ້ງປະເພດບາໂຄດບໍ່ຖືກຕ້ອງຫຼືເຈົ້າໄດ້ກໍານົດ ໜ້າ ກາກບາໂຄດສໍາລັບຕົວເລກທີ່ບໍ່ກົງກັບຄ່າທີ່ສະແກນໄວ້.
 ErrorCustomerCodeRequired=ຕ້ອງການລະຫັດລູກຄ້າ
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=ບໍ່ຢູ່ໃນວັດຈະນ
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=ພາຣາມິເຕີ PHP ຂອງເຈົ້າ upload_max_filesize (%s) ສູງກວ່າພາລາມິເຕີ PHP post_max_size (%s). ອັນນີ້ບໍ່ແມ່ນການຕັ້ງທີ່ສອດຄ່ອງ.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)

@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Этот контакт уже опр
 ErrorCashAccountAcceptsOnlyCashMoney=Этот банковский счет определен как счет для наличных, так что он принимает только наличные платежи.
 ErrorFromToAccountsMustDiffers=Источник и цели банковского счета должны быть разными.
 ErrorBadThirdPartyName=Неверное значение для стороннего имени
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s является обязательным
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Плохо синтаксис для заказчика код
 ErrorBadBarCodeSyntax=Неверный синтаксис штрих-кода. Возможно, вы установили неверный тип штрих-кода или определили маску штрих-кода для нумерации, которая не соответствует отсканированному значению.
 ErrorCustomerCodeRequired=Требуется код клиента
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Нет в Словаре условий о
 ErrorIsNotADraft=%s это не черновик
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ваш параметр PHP upload_max_filesize (%s) выше, чем параметр PHP post_max_size (%s). Это непоследовательная установка.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Требуется не менее %s символа(о�
 RequireXStringMax = Требуется не более %s символов.
 RequireAtLeastXDigits = Требуется не менее %s цифр
 RequireXDigitsMax = Требуется не более %s цифр
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Адрес электронной почты недействителен
 RequireMaxLength = Длина не должна превышать %s символов.
 RequireMinLength = Длина должна быть больше, чем %s симв.

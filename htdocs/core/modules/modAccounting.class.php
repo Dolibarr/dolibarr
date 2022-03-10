@@ -256,7 +256,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Chartofaccounts';
-		$this->export_icon[$r] = 'accounting';
+		$this->export_icon[$r] = $this->picto;
 		$this->export_permission[$r] = array(array("accounting", "chartofaccount"));
 		$this->export_fields_array[$r] = array('ac.rowid'=>'ChartofaccountsId', 'ac.pcg_version'=>'Chartofaccounts', 'aa.rowid'=>'ID', 'aa.account_number'=>"AccountAccounting", 'aa.label'=>"Label", 'aa.account_parent'=>"Accountparent", 'aa.pcg_type'=>"Pcgtype", 'aa.active'=>'Status');
 		$this->export_TypeFields_array[$r] = array('ac.rowid'=>'List:accounting_system:pcg_version', 'ac.pcg_version'=>'Text', 'aa.rowid'=>'Numeric', 'aa.account_number'=>"Text", 'aa.label'=>"Text", 'aa.account_parent'=>"Text", 'aa.pcg_type'=>'Text', 'aa.active'=>'Status');
@@ -350,8 +350,8 @@ class modAccounting extends DolibarrModules
 			'b.fk_doc'=>'const-0',
 			'b.fk_docdet'=>'const-0',
 			'b.fk_user_author'=>'user->id',
-			'b.montant'=>'rule-computeMontant',
-			'b.sens'=>'rule-computeSens'
+			'b.montant'=>'rule-computeAmount',
+			'b.sens'=>'rule-computeDirection'
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r]=array(
 			'b.numero_compte'=>array('rule'=>'accountingaccount'),

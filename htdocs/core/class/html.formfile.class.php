@@ -359,9 +359,9 @@ class FormFile
 	 *      Return a string to show the box with list of available documents for object.
 	 *      This also set the property $this->numoffiles
 	 *
-	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:myobject', 'mymodule_temp', ...)
-	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
-	 *      @param      string				$filedir            Directory to scan
+	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:MyObject', 'mymodule_temp', ...)
+	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into a subdir of module.
+	 *      @param      string				$filedir            Directory to scan (must not end with a /). Example: '/mydolibarrdocuments/facture/FAYYMM-1234'
 	 *      @param      string				$urlsource          Url of origin page (for return)
 	 *      @param      int|string[]        $genallowed         Generation is allowed (1/0 or array list of templates)
 	 *      @param      int					$delallowed         Remove is allowed (1/0)
@@ -720,7 +720,7 @@ class FormFile
 				if (class_exists($class)) {
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);
 				} else {
-					dol_print_error($this->db, "Bad value for modulepart '".$modulepart."' in showdocuments");
+					dol_print_error($this->db, "Bad value for modulepart '".$modulepart."' in showdocuments (class ".$class." for Doc generation not found)");
 					return -1;
 				}
 			}
@@ -1393,7 +1393,7 @@ class FormFile
 					print '</td>';
 
 					// Date
-					print '<td class="center" style="width: 140px">'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>'; // 140px = width for date with PM format
+					print '<td class="center nowraponall">'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>';
 
 					// Preview
 					if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
@@ -1417,7 +1417,7 @@ class FormFile
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
-							print '<img class="photo maxwidth200 shadow valignmiddle" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
+							print '<img class="photo maxwidth200 shadow valignmiddle" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '20' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
 							print '</a>';
 						} else {
 							print '&nbsp;';

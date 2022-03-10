@@ -407,7 +407,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 						} else {
 							$title = $langs->trans("ShowPreview");
 						}
-						print '<img class="img-skinthumb shadow" src="'.$url.'" alt="'.$title.'" title="'.$title.'" style="border: none; margin-bottom: 5px;">';
+						print '<img class="img-skinthumb shadow" src="'.$url.'" alt="'.dol_escape_htmltag($title).'" title="'.dol_escape_htmltag($title).'" style="border: none; margin-bottom: 5px;">';
 						print '</a><br>';
 						if ($subdir == $selected_theme) {
 							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" id="main_theme'.$subdir.'" checked name="main_theme" value="'.$subdir.'"><label for="main_theme'.$subdir.'"> <b>'.$subdir.'</b></label>';
@@ -440,6 +440,9 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	$colorbacklinepairhover = '';
 	$colorbacklinepairhover = '';
 	$colorbacklinepairchecked = '';
+	$butactionbg = '';
+	$textbutaction = '';
+	// Set the variables with the default value
 	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	}
@@ -502,6 +505,27 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</td>';
 		print '</tr>';
 	}
+
+	// BorderTableActive
+	/* Disabled because not supported by md theme
+	if ($foruserprofile) {
+	} else {
+		$default = $langs->trans('No');
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("UseBorderOnTable").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		if ($edit) {
+			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1);
+			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
+		} else {
+			print yn($conf->global->THEME_ELDY_USEBORDERONTABLE);
+		}
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+		print '</td>';
+		print '</tr>';
+	}
+	*/
 
 	// Background color THEME_ELDY_BACKBODY
 	if ($foruserprofile) {
@@ -935,7 +959,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td>'.$langs->trans("BtnActionColor").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
-			print $formother->selectColor(colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_BTNACTION) ? $conf->global->THEME_ELDY_BTNACTION : ''), array()), ''), 'THEME_ELDY_BTNACTION', '', 1, '', '', 'colorbtnaction').' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_BTNACTION) ? $conf->global->THEME_ELDY_BTNACTION : ''), array()), ''), 'THEME_ELDY_BTNACTION', '', 1, '', '', 'butactionbg').' ';
 		} else {
 			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BTNACTION, array()), '');
 			if ($color) {
@@ -952,7 +976,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</tr>';
 	}
 
-		// Text btn action
+	// Text btn action
 	if ($foruserprofile) {
 		/*
 		 print '<tr class="oddeven">';
@@ -981,7 +1005,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td>'.$langs->trans("TextBtnActionColor").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
-			print $formother->selectColor(colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_TEXTBTNACTION) ? $conf->global->THEME_ELDY_TEXTBTNACTION : ''), array()), ''), 'THEME_ELDY_TEXTBTNACTION', '', 1, '', '', 'colortextbtnaction').' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_TEXTBTNACTION) ? $conf->global->THEME_ELDY_TEXTBTNACTION : ''), array()), ''), 'THEME_ELDY_TEXTBTNACTION', '', 1, '', '', 'textbutaction').' ';
 		} else {
 			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTBTNACTION, array()), '');
 			if ($color) {

@@ -534,9 +534,9 @@ if (empty($reshook)) {
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
 			// ajout prix achat
-			$fk_fournprice = $_POST['fournprice'];
-			if (!empty($_POST['buying_price'])) {
-				$pa_ht = $_POST['buying_price'];
+			$fk_fournprice = GETPOST('fournprice');
+			if (GETPOST('buying_price')) {
+				$pa_ht = GETPOST('buying_price');
 			} else {
 				$pa_ht = null;
 			}
@@ -1132,18 +1132,16 @@ if ($action == 'create') {
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 		if ($soc->remise_percent) {
-			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
+			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent).' ';
 		} else {
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoRelativeDiscount").'. </span>';
 		}
-		print '. ';
 		$absolute_discount = $soc->getAvailableDiscounts();
 		if ($absolute_discount) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency)).'.';
 		} else {
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoAbsoluteDiscount").'.</span>';
 		}
-		print '.';
 		print '</td></tr>';
 	}
 
@@ -1370,18 +1368,16 @@ if ($action == 'create') {
 		// Line info of thirdparty discounts
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
 		if ($object->thirdparty->remise_percent) {
-			print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
+			print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent).'. ';
 		} else {
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoRelativeDiscount").'. </span>';
 		}
 		$absolute_discount = $object->thirdparty->getAvailableDiscounts();
-		print '. ';
 		if ($absolute_discount) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency)).'.';
 		} else {
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '<span class="hideonsmartphone">'.$langs->trans("CompanyHasNoAbsoluteDiscount").'.</span>';
 		}
-		print '.';
 		print '</td></tr>';
 
 		// Date

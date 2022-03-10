@@ -13,7 +13,7 @@
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2022      Gauthier VERDOL     		<gauthier.verdol@atm-consulting.fr>
  *
@@ -731,12 +731,20 @@ class SupplierProposal extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			$pu_ht = $tabprice[3];
+			$pu_tva = $tabprice[4];
+			$pu_ttc = $tabprice[5];
 
 			// MultiCurrency
 			$multicurrency_total_ht  = $tabprice[16];
 			$multicurrency_total_tva = $tabprice[17];
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
+
+			$pu = $pu_ht;
+			if ($price_base_type == 'TTC') {
+				$pu = $pu_ttc;
+			}
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new SupplierProposalLine($this->db);
@@ -2468,7 +2476,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -2551,7 +2559,15 @@ class SupplierProposal extends CommonObject
 				$result .= '</span>';
 			}
 		}
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

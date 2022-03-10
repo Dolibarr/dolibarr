@@ -246,9 +246,12 @@ if ($reshook == 0) {
 	}
 }
 
+$permissiontoadd = 1;
+
 //asort($elementList);
 
 $id = 25;
+
 
 
 /*
@@ -305,7 +308,7 @@ if (empty($reshook)) {
 
 			// Rename some POST variables into a generic name
 			if (GETPOST('actionmodify', 'alpha') && $value == 'topic') {
-				$_POST['topic'] = $_POST['topic-'.$rowid];
+				$_POST['topic'] = GETPOST('topic-'.$rowid);
 			}
 
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '' || GETPOST($value) == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position') {
@@ -338,6 +341,7 @@ if (empty($reshook)) {
 				}
 
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+				$action = 'add';
 			}
 		}
 
@@ -411,6 +415,7 @@ if (empty($reshook)) {
 				} else {
 					dol_print_error($db);
 				}
+				$action = 'add';
 			}
 		}
 
@@ -489,6 +494,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			} else {
 				setEventMessages($db->error(), null, 'errors');
+				$action = 'edit';
 			}
 		}
 	}
@@ -515,7 +521,7 @@ if (empty($reshook)) {
 	if ($action == $acts[0]) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."=".((int) $rowid);
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -527,7 +533,7 @@ if (empty($reshook)) {
 	if ($action == $acts[1]) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."=".((int) $rowid);
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -545,18 +551,38 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $help_url = '';
-$title = $langs->trans("EMailsSetup");
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	$title = $langs->trans("EMailsSetup");
+} else {
+	$title = $langs->trans("EMailsTemplates");
+}
 
 llxHeader('', $title, $help_url);
 
 $linkback = '';
 $titlepicto = 'title_setup';
 
-print load_fiche_titre($title, $linkback, $titlepicto);
 
-$head = email_admin_prepare_head();
+$url = DOL_URL_ROOT.'/admin/mails_templates.php?action=add';
+$newcardbutton = dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
-print dol_get_fiche_head($head, 'templates', '', -1);
+
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	print load_fiche_titre($title, '', $titlepicto);
+} else {
+	print load_fiche_titre($title, $newcardbutton, $titlepicto);
+}
+
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	$head = email_admin_prepare_head();
+
+	print dol_get_fiche_head($head, 'templates', '', -1);
+
+	if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+		print load_fiche_titre('', $newcardbutton, '');
+	}
+}
+
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete') {
@@ -599,7 +625,7 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 
 $fieldlist = explode(',', $tabfield[$id]);
 
-if ($action == 'view') {
+if ($action == 'add') {
 	// Form to add a new line
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -750,7 +776,8 @@ if ($action == 'view') {
 		if ($tmpfieldlist == 'topic') {
 			print '<td class="center" rowspan="'.(count($fieldsforcontent)).'">';
 			if ($action != 'edit') {
-				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
+				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'"><br>';
+				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</td>';
 		}
@@ -1007,7 +1034,7 @@ if ($resql) {
 					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
 				}
 				// Test on 'enabled'
-				if (!dol_eval($obj->enabled, 1)) {
+				if (!dol_eval($obj->enabled, 1, 1, '1')) {
 					$i++;
 					continue; // Email template not qualified
 				}
@@ -1142,7 +1169,10 @@ print '</div>';
 print '</form>';
 
 
-print dol_get_fiche_end();
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	print dol_get_fiche_end();
+}
+
 
 // End of page
 llxFooter();

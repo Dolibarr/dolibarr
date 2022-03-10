@@ -47,6 +47,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
+
 if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
 	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
 	if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
@@ -76,12 +77,15 @@ print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySet
 print "<br><br>";
 print '</span>';
 
-print '<br><br>';
+print '<br>';
 
 // Show info setup company
 if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 	$setupcompanynotcomplete = 1;
 }
+
+print '<section class="setupsection">';
+
 print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
 print '<br><br>';
 print $langs->trans("SetupDescription3b");
@@ -90,10 +94,13 @@ if (!empty($setupcompanynotcomplete)) {
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
+
+print '</section>';
+
 print '<br>';
 print '<br>';
-print '<br>';
-print '<br>';
+
+print '<section class="setupsection">';
 
 // Show info setup module
 print img_picto('', 'cog', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
@@ -103,7 +110,9 @@ if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FO
 	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
 }
-print '<br>';
+
+print '</section>';
+
 print '<br>';
 print '<br>';
 print '<br>';

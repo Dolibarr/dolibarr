@@ -156,7 +156,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
 		$update_child_soc = GETPOST('updatechildprice');

@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategori, der automatisk tilføjes til
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategori, der automatisk tilføjes til tredjeparter, når de foreslår en stand
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Skabelon til e-mail, der skal sendes efter modtagelse af et forslag til en konference.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Skabelon til e-mail, der skal sendes efter modtagelse af et forslag til en stand.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Skabelon til e -mail, der skal sendes, efter at en registrering til en bod er blevet betalt.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Skabelon af e-mail til at sende efter en tilmelding til en stand er betalt.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = E -mail -skabelon, der skal sendes, efter at en registrering til en begivenhed er betalt.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Skabelon til e-mail med massaktion til attendes
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Skabelon til e-mail med massaktion til højttalere
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrer tredjeparts valgliste i deltagernes oprettelseskort / formular med kategori
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtrer tredjeparts valgliste i deltagernes oprettelseskort / formular med kundetype
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Skabelon for e-mail til brug ved afsendelse af e-mails fra massaktionen "Send e-mails" til højttalere
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Skabelon til e-mail til brug ved afsendelse af e-mails fra massaktionen "Send e-mails" på deltagerlisten
+EVENTORGANIZATION_FILTERATTENDEES_CAT = I formularen til at oprette/tilføje en deltager begrænser listen over tredjeparter til tredjeparter i kategorien
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = I formularen til at oprette/tilføje en deltager begrænser listen over tredjeparter til tredjeparter med arten
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Betaling af din bod
 EventOrganizationEmailRegistrationPayment = Tilmelding til et arrangement
 EventOrganizationMassEmailAttendees = Kommunikation til deltagere
 EventOrganizationMassEmailSpeakers = Kommunikation til taler
+ToSpeakers=Til talere 
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Pris for registrering
 PriceOfRegistrationHelp=Pris at betale for at tilmelde sig eller deltage i arrangementet
 PriceOfBooth=Abonnementspris for at stå en kabine
 PriceOfBoothHelp=Abonnementspris for at stå en kabine
-EventOrganizationICSLink=Link ICS til begivenheder
+EventOrganizationICSLink=Link ICS til konferencer
 ConferenceOrBoothInformation=Oplysninger om konference eller stand
 Attendees=Deltagere
 ListOfAttendeesOfEvent=Liste over deltagere i arrangementsprojektet
 DownloadICSLink = Download ICS-link
-EVENTORGANIZATION_SECUREKEY = Sikker nøgle til linket til offentlig registrering til en konference
+EVENTORGANIZATION_SECUREKEY = Seed for at sikre nøglen til den offentlige registreringsside for at foreslå en konference
 SERVICE_BOOTH_LOCATION = Service, der bruges til fakturarække om en standplacering
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service, der bruges til fakturarække om et deltagerabonnement på en konference
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service brugt til fakturarækken om et deltagerabonnement på en begivenhed
 NbVotes=Antal stemmer
 #
 # Status

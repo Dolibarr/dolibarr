@@ -290,7 +290,7 @@ if ($action == 'valid' && $user->rights->facture->creer) {
 			$payment->datepaye = $now;
 			$payment->fk_account = $bankaccount;
 			$payment->amounts[$invoice->id] = $amountofpayment;
-			if ($pay == 'cash') {
+			if ($pay == 'LIQ') {
 				$payment->pos_change = price2num(GETPOST('excess', 'alpha'));
 			}
 
@@ -505,6 +505,7 @@ if ($action == "addline") {
 
 	$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 
+	$qty = GETPOSTISSET('qty') ? GETPOST('qty', 'int') : 1;
 	$price = $datapriceofproduct['pu_ht'];
 	$price_ttc = $datapriceofproduct['pu_ttc'];
 	//$price_min = $datapriceofproduct['price_min'];
@@ -538,7 +539,7 @@ if ($action == "addline") {
 		foreach ($invoice->lines as $line) {
 			if ($line->product_ref == $prod->ref) {
 				if ($line->special_code==4) continue; // If this line is sended to printer create new line
-				$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty + 1, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+				$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty + $qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 				if ($result < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				} else {
@@ -550,7 +551,7 @@ if ($action == "addline") {
 	}
 	if ($idoflineadded <= 0) {
 		$invoice->fetch_thirdparty();
-		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', 0, 100, '', null, 0);
+		$idoflineadded = $invoice->addline($prod->description, $price, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', 0, 100, '', null, 0);
 		if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 			$CUSTOMER_DISPLAY_line1 = $prod->label;
 			$CUSTOMER_DISPLAY_line2 = price($price_ttc);
@@ -911,6 +912,7 @@ $form = new Form($db);
 <script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
+<?php if ($action=="valid") echo "var place=0;";?> // Set to default place after close sale
 var placeid=<?php echo ($placeid > 0 ? $placeid : 0); ?>;
 $(document).ready(function() {
 	var idoflineadded = <?php echo (empty($idoflineadded) ? 0 : $idoflineadded); ?>;

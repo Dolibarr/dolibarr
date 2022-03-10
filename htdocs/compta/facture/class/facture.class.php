@@ -1,23 +1,24 @@
 <?php
-/* Copyright (C) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2020 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2012-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
- * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
- * Copyright (C) 2016      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018      Alexandre Spangaro    <aspangaro@open-dsi.fr>
- * Copyright (C) 2018      Nicolas ZABOURI        <info@inovea-conseil.com>
- * Copyright (C) 2022      Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012-2014  Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
+ * Copyright (C) 2022      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -788,6 +789,9 @@ class Facture extends CommonInvoice
 				dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
 				foreach ($this->lines as $i => $val) {
 					$newinvoiceline = $this->lines[$i];
+
+					$newinvoiceline->context = $this->context;
+
 					$newinvoiceline->fk_facture = $this->id;
 
 					$newinvoiceline->origin = $this->lines[$i]->element;
@@ -820,7 +824,7 @@ class Facture extends CommonInvoice
 						$result = $newinvoiceline->insert();
 
 						// Defined the new fk_parent_line
-						if ($result > 0 && $newinvoiceline->product_type == 9) {
+						if ($result > 0) {
 							$fk_parent_line = $result;
 						}
 					}
@@ -1167,6 +1171,9 @@ class Facture extends CommonInvoice
 
 		$object->fetch($fromid);
 
+		// Load source object
+		$objFrom = clone $object;
+
 		// Change socid if needed
 		if (!empty($this->socid) && $this->socid != $object->socid) {
 			$objsoc = new Societe($this->db);
@@ -1247,13 +1254,13 @@ class Facture extends CommonInvoice
 			$this->errors = $object->errors;
 		} else {
 			// copy internal contacts
-			if ($object->copy_linked_contact($this, 'internal') < 0) {
+			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
 				$this->error = $object->error;
 				$this->errors = $object->errors;
-			} elseif ($this->socid == $object->socid) {
+			} elseif ($object->socid == $objFrom->socid) {
 				// copy external contacts if same company
-				if ($object->copy_linked_contact($this, 'external') < 0) {
+				if ($object->copy_linked_contact($objFrom, 'external') < 0) {
 					$error++;
 					$this->error = $object->error;
 					$this->errors = $object->errors;
@@ -1264,7 +1271,7 @@ class Facture extends CommonInvoice
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom'=>$this);
+				$parameters = array('objFrom'=>$objFrom);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -1566,7 +1573,7 @@ class Facture extends CommonInvoice
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('invoicedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result, 'notooltip' => $notooltip, 'addlinktonotes' => $addlinktonotes, 'save_lastsearch_value'=> $save_lastsearch_value, 'target' => $target);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result, 'notooltip' => $notooltip, 'addlinktonotes' => $addlinktonotes, 'save_lastsearch_value'=> $save_lastsearch_value, 'target' => $target);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -2645,6 +2652,7 @@ class Facture extends CommonInvoice
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$productStatic = new Product($this->db);
 			$warehouseStatic = new Entrepot($this->db);
+			$productbatch = new ProductBatch($this->db);
 		}
 
 		$now = dol_now();
@@ -2787,7 +2795,7 @@ class Facture extends CommonInvoice
 											$sortorder = 'ASC,ASC,ASC,ASC';
 										}
 
-										$resBatchList = Productbatch::findAllForProduct($this->db, $productStatic->id, $idwarehouse, (!empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) ? null : 0), $sortfield, $sortorder);
+										$resBatchList = $productbatch->findAllForProduct($productStatic->id, $idwarehouse, (!empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) ? null : 0), $sortfield, $sortorder);
 										if (!is_array($resBatchList)) {
 											$error++;
 											$this->error = $this->db->lasterror();

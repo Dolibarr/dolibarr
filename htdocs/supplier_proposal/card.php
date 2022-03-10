@@ -246,7 +246,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'setdate_livraison' && $usercancreate) {
-		$result = $object->setDeliveryDate($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+		$result = $object->setDeliveryDate($user, dol_mktime(12, 0, 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int')));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -897,7 +897,7 @@ if (empty($reshook)) {
 		if (!empty($productid)) {
 			$productsupplier = new ProductFournisseur($db);
 			if (!empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) {
-				if ($productid > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $productid, 'none', GETPOST('socid', 'int')) < 0) {
+				if ($productid > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty')), $productid, 'none', GETPOST('socid', 'int')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
 			}
@@ -1009,7 +1009,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOST('projectid'), 'int');
 	} elseif ($action == 'setavailability' && $usercancreate) {
 		// Delivery delay
-		$result = $object->availability($_POST['availability_id']);
+		$result = $object->availability(GETPOST('availability_id'));
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		// Terms of payments
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));

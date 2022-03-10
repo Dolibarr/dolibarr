@@ -410,3 +410,4 @@ DefaultBOMDesc=Standardstyklisten anbefales at bruge til fremstilling af dette p
 Rank=Rang
 SwitchOnSaleStatus=Slå salgsstatus til
 SwitchOnPurchaseStatus=Slå købsstatus til
+StockMouvementExtraFields= Ekstra felter (aktiebevægelse)

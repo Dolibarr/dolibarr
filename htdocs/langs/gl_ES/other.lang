@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Proxecto creado polo recolector de correos electr
 TicketCreatedByEmailCollector=Ticket creado polo recolector de correos electrónicos do MSGID de correo electrónico %s
 OpeningHoursFormatDesc=Use o - para separar horario de apertura e peche.<br>Use o espazo para engadir diferentes rangos.<br>Exemplo: 8-12 14-18
 SuffixSessionName=Sufixo para o nome da sesión
+LoginWith=Inicio de sesión con %s
 
 ##### Export #####
 ExportsArea=Área de exportación

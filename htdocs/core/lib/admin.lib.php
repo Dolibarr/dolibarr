@@ -320,6 +320,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 	// Loop on each request to execute request
 	$cursorinsert = 0;
 	$listofinsertedrowid = array();
+	$keyforsql = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
 			// Replace the prefix tables
@@ -335,7 +336,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 			// Add log of request
 			if (!$silent) {
-				print '<tr class="trforrunsql"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+				print '<tr class="trforrunsql'.$keyforsql.'"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
 			}
 			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
@@ -454,18 +455,18 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			function init_trrunsql()
+			function init_trrunsql'.$keyforsql.'()
 			{
-				console.log("toggle .trforrunsql");
-				jQuery(".trforrunsql").toggle();
+				console.log("toggle .trforrunsql'.$keyforsql.'");
+				jQuery(".trforrunsql'.$keyforsql.'").toggle();
 			}
-			init_trrunsql();
-			jQuery(".trforrunsqlshowhide").click(function() {
-				init_trrunsql();
+			init_trrunsql'.$keyforsql.'();
+			jQuery(".trforrunsqlshowhide'.$keyforsql.'").click(function() {
+				init_trrunsql'.$keyforsql.'();
 			});
 		});
 		</script>';
-		print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
 
 		print '</td></tr>'."\n";
@@ -1627,6 +1628,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			if (empty($strictw3c)) {
 				print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="page_y" value="'.newToken().'">';
 			}
 
 			print '<tr class="oddeven">';
@@ -1733,7 +1735,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			// Submit
 			if (empty($strictw3c)) {
 				print '<td class="center">';
-				print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+				print '<input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update">';
 				print "</td>";
 			}
 
@@ -1748,7 +1750,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 	print '</div>';
 
 	if (!empty($strictw3c) && $strictw3c == 1) {
-		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+		print '<div align="center"><input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update"></div>';
 		print "</form>\n";
 	}
 }

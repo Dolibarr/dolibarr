@@ -847,7 +847,7 @@ class BOM extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('bomdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1064,26 +1064,89 @@ class BOM extends CommonObject
 				$tmpproduct->cost_price = 0;
 				$tmpproduct->pmp = 0;
 
-				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
-				if ($result < 0) {
-					$this->error = $tmpproduct->error;
-					return -1;
-				}
-				$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-				if (empty($line->unit_cost)) {
-					if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-						$line->unit_cost = $productFournisseur->fourn_unitprice;
+				if (empty($line->fk_bom_child)) {
+					$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
+					if ($result < 0) {
+						$this->error = $tmpproduct->error;
+						return -1;
+					}
+					$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+					if (empty($line->unit_cost)) {
+						if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+							$line->unit_cost = $productFournisseur->fourn_unitprice;
+						}
+					}
+
+					$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+
+					$this->total_cost += $line->total_cost;
+				} else {
+					$bom_child= new BOM($this->db);
+					$res = $bom_child->fetch($line->fk_bom_child);
+					if ($res>0) {
+						$bom_child->calculateCosts();
+						$line->childBom[] = $bom_child;
+						$this->total_cost += $bom_child->total_cost  * $line->qty;
+					} else {
+						$this->error = $bom_child->error;
+						return -2;
 					}
 				}
-
-				$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
-
-				$this->total_cost += $line->total_cost;
 			}
 
 			$this->total_cost = price2num($this->total_cost, 'MT');
-			if ($this->qty) {
+			if ($this->qty > 0) {
 				$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+			} elseif ($this->qty < 0) {
+				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
+			}
+		}
+	}
+
+	/**
+	 * Get Net needs by product
+	 *
+	 * @param array $TNetNeeds Array of ChildBom and infos linked to
+	 * @param int   $qty       qty needed
+	 * @return void
+	 */
+	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
+	{
+		if (! empty($this->lines)) {
+			foreach ($this->lines as $line) {
+				if (! empty($line->childBom)) {
+					foreach ($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+				} else {
+					$TNetNeeds[$line->fk_product] += $line->qty*$qty;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get Net needs Tree by product or bom
+	 *
+	 * @param array $TNetNeeds Array of ChildBom and infos linked to
+	 * @param int   $qty       qty needed
+	 * @param int   $level     level of recursivity
+	 * @return void
+	 */
+	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
+	{
+		if (! empty($this->lines)) {
+			foreach ($this->lines as $line) {
+				if (! empty($line->childBom)) {
+					foreach ($line->childBom as $childBom) {
+						$TNetNeeds[$childBom->id]['bom'] = $childBom;
+						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
+						$TNetNeeds[$childBom->id]['qty'] = $line->qty*$qty;
+						$TNetNeeds[$childBom->id]['level'] = $level;
+						$childBom->getNetNeedsTree($TNetNeeds, $line->qty*$qty, $level+1);
+					}
+				} else {
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
+				}
 			}
 		}
 	}
@@ -1212,6 +1275,11 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $unit_cost = 0;
 
+
+	/**
+	 * @var Bom     array of Bom in line
+	 */
+	public $childBom = array();
 
 	/**
 	 * Constructor
@@ -1453,7 +1521,7 @@ class BOMLine extends CommonObjectLine
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('bomlinedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

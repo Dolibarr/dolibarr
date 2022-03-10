@@ -369,7 +369,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classin' && $usercancreate) {
 		$object->fetch($id);
-		$object->setProject($_POST['projectid']);
+		$object->setProject(GETPOST('projectid', 'int'));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
@@ -491,7 +491,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setpaymentterm' && $usercancreate) {
 		$object->fetch($id);
-		$object->date_lim_reglement = dol_mktime(12, 0, 0, $_POST['paymenttermmonth'], $_POST['paymenttermday'], $_POST['paymenttermyear']);
+		$object->date_lim_reglement = dol_mktime(12, 0, 0, GETPOST('paymenttermmonth', 'int'), GETPOST('paymenttermday', 'int'), GETPOST('paymenttermyear', 'int'));
 		if ($object->date_lim_reglement < $object->date) {
 			$object->date_lim_reglement = $object->calculate_date_lim_reglement();
 			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
@@ -745,7 +745,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			// On verifie si la facture a des paiements
+			// We check if invoice has payments
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
@@ -995,7 +995,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 		}
-	} elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $usercancreate) {
+	} elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $usercanissuepayment) {
 		// Delete payment
 		$object->fetch($id);
 		if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0) {
@@ -1137,6 +1137,8 @@ if (empty($reshook)) {
 						$facture_source->fetchPreviousNextSituationInvoice();
 					}
 				}
+
+
 				$id = $object->create($user);
 				if ($id < 0) {
 					$error++;
@@ -1264,12 +1266,13 @@ if (empty($reshook)) {
 							$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
 							$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
+							$line->context['createcreditnotefrominvoice'] = 1;
 							$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
 
 							$object->lines[] = $line; // insert new line in current object
 
 							// Defined the new fk_parent_line
-							if ($result > 0 && $line->product_type == 9) {
+							if ($result > 0) {
 								$fk_parent_line = $result;
 							}
 						}
@@ -1780,7 +1783,7 @@ if (empty($reshook)) {
 										}
 
 										// Defined the new fk_parent_line
-										if ($result > 0 && $lines[$i]->product_type == 9) {
+										if ($result > 0) {
 											$fk_parent_line = $result;
 										}
 									}
@@ -2109,7 +2112,7 @@ if (empty($reshook)) {
 
 			// Define special_code for special lines
 			$special_code = 0;
-			// if (empty($_POST['qty'])) $special_code=3; // Options should not exists on invoices
+			// if (!GETPOST(qty)) $special_code=3; // Options should not exists on invoices
 
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
@@ -2283,7 +2286,7 @@ if (empty($reshook)) {
 				}
 
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $_POST['progress'], '', $fk_unit, $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, GETPOST('progress'), '', $fk_unit, $pu_ht_devise);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -2396,9 +2399,9 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code');
-		if (!GETPOST('qty')) {
-			$special_code = 3;
+		$special_code = GETPOST('special_code', 'int');
+		if ($special_code == 3) {
+			$special_code = 0;	// Options should not exists on invoices
 		}
 
 		$line = new FactureLigne($db);
@@ -2578,7 +2581,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'updatealllines' && $usercancreate && $_POST['all_percent'] == $langs->trans('Modifier')) {	// Update all lines of situation invoice
+	} elseif ($action == 'updatealllines' && $usercancreate && GETPOST('all_percent') == $langs->trans('Modifier')) {	// Update all lines of situation invoice
 		if (!$object->fetch($id) > 0) {
 			dol_print_error($db);
 		}
@@ -2591,11 +2594,11 @@ if (empty($reshook)) {
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else {
-					$object->update_percent($line, $_POST['all_progress']);
+					$object->update_percent($line, GETPOST('all_progress'));
 				}
 			}
 		}
-	} elseif ($action == 'updateline' && $usercancreate && $_POST['cancel'] == $langs->trans("Cancel")) {
+	} elseif ($action == 'updateline' && $usercancreate && !$cancel) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // To show again edited page
 		exit();
 	} elseif ($action == 'confirm_situationout' && $confirm == 'yes' && $usercancreate) {
@@ -2924,6 +2927,9 @@ if ($action == 'create') {
 			if (empty($mode_reglement_id)) {
 				$mode_reglement_id = $soc->mode_reglement_id;
 			}
+			if (empty($fk_account)) {
+				$fk_account = $soc->fk_account;
+			}
 			if (!$remise_percent) {
 				$remise_percent = $soc->remise_percent;
 			}
@@ -3030,6 +3036,9 @@ if ($action == 'create') {
 	if (empty($mode_reglement_id)) {
 		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
+
+	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	$fk_account = GETPOSTISSET("fk_account") ? GETPOST("fk_account", 'int') : $fk_account;
 
 	if (!empty($soc->id)) {
 		$absolute_discount = $soc->getAvailableDiscounts();
@@ -3637,8 +3646,8 @@ if ($action == 'create') {
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$fk_account = GETPOSTISSET('fk_account') ? GETPOST('fk_account', 'int') : $fk_account;
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
@@ -4950,14 +4959,14 @@ if ($action == 'create') {
 	// List of payments already done
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder paymenttable" width="100%">';
+	print '<table class="noborder paymenttable centpercent">';
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">'.($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 	print '<td class="liste_titre">'.$langs->trans('Date').'</td>';
 	print '<td class="liste_titre">'.$langs->trans('Type').'</td>';
 	if (!empty($conf->banque->enabled)) {
-		print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
+		print '<td class="liste_titre">'.$langs->trans('BankAccount').'</td>';
 	}
 	print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
 	print '<td class="liste_titre" width="18">&nbsp;</td>';

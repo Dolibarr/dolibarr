@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Bold reference and period in PDF
-BoldLabelOnPDF=Bold label in PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=ມູນນິທິ
 Version=ສະບັບ
 Publisher=ຜູ້ຕີພິມ
@@ -343,7 +343,7 @@ StepNb=ຂັ້ນຕອນ %s
 FindPackageFromWebSite=ຊອກຫາຊຸດທີ່ສະ ໜອງ ຄຸນສົມບັດທີ່ເຈົ້າຕ້ອງການ (ຕົວຢ່າງຢູ່ໃນເວັບໄຊທ official ທາງການ %s).
 DownloadPackageFromWebSite=ດາວໂຫລດແພັກເກດ (ຕົວຢ່າງຈາກເວັບໄຊທ official ທາງການ %s).
 UnpackPackageInDolibarrRoot=ແກະ/ແກະໄຟລ pack ທີ່ບັນຈຸໃສ່ໃນໄດເລກະທໍລີເຊີບເວີ Dolibarr ຂອງເຈົ້າ: <b> %s </b>
-UnpackPackageInModulesRoot=ເພື່ອປັບໃຊ້/ຕິດຕັ້ງໂມດູນພາຍນອກ, ແກະ/ແຍກໄຟລ aged ແພັກເກັດໃສ່ໃນໄດເລກະທໍລີເຊີບເວີທີ່ອຸທິດໃຫ້ກັບໂມດູນພາຍນອກ: <br> <b> %s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=ການ ນຳ ໃຊ້ໂມດູນ ສຳ ເລັດແລ້ວ. ແນວໃດກໍ່ຕາມເຈົ້າຕ້ອງເປີດໃຊ້ແລະຕັ້ງຄ່າໂມດູນໃນໃບສະັກຂອງເຈົ້າໂດຍການເຂົ້າໄປທີ່ໂມດູນການຕັ້ງ ໜ້າ: <a href="%s"> %s </a>.
 NotExistsDirect=ບັນຊີລາຍຊື່ຮາກທາງເລືອກບໍ່ໄດ້ກໍານົດໄວ້ໃນບັນຊີລາຍຊື່ທີ່ມີຢູ່ແລ້ວ. <br>
 InfDirAlt=ນັບຕັ້ງແຕ່ສະບັບ 3, ມັນເປັນໄປໄດ້ທີ່ຈະກໍານົດລະບົບຮາກທາງເລືອກ. ອັນນີ້ອະນຸຍາດໃຫ້ເຈົ້າເກັບຮັກສາ, ເຂົ້າໄປໃນບັນຊີລາຍຊື່ທີ່ອຸທິດຕົນ, ປລັກອິນແລະແມ່ແບບທີ່ກໍານົດເອງ. <br> ພຽງແຕ່ສ້າງບັນຊີລາຍການຢູ່ທີ່ຮາກຂອງ Dolibarr (ຕົວຢ່າງ: custom). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=ການຕິດຕັ້ງຫຼືສ້າງໂ
 HighlightLinesOnMouseHover=ເນັ້ນເສັ້ນຕາຕະລາງເມື່ອການເຄື່ອນຍ້າຍເມົ້າຜ່ານ
 HighlightLinesColor=ເນັ້ນສີຂອງເສັ້ນເມື່ອເມົ້າຜ່ານ (ໃຊ້ 'ffffff' ໂດຍບໍ່ມີຈຸດເດັ່ນ)
 HighlightLinesChecked=ເນັ້ນສີຂອງເສັ້ນເມື່ອມັນຖືກກວດກາ (ໃຊ້ 'ffffff' ໂດຍບໍ່ມີຈຸດເດັ່ນ)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=ສີຂໍ້ຄວາມຂອງຫົວຂໍ້ ໜ້າ
 LinkColor=ສີຂອງການເຊື່ອມຕໍ່
 PressF5AfterChangingThis=ກົດ CTRL+F5 ຢູ່ເທິງແປ້ນພິມຫຼືລຶບ cache ຂອງ browser ຂອງເຈົ້າຫຼັງຈາກປ່ຽນຄ່ານີ້ເພື່ອໃຫ້ມັນມີຜົນ
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
-BoldRefAndPeriodOnPDF=Referensi tebal dan titik dalam PDF
-BoldLabelOnPDF=Label tebal dalam PDF
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Yayasan
 Version=Versi
 Publisher=Penerbit
@@ -343,7 +343,7 @@ StepNb=Langkah %s
 FindPackageFromWebSite=Temukan paket yang menyediakan fitur yang Anda butuhkan (misalnya di situs web resmi %s).
 DownloadPackageFromWebSite=Paket unduhan (misalnya dari situs web resmi %s).
 UnpackPackageInDolibarrRoot=Buka paket / unzip file yang dikemas ke dalam direktori server Dolibarr Anda:<b>%s </b>
-UnpackPackageInModulesRoot=Untuk menggunakan / menginstal modul eksternal, buka paket / unzip file yang dikemas ke dalam direktori server yang didedikasikan untuk modul eksternal: <br><b>%s </b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Pemasangan modul selesai. Namun Anda harus mengaktifkan dan mengatur modul dalam aplikasi Anda dengan masuk ke modul pengaturan halaman: <a href="%s"> %s </a>.
 NotExistsDirect=Direktori root alternatif tidak didefinisikan ke direktori yang ada. <br>
 InfDirAlt=Sejak versi 3, dimungkinkan untuk mendefinisikan direktori root alternatif. Ini memungkinkan Anda untuk menyimpan, ke direktori khusus, plug-in, dan template khusus. <br> Cukup buat direktori di root Dolibarr (mis: kustom). <br>
@@ -1917,6 +1917,8 @@ ConfFileMustContainCustom=Menginstal atau membuat modul eksternal dari aplikasi 
 HighlightLinesOnMouseHover=Sorot garis-garis tabel ketika mouse bergerak
 HighlightLinesColor=Sorot warna garis ketika mouse dilewati (gunakan 'ffffff' tanpa highlight)
 HighlightLinesChecked=Sorot warna garis ketika dicentang (gunakan 'ffffff' tanpa highlight)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=Warna teks judul Halaman
 LinkColor=Warna tautan
 PressF5AfterChangingThis=Tekan CTRL + F5 pada keyboard atau kosongkan cache browser Anda setelah mengubah nilai ini agar efektif
@@ -2216,3 +2218,5 @@ NativeModules=Native modules
 NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
 API_DISABLE_COMPRESSION=Disable compression of API responses
 EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

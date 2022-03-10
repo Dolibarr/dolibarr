@@ -272,6 +272,7 @@ ProjectCreatedByEmailCollector=Лоиҳа аз ҷониби коллекторҳ
 TicketCreatedByEmailCollector=Чипта аз ҷониби коллекторҳои почтаи электронӣ аз почтаи MSGID %s сохта шудааст
 OpeningHoursFormatDesc=Барои ҷудо кардани соатҳои кушодан ва пӯшидани a - истифода баред. <br> Барои ворид кардани диапазонҳои гуногун фосила истифода баред. <br> Мисол: 8-12 14-18
 SuffixSessionName=Суффикс барои номи сессия
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Минтақаи содирот

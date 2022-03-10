@@ -27,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Tento kontakt je již definován jako
 ErrorCashAccountAcceptsOnlyCashMoney=Tento bankovní účet je hotovostní účet, takže přijímá pouze platby typu hotovosti.
 ErrorFromToAccountsMustDiffers=Zdrojové a cílové bankovní účty musí být různé.
 ErrorBadThirdPartyName=Špatná hodnota názvu subjektu nebo třetí strany
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=%s je povinné
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Špatná syntaxe kódu zákazníka
 ErrorBadBarCodeSyntax=Špatná syntaxe pro čárový kód. Možná jste nastavili špatný typ čárového kódu nebo jste definovali masku čárového kódu pro číslování, které nesouhlasí s naskenovanou hodnotou.
 ErrorCustomerCodeRequired=Je vyžadován kód zákazníka
@@ -274,6 +276,7 @@ ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please mo
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Váš parametr PHP upload_max_filesize (%s) je vyšší než parametr PHP post_max_size (%s). Toto není konzistentní nastavení.
@@ -315,6 +318,7 @@ RequireAtLeastXString = Requires at least %s character(s)
 RequireXStringMax = Requires %s character(s) max
 RequireAtLeastXDigits = Requires at least %s digit(s)
 RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
 RequireValidEmail = Email address is not valid
 RequireMaxLength = Length must be less than %s chars
 RequireMinLength = Length must be more than %s char(s)
