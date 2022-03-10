@@ -698,7 +698,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
-	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : 0);
+	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (empty($conf->global->TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION) ? 0 : 1));
 	$formticket->withusercreate = 0;
 	$formticket->withref = 1;
 	$formticket->fk_user_create = $user->id;
