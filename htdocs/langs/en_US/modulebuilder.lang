@@ -145,3 +145,4 @@ TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
 ImportExportProfiles=Import and export profiles
 ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
