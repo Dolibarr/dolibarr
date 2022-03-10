@@ -45,7 +45,6 @@ $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
-$description = GETPOST('description', 'restricthtml');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard', 'globalcard'));
@@ -451,8 +450,7 @@ if ($id > 0 || !empty($ref)) {
             if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
                 $nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
             }
-            $description = !empty($description) ? $description : $object->description;
-            $doleditor = new DolEditor('description', $description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+            $doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
             print $doleditor->Create();
         }
 		print '</td></tr>';
@@ -551,11 +549,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Description
 		print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
-        if (!empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
-            print $object->description;
-        } else {
-            print nl2br($object->description);
-        }
+        print dol_htmlentitiesbr($object->description);
 		print '</td></tr>';
 
 		print '</table>';
