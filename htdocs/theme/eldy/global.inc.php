@@ -3543,6 +3543,12 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+.thsticky, .tdsticky {
+	position: sticky;
+	left: 0px;
+}
+
+
 /* To have left column sticky */
 /*.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
 	position: sticky;
