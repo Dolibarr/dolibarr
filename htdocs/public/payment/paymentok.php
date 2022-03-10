@@ -446,7 +446,7 @@ if ($ispaymentok) {
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
 				// add default label for subscription before paymnetinfo if specified in module setup
-				$label = (empty($conf->global->MEMBER_NO_DEFAULT_LABEL)) ? $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom : time()), "%Y") . ' - ': '';
+				$label = (empty($conf->global->MEMBER_NO_DEFAULT_LABEL)) ? $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom :  dol_now()), "%Y") . ' - ': '';
 				$label = 'Online subscription '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
 
 				// Payment informations
