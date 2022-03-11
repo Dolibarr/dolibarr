@@ -1718,8 +1718,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 		print '</tr>';
 
-		print '</td></tr>';
-
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
@@ -1736,9 +1734,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if ($user->admin) {
 					print '<!-- '.$langs->trans("Crypted").': '.$object->pass_indatabase_crypted.' -->';
 				}
-				print '<span class="opacitymedium"'.$langs->trans("Hidden").'</span>';
+				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 			}
-			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
+			if (!empty($object->pass_indatabase) && empty($object->user_id)) {	// Show warning only for old password still in clear (does not happen anymore)
 				$langs->load("errors");
 				$htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
 				print ' '.$form->textwithpicto('', $htmltext, 1, 'warning');
@@ -1777,7 +1775,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<div class="fichehalfright">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield tableforfield centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Tags / Categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -1851,18 +1849,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 		print '</td></tr>';
-
-		// VCard
-		/*
-		print '<tr><td>';
-		print $langs->trans("VCard").'</td><td colspan="3">';
-		print '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("Download").' vcard', 'vcard.png', 'class="paddingrightonly"');
-		print $langs->trans("Download");
-		print img_picto($langs->trans("Download").' vcard', 'download', 'class="paddingleft"');
-		print '</a>';
-		print '</td></tr>';
-		*/
 
 		print "</table>\n";
 
