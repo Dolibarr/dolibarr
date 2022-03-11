@@ -952,6 +952,18 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			if ($fieldname == 'entity') {
 				$index = 1;
 			}
+			// css
+			$css = '';
+			$cssview = '';
+			$csslist = '';
+			if ($fieldname == 'import_key') {
+				$css = 'minwidth300';
+				$cssview = 'wordbreak';
+			}
+			if (in_array($fieldname, array('note_public', 'note_private'))) {
+				$cssview = 'wordbreak';
+			}
+
 
 			$string .= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."',";
 			if ($default != '') {
@@ -968,6 +980,15 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$string .= ", 'position'=>".$position;
 			if ($index) {
 				$string .= ", 'index'=>".$index;
+			}
+			if ($css) {
+				$string .= ", 'css'=>".$css;
+			}
+			if ($cssview) {
+				$string .= ", 'cssview'=>".$cssview;
+			}
+			if ($csslist) {
+				$string .= ", 'csslist'=>".$csslist;
 			}
 			$string .= "),\n";
 			$string .= "<br>";
@@ -1320,9 +1341,9 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'isameasure'=>GETPOST('propisameasure', 'int'),
 				'comment'=>GETPOST('propcomment', 'alpha'),
 				'help'=>GETPOST('prophelp', 'alpha'),
-				'css'=>GETPOST('propcss', 'aZ09'),
-				'cssview'=>GETPOST('propcssview', 'aZ09'),
-				'csslist'=>GETPOST('propcsslist', 'aZ09'),
+				'css'=>GETPOST('propcss', 'alpha'),				// Can be 'maxwidth500 widthcentpercentminusxx' for example
+				'cssview'=>GETPOST('propcssview', 'alpha'),
+				'csslist'=>GETPOST('propcsslist', 'alpha'),
 				'default'=>GETPOST('propdefault', 'restricthtml'),
 				'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
 				'validate' => GETPOST('propvalidate', 'int')
@@ -1343,7 +1364,6 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 	// Edit the class file to write properties
 	if (!$error) {
 		$moduletype = 'external';
-		var_dump($addfieldentry);
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry, $moduletype);
 
 		if (is_numeric($object) && $object <= 0) {
@@ -1940,6 +1960,11 @@ if ($module == 'initmodule') {
 		$head2[$h][2] = 'description';
 		$h++;
 
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '');
+		$head2[$h][1] = $langs->trans("Objects");
+		$head2[$h][2] = 'objects';
+		$h++;
+
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=languages&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = $langs->trans("Languages");
 		$head2[$h][2] = 'languages';
@@ -1948,11 +1973,6 @@ if ($module == 'initmodule') {
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = $langs->trans("Dictionaries");
 		$head2[$h][2] = 'dictionaries';
-		$h++;
-
-		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Objects");
-		$head2[$h][2] = 'objects';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread ? '@'.$dirread : '');
