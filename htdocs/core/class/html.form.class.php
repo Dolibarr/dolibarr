@@ -4807,7 +4807,7 @@ class Form
 						$more .= '<div class="tagtr">';
 						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
 						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$moreattr;
-						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0') {
+						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0' && $input['value'] != '') {
 							$more .= ' checked';
 						}
 						if (is_bool($input['value']) && $input['value']) {
@@ -4863,6 +4863,8 @@ class Form
 						$moreonecolumn .= '</div>'."\n";
 					} elseif ($input['type'] == 'hidden') {
 						// Do nothing more, already added by a previous loop
+					} elseif ($input['type'] == 'separator') {
+						$more .= '<br>';
 					} else {
 						$more .= 'Error type '.$input['type'].' for the confirm box is not a supported type';
 					}
@@ -5035,7 +5037,7 @@ class Form
 			$formconfirm .= '<td class="valid">'.$question.'</td>';
 			$formconfirm .= '<td class="valid center">';
 			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly');
-			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'">';
+			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="'.$langs->trans("Validate").'">';
 			$formconfirm .= '</td>';
 			$formconfirm .= '</tr>'."\n";
 
@@ -6582,7 +6584,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$retstring = '';
+		$retstring = '<span class="nowraponall">';
 
 		$hourSelected = 0;
 		$minSelected = 0;
@@ -6614,7 +6616,7 @@ class Form
 		if ($typehour != 'text') {
 			$retstring .= ' '.$langs->trans('HourShort');
 		} else {
-			$retstring .= '<span class="hideonsmartphone">:</span>';
+			$retstring .= '<span class="">:</span>';
 		}
 
 		// Minutes
@@ -6642,7 +6644,7 @@ class Form
 			$retstring .= ' '.$langs->trans('MinuteShort');
 		}
 
-		//$retstring.="&nbsp;";
+		$retstring.="</span>";
 
 		if (!empty($nooutput)) {
 			return $retstring;
@@ -7424,7 +7426,7 @@ class Form
 		if (!empty($objecttmp->fields)) {	// For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (!dol_eval($val['enabled'], 1, 1)) {
+				if (!dol_eval($val['enabled'], 1, 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {

@@ -286,10 +286,11 @@ print '<div class="corps"> '."\n";
 
 // show title of survey
 $titre = str_replace("\\", "", $object->title);
-print '<strong>'.dol_htmlentities($titre).'</strong><br><br>'."\n";
+print '<strong>'.dol_htmlentities($titre).'</strong>';
 
 // show description of survey
 if ($object->description) {
+	print '<br><br>'."\n";
 	print dol_htmlentitiesbr($object->description);
 	print '<br>'."\n";
 }

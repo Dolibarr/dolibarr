@@ -405,7 +405,7 @@ print '<br><br>';
 print '<br>';
 
 
-print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
+print load_fiche_titre($langs->trans("OtherSetup"), '', 'folder');
 
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
@@ -438,18 +438,23 @@ print '<br>';
 print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
 print '<br>';
 
+print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 2)</span>'."<br>";
+print '<br>';
+
+print '<br>';
+print '<br>';
+
+
+print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
+
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 2)</span>' : $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)."<br>";
-print '<br>';
-
 print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>' : $conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL)."<br>";
 print '<br>';
-
 
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
 if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {

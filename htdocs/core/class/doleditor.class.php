@@ -316,7 +316,7 @@ class DolEditor
 						jQuery(".buttonforacesave").click(function() {
         					console.log("We click on savefile button for component '.$this->htmlname.'");
         					var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid")
-        					console.log(aceEditor.getSession().getValue());
+        					//console.log(aceEditor.getSession().getValue());
 							jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
 							/*if (jQuery("#'.$this->htmlname.'").html().length > 0) return true;
 							else return false;*/

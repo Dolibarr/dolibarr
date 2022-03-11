@@ -35,6 +35,9 @@
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging varchar(64) DEFAULT NULL;
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;

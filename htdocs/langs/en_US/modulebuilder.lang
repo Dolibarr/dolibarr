@@ -138,10 +138,11 @@ CSSViewClass=CSS for read form
 CSSListClass=CSS for list
 NotEditable=Not editable
 ForeignKey=Foreign key
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
+TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Ascii to HTML converter
 AsciiToPdfConverter=Ascii to PDF converter
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
 ImportExportProfiles=Import and export profiles
 ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated

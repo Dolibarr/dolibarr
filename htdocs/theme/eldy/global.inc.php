@@ -168,6 +168,10 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 */
+.liste_titre input[name=search_month] {
+	margin-right: 4px;
+}
+
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
@@ -6202,6 +6206,10 @@ span#select2-boxbookmark-container {
   position: relative;
   cursor: text;
   overflow: hidden;
+}
+
+ul.select2-results__options li {
+	font-size: 0.95em;
 }
 
 

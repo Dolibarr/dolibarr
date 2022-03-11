@@ -22,10 +22,11 @@
  * This is the "File Uploader" for PHP.
  */
 
-require 'config.php';
+require 'config.php';	// This include the main.inc.php
 require 'util.php';
 require 'io.php';
 require 'commands.php';
+
 
 /**
  * SendError
@@ -61,6 +62,7 @@ if (!IsAllowedCommand($sCommand)) {
 if (!IsAllowedType($sType)) {
 	SendUploadResults(1, '', '', 'Invalid type specified');
 }
+
 
 
 // @CHANGE
