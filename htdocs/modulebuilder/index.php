@@ -2287,7 +2287,7 @@ if ($module == 'initmodule') {
 				print '<table class="noborder">';
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, ' aaa ');
 				print_liste_field_titre("Table", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("SQL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
@@ -2699,7 +2699,7 @@ if ($module == 'initmodule') {
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder small">';
 							print '<tr class="liste_titre">';
-							print '<th>'.$langs->trans("Property");
+							print '<th class="thsticky">'.$langs->trans("Property");
 							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeExamples").'</a>)';
 							print '</th>';
 							print '<th>';
@@ -2736,7 +2736,7 @@ if ($module == 'initmodule') {
 							if (!empty($properties)) {
 								// Line to add a property
 								print '<tr>';
-								print '<td><input type="text" class="maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
+								print '<td class="tdsticky"><input type="text" class="maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
 								print '<td><input type="text" class="maxwidth75" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel', 'alpha')).'"></td>';
 								print '<td><input type="text" class="maxwidth75" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype', 'alpha')).'"></td>';
 								print '<td><input type="text" class="maxwidth75" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval', 'restricthtml')).'"></td>';
@@ -2803,7 +2803,7 @@ if ($module == 'initmodule') {
 
 									print '<tr class="oddeven">';
 
-									print '<td>';
+									print '<td class="tdsticky">';
 									print dol_escape_htmltag($propname);
 									print '</td>';
 									print '<td>';

@@ -6680,7 +6680,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$retstring = '';
+		$retstring = '<span class="nowraponall">';
 
 		$hourSelected = 0;
 		$minSelected = 0;
@@ -6712,7 +6712,7 @@ class Form
 		if ($typehour != 'text') {
 			$retstring .= ' '.$langs->trans('HourShort');
 		} else {
-			$retstring .= '<span class="hideonsmartphone">:</span>';
+			$retstring .= '<span class="">:</span>';
 		}
 
 		// Minutes
@@ -6740,7 +6740,7 @@ class Form
 			$retstring .= ' '.$langs->trans('MinuteShort');
 		}
 
-		//$retstring.="&nbsp;";
+		$retstring.="</span>";
 
 		if (!empty($nooutput)) {
 			return $retstring;

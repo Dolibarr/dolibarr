@@ -3599,6 +3599,11 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+.thsticky, .tdsticky {
+	position: sticky;
+	left: 0px;
+}
+
 <?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_REF)) { ?>
 /* To have left column sticky */
 .tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
