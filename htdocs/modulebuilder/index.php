@@ -956,7 +956,10 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$css = '';
 			$cssview = '';
 			$csslist = '';
-			if ($fieldname == 'import_key') {
+			if (preg_match('/^fk_/', $fieldname)) {
+				$css = 'maxwidth500 widthcentpercentminusxx';
+			}
+			if ($fieldname == 'label') {
 				$css = 'minwidth300';
 				$cssview = 'wordbreak';
 			}
@@ -2557,8 +2560,9 @@ if ($module == 'initmodule') {
 							$pathtoapi = strtolower($module).'/class/api_'.strtolower($module).'s.class.php';
 							$realpathtoapi = $dirread.'/'.$pathtoapi;
 						}
-						$urloflist = $dirread.'/'.$pathtolist;
-						$urlofcard = $dirread.'/'.$pathtocard;
+
+						$urloflist = dol_buildpath('/'.$pathtolist, 1);
+						$urlofcard = dol_buildpath('/'.$pathtocard, 1);
 
 						print '<div class="fichehalfleft smallxxx">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtoclass).($realpathtoclass ? '' : '</strike>').'</strong>';

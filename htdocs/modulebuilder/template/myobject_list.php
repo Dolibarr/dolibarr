@@ -176,13 +176,17 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->mymodule->myobject->read;
-$permissiontoadd = $user->rights->mymodule->myobject->write;
-$permissiontodelete = $user->rights->mymodule->myobject->delete;
-
-// Security check
-if (empty($conf->mymodule->enabled)) {
-	accessforbidden('Module not enabled');
+// There is several ways to check permission.
+// Set $enablepermissioncheck to 1 to enable a minimum low level of checks
+$enablepermissioncheck = 0;
+if ($enablepermissioncheck) {
+	$permissiontoread = $user->rights->mymodule->myobject->read;
+	$permissiontoadd = $user->rights->mymodule->myobject->write;
+	$permissiontodelete = $user->rights->mymodule->myobject->delete;
+} else {
+	$permissiontoread = 1;
+	$permissiontoadd = 1;
+	$permissiontodelete = 1;
 }
 
 // Security check (enable the most restrictive one)
@@ -191,8 +195,8 @@ if ($user->socid > 0) accessforbidden();
 //$socid = 0; if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-//if (empty($conf->mymodule->enabled)) accessforbidden();
-//if (!$permissiontoread) accessforbidden();
+if (empty($conf->mymodule->enabled)) accessforbidden('Moule not enabled');
+if (!$permissiontoread) accessforbidden();
 
 
 
