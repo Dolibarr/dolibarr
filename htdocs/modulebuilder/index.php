@@ -3103,14 +3103,14 @@ if ($module == 'initmodule') {
 
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Type", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("fk_menu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("LinkToParentMenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("Title", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("mainmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("leftmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("URL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("RelativeURL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("LanguageFile", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ');
 				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("Target", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("UserType", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'right ');
@@ -3148,15 +3148,15 @@ if ($module == 'initmodule') {
 						print dol_escape_htmltag($menu['langs']);
 						print '</td>';
 
-						print '<td>';
+						print '<td class="right">';
 						print dol_escape_htmltag($menu['position']);
 						print '</td>';
 
-						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($menu['enabled']).'">';
+						print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['enabled']).'">';
 						print dol_escape_htmltag($menu['enabled']);
 						print '</td>';
 
-						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($menu['perms']).'">';
+						print '<td class="center tdoverflowmax200" title="'.dol_escape_htmltag($menu['perms']).'">';
 						print dol_escape_htmltag($menu['perms']);
 						print '</td>';
 
@@ -3858,8 +3858,10 @@ if ($module == 'initmodule') {
 			$FILENAMEDOCPDF = $modulelowercase.'.pdf';
 			$outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
 			$outputfiledocurl = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOC;
+			$outputfiledocrel = $modulelowercase.'/doc/'.$FILENAMEDOC;
 			$outputfiledocpdf = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOCPDF;
 			$outputfiledocurlpdf = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOCPDF;
+			$outputfiledocrelpdf = $modulelowercase.'/doc/'.$FILENAMEDOCPDF;
 
 			// HTML
 			print '<span class="fa fa-file-o"></span> '.$langs->trans("PathToModuleDocumentation", "HTML").' : ';
@@ -3872,6 +3874,7 @@ if ($module == 'initmodule') {
 				print '</a>';
 				print '</strong>';
 				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')</span>';
+				print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&format='.$format.'&file='.urlencode($outputfiledocrel).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 			}
 			print '</strong><br>';
 
@@ -3886,6 +3889,7 @@ if ($module == 'initmodule') {
 				print '</a>';
 				print '</strong>';
 				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledocpdf), 'dayhour').')</span>';
+				print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&format='.$format.'&file='.urlencode($outputfiledocpdfrel).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 			}
 			print '</strong><br>';
 
@@ -3952,8 +3956,11 @@ if ($module == 'initmodule') {
 				$relativepath = $modulelowercase.'/bin/'.$FILENAMEZIP;
 				print '<strong><a href="'.DOL_URL_ROOT.'/document.php?modulepart=packages&file='.urlencode($relativepath).'">'.$outputfilezip.'</a></strong>';
 				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfilezip), 'dayhour').')</span>';
+				print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&format='.$format.'&file='.urlencode($relativepath).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 			}
-			print '</strong><br>';
+			print '</strong>';
+
+			print '<br>';
 
 			print '<br>';
 
