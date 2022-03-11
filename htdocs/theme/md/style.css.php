@@ -3599,9 +3599,23 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+
 .thsticky, .tdsticky {
 	position: sticky;
 	left: 0px;
+}
+.thstickyright, .tdstickyright {
+	position: sticky;
+	right: 0px;
+}
+.thstickygray, .tdstickygray {
+	background-color: lightgray;
+}
+.thstickyghostwhite, .tdstickyghostwhite {
+	background-color: ghostwhite;
+}
+.thstickyinherit, .tdstickyinherit {
+	background-color: inherit;
 }
 
 <?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_REF)) { ?>

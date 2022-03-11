@@ -50,7 +50,7 @@ $substitutionarrayfortest = array(
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
 	'__CHECK_READ__' => (!empty($object) && is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '',
 	'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''), // Done into actions_sendmails
-	'__LOGIN__' => 'RecipientLogin',
+	'__LOGIN__' => $user->login,
 	'__LASTNAME__' => 'RecipientLastname',
 	'__FIRSTNAME__' => 'RecipientFirstname',
 	'__ADDRESS__'=> 'RecipientAddress',
@@ -662,7 +662,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
 			if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer'))) {
 				if (function_exists('openssl_open')) {
-					print yn($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED);
+					print yn(getDolGlobalInt('MAIN_MAIL_EMAIL_DKIM_ENABLED'));
 				} else {
 					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 				}
@@ -887,7 +887,6 @@ if ($action == 'edit') {
 			}
 
 			setEventMessages($errormsg, null, 'errors');
-			print $errormsg;
 		}
 		print '<br>';
 	}

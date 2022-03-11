@@ -848,8 +848,13 @@ class Utils
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
 					$this->error = $resarray['error'].' '.$resarray['output'];
+					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
+				if ($result < 0 && empty($this->errors)) {
+					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOC);
+					$this->errors[] = $this->error;
+				}
 
 				// Build PDF doc
 				$command = $conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
@@ -857,8 +862,13 @@ class Utils
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
 					$this->error = $resarray['error'].' '.$resarray['output'];
+					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
+				if ($result < 0 && empty($this->errors)) {
+					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOCPDF);
+					$this->errors[] = $this->error;
+				}
 
 				chdir($currentdir);
 			} else {
@@ -869,8 +879,6 @@ class Utils
 				return 1;
 			} else {
 				$error++;
-				$langs->load("errors");
-				$this->error = $langs->trans("ErrorFailToGenerateFile", $outputfiledoc);
 			}
 		} else {
 			$error++;
