@@ -50,7 +50,7 @@ $langs->setDefaultLang($setuplang);
 $langs->loadLangs(array("admin", "install"));
 
 
-// Choice of DBMS 
+// Choice of DBMS
 
 $choix = 0;
 if ($dolibarr_main_db_type == "mysqli") {
@@ -129,7 +129,7 @@ if ($action == "set") {
 		}
 	}
 
-	
+
 	// Display version / Affiche version
 	if ($ok) {
 		$version = $db->getVersion();
@@ -223,7 +223,7 @@ if ($action == "set") {
 					$db->free($resql);
 				} else {
 					if ($db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS' ||
-					    $db->errno() == 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS') {
+						$db->errno() == 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS') {
 						//print "<td>already existing</td></tr>";
 					} else {
 						print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey", $name);
@@ -292,7 +292,7 @@ if ($action == "set") {
 					$buf = fgets($fp, 4096);
 
 					// Special case of lines allowed for some version only
-					 // MySQL 
+					 // MySQL
 					if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
 						//print var_dump($versioncommande);
@@ -324,7 +324,7 @@ if ($action == "set") {
 				}
 				fclose($fp);
 
-				// If several requests, we loop on each 
+				// If several requests, we loop on each
 				$listesql = explode(';', $buffer);
 				foreach ($listesql as $req) {
 					$buffer = trim($req);
