@@ -10,6 +10,7 @@
  * Copyright (C) 2015-2021 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
+ * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -861,10 +862,36 @@ if ($object->id > 0) {
 				$propal_static->total_tva = $objp->total_tva;
 				$propal_static->total_ttc = $objp->total_ttc;
 				print $propal_static->getNomUrl(1);
-				$filename = dol_sanitizeFileName($objp->ref);
+
+				// Preview
 				$filedir = $conf->propal->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$urlsource = '/comm/propal/card.php?id='.$objp->cid;
-				print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->propal->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/comm/propal/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
 				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
 					print " ".img_warning();
 				}
@@ -946,10 +973,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
-				$filename = dol_sanitizeFileName($objp->ref);
-				$filedir = $conf->order->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$urlsource = '/commande/card.php?id='.$objp->cid;
-				print $formfile->getDocumentsLink($commande_static->element, $filename, $filedir);
+				// Preview
+				$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->order->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/commande/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($commande_static->element, $filename, $filedir);
 				print '</td>';
 
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
@@ -1015,10 +1067,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
-				$filename = dol_sanitizeFileName($objp->ref);
+				// Preview
 				$filedir = $conf->expedition->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$urlsource = '/expedition/card.php?id='.$objp->cid;
-				print $formfile->getDocumentsLink($sendingstatic->element, $filename, $filedir);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->expedition->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/expedition/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($sendingstatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->date_creation > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
@@ -1092,10 +1169,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $contrat->getNomUrl(1, 12);
-				$filename = dol_sanitizeFileName($objp->ref);
+				// Preview
 				$filedir = $conf->contrat->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$urlsource = '/contrat/card.php?id='.$objp->cid;
-				print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->contrat->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/contrat/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
 				print "</td>\n";
 				print '<td class="nowrap">'.dol_trunc($objp->refsup, 12)."</td>\n";
@@ -1157,10 +1259,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $fichinter_static->getNomUrl(1);
-				$filename = dol_sanitizeFileName($objp->ref);
+				// Preview
 				$filedir = $conf->fichinter->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$urlsource = '/fichinter/card.php?id='.$objp->cid;
-				print $formfile->getDocumentsLink($fichinter_static->element, $filename, $filedir);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->fichinter->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/fichinter/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($fichinter_static->element, $filename, $filedir);
 				print '</td>'."\n";
 				//print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td class="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
@@ -1326,10 +1453,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $facturestatic->getNomUrl(1);
-				$filename = dol_sanitizeFileName($objp->ref);
+				// Preview
 				$filedir = $conf->facture->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$urlsource = '/compta/facture/card.php?id='.$objp->cid;
-				print $formfile->getDocumentsLink($invoicetemplate->element, $filename, $filedir);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->facture->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/compta/facture/card.php?id='.$objp->cid;
+				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->df > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
