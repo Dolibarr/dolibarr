@@ -864,7 +864,7 @@ if ($object->id > 0) {
 				print $propal_static->getNomUrl(1);
 
 				// Preview
-				$filedir = $conf->propal->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -889,7 +889,7 @@ if ($object->id > 0) {
 					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, $param);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
-				// $filedir = $conf->propal->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/comm/propal/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
 				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
@@ -974,7 +974,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
 				// Preview
-				$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->commande->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -999,7 +999,7 @@ if ($object->id > 0) {
 					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
-				// $filedir = $conf->order->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->order->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/commande/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($commande_static->element, $filename, $filedir);
 				print '</td>';
@@ -1068,7 +1068,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
 				// Preview
-				$filedir = $conf->expedition->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -1093,7 +1093,7 @@ if ($object->id > 0) {
 					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
-				// $filedir = $conf->expedition->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/expedition/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($sendingstatic->element, $filename, $filedir);
 				print '</td>';
@@ -1170,7 +1170,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $contrat->getNomUrl(1, 12);
 				// Preview
-				$filedir = $conf->contrat->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -1195,7 +1195,7 @@ if ($object->id > 0) {
 					print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, $param);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
-				// $filedir = $conf->contrat->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/contrat/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
@@ -1260,7 +1260,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $fichinter_static->getNomUrl(1);
 				// Preview
-				$filedir = $conf->fichinter->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -1285,7 +1285,7 @@ if ($object->id > 0) {
 					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, $param);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
-				// $filedir = $conf->fichinter->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/fichinter/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($fichinter_static->element, $filename, $filedir);
 				print '</td>'."\n";
@@ -1454,7 +1454,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $facturestatic->getNomUrl(1);
 				// Preview
-				$filedir = $conf->facture->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -1479,7 +1479,7 @@ if ($object->id > 0) {
 					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, $param);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
-				// $filedir = $conf->facture->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/compta/facture/card.php?id='.$objp->cid;
 				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
