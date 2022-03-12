@@ -861,13 +861,10 @@ if ($object->id > 0) {
 				$propal_static->total_tva = $objp->total_tva;
 				$propal_static->total_ttc = $objp->total_ttc;
 				print $propal_static->getNomUrl(1);
-
 				$filename = dol_sanitizeFileName($objp->ref);
 				$filedir = $conf->propal->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$urlsource = '/comm/propal/card.php?id='.$objp->cid;
-
 				print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
-
 				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
 					print " ".img_warning();
 				}
@@ -949,11 +946,9 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
-
 				$filename = dol_sanitizeFileName($objp->ref);
 				$filedir = $conf->order->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$urlsource = '/commande/card.php?id='.$objp->cid;
-
 				print $formfile->getDocumentsLink($commande_static->element, $filename, $filedir);
 				print '</td>';
 
@@ -1020,6 +1015,10 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
+				$filename = dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->expedition->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$urlsource = '/expedition/card.php?id='.$objp->cid;
+				print $formfile->getDocumentsLink($sendingstatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->date_creation > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
@@ -1093,6 +1092,10 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $contrat->getNomUrl(1, 12);
+				$filename = dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->contrat->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$urlsource = '/contrat/card.php?id='.$objp->cid;
+				print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
 				print "</td>\n";
 				print '<td class="nowrap">'.dol_trunc($objp->refsup, 12)."</td>\n";
@@ -1154,6 +1157,10 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $fichinter_static->getNomUrl(1);
+				$filename = dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->fichinter->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$urlsource = '/fichinter/card.php?id='.$objp->cid;
+				print $formfile->getDocumentsLink($fichinter_static->element, $filename, $filedir);
 				print '</td>'."\n";
 				//print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td class="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
@@ -1228,19 +1235,8 @@ if ($object->id > 0) {
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
-
-
 				print $invoicetemplate->getNomUrl(1);
 				print '</td>';
-
-				// Other picto tool
-				print '<td width="16" class="nobordernopadding right">';
-				$filename = dol_sanitizeFileName($invoicetemplate->ref);
-				$filedir = $conf->propal->multidir_output[$invoicetemplate->propal_entity].'/'.dol_sanitizeFileName($invoicetemplate->ref);
-				$urlsource = $_SERVER['PHP_SELF'].'?id='.$invoicetemplate->rowid;
-				print $formfile->getDocumentsLink($invoicetemplate->element, $filename, $filedir);
-				print '</td>';
-
 
 				if ($objp->frequency && $objp->date_last_gen > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen), 'day').'</td>';
@@ -1330,6 +1326,10 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $facturestatic->getNomUrl(1);
+				$filename = dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->facture->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$urlsource = '/compta/facture/card.php?id='.$objp->cid;
+				print $formfile->getDocumentsLink($invoicetemplate->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->df > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
