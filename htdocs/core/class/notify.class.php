@@ -4,6 +4,7 @@
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2021 	   Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
