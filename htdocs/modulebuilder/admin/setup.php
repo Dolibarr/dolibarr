@@ -120,7 +120,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseAboutPage").'</td>';
-	print '<td class="center">';
+	print '<td>';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {
