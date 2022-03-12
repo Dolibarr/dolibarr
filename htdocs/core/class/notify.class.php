@@ -81,7 +81,7 @@ class Notify
 		'EXPENSE_REPORT_APPROVE',
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
-		'ACTION_CREATE',
+		'ACTION_CREATE'
 	);
 
 	/**
@@ -363,7 +363,7 @@ class Notify
 		$hookmanager->initHooks(array('notification'));
 
 
-		$reshook = $hookmanager->executeHooks('notifsupported');
+		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
 		if (empty($reshook)) {
 			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
 				Notify::$arrayofnotifsupported = array_merge(Notify::$arrayofnotifsupported, $hookmanager->resArray['arrayofnotifsupported']);
