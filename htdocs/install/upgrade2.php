@@ -1,10 +1,21 @@
 <?php
+
+/*
+ *	\file       htdocs/install/upgrade2.php
+ *	\brief      Upgrade some data
+ */
+
+
 /* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
+ */
+
+
+/* License 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -17,8 +28,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Upgrade2 scripts can be ran from command line with syntax:
+ */
+ 
+ 
+/* Upgrade2 scripts can be ran from command line with syntax:
  *
  * cd htdocs/install
  * php upgrade.php 3.4.0 3.5.0 [dirmodule|ignoredbversion]
@@ -33,24 +46,24 @@
  * php upgrade2.php 0.0.0 0.0.0 [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE]
  */
 
-/**
- *	\file       htdocs/install/upgrade2.php
- *	\brief      Upgrade some data
- */
 
 include_once 'inc.php';
 if (!file_exists($conffile)) {
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
+
 require_once $conffile;
-require_once $dolibarr_main_document_root.'/compta/facture/class/facture.class.php';
-require_once $dolibarr_main_document_root.'/comm/propal/class/propal.class.php';
-require_once $dolibarr_main_document_root.'/contrat/class/contrat.class.php';
-require_once $dolibarr_main_document_root.'/commande/class/commande.class.php';
-require_once $dolibarr_main_document_root.'/fourn/class/fournisseur.commande.class.php';
-require_once $dolibarr_main_document_root.'/core/lib/price.lib.php';
+
 require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
+require_once $dolibarr_main_document_root.'/core/lib/price.lib.php';
+
+require_once $dolibarr_main_document_root.'/comm/propal/class/propal.class.php';
+require_once $dolibarr_main_document_root.'/commande/class/commande.class.php';
+require_once $dolibarr_main_document_root.'/compta/facture/class/facture.class.php';
+require_once $dolibarr_main_document_root.'/contrat/class/contrat.class.php';
+require_once $dolibarr_main_document_root.'/fourn/class/fournisseur.commande.class.php';
+
 
 global $langs;
 
@@ -59,8 +72,8 @@ $step = 2;
 $error = 0;
 
 
-// Cette page peut etre longue. On augmente le delai autorise.
-// Ne fonctionne que si on est pas en safe_mode.
+// This page can be long. We increase the time allowed.
+// Only works if you are not in safe_mode.
 $err = error_reporting();
 error_reporting(0);
 if (!empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT)) {
@@ -76,8 +89,10 @@ $versionfrom = GETPOST("versionfrom", 'alpha', 3) ?GETPOST("versionfrom", 'alpha
 $versionto = GETPOST("versionto", 'alpha', 3) ?GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
 $enablemodules = GETPOST("enablemodules", 'alpha', 3) ?GETPOST("enablemodules", 'alpha', 3) : (empty($argv[3]) ? '' : $argv[3]);
 
-$langs->loadLangs(array("admin", "install", "bills", "suppliers"));
+$langs->loadLangs(array("admin", "install", "bills", "suppliers"));  
 
+
+// DBMS choice
 if ($dolibarr_main_db_type == 'mysqli') {
 	$choix = 1;
 }
@@ -195,6 +210,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		// Version to install is DOL_VERSION
 		$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', isset($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_UPGRADE : (isset($conf->global->MAIN_VERSION_LAST_INSTALL) ? $conf->global->MAIN_VERSION_LAST_INSTALL : ''));
 
+		// EN:
+		// Each migration action must return a row with 4 columns with
+		// in the 1st column, the description of the action to do
+		// in the 4th column, the text 'OK' if done or 'AlreadyDone' if nothing is done or 'Error
+		// FR:
 		// Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
 		// dans la 1ere colonne, la description de l'action a faire
 		// dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
@@ -652,7 +672,8 @@ if ($ret) {
 
 
 /**
- * Reporte liens vers une facture de paiements sur table de jointure (lien n-n paiements factures)
+ * EN: Report links to an invoice of payments on join table (link n-n payments invoices)
+ * FR: Reporte liens vers une facture de paiements sur table de jointure (lien n-n paiements factures)
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -729,9 +750,15 @@ function migrate_paiements($db, $langs, $conf)
 }
 
 /**
+ * EN:
+ * Correct orphaned payments (palm links due to bugs)
+ * To see if there are any orphans left:
+ *
+ * FR:
  * Corrige paiement orphelins (liens paumes suite a bugs)
  * Pour verifier s'il reste des orphelins:
- * select * from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
+ *
+ *   select * from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -748,7 +775,8 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 	$result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
 	$obj = $db->fetch_object($result);
 	if ($obj) {
-		// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
+		// EN: All records that come out of this query should have a father in llx_paiement_facture 
+		// FR: Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
 		$sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
@@ -768,7 +796,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				if ($obj->pamount == $obj->bamount && $obj->socid) {	// Pour etre sur d'avoir bon cas
+				if ($obj->pamount == $obj->bamount && $obj->socid) {	// To make sure you have the right case / Pour etre sur d'avoir bon cas
 					$row[$j]['paymentid'] = $obj->rowid; // paymentid
 					$row[$j]['pamount'] = $obj->pamount;
 					$row[$j]['fk_bank'] = $obj->fk_bank;
@@ -794,7 +822,8 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
-				// On cherche facture sans lien paiement et du meme montant et pour meme societe.
+				// EN: We are looking for an invoice without payment link and of the same amount and for the same company.
+				// FR: On cherche facture sans lien paiement et du meme montant et pour meme societe.
 				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
@@ -858,7 +887,8 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 	$result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
 	$obj = $db->fetch_object($result);
 	if ($obj) {
-		// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
+		// EN: All records that come out of this query should have a father in llx_paiement_facture
+		// FR: Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
 		$sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
@@ -877,7 +907,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				if ($obj->pamount == $obj->bamount && $obj->socid) {	// Pour etre sur d'avoir bon cas
+				if ($obj->pamount == $obj->bamount && $obj->socid) {	// To make sure you have the right case / Pour etre sur d'avoir bon cas
 					$row[$j]['paymentid'] = $obj->rowid; // paymentid
 					$row[$j]['pamount'] = $obj->pamount;
 					$row[$j]['fk_bank'] = $obj->fk_bank;
@@ -905,7 +935,8 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
-				// On cherche facture sans lien paiement et du meme montant et pour meme societe.
+				// EN: We are looking for an invoice without payment link and of the same amount and for the same company. 
+				// FR: On cherche facture sans lien paiement et du meme montant et pour meme societe.
 				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
@@ -965,7 +996,8 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 
 
 /**
- * Mise a jour des contrats (gestion du contrat + detail de contrat)
+ * EN: Update of contracts (contract management + contract details)
+ * FR: Mise a jour des contrats (gestion du contrat + detail de contrat)
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1124,7 +1156,8 @@ function migrate_links_transfert($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des date de contrats non renseignees
+ * EN: Update of uninformed contract dates
+ * FR: Mise a jour des date de contrats non renseignees
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1234,7 +1267,8 @@ function migrate_contracts_date2($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des dates de creation de contrat
+ * EN: Update of contract creation dates
+ * FR: Mise a jour des dates de creation de contrat
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1264,7 +1298,8 @@ function migrate_contracts_date3($db, $langs, $conf)
 }
 
 /**
- * Reouverture des contrats qui ont au moins une ligne non fermee
+ * EN: Reopening of contracts that have at least one open line 
+ * FR: Reouverture des contrats qui ont au moins une ligne non fermee
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1327,7 +1362,7 @@ function migrate_contracts_open($db, $langs, $conf)
 }
 
 /**
- * Factures fournisseurs
+ * Suppliers invoices / Factures fournisseurs
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1360,12 +1395,14 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 			$i = 0;
 			$var = true;
 
-			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
+			// EN: For each supplier payment, a line is inserted in paiementfourn_facturefourn
+			// FR: Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
 			while (($i < $select_num) && (!$error)) {
 				$var = !$var;
 				$select_obj = $db->fetch_object($select_resql);
 
-				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
+				// EN: Check if the row is already in the new table. We don't want to insert duplicates.
+				// FR: Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
 				$check_sql = 'SELECT fk_paiementfourn, fk_facturefourn';
 				$check_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 				$check_sql .= ' WHERE fk_paiementfourn = '.((int) $select_obj->rowid).' AND fk_facturefourn = '.((int) $select_obj->fk_facture_fourn);
@@ -1472,7 +1509,7 @@ function migrate_price_facture($db, $langs, $conf)
 				$total_ttc_f = $obj->total_ttc_f;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update 3 new fields / On met a jour les 3 nouveaux champs
 				$facligne = new FactureLigne($db);
 				$facligne->fetch($rowid);
 
@@ -1490,7 +1527,7 @@ function migrate_price_facture($db, $langs, $conf)
 				$facligne->update_total();
 
 
-				/* On touche a facture mere uniquement si total_ttc = 0 */
+				// We touch the mother invoice only if total_ttc = 0  // On touche a facture mere uniquement si total_ttc = 0 
 				if (!$total_ttc_f) {
 					$facture = new Facture($db);
 					$facture->id = $obj->facid;
@@ -1573,7 +1610,7 @@ function migrate_price_propal($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update 3 new fields / On met a jour les 3 nouveaux champs
 				$propalligne = new PropaleLigne($db);
 				$propalligne->fetch($rowid);
 
@@ -1676,9 +1713,9 @@ function migrate_price_contrat($db, $langs, $conf)
 				$remise_percent = $obj->remise_percent;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update 3 new fields / On met a jour les 3 nouveaux champs
 				$contratligne = new ContratLigne($db);
-				//$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
+				//$contratligne->fetch($rowid); // Not required because update_total only updates redefined chp // Non requis car le update_total ne met a jour que chp redefinis
 				$contratligne->fetch($rowid);
 
 				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, 0, 'HT', $info_bits, $contratligne->product_type, $tmpmysoc);
@@ -1758,7 +1795,7 @@ function migrate_price_commande($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update 3 new fields / On met a jour les 3 nouveaux champs
 				$commandeligne = new OrderLine($db);
 				$commandeligne->fetch($rowid);
 
@@ -1868,7 +1905,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$remise_percent_global = $obj->remise_percent_global;
 				$info_bits = $obj->info_bits;
 
-				// On met a jour les 3 nouveaux champs
+				// We update 3 new fields / On met a jour les 3 nouveaux champs
 				$commandeligne = new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
@@ -1904,6 +1941,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				 print "Error #3";
 				 }
 				 */
+				
 				$i++;
 			}
 		} else {
@@ -1935,7 +1973,8 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des modeles selectionnes
+ * EN: Update of selected models
+ * FR: Mise a jour des modeles selectionnes
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
