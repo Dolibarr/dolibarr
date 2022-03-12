@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
@@ -112,6 +113,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $object = new Client($db);
 $extrafields = new ExtraFields($db);
+$formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -940,7 +942,17 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
+
+
+
+				$filename = dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->order->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$urlsource = '/dolibarr/commande/card.php?id='.$objp->cid;
+
+				print $formfile->getDocumentsLink($commande_static->element, $filename, $filedir);
+				print '</td>';
+
+				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td class="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut, $objp->facture, 5).'</td></tr>';
 				$i++;
@@ -1211,8 +1223,20 @@ if ($object->id > 0) {
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
+
+
 				print $invoicetemplate->getNomUrl(1);
 				print '</td>';
+
+				// Other picto tool
+				print '<td width="16" class="nobordernopadding right">';
+				$filename = dol_sanitizeFileName($invoicetemplate->ref);
+				$filedir = $conf->propal->multidir_output[$invoicetemplate->propal_entity].'/'.dol_sanitizeFileName($invoicetemplate->ref);
+				$urlsource = $_SERVER['PHP_SELF'].'?id='.$invoicetemplate->rowid;
+				print $formfile->getDocumentsLink($invoicetemplate->element, $filename, $filedir);
+				print '</td>';
+
+
 				if ($objp->frequency && $objp->date_last_gen > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen), 'day').'</td>';
 				} else {
