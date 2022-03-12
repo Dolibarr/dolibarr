@@ -15,7 +15,7 @@
  */
 
 
-/* License 
+/* License
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -29,8 +29,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
- 
- 
+
+
 /* Upgrade2 scripts can be ran from command line with syntax:
  *
  * cd htdocs/install
@@ -89,7 +89,7 @@ $versionfrom = GETPOST("versionfrom", 'alpha', 3) ?GETPOST("versionfrom", 'alpha
 $versionto = GETPOST("versionto", 'alpha', 3) ?GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
 $enablemodules = GETPOST("enablemodules", 'alpha', 3) ?GETPOST("enablemodules", 'alpha', 3) : (empty($argv[3]) ? '' : $argv[3]);
 
-$langs->loadLangs(array("admin", "install", "bills", "suppliers"));  
+$langs->loadLangs(array("admin", "install", "bills", "suppliers"));
 
 
 // DBMS choice
@@ -775,7 +775,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 	$result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
 	$obj = $db->fetch_object($result);
 	if ($obj) {
-		// EN: All records that come out of this query should have a father in llx_paiement_facture 
+		// EN: All records that come out of this query should have a father in llx_paiement_facture
 		// FR: Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
 		$sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
@@ -935,7 +935,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
-				// EN: We are looking for an invoice without payment link and of the same amount and for the same company. 
+				// EN: We are looking for an invoice without payment link and of the same amount and for the same company.
 				// FR: On cherche facture sans lien paiement et du meme montant et pour meme societe.
 				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
@@ -1298,7 +1298,7 @@ function migrate_contracts_date3($db, $langs, $conf)
 }
 
 /**
- * EN: Reopening of contracts that have at least one open line 
+ * EN: Reopening of contracts that have at least one open line
  * FR: Reouverture des contrats qui ont au moins une ligne non fermee
  *
  * @param	DoliDB		$db		Database handler
@@ -1527,7 +1527,7 @@ function migrate_price_facture($db, $langs, $conf)
 				$facligne->update_total();
 
 
-				// We touch the mother invoice only if total_ttc = 0  // On touche a facture mere uniquement si total_ttc = 0 
+				// We touch the mother invoice only if total_ttc = 0  // On touche a facture mere uniquement si total_ttc = 0
 				if (!$total_ttc_f) {
 					$facture = new Facture($db);
 					$facture->id = $obj->facid;
@@ -1941,7 +1941,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				 print "Error #3";
 				 }
 				 */
-				
+
 				$i++;
 			}
 		} else {
