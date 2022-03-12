@@ -861,6 +861,13 @@ if ($object->id > 0) {
 				$propal_static->total_tva = $objp->total_tva;
 				$propal_static->total_ttc = $objp->total_ttc;
 				print $propal_static->getNomUrl(1);
+
+				$filename = dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->propal->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$urlsource = '/comm/propal/card.php?id='.$objp->cid;
+
+				print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
+
 				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
 					print " ".img_warning();
 				}
@@ -943,11 +950,9 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
 
-
-
 				$filename = dol_sanitizeFileName($objp->ref);
 				$filedir = $conf->order->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$urlsource = '/dolibarr/commande/card.php?id='.$objp->cid;
+				$urlsource = '/commande/card.php?id='.$objp->cid;
 
 				print $formfile->getDocumentsLink($commande_static->element, $filename, $filedir);
 				print '</td>';
