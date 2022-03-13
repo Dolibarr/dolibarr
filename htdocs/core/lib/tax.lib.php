@@ -66,15 +66,28 @@ function tax_prepare_head(ChargeSociales $object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
+
+	$nbNote = 0;
+	if (!empty($object->note_private)) {
+		$nbNote++;
+	}
+	if (!empty($object->note_public)) {
+		$nbNote++;
+	}
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Notes");
+	$head[$h][1] = $langs->trans('Notes');
+	if ($nbNote > 0) {
+		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+	}
 	$head[$h][2] = 'note';
 	$h++;
+
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'tax', 'remove');
 
