@@ -120,7 +120,7 @@ $sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CB);
 $sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
 $sql.=")";
 */
-$sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code, f.date_closing";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b";
 $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid";
 $sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
@@ -135,6 +135,8 @@ else
 	dol_print_error('Value for key = '.$key.' not supported');
 	exit;
 }*/
+if ($object->date_valid==null) $object->date_valid=dol_now();
+$sql .= " AND f.date_closing BETWEEN '".$db->idate($object->date_creation)."' AND '".$db->idate($object->date_valid)."'";
 if ($syear && !$smonth) {
 	$sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
 } elseif ($syear && $smonth && !$sday) {
