@@ -384,6 +384,11 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (23
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2322,232,    '12','0','VAT 12%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2323,232,     '8','0','VAT 8%',1);
 
+-- VIETNAM (id country=233)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2331,233,     '0','0','Thuế GTGT đươc khấu trừ 0%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2332,233,    '5','0','Thuế GTGT đươc khấu trừ 5%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2333,233,     '8','0','Thuế GTGT đươc khấu trừ 8%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2334,233,     '10','0','Thuế GTGT đươc khấu trừ 10%',1);
 -- Example of code to insert a VAT rate 0 for each country
 --delete from llx_c_tva where rowid = 1181;		-- to delete a record that does not follow rules for rowid (fk_pays+'1')
 --insert into llx_c_tva(rowid, fk_pays, taux, recuperableonly, note, active) SELECT CONCAT(c.rowid, '1'), c.rowid, 0, 0, 'No VAT', 1 from llx_c_country as c where c.rowid not in (select fk_pays from llx_c_tva);
