@@ -11,6 +11,7 @@
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2013	   Cedric GROSS		    <c.gross@kreiz-it.fr>
 -- Copyright (C) 2020-2021 Udo Tamm       	    <dev@dolibit.de>
+-- Copyright (C) 2022      Miro Sertić       	<miro.sertic0606@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
