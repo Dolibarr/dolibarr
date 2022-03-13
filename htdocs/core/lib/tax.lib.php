@@ -71,6 +71,11 @@ function tax_prepare_head(ChargeSociales $object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/note.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Notes");
+	$head[$h][2] = 'note';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'tax', 'remove');
 
 	return $head;
