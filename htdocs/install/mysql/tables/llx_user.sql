@@ -109,4 +109,5 @@ create table llx_user
   default_range     integer,
   default_c_exp_tax_cat     integer,
   fk_warehouse      integer						-- default warehouse os user
+  mail_autocopy         tinyint,	-- 1 if Autocopy for user he sends
 )ENGINE=innodb;

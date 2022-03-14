@@ -299,6 +299,7 @@ if (empty($reshook)) {
 			$object->birth = $dateofbirth;
 
 			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
+			$object->mail_autocopy = GETPOST('mail_autocopy', 'int');
 
 			$object->lang = GETPOST('default_lang', 'aZ09');
 
@@ -460,7 +461,7 @@ if (empty($reshook)) {
 				if (!empty($conf->stock->enabled)) {
 					$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 				}
-
+				$object->mail_autocopy = GETPOST('mail_autocopy', 'int');
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				// Do we update also ->entity ?
@@ -1104,6 +1105,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 	} else {
 		print '<input type="text" name="email" class="maxwidth500 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('email', 'alphanohtml')).'">';
 	}
+
+	// Email autocopy
+	print $form->textwithpicto($langs->trans('EMailAutocopy'), $langs->trans("EMailAutocopyDesc"));
+	print '<input type="checkbox" name="mail_autocopy" value="1"'.(GETPOST('mail_autocopy') == '1' ? ' checked="checked"' : (($mail_autocopy && !GETPOSTISSET('login')) ? ' checked="checked"' : '')).'>';
 	print '</td></tr>';
 
 	// Social networks
@@ -1607,6 +1612,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				print '</td></tr>';
 			}
+
+			// Email autocopy
+			print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans('EMailAutocopy'), $langs->trans("EMailAutocopyDesc")).'</td><td>';
+			print '<input type="checkbox" disabled name="mail_autocopy" value="1"'.($object->mail_autocopy ? ' checked="checked"' : '').'>';
+			print '</td></tr>';
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
@@ -2481,6 +2491,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<input type="hidden" name="email" value="'.$object->email.'">';
 				print $object->email;
 			}
+			// Email autocopy
+			print $form->textwithpicto($langs->trans('EMailAutocopy'), $langs->trans("EMailAutocopyDesc"));
+			print '<input type="checkbox" name="mail_autocopy" value="1"'.(GETPOST('mail_autocopy') == '1' ? ' checked="checked"' : (($object->mail_autocopy && !GETPOSTISSET('login')) ? ' checked="checked"' : '')).'>';
 			print '</td></tr>';
 
 			if (!empty($conf->socialnetworks->enabled)) {

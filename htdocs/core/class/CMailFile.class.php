@@ -140,7 +140,7 @@ class CMailFile
 	 */
 	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
 	{
-		global $conf, $dolibarr_main_data_root;
+		global $conf, $dolibarr_main_data_root, $user;
 
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
@@ -254,6 +254,9 @@ class CMailFile
 		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
 		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
 			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		}
+		if (!empty($user->mail_autocopy)) {
+			$addr_bcc .= ($addr_bcc ? ', ' : '').$user->email;
 		}
 
 		$this->subject = $subject;

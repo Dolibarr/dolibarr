@@ -346,6 +346,8 @@ class User extends CommonObject
 	 */
 	public $fk_warehouse;
 
+	public $mail_autocopy; // Define if mail is send autocopy to user
+
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'lastname'=>array('type'=>'varchar(50)', 'label'=>'LastName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
@@ -436,6 +438,7 @@ class User extends CommonObject
 		$sql .= " u.dateemployment, u.dateemploymentend,";
 		$sql .= " u.fk_warehouse,";
 		$sql .= " u.ref_ext,";
+		$sql .= " u.mail_autocopy,";
 		$sql .= " u.default_range, u.default_c_exp_tax_cat,"; // Expense report default mode
 		$sql .= " c.code as country_code, c.label as country,";
 		$sql .= " d.code_departement as state_code, d.nom as state";
@@ -557,6 +560,7 @@ class User extends CommonObject
 				$this->default_range = $obj->default_range;
 				$this->default_c_exp_tax_cat = $obj->default_c_exp_tax_cat;
 				$this->fk_warehouse = $obj->fk_warehouse;
+				$this->mail_autocopy = $obj->mail_autocopy;
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
@@ -1791,6 +1795,7 @@ class User extends CommonObject
 		$this->dateendvalidity = empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
 		$this->birth        = trim($this->birth);
 		$this->fk_warehouse = (int) $this->fk_warehouse;
+		$this->mail_autocopy = (int) $this->mail_autocopy;
 
 		// Check parameters
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
@@ -1901,6 +1906,8 @@ class User extends CommonObject
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
+		var_dump($this->mail_autocopy);
+		$sql .= ", mail_autocopy = ".($this->mail_autocopy > 0 ? $this->mail_autocopy : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

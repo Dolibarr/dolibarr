@@ -124,3 +124,5 @@ ValidatorIsSupervisorByDefault=By default, the validator is the supervisor of th
 UserPersonalEmail=Personal email
 UserPersonalMobile=Personal mobile phone
 WarningNotLangOfInterface=Warning, this is the main language the user speak, not the language of the interface he choosed to see. To change the interface language visible by this user, go on tab %s 
+EMailAutocopy = Autocopy for me
+EMailAutocopyDesc = Copy for me the emails I send

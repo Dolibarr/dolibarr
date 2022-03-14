@@ -284,3 +284,4 @@ ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_chargesociales ADD COLUMN note_private text;
 ALTER TABLE llx_chargesociales ADD COLUMN note_public text;
 
+ALTER TABLE llx_user ADD mail_autocopy tinyint NULL AFTER fk_warehouse;
