@@ -69,7 +69,7 @@ class PartnershipType extends CommonObject
 	public $fields=array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
-		'code' =>array('type'=>'varchar(32)', 'label'=>'Code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20, 'showoncombobox'=>1),
+		'code' =>array('type'=>'varchar(32)', 'label'=>'Code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'label' =>array('type'=>'varchar(64)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
 		'active' =>array('type'=>'integer', 'label'=>'Active', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30),
 	);
