@@ -108,10 +108,20 @@ class Notify
 		global $conf, $langs;
 		$langs->load("mails");
 
+		// Get full list of all notifications subscribed for $action, $socid and $object
 		$listofnotiftodo = $this->getNotificationsArray($action, $socid, $object, 0);
+
 		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER)) {
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'touser') {
+					unset($listofnotiftodo[$val['email']]);
+					//$listofnotiftodo = array_merge($listofnotiftodo);
+				}
+			}
+		}
+		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT)) {
+			foreach ($listofnotiftodo as $val) {
+				if ($val['type'] == 'tocontact') {
 					unset($listofnotiftodo[$val['email']]);
 					//$listofnotiftodo = array_merge($listofnotiftodo);
 				}
@@ -198,10 +208,10 @@ class Notify
 		if (!$error) {
 			if ($socid >= 0 && in_array('thirdparty', $scope)) {
 				$sql = "SELECT a.code, c.email, c.rowid";
-				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
-				$sql .= " ".MAIN_DB_PREFIX."socpeople as c,";
-				$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-				$sql .= " ".MAIN_DB_PREFIX."societe as s";
+				$sql .= " FROM ".$this->db->prefix()."notify_def as n,";
+				$sql .= " ".$this->db->prefix()."socpeople as c,";
+				$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
+				$sql .= " ".$this->db->prefix()."societe as s";
 				$sql .= " WHERE n.fk_contact = c.rowid";
 				$sql .= " AND a.rowid = n.fk_action";
 				$sql .= " AND n.fk_soc = s.rowid";
@@ -238,9 +248,9 @@ class Notify
 		if (!$error) {
 			if ($userid >= 0 && in_array('user', $scope)) {
 				$sql = "SELECT a.code, c.email, c.rowid";
-				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
-				$sql .= " ".MAIN_DB_PREFIX."user as c,";
-				$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a";
+				$sql .= " FROM ".$this->db->prefix()."notify_def as n,";
+				$sql .= " ".$this->db->prefix()."user as c,";
+				$sql .= " ".$this->db->prefix()."c_action_trigger as a";
 				$sql .= " WHERE n.fk_user = c.rowid";
 				$sql .= " AND a.rowid = n.fk_action";
 				$sql .= $sqlnotifcode;
@@ -385,10 +395,10 @@ class Notify
 		if (!empty($object->socid) && $object->socid > 0) {
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-			$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-			$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
-			$sql .= " ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " FROM ".$this->db->prefix()."socpeople as c,";
+			$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
+			$sql .= " ".$this->db->prefix()."notify_def as n,";
+			$sql .= " ".$this->db->prefix()."societe as s";
 			$sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
@@ -405,9 +415,9 @@ class Notify
 		// Check notification per user
 		$sql .= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
 		$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as c,";
-		$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-		$sql .= " ".MAIN_DB_PREFIX."notify_def as n";
+		$sql .= " FROM ".$this->db->prefix()."user as c,";
+		$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
+		$sql .= " ".$this->db->prefix()."notify_def as n";
 		$sql .= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
 		$sql .= " AND c.statut = 1";
 		if (is_numeric($notifcode)) {
@@ -634,10 +644,10 @@ class Notify
 
 						if ($mailfile->sendfile()) {
 							if ($obj->type_target == 'touserid') {
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
+								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".((int) $obj->cid).", '".$this->db->escape($obj->type)."', '".$this->db->escape($object_type)."', '".$this->db->escape($obj->type_target)."', ".((int) $object->id).", '".$this->db->escape($obj->email)."')";
 							} else {
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
+								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".((int) $obj->cid).", '".$this->db->escape($obj->type)."', '".$this->db->escape($object_type)."', '".$this->db->escape($obj->type_target)."', ".((int) $object->id).", '".$this->db->escape($obj->email)."')";
 							}
 							if (!$this->db->query($sql)) {
@@ -869,7 +879,7 @@ class Notify
 					);
 
 					if ($mailfile->sendfile()) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
+						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
 						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($conf->global->$param)."')";
 						if (!$this->db->query($sql)) {
 							dol_print_error($this->db);

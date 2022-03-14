@@ -51,7 +51,8 @@ if (!empty($conf->salaries->enabled)) {
 }
 
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$id = GETPOST('rowid', 'int');
+$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -67,8 +68,9 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
-if (empty($user->rights->banque->lire) && !$user->rights->banque->consolidate) {
+
+$result = restrictedArea($user, 'banque', $accountid, 'bank_account');
+if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
 	accessforbidden();
 }
 
@@ -78,6 +80,7 @@ $hookmanager->initHooks(array('bankline'));
 /*
  * Actions
  */
+
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -256,16 +259,20 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("BankTransaction"));
 
+$arrayselected = array();
+
 $c = new Categorie($db);
 $cats = $c->containing($rowid, Categorie::TYPE_BANK_LINE);
-foreach ($cats as $cat) {
-	$arrayselected[] = $cat->id;
+if (is_array($cats)) {
+	foreach ($cats as $cat) {
+		$arrayselected[] = $cat->id;
+	}
 }
 
 $head = bankline_prepare_head($rowid);
 
 
-$sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
+$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro,";
 $sql .= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";
 $sql .= " b.emetteur,b.banque";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -299,6 +306,7 @@ if ($result) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
+		print '<input type="hidden" name="account" value="'.$acct->id.'">';
 		print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
 		print dol_get_fiche_head($head, 'bankline', $langs->trans('LineRecord'), 0, 'accountline', 0);
@@ -490,9 +498,9 @@ if ($result) {
 			print $form->selectDate($db->jdate($objp->do), 'dateo', '', '', '', 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
-				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&id='.$objp->fk_account.'&rowid='.$objp->rowid.'&token='.newToken().'">';
 				print img_edit_remove()."</a> ";
-				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=donext&id='.$objp->fk_account.'&rowid='.$objp->rowid.'&token='.newToken().'">';
 				print img_edit_add()."</a>";
 			}
 			print '</td>';
@@ -510,9 +518,9 @@ if ($result) {
 			print $form->selectDate($db->jdate($objp->dv), 'datev', '', '', '', 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
-				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&id='.$objp->fk_account.'&rowid='.$objp->rowid.'&token='.newToken().'">';
 				print img_edit_remove()."</a> ";
-				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&id='.$objp->fk_account.'&rowid='.$objp->rowid.'&token='.newToken().'">';
 				print img_edit_add()."</a>";
 			}
 			print '</td>';
@@ -569,11 +577,15 @@ if ($result) {
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
+
 			$arrayselected = array();
+
 			$c = new Categorie($db);
 			$cats = $c->containing($bankline->id, Categorie::TYPE_BANK_LINE);
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			if (is_array($cats)) {
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
 			}
 			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
 			print "</td></tr>";
@@ -649,10 +661,10 @@ if ($result) {
 			}
 			print '</tr>';
 
-			print "<tr><td>".$langs->trans("BankLineConciliated")."</td>";
+			print '<tr><td><label for="reconciled">'.$langs->trans("BankLineConciliated").'</label></td>';
 			if ($user->rights->banque->consolidate) {
 				print '<td>';
-				print '<input type="checkbox" name="reconciled" class="flat" '.(GETPOSTISSET("reconciled") ? (GETPOST("reconciled") ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
+				print '<input type="checkbox" id="reconciled" name="reconciled" class="flat" '.(GETPOSTISSET("reconciled") ? (GETPOST("reconciled") ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
 				print '</td>';
 			} else {
 				print '<td>'.yn($objp->rappro).'</td>';

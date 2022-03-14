@@ -11,6 +11,7 @@
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2022       Udo Tamm				<dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,9 @@ $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $facid = GETPOST('facid', 'int');
 $socid = GETPOST('socid', 'int');
@@ -54,16 +58,16 @@ $day = GETPOST('day', 'int');
 $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
-$search_ref = GETPOST("search_ref", "alpha");
-$search_account = GETPOST("search_account", "int");
-$search_paymenttype = GETPOST("search_paymenttype");
-$search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
-$search_company = GETPOST("search_company", 'alpha');
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_account = GETPOST('search_account', 'int');
+$search_paymenttype = GETPOST('search_paymenttype');
+$search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on "< x"
+$search_company = GETPOST('search_company', 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -108,6 +112,18 @@ $arrayfields = array();
 /*
  * Actions
  */
+
+if ($cancel) {
+	if (!empty($backtopageforcancel)) {
+		header("Location: ".$backtopageforcancel);
+		exit;
+	} elseif (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+	header("Location: ".DOL_URL_ROOT.'/fourn/facture/list.php');
+	exit;
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
@@ -171,7 +187,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => $_POST[$key]);
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
 				$cursorfacid = substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = (GETPOST($key) ? price2num(GETPOST($key)) : 0);
@@ -203,7 +219,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if ($_POST['paiementid'] <= 0) {
+		if (GETPOST('paiementid') <= 0) {
 			setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('PaymentMode')), null, 'errors');
 			$error++;
 		}
@@ -478,7 +494,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $object->date);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
-			$form->select_types_paiements(empty($_POST['paiementid']) ? $obj->fk_mode_reglement : $_POST['paiementid'], 'paiementid');
+			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
 			print '</td>';
 			if (!empty($conf->banque->enabled)) {
 				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
@@ -488,10 +504,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			} else {
 				print '<tr><td>&nbsp;</td></tr>';
 			}
-			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement']) ? '' : $_POST['num_paiement']).'"></td></tr>';
+			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(!GETPOST('num_paiement') ? '' : GETPOST('num_paiement')).'"></td></tr>';
 			print '<tr><td>'.$langs->trans('Comments').'</td>';
 			print '<td class="tdtop">';
-			print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment']) ? '' : $_POST['comment']).'</textarea></td></tr>';
+			print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(!GETPOST('comment') ? '' : GETPOST('comment')).'</textarea></td></tr>';
 			print '</table>';
 			print dol_get_fiche_end();
 
@@ -519,7 +535,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$sql .= ' AND f.type = 2'; // If paying back a credit note, we show all credit notes
 				}
 				// Group by because we have a total
-				$sql .= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef, f.date_lim_reglement';
+				$sql .= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc,';
+				$sql .= ' f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+				$sql .= ' f.datef, f.date_lim_reglement';
 				// Sort invoices by date and serial number: the older one comes first
 				$sql .= ' ORDER BY f.datef ASC, f.ref ASC';
 
@@ -665,10 +683,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 										}
 											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									} else {
-										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
+										print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									}
 								}
 								print "</td>";
@@ -685,7 +703,31 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 							print '</td>';
 
-							print '<td class="right">'.price($sign * $remaintopay).'</td>';
+							print '<td class="right">';
+							print price($sign * $remaintopay);
+							if (!empty($conf->paymentbybanktransfer->enabled)) {
+								$numdirectdebitopen = 0;
+								$totaldirectdebit = 0;
+								$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
+								$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+								$sql .= " WHERE fk_facture_fourn = ".((int) $objp->facid);
+								$sql .= " AND pfd.traite = 0";
+								$sql .= " AND pfd.ext_payment_id IS NULL";
+
+								$result_sql = $db->query($sql);
+								if ($result_sql) {
+									$obj = $db->fetch_object($result_sql);
+									$numdirectdebitopen = $obj->nb;
+									$totaldirectdebit = $obj->amount;
+								} else {
+									dol_print_error($db);
+								}
+								if ($numdirectdebitopen) {
+									$langs->load("withdrawals");
+									print img_warning($langs->trans("WarningSomeCreditTransferAlreadyExists", $numdirectdebitopen, price(price2num($totaldirectdebit, 'MT'), 0, $langs, 1, -1, -1, $conf->currency)), '', 'classfortooltip');
+								}
+							}
+							print '</td>';
 
 							// Amount
 							print '<td class="center nowraponall">';
@@ -747,10 +789,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				}
 			}
 
-			// Save Button
+			// Save + Cancel Buttons
 			if ($action != 'add_paiement') {
-				print '<br><div class="center"><input type="checkbox" checked name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
-				print '<br><input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'"></div>';
+				print '<br><div class="center">';
+				print '<input type="checkbox" checked id="closepaidinvoices" name="closepaidinvoices"> <label for="closepaidinvoices">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
+				print '<input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
+				print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '</div>';
 			}
 
 			// Form to confirm payment

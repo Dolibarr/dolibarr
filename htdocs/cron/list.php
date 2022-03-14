@@ -46,8 +46,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'cro
 $id = GETPOST('id', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -478,8 +478,12 @@ if ($num > 0) {
 		if (empty($obj)) {
 			break;
 		}
-		if (isset($obj->test) && !verifCond($obj->test)) {
-			continue; // Discard line with test = false
+
+		if (isset($obj->test)) {
+			$veriftest = verifCond($obj->test);
+			if (!$veriftest) {
+				continue; // Discard line with test = false
+			}
 		}
 
 		$object->id = $obj->rowid;

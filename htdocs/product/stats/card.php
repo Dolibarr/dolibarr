@@ -192,20 +192,20 @@ if ($result || !($id > 0)) {
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
-		print $form->selectarray('type', $array, $type);
+		print $form->selectarray('type', $array, $type, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 		print '</td></tr>';
 
 		// Product
 		print '<tr><td class="titlefield">'.$langs->trans("ProductOrService").'</td><td>';
 		print img_picto('', 'product', 'class="pictofixedwidth"');
-		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, 'maxwidth500');
+		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', ($conf->dol_optimize_smallscreen ? 1 : 0), array(), 0, '1', 0, 'widthcentpercentminusx maxwidth400');
 		print '</td></tr>';
 
 		// Tag
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
-			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth300');
+			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth400');
 			print $moreforfilter;
 			print '</td></tr>';
 		}
@@ -465,7 +465,9 @@ if ($result || !($id > 0)) {
 			$linktoregenerate .= img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh');
 			$linktoregenerate .= '</a>';
 
+
 			// Show graph
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			// Label
 			print '<tr class="liste_titre"><td>';
@@ -478,6 +480,7 @@ if ($result || !($id > 0)) {
 			print $graphfiles[$key]['output'];
 			print '</td></tr>';
 			print '</table>';
+			print '</div>';
 
 			if ($i % 2 == 0) {
 				print "\n".'</div>'."\n";

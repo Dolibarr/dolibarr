@@ -52,7 +52,7 @@ $hookmanager = new HookManager($db);
 $hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
+$langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 $socid = GETPOST("socid", "int");
 

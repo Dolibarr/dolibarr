@@ -111,7 +111,7 @@ class Inventory extends CommonObject
 		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>512, 'csslist'=>'tdoverflowmax200'),
 		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Recorded', 9=>'Canceled'))
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed', 9=>'Canceled'))
 	);
 
 	/**
@@ -266,7 +266,7 @@ class Inventory extends CommonObject
 
 		if ($this->status == self::STATUS_DRAFT) {
 			// Delete inventory
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.((int) $this->id);
+			$sql = 'DELETE FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -275,21 +275,21 @@ class Inventory extends CommonObject
 			}
 
 			// Scan existing stock to prefill the inventory
-			$sql = 'SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,';
-			$sql .= ' pb.batch, pb.qty';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_stock as ps';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb ON pb.fk_product_stock = ps.rowid,';
-			$sql .= ' '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'entrepot as e';
-			$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-			$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
+			$sql = "SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,";
+			$sql .= " pb.batch, pb.qty";
+			$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb ON pb.fk_product_stock = ps.rowid,";
+			$sql .= " ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
+			$sql .= " WHERE p.entity IN (".getEntity('product').")";
+			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 				$sql .= " AND p.fk_product_type = 0";
 			}
 			if ($this->fk_product > 0) {
-				$sql .= ' AND ps.fk_product = '.((int) $this->fk_product);
+				$sql .= " AND ps.fk_product = ".((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= ' AND ps.fk_entrepot = '.((int) $this->fk_warehouse);
+				$sql .= " AND ps.fk_entrepot = ".((int) $this->fk_warehouse);
 			}
 
 			$inventoryline = new InventoryLine($this->db);
@@ -349,7 +349,7 @@ class Inventory extends CommonObject
 		$this->db->begin();
 
 		// Delete inventory
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.((int) $this->id);
+		$sql = 'DELETE FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
@@ -626,7 +626,7 @@ class Inventory extends CommonObject
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_RECORDED) {
-			$statusType = 'status5';
+			$statusType = 'status6';
 		}
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);
@@ -640,10 +640,10 @@ class Inventory extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem, date_validation as datev,';
-		$sql .= ' fk_user_creat, fk_user_modif, fk_user_valid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql = "SELECT rowid, date_creation as datec, tms as datem, date_validation as datev,";
+		$sql .= " fk_user_creat, fk_user_modif, fk_user_valid";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

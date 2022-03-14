@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=PHP o'rnatishingiz Curl-ni qo'llab-quvvatlamaydi.
 ErrorPHPDoesNotSupportCalendar=PHP o'rnatishingiz PHP kalendar kengaytmalarini qo'llab-quvvatlamaydi.
 ErrorPHPDoesNotSupportUTF8=PHP o'rnatishingiz UTF8 funktsiyalarini qo'llab-quvvatlamaydi. Dolibarr to'g'ri ishlay olmaydi. Dolibarr dasturini o'rnatishdan oldin buni hal qiling.
 ErrorPHPDoesNotSupportIntl=PHP o'rnatishingiz Intl funktsiyalarini qo'llab-quvvatlamaydi.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=PHP o'rnatishingiz kengaytirilgan disk raskadrovka funktsiyalarini qo'llab-quvvatlamaydi.
 ErrorPHPDoesNotSupport=PHP o'rnatishingiz %s funktsiyalarini qo'llab-quvvatlamaydi.
 ErrorDirDoesNotExists=%s katalogi mavjud emas.

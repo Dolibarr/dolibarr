@@ -7,6 +7,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * Dropdown of user popup
  */
 
+.bookmark-footer a.top-menu-dropdown-link {
+	white-space: normal;
+	word-break: break-word;
+}
+
 button.dropdown-item.global-search-item {
 	outline: none;
 }
@@ -14,6 +19,12 @@ button.dropdown-item.global-search-item {
 .open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-quickadd, .open>.dropdown-menu, .dropdown dd ul.open {
 	display: block;
 }
+
+#topmenu-bookmark-dropdown .dropdown-menu {
+	min-width: 300px;
+	max-width: 360px;
+}
+
 
 .dropdown-search {
 	border-color: #eee;
@@ -359,7 +370,7 @@ a.top-menu-dropdown-link {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	margin-right: 5px;
+	margin-<?php echo $right; ?>: 5px;
 	display: inline-block;
 	content: "\f0da";
 	/* color: rgba(0,0,0,0.3); */

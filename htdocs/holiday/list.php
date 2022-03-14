@@ -488,9 +488,15 @@ if ($resql) {
 
 		print '<div class="tabsAction">';
 
-		$canedit = (($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))));
+		$cancreate = 0;
+		if (!empty($user->rights->holiday->writeall)) {
+			$cancreate = 1;
+		}
+		if (!empty($user->rights->holiday->write) && in_array($user_id, $childids)) {
+			$cancreate = 1;
+		}
 
-		if ($canedit) {
+		if ($cancreate) {
 			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
 		}
 

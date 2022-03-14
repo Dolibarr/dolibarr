@@ -55,6 +55,7 @@ $id = GETPOST('id') ?GETPOST('id', 'int') : $rowid;
 $typeid = GETPOST('typeid', 'int');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
+$ref = GETPOST('ref', 'alpha');
 
 if (!empty($conf->mailmanspip->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
@@ -918,12 +919,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// When used in standard mode
 	// -----------------------------------------
 
+	// Create mode
 	if ($action == 'create') {
-		/* ************************************************************************** */
-		/*                                                                            */
-		/* Creation mode                                                              */
-		/*                                                                            */
-		/* ************************************************************************** */
 		$object->canvas = $canvas;
 		$object->state_id = GETPOST('state_id', 'int');
 
@@ -953,7 +950,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print load_fiche_titre($langs->trans("NewMember"), '', $object->picto);
 
 		if ($conf->use_javascript_ajax) {
-			print "\n".'<script type="text/javascript">';
+			print "\n".'<script type="text/javascript">'."\n";
 			print 'jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="create";
@@ -1094,15 +1091,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $soc->phone).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $soc->phone).'"></td></tr>';
 
 		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-		print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone_perso" size="20" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" size="20" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
 
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-		print '<td>'.img_picto('', 'object_phoning_mobile').' <input type="text" name="phone_mobile" size="20" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" size="20" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td></tr>';
 
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1145,13 +1142,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</form>\n";
 	}
 
+	// Edit mode
 	if ($action == 'edit') {
-		/********************************************
-		*
-		* Edition mode
-		*
-		********************************************/
-
 		$res = $object->fetch($id);
 		if ($res < 0) {
 			dol_print_error($db, $object->error); exit;
@@ -1295,11 +1287,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED ? '<span class="fieldrequired">' : '').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED ? '</span>' : '').'</td>';
-		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET("member_email") ? GETPOST("member_email", '', 2) : $object->email).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').'<input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET("member_email") ? GETPOST("member_email", '', 2) : $object->email).'"></td></tr>';
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-			print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ?GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ?GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
@@ -1333,15 +1325,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" value="'.(GETPOSTISSET("phone") ? GETPOST("phone") : $object->phone).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" value="'.(GETPOSTISSET("phone") ? GETPOST("phone") : $object->phone).'"></td></tr>';
 
 		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone_perso" value="'.(GETPOSTISSET("phone_perso") ? GETPOST("phone_perso") : $object->phone_perso).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" value="'.(GETPOSTISSET("phone_perso") ? GETPOST("phone_perso") : $object->phone_perso).'"></td></tr>';
 
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-		print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').' <input type="text" name="phone_mobile" value="'.(GETPOSTISSET("phone_mobile") ? GETPOST("phone_mobile") : $object->phone_mobile).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" value="'.(GETPOSTISSET("phone_mobile") ? GETPOST("phone_mobile") : $object->phone_mobile).'"></td></tr>';
 
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1412,13 +1404,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</form>';
 	}
 
+	// View
 	if ($id > 0 && $action != 'edit') {
-		/* ************************************************************************** */
-		/*                                                                            */
-		/* View mode                                                                  */
-		/*                                                                            */
-		/* ************************************************************************** */
-
 		$res = $object->fetch($id);
 		if ($res < 0) {
 			dol_print_error($db, $object->error); exit;
@@ -1707,7 +1694,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'rowid', $linkback);
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= '</a>';
+
+
+		dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -1727,8 +1719,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 		print '</tr>';
 
-		print '</td></tr>';
-
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
@@ -1745,9 +1735,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if ($user->admin) {
 					print '<!-- '.$langs->trans("Crypted").': '.$object->pass_indatabase_crypted.' -->';
 				}
-				print '<span class="opacitymedium"'.$langs->trans("Hidden").'</span>';
+				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 			}
-			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
+			if (!empty($object->pass_indatabase) && empty($object->user_id)) {	// Show warning only for old password still in clear (does not happen anymore)
 				$langs->load("errors");
 				$htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
 				print ' '.$form->textwithpicto('', $htmltext, 1, 'warning');
@@ -1786,7 +1776,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<div class="fichehalfright">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield tableforfield centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Tags / Categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -1859,15 +1849,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
 			}
 		}
-		print '</td></tr>';
-
-		// VCard
-		print '<tr><td>';
-		print $langs->trans("VCard").'</td><td colspan="3">';
-		print '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
-		print $langs->trans("Download");
-		print '</a>';
 		print '</td></tr>';
 
 		print "</table>\n";

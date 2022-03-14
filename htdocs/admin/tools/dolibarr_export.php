@@ -400,8 +400,6 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
-print '</td></tr>';
-print '</table>';
 
 
 
@@ -538,6 +536,8 @@ if (!empty($_SESSION["commandbackuptorun"])) {
 
 print "</div> <!-- end div center button -->\n";
 
+print '</td></tr>';
+print '</table>';
 
 print "</div> 	<!-- end div fichehalfleft -->\n";
 
@@ -553,6 +553,7 @@ print '</form>';
 print '</fieldset>';
 
 
+$title = $langs->trans("BackupZipWizard");
 
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
@@ -571,7 +572,7 @@ print '</span>';
 
 print '<div id="backupfilesleft" class="fichehalfleft">';
 
-print load_fiche_titre($title ? $title : $langs->trans("BackupZipWizard"));
+print load_fiche_titre($title);
 
 print '<label for="zipfilename_template" class="line-height-large paddingbottom">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix = 'documents';

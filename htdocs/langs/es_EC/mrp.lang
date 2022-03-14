@@ -15,7 +15,6 @@ WatermarkOnDraftBOMs=Marca de agua en el borrador de lista de materiales
 FreeLegalTextOnMOs=Texto libre en el documento de MO
 WatermarkOnDraftMOs=Marca de agua en borrador MO
 ConfirmCloneMo=¿Está seguro de que desea clonar la orden de fabricación %s?
-ValueOfMeansLoss=Valor de 0.95 significa un promedio de 5%% de pérdida durante la producción
 DeleteBillOfMaterials=Eliminar lista de materiales
 DeleteMo=Eliminar orden de fabricación
 QtyToProduce=Cantidad para producir

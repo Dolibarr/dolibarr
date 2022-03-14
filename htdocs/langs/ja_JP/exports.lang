@@ -49,7 +49,7 @@ LineQty=線の量
 LineTotalHT=除く金額ラインの税金
 LineTotalTTC=ラインのための税の額
 LineTotalVAT=ラインの付加価値税の額
-TypeOfLineServiceOrProduct=回線の種類(0 =製品、1 =サービス)
+TypeOfLineServiceOrProduct=行の種類(0 =製品、1 =サービス)
 FileWithDataToImport=インポートするデータを持つファイル
 FileToImport=インポートするソースファイル
 FileMustHaveOneOfFollowingFormat=インポートするファイルは、次のいずれかの形式である必要がある

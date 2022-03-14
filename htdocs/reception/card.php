@@ -323,7 +323,6 @@ if (empty($reshook)) {
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
-			//var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
 			//reception line for product with no batch management and no multiple stock location
 			if (GETPOST($qty, 'alpha') > 0) {
 				$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
@@ -335,7 +334,6 @@ if (empty($reshook)) {
 
 
 		if ($totalqty > 0) {  // There is at least one thing to ship
-			//var_dump($_POST);exit;
 			for ($i = 1; $i <= $num; $i++) {
 				$lineToTest = '';
 				$lineId = GETPOST($idl, 'int');
@@ -466,7 +464,6 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 		}*/
 	} elseif ($action == 'setdate_livraison' && $permissiontoadd) {
-		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -912,7 +909,14 @@ if ($action == 'create') {
 
 			// Reception lines
 			$numAsked = 0;
+
+			/**
+			 * @var array $suffix2numAsked map HTTP query parameter suffixes (like '1_0') to line indices so that
+			 *                             extrafields from HTTP query can be assigned to the correct dispatch line
+			*/
+			$suffix2numAsked = array();
 			$dispatchLines = array();
+
 			foreach ($_POST as $key => $value) {
 				// If create form is coming from the button "Create Reception" of previous page
 
@@ -920,55 +924,70 @@ if ($action == 'create') {
 				$reg = array();
 				if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 					$numAsked++;
+					$paramSuffix = $reg[1] . '_' . $reg[2];
+					$suffix2numAsked[$paramSuffix] = $numAsked;
 
 					// $numline=$reg[2] + 1; // line of product
 					$numline = $numAsked;
-					$prod = "product_".$reg[1].'_'.$reg[2];
-					$qty = "qty_".$reg[1].'_'.$reg[2];
-					$ent = "entrepot_".$reg[1].'_'.$reg[2];
-					$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
-					$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
+
+					$prod = "product_" . $paramSuffix;
+					$qty = "qty_" . $paramSuffix;
+					$ent = "entrepot_" . $paramSuffix;
+					$pu = "pu_" . $paramSuffix; // This is unit price including discount
+					$fk_commandefourndet = "fk_commandefourndet_" . $paramSuffix;
 					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'));
 				}
 
 				// with batch module enabled
 				if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 					$numAsked++;
+					$paramSuffix = $reg[1] . '_' . $reg[2];
+					$suffix2numAsked[$paramSuffix] = $numAsked;
 
 					// eat-by date dispatch
 					// $numline=$reg[2] + 1; // line of product
 					$numline = $numAsked;
-					$prod = 'product_batch_'.$reg[1].'_'.$reg[2];
-					$qty = 'qty_'.$reg[1].'_'.$reg[2];
-					$ent = 'entrepot_'.$reg[1].'_'.$reg[2];
-					$pu = 'pu_'.$reg[1].'_'.$reg[2];
-					$lot = 'lot_number_'.$reg[1].'_'.$reg[2];
-					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
-					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
-					$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' =>GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+
+					$prod = 'product_batch_' . $paramSuffix;
+					$qty = 'qty_' . $paramSuffix;
+					$ent = 'entrepot_' . $paramSuffix;
+					$pu = 'pu_' . $paramSuffix;
+					$lot = 'lot_number_' . $paramSuffix;
+					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$paramSuffix.'month', 'int'), GETPOST('dluo_'.$paramSuffix.'day', 'int'), GETPOST('dluo_'.$paramSuffix.'year', 'int'));
+					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$paramSuffix.'month', 'int'), GETPOST('dlc_'.$paramSuffix.'day', 'int'), GETPOST('dlc_'.$paramSuffix.'year', 'int'));
+					$fk_commandefourndet = 'fk_commandefourndet_'.$paramSuffix;
+					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 
 				// If create form is coming from same page, it means that post was sent but an error occured
 				if (preg_match('/^productid([0-9]+)$/i', $key, $reg)) {
 					$numAsked++;
+					$paramSuffix = $reg[1];
+					$suffix2numAsked[$paramSuffix] = $numAsked;
 
 					// eat-by date dispatch
 					// $numline=$reg[2] + 1; // line of product
 					$numline = $numAsked;
-					$prod = 'productid'.$reg[1];
-					$comment = 'comment'.$reg[1];
-					$qty = 'qtyl'.$reg[1];
-					$ent = 'entl'.$reg[1];
-					$pu = 'pul'.$reg[1];
-					$lot = 'batch'.$reg[1];
-					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo'.$reg[1].'month', 'int'), GETPOST('dluo'.$reg[1].'day', 'int'), GETPOST('dluo'.$reg[1].'year', 'int'));
-					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc'.$reg[1].'month', 'int'), GETPOST('dlc'.$reg[1].'day', 'int'), GETPOST('dlc'.$reg[1].'year', 'int'));
-					$fk_commandefourndet = 'fk_commandefournisseurdet'.$reg[1];
+
+					$prod = 'productid'.$paramSuffix;
+					$comment = 'comment'.$paramSuffix;
+					$qty = 'qtyl'.$paramSuffix;
+					$ent = 'entl'.$paramSuffix;
+					$pu = 'pul'.$paramSuffix;
+					$lot = 'batch'.$paramSuffix;
+					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo'.$paramSuffix.'month', 'int'), GETPOST('dluo'.$paramSuffix.'day', 'int'), GETPOST('dluo'.$paramSuffix.'year', 'int'));
+					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc'.$paramSuffix.'month', 'int'), GETPOST('dlc'.$paramSuffix.'day', 'int'), GETPOST('dlc'.$paramSuffix.'year', 'int'));
+					$fk_commandefourndet = 'fk_commandefournisseurdet'.$paramSuffix;
 					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' =>GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST($comment), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 			}
 
+			// If extrafield values are passed in the HTTP query, assign them to the correct dispatch line
+			// Note that if an extrafield with the same name exists in the origin supplier order line, the value
+			// from the HTTP query will be ignored
+			foreach ($suffix2numAsked as $suffix => $n) {
+				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('commande_fournisseur_dispatch', '_' . $suffix, '');
+			}
 
 			print '<script type="text/javascript">
             jQuery(document).ready(function() {
@@ -1026,9 +1045,17 @@ if ($action == 'create') {
 				print "</tr>\n";
 			}
 
+			// $objectsrc->lines contains the line of the purchase order
+			// $dispatchLines is list of lines with dispatching detail (with product, qty and warehouse). One purchase order line may have n of this dispatch lines.
+
+			$arrayofpurchaselinealreadyoutput= array();
+
+			// $_POST contains fk_commandefourndet_X_Y    where Y is num of product line and X is number of splitted line
 			$indiceAsked = 1;
-			while ($indiceAsked <= $numAsked) {
+			while ($indiceAsked <= $numAsked) {	// Loop on $dispatchLines. Warning: $dispatchLines must be sorted by fk_commandefourndet (it is a regroupment key on output)
 				$product = new Product($db);
+
+				// We search the purchase order line that is linked to the dispatchLines
 				foreach ($objectsrc->lines as $supplierLine) {
 					if ($dispatchLines[$indiceAsked]['fk_commandefourndet'] == $supplierLine->id) {
 						$line = $supplierLine;
@@ -1050,7 +1077,6 @@ if ($action == 'create') {
 				print '<!-- line fk_commandefourndet='.$line->id.' for product='.$line->fk_product.' -->'."\n";
 				print '<tr class="oddeven">'."\n";
 
-
 				// Product label
 				if ($line->fk_product > 0) {  // If predefined product
 					$product->fetch($line->fk_product);
@@ -1059,42 +1085,45 @@ if ($action == 'create') {
 
 					print '<td>';
 					print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
-					print '<input type="hidden" name="productid'.$indiceAsked.'" value="'.$line->fk_product.'">';
+					if (! array_key_exists($line->id, $arrayofpurchaselinealreadyoutput)) {	// Add test to avoid to show qty twice
+						print '<input type="hidden" name="productid'.$indiceAsked.'" value="'.$line->fk_product.'">';
 
-					// Show product and description
-					$product_static = $product;
+						// Show product and description
+						$product_static = $product;
 
-					$text = $product_static->getNomUrl(1);
-					$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
-					$description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($line->desc));
-					print $form->textwithtooltip($text, $description, 3, '', '', $i);
+						$text = $product_static->getNomUrl(1);
+						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
+						$description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($line->desc));
+						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
-					// Show range
-					print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
+						// Show range
+						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
 
-					// Add description in form
-					if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-						print ($line->desc && $line->desc != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
+						// Add description in form
+						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+							print ($line->desc && $line->desc != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
+						}
 					}
-
 					print '</td>';
 				} else {
 					print "<td>";
-					if ($type == 1) {
-						$text = img_object($langs->trans('Service'), 'service');
-					} else {
-						$text = img_object($langs->trans('Product'), 'product');
-					}
+					if (! array_key_exists($line->id, $arrayofpurchaselinealreadyoutput)) {	// Add test to avoid to show qty twice
+						if ($type == 1) {
+							$text = img_object($langs->trans('Service'), 'service');
+						} else {
+							$text = img_object($langs->trans('Product'), 'product');
+						}
 
-					if (!empty($line->label)) {
-						$text .= ' <strong>'.$line->label.'</strong>';
-						print $form->textwithtooltip($text, $line->desc, 3, '', '', $i);
-					} else {
-						print $text.' '.nl2br($line->desc);
-					}
+						if (!empty($line->label)) {
+							$text .= ' <strong>'.$line->label.'</strong>';
+							print $form->textwithtooltip($text, $line->desc, 3, '', '', $i);
+						} else {
+							print $text.' '.nl2br($line->desc);
+						}
 
-					// Show range
-					print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
+						// Show range
+						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
+					}
 					print "</td>\n";
 				}
 
@@ -1105,8 +1134,11 @@ if ($action == 'create') {
 				print '<input type="text" class="maxwidth100" name="comment'.$indiceAsked.'" value="'.$defaultcomment.'">';
 				print '</td>';
 
-				// Qty
-				print '<td class="center">'.$line->qty;
+				// Qty in source purchase order line
+				print '<td class="center">';
+				if (! array_key_exists($line->id, $arrayofpurchaselinealreadyoutput)) {	// Add test to avoid to show qty twice
+					print $line->qty;
+				}
 				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value="'.$line->id.'">';
 				print '<input type="hidden" name="pul'.$indiceAsked.'" value="'.$line->pu_ht.'">';
 				print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
@@ -1116,7 +1148,9 @@ if ($action == 'create') {
 				// Qty already received
 				print '<td class="center">';
 				$quantityDelivered = $objectsrc->receptions[$line->id];
-				print $quantityDelivered;
+				if (! array_key_exists($line->id, $arrayofpurchaselinealreadyoutput)) {	// Add test to avoid to show qty twice
+					print $quantityDelivered;
+				}
 				print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
 				print '</td>';
 
@@ -1192,8 +1226,12 @@ if ($action == 'create') {
 						}
 					}
 				}
+
+				$arrayofpurchaselinealreadyoutput[$line->id] = $line->id;
+
 				print "</tr>\n";
 
+				$extralabelslines = $extrafields->attributes[$line->table_element];
 				//Display lines extrafields
 				if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 					$colspan = 5;
@@ -1211,6 +1249,9 @@ if ($action == 'create') {
 					$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
 					$line->fetch_optionals();
 
+					if (empty($line->array_options) && !empty($dispatchLines[$indiceAsked]['array_options'])) {
+						$line->array_options = $dispatchLines[$indiceAsked]['array_options'];
+					}
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
 					print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
@@ -1749,7 +1790,9 @@ if ($action == 'create') {
 			//var_dump($alreadysent);
 		}
 
-		// Loop on each product to send/sent
+		$arrayofpurchaselinealreadyoutput = array();
+
+		// Loop on each product to send/sent. Warning: $lines must be sorted by ->fk_commandefourndet (it is a regroupment key on output)
 		for ($i = 0; $i < $num_prod; $i++) {
 			print '<!-- origin line id = '.(!empty($lines[$i]->origin_line_id) ? $lines[$i]->origin_line_id : 0).' -->'; // id of order line
 			print '<tr class="oddeven">';
@@ -1771,32 +1814,35 @@ if ($action == 'create') {
 				}
 
 				print '<td>';
-
-				$text = $lines[$i]->product->getNomUrl(1);
-				$text .= ' - '.$label;
-				$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
-				print $form->textwithtooltip($text, $description, 3, '', '', $i);
-				print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
-				if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-					print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
+				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
+					$text = $lines[$i]->product->getNomUrl(1);
+					$text .= ' - '.$label;
+					$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
+					print $form->textwithtooltip($text, $description, 3, '', '', $i);
+					print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
+					if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
+					}
 				}
 				print "</td>\n";
 			} else {
 				print "<td>";
-				if ($lines[$i]->product_type == Product::TYPE_SERVICE) {
-					$text = img_object($langs->trans('Service'), 'service');
-				} else {
-					$text = img_object($langs->trans('Product'), 'product');
-				}
+				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
+					if ($lines[$i]->product_type == Product::TYPE_SERVICE) {
+						$text = img_object($langs->trans('Service'), 'service');
+					} else {
+						$text = img_object($langs->trans('Product'), 'product');
+					}
 
-				if (!empty($lines[$i]->label)) {
-					$text .= ' <strong>'.$lines[$i]->label.'</strong>';
-					print $form->textwithtooltip($text, $lines[$i]->description, 3, '', '', $i);
-				} else {
-					print $text.' '.nl2br($lines[$i]->description);
-				}
+					if (!empty($lines[$i]->label)) {
+						$text .= ' <strong>'.$lines[$i]->label.'</strong>';
+						print $form->textwithtooltip($text, $lines[$i]->description, 3, '', '', $i);
+					} else {
+						print $text.' '.nl2br($lines[$i]->description);
+					}
 
-				print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
+					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
+				}
 				print "</td>\n";
 			}
 
@@ -1808,33 +1854,39 @@ if ($action == 'create') {
 
 
 			// Qty ordered
-			print '<td class="center">'.$lines[$i]->qty_asked.'</td>';
+			print '<td class="center">';
+			if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
+				print $lines[$i]->qty_asked;
+			}
+			print '</td>';
 
 			// Qty in other receptions (with reception and warehouse used)
 			if ($origin && $origin_id > 0) {
 				print '<td class="center nowrap">';
-				foreach ($alreadysent as $key => $val) {
-					if ($lines[$i]->fk_commandefourndet == $key) {
-						$j = 0;
-						foreach ($val as $receptionline_id => $receptionline_var) {
-							if ($receptionline_var['reception_id'] == $lines[$i]->fk_reception) {
-								continue; // We want to show only "other receptions"
-							}
+				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
+					foreach ($alreadysent as $key => $val) {
+						if ($lines[$i]->fk_commandefourndet == $key) {
+							$j = 0;
+							foreach ($val as $receptionline_id => $receptionline_var) {
+								if ($receptionline_var['reception_id'] == $lines[$i]->fk_reception) {
+									continue; // We want to show only "other receptions"
+								}
 
-							$j++;
-							if ($j > 1) {
-								print '<br>';
-							}
-							$reception_static->fetch($receptionline_var['reception_id']);
-							print $reception_static->getNomUrl(1);
-							print ' - '.$receptionline_var['qty'];
+								$j++;
+								if ($j > 1) {
+									print '<br>';
+								}
+								$reception_static->fetch($receptionline_var['reception_id']);
+								print $reception_static->getNomUrl(1);
+								print ' - '.$receptionline_var['qty'];
 
-							$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
-							if (!empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0) {
-								$warehousestatic->fetch($receptionline_var['warehouse']);
-								$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
+								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
+								if (!empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0) {
+									$warehousestatic->fetch($receptionline_var['warehouse']);
+									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
+								}
+								print ' '.$form->textwithpicto('', $htmltext, 1);
 							}
-							print ' '.$form->textwithpicto('', $htmltext, 1);
 						}
 					}
 				}
@@ -1964,7 +2016,10 @@ if ($action == 'create') {
 			}
 			print "</tr>";
 
+			$arrayofpurchaselinealreadyoutput[$lines[$i]->fk_commandefourndet] = $lines[$i]->fk_commandefourndet;
+
 			// Display lines extrafields
+			$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
 			if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
 				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);

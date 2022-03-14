@@ -19,7 +19,7 @@
 ModulePartnershipName=Partnerskabsledelse
 PartnershipDescription=Ledelse af modulpartnerskab
 PartnershipDescriptionLong= Ledelse af modulpartnerskab
-
+Partnership=Partnerskab
 AddPartnership=Tilføj partnerskab
 CancelPartnershipForExpiredMembers=Partnerskab: Annuller partnerskab med medlemmer med udløbne abonnementer
 PartnershipCheckBacklink=Partnerskab: Tjek henvisende backlink

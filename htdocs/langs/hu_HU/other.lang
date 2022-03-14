@@ -258,6 +258,10 @@ PassEncoding=Jelszó kódolás
 PermissionsAdd=Engedélyek hozzáadva
 PermissionsDelete=Engedélyek eltávolítva
 YourPasswordMustHaveAtLeastXChars=A jelszónak legalább <strong>%s</strong> karakterből kell állnia
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Jelszava sikeresen vissza lett állítva
 ApplicantIpAddress=A pályázó IP címe
 SMSSentTo=SMS elküldve %s-re
@@ -268,6 +272,7 @@ ProjectCreatedByEmailCollector=A projektet létrehozva az e-mail gyűjtő által
 TicketCreatedByEmailCollector=A jegy létrehozva az e-mail gyűjtő által az MSGID %s e-mailből
 OpeningHoursFormatDesc=A nyitvatartási időket (-tól-ig) kötőjellel (-) válassza el. <br> Használjon szóközt a különböző idősávok megadásához. <br> Példa: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Az export területén

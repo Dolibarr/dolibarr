@@ -67,6 +67,11 @@ class ExtraFields
 	public $attributes;
 
 	/**
+	 * @var array	Array with boolean of status of groups
+	 */
+	public $expand_display;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -265,10 +270,10 @@ class ExtraFields
 				'default' => $default_value
 			);
 
-			$result = $this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+			$result = $this->db->DDLAddField($this->db->prefix().$table, $attrname, $field_desc);
 			if ($result > 0) {
 				if ($unique) {
-					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+					$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
 				return 1;
@@ -353,7 +358,7 @@ class ExtraFields
 				$params = '';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,";
 			$sql .= " label,";
 			$sql .= " type,";
@@ -447,7 +452,7 @@ class ExtraFields
 
 			if (!$error) {
 				$sql = "SELECT COUNT(rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql .= " FROM ".$this->db->prefix()."extrafields";
 				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
 				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
@@ -455,7 +460,7 @@ class ExtraFields
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->nb <= 0) {
-						$result = $this->db->DDLDropField(MAIN_DB_PREFIX.$table, $attrname); // This also drop the unique key
+						$result = $this->db->DDLDropField($this->db->prefix().$table, $attrname); // This also drop the unique key
 						if ($result < 0) {
 							$this->error = $this->db->lasterror();
 							$this->errors[] = $this->db->lasterror();
@@ -492,7 +497,7 @@ class ExtraFields
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+			$sql = "DELETE FROM ".$this->db->prefix()."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
 			$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
@@ -597,7 +602,7 @@ class ExtraFields
 			}
 
 			if ($type != 'separate') { // No table update when separate type
-				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
@@ -606,12 +611,16 @@ class ExtraFields
 				if ($result > 0) {
 					$sql = '';
 					if ($unique) {
-						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					} else {
-						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
+					/*if ($resql < 0) {
+						$this->error = $this->db->lasterror();
+						return -1;
+					}*/
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror();
@@ -699,20 +708,20 @@ class ExtraFields
 
 			if ($entity === '' || $entity != '0') {
 				// We dont want on all entities, we delete all and current
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
 				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			} else {
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity = 0";
 				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			}
 			$resql1 = $this->db->query($sql_del);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,"; // This is code
 			$sql .= " entity,";
 			$sql .= " label,";
@@ -804,15 +813,12 @@ class ExtraFields
 		if ($elementtype == 'order_supplier') {
 			$elementtype = 'commande_fournisseur';
 		}
-		if ($elementtype == 'stock_mouvement') {
-			$elementtype = 'movement';
-		}
 
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
 		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
-		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
@@ -915,9 +921,9 @@ class ExtraFields
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
+			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
 			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
 			$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
@@ -925,6 +931,7 @@ class ExtraFields
 			// Old usage
 			$label = $this->attribute_label[$key];
 			$type = $this->attribute_type[$key];
+			$list = $this->attribute_list[$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
@@ -1141,7 +1148,7 @@ class ExtraFields
 
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use curent entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
@@ -1160,7 +1167,7 @@ class ExtraFields
 						}
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE ".$InfoFieldList[4];
@@ -1309,7 +1316,7 @@ class ExtraFields
 
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -1372,7 +1379,7 @@ class ExtraFields
 
 						// We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE ".$InfoFieldList[4];
@@ -1507,9 +1514,9 @@ class ExtraFields
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
+			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
 			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		} else {
@@ -1559,7 +1566,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $langs, 0, 0, -1);
+				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$langs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
@@ -1597,7 +1604,7 @@ class ExtraFields
 			}
 
 			$sql = "SELECT ".$keyList;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1701,7 +1708,7 @@ class ExtraFields
 			}
 
 			$sql = "SELECT ".$keyList;
-			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1867,56 +1874,63 @@ class ExtraFields
 			$colspan=0;
 		}
 
+		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
+		$extrafield_param_list = array();
+		if (!empty($extrafield_param) && is_array($extrafield_param)) {
+			$extrafield_param_list = array_keys($extrafield_param['options']);
+		}
+		$extrafield_collapse_display_value = -1;
+		$expand_display = false;
+		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
+			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+		}
+
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
-		$out .='<strong>';
+		$out .= '<span class="cursorpointer '.($extrafield_collapse_display_value == 0 ? 'fas fa-square' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>&nbsp;';
+		$out .= '<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out .= '</strong>';
 		$out .= '</'.$tagtype_dyn.'>';
 		$out .= '</'.$tagtype.'>';
 
-		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
-		if (!empty($extrafield_param) && is_array($extrafield_param)) {
-			$extrafield_param_list = array_keys($extrafield_param['options']);
+		$collapse_group = $key.(!empty($object->id) ? '_'.$object->id : '');
+		//$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
 
-			if (count($extrafield_param_list) > 0) {
-				$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-				if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-					// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
-					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
-					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
+		if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+			// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
+			$this->expand_display[$collapse_group] = $expand_display;
 
-					if (!empty($conf->use_javascript_ajax)) {
-						$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
-						$out .= '<script type="text/javascript">'."\n";
-						$out .= 'jQuery(document).ready(function(){'."\n";
-						if ($collapse_display === false) {
-							$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");';
-							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
-							$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
-						} else {
-							$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");';
-							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
-							$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						}
-						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
-						$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
-						$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(100, function(){'."\n";
-						$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
-						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						$out .= '           } else {'."\n";
-						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						$out .= '           }'."\n";
-						$out .= '       });'."\n";
-						$out .= '   });'."\n";
-						$out .= '});'."\n";
-						$out .= '</script>'."\n";
-					}
+			if (!empty($conf->use_javascript_ajax)) {
+				$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
+				$out .= '<script type="text/javascript">'."\n";
+				$out .= 'jQuery(document).ready(function(){'."\n";
+				if ($expand_display === false) {
+					$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
+					$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
+				} else {
+					$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
+					$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				}
+				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+				$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$collapse_group.'");'."\n";
+				$out .= '       jQuery(".trextrafields_collapse'.$collapse_group.'").toggle(100, function(){'."\n";
+				$out .= '           if (jQuery(".trextrafields_collapse'.$collapse_group.'").is(":hidden")) {'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '           } else {'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '           }'."\n";
+				$out .= '       });'."\n";
+				$out .= '   });'."\n";
+				$out .= '});'."\n";
+				$out .= '</script>'."\n";
 			}
+		} else {
+			$this->expand_display[$collapse_group] = 1;
 		}
 
 		return $out;
@@ -1949,8 +1963,8 @@ class ExtraFields
 				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) {
 					continue;
 				}
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && $this->attributes[$object->table_element]['type'][$key] != 'boolean') {
-					//when unticking boolean field, it's not set in POST
+
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
 					continue;
 				}
 
@@ -1961,17 +1975,17 @@ class ExtraFields
 
 				$enabled = 1;
 				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
-					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1);
+					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '1');
 				}
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1');
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
+					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '1');
 				}
 				if (empty($enabled)) {
 					continue;

@@ -293,18 +293,21 @@ class pdf_standard extends ModelePDFProduct
 					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
-				if ($object->weight) {
-					$texttoshow = $langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").': '.($object->length != '' ? $object->length : '?').' x '.($object->width != '' ? $object->width : '?').' x '.($object->height != '' ? $object->height : '?');
+				if ($object->length) {
+					$texttoshow = $langs->trans("Length") . ' x ' . $langs->trans("Width") . ' x ' . $langs->trans("Height") . ': ' . ($object->length != '' ? $object->length : '?') . ' x ' . ($object->width != '' ? $object->width : '?') . ' x ' . ($object->height != '' ? $object->height : '?');
+					$texttoshow .= ' ' . measuringUnitString(0, "size", $object->length_units);
 					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
 				if ($object->surface) {
-					$texttoshow = $langs->trans("Area").': '.dol_htmlentitiesbr($object->surface);
+					$texttoshow = $langs->trans("Surface") . ': ' . dol_htmlentitiesbr($object->surface);
+					$texttoshow .= ' ' . measuringUnitString(0, "surface", $object->surface_units);
 					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
 				if ($object->volume) {
-					$texttoshow = $langs->trans("Volume").': '.dol_htmlentitiesbr($object->volume);
+					$texttoshow = $langs->trans("Volume") . ': ' . dol_htmlentitiesbr($object->volume);
+					$texttoshow .= ' ' . measuringUnitString(0, "volume", $object->volume_units);
 					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}

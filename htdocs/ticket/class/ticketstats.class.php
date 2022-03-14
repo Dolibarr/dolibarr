@@ -62,14 +62,14 @@ class TicketStats extends Stats
 		$this->field = 'timing';
 
 		$this->where = " fk_statut > 0";
-		$this->where .= " AND entity = ".$conf->entity;
+		$this->where .= " AND entity = ".((int) $conf->entity);
 		if ($this->socid > 0) {
 			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
 			$this->where .= ' AND fk_user_create IN ('.$this->db->sanitize(join(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
-			$this->where .= ' AND fk_user_create = '.$this->userid;
+			$this->where .= " AND fk_user_create = ".((int) $this->userid);
 		}
 	}
 
