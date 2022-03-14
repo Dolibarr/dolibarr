@@ -2146,22 +2146,24 @@ function dol_uncompress($inputfile, $outputdir)
 		}
 
 		return array('error'=>'ErrNoZipEngine');
-	} elseif ($fileinfo["extension"] == "gz" || $fileinfo["extension"] == "bz2") {
+	} elseif (in_array($fileinfo["extension"], array('gz','bz2','zst'))) {
 		$extension = pathinfo($fileinfo["filename"], PATHINFO_EXTENSION);
 		if ($extension == "tar") {
-			$cmd = "tar -C ".$outputdir." -xvf ".$fileinfo["dirname"]."/".$fileinfo["basename"];
+			$cmd = 'tar -C '.escapeshellcmd(dol_sanitizePathName($outputdir)).' -xvf '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
 			$resarray = $utils->executeCLI($cmd, $outputdir);
 		} else {
 			$program = "";
 			if ($fileinfo["extension"] == "gz") {
-				$program = "gzip";
+				$program = 'gzip';
 			} elseif ($fileinfo["extension"] == "bz2") {
-				$program = "bzip2";
+				$program = 'bzip2';
+			} elseif ($fileinfo["extension"] == "zst") {
+				$program = 'zstd';
 			} else {
 				return array('error'=>'ErrFileExtension');
 			}
-			$cmd = $program." -dc ".$fileinfo["dirname"]."/".$fileinfo["basename"];
-			$outputfilename = $outputdir."/".$fileinfo["filename"];
+			$cmd = $program.' -dc '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
+			$outputfilename = escapeshellcmd(dol_sanitizePathName($outputdir).'/'.dol_sanitizeFileName($fileinfo["filename"]));
 			$resarray = $utils->executeCLI($cmd, $outputfilename, 0, $outputfilename);
 			if ($resarray["output"] == 2) {
 				$resarray["error"] = "ErrFilePermOrFileNotFound";
