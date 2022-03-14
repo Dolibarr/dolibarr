@@ -33,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modBarcode extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -94,6 +93,7 @@ class modBarcode extends DolibarrModules
 		// Main menu entries
 		$r = 0;
 
+		// A menu entry for the Tools top menu
 		$this->menu[$r] = array(
 			'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'mainmenu'=>'tools',
@@ -111,6 +111,7 @@ class modBarcode extends DolibarrModules
 		);
 		$r++;
 
+		// A menu entry for the left menu
 		$this->menu[$r] = array(
 			'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left', // This is a Left menu entry

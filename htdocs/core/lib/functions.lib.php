@@ -6582,16 +6582,18 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
 							$valuetoclean = $attrs->item($ii)->value;
 
-							do {
-								$oldvaluetoclean = $valuetoclean;
-								$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
-								$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
-								if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-									$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-									$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-									$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
-								}
-							} while ($oldvaluetoclean != $valuetoclean);
+							if (isset($valuetoclean)) {
+								do {
+									$oldvaluetoclean = $valuetoclean;
+									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
+									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
+									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
+										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+									}
+								} while ($oldvaluetoclean != $valuetoclean);
+							}
 
 							$attrs->item($ii)->value = $valuetoclean;
 						}
@@ -8295,7 +8297,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
  * Verify if condition in string is ok or not
  *
  * @param 	string		$strToEvaluate	String with condition to check
- * @return 	boolean						True or False. Note: It returns True if $strToEvaluate is ''
+ * @return 	boolean						True or False. Note: It returns also True if $strToEvaluate is ''. False if error
  */
 function verifCond($strToEvaluate)
 {
@@ -8306,8 +8308,12 @@ function verifCond($strToEvaluate)
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
-		$str = 'if(!('.$strToEvaluate.')) { $rights = false; }';
-		dol_eval($str); // The dol_eval must contains all the global $xxx used into a condition
+		//$str = 'if(!('.$strToEvaluate.')) $rights = false;';
+		//dol_eval($str, 0, 1, '2'); // The dol_eval must contains all the global $xxx used into a condition
+		//var_dump($strToEvaluate);
+		$rep = dol_eval($strToEvaluate, 1, 1, '1'); // The dol_eval must contains all the global $xxx for all variables $xxx found into the string condition
+		$rights = (($rep && strpos($rep, 'Bad string syntax to evaluate') === false) ? true : false);
+		//var_dump($rights);
 	}
 	return $rights;
 }
@@ -8316,12 +8322,13 @@ function verifCond($strToEvaluate)
  * Replace eval function to add more security.
  * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
- * @param 	string	$s				String to evaluate
- * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
- * @param   int     $hideerrors     1=Hide errors
- * @return	mixed					Nothing or return result of eval
+ * @param 	string	$s					String to evaluate
+ * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
+ * @param   int     $hideerrors     	1=Hide errors
+ * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_->&|=!?():"\',/' and restrict use of (, 2=Accept also ';' and no restriction on (.
+ * @return	mixed						Nothing or return result of eval
  */
-function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
+function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only global variables can be changed by eval function and returned to caller
 	global $db, $langs, $user, $conf, $website, $websitepage;
@@ -8333,17 +8340,62 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
 	global $soc; // For backward compatibility
 
-	// Replace dangerous char (used for RCE), we allow only PHP variable testing.
+	// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
+	if ($onlysimplestring == '1') {
+		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
+		// We must accept: '$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)'
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_->&|=!?():"\',/', '/').']/i', $s)) {
+			if ($returnvalue) {
+				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+			} else {
+				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+				return '';
+			}
+			// TODO We can exclude all () that is not '($db)' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match('
+			// ...
+		}
+	} elseif ($onlysimplestring == '2') {
+		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_->&|=!?():"\',/;[]', '/').']/i', $s)) {
+			if ($returnvalue) {
+				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+			} else {
+				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+				return '';
+			}
+		}
+	}
+	if (strpos($s, '::') !== false) {
+		if ($returnvalue) {
+			return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
+		} else {
+			dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s);
+			return '';
+		}
+	}
 	if (strpos($s, '`') !== false) {
-		return 'Bad string syntax to evaluate: '.$s;
+		if ($returnvalue) {
+			return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
+		} else {
+			dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): '.$s);
+			return '';
+		}
+	}
+	if (strpos($s, '.') !== false) {
+		if ($returnvalue) {
+			return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
+		} else {
+			dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
+			return '';
+		}
 	}
 
 	// We block use of php exec or php file functions
 	$forbiddenphpstrings = array('$$');
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
 
-	$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
-	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+	$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI", 'verifCond');
+	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 	$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
 
 	$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
@@ -8357,7 +8409,12 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 
 	if (strpos($s, '__forbiddenstring__') !== false) {
 		dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
-		return 'Bad string syntax to evaluate: '.$s;
+		if ($returnvalue) {
+			return 'Bad string syntax to evaluate: '.$s;
+		} else {
+			dol_syslog('Bad string syntax to evaluate: '.$s);
+			return '';
+		}
 	}
 
 	//print $s."<br>\n";
@@ -10085,7 +10142,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
-		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
+		if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(
@@ -10096,6 +10153,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	if (empty($html)) {
 		$html = $label;
+		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
 		$attr['aria-label'] = $label;
 	}
@@ -10109,6 +10167,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		$attr['id'] = $id;
 	}
 
+
 	// Override attr
 	if (!empty($params['attr']) && is_array($params['attr'])) {
 		foreach ($params['attr'] as $key => $value) {
@@ -10120,6 +10179,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 				$attr[$key] = $value;
 			}
 		}
+	}
+
+	// automatic add tooltip when title is detected
+	if (!empty($attr['title']) && !empty($attr['class']) && strpos($attr['class'], 'classfortooltip') === false) {
+		$attr['class'].= ' classfortooltip';
 	}
 
 	// Js Confirm button
@@ -10815,6 +10879,9 @@ function dolForgeCriteriaCallback($matches)
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
 	$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+	if ($operator == 'NOTLIKE') {
+		$operator = 'NOT LIKE';
+	}
 
 	$tmpescaped = trim($tmp[2]);
 	$regbis = array();

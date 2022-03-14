@@ -410,7 +410,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 					// To enable when page exists
 					if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL)) {
-						if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') {
+						if ($nature == 'hasnew' || $nature == 'inventory') {
 							$nature = '';
 						}
 					}

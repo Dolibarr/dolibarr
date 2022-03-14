@@ -730,6 +730,14 @@ div#moretabsList, div#moretabsListaction {
 }
 
 hr { border: 0; border-top: 1px solid #ccc; }
+.tabBar hr { margin-top: 20px; margin-bottom: 17px; }
+
+
+table.tableforfield .button:not(.bordertransp):not(.buttonpayment),
+table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
+	margin-bottom: 2px;
+	margin-top: 2px;
+}
 
 .button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-color: #c5c5c5;
@@ -3564,15 +3572,14 @@ table.borderplus {
 	border: 1px solid #BBB;
 }
 
-.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 26px;
-}
+.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
+div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-	height: 26px;
+	height: 28px;
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
-	padding: 4px 4px 4px 4px;
+	padding: 3px 4px 3px 4px;
 	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
@@ -3590,6 +3597,25 @@ td.border, div.tagtable div div.border {
 }
 .table-val-border-col {
 	width:auto;
+}
+
+
+.thsticky, .tdsticky {
+	position: sticky;
+	left: 0px;
+}
+.thstickyright, .tdstickyright {
+	position: sticky;
+	right: 0px;
+}
+.thstickygray, .tdstickygray {
+	background-color: lightgray;
+}
+.thstickyghostwhite, .tdstickyghostwhite {
+	background-color: ghostwhite;
+}
+.thstickyinherit, .tdstickyinherit {
+	background-color: inherit;
 }
 
 <?php if (!empty($conf->global->THEME_ENABLE_STICKY_COLUMN_REF)) { ?>
@@ -6138,7 +6164,7 @@ span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
 }
 span.noborderoncategories {
-	padding: 3px 5px 0px 5px;
+	padding: 3px 5px 3px 5px;
 }
 .categtextwhite, .treeview .categtextwhite.hover {
 	color: #fff !important;
@@ -7230,7 +7256,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	#divbodywebsite {
-		word-break: break-all;
+		word-break: break-word;
 	}
 
 	.websiteselectionsection {

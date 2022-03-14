@@ -78,15 +78,24 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-$permission = $user->rights->mymodule->myobject->write;
+// There is several ways to check permission.
+// Set $enablepermissioncheck to 1 to enable a minimum low level of checks
+$enablepermissioncheck = 0;
+if ($enablepermissioncheck) {
+	$permissiontoread = $user->rights->mymodule->myobject->read;
+	$permission = $user->rights->mymodule->myobject->write;
+} else {
+	$permissiontoread = 1;
+	$permission = 1;
+}
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-//if (empty($conf->mymodule->enabled)) accessforbidden();
-//if (!$permissiontoread) accessforbidden();
+if (empty($conf->mymodule->enabled)) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -152,7 +161,7 @@ if ($object->id) {
 	 */
 	$head = myobjectPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'contact', '', -1, $object->picto);
+	print dol_get_fiche_head($head, 'contact', $langs->trans("MyObject"), -1, $object->picto);
 
 	$linkback = '<a href="'.dol_buildpath('/mymodule/myobject_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

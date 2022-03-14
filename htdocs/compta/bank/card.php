@@ -124,6 +124,7 @@ if (empty($reshook)) {
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
 		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
@@ -224,6 +225,7 @@ if (empty($reshook)) {
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
 		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
@@ -537,6 +539,13 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans($bickey).'</td>';
 		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOST('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
 
+		if ($conf->paymentbybanktransfer->enabled) {
+			print '<tr><td>'.$langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation").'</td>';
+			print '<td><input type="checkbox" class="flat minwidth150" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>&nbsp;';
+			print img_picto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp"), 'info');
+			print '</td></tr>';
+		}
+
 		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 		print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
 		print (GETPOST('domiciliation') ?GETPOST('domiciliation') : $object->domiciliation);
@@ -777,6 +786,11 @@ if ($action == 'create') {
 				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td>'.$object->ics_transfer.'</td>';
 				print '</tr>';
+
+				print '<tr><td>'.$langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation").'</td><td>';
+				print (empty($object->pti_in_ctti) ? $langs->trans("No") : $langs->trans("Yes")) . '&nbsp;';
+				print img_picto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp"), 'info');
+				print "</td></tr>\n";
 			}
 
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
@@ -1074,6 +1088,11 @@ if ($action == 'create') {
 			if ($conf->paymentbybanktransfer->enabled) {
 				print '<tr><td>'.$langs->trans("ICS").' ('.$langs->trans("BankTransfer").')</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
+
+				print '<tr><td>'.$langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation").'</td>';
+				print '<td><input type="checkbox" class="flat minwidth150" name="pti_in_ctti"'. ($object->pti_in_ctti ? ' checked ' : '') . '>&nbsp;';
+				print img_picto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp"), 'info');
+				print '</td></tr>';
 			}
 
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';

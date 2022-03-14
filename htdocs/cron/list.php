@@ -478,8 +478,12 @@ if ($num > 0) {
 		if (empty($obj)) {
 			break;
 		}
-		if (isset($obj->test) && !verifCond($obj->test)) {
-			continue; // Discard line with test = false
+
+		if (isset($obj->test)) {
+			$veriftest = verifCond($obj->test);
+			if (!$veriftest) {
+				continue; // Discard line with test = false
+			}
 		}
 
 		$object->id = $obj->rowid;

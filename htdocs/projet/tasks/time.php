@@ -659,9 +659,10 @@ if ($action == 'confirm_generateinter') {
 		if (!$error) {
 			$arrayoftasks = array();
 			foreach ($toselect as $key => $value) {
-				// Get userid, timepent
+				// Get userid, timespent
 				$object->fetchTimeSpent($value);
 				// $object->id is the task id
+				$arrayoftasks[$object->timespent_id]['id'] = $object->id;
 				$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
 				$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 				$arrayoftasks[$object->timespent_id]['note'] = $object->timespent_note;
@@ -670,7 +671,7 @@ if ($action == 'confirm_generateinter') {
 
 			foreach ($arrayoftasks as $timespent_id => $value) {
 				$ftask = new Task($db);
-				$ftask->fetch($object->id);
+				$ftask->fetch($value['id']);
 				// Define qty per hour
 				$qtyhour = $value['timespent'] / 3600;
 				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
