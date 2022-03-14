@@ -249,6 +249,22 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][4] = 'compare_advance';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->compare_advance->read)
 		$r++;
+
+		// Read employee
+		$this->rights[$r][0] = 4031; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read employee'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read_employee';
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->read_employee->read)
+		$r++;
+
+		// Write employee
+		$this->rights[$r][0] = 4032; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Write employee'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'write_employee';
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->write_employee->write)
+		$r++;
 	}
 
 	/**
