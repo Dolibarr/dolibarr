@@ -280,3 +280,7 @@ ALTER TABLE llx_propal ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 UPDATE llx_c_country SET eec=0 WHERE eec IS NULL;
 ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
 
+
+ALTER TABLE llx_chargesociales ADD COLUMN note_private text;
+ALTER TABLE llx_chargesociales ADD COLUMN note_public text;
+
