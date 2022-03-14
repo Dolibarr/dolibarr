@@ -398,7 +398,7 @@ class BOM extends CommonObject
 		$result = $this->fetchLinesCommon();
 
 		//associate to each line childbom if exist
-		if(!empty($this->lines)) {
+		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				$bom_child = new BOM($this->db);
 				$res = $bom_child->fetch($line->fk_bom_child);
