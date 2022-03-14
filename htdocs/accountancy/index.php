@@ -175,7 +175,7 @@ if ($conf->accounting->enabled)
 
 		print '<br>';
 	}
-	
+
     // Step A - E
 
 	print "<br>\n";
