@@ -233,7 +233,7 @@ if (empty($reshook)) {
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
 			print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=add&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Add") . '</a>';
 			if ($cnt_trans > 0) {
-				print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=edit&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Update") . '</a>';
+				print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=edit&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Modify") . '</a>';
 			}
 		}
 	}

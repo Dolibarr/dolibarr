@@ -104,18 +104,18 @@ class Skilldet extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'rankorder' => array('type'=>'integer', 'label'=>'rank', 'enabled'=>'1', 'position'=>2, 'notnull'=>0, 'visible'=>2,),
+		'fk_skill' => array('type'=>'integer:Skill:/hrm/class/skill.class.php', 'label'=>'fk_skill', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>0,),
+		'rankorder' => array('type'=>'integer', 'label'=>'rank', 'enabled'=>'1', 'position'=>10, 'notnull'=>0, 'visible'=>2,),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>0,),
-		'fk_skill' => array('type'=>'integer:Skill:/hrm/class/skill.class.php', 'label'=>'fk_skill', 'enabled'=>'1', 'position'=>513, 'notnull'=>1, 'visible'=>0,),
 	);
 	public $rowid;
+	public $fk_skill;
+	public $rankorder;
 	public $description;
 	public $fk_user_creat;
 	public $fk_user_modif;
-	public $fk_skill;
-	public $rank;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -768,7 +768,7 @@ class Skilldet extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('skilldetdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

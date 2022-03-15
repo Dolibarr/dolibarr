@@ -262,7 +262,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		exit();
 	}
 
-	$prodcomb->variation_weight = $weight_impact;
+	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
 	if ($conf->global->PRODUIT_MULTIPRICES) {

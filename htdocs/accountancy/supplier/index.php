@@ -34,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
+$validatemonth = GETPOST('validatemonth', 'int');
+$validateyear = GETPOST('validateyear', 'int');
+
 // Security check
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
@@ -114,6 +117,9 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 
 if ($action == 'validatehistory') {
 	$error = 0;
+	$nbbinddone = 0;
+	$notpossible = 0;
+
 	$db->begin();
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
@@ -149,7 +155,6 @@ if ($action == 'validatehistory') {
 	} else {
 		$sql .= " s.accountancy_code_buy as company_code_buy";
 	}
-
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
@@ -167,10 +172,12 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
-	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
-	$sql .= " AND l.product_type <= 2";
+	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0 AND l.product_type <= 2 AND f.entity = ".((int) $conf->entity);
 	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	}
+	if ($validatemonth && $validateyear) {
+		$sql .= dolSqlDateFilter('f.datef', 0, $validatemonth, $validateyear);
 	}
 
 	dol_syslog('htdocs/accountancy/supplier/index.php');
@@ -204,7 +211,7 @@ if ($action == 'validatehistory') {
 			$thirdpartystatic->email = $objp->email;
 			$thirdpartystatic->country_code = $objp->country_code;
 			$thirdpartystatic->tva_intra = $objp->tva_intra;
-			$thirdpartystatic->code_compta = $objp->company_code_sell;
+			$thirdpartystatic->code_compta_product = $objp->company_code_buy;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 			$product_static->ref = $objp->product_ref;
 			$product_static->id = $objp->product_id;
@@ -223,7 +230,7 @@ if ($action == 'validatehistory') {
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			$facture_static->type = $objp->ftype;
-			$facture_static->datef = $objp->datef;
+			$facture_static->date = $objp->datef;
 
 			$facture_static_det->id = $objp->rowid;
 			$facture_static_det->total_ht = $objp->total_ht;
@@ -241,6 +248,8 @@ if ($action == 'validatehistory') {
 			$code_buy_p_notset = '';
 			$code_buy_t_notset = '';
 
+			$suggestedid = 0;
+
 			$return = $accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'supplier');
 			if (!is_array($return) && $return<0) {
 				setEventMessage($accountingAccount->error, 'errors');
@@ -255,16 +264,7 @@ if ($action == 'validatehistory') {
 				}
 			}
 
-			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-				if (!empty($objp->company_code_buy)) {
-					$objp->code_buy_t = $objp->company_code_buy;
-					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-					$suggestedaccountingaccountfor = '';
-				}
-			}
-
-			if ($objp->aarowid_suggest > 0) {
+			if ($suggestedid > 0) {
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
 				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $facture_static_det->id);
@@ -274,10 +274,17 @@ if ($action == 'validatehistory') {
 					$error++;
 					setEventMessages($db->lasterror(), null, 'errors');
 					break;
+				} else {
+					$nbbinddone++;
 				}
+			} else {
+				$notpossible++;
 			}
 
 			$i++;
+		}
+		if ($num_lines > 10000) {
+			$notpossible += ($num_lines - 10000);
 		}
 	}
 
@@ -285,7 +292,7 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, 'mesgs');
 	}
 }
 
@@ -307,7 +314,7 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?year='.$year_current.'&action=validatehistory">'.$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
@@ -322,7 +329,24 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+	$cursormonth = $j;
+	if ($cursormonth > 12) {
+		$cursormonth -= 12;
+	}
+	$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+	$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
+	print '<td width="60" class="right">';
+	if (!empty($tmp['mday'])) {
+		$param = 'search_date_startday=1&search_date_startmonth='.$cursormonth.'&search_date_startyear='.$cursoryear;
+		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
+		print '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/list.php?'.$param.'">';
+	}
+	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	if (!empty($tmp['mday'])) {
+		print '</a>';
+	}
+	print '</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -350,6 +374,7 @@ $sql .= "  AND ffd.product_type <= 2";
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
+$sql .= ' ORDER BY aa.account_number';
 
 dol_syslog('htdocs/accountancy/supplier/index.php');
 $resql = $db->query($sql);
@@ -357,7 +382,8 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
+		print '<td>';
 		if ($row[0] == 'tobind') {
 			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
@@ -366,19 +392,26 @@ if ($resql) {
 		print '</td>';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
 			print $row[1];
 		}
 		print '</td>';
-		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
+		for ($i = 2; $i <= 13; $i++) {
+			print '<td class="right nowraponall amount">';
+			print price($row[$i]);
+			print '</td>';
 		}
-		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
+
+	if ($num == 0) {
+		print '<tr class="oddeven"><td colspan="16">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
+	}
 } else {
 	print $db->lasterror(); // Show last sql error
 }
@@ -401,7 +434,24 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+	$cursormonth = $j;
+	if ($cursormonth > 12) {
+		$cursormonth -= 12;
+	}
+	$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+	$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
+	print '<td width="60" class="right">';
+	if (!empty($tmp['mday'])) {
+		$param = 'search_date_startday=1&search_date_startmonth='.$cursormonth.'&search_date_startyear='.$cursoryear;
+		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
+		print '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/lines.php?'.$param.'">';
+	}
+	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	if (!empty($tmp['mday'])) {
+		print '</a>';
+	}
+	print '</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -436,7 +486,8 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ($row = $db->fetch_row($resql)) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
+		print '<td>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("Unknown");
 		} else {
@@ -445,19 +496,26 @@ if ($resql) {
 		print '</td>';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
 			print $row[1];
 		}
 		print '</td>';
-		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
+		for ($i = 2; $i <= 13; $i++) {
+			print '<td class="right nowraponall amount">';
+			print price($row[$i]);
+			print '</td>';
 		}
-		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
+
+	if ($num == 0) {
+		print '<tr class="oddeven"><td colspan="16">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
+	}
 } else {
 	print $db->lasterror(); // Show last sql error
 }

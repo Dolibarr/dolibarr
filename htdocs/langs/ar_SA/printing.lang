@@ -1,15 +1,15 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=One click Printing
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
-MenuDirectPrinting=One click Printing jobs
-DirectPrint=One click Print
+Module64000Name=طباعة بنقرة واحدة
+Module64000Desc=إتاحة نظام الطباعة بنقرة واحدة
+PrintingSetup=إعدادات نظام طباعة بنقرة واحدة
+PrintingDesc=تضيف هذه الوحدة زر الطباعة إلى وحدات مختلفة للسماح بطباعة الوثائق مباشرة إلى طابعة دون الحاجة إلى فتح الوثيقة في تطبيق آخر.
+MenuDirectPrinting=وظائف الطباعة بنقرة واحدة
+DirectPrint=طباعة بنقرة واحدة\n
 PrintingDriverDesc=المتغيرات التكوين للطباعة السائق.
 ListDrivers=قائمة برامج التشغيل
 PrintTestDesc=قائمة الطابعات.
 FileWasSentToPrinter=وأرسل ملف٪ s إلى طابعة
-ViaModule=via the module
+ViaModule=عبر الوحدة
 NoActivePrintingModuleFound=No active driver to print document. Check setup of module %s.
 PleaseSelectaDriverfromList=يرجى تحديد برنامج تشغيل من القائمة.
 PleaseConfigureDriverfromList=يرجى تكوين برنامج التشغيل المحدد من القائمة.

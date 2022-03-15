@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,12 +67,17 @@ $colspan = 3; // Col total ht + col edit + col delete
 if (!empty($inputalsopricewithtax)) {
 	$colspan++; // We add 1 if col total ttc
 }
-if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier'))) {
+if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	$colspan++;
+}
+
+
 
 print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 
@@ -125,7 +131,7 @@ $coldisplay++;
 
 	<?php
 	if (is_object($hookmanager)) {
-		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
+		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line', 'int') : $line->fk_parent_line);
 		$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
 		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
@@ -151,10 +157,12 @@ $coldisplay++;
 		if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) {
 			$toolbarname = 'dolibarr_notes';
 		}
-		$doleditor = new DolEditor('product_desc', $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 164 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
+		$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 164 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
-		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">'.$line->description.'</textarea>';
+		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">';
+		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+		print '</textarea>';
 	}
 
 	//Line extrafield
@@ -168,35 +176,39 @@ $coldisplay++;
 	}
 
 	// Show autofill date for recuring invoices
-	if (!empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec') {
+	if (!empty($conf->service->enabled) && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
+		if ($line->element == 'invoice_supplier_det_rec') {
+			$line->date_start_fill = $line->date_start;
+			$line->date_end_fill = $line->date_end;
+		}
 		echo '<br>';
 		echo $langs->trans('AutoFillDateFrom').' ';
-		echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
+		echo $form->selectyesno('date_start_fill', GETPOSTISSET('date_start_fill') ? GETPOST('date_start_fill', 'int') : $line->date_start_fill, 1);
 		echo ' - ';
 		echo $langs->trans('AutoFillDateTo').' ';
-		echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
+		echo $form->selectyesno('date_end_fill', GETPOSTISSET('date_end_fill') ? GETPOST('date_end_fill', 'int') : $line->date_end_fill, 1);
 	}
 
 	?>
 	</td>
 
 	<?php
-	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 		$coldisplay++;
 		?>
-		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
 	}
 
 	$coldisplay++;
 	if (!$situationinvoicelinewithparent) {
-		print '<td class="right">'.$form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : ''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1).'</td>';
+		print '<td class="right">'.$form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1).'</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
 	}
 
 	$coldisplay++;
-	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="'.(isset($line->pu_ht) ?price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0)).'"';
+	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="'.(GETPOSTISSET('price_ht') ? GETPOST('price_ht', 'alpha') : (isset($line->pu_ht) ? price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0))).'"';
 	if ($situationinvoicelinewithparent) {
 		print ' readonly';
 	}
@@ -204,12 +216,12 @@ $coldisplay++;
 
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++;
-		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
+		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
 
 	if ($inputalsopricewithtax) {
 		$coldisplay++;
-		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc) ?price($line->pu_ttc, 0, '', 0) : '').'"';
+		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($line->pu_ttc) ? price($line->pu_ttc, 0, '', 0) : '')).'"';
 		if ($line->fk_prev_id != null) {
 			print ' readonly';
 		}
@@ -223,7 +235,7 @@ $coldisplay++;
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'"';
+		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.(GETPOSTISSET('qty') ? GETPOST('qty') : $line->qty).'"';
 		if ($situationinvoicelinewithparent) {	// Do not allow editing during a situation cycle
 			print ' readonly';
 		}
@@ -248,7 +260,7 @@ $coldisplay++;
 		}
 		$coldisplay++;
 		print '<td class="left">';
-		print $form->selectUnits($line->fk_unit, "units", 0, $unit_type);
+		print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
 		print '</td>';
 	}
 	?>
@@ -256,7 +268,7 @@ $coldisplay++;
 	<td class="nowrap right">
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.$line->remise_percent.'"';
+		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : $line->remise_percent).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
@@ -268,7 +280,7 @@ $coldisplay++;
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$line->situation_percent.'" name="progress">%</td>';
+		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.(GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent).'" name="progress">%</td>';
 		$coldisplay++;
 		print '<td></td>';
 	}
@@ -282,7 +294,7 @@ $coldisplay++;
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht, 0, '', 0); ?>">
+			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo (GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
 		</td>
 		<?php }
 

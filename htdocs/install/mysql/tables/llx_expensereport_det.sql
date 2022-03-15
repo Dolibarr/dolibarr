@@ -45,7 +45,7 @@ CREATE TABLE llx_expensereport_det
    info_bits					integer DEFAULT 0,				-- TVA NPR ou non
    special_code					integer DEFAULT 0,			    -- code for special lines
    fk_multicurrency             integer,
-   multicurrency_code           varchar(255),
+   multicurrency_code           varchar(3),
    multicurrency_subprice       double(24,8) DEFAULT 0,
    multicurrency_total_ht       double(24,8) DEFAULT 0,
    multicurrency_total_tva      double(24,8) DEFAULT 0,

@@ -91,7 +91,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 	if (!$error) {
 		$object->oldcopy = clone $object;
 
-		$tmparray = explode('_', $_POST['task_parent']);
+		$tmparray = explode('_', GETPOST('task_parent'));
 		$task_parent = $tmparray[1];
 		if (empty($task_parent)) {
 			$task_parent = 0; // If task_parent is ''
@@ -108,7 +108,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 		$object->budget_amount = price2num(GETPOST('budget_amount', 'alphanohtml'));
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 		if ($ret < 0) {
 			$error++;
 		}
@@ -117,6 +117,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 			$result = $object->update($user);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
+				$action = 'edit';
 			}
 		}
 	} else {

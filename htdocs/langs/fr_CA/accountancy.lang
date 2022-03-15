@@ -119,7 +119,6 @@ DescVentilTodoExpenseReport=Les lignes de rapport de frais de liaison ne sont pa
 DescVentilExpenseReport=Consultez ici la liste des lignes de rapport de dépenses liées (ou non) à un compte comptable de frais
 DescVentilDoneExpenseReport=Consultez ici la liste des rapports des lignes de dépenses et de leurs comptes comptables
 ValidateMovements=Valider les écritures
-AutomaticBindingDone=Liaison automatique effectuée
 FicheVentilation=Carte de reliure
 GeneralLedgerIsWritten=Les transactions sont écrites dans le Ledger
 ChangeBinding=Changer la liaison

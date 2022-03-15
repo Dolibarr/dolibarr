@@ -15,9 +15,9 @@ TOKEN_EXPIRED=Token caducado
 TOKEN_EXPIRE_AT=El token vence a las
 OAUTH_GOOGLE_NAME=Servicio OAuth de Google
 OAUTH_GOOGLE_ID=ID de Google de OAuth
-OAUTH_GOOGLE_DESC=Vaya a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> esta página </a> y luego "Credenciales" para crear credenciales OAuth
+OAUTH_GOOGLE_DESC=Vaya a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external"> esta página </a> y luego a "Credenciales" para crear credenciales de OAuth
 OAUTH_GITHUB_NAME=Servicio OAuth GitHub
 OAUTH_GITHUB_ID=ID de GitHub de OAuth
-OAUTH_GITHUB_DESC=Vaya a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> esta página </a> y luego "Registrar una nueva aplicación" para crear credenciales de OAuth
+OAUTH_GITHUB_DESC=Vaya a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external"> en esta página </a> y luego a "Registrar una nueva aplicación" para crear credenciales de OAuth.
 OAUTH_STRIPE_TEST_NAME=Prueba de banda de OAuth
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe en vivo

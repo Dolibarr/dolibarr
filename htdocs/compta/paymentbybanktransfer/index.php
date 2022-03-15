@@ -43,6 +43,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
+$usercancreate = $user->rights->paymentbybanktransfer->create;
+
 
 /*
  * Actions
@@ -62,7 +64,12 @@ if (prelevement_check_config('bank-transfer') < 0) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByBankTransfer")), null, 'errors');
 }
 
-print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"));
+$newcardbutton = '';
+if ($usercancreate) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer');
+}
+
+print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"), $newcardbutton);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -185,6 +192,7 @@ $limit = 5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " WHERE p.type = 'bank-transfer'";
+$sql .= " AND p.entity IN (".getEntity('invoice').")";
 $sql .= " ORDER BY datec DESC";
 $sql .= $db->plimit($limit);
 

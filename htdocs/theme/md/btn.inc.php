@@ -10,10 +10,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 			--btncolorborderhover: none;
 			--btncolorborder: #FFF;
 			--butactiondeletebg: rgb(234,228,225);
-			/* tertiary color */
-			/* --butactionbg:rgb(218, 235, 225); */
-			/* --butactionbg:rgb(228, 218, 235); */
-			--butactionbg:rgb(118, 145, 225);
+			--butactionbg: rgb(<?php print $butactionbg; ?>);
+			--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
 
 <?php
@@ -29,8 +27,9 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
             --btncolorbg: rgb(26,27,27);
             --btncolorborderhover: #ffffff;
             --btncolorborder: #2b2c2e;
-            --butactionbg:rgb(173,140,79);
             --butactiondeletebg: rgb(252,84,91);
+			--butactionbg: rgb(173,140,79);
+			--textbutaction: rgb(255,255,255);
 
       }\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
@@ -43,10 +42,6 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 /* Buttons for actions                                                            */
 /* ============================================================================== */
 
-
-/*div.divButAction {
-	margin-bottom: 1.4em;
-}*/
 
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
@@ -69,7 +64,7 @@ span.butAction, span.butActionDelete {
 
 .butAction {
 	background: var(--butactionbg);
-	color: #FFF !important;
+	color: var(--textbutaction) !important;
 	/* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butActionDelete {
@@ -82,6 +77,7 @@ span.butAction, span.butActionDelete {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
+	line-height: 1.8em;
 
 	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
@@ -237,6 +233,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	background: var(--butactiondeletebg);
 	/* border: 1px solid #633; */
 	color: #633;
+	/* vertical-align: middle; */
 }
 
 .butActionDelete:hover {
@@ -323,7 +320,7 @@ div.pagination li:first-child a.btnTitle {
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
-	background-color: #fbfbfb;
+	/* background-color: #fbfbfb; */
 }
 
 a.btnTitle.btnTitleSelected {
@@ -373,6 +370,11 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	font-size: 20px;
 	display: block;
 }
+
+.paginationafterarrows a.btnTitlePlus, .titre_right a.btnTitlePlus {
+	border: 1px solid var(--colorbackbody);
+}
+
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */

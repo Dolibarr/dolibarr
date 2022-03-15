@@ -260,6 +260,8 @@ if (empty($reshook)) {
 			$nuser->employee = 1;
 			$nuser->firstname = $object->firstname;
 			$nuser->lastname = $object->lastname;
+			$nuser->email = '';
+			$nuser->personal_email = $object->email;
 			$nuser->personal_mobile = $object->phone;
 			$nuser->birth = $object->date_birth;
 			$nuser->salary = $object->remuneration_proposed;
@@ -322,9 +324,6 @@ if ($action == 'create') {
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 

@@ -499,7 +499,7 @@ if ($result && $action == "dl" && !$error) {
 		$zip->addFromString('transactions.csv', $log);
 		$zip->close();
 
-		///Then download the zipped file.
+		// Then download the zipped file.
 		header('Content-Type: application/zip');
 		header('Content-disposition: attachment; filename='.basename($zipname));
 		header('Content-Length: '.filesize($zipname));
@@ -736,7 +736,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				print '<td>';
 				if (!empty($data['files'])) {
 					foreach ($data['files'] as $id => $filecursor) {
-						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
+						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
 					}
 				}
 				print "</td>\n";

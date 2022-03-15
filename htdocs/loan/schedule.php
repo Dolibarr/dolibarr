@@ -187,7 +187,7 @@ $morehtmlright = '';
 dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 $(document).ready(function() {
 	$('[name^="mens"]').focusout(function() {
 		var echeance=$(this).attr('ech');

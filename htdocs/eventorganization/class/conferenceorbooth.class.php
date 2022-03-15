@@ -135,7 +135,8 @@ class ConferenceOrBooth extends ActionComm
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
-	public $pubregister;
+	//public $pubregister;
+
 
 	/**
 	 * Constructor
@@ -252,8 +253,8 @@ class ConferenceOrBooth extends ActionComm
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
-		$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
-		$this->pubregister = $link_subscription;
+		/*$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
+		$this->pubregister = $link_subscription;*/
 
 		$this->getActionCommFields();
 		return $result;
@@ -601,7 +602,7 @@ class ConferenceOrBooth extends ActionComm
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('conferenceorboothdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

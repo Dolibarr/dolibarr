@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategori untuk ditambahkan ke pihak ke
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategori untuk ditambahkan ke pihak ketiga secara otomatis dibuat saat mereka menyarankan stan
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template email untuk dikirim setelah menerima saran konferensi.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template email untuk dikirim setelah menerima saran stan.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template email aksi masal ke para peserta
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Templat email aksi masal ke pembicara
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter daftar pilih pihak ketiga di kartu/formulir pembuatan peserta dengan kategori
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter daftar pilih pihak ketiga di kartu/formulir pembuatan peserta dengan tipe pelanggan
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Payment of your booth
 EventOrganizationEmailRegistrationPayment = Registration for an event
 EventOrganizationMassEmailAttendees = Komunikasi kepada peserta
 EventOrganizationMassEmailSpeakers = Komunikasi dengan pembicara
+ToSpeakers=To speakers
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Harga pendaftaran
 PriceOfRegistrationHelp=Harga yang harus dibayar untuk mendaftar atau berpartisipasi dalam acara
 PriceOfBooth=Harga langganan mendirikan stan
 PriceOfBoothHelp=Harga langganan stand stand
-EventOrganizationICSLink=Tautkan ICS untuk acara
+EventOrganizationICSLink=Link ICS for conferences
 ConferenceOrBoothInformation=Informasi Konferensi Atau Stan
 Attendees=Peserta
 ListOfAttendeesOfEvent=Daftar peserta proyek acara
 DownloadICSLink = Unduh tautan ICS
-EVENTORGANIZATION_SECUREKEY = Kunci Aman dari tautan pendaftaran publik ke konferensi
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = Layanan yang digunakan untuk baris faktur tentang lokasi stan
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Layanan yang digunakan untuk baris faktur tentang langganan peserta konferensi
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Jumlah suara
 #
 # Status

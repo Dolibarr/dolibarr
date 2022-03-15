@@ -1067,7 +1067,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 					$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_tovalid", $langs->trans("MenuToValid"), 2, $user->rights->facture->lire, '', $mainmenu, 'customer_bills_tovalid');
 				}
-				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_reports", $langs->trans("Reportings"), 2, $user->rights->facture->lire, '', $mainmenu, 'customers_bills_reports');
+				if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills/', $leftmenu)) {
+					$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_payment_report", $langs->trans("Reportings"), 2, $user->rights->facture->lire, '', $mainmenu, 'customers_bills_payment_report');
+				}
 
 				$newmenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"), 1, $user->rights->facture->lire, '', $mainmenu, 'customers_bills_stats');
 			}
@@ -1085,9 +1087,13 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills_paid&amp;search_status=2", $langs->trans("BillShortStatusPaid"), 2, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_paid');
 				}
 
+				$newmenu->add("/fourn/facture/list-rec.php?leftmenu=supplierinvoicestemplate_list", $langs->trans("ListOfTemplates"), 1, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'supplierinvoicestemplate_list');
+
 				$newmenu->add("/fourn/paiement/list.php?leftmenu=suppliers_bills_payment", $langs->trans("Payments"), 1, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_payment');
 
-				$newmenu->add("/fourn/facture/rapport.php?leftmenu=suppliers_bills_report", $langs->trans("Reportings"), 2, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_report');
+				if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills/', $leftmenu)) {
+					$newmenu->add("/fourn/facture/rapport.php?leftmenu=suppliers_bills_payment_report", $langs->trans("Reportings"), 2, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_payment_report');
+				}
 
 				$newmenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"), 1, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_stats');
 			}
@@ -1326,7 +1332,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 								// To enable when page exists
 								if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL)) {
-									if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') {
+									if ($nature == 'hasnew' || $nature == 'inventory') {
 										$nature = '';
 									}
 								}
@@ -1348,6 +1354,12 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$db->free($resql);
 				}
 
+				// Files
+				if (empty($conf->global->ACCOUNTANCY_HIDE_EXPORT_FILES_MENU)) {
+					$newmenu->add("/compta/accounting-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 1, $user->rights->accounting->mouvements->lire);
+				}
+
+
 				// Accounting
 				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_accountancy", $langs->trans("MenuAccountancy"), 0, $user->rights->accounting->mouvements->lire || $user->rights->accounting->comptarapport->lire, '', $mainmenu, 'accountancy', 1, '', '', '', img_picto('', 'accountancy', 'class="paddingright pictofixedwidth"'));
 
@@ -1359,11 +1371,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				// Account Balance
 				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->rights->accounting->mouvements->lire);
-
-				// Files
-				if (empty($conf->global->ACCOUNTANCY_HIDE_EXPORT_FILES_MENU)) {
-					$newmenu->add("/compta/accounting-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files", $langs->trans("AccountantFiles"), 1, $user->rights->accounting->mouvements->lire);
-				}
 
 				// Closure
 				$newmenu->add("/accountancy/closure/index.php?mainmenu=accountancy&amp;leftmenu=accountancy_closure", $langs->trans("MenuAccountancyClosure"), 1, $user->rights->accounting->fiscalyear->write, '', $mainmenu, 'closure');
@@ -1487,7 +1494,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Intracomm report
 			if (!empty($conf->intracommreport->enabled)) {
-				$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+				$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 60, '', '', '', img_picto('', 'intracommreport', 'class="paddingright pictofixedwidth"'));
 				if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {
 					// DEB / DES
 					$newmenu->add("/intracommreport/card.php?action=create&leftmenu=intracommreport", $langs->trans("MenuIntracommReportNew"), 1, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
@@ -1500,10 +1507,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->rights->asset->read, '', $mainmenu, 'asset', 100, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 				$newmenu->add("/asset/card.php?leftmenu=asset&amp;action=create", $langs->trans("MenuNewAsset"), 1, $user->rights->asset->write);
 				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->rights->asset->read);
-				$newmenu->add("/asset/type.php?leftmenu=asset_type", $langs->trans("MenuTypeAssets"), 1, $user->rights->asset->read, '', $mainmenu, 'asset_type');
-				if ($usemenuhider || empty($leftmenu) || preg_match('/asset_type/', $leftmenu)) {
-					$newmenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create", $langs->trans("MenuNewTypeAssets"), 2, $user->rights->asset->setup_advance);
-					$newmenu->add("/asset/type.php?leftmenu=asset_type", $langs->trans("MenuListTypeAssets"), 2, $user->rights->asset->read);
+				$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuAssetModels"), 1, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->read) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->setup_advance->read)), '', $mainmenu, 'asset_model');
+				if ($usemenuhider || empty($leftmenu) || preg_match('/asset_model/', $leftmenu)) {
+					$newmenu->add("/asset/model/card.php?leftmenu=asset_model&amp;action=create", $langs->trans("MenuNewAssetModel"), 2, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->write) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->setup_advance->write)));
+					$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuListAssetModels"), 2, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->read) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->setup_advance->read)));
 				}
 			}
 		}
@@ -1618,7 +1625,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->rights->service->creer);
 				$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->service->lire);
 				if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->facture->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_oder->enabled) || !empty($conf->supplier_invoice->enabled)) {
-					$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->rights->service->lire && $user->rights->propale->lire);
+					$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->rights->service->lire || $user->rights->product->lire);
 				}
 				// Categories
 				if (!empty($conf->categorie->enabled)) {
@@ -1793,6 +1800,31 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee", $langs->trans("Employees"), 0, $user->rights->user->user->lire, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
 				$newmenu->add("/user/card.php?mainmenu=hrm&leftmenu=hrm&action=create&employee=1", $langs->trans("NewEmployee"), 1, $user->rights->user->user->creer);
 				$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee&contextpage=employeelist", $langs->trans("List"), 1, $user->rights->user->user->lire);
+
+				$newmenu->add("/hrm/index.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillsManagement"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
+
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "hrm_sm") {
+					// Skills
+					$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Skills"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
+					//$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
+					//$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+
+					// Job (Description of work to do and skills required)
+					$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("JobsPosition"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="pictofixedwidth"'));
+					//$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->rights->hrm->all->write);
+					//$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+
+					// Position = Link job - user
+					$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("EmployeePositions"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user-cog', 'class="pictofixedwidth"'));
+					//$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->rights->hrm->all->write);
+					//$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+
+					// Evaluation
+					$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Evalutions"), 1, $user->rights->hrm->evaluation->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
+					//$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewEval"), 1, $user->rights->hrm->evaluation->write);
+					//$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->evaluation->read);
+					$newmenu->add("/hrm/compare.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillComparison"), 1, $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read);
+				}
 			}
 
 			// Leave/Holiday/Vacation module
@@ -1849,29 +1881,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire, '', $mainmenu, 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="pictofixedwidth"'));
 				}
-			}
-
-			if (!empty($conf->hrm->enabled)) {
-				// Skills
-				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("skill"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
-				$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
-				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
-
-				// Job
-				$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Job"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'technic', 'class="pictofixedwidth"'));
-				$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->rights->hrm->all->write);
-				$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
-
-				// Position
-				$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Position"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user-cog', 'class="pictofixedwidth"'));
-				$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->rights->hrm->all->write);
-				$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
-
-				// Evaluation
-				$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Eval"), 0, $user->rights->hrm->evaluation->read, '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
-				$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm&action=create", $langs->trans("NewEval"), 1, $user->rights->hrm->evaluation->write);
-				$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->hrm->evaluation->read);
-				$newmenu->add("/hrm/compare.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("Compare"), 1, $user->rights->hrm->compare->read);
 			}
 		}
 

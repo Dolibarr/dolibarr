@@ -122,11 +122,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -182,8 +182,8 @@ if (GETPOST('cancel', 'alpha')) {
 	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend'
-&& $massaction != 'presend_attendees'
-&& $massaction != 'confirm_presend_attendees') {
+&& $massaction != 'presend'
+&& $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -547,7 +547,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 		// Show message
-		$message = '<a target="_blank" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 		$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
 		$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 		print $message;
@@ -564,8 +564,8 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
-		print '<a target="_blank" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
+		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+		print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
 		print '</td></tr>';
@@ -582,7 +582,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
 		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
-		print '<a target="_blank" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+		print '<a target="_blank" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
 		print '</td></tr>';
@@ -676,8 +676,7 @@ $arrayofmassactions = array(
 	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-	'presend_attendees'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' - '.$langs->trans("Attendees"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -706,13 +705,15 @@ $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle'
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
+
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail = "SendConferenceOrBoothAttendeeRef";
-$modelmail = "conferenceorboothattendee";
+$topicmail = $projectstatic->title;
+$modelmail = "conferenceorbooth";
 $objecttmp = new ConferenceOrBoothAttendee($db);
-$trackid = 'xxxx'.$object->id;
-include DOL_DOCUMENT_ROOT.'/eventorganization/tpl/massactions_mail_pre.tpl.php';
+$trackid = 'conferenceorbooth_'.$object->id;
+$withmaindocfilemail = 0;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {

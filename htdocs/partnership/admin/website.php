@@ -248,7 +248,7 @@ if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
 
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
-	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	print '</div>';
 	print ajax_autoselect('publicurlmember');
 }

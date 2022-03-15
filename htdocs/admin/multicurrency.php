@@ -266,7 +266,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION)) {
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
-	print '<td class="fieldrequired"><a target="_blank" href="'.$urlforapilayer.'">'.$langs->transnoentitiesnoconv("multicurrency_appId").'</a></td>';
+	print '<td class="fieldrequired"><a target="_blank" rel="noopener noreferrer external" href="'.$urlforapilayer.'">'.$langs->transnoentitiesnoconv("multicurrency_appId").'</a></td>';
 	print '<td class="right">';
 	print '<input type="text" name="MULTICURRENCY_APP_ID" value="'.$conf->global->MULTICURRENCY_APP_ID.'" size="28" />&nbsp;';
 	print '</td></tr>';
@@ -332,8 +332,8 @@ foreach ($TCurrency as &$currency) {
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';
 	print '<input type="text" name="rate" class="width75 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13">&nbsp;'.$currency->code.'&nbsp;';
-	print '<input type="submit" name="updatecurrency" class="button button-edit" value="'.$langs->trans("Modify").'">&nbsp;';
-	print '<input type="submit" name="deletecurrency" class="button" value="'.$langs->trans("Delete").'">';
+	print '<input type="submit" name="updatecurrency" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">&nbsp;';
+	print '<input type="submit" name="deletecurrency" class="button smallpaddingimp" value="'.$langs->trans("Delete").'">';
 	print '</form>';
 	print '</td></tr>';
 }

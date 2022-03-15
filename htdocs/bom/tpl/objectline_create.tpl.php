@@ -107,9 +107,9 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 	echo '</span>';
 }
 if (!empty($conf->global->BOM_SUB_BOM)) {
-	print '<br>'.$langs->trans("or").' '.$langs->trans("BOM");
+	print '<br><span class="opacitymedium">'.$langs->trans("or").'</span><br>'.$langs->trans("BOM");
 	// TODO Add component to select a BOM
-	print '<select id="bom_select" name="bom_select"><options value="-1"></options></select>';
+	$form->select_bom();
 }
 print '</td>';
 

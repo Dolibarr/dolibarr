@@ -80,7 +80,6 @@ DescVentilTodoExpenseReport=Link expense report lines not already linked with a 
 DescVentilExpenseReport=View here the list of expense report lines linked (or not) to a fee finance account
 DescVentilDoneExpenseReport=View here the list of the lines of expense reports and their fees account
 ValidateHistory=Link Automatically
-AutomaticBindingDone=Automatic link done
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this finance account because it is used
 MvtNotCorrectlyBalanced=Transaction not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Link card

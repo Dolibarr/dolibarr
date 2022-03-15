@@ -81,7 +81,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	$listofobjectref = array();
 	$contactidtosend = array();
 	$attachedfilesThirdpartyObj = array();
-	$oneemailperrecipient = (GETPOST('oneemailperrecipient') == 'on' ? 1 : 0);
+	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
 
 	if (!$error) {
 		$thirdparty = new Societe($db);
@@ -143,7 +143,7 @@ if (!$error && $massaction == 'confirm_presend') {
 		$massaction = 'presend';
 	}
 
-	$receiver = $_POST['receiver'];
+	$receiver = GETPOST('receiver', 'alphawithlgt');
 	if (!is_array($receiver)) {
 		if (empty($receiver) || $receiver == '-1') {
 			$receiver = array();
@@ -181,7 +181,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			$tmparray = array();
 			if (trim($_POST['sendto'])) {
 				// Recipients are provided into free text
-				$tmparray[] = trim($_POST['sendto']);
+				$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
 			}
 			if (count($receiver) > 0) {
 				foreach ($receiver as $key => $val) {
@@ -197,7 +197,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			$sendto = implode(',', $tmparray);
 
 			// Define $sendtocc
-			$receivercc = $_POST['receivercc'];
+			$receivercc = GETPOST('receivercc', 'alphawithlgt');
 			if (!is_array($receivercc)) {
 				if ($receivercc == '-1') {
 					$receivercc = array();
@@ -207,7 +207,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			}
 			$tmparray = array();
 			if (trim($_POST['sendtocc'])) {
-				$tmparray[] = trim($_POST['sendtocc']);
+				$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 			}
 			if (count($receivercc) > 0) {
 				foreach ($receivercc as $key => $val) {
@@ -298,7 +298,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					continue;
 				}
 
-				if ($_POST['addmaindocfile']) {
+				if (GETPOST('addmaindocfile')) {
 					// TODO Use future field $objectobj->fullpathdoc to know where is stored default file
 					// TODO If not defined, use $objectobj->model_pdf (or defaut invoice config) to know what is template to use to regenerate doc.
 					$filename = dol_sanitizeFileName($objectobj->ref).'.pdf';
@@ -347,7 +347,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				$reg = array();
 				$fromtype = GETPOST('fromtype');
 				if ($fromtype === 'user') {
-					$from = $user->getFullName($langs).' <'.$user->email.'>';
+					$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 				} elseif ($fromtype === 'company') {
 					$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 				} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
@@ -361,10 +361,10 @@ if (!$error && $massaction == 'confirm_presend') {
 					$resql = $db->query($sql);
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
-						$from = $obj->label.' <'.$obj->email.'>';
+						$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 					}
 				} else {
-					$from = $_POST['fromname'].' <'.$_POST['frommail'].'>';
+					$from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
 				}
 
 				$replyto = $from;
@@ -657,8 +657,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 			// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 			$objecttmp->socid = $cmd->socid;
 			$objecttmp->type = $objecttmp::TYPE_STANDARD;
-			$objecttmp->cond_reglement_id	= ($cmd->cond_reglement_id || $cmd->thirdparty->cond_reglement_id);
-			$objecttmp->mode_reglement_id	= ($cmd->mode_reglement_id || $cmd->thirdparty->mode_reglement_id);
+			$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
+			$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
 
 			$objecttmp->fk_project = $cmd->fk_project;
 			$objecttmp->multicurrency_code = $cmd->multicurrency_code;
@@ -1306,6 +1306,12 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				continue;
 			}
 
+			if ($objectclass == 'Holiday' && ! in_array($objecttmp->statut, array(Holiday::STATUS_DRAFT, Holiday::STATUS_CANCELED, Holiday::STATUS_REFUSED))) {
+				$nbignored++;
+				$resaction .= '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
+				continue;
+			}
+
 			if ($objectclass == "Task" && $objecttmp->hasChildren() > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET fk_task_parent = 0 WHERE fk_task_parent = ".((int) $objecttmp->id);
 				$res = $db->query($sql);
@@ -1342,8 +1348,10 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		// Message for elements well deleted
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-		} elseif ($nbok == 1) {
-			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		} elseif ($nbok > 0) {
+			setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
 		}
 
 		// Message for elements which can't be deleted
@@ -1571,17 +1579,20 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
-		if ($result>0) {
-			if ($objecttmp->statut == Holiday::STATUS_VALIDATED && $user->id == $objecttmp->fk_validator) {
+		if ($result > 0) {
+			if ($objecttmp->statut != Holiday::STATUS_VALIDATED) {
+				setEventMessages($langs->trans('StatusOfRefMustBe', $objecttmp->ref, $langs->transnoentitiesnoconv('Validated')), null, 'warnings');
+				continue;
+			}
+			if ($user->id == $objecttmp->fk_validator) {
 				$objecttmp->oldcopy = dol_clone($objecttmp);
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
 				$objecttmp->statut = Holiday::STATUS_APPROVED;
 
-				$db->begin();
-
 				$verif = $objecttmp->approve($user);
+
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
@@ -1656,14 +1667,9 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 						}
 					}
 				}
-
-				if (!$error) {
-					$db->commit();
-					$nbok++;
-				} else {
-					$db->rollback();
-					$action = '';
-				}
+			} else {
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorNotApproverForHoliday', $objecttmp->ref), null, 'errors');
 			}
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1675,7 +1681,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	if (!$error) {
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsApproved", $nbok), null, 'mesgs');
-		} else {
+		} elseif ($nbok == 1) {
 			setEventMessages($langs->trans("RecordAproved"), null, 'mesgs');
 		}
 		$db->commit();

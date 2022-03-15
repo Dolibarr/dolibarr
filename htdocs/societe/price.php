@@ -156,7 +156,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
 		$update_child_soc = GETPOST('updatechildprice');
@@ -245,8 +245,8 @@ print dol_get_fiche_end();
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 
-	$sortfield = GETPOST("sortfield", 'alpha');
-	$sortorder = GETPOST("sortorder", 'alpha');
+	$sortfield = GETPOST('sortfield', 'aZ09comma');
+	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1) {

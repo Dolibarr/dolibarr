@@ -473,7 +473,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$newcardbutton = dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
@@ -711,8 +711,8 @@ while ($i < min($num, $limit)) {
 		}
 
 		// Show the break account
-		print "<tr>";
-		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 10).'" style="font-weight:bold; border-bottom: 1pt solid black;">';
+		print '<tr class="trforbreak">';
+		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 10).'" class="tdforbreak">';
 		if ($line->numero_compte != "" && $line->numero_compte != '-1') {
 			print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
 		} else {
