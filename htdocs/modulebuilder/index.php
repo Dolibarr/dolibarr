@@ -1332,8 +1332,8 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		}
 
-	if (!$error && !GETPOST('regenerateclasssql')&& !GETPOST('regeneratemissing')) {
-		$addfieldentry = array(
+		if (!$error && !GETPOST('regenerateclasssql')&& !GETPOST('regeneratemissing')) {
+			$addfieldentry = array(
 			'name'=>GETPOST('propname', 'aZ09'),
 			'label'=>GETPOST('proplabel', 'alpha'),
 			'type'=>GETPOST('proptype', 'alpha'),
@@ -1353,7 +1353,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			'default'=>GETPOST('propdefault', 'restricthtml'),
 			'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
 			'validate' => GETPOST('propvalidate', 'int')
-		);
+			);
 
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
