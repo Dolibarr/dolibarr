@@ -165,43 +165,17 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Check that all fields are filled
 	$ok = 1;
-	foreach ($listfield as $f => $value) {
-		if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label')) {
-			$fieldnamekey = 'Label';
-		}
-		if ($fieldnamekey == 'code') {
-			$fieldnamekey = 'Code';
-		}
-		if ($fieldnamekey == 'nature') {
-			$fieldnamekey = 'NatureOfJournal';
-		}
-	}
+
 	// Other checks
 	if (GETPOSTISSET("code")) {
 		if (GETPOST("code") == '0') {
 			$ok = 0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}
-		/*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
-		{
-			$ok = 0;
-			$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
-		}*/
 	}
 	if (!GETPOST('label', 'alpha')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 		$ok = 0;
-	}
-
-	// Clean some parameters
-	if ($_POST["accountancy_code"] <= 0) {
-		$_POST["accountancy_code"] = ''; // If empty, we force to null
-	}
-	if ($_POST["accountancy_code_sell"] <= 0) {
-		$_POST["accountancy_code_sell"] = ''; // If empty, we force to null
-	}
-	if ($_POST["accountancy_code_buy"] <= 0) {
-		$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
 	}
 
 	// Si verif ok et action add, on ajoute la ligne
@@ -235,16 +209,13 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
-			if ($value == 'entity') {
-				$_POST[$listfieldvalue[$i]] = $conf->entity;
-			}
 			if ($i) {
 				$sql .= ",";
 			}
-			if ($_POST[$listfieldvalue[$i]] == '') {
+			if (GETPOST($listfieldvalue[$i]) == '') {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -254,7 +225,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$result = $db->query($sql);
 		if ($result) {	// Add is ok
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
+			$_POST = array('id'=>$id); // Clean $_POST array, we keep only id
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -281,24 +252,15 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
-			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
-				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
-			} elseif ($field == 'entity') {
-				$_POST[$listfieldvalue[$i]] = $conf->entity;
-			}
 			if ($i) {
 				$sql .= ",";
 			}
-			$sql .= $field."=";
-			if ($_POST[$listfieldvalue[$i]] == '' && !($listfieldvalue[$i] == 'code' && $id == 10)) {
-				$sql .= "null"; // For vat, we want/accept code = ''
-			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
-			}
+			$sql .= $field." = ";
+			$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			$i++;
 		}
 		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -323,7 +285,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	}
 
 	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -410,7 +372,7 @@ if ($action == 'delete') {
 if ($id) {
 	// Complete requete recherche valeurs avec critere de tri
 	$sql = $tabsql[$id];
-	$sql .= " WHERE a.entity = ".$conf->entity;
+	$sql .= " WHERE a.entity = ".((int) $conf->entity);
 
 	// If sort order is "country", we use country_code instead
 	if ($sortfield == 'country') {
@@ -510,7 +472,7 @@ if ($id) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		$param = '&id='.$id;
+		$param = '&id='.((int) $id);
 		if ($search_country_id > 0) {
 			$param .= '&search_country_id='.urlencode($search_country_id);
 		}
@@ -635,7 +597,7 @@ if ($id) {
 							$class = 'tddict';
 							// Show value for field
 							if ($showfield) {
-								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dol_escape_htmltag($valuetoshow).'</td>';
 							}
 						}
 					}

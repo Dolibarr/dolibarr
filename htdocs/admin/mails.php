@@ -50,7 +50,7 @@ $substitutionarrayfortest = array(
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
 	'__CHECK_READ__' => (!empty($object) && is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '',
 	'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''), // Done into actions_sendmails
-	'__LOGIN__' => 'RecipientLogin',
+	'__LOGIN__' => $user->login,
 	'__LASTNAME__' => 'RecipientLastname',
 	'__FIRSTNAME__' => 'RecipientFirstname',
 	'__ADDRESS__'=> 'RecipientAddress',
@@ -662,7 +662,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
 			if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer'))) {
 				if (function_exists('openssl_open')) {
-					print yn($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED);
+					print yn(getDolGlobalInt('MAIN_MAIL_EMAIL_DKIM_ENABLED'));
 				} else {
 					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 				}
@@ -887,7 +887,6 @@ if ($action == 'edit') {
 			}
 
 			setEventMessages($errormsg, null, 'errors');
-			print $errormsg;
 		}
 		print '<br>';
 	}
@@ -903,8 +902,8 @@ if ($action == 'edit') {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
-		$formmail->fromname = (GETPOSTISSET('fromname') ? $_POST['fromname'] : $conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->frommail = (GETPOSTISSET('frommail') ? $_POST['frommail'] : $conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname') : $conf->global->MAIN_MAIL_EMAIL_FROM);
+		$formmail->frommail = (GETPOSTISSET('frommail') ? GETPOST('frommail') : $conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->fromid = $user->id;
 		$formmail->fromalsorobot = 1;
 		$formmail->fromtype = (GETPOSTISSET('fromtype') ?GETPOST('fromtype', 'aZ09') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
@@ -912,9 +911,9 @@ if ($action == 'edit') {
 		$formmail->withsubstit = 1;
 		$formmail->withfrom = 1;
 		$formmail->witherrorsto = 1;
-		$formmail->withto = (!empty($_POST['sendto']) ? GETPOST('sendto', 'restricthtml') : ($user->email ? $user->email : 1));
-		$formmail->withtocc = (!empty($_POST['sendtocc']) ? GETPOST('sendtocc', 'restricthtml') : 1); // ! empty to keep field if empty
-		$formmail->withtoccc = (!empty($_POST['sendtoccc']) ? GETPOST('sendtoccc', 'restricthtml') : 1); // ! empty to keep field if empty
+		$formmail->withto = (GETPOSTISSET('sendto') ? GETPOST('sendto', 'restricthtml') : ($user->email ? $user->email : 1));
+		$formmail->withtocc = (GETPOSTISSET('sendtocc') ? GETPOST('sendtocc', 'restricthtml') : 1); // ! empty to keep field if empty
+		$formmail->withtoccc = (GETPOSTISSET('sendtoccc') ? GETPOST('sendtoccc', 'restricthtml') : 1); // ! empty to keep field if empty
 		$formmail->withtopic = (GETPOSTISSET('subject') ? GETPOST('subject') : $langs->trans("Test"));
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;

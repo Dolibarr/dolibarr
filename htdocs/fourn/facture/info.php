@@ -44,6 +44,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
+$hookmanager->initHooks(array('invoicesuppliercardinfo'));
 
 $object = new FactureFournisseur($db);
 

@@ -2591,7 +2591,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $table_element = 'contratdet';
 
-
 	/**
 	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea()
 	 */

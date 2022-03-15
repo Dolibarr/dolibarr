@@ -659,9 +659,10 @@ if ($action == 'confirm_generateinter') {
 		if (!$error) {
 			$arrayoftasks = array();
 			foreach ($toselect as $key => $value) {
-				// Get userid, timepent
+				// Get userid, timespent
 				$object->fetchTimeSpent($value);
 				// $object->id is the task id
+				$arrayoftasks[$object->timespent_id]['id'] = $object->id;
 				$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
 				$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 				$arrayoftasks[$object->timespent_id]['note'] = $object->timespent_note;
@@ -670,7 +671,7 @@ if ($action == 'confirm_generateinter') {
 
 			foreach ($arrayoftasks as $timespent_id => $value) {
 				$ftask = new Task($db);
-				$ftask->fetch($object->id);
+				$ftask->fetch($value['id']);
 				// Define qty per hour
 				$qtyhour = $value['timespent'] / 3600;
 				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
@@ -1433,12 +1434,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Note
 			print '<td>';
-			print '<textarea name="timespent_note" class="maxwidth100onsmartphone" rows="'.ROWS_2.'">'.($_POST['timespent_note'] ? $_POST['timespent_note'] : '').'</textarea>';
+			print '<textarea name="timespent_note" class="maxwidth100onsmartphone" rows="'.ROWS_2.'">'.(GETPOST('timespent_note') ? GETPOST('timespent_note') : '').'</textarea>';
 			print '</td>';
 
 			// Duration - Time spent
 			print '<td class="nowraponall">';
-			$durationtouse = ($_POST['timespent_duration'] ? $_POST['timespent_duration'] : '');
+			$durationtouse = (GETPOST('timespent_duration') ? GETPOST('timespent_duration') : '');
 			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin')) {
 				$durationtouse = (GETPOST('timespent_durationhour') * 3600 + GETPOST('timespent_durationmin') * 60);
 			}

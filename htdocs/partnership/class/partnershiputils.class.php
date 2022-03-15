@@ -64,7 +64,7 @@ class PartnershipUtils
 	{
 		global $conf, $langs, $user;
 
-		$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+		$managedfor	= empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) ? 'thirdparty' : $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
 
 		if ($managedfor != 'member') {
 			return 0; // If option 'PARTNERSHIP_IS_MANAGED_FOR' = 'thirdparty', this cron job does nothing.

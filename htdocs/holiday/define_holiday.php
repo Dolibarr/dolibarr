@@ -145,7 +145,8 @@ if (empty($reshook)) {
 			}
 
 			//If the user set a comment, we add it to the log comment
-			$comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
+			$note_holiday = GETPOST('note_holiday');
+			$comment = ((isset($note_holiday[$userID]) && !empty($note_holiday[$userID])) ? ' ('.$note_holiday[$userID].')' : '');
 
 			//print 'holiday: '.$val['rowid'].'-'.$userValue;
 			if ($userValue != '') {

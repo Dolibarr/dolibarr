@@ -655,6 +655,13 @@ class Website extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$newref = dol_sanitizeFileName($newref);
+
+		if (empty($newref)) {
+			$this->error = 'ErrorBadParameter';
+			return -1;
+		}
+
 		$object = new self($this->db);
 
 		// Check no site with ref exists
@@ -671,8 +678,8 @@ class Website extends CommonObject
 		$oldidforhome = $object->fk_default_home;
 		$oldref = $object->ref;
 
-		$pathofwebsiteold = $dolibarr_main_data_root.'/website/'.$oldref;
-		$pathofwebsitenew = $dolibarr_main_data_root.'/website/'.$newref;
+		$pathofwebsiteold = $dolibarr_main_data_root.'/website/'.dol_sanitizeFileName($oldref);
+		$pathofwebsitenew = $dolibarr_main_data_root.'/website/'.dol_sanitizeFileName($newref);
 		dol_delete_dir_recursive($pathofwebsitenew);
 
 		$fileindex = $pathofwebsitenew.'/index.php';

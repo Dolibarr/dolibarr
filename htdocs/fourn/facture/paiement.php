@@ -187,7 +187,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => $_POST[$key]);
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
 				$cursorfacid = substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = (GETPOST($key) ? price2num(GETPOST($key)) : 0);
@@ -219,7 +219,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if ($_POST['paiementid'] <= 0) {
+		if (GETPOST('paiementid') <= 0) {
 			setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('PaymentMode')), null, 'errors');
 			$error++;
 		}
@@ -494,7 +494,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $object->date);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
-			$form->select_types_paiements(empty($_POST['paiementid']) ? $obj->fk_mode_reglement : $_POST['paiementid'], 'paiementid');
+			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
 			print '</td>';
 			if (!empty($conf->banque->enabled)) {
 				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
@@ -504,10 +504,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			} else {
 				print '<tr><td>&nbsp;</td></tr>';
 			}
-			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement']) ? '' : $_POST['num_paiement']).'"></td></tr>';
+			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(!GETPOST('num_paiement') ? '' : GETPOST('num_paiement')).'"></td></tr>';
 			print '<tr><td>'.$langs->trans('Comments').'</td>';
 			print '<td class="tdtop">';
-			print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment']) ? '' : $_POST['comment']).'</textarea></td></tr>';
+			print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(!GETPOST('comment') ? '' : GETPOST('comment')).'</textarea></td></tr>';
 			print '</table>';
 			print dol_get_fiche_end();
 
@@ -683,10 +683,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 										}
 											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									} else {
-										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
+										print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									}
 								}
 								print "</td>";

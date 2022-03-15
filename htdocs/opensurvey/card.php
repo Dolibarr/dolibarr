@@ -137,18 +137,18 @@ if (empty($reshook)) {
 	if (GETPOST('ajoutcomment')) {
 		$error = 0;
 
-		if (!GETPOST('comment')) {
+		if (!GETPOST('comment', "alphanohtml")) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 		}
-		if (!GETPOST('commentuser')) {
+		if (!GETPOST('commentuser', "alphanohtml")) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 		}
 
 		if (!$error) {
-			$comment = (string) GETPOST("comment", "restricthtml");
-			$comment_user = (string) GETPOST('commentuser', "restricthtml");
+			$comment = (string) GETPOST("comment", "alphanohtml");
+			$comment_user = (string) GETPOST('commentuser', "alphanohtml");
 
 			$resql = $object->addComment($comment, $comment_user);
 
@@ -422,7 +422,7 @@ print '<br>';
 if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll").'<br>';
 	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
-	print $langs->trans("Name").': <input type="text" class="minwidth300" name="commentuser" value="'.$user->getFullName($langs).'"> '."\n";
+	print $langs->trans("Name").': <input type="text" class="minwidth300" name="commentuser" value="'.dol_escape_htmltag($user->getFullName($langs)).'"> '."\n";
 	print '<input type="submit" class="button reposition" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 }
 
