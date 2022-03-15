@@ -1055,6 +1055,7 @@ class Reception extends CommonObject
 				$sql_commfourndet = 'SELECT qty, ref,  label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent';
 				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
 				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
+				$sql_commfourndet .= ' ORDER BY rang';
 				$resql_commfourndet = $this->db->query($sql_commfourndet);
 				if (!empty($resql_commfourndet)) {
 					$obj = $this->db->fetch_object($resql_commfourndet);

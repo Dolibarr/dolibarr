@@ -175,6 +175,7 @@ if (empty($reshook)) {
 
 		$TFact = array();
 		$TFactThird = array();
+		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
 		$lastid= 0;
@@ -182,6 +183,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+		//sort ids to keep order if one bill per third
+		sort($receptions);
 		foreach ($receptions as $id_reception) {
 			$rcp = new Reception($db);
 			 // We only invoice reception that are validated
@@ -254,6 +257,7 @@ if (empty($reshook)) {
 					$lastid = $objecttmp->id;
 
 					$TFactThird[$rcp->socid] = $objecttmp;
+					$TFactThirdNbLines[$rcp->socid] = 0; //init nblines to have lines ordered by expedition and rang
 				} else {
 					$langs->load("errors");
 					$errors[] = $rcp->ref.' : '.$langs->trans($objecttmp->error);
@@ -343,6 +347,11 @@ if (empty($reshook)) {
 
 							$objecttmp->context['createfromclone'];
 
+							$rang = $i;
+							//there may already be rows from previous receptions
+							if (!empty($createbills_onebythird))
+								$rang = $TFactThirdNbLines[$rcp->socid];
+
 							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
@@ -358,7 +367,7 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								$i,
+								$rang,
 								false,
 								0,
 								null,
@@ -371,6 +380,8 @@ if (empty($reshook)) {
 
 							if ($result > 0) {
 								$lineid = $result;
+								if (!empty($createbills_onebythird)) //increment rang to keep order
+									$TFactThirdNbLines[$rcp->socid]++;
 							} else {
 								$lineid = 0;
 								$error++;
