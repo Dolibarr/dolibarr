@@ -7,7 +7,7 @@
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
@@ -3675,7 +3675,7 @@ abstract class CommonObject
 
 		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
 		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
-		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
+		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization', 'asset');
 		// Add module part to target type if object has $module property and isn't in core modules.
 		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
 
@@ -5693,12 +5693,12 @@ abstract class CommonObject
 
 			$enabled = 1;
 			if (isset($this->fields[$key]['enabled'])) {
-				$enabled = dol_eval($this->fields[$key]['enabled'], 1);
+				$enabled = dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
 			}
 			/*$perms = 1;
 			if (isset($this->fields[$key]['perms']))
 			{
-				$perms = dol_eval($this->fields[$key]['perms'], 1);
+				$perms = dol_eval($this->fields[$key]['perms'], 1, 1, '1');
 			}*/
 			if (empty($enabled)) {
 				continue;
@@ -5854,7 +5854,7 @@ abstract class CommonObject
 						if (!empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0);
+								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 							}
 						}
 					}
@@ -5985,7 +5985,7 @@ abstract class CommonObject
 
 				if (!empty($attrfieldcomputed)) {
 					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-						$value = dol_eval($attrfieldcomputed, 1, 0);
+						$value = dol_eval($attrfieldcomputed, 1, 0, '');
 						dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 						$new_array_options[$key] = $value;
 					} else {
@@ -6352,7 +6352,7 @@ abstract class CommonObject
 
 			if (!empty($attrfieldcomputed)) {
 				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-					$value = dol_eval($attrfieldcomputed, 1, 0);
+					$value = dol_eval($attrfieldcomputed, 1, 0, '');
 					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
 				} else {
@@ -6697,7 +6697,7 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, !empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
-				$out = $doleditor->Create(1);
+				$out = $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
@@ -7206,7 +7206,7 @@ abstract class CommonObject
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = dol_eval($computed, 1, 0);
+			$value = dol_eval($computed, 1, 0, '');
 		}
 
 		if (empty($morecss)) {
@@ -7717,7 +7717,7 @@ abstract class CommonObject
 		if (empty($reshook)) {
 			if (key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
 				$out .= "\n";
-				$out .= '<!-- showOptionals --> ';
+				$out .= '<!-- commonobject:showOptionals --> ';
 				$out .= "\n";
 
 				$extrafields_collapse_num = '';
@@ -7731,7 +7731,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1);
+						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '1');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -7739,12 +7739,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
+						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '1');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
+						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '1');
 					}
 
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {

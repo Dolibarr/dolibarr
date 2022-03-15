@@ -1165,3 +1165,5 @@ NotClosedYet=Not yet closed
 ClearSignature=Reset signature
 CanceledHidden=Canceled hidden
 CanceledShown=Canceled shown
+Terminate=Terminate
+Terminated=Terminated

@@ -67,7 +67,7 @@ ErrorDestinationAlreadyExists=Another file with the name <b>%s</b> already exist
 ErrorPartialFile=File not received completely by server.
 ErrorNoTmpDir=Temporary directy %s does not exists.
 ErrorUploadBlockedByAddon=Upload blocked by a PHP/Apache plugin.
-ErrorFileSizeTooLarge=File size is too large.
+ErrorFileSizeTooLarge=File size is too large or file not provided.
 ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=Size too long for int type (%s digits maximum)
 ErrorSizeTooLongForVarcharType=Size too long for string type (%s chars maximum)
@@ -278,6 +278,7 @@ ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
 ErrorRequestTooLarge=Error, request too large
+ErrorNotApproverForHoliday=You are not the approver for leave %s 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

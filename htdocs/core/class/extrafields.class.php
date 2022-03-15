@@ -921,9 +921,9 @@ class ExtraFields
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
+			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
 			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
 			$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
@@ -1511,9 +1511,9 @@ class ExtraFields
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
+			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
 			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		} else {
@@ -1886,17 +1886,19 @@ class ExtraFields
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
-		$out .= '<span class="cursorpointer far fa-'.($expand_display ? 'minus' : 'plus').'-square"></span>&nbsp;';
+		$out .= '<span class="cursorpointer '.($extrafield_collapse_display_value == 0 ? 'fas fa-square' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>&nbsp;';
 		$out .= '<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out .= '</strong>';
 		$out .= '</'.$tagtype_dyn.'>';
 		$out .= '</'.$tagtype.'>';
 
+		$collapse_group = $key.(!empty($object->id) ? '_'.$object->id : '');
+		//$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
+
 		if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
 			// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
-			$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
-			$this->expand_display[$extrafields_collapse_num] = $expand_display;
+			$this->expand_display[$collapse_group] = $expand_display;
 
 			if (!empty($conf->use_javascript_ajax)) {
 				$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
@@ -1904,15 +1906,15 @@ class ExtraFields
 				$out .= 'jQuery(document).ready(function(){'."\n";
 				if ($expand_display === false) {
 					$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
-					$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
+					$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
 				} else {
 					$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
 					$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				}
 				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
-				$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
-				$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(100, function(){'."\n";
-				$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
+				$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$collapse_group.'");'."\n";
+				$out .= '       jQuery(".trextrafields_collapse'.$collapse_group.'").toggle(100, function(){'."\n";
+				$out .= '           if (jQuery(".trextrafields_collapse'.$collapse_group.'").is(":hidden")) {'."\n";
 				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
 				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				$out .= '           } else {'."\n";
@@ -1924,6 +1926,8 @@ class ExtraFields
 				$out .= '});'."\n";
 				$out .= '</script>'."\n";
 			}
+		} else {
+			$this->expand_display[$collapse_group] = 1;
 		}
 
 		return $out;
@@ -1968,17 +1972,17 @@ class ExtraFields
 
 				$enabled = 1;
 				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
-					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1);
+					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '1');
 				}
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1');
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
+					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '1');
 				}
 				if (empty($enabled)) {
 					continue;

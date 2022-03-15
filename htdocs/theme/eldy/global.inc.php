@@ -168,6 +168,10 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 */
+.liste_titre input[name=search_month] {
+	margin-right: 4px;
+}
+
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
@@ -3539,6 +3543,25 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+
+.thsticky, .tdsticky {
+	position: sticky;
+	left: 0px;
+}
+.thstickyright, .tdstickyright {
+	position: sticky;
+	right: 0px;
+}
+.thstickygray, .tdstickygray {
+	background-color: lightgray;
+}
+.thstickyghostwhite, .tdstickyghostwhite {
+	background-color: ghostwhite;
+}
+.thstickyinherit, .tdstickyinherit {
+	background-color: inherit;
+}
+
 /* To have left column sticky */
 /*.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
 	position: sticky;
@@ -5246,7 +5269,7 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 2px !important; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
 .treeview .hitarea { margin-top: 3px; }
@@ -6266,7 +6289,7 @@ span.noborderoncategories a, li.noborderoncategories a {
 	/* vertical-align: top; */
 }
 span.noborderoncategories {
-	padding: 4px 5px 0px 5px;
+	padding: 3px 5px 3px 5px;
 	display: inline-block;
 }
 .categtextwhite, .treeview .categtextwhite.hover {

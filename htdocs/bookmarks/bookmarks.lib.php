@@ -66,7 +66,7 @@ function printDropdownBookmarksList()
 
 
 	// Url to list bookmark
-	$listbtn = '<a class="top-menu-dropdown-link" title="'.$langs->trans('Bookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
+	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
 	$listbtn .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
 
 	// Url to go on create new bookmark page
