@@ -19,10 +19,12 @@
 --
 -- ===================================================================
 --
--- statut
+-- state / statut
+-- -2 : excluded / exclu 
 -- -1 : draft / brouillon
 --  0 : canceled / resilie
 --  1 : valid / valide
+--
 
 create table llx_adherent
 (
