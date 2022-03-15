@@ -13,8 +13,9 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
+ * Copyright (C) 2018-2021 Frédéric France     	<frederic.france@netlogic.fr>
+ * Copyright (C) 2018      David Beniamine     	<David.Beniamine@Tetras-Libre.fr>
+ * Copyright (C) 2022      Anthony Berton       <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
