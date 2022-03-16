@@ -1584,12 +1584,17 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 						dol_syslog("Warning: module ".$modcss." declared a css path file into its descriptor that is empty.", LOG_WARNING);
 					}
 					// cssfile is a relative path
-					print '<!-- Includes CSS added by module '.$modcss.' -->'."\n".'<link rel="stylesheet" type="text/css" href="'.dol_buildpath($cssfile, 1);
-					// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
-					if (!preg_match('/\.css$/i', $cssfile)) {
-						print $themeparam;
+					$urlforcss = dol_buildpath($cssfile, 1);
+					if ($urlforcss && $urlforcss != '/') {
+						print '<!-- Includes CSS added by module '.$modcss.' -->'."\n".'<link rel="stylesheet" type="text/css" href="'.$urlforcss;
+						// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
+						if (!preg_match('/\.css$/i', $cssfile)) {
+							print $themeparam;
+						}
+						print '">'."\n";
+					} else {
+						dol_syslog("Warning: module ".$modcss." declared a css path file for a file we can't find.", LOG_WARNING);
 					}
-					print '">'."\n";
 				}
 			}
 		}
@@ -1728,7 +1733,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					$filesjs = (array) $filesjs; // To be sure filejs is an array
 					foreach ($filesjs as $jsfile) {
 						// jsfile is a relative path
-						print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.dol_buildpath($jsfile, 1).((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
+						$urlforjs = dol_buildpath($jsfile, 1);
+						if ($urlforjs && $urlforjs != '/') {
+							print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.$urlforjs.((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
+						} else {
+							dol_syslog("Warning: module ".$modjs." declared a js path file for a file we can't find.", LOG_WARNING);
+						}
 					}
 				}
 			}

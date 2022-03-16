@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'companies'));
 
 $id = GETPOST("rowid", 'int');
+$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -40,7 +41,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
+$result = restrictedArea($user, 'banque', $accountid, 'bank_account');
 if (!$user->rights->banque->lire && !$user->rights->banque->consolidate) {
 	accessforbidden();
 }

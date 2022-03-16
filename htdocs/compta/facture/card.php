@@ -247,6 +247,8 @@ if (empty($reshook)) {
 
 		$result = $object->deleteline(GETPOST('lineid', 'int'));
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -1107,6 +1109,8 @@ if (empty($reshook)) {
 						$facture_source->fetchPreviousNextSituationInvoice();
 					}
 				}
+
+
 				$id = $object->create($user);
 				if ($id < 0) {
 					$error++;
@@ -1234,6 +1238,7 @@ if (empty($reshook)) {
 							$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
 							$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
+							$line->context['createcreditnotefrominvoice'] = 1;
 							$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
 
 							$object->lines[] = $line; // insert new line in current object
@@ -2367,9 +2372,9 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code');
-		if (!GETPOST('qty')) {
-			$special_code = 3;
+		$special_code = GETPOST('special_code', 'int');
+		if ($special_code == 3) {
+			$special_code = 0;	// Options should not exists on invoices
 		}
 
 		$line = new FactureLigne($db);
@@ -2894,6 +2899,9 @@ if ($action == 'create') {
 			if (empty($mode_reglement_id)) {
 				$mode_reglement_id = $soc->mode_reglement_id;
 			}
+			if (empty($fk_account)) {
+				$fk_account = $soc->fk_account;
+			}
 			if (!$remise_percent) {
 				$remise_percent = $soc->remise_percent;
 			}
@@ -3000,6 +3008,9 @@ if ($action == 'create') {
 	if (empty($mode_reglement_id)) {
 		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
+
+	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	$fk_account = GETPOSTISSET("fk_account") ? GETPOST("fk_account", 'int') : $fk_account;
 
 	if (!empty($soc->id)) {
 		$absolute_discount = $soc->getAvailableDiscounts();
@@ -3603,8 +3614,8 @@ if ($action == 'create') {
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$fk_account = GETPOST('fk_account', 'int');
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
@@ -5378,7 +5389,8 @@ if ($action == 'create') {
 				}
 			}
 
-			$sumofpayment = $object->getSommePaiement();
+			$sumofpayment = $totalpaye;
+			$sumofpaymentall = $totalpaye + $totalcreditnotes + $totaldeposits;
 
 			// Reverse back money or convert to reduction
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
@@ -5402,8 +5414,8 @@ if ($action == 'create') {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > 0 && empty($discount->id)) {
-					if (price2num($object->total_ttc, 'MT') == price2num($sumofpayment, 'MT')) {
+				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > Facture::STATUS_DRAFT && empty($discount->id)) {
+					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT')) {
 						// We can close a down payment only if paid amount is same than amount of down payment (by definition)
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
 					} else {
@@ -5416,7 +5428,7 @@ if ($action == 'create') {
 			if (($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment
 				&& (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0) || ($object->type == Facture::TYPE_DEPOSIT && $object->total_ttc > 0)))
 			) {
-				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') != price2num($sumofpayment, 'MT')) {
+				if ($object->type == Facture::TYPE_DEPOSIT && price2num($object->total_ttc, 'MT') != price2num($sumofpaymentall, 'MT')) {
 					// We can close a down payment only if paid amount is same than amount of down payment (by definition)
 					print '<span class="butActionRefused" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ClassifyPaid').'</span>';
 				} else {
@@ -5424,7 +5436,7 @@ if ($action == 'create') {
 				}
 			}
 
-			// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
+			// Classify 'closed not completely paid' (possible if validated and not yet set paid)
 			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && $usercanissuepayment) {
 				if ($totalpaye > 0 || $totalcreditnotes > 0) {
 					// If one payment or one credit note was linked to this invoice

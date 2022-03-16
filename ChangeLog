@@ -2,6 +2,43 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 14.0.5 compared to 14.0.4 *****
+
+FIX: 13.0: printFieldListWhere called twice on same query
+FIX: 14.0.4 fatal error on cron list.
+FIX: #19476
+FIX: #19564
+FIX: #19651
+FIX: Accountancy - SQL error on subledger account search in journal
+FIX: apply eldy's suggestion to not overwrite existing extrafields of $line
+FIX: Can't close a down payment if paid with credit notes.
+FIX: better compatibility with multicompany
+FIX: contact card: bad colspan value for separator extrafield in creation/modification form
+FIX: discounts are applied both when fetching the best supplier price and when displaying it
+FIX: double display for contact categorie on societe create card
+FIX: fatal error on cron list.
+FIX: holiday list: only mass delete if leave request is not in draft, canceled or refused, like in card
+FIX: holiday mass deletion: correct return of record deleted
+FIX: Holiday month report
+FIX: info tab on customer invoice record not found
+FIX: line extrafields are inoperative in dispatch cards even when they exist
+FIX: list of categories in stats of supplier invoices
+FIX: missing default value for more comprehensive
+FIX: multicurrency: fields in discount unitialized when creating deposit
+FIX: Navigation on bank transaction list
+FIX: Can't edit a bank transaction due to bad permission check.
+FIX: Option MAIN_DIRECT_STATUS_UPDATE broken. Ajax on/off not saving value in DB after updating to version >=12
+FIX: postgresql compatibility, "" as is not authorized
+FIX: printFieldListWhere called twice (at different locations) for the same SQL query, can result in syntax errors
+FIX: select too large into addrights (pb of missing parenthesis)
+FIX: set optional from post, we can't untick boolean field on product card
+FIX: Take into consideration work leave over serveral months
+FIX: test if method exist on wrong object
+FIX: title for nature of third party in company list
+FIX: Urgent onglet contact inaccessible depuis une facture
+FIX: wrong syntax of sql request
+
 ***** ChangeLog for 14.0.4 compared to 14.0.3 *****
 
 FIX: $totalarray is overwritten, totals were lost

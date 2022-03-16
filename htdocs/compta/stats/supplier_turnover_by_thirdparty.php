@@ -38,8 +38,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = GETPOST("sortorder", 'aZ09');
-$sortfield = GETPOST("sortfield", 'aZ09');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
