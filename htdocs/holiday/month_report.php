@@ -358,7 +358,10 @@ else {
 		}
 
 		if (!empty($arrayfields['used_days_month']['checked'])) print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth).'</td>';
-		if (!empty($arrayfields['cp.description']['checked'])) print '<td class="maxwidth300">'.dol_escape_htmltag(dolGetFirstLineOfText($obj->description)).'</td>';
+
+		if (!empty($arrayfields['cp.description']['checked'])) {
+			print '<td class="maxwidth300">'.dolGetFirstLineOfText($obj->description).'</td>';
+		}
 
 		print '<td></td>';
 		print '</tr>';
