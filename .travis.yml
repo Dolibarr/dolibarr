@@ -50,7 +50,7 @@ jobs:
       env: DB=postgresql
     - stage: PHP 5.6-7.4
       if: type = pull_request OR type = push
-      php: '7.4'
+      php: '7.4.22'
       env: DB=mysql
     - stage: PHP Dev
       if: type = push AND branch = develop
