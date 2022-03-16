@@ -7404,8 +7404,8 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	.valuefield.fieldname_type span.badgeneutral {
-	    margin-top: 5px;
-	    display: inline-block;
+		margin-top: 5px;
+		display: inline-block;
 	}
 
 	tr.trextrafieldseparator td, tr.trextrafields_collapse_last td {
