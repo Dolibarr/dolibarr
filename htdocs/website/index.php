@@ -2520,6 +2520,7 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formwebsite = new FormWebsite($db);
 $formother = new FormOther($db);
+$formconfirm = "";
 
 // Confirm generation of website sitemaps
 if ($action == 'confirmgeneratesitemaps') {
@@ -3040,7 +3041,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
 				print '<script type="text/javascript">
 						$(document).ready(function() {
-							var isEditingEnabled = '.($conf->global->WEBSITE_EDITINLINE ? 'true' : 'false').';
+							var isEditingEnabled = '.(getDolGlobalString("WEBSITE_EDITINLINE") ? 'true' : 'false').';
 							if (isEditingEnabled)
 							{
 								switchEditorOnline(true);
