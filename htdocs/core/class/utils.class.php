@@ -376,9 +376,9 @@ class Utils
 									continue;
 								}
 								fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
-								if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
+								if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 									$ok = 1;
-								} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
+								} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
 									$ok = 1;
 								}
 							}
