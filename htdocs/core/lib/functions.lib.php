@@ -10563,7 +10563,7 @@ function isAFileWithExecutableContent($filename)
  */
 function newToken()
 {
-	return !empty($_SESSION['newtoken']) ? $_SESSION['newtoken'] : "";
+	return empty($_SESSION['newtoken']) ? '' : $_SESSION['newtoken'];
 }
 
 /**
