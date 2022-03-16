@@ -1109,6 +1109,8 @@ if (empty($reshook)) {
 						$facture_source->fetchPreviousNextSituationInvoice();
 					}
 				}
+
+
 				$id = $object->create($user);
 				if ($id < 0) {
 					$error++;
@@ -1236,6 +1238,7 @@ if (empty($reshook)) {
 							$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
 							$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
+							$line->context['createcreditnotefrominvoice'] = 1;
 							$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
 
 							$object->lines[] = $line; // insert new line in current object
@@ -2368,9 +2371,9 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code');
-		if (!GETPOST('qty')) {
-			$special_code = 3;
+		$special_code = GETPOST('special_code', 'int');
+		if ($special_code == 3) {
+			$special_code = 0;	// Options should not exists on invoices
 		}
 
 		$line = new FactureLigne($db);
@@ -2895,6 +2898,9 @@ if ($action == 'create') {
 			if (empty($mode_reglement_id)) {
 				$mode_reglement_id = $soc->mode_reglement_id;
 			}
+			if (empty($fk_account)) {
+				$fk_account = $soc->fk_account;
+			}
 			if (!$remise_percent) {
 				$remise_percent = $soc->remise_percent;
 			}
@@ -3001,6 +3007,9 @@ if ($action == 'create') {
 	if (empty($mode_reglement_id)) {
 		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
+
+	// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	$fk_account = GETPOSTISSET("fk_account") ? GETPOST("fk_account", 'int') : $fk_account;
 
 	if (!empty($soc->id)) {
 		$absolute_discount = $soc->getAvailableDiscounts();
@@ -3604,8 +3613,8 @@ if ($action == 'create') {
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$fk_account = GETPOST('fk_account', 'int');
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
