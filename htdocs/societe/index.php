@@ -106,7 +106,7 @@ if (empty($user->rights->fournisseur->lire)) {
 }
 // Add where from hooks
 $parameters = array('socid' => $socid);
-$reshook = $hookmanager->executeHooks('printFieldListWhereForStatisticArea', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid > 0) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -295,7 +295,7 @@ if (empty($user->rights->fournisseur->lire)) {
 }
 // Add where from hooks
 $parameters = array('socid' => $socid);
-$reshook = $hookmanager->executeHooks('printFieldListWhereForLatestModified', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid > 0) {
 		$sql .= " AND s.rowid = ".((int) $socid);
