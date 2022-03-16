@@ -99,7 +99,8 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 
 		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
 		$object->label = GETPOST("label", "alphanohtml");
-		$object->description = GETPOST('description', "alphanohtml");
+		if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $object->description = GETPOST('description', "alphanohtml");
+		else $object->description = GETPOST('description', "restricthtml");
 		$object->fk_task_parent = $task_parent;
 		$object->planned_workload = $planned_workload;
 		$object->date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
@@ -439,7 +440,19 @@ if ($id > 0 || !empty($ref)) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$object->description.'</textarea>';
+
+		if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+			print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$object->description.'</textarea>';
+		} else {
+			// WYSIWYG editor
+			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+			if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+				$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+			}
+			$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+			print $doleditor->Create();
+		}
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
@@ -536,7 +549,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Description
 		print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
-		print nl2br($object->description);
+		print dol_htmlentitiesbr($object->description);
 		print '</td></tr>';
 
 		print '</table>';
