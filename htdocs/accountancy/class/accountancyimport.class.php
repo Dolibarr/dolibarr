@@ -33,7 +33,6 @@
  */
 
 
-
 /**
  * Manage the different format accountancy import
  */
