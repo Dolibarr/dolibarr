@@ -482,6 +482,7 @@ PaymentByChequeOrderedToShort=Règlement TTC par chèque à l'ordre de
 SendTo=envoyé à
 PaymentByTransferOnThisBankAccount=Règlement par virement sur le compte bancaire suivant
 VATIsNotUsedForInvoice=* TVA non applicable art-293B du CGI
+VATIsNotUsedForInvoiceAsso=* TVA non applicable art-261-7 du CGI
 LawApplicationPart1=Par application de la loi 80.335 du 12/05/80
 LawApplicationPart2=les marchandises demeurent la propriété du
 LawApplicationPart3=vendeur jusqu'à complet encaissement de
