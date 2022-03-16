@@ -49,7 +49,8 @@ class AccountancyImport
 	 * @param 	int			$record_key         Record key
 	 * @return  int         <0 if KO, >0 if OK
 	 */
-	public function cleanAmount(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $record_key) {
+	public function cleanAmount(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $record_key)
+	{
 		$value_trim = trim($arrayrecord[$record_key]['val']);
 		$arrayrecord[$record_key]['val'] = floatval($value_trim);
 	}
@@ -64,7 +65,8 @@ class AccountancyImport
 	 * @param 	int			$record_key         Record key
 	 * @return  int         <0 if KO, >0 if OK
 	 */
-	public function cleanValue(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $record_key) {
+	public function cleanValue(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $record_key)
+	{
 		$arrayrecord[$record_key]['val'] = trim($arrayrecord[$record_key]['val']);
 	}
 
