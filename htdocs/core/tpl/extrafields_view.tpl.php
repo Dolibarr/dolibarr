@@ -122,7 +122,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				print ' trextrafields_collapse_last';
 			}
 			print '"';
-			if (empty($extrafields->expand_display[$collapse_group])) {
+			if (isset($extrafields->expand_display) && empty($extrafields->expand_display[$collapse_group])) {
 				print ' style="display: none;"';
 			}
 			print '>';
