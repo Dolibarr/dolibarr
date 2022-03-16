@@ -205,7 +205,7 @@ if (!empty($conf->expedition->enabled)) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
 }
 if (!empty($conf->reception->enabled)) {
-	$elementList['reception_send'] = img_picto('', 'dolly', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendReception'));
+	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendReception'));
 }
 if (!empty($conf->ficheinter->enabled)) {
 	$elementList['fichinter_send'] = img_picto('', 'intervention', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendIntervention'));
