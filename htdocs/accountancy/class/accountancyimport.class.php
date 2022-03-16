@@ -40,6 +40,35 @@
 class AccountancyImport
 {
 	/**
+	 *  Clean amount
+	 *
+	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   string      $fieldname          Field name with alias
+	 * @param   array       $listfields         Fields list to add
+	 * @param   array       $listvalues         Values list to add
+	 * @param 	int			$record_key         Record key
+	 * @return  int         <0 if KO, >0 if OK
+	 */
+	public function cleanAmount(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $record_key) {
+		$value_trim = trim($arrayrecord[$record_key]['val']);
+		$arrayrecord[$record_key]['val'] = floatval($value_trim);
+	}
+
+	/**
+	 *  Clean value with trim
+	 *
+	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   string      $fieldname          Field name with alias
+	 * @param   array       $listfields         Fields list to add
+	 * @param   array       $listvalues         Values list to add
+	 * @param 	int			$record_key         Record key
+	 * @return  int         <0 if KO, >0 if OK
+	 */
+	public function cleanValue(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $record_key) {
+		$arrayrecord[$record_key]['val'] = trim($arrayrecord[$record_key]['val']);
+	}
+
+	/**
 	 *  Compute amount
 	 *
 	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
@@ -55,20 +84,25 @@ class AccountancyImport
 			$fieldname = $fieldArr[1];
 		}
 
-		$debit  = floatval(trim($arrayrecord[11]['val']));
-		$credit = floatval(trim($arrayrecord[12]['val']));
+		$debit_index = 11;
+		$credit_index = 12;
+		$debit_val = trim($arrayrecord[$debit_index]['val']);
+		$credit_val = trim($arrayrecord[$credit_index]['val']);
+		$debit  = floatval($debit_val);
+		$credit = floatval($credit_val);
 		if (!empty($debit)) {
 			$amount = $debit;
 		} else {
 			$amount = $credit;
 		}
+		$listvalues[$debit_index] = "'" . $debit . "'";
+		$listvalues[$credit_index] = "'" . $credit . "'";
 
 		$listfields[] = $fieldname;
 		$listvalues[] = "'" . abs($amount) . "'";
 
 		return 1;
 	}
-
 
 	/**
 	 *  Compute sens
