@@ -7455,6 +7455,21 @@ div.clipboardCPValue.hidewithsize {
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
 	}
+
+
+	div.fichehalfright {
+		margin-top: 30px;
+	}
+
+	.valuefield.fieldname_type span.badgeneutral {
+		margin-top: 5px;
+		display: inline-block;
+	}
+
+	tr.trextrafieldseparator td, tr.trextrafields_collapse_last td {
+		/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
+		border-bottom: 1px solid var(--colortopbordertitle1) !important;
+	}
 }
 
 @media only screen and (max-width: 320px)
