@@ -33,13 +33,11 @@
  */
 
 
-
 /**
  * Manage the different format accountancy import
  */
 class AccountancyImport
 {
-	
 	/**
 	 *  Clean amount
 	 *
