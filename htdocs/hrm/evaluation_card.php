@@ -112,8 +112,8 @@ if (empty($reshook)) {
 
 	$backurlforlist = dol_buildpath('/hrm/evaluation_list.php', 1);
 
-	if (empty($backtopage) || ($cancel && empty($id))) {
-		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+	if (!empty($backtopage) || ($cancel && empty($id))) {
+		if (!empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
@@ -159,6 +159,7 @@ if (empty($reshook)) {
 				$line->rankorder = $TNote[$line->fk_skill];
 				$line->update($user);
 			}
+			setEventMessage($langs->trans("SaveLevelSkill"));
 		}
 	}
 
@@ -569,7 +570,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Description") . '</th>';
 			print '<th style="width:auto;text-align:center" class="liste_titre">' . $langs->trans("EmployeeRank") . '</th>';
 			print '<th style="width:auto;text-align:center" class="liste_titre">' . $langs->trans("RequiredRank") . '</th>';
-			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Result") . '</th>';
+			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Result") . ' ' .$form->textwithpicto('', GetLegendSkills(), 1) .'</th>';
 			print '</tr>';
 
 			$sk = new Skill($db);

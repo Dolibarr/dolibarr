@@ -160,8 +160,8 @@ if (empty($reshook)) {
 	$backurlforlist = dol_buildpath('/hrm/position_list.php', 1);
 	//$backtopage = dol_buildpath('/hrm/position.php', 1) . '?fk_job=' . ($fk_job > 0 ? $fk_job : '__ID__');
 
-	if (empty($backtopage) || ($cancel && empty($fk_job))) {
-		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+	if (!empty($backtopage) || ($cancel && empty($fk_job))) {
+		if (!empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($fk_job) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
