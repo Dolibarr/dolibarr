@@ -282,7 +282,7 @@ class Holiday extends CommonObject
 			$this->errors[] = $nbopenday;
 			return -1;
 		}
-		
+
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 		$sql .= "ref,";
@@ -870,7 +870,7 @@ class Holiday extends CommonObject
 										$this->db->jdate($this->date_fin, 1), 0, 1,
 										$this->halfday
 						);	// user jdate(..., 1) because num_open_day need UTC dates
-			
+
 			// num_open_day returns string in case of error
 			if (is_string($nbopenday)) {
 				$error++;
@@ -1001,7 +1001,7 @@ class Holiday extends CommonObject
 										$this->db->jdate($this->date_fin, 1), 0, 1,
 										$this->halfday
 						);	// user jdate(..., 1) because num_open_day need UTC dates
-			
+
 			// num_open_day returns string in case of error
 			if (is_string($nbopenday)) {
 				$error++;
