@@ -2,7 +2,7 @@
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2020 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2022 Charlene Benke	<charlene@patas-monkey.com>
  * Copyright (C) 2019-2021 Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -268,6 +268,7 @@ $sql .= " cp.description,";
 $sql .= " cp.date_debut,";
 $sql .= " cp.date_fin,";
 $sql .= " cp.halfday,";
+$sql .= " cp.nb_open_day,";
 $sql .= " cp.statut as status,";
 $sql .= " cp.fk_validator,";
 $sql .= " cp.date_valid,";
@@ -811,7 +812,7 @@ if ($resql) {
 			}
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
-				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
+				$nbopenedday = $obj->nb_open_day;
 				$totalduration += $nbopenedday;
 				print $nbopenedday.' '.$langs->trans('DurationDays');
 				print '</td>';
