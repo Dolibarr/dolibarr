@@ -168,6 +168,10 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 */
+.liste_titre input[name=search_month] {
+	margin-right: 4px;
+}
+
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
@@ -3537,6 +3541,25 @@ td.border, div.tagtable div div.border {
 }
 .table-val-border-col {
 	width:auto;
+}
+
+
+.thsticky, .tdsticky {
+	position: sticky;
+	left: 0px;
+}
+.thstickyright, .tdstickyright {
+	position: sticky;
+	right: 0px;
+}
+.thstickygray, .tdstickygray {
+	background-color: lightgray;
+}
+.thstickyghostwhite, .tdstickyghostwhite {
+	background-color: ghostwhite;
+}
+.thstickyinherit, .tdstickyinherit {
+	background-color: inherit;
 }
 
 /* To have left column sticky */
@@ -7431,6 +7454,21 @@ div.clipboardCPValue.hidewithsize {
 
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
+	}
+
+
+	div.fichehalfright {
+		margin-top: 30px;
+	}
+
+	.valuefield.fieldname_type span.badgeneutral {
+		margin-top: 5px;
+		display: inline-block;
+	}
+
+	tr.trextrafieldseparator td, tr.trextrafields_collapse_last td {
+		/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
+		border-bottom: 1px solid var(--colortopbordertitle1) !important;
 	}
 }
 

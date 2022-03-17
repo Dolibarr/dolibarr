@@ -16,7 +16,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
@@ -6680,7 +6680,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$retstring = '';
+		$retstring = '<span class="nowraponall">';
 
 		$hourSelected = 0;
 		$minSelected = 0;
@@ -6712,7 +6712,7 @@ class Form
 		if ($typehour != 'text') {
 			$retstring .= ' '.$langs->trans('HourShort');
 		} else {
-			$retstring .= '<span class="hideonsmartphone">:</span>';
+			$retstring .= '<span class="">:</span>';
 		}
 
 		// Minutes
@@ -6740,7 +6740,7 @@ class Form
 			$retstring .= ' '.$langs->trans('MinuteShort');
 		}
 
-		//$retstring.="&nbsp;";
+		$retstring.="</span>";
 
 		if (!empty($nooutput)) {
 			return $retstring;
@@ -8587,6 +8587,7 @@ class Form
 					print '<br><form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
 					print '<input type="hidden" name="id" value="' . $object->id . '">';
 					print '<input type="hidden" name="action" value="addlinkbyref">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="addlink" value="' . $key . '">';
 					print '<table class="noborder">';
 					print '<tr>';

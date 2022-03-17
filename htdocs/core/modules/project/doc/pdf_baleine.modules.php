@@ -432,10 +432,12 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->MultiCell($this->posxlabel - $this->posxref, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
 					// Workload
 					$pdf->SetXY($this->posxworkload, $curY);
+					$pdf->SetFont('', '', $default_font_size - 2); // We use a smaller font
 					$pdf->MultiCell($this->posxprogress - $this->posxworkload, 3, $planned_workload ? $planned_workload : '', 0, 'R');
 					// Progress
 					$pdf->SetXY($this->posxprogress, $curY);
 					$pdf->MultiCell($this->posxdatestart - $this->posxprogress, 3, $progress, 0, 'R');
+					$pdf->SetFont('', '', $default_font_size - 1); // We restore font
 
 					// Date start and end
 					$pdf->SetXY($this->posxdatestart, $curY);
@@ -640,9 +642,11 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : ".dol_print_date($object->date_start, 'day', false, $outputlangs, true), '', 'R');
 
-		$posy += 6;
-		$pdf->SetXY($posx, $posy);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : ".dol_print_date($object->date_end, 'day', false, $outputlangs, true), '', 'R');
+		if ($object->date_end) {
+			$posy += 6;
+			$pdf->SetXY($posx, $posy);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : ".dol_print_date($object->date_end, 'day', false, $outputlangs, true), '', 'R');
+		}
 
 		if (is_object($object->thirdparty)) {
 			$posy += 6;

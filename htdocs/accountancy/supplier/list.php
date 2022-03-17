@@ -644,7 +644,7 @@ if ($result) {
 
 		// Description
 		print '<td class="tdoverflowonsmartphone small">';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc));
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facturefourn_static_det->desc);
 		print '</td>';
