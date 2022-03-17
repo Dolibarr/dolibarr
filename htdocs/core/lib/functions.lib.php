@@ -3465,12 +3465,16 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
  *
  *	@param	    string		$address    			email (Ex: "toto@examle.com". Long form "John Do <johndo@example.com>" will be false)
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
+ *  @param		int			$acceptuserkey			If 1, the special string '__USER_EMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  *  @see isValidMXRecord()
  */
-function isValidEmail($address, $acceptsupervisorkey = 0)
+function isValidEmail($address, $acceptsupervisorkey = 0, $acceptuserkey = 0)
 {
 	if ($acceptsupervisorkey && $address == '__SUPERVISOREMAIL__') {
+		return true;
+	}
+	if ($acceptuserkey && $address == '__USER_EMAIL__') {
 		return true;
 	}
 	if (filter_var($address, FILTER_VALIDATE_EMAIL)) {
