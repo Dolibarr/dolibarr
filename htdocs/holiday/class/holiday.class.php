@@ -84,7 +84,7 @@ class Holiday extends CommonObject
 	public $halfday = ''; // 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 	public $statut = ''; // 1=draft, 2=validated, 3=approved
 	public $nb_open_day;	// number of open day beetween date_debut and date_fin and halfday
-	
+
 	/**
 	 * @var int 	ID of user that must approve. TODO: there is no date for validation (date_valid is used for approval), add one.
 	 */
@@ -271,8 +271,8 @@ class Holiday extends CommonObject
 			$this->error = "ErrorBadParameterFkType"; return -1;
 		}
 
-		$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1), 
-									$this->db->jdate($this->date_fin, 1), 0, 1, 
+		$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1),
+									$this->db->jdate($this->date_fin, 1), 0, 1,
 									$this->halfday
 					);	// user jdate(..., 1) because num_open_day need UTC dates
 		// Insert request
@@ -977,14 +977,13 @@ class Holiday extends CommonObject
 		}
 		$sql .= " halfday = ".$this->halfday.",";
 		if (!empty($this->date_debut) && !empty($this->date_fin)) {
-			
-			$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1), 
-										$this->db->jdate($this->date_fin, 1), 0, 1, 
+			$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1),
+										$this->db->jdate($this->date_fin, 1), 0, 1,
 										$this->halfday
 						);	// user jdate(..., 1) because num_open_day need UTC dates
 			$sql .= " nb_open_day = ".$nbopenday.",";
 		}
-		
+
 		if (!empty($this->statut) && is_numeric($this->statut)) {
 			$sql .= " statut = ".$this->statut.",";
 		} else {
