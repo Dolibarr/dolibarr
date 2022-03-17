@@ -980,6 +980,8 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
+				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -1;
 			}
@@ -4166,36 +4168,40 @@ class PropaleLigne extends CommonObjectLine
 		$error = 0;
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".((int) $this->rowid);
-		dol_syslog("PropaleLigne::delete", LOG_DEBUG);
-		if ($this->db->query($sql)) {
-			// Remove extrafields
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LINEPROPAL_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
+		}
+		// End call triggers
 
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('LINEPROPAL_DELETE', $user);
-				if ($result < 0) {
-					$this->db->rollback();
-					return -1;
+		if (!$error) {
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "propaldet WHERE rowid = " . ((int) $this->rowid);
+			dol_syslog("PropaleLigne::delete", LOG_DEBUG);
+			if ($this->db->query($sql)) {
+				// Remove extrafields
+				if (!$error) {
+					$this->id = $this->rowid;
+					$result = $this->deleteExtraFields();
+					if ($result < 0) {
+						$error++;
+						dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
+					}
 				}
+			} else {
+				$this->error = $this->db->error() . " sql=" . $sql;
+				$error++;
 			}
-			// End call triggers
+		}
 
-			$this->db->commit();
-
-			return 1;
-		} else {
-			$this->error = $this->db->error()." sql=".$sql;
+		if ($error) {
 			$this->db->rollback();
 			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
 		}
 	}
 
