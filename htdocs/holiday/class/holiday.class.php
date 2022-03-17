@@ -2310,6 +2310,7 @@ class Holiday extends CommonObject
 		$this->date_valid = dol_now();
 		$this->fk_validator = $user->id;
 		$this->halfday = 0;
+		$this->nb_open_day = 1;
 		$this->fk_type = 1;
 		$this->statut = Holiday::STATUS_VALIDATED;
 	}
