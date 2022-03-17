@@ -60,6 +60,9 @@ class ProductAttribute extends CommonObject
 	 */
 	public $rang;
 
+	public $position;
+
+
 	/**
 	 * Constructor
 	 *
@@ -85,7 +88,7 @@ class ProductAttribute extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".((int) $id)." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, ref, ref_ext, label, position FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".((int) $id)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -99,7 +102,8 @@ class ProductAttribute extends CommonObject
 		$this->ref = $obj->ref;
 		$this->ref_ext = $obj->ref_ext;
 		$this->label = $obj->label;
-		$this->rang = $obj->rang;
+		$this->rang = $obj->position;
+		$this->position = $obj->position;
 
 		return 1;
 	}
@@ -113,8 +117,8 @@ class ProductAttribute extends CommonObject
 	{
 		$return = array();
 
-		$sql = 'SELECT rowid, ref, ref_ext, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getEntity('product').')';
-		$sql .= $this->db->order('rang', 'asc');
+		$sql = 'SELECT rowid, ref, ref_ext, label, position FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getEntity('product').')';
+		$sql .= $this->db->order('position', 'asc');
 		$query = $this->db->query($sql);
 		if ($query) {
 			while ($result = $this->db->fetch_object($query)) {
@@ -123,7 +127,8 @@ class ProductAttribute extends CommonObject
 				$tmp->ref = $result->ref;
 				$tmp->ref_ext = $result->ref_ext;
 				$tmp->label = $result->label;
-				$tmp->rang = $result->rang;
+				$tmp->rang = $result->position;
+				$tmp->position = $result->position;
 
 				$return[] = $tmp;
 			}

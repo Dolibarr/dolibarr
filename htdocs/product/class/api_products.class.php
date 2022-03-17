@@ -1122,7 +1122,9 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, rang, entity FROM ".$this->db->prefix()."product_attribute WHERE ref LIKE '".trim($ref)."' AND entity IN (".getEntity('product').")";
+		$ref = trim($ref);
+
+		$sql = "SELECT rowid, ref, ref_ext, label, position, entity FROM ".$this->db->prefix()."product_attribute WHERE ref LIKE '".$this->db->escape($ref)."' AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -1137,7 +1139,8 @@ class Products extends DolibarrApi
 		$attr['ref'] = $result->ref;
 		$attr['ref_ext'] = $result->ref_ext;
 		$attr['label'] = $result->label;
-		$attr['rang'] = $result->rang;
+		$attr['rang'] = $result->position;
+		$attr['position'] = $result->position;
 		$attr['entity'] = $result->entity;
 
 		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."product_attribute_combination2val as pac2v";
@@ -1169,7 +1172,9 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, rang, entity FROM ".$this->db->prefix()."product_attribute WHERE ref_ext LIKE '".trim($ref_ext)."' AND entity IN (".getEntity('product').")";
+		$ref_ext = trim($ref_ext);
+
+		$sql = "SELECT rowid, ref, ref_ext, label, position, entity FROM ".$this->db->prefix()."product_attribute WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."' AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -1184,7 +1189,8 @@ class Products extends DolibarrApi
 		$attr['ref'] = $result->ref;
 		$attr['ref_ext'] = $result->ref_ext;
 		$attr['label'] = $result->label;
-		$attr['rang'] = $result->rang;
+		$attr['rang'] = $result->position;
+		$attr['position'] = $result->position;
 		$attr['entity'] = $result->entity;
 
 		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."product_attribute_combination2val as pac2v";
