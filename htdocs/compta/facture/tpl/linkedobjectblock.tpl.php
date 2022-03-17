@@ -45,7 +45,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	}
 	print '<tr class="'.$trclass.'" data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
-	print '<td class="linkedcol-element">';
+	print '<td class="linkedcol-element tdoverflowmax100">';
 	switch ($objectlink->type) {
 		case Facture::TYPE_REPLACEMENT:
 			echo $langs->trans("InvoiceReplacement");

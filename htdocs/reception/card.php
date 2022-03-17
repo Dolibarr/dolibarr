@@ -690,7 +690,7 @@ if (empty($reshook)) {
 	$triggersendname = 'RECEPTION_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromreception';
-	$trackid = 'shi'.$object->id;
+	$trackid = 'rec'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
