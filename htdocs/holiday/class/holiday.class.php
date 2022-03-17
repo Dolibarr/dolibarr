@@ -83,7 +83,8 @@ class Holiday extends CommonObject
 	public $date_fin_gmt = ''; // Date end in GMT
 	public $halfday = ''; // 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 	public $statut = ''; // 1=draft, 2=validated, 3=approved
-
+	public $nb_open_day;	// number of open day beetween date_debut and date_fin and halfday
+	
 	/**
 	 * @var int 	ID of user that must approve. TODO: there is no date for validation (date_valid is used for approval), add one.
 	 */
@@ -270,6 +271,10 @@ class Holiday extends CommonObject
 			$this->error = "ErrorBadParameterFkType"; return -1;
 		}
 
+		$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1), 
+									$this->db->jdate($this->date_fin, 1), 0, 1, 
+									$this->halfday
+					);	// user jdate(..., 1) because num_open_day need UTC dates
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 		$sql .= "ref,";
@@ -279,6 +284,7 @@ class Holiday extends CommonObject
 		$sql .= "date_debut,";
 		$sql .= "date_fin,";
 		$sql .= "halfday,";
+		$sql .= "nb_open_day,";
 		$sql .= "statut,";
 		$sql .= "fk_validator,";
 		$sql .= "fk_type,";
@@ -292,6 +298,7 @@ class Holiday extends CommonObject
 		$sql .= " '".$this->db->idate($this->date_debut)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".((int) $this->halfday).",";
+		$sql .= " ".($nbopenday).",";
 		$sql .= " '1',";
 		$sql .= " ".((int) $this->fk_validator).",";
 		$sql .= " ".((int) $this->fk_type).",";
@@ -375,6 +382,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
 		$sql .= " cp.halfday,";
+		$sql .= " cp.nb_open_day,";
 		$sql .= " cp.statut,";
 		$sql .= " cp.fk_validator,";
 		$sql .= " cp.date_valid,";
@@ -412,6 +420,7 @@ class Holiday extends CommonObject
 				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
 				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
 				$this->halfday = $obj->halfday;
+				$this->nb_open_day = $obj->nb_open_day;
 				$this->statut = $obj->statut;
 				$this->fk_validator = $obj->fk_validator;
 				$this->date_valid = $this->db->jdate($obj->date_valid);
@@ -465,6 +474,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
 		$sql .= " cp.halfday,";
+		$sql .= " cp.nb_open_day,";
 		$sql .= " cp.statut,";
 		$sql .= " cp.fk_validator,";
 		$sql .= " cp.date_valid,";
@@ -532,6 +542,7 @@ class Holiday extends CommonObject
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
 				$tab_result[$i]['halfday'] = $obj->halfday;
+				$tab_result[$i]['nb_open_day'] = $obj->nb_open_day;
 				$tab_result[$i]['statut'] = $obj->statut;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
@@ -590,6 +601,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
 		$sql .= " cp.halfday,";
+		$sql .= " cp.nb_open_day,";
 		$sql .= " cp.statut,";
 		$sql .= " cp.fk_validator,";
 		$sql .= " cp.date_valid,";
@@ -656,6 +668,7 @@ class Holiday extends CommonObject
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
 				$tab_result[$i]['halfday'] = $obj->halfday;
+				$tab_result[$i]['nb_open_day'] = $obj->nb_open_day;
 				$tab_result[$i]['statut'] = $obj->statut;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
@@ -963,6 +976,15 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " halfday = ".$this->halfday.",";
+		if (!empty($this->date_debut) && !empty($this->date_fin)) {
+			
+			$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1), 
+										$this->db->jdate($this->date_fin, 1), 0, 1, 
+										$this->halfday
+						);	// user jdate(..., 1) because num_open_day need UTC dates
+			$sql .= " nb_open_day = ".$nbopenday.",";
+		}
+		
 		if (!empty($this->statut) && is_numeric($this->statut)) {
 			$sql .= " statut = ".$this->statut.",";
 		} else {
