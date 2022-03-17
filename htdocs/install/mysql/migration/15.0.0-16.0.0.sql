@@ -31,7 +31,7 @@
 
 
 
-ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8)     DEFAULT 0,
+ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8)     DEFAULT 0;
 
 
 -- Missing in v15 or lower
