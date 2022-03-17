@@ -268,3 +268,4 @@ OneLinePerTask=One line per task
 OneLinePerPeriod=One line per period
 RefTaskParent=Ref. Parent Task
 ProfitIsCalculatedWith=Profit is calculated using
+ErrorPROJECTLEADERRoleMissingRestoreIt=The "PROJECTLEADER" role is missing or has been de-activited, please restore in the dictionary of contact types
