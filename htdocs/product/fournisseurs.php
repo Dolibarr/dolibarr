@@ -319,9 +319,10 @@ if (empty($reshook)) {
 				if (empty($packaging)) {
 					$packaging = 1;
 				}
+				/* We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
-				}
+				}*/
 				$object->packaging = $packaging;
 
 				if (!empty($conf->multicurrency->enabled)) {

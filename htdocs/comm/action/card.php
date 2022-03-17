@@ -1491,6 +1491,10 @@ if ($id > 0) {
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
+	            		$("#actioncode").change(function() {
+                        	if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
+                        	else $("#dateend").removeClass("fieldrequired");
+                    	});
                    })';
 			print '</script>'."\n";
 		}
@@ -1535,7 +1539,11 @@ if ($id > 0) {
 		print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
 
 		// Date start - end
-		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
+		print '<tr><td class="nowrap">';
+		print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
+		print ' - ';
+		print '<span id="dateend"'.($object->type_code == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
+		print '</td><td td colspan="3">';
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		if (GETPOST("afaire") == 1) {
 			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuser') : 'tzuser');
