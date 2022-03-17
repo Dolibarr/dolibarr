@@ -349,6 +349,8 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 				dol_print_error('Value for key = '.$key.' not supported');
 				exit;
 			}
+			if ($object->date_valid==null) $object->date_valid=dol_now();
+			$sql .= " AND f.date_closing BETWEEN '".$db->idate($object->date_creation)."' AND '".$db->idate($object->date_valid)."'";
 			if ($syear && !$smonth) {
 				$sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
 			} elseif ($syear && $smonth && !$sday) {
