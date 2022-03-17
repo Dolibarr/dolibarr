@@ -1320,6 +1320,7 @@ class Form
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
+		global $hookmanager;
 
 		$out = '';
 		$num = 0;
@@ -1367,6 +1368,10 @@ class Form
 		if (!empty($excludeids)) {
 			$sql .= " AND s.rowid NOT IN (".$this->db->sanitize(join(',', $excludeids)).")";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectThirdpartyListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria
 		if ($filterkey && $filterkey != '') {
 			$sql .= " AND (";
@@ -3185,6 +3190,7 @@ class Form
 	{
 		// phpcs:enable
 		global $langs, $conf, $user;
+		global $hookmanager;
 
 		$out = '';
 		$outarray = array();
@@ -3234,6 +3240,10 @@ class Form
 		if (!empty($filtre)) {
 			$sql .= " ".$filtre;
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
