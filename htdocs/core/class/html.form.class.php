@@ -1684,6 +1684,10 @@ class Form
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND sp.statut <> 0";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY sp.lastname ASC";
 
 		dol_syslog(get_class($this)."::selectcontacts", LOG_DEBUG);
