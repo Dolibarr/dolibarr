@@ -573,7 +573,7 @@ if (empty($reshook)) {
 			// If no SQL error, we redirect to the request form
 			if (!$error) {
 				// Calculcate number of days consummed
-				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				$nbopenedday = $object->nb_open_day;
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
 				$label = $langs->transnoentitiesnoconv("Holidays").' - '.$object->ref;
@@ -792,7 +792,7 @@ if (empty($reshook)) {
 				}
 
 				// Calculcate number of days consummed
-				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				$nbopenedday = $object->nb_open_day;
 
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
@@ -1284,7 +1284,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
 				print '</td>';
 				print '<td>';
-				print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				print $object->nb_open_day;
 				print '</td>';
 				print '</tr>';
 
