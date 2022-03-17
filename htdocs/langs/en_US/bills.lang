@@ -482,6 +482,7 @@ PaymentByChequeOrderedToShort=Check payments (incl. tax) are payable to
 SendTo=sent to
 PaymentByTransferOnThisBankAccount=Payment by transfer to the following bank account
 VATIsNotUsedForInvoice=* Non applicable VAT art-293B of CGI
+VATIsNotUsedForInvoiceAsso=* Non applicable VAT art-261-7 of CGI
 LawApplicationPart1=By application of the law 80.335 of 12/05/80
 LawApplicationPart2=the goods remain the property of
 LawApplicationPart3=the seller until full payment of

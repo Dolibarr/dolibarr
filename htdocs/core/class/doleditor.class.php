@@ -326,20 +326,21 @@ class DolEditor
 
 			$out .= 'jQuery(document).ready(function() {
 						jQuery(".buttonforacesave").click(function() {
-        					console.log("We click on savefile button for component '.$this->htmlname.'");
-        					var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+        					console.log("We click on savefile button for component '.dol_escape_js($this->htmlname).'");
+        					var aceEditor = window.ace.edit("'.dol_escape_js($this->htmlname).'aceeditorid");
 							if (aceEditor) {
 								var cursorPos = aceEditor.getCursorPosition();
-								console.log(cursorPos);
+								//console.log(cursorPos);
 								if (cursorPos) {
-									jQuery("#'.$this->htmlname.'_x").val(cursorPos.column);
-									jQuery("#'.$this->htmlname.'_y").val(cursorPos.row);
+									jQuery("#'.dol_escape_js($this->htmlname).'_x").val(cursorPos.column);
+									jQuery("#'.dol_escape_js($this->htmlname).'_y").val(cursorPos.row);
 								}
 	        					//console.log(aceEditor.getSession().getValue());
 								// Inject content of editor into the original HTML field.
-								jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
-								/*if (jQuery("#'.$this->htmlname.'").html().length > 0) return true;
+								jQuery("#'.dol_escape_js($this->htmlname).'").val(aceEditor.getSession().getValue());
+								/*if (jQuery("#'.dol_escape_js($this->htmlname).'").html().length > 0) return true;
 								else return false;*/
+								return true;
 							} else {
 								console.log("Failed to retrieve js object ACE from its name");
 								return false;

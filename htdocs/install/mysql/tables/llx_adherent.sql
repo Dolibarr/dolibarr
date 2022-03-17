@@ -19,10 +19,12 @@
 --
 -- ===================================================================
 --
--- statut
--- -1 : brouillon
---  0 : resilie
---  1 : valide
+-- state / statut
+-- -2 : excluded / exclu 
+-- -1 : draft / brouillon
+--  0 : canceled / resilie
+--  1 : valid / valide
+--
 
 create table llx_adherent
 (
@@ -39,7 +41,7 @@ create table llx_adherent
   pass             varchar(50),                 -- password
   pass_crypted     varchar(128),
   fk_adherent_type integer NOT NULL,
-  morphy           varchar(3) NOT NULL,         -- personne morale / personne physique
+  morphy           varchar(3) NOT NULL,         -- EN: legal entity / natural person  FR: personne morale / personne physique
   societe          varchar(128),			          -- company name (should be same length than societe.name). No more used.
   fk_soc           integer NULL,		            -- Link to third party linked to member
   address          text,
@@ -64,20 +66,20 @@ create table llx_adherent
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),
-  birth            date,                        -- birthday
-  photo            varchar(255),                -- filename or url of photo
+  birth            date,                          -- birthday
+  photo            varchar(255),                  -- filename or url of photo
   statut           smallint NOT NULL DEFAULT 0,
-  public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
-  datefin          datetime,                    -- date de fin de validite de la cotisation
+  public           smallint NOT NULL DEFAULT 0,   -- certain champ de la fiche sont ils public ou pas ?
+  datefin          datetime,                      -- end date of validity of the contribution / date de fin de validite de la cotisation
   note_private     text DEFAULT NULL,
   note_public      text DEFAULT NULL,
   model_pdf		     varchar(255),
-  datevalid        datetime,                    -- date de validation
-  datec            datetime,                    -- date de creation
+  datevalid        datetime,                      -- date of validation
+  datec            datetime,                      -- date of creation
   tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- last modification date
-  fk_user_author   integer,                     -- can be null because member can be create by a guest
+  fk_user_author   integer,                       -- can be null because member can be create by a guest
   fk_user_mod      integer,
   fk_user_valid    integer,
-  canvas           varchar(32),                 -- type of canvas if used (null by default)
-  import_key       varchar(14)                  -- Import key
+  canvas           varchar(32),                   -- type of canvas if used (null by default)
+  import_key       varchar(14)                    -- Import key
 )ENGINE=innodb;

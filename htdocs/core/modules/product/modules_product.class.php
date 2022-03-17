@@ -43,20 +43,18 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'product';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($dbs, $type, $maxfilenamelength);
 		return $list;
 	}
 }
@@ -156,22 +154,22 @@ abstract class ModeleProductCode
 	/**
 	 *  Renvoi la liste des modeles de numérotation
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of numbers
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
 		$list = array();
 		$sql = "";
 
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $dbs->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$row = $db->fetch_row($resql);
+				$row = $dbs->fetch_row($resql);
 				$list[$row[0]] = $row[1];
 				$i++;
 			}
