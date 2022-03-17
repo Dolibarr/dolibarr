@@ -3151,7 +3151,7 @@ if ($action == 'create') {
 
 			//$resteapayer = $object->total_ttc - $totalpaye;
 			$resteapayeraffiche = $resteapayer;
-
+//var_dump($resteapayer);
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 			// Loop on each credit note or deposit amount applied
