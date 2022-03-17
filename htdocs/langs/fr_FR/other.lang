@@ -303,3 +303,5 @@ SelectTheTypeOfObjectToAnalyze=Sélectionner un objet pour en voir les statistiq
 ConfirmBtnCommonContent = Êtes-vous sûr de vouloir "%s" ?
 ConfirmBtnCommonTitle = Confirmer votre action
 CloseDialog = Fermer
+
+Autofill = Remplissage auto
