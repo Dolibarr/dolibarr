@@ -275,6 +275,14 @@ class Holiday extends CommonObject
 									$this->db->jdate($this->date_fin, 1), 0, 1,
 									$this->halfday
 					);	// user jdate(..., 1) because num_open_day need UTC dates
+
+		// num_open_day returns string in case of error
+		if (is_string($nbopenday)) {
+			$this->error = "ErrorNumOpenDay";
+			$this->errors[] = $nbopenday;
+			return -1;
+		}
+		
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 		$sql .= "ref,";
@@ -857,6 +865,18 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " halfday = ".((int) $this->halfday).",";
+		if (!empty($this->date_debut) && !empty($this->date_fin)) {
+			$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1),
+										$this->db->jdate($this->date_fin, 1), 0, 1,
+										$this->halfday
+						);	// user jdate(..., 1) because num_open_day need UTC dates
+			
+			// num_open_day returns string in case of error
+			if (is_string($nbopenday)) {
+				$error++;
+			}
+			$sql .= " nb_open_day = ".$nbopenday.",";
+		}
 		if (!empty($this->statut) && is_numeric($this->statut)) {
 			$sql .= " statut = ".((int) $this->statut).",";
 		} else {
@@ -981,6 +1001,11 @@ class Holiday extends CommonObject
 										$this->db->jdate($this->date_fin, 1), 0, 1,
 										$this->halfday
 						);	// user jdate(..., 1) because num_open_day need UTC dates
+			
+			// num_open_day returns string in case of error
+			if (is_string($nbopenday)) {
+				$error++;
+			}
 			$sql .= " nb_open_day = ".$nbopenday.",";
 		}
 
