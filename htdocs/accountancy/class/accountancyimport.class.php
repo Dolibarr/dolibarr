@@ -33,11 +33,30 @@
  */
 
 
+
 /**
  * Manage the different format accountancy import
  */
 class AccountancyImport
 {
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		global $conf;
+
+		$this->db = $db;
+	}
+
 	/**
 	 *  Clean amount
 	 *
@@ -104,6 +123,7 @@ class AccountancyImport
 
 		return 1;
 	}
+
 
 	/**
 	 *  Compute sens

@@ -198,6 +198,10 @@ if (!empty($canvas)) {
 if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
 // Add fields from hooks
