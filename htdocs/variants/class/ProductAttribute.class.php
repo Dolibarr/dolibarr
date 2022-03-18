@@ -1346,7 +1346,7 @@ class ProductAttribute extends CommonObject
 		global $form;
 		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
-		$object_rights = $user->rights->produit->lire || $user->rights->service->lire;
+		$object_rights = $user->rights->variants;
 
 		// Line in view mode
 		if ($action != 'editline' || $selected != $line->id) {

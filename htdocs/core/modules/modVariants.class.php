@@ -109,5 +109,19 @@ class modVariants extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
+		$r = 0;
+
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read objects of ProductAttribute'; // Permission label
+		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/Update objects of ProductAttribute'; // Permission label
+		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete objects of ProductAttribute'; // Permission label
+		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
 	}
 }

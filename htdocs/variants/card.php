@@ -58,10 +58,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productattributecard', 'globalcard'));
 
-$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
-$permissiontoadd = $user->rights->produit->lire || $user->rights->service->lire; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontoedit = $user->rights->produit->lire || $user->rights->service->lire; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->produit->lire || $user->rights->service->lire;
+$permissiontoread = $user->rights->variants->read;
+$permissiontoadd = $user->rights->variants->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoedit = $user->rights->variants->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->variants->delete;
 
 $error = 0;
 
