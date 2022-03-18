@@ -8772,19 +8772,15 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
 							$labeltemp = explode(',', $values[2]);
-							if (is_array($labeltemp)) {
-								$label = $langs->trans($labeltemp[0]);
-								if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
-									dol_include_once($labeltemp[2]);
-									$obj = new $labeltemp[1]($db);
-									$function = $labeltemp[3];
-									if (method_exists($obj, $function)) {
-										$nbrec = $obj->$function($object->id, $obj);
-										$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
-									}
+							$label = $langs->trans($labeltemp[0]);
+							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
+								dol_include_once($labeltemp[2]);
+								$obj = new $labeltemp[1]($db);
+								$function = $labeltemp[3];
+								if (method_exists($obj, $function)) {
+									$nbrec = $obj->$function($object->id, $obj);
+									$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
 								}
-							} else {
-								$label = $langs->trans($values[2]);
 							}
 						}
 
