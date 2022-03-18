@@ -91,6 +91,10 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15419', '626 - Régimen Simplificado de Confianza', 1);
 
 
+ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_soc (fk_type, fk_soc, date_partnership_start);
+ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_member, date_partnership_start);
+
+
 -- v16
 
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
