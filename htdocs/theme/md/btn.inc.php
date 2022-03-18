@@ -217,7 +217,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	padding-<?php echo $left; ?>: 6px;
 	font-size: 1.5em;
 	border: none;
-	box-shadow: none; webkit-box-shadow: none;
+	box-shadow: none;
+	-webkit-box-shadow: none;
 }
 
 .butAction:hover   {
