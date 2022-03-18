@@ -612,7 +612,7 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $key - 1));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, $listfields, $listvalues, $key - 1));
 									if ($res < 0) {
 										if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
 											$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
