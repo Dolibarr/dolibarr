@@ -73,10 +73,10 @@ class modVariants extends DolibarrModules
 		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
-		// Example: this->dirs = array("/mymodule/temp");
+		// Example: this->dirs = array("/variants/temp");
 		$this->dirs = array();
 
-		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
+		// Config pages. Put here list of php page, stored into variants/admin directory, to use to setup module.
 		$this->config_page_url = array('admin.php@variants');
 
 		// Dependencies
@@ -97,9 +97,9 @@ class modVariants extends DolibarrModules
 		);
 
 		// Dictionaries
-		if (!isset($conf->mymodule->enabled)) {
-			$conf->mymodule = new stdClass();
-			$conf->mymodule->enabled = 0;
+		if (!isset($conf->variants->enabled)) {
+			$conf->variants = new stdClass();
+			$conf->variants->enabled = 0;
 		}
 		$this->dictionaries = array();
 
