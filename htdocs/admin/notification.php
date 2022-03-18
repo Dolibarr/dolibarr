@@ -267,6 +267,7 @@ $constantes = array();
 foreach ($listofnotifiedevents as $notifiedevent) {
 	$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 	$elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
+	$model = $notifiedevent['elementtype'].'_send';
 
 	if ($notifiedevent['elementtype'] == 'order_supplier') {
 		$elementLabel = $langs->trans('SupplierOrder');

@@ -92,6 +92,7 @@ LineBuyPriceHT=Buy Price Amount net of tax for line
 SignPropal=Accept proposal
 RefusePropal=Refuse proposal
 Sign=Sign
+NoSign=Refuse
 PropalAlreadySigned=Proposal already accepted
 PropalAlreadyRefused=Proposal already refused
 PropalSigned=Proposal accepted

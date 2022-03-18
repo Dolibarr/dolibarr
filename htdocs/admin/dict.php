@@ -8,7 +8,7 @@
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
@@ -201,7 +201,7 @@ $tabsql = array();
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, r.code_region as state_code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
-$tabsql[4] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite FROM ".MAIN_DB_PREFIX."c_country AS c";
+$tabsql[4] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays=c.rowid and c.active=1";
@@ -669,8 +669,8 @@ if ($id == 11) {
 
 	asort($elementList);
 	$sourceList = array(
-			'internal' => $langs->trans('Internal'),
-			'external' => $langs->trans('External')
+		'internal' => $langs->trans('Internal'),
+		'external' => $langs->trans('External')
 	);
 }
 
@@ -737,12 +737,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 		}
 		if ((!GETPOSTISSET($value) || GETPOST($value) == '')
 			&& (!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto'))  // Fields that are not mandatory
-			&& ($id != 10 || ($value != 'code' && $value != 'note')) // Field code and note is not mandatory for dictionary table 10
-			)
-		) {
-			$ok = 0;
-			$fieldnamekey = $value;
-			// We take translate key of field
+				&& ($id != 10 || ($value != 'code' && $value != 'note')) // Field code and note is not mandatory for dictionary table 10
+				)
+			) {
+				$ok = 0;
+				$fieldnamekey = $value;
+				// We take translate key of field
 			if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label')) {
 				$fieldnamekey = 'Label';
 			}
@@ -792,7 +792,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 				$fieldnamekey = 'UseByDefault';
 			}
 
-			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 		}
 	}
 	// Other checks
@@ -1093,6 +1093,45 @@ if ($action == 'disable_favorite') {
 	}
 }
 
+// Is in EEC - Activate
+if ($action == 'activate_eec') {
+	if ($tabrowid[$id]) {
+		$rowidcol = $tabrowid[$id];
+	} else {
+		$rowidcol = "rowid";
+	}
+
+	if ($rowid) {
+		$sql = "UPDATE ".$tabname[$id]." SET eec = 1 WHERE ".$rowidcol."='".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+	} elseif ($code) {
+		$sql = "UPDATE ".$tabname[$id]." SET eec = 1 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+	}
+
+	$result = $db->query($sql);
+	if (!$result) {
+		dol_print_error($db);
+	}
+}
+
+// Is in EEC - Disable
+if ($action == 'disable_eec') {
+	if ($tabrowid[$id]) {
+		$rowidcol = $tabrowid[$id];
+	} else {
+		$rowidcol = "rowid";
+	}
+
+	if ($rowid) {
+		$sql = "UPDATE ".$tabname[$id]." SET eec = 0 WHERE ".$rowidcol."='".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+	} elseif ($code) {
+		$sql = "UPDATE ".$tabname[$id]." SET eec = 0 WHERE code='".dol_escape_htmltag($code)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+	}
+
+	$result = $db->query($sql);
+	if (!$result) {
+		dol_print_error($db);
+	}
+}
 
 /*
  * View
@@ -1452,6 +1491,7 @@ if ($id) {
 
 		if ($id == 4) {
 			$tdsoffields .= '<td></td>';
+			$tdsoffields .= '<td></td>';
 		}
 		$tdsoffields .= '<td>';
 		$tdsoffields .= '<input type="hidden" name="id" value="'.$id.'">';
@@ -1495,6 +1535,7 @@ if ($id) {
 		}
 
 		if ($id == 4) {
+			print '<td></td>';
 			print '<td></td>';
 		}
 		print '<td colspan="3" class="center">';
@@ -1569,6 +1610,7 @@ if ($id) {
 		}
 		if ($id == 4) {
 			print '<td></td>';
+			print '<td></td>';
 		}
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre right" colspan="2">';
@@ -1592,10 +1634,10 @@ if ($id) {
 
 			// Determines the name of the field in relation to the possible names
 			// in data dictionaries
-			$showfield = 1; // By defaut
+			$showfield = 1; // By default
 			$cssprefix = '';
 			$sortable = 1;
-			$valuetoshow = ucfirst($value); // By defaut
+			$valuetoshow = ucfirst($value); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 
 			// Special cases
@@ -1794,8 +1836,9 @@ if ($id) {
 				print getTitleFieldOfList($newvaluetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $value : ''), ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $cssprefix);
 			}
 		}
-		// Favorite - Only activated on country dictionary
+		// Favorite & EEC - Only activated on country dictionary
 		if ($id == 4) {
+			print getTitleFieldOfList($langs->trans("InEEC"), 0, $_SERVER["PHP_SELF"], "eec", ($page ? 'page='.$page.'&' : ''), $param, 'align="center"', $sortfield, $sortorder, '', 0, $langs->trans("CountryIsInEEC"));
 			print getTitleFieldOfList($langs->trans("Favorite"), 0, $_SERVER["PHP_SELF"], "favorite", ($page ? 'page='.$page.'&' : ''), $param, 'align="center"', $sortfield, $sortorder);
 		}
 
@@ -2089,10 +2132,19 @@ if ($id) {
 					}
 					$url .= '&';
 
-					// Favorite
+					// Favorite & EEC
 					// Only activated on country dictionary
 					if ($id == 4) {
 						print '<td class="nowrap center">';
+						// Is in EEC
+						if ($iserasable) {
+							print '<a class="reposition" href="'.$url.'action='.$acts[$obj->eec].'_eec&token='.newToken().'">'.$actl[$obj->eec].'</a>';
+						} else {
+							print $langs->trans("AlwaysActive");
+						}
+						print '</td>';
+						print '<td class="nowrap center">';
+						// Favorite
 						if ($iserasable) {
 							print '<a class="reposition" href="'.$url.'action='.$acts[$obj->favorite].'_favorite&token='.newToken().'">'.$actl[$obj->favorite].'</a>';
 						} else {
@@ -2359,10 +2411,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		} elseif ($value == 'unit') {
 			print '<td>';
 			$units = array(
-					'mm' => $langs->trans('SizeUnitmm'),
-					'cm' => $langs->trans('SizeUnitcm'),
-					'point' => $langs->trans('SizeUnitpoint'),
-					'inch' => $langs->trans('SizeUnitinch')
+				'mm' => $langs->trans('SizeUnitmm'),
+				'cm' => $langs->trans('SizeUnitcm'),
+				'point' => $langs->trans('SizeUnitpoint'),
+				'inch' => $langs->trans('SizeUnitinch')
 			);
 			print $form->selectarray('unit', $units, (!empty($obj->{$value}) ? $obj->{$value}:''), 0, 0, 0);
 			print '</td>';

@@ -40,6 +40,24 @@
 class AccountancyImport
 {
 	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		global $conf;
+
+		$this->db = $db;
+	}
+
+	/**
 	 *  Compute amount
 	 *
 	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...

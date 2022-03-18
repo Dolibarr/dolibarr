@@ -266,6 +266,11 @@ if ($id > 0 || !empty($ref)) {
 
 		print dol_get_fiche_end();
 
+
+		print '<div class="fichecenter">';
+		print '<div class="underbanner clearboth"></div>';
+		print '</div>';
+
 		print '<br>';
 
 		$prodsfather = $object->getFather(); // Parent Products
