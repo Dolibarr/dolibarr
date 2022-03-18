@@ -79,6 +79,9 @@ class box_contacts extends ModeleBoxes
 
 		$this->max = $max;
 
+		$contactstatic = new Contact($this->db);
+		$societestatic = new Societe($this->db);
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
 
 		if ($user->rights->societe->lire && $user->rights->societe->contact->lire) {
@@ -125,9 +128,6 @@ class box_contacts extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-
-				$contactstatic = new Contact($this->db);
-				$societestatic = new Societe($this->db);
 
 				$line = 0;
 				while ($line < $num) {
