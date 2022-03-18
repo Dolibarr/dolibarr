@@ -507,7 +507,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function deleteContact($id, $contactid, $type)
 	{
@@ -649,7 +649,7 @@ class Invoices extends DolibarrApi
 
 		$result = $this->invoice->delete(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting invoice');
 		}
 
 		return array(
@@ -768,7 +768,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 */
 	public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
@@ -817,7 +817,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 */
 	public function settodraft($id, $idwarehouse = -1)
@@ -920,7 +920,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function settopaid($id, $close_code = '', $close_note = '')
 	{
@@ -970,7 +970,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function settounpaid($id)
 	{
@@ -1057,7 +1057,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function markAsCreditAvailable($id)
 	{

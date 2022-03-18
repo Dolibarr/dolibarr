@@ -742,7 +742,7 @@ class Products extends DolibarrApi
 	 * @param  	int		    $fk_barcode_type     	        Barcode type
 	 * @return int
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url POST {id}/purchase_prices
@@ -1158,7 +1158,7 @@ class Products extends DolibarrApi
 	 * @param  string $ref_ext External reference of Attribute
 	 * @return array
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url GET attributes/ref_ext/{ref_ext}
@@ -1206,7 +1206,7 @@ class Products extends DolibarrApi
 	 * @param  string $ref_ext   Reference of Attribute
 	 * @return int
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url POST attributes
@@ -1283,7 +1283,7 @@ class Products extends DolibarrApi
 	 * @param  int $id 	ID of Attribute
 	 * @return int		Result of deletion
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url DELETE attributes/{id}
@@ -1311,7 +1311,7 @@ class Products extends DolibarrApi
 	 * @param  int $id ID of Attribute value
 	 * @return array
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url GET attributes/values/{id}
@@ -1352,7 +1352,7 @@ class Products extends DolibarrApi
 	 * @param  string $ref Ref of Attribute value
 	 * @return array
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url GET attributes/{id}/values/ref/{ref}
@@ -1439,7 +1439,7 @@ class Products extends DolibarrApi
 	 * @return array
 	 *
 	 * @throws RestException 401
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 *
 	 * @url GET attributes/{id}/values
 	 */
@@ -1511,7 +1511,7 @@ class Products extends DolibarrApi
 	 * @param  string $value Value of Attribute value
 	 * @return int
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url POST attributes/{id}/values
@@ -1545,7 +1545,7 @@ class Products extends DolibarrApi
 	 * @return array
 	 *
 	 * @throws RestException 401
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 *
 	 * @url PUT attributes/values/{id}
 	 */
@@ -1590,7 +1590,7 @@ class Products extends DolibarrApi
 	 * @param  int $id ID of Attribute value
 	 * @return int
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url DELETE attributes/values/{id}
@@ -1617,7 +1617,7 @@ class Products extends DolibarrApi
 	 * @param  int  $includestock   Default value 0. If parameter is set to 1 the response will contain stock data of each variant
 	 * @return array
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url GET {id}/variants
@@ -1653,7 +1653,7 @@ class Products extends DolibarrApi
 	 * @param  string $ref Ref of Product
 	 * @return array
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url GET ref/{ref}/variants
@@ -1695,7 +1695,7 @@ class Products extends DolibarrApi
 	 * @param  string $ref_ext External reference of variant
 	 * @return int
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 *
@@ -1752,7 +1752,7 @@ class Products extends DolibarrApi
 	 * @param  array  $features                 List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
 	 * @return int
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 *
@@ -1807,7 +1807,7 @@ class Products extends DolibarrApi
 	 * @param  array $request_data Datas
 	 * @return int
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url PUT variants/{id}
@@ -1841,7 +1841,7 @@ class Products extends DolibarrApi
 	 * @param  int $id 	ID of Variant
 	 * @return int		Result of deletion
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 *
 	 * @url DELETE variants/{id}
@@ -1869,7 +1869,7 @@ class Products extends DolibarrApi
 	 * @param  int $selected_warehouse_id ID of warehouse
 	 * @return int
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 *
