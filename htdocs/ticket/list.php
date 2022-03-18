@@ -324,8 +324,6 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formTicket = new FormTicket($db);
 
-$now = dol_now();
-
 $user_temp = new User($db);
 $socstatic = new Societe($db);
 
@@ -925,6 +923,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$now = dol_now();
 $cacheofoutputfield = array();
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
@@ -940,6 +939,7 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	$langs->load("ticket");
+	$object->status = $object->fk_statut; // fk_statut is deprecated
 
 	// Show here line of result
 	print '<tr class="oddeven">';
@@ -1019,6 +1019,26 @@ while ($i < min($num, $limit)) {
 				}
 			} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
+			} elseif ($key == 'ref') {
+				print $object->showOutputField($val, $key, $obj->$key, '');
+
+				// display a warning on untreated tickets
+				$is_open = ($object->status != Ticket::STATUS_CLOSED && $object->status != Ticket::STATUS_CANCELED );
+				$should_show_warning = (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) || !empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE));
+				if ($is_open && $should_show_warning) {
+					$date_last_msg_sent = (int) $db->jdate($object->date_last_msg_sent);
+					$hour_diff = ($now - $date_last_msg_sent) / 3600 ;
+
+					if (!empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE && $date_last_msg_sent == 0)) {
+						$creation_date =  (int) $db->jdate($object->datec);
+						$hour_diff_creation = ($now - $creation_date) / 3600 ;
+						if ($hour_diff_creation > $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE) {
+							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE), 'warning', 'style="color: red;"', false, 0, 0, '', '');
+						}
+					} elseif (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) && $hour_diff > $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) {
+						print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE), 'warning');
+					}
+				}
 			} else {	// Example: key=fk_soc, obj->key=123 val=array('type'=>'integer', ...
 				$tmp = explode(':', $val['type']);
 				if ($tmp[0] == 'integer' && !empty($tmp[1]) && class_exists($tmp[1])) {

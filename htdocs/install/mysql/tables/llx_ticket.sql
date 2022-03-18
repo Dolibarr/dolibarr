@@ -36,6 +36,7 @@ CREATE TABLE llx_ticket
 	severity_code varchar(32),
 	datec datetime,
 	date_read datetime,
+	date_last_msg_sent datetime,
 	date_close datetime,
 	notify_tiers_at_create tinyint,
 	email_msgid varchar(255),				-- if ticket is created by email collector, we store here MSG ID

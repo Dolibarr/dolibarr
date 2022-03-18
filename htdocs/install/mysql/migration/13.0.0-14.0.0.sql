@@ -649,3 +649,6 @@ ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode 
 
 ALTER TABLE llx_c_socialnetworks DROP INDEX idx_c_socialnetworks_code;
 ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_entity (code, entity);
+
+-- Easya 2022.5 -> 2022.6
+ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
