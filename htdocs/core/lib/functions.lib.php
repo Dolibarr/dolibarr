@@ -8778,8 +8778,10 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 									dol_include_once($labeltemp[2]);
 									$obj = new $labeltemp[1]($db);
 									$function = $labeltemp[3];
-									$nbrec = $obj->$function($object->id, $obj);
-									$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+									if (method_exists($obj, $function)) {
+										$nbrec = $obj->$function($object->id, $obj);
+										$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+									}
 								}
 							} else {
 								$label = $langs->trans($values[2]);
