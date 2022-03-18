@@ -1070,7 +1070,7 @@ if ($id) {
 		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 		} else {
-			print dolGetButtonAction($langs->trans('DisabledBecausePayments'),$langs->trans('Delete'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
+			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
 		}
 	}
 	print "</div>";
