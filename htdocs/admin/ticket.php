@@ -187,7 +187,9 @@ if ($action == 'setvarother') {
 	if (!($res > 0)) {
 		$error++;
 	}
+}
 
+if ($action == 'setvarworkflowother') {
 	$param_delay_first_response = GETPOST('delay_first_response', 'int');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
@@ -532,7 +534,7 @@ if (!$conf->use_javascript_ajax) {
 
 // Define wanted maximum time elapsed before answers to tickets
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-print '<input type="hidden" name="action" value="setvarother">';
+print '<input type="hidden" name="action" value="setvarworkflowother">';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";
