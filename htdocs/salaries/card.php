@@ -1053,7 +1053,7 @@ if ($id) {
 
 		// Emit payment
 		if ($object->paye == 0 && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $user->rights->salaries->write) {
-			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php'.'?action=create&token='.newToken().'&id='.$object->id, '');
+			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php?action=create&token='.newToken().'&id='. $object->id, '');
 		}
 
 		// Classify 'paid'
