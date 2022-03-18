@@ -457,9 +457,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 			// Automatically create intervention
-			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION) && !empty($object->fk_soc)) {
+			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
 				$fichinter = new Fichinter($this->db);
-				$fichinter->socid = $object->fk_soc;
+				$fichinter->socid = (int) $object->fk_soc;
 				$fichinter->fk_project = $projectid;
 				$fichinter->fk_contrat = (int) $object->fk_contract;
 				$fichinter->author = $user->id;
