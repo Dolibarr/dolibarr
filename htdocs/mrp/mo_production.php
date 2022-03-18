@@ -808,7 +808,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$tmpproduct->fetch($line->fk_product);
 					$linecost = price2num($tmpproduct->pmp, 'MT');
 
-					if ($line->origin_type == 'free' && $object->qty > 0) {
+					if ($object->qty > 0) {
 						// add free consume line cost to bomcost
 						$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 						if (empty($costprice)) {
@@ -822,12 +822,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');
 						$bomcost += $linecost;
-					} elseif ($line->origin_id > 0 && $line->origin_type == 'bom' && $object->qty > 0) {
-						foreach ($bom->lines as $bomline) {
-							if ($bomline->id == $line->origin_id) {
-								$linecost = price2num(($line->qty * $bomline->unit_cost) / $object->qty, 'MT');
-							}
-						}
 					}
 
 					$bomcost = price2num($bomcost, 'MU');
