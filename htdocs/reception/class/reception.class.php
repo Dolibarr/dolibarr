@@ -236,7 +236,6 @@ class Reception extends CommonObject
 
 		$this->user = $user;
 
-
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."reception (";
@@ -273,12 +272,12 @@ class Reception extends CommonObject
 		$sql .= ", ".((int) $this->fk_project);
 		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql .= ", ".((double) $this->weight);
-		$sql .= ", ".((double) $this->sizeS); // TODO Should use this->trueDepth
-		$sql .= ", ".((double) $this->sizeW); // TODO Should use this->trueWidth
-		$sql .= ", ".((double) $this->sizeH); // TODO Should use this->trueHeight
-		$sql .= ", ".((double) $this->weight_units);
-		$sql .= ", ".((double) $this->size_units);
+		$sql .= ", ".(is_null($this->weight) ? "NULL" : ((double) $this->weight));
+		$sql .= ", ".(is_null($this->sizeS) ? "NULL" : ((double) $this->sizeS)); // TODO Should use this->trueDepth
+		$sql .= ", ".(is_null($this->sizeW) ? "NULL" : ((double) $this->sizeW)); // TODO Should use this->trueWidth
+		$sql .= ", ".(is_null($this->sizeH) ? "NULL" : ((double) $this->sizeH)); // TODO Should use this->trueHeight
+		$sql .= ", ".(is_null($this->weight_units) ? "NULL" : ((double) $this->weight_units));
+		$sql .= ", ".(is_null($this->size_units) ? "NULL" : ((double) $this->size_units));
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
@@ -835,8 +834,14 @@ class Reception extends CommonObject
 		$line->qty = $qty;
 
 		$supplierorderline = new CommandeFournisseurLigne($this->db);
-		$supplierorderline->fetch($id);
+		$result = $supplierorderline->fetch($id);
+		if ($result <= 0) {
+			$this->error = $supplierorderline->error;
+			$this->errors = $supplierorderline->errors;
+			return -1;
+		}
 
+		$fk_product = 0;
 		if (!empty($conf->stock->enabled) && !empty($supplierorderline->fk_product)) {
 			$fk_product = $supplierorderline->fk_product;
 
@@ -1164,6 +1169,7 @@ class Reception extends CommonObject
 				$sql_commfourndet = 'SELECT qty, ref,  label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent';
 				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
 				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
+				$sql_commfourndet .= ' ORDER BY rang';
 				$resql_commfourndet = $this->db->query($sql_commfourndet);
 				if (!empty($resql_commfourndet)) {
 					$obj = $this->db->fetch_object($resql_commfourndet);

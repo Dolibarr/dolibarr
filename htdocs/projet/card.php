@@ -632,11 +632,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 
 	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOSTISSET('public') ? GETPOST('public') : $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('public', $array, GETPOST('public'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	} else {
-		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTISSET('public') ? GETPOST('public') : $object->public).'">';
+		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
 
-		if ( (GETPOSTISSET('public') ? GETPOST('public') : $object->public)==0) {
+		if (GETPOST('public') == 0) {
 			print $langs->trans("PrivateProject");
 		} else {
 			print $langs->trans("SharedProject");

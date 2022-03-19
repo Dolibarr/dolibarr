@@ -347,7 +347,7 @@ UseProductFournDesc=Add a feature to define the product description defined by t
 ProductSupplierDescription=Vendor description for the product
 UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
 PackagingForThisProduct=Packaging
-PackagingForThisProductDesc=You will automaticaly buy a multiple of this quantity. Can't be lower than the minimum purchase quantity
+PackagingForThisProductDesc=You will automaticaly purchase a multiple of this quantity.
 QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
 
 #Attributes
@@ -413,3 +413,4 @@ SwitchOnSaleStatus=Switch on sale status
 SwitchOnPurchaseStatus=Switch on purchase status
 StockMouvementExtraFields= Extra Fields (stock mouvement)
 InventoryExtraFields= Extra Fields (inventory)
+ScanOrTypeOrCopyPasteYourBarCodes=Scan or type or copy/paste your barcodes
