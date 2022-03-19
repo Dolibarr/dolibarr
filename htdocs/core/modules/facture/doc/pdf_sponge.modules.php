@@ -460,7 +460,7 @@ class pdf_sponge extends ModelePDFFactures
 				}
 
 				$tab_top += $extra_under_address_shift;
-				$tab_top_newpage += $extra_under_address_shift;
+				$tab_top_newpage += 0;
 
 
 				// Define heigth of table for lines (for first page)
