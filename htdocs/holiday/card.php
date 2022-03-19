@@ -263,6 +263,7 @@ if (empty($reshook)) {
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
 				$object->halfday = $halfday;
+				$object->nb_open_day = $nbopenedday;
 
 				$result = $object->create($user);
 				if ($result <= 0) {
@@ -384,6 +385,7 @@ if (empty($reshook)) {
 				$object->date_fin = $date_fin;
 				$object->fk_validator = $approverid;
 				$object->halfday = $halfday;
+				$object->nb_open_day = $nbopenedday;
 
 				// Update
 				$verif = $object->update($user);
