@@ -369,10 +369,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* The slow method does not consume memory on mysql (not tested on pgsql) */
 	/*$resql = $db->query($sql, 0, 'auto', 1);
 	while ($db->fetch_object($resql)) {
-		$nbtotalofrecords++;
-	}*/
+		if (empty($nbtotalofrecords)) {
+			$nbtotalofrecords = 1;    // We can't make +1 because init value is ''
+		 } else {
+			 $nbtotalofrecords++;
+		 }
+	 }*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),]+FROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;
