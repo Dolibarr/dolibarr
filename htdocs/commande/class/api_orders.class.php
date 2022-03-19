@@ -574,7 +574,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function deleteContact($id, $contactid, $type)
 	{
@@ -704,7 +704,7 @@ class Orders extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @return  array
 	 */
@@ -974,7 +974,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function getOrderShipments($id)
 	{
@@ -1030,7 +1030,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function createOrderShipment($id, $warehouse_id)
 	{

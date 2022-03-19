@@ -351,7 +351,7 @@ if ($search_dfyear > 0 && $search_op2df) {
 	}
 }
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	//$result = $db->query($sql);
 	//$nbtotalofrecords = $db->num_rows($result);

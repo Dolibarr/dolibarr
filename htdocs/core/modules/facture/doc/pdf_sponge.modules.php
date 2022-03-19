@@ -540,7 +540,7 @@ class pdf_sponge extends ModelePDFFactures
 								$pdf->useTemplate($tplidx);
 							}
 							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-								$this->_pagehead($pdf, $object, 0, $outputlangs);
+								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 							}
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
 							$pdf->setTopMargin($tab_top_newpage);
@@ -598,7 +598,7 @@ class pdf_sponge extends ModelePDFFactures
 							$pdf->useTemplate($tplidx);
 						}
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
+							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
@@ -620,7 +620,7 @@ class pdf_sponge extends ModelePDFFactures
 								$pdf->useTemplate($tplidx);
 							}
 							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-								$this->_pagehead($pdf, $object, 0, $outputlangs);
+								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 							}
 
 							$posyafter = $tab_top_newpage;
@@ -922,7 +922,7 @@ class pdf_sponge extends ModelePDFFactures
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
+							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 					}
 
@@ -940,7 +940,7 @@ class pdf_sponge extends ModelePDFFactures
 						}
 						$pagenb++;
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
+							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 					}
 				}
@@ -1026,7 +1026,7 @@ class pdf_sponge extends ModelePDFFactures
 		$tab3_width = 80;
 		$tab3_height = 4;
 		if ($this->page_largeur < 210) { // To work with US executive format
-			$tab3_posx -= 20;
+			$tab3_posx -= 15;
 		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1356,7 +1356,8 @@ class pdf_sponge extends ModelePDFFactures
 		$col1x = 120;
 		$col2x = 170;
 		if ($this->page_largeur < 210) { // To work with US executive format
-			$col2x -= 20;
+			$col1x -= 15;
+			$col2x -= 10;
 		}
 		$largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
