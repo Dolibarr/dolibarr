@@ -271,18 +271,6 @@ class Holiday extends CommonObject
 			$this->error = "ErrorBadParameterFkType"; return -1;
 		}
 
-		$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1),
-									$this->db->jdate($this->date_fin, 1), 0, 1,
-									$this->halfday
-					);	// user jdate(..., 1) because num_open_day need UTC dates
-
-		// num_open_day returns string in case of error
-		if (is_string($nbopenday)) {
-			$this->error = "ErrorNumOpenDay";
-			$this->errors[] = $nbopenday;
-			return -1;
-		}
-
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 		$sql .= "ref,";
@@ -306,7 +294,7 @@ class Holiday extends CommonObject
 		$sql .= " '".$this->db->idate($this->date_debut)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".((int) $this->halfday).",";
-		$sql .= " ".($nbopenday).",";
+		$sql .= " ".($this->num_open_day).",";
 		$sql .= " '1',";
 		$sql .= " ".((int) $this->fk_validator).",";
 		$sql .= " ".((int) $this->fk_type).",";
@@ -866,16 +854,7 @@ class Holiday extends CommonObject
 		}
 		$sql .= " halfday = ".((int) $this->halfday).",";
 		if (!empty($this->date_debut) && !empty($this->date_fin)) {
-			$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1),
-										$this->db->jdate($this->date_fin, 1), 0, 1,
-										$this->halfday
-						);	// user jdate(..., 1) because num_open_day need UTC dates
-
-			// num_open_day returns string in case of error
-			if (is_string($nbopenday)) {
-				$error++;
-			}
-			$sql .= " nb_open_day = ".$nbopenday.",";
+			$sql .= " nb_open_day = ".$this->nb_open_day.",";
 		}
 		if (!empty($this->statut) && is_numeric($this->statut)) {
 			$sql .= " statut = ".((int) $this->statut).",";
@@ -997,16 +976,7 @@ class Holiday extends CommonObject
 		}
 		$sql .= " halfday = ".$this->halfday.",";
 		if (!empty($this->date_debut) && !empty($this->date_fin)) {
-			$nbopenday = num_open_day($this->db->jdate($this->date_debut, 1),
-										$this->db->jdate($this->date_fin, 1), 0, 1,
-										$this->halfday
-						);	// user jdate(..., 1) because num_open_day need UTC dates
-
-			// num_open_day returns string in case of error
-			if (is_string($nbopenday)) {
-				$error++;
-			}
-			$sql .= " nb_open_day = ".$nbopenday.",";
+			$sql .= " nb_open_day = ".$this->nb_open_day.",";
 		}
 
 		if (!empty($this->statut) && is_numeric($this->statut)) {
