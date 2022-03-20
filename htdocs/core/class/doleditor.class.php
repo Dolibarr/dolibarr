@@ -193,10 +193,10 @@ class DolEditor
 									removePlugins : \''.$pluginstodisable.'\',
             						readOnly : '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
-            						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',
-            						extraAllowedContent : \'a[target];div{float,display}\',						/* Add the style float and display into div to default other allowed tags */
-									disallowedContent : '.($disallowAnyContent ? '\'\'' : '\'\'').',
-            						fullPage : '.($fullpage ? 'true' : 'false').',
+            						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
+            						extraAllowedContent : \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
+									disallowedContent : '.($disallowAnyContent ? '\'\'' : '\'\'').',	/* Tags that are not allowed */
+            						fullPage : '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
