@@ -2482,7 +2482,7 @@ if ($action == 'create') {
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send) {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 					} else {
-						print dolGetButtonAction('',$langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 					}
 				}
 			}
