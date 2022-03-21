@@ -383,10 +383,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 
 				// Define substitution array
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);	// Set tags __...__
 				$array_object_from_properties = $this->get_substitutionarray_each_var_object($object, $outputlangs);
-				$array_objet = $this->get_substitutionarray_object($object, $outputlangs);
-				$array_user = $this->get_substitutionarray_user($user, $outputlangs);
+				$array_objet = $this->get_substitutionarray_object($object, $outputlangs);			// Set tags object_...
+				$array_user = $this->get_substitutionarray_user($user, $outputlangs);				// Set tags myuser_...
 				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_propal = is_object($propal_object) ? $this->get_substitutionarray_object($propal_object, $outputlangs, 'propal') : array();
