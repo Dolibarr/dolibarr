@@ -556,9 +556,26 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 			$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
 		}
 	}
+
+	// Add INNER JOIN for all parent tables
+	//var_dump($arrayofxaxis); var_dump($search_xaxis);
+	$listoftablesalreadyadded = array($object->table_element => $object->table_element);
+	foreach ($search_xaxis as $key => $val) {
+		if (!empty($arrayofxaxis[$val])) {
+			$tmpval = explode('.', $val);
+			//var_dump($arrayofxaxis[$val]['table']);
+			if (! in_array($arrayofxaxis[$val]['table'], $listoftablesalreadyadded)) {	// We do not add join for main table already added
+				$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$arrayofxaxis[$val]['table'].' as '.$tmpval[0];
+				$listoftablesalreadyadded[$arrayofxaxis[$val]['table']] = $arrayofxaxis[$val]['table'];
+			}
+		} else {
+			dol_print_error($db, 'Found an key into search_xaxis not found into arrayofxaxis');
+		}
+	}
+
 	$sql .= ' WHERE 1 = 1';
 	if ($object->ismultientitymanaged == 1) {
-		$sql .= ' AND entity IN ('.getEntity($object->element).')';
+		$sql .= ' AND t.entity IN ('.getEntity($object->element).')';
 	}
 	// Add the where here
 	$sqlfilters = $search_component_params_hidden;
@@ -914,7 +931,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
  * Fill arrayofmesures for an object
  *
  * @param 	mixed		$object			Any object
- * @param	string		$tablealias		Alias of table
+ * @param	string		$tablealias		Alias of table ('t' for example)
  * @param	string		$labelofobject	Label of object
  * @param	array		$arrayofxaxis	Array of xaxis already filled
  * @param	int			$level 			Level
@@ -964,14 +981,31 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 				continue;
 			}
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$arrayofxaxis[$tablealias.'.'.$key.'-year'] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => ($val['position']+($count * 100000)).'.1');
-				$arrayofxaxis[$tablealias.'.'.$key.'-month'] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => ($val['position']+($count * 100000)).'.2');
-				$arrayofxaxis[$tablealias.'.'.$key.'-day'] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => ($val['position']+($count * 100000)).'.3');
+				$arrayofxaxis[$tablealias.'.'.$key.'-year'] = array(
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
+					'position' => ($val['position']+($count * 100000)).'.1',
+					'table' => $object->table_element
+				);
+				$arrayofxaxis[$tablealias.'.'.$key.'-month'] = array(
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>',
+					'position' => ($val['position']+($count * 100000)).'.2',
+					'table' => $object->table_element
+				);
+				$arrayofxaxis[$tablealias.'.'.$key.'-day'] = array(
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>',
+					'position' => ($val['position']+($count * 100000)).'.3',
+					'table' => $object->table_element
+				);
 			} else {
-				$arrayofxaxis[$tablealias.'.'.$key] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']), 'position' => ($val['position']+($count * 100000)));
+				$arrayofxaxis[$tablealias.'.'.$key] = array(
+					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
+					'position' => ($val['position']+($count * 100000)),
+					'table' => $object->table_element
+				);
 			}
 		}
 	}
+
 	// Add extrafields to X-Axis
 	if ($object->isextrafieldmanaged) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -981,9 +1015,14 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
 				continue;
 			}
-			$arrayofxaxis[$tablealias.'e.'.$key] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000));
+			$arrayofxaxis[$tablealias.'e.'.$key] = array(
+				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]),
+				'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000),
+				'table' => $object->table_element
+			);
 		}
 	}
+
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
@@ -993,10 +1032,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 				dol_include_once($tmptype[2]);
 				if (class_exists($newobject)) {
 					$tmpobject = new $newobject($db);
-					/*var_dump($val['label']);
-					 var_dump($tmptype);
-					 var_dump($arrayofmesures);
-					 var_dump('t-'.$key);*/
+					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
 					$arrayofxaxis = fillArrayOfXAxis($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofxaxis, $level + 1, $count);
 				} else {
