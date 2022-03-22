@@ -162,7 +162,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => $delayIcon.'<span class="classfortooltip" title="'.$langs->trans('DateDeliveryPlanned').'"><i class="fa fa-dolly" ></i> '.dol_print_date($delivery_date, 'day', 'tzuserrel').'</span>',
+						'text' => $delayIcon.'<span class="classfortooltip" title="'.$langs->trans('DateDeliveryPlanned').'"><i class="fa fa-flip-dolly" ></i> '.dol_print_date($delivery_date, 'day', 'tzuserrel').'</span>',
 						'asis' => 1
 					);
 

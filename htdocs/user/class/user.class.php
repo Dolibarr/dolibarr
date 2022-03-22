@@ -970,7 +970,9 @@ class User extends CommonObject
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
 			$sql .= " AND r.entity IN (0,".(!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
 		} else {
-			$sql .= " AND ur.entity = ".((int) $conf->entity);
+			// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
+			// So we must include the filter on r.entity on both r and ur.
+			$sql .= " AND r.entity = ".((int) $conf->entity)." AND ur.entity = ".((int) $conf->entity);
 		}
 		$sql .= " AND ur.fk_user= ".((int) $this->id);
 		$sql .= " AND r.perms IS NOT NULL";

@@ -1947,7 +1947,7 @@ if ($action == 'create') {
 
 		// We verify whether the object is provisionally numbering
 		$ref = substr($object->ref, 1, 4);
-		if ($ref == 'PROV') {
+		if ($ref == 'PROV' || $ref == '') {
 			$numref = $object->getNextNumRef($soc);
 			if (empty($numref)) {
 				$error++;

@@ -236,7 +236,6 @@ class Reception extends CommonObject
 
 		$this->user = $user;
 
-
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."reception (";
@@ -273,12 +272,12 @@ class Reception extends CommonObject
 		$sql .= ", ".$this->fk_project;
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql .= ", ".$this->weight;
-		$sql .= ", ".$this->sizeS; // TODO Should use this->trueDepth
-		$sql .= ", ".$this->sizeW; // TODO Should use this->trueWidth
-		$sql .= ", ".$this->sizeH; // TODO Should use this->trueHeight
-		$sql .= ", ".$this->weight_units;
-		$sql .= ", ".$this->size_units;
+		$sql .= ", ".(is_null($this->weight) ? "NULL" : ((double) $this->weight));
+		$sql .= ", ".(is_null($this->sizeS) ? "NULL" : ((double) $this->sizeS)); // TODO Should use this->trueDepth
+		$sql .= ", ".(is_null($this->sizeW) ? "NULL" : ((double) $this->sizeW)); // TODO Should use this->trueWidth
+		$sql .= ", ".(is_null($this->sizeH) ? "NULL" : ((double) $this->sizeH)); // TODO Should use this->trueHeight
+		$sql .= ", ".(is_null($this->weight_units) ? "NULL" : ((double) $this->weight_units));
+		$sql .= ", ".(is_null($this->size_units) ? "NULL" : ((double) $this->size_units));
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
@@ -825,8 +824,14 @@ class Reception extends CommonObject
 		$line->qty = $qty;
 
 		$supplierorderline = new CommandeFournisseurLigne($this->db);
-		$supplierorderline->fetch($id);
+		$result = $supplierorderline->fetch($id);
+		if ($result <= 0) {
+			$this->error = $supplierorderline->error;
+			$this->errors = $supplierorderline->errors;
+			return -1;
+		}
 
+		$fk_product = 0;
 		if (!empty($conf->stock->enabled) && !empty($supplierorderline->fk_product)) {
 			$fk_product = $supplierorderline->fk_product;
 

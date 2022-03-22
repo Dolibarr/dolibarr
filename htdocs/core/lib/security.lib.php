@@ -603,7 +603,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 	foreach ($featuresarray as $feature) {
 		$sql = '';
 
-		//var_dump($feature);
+		//var_dump($feature);exit;
 
 		// For backward compatibility
 		if ($feature == 'member') {

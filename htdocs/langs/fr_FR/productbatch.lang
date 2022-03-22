@@ -42,3 +42,4 @@ HideLots=Masquer les lots
 #Traceability - qc status
 OutOfOrder=Hors d'usage
 InWorkingOrder=En état de marche
+CantMoveNonExistantSerial=Erreur : Vous avez demandé un mouvement sur un numéro de série qui n’existe plus. Peut-être avez-vous requis le même numéro de série plusieurs fois dans une même expédition, ou il a déjà servi dans une autre expédition. Supprimez cette expédition et préparez-en une autre.

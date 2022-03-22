@@ -820,6 +820,8 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 				// using a non coventionnel way to be encoded, to not have them sanitized just after)
 				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+				//$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) { return realCharForNumericEntities($m); }, $out);
+
 
 				// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.

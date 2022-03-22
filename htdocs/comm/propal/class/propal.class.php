@@ -4228,7 +4228,7 @@ class PropaleLigne extends CommonObjectLine
 		// End call triggers
 
 		if (!$error) {
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "propaldet WHERE rowid = " . ((int)$this->rowid);
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "propaldet WHERE rowid = " . ((int) $this->rowid);
 			dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				// Remove extrafields
