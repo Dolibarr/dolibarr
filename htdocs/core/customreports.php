@@ -278,7 +278,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		$sql = "SELECT DISTINCT ".$fieldtocount." as val";
 
 		if (strpos($fieldtocount, 'te.') === 0) {
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.'_extrafields as te';
+			$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element."_extrafields as te";
 		} else {
 			$tabletouse = $object->table_element;
 			$tablealiastouse = 't';
@@ -287,7 +287,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 				$tabletouse = $arrayofgroupby[$gval]['table'];
 				$tablealiastouse = $tmpval[0];
 			}
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$tabletouse.' as '.$tablealiastouse;
+			$sql .= " FROM ".MAIN_DB_PREFIX.$tabletouse." as ".$tablealiastouse;
 		}
 
 		// Add the where here
@@ -303,7 +303,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			}
 		}*/
 
-		$sql .= ' LIMIT '.($MAXUNIQUEVALFORGROUP + 1);
+		$sql .= " LIMIT ".((int) ($MAXUNIQUEVALFORGROUP + 1));
 
 		//print $sql;
 		$resql = $db->query($sql);
