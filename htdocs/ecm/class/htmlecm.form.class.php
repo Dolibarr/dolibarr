@@ -80,7 +80,7 @@ class FormEcm
 			$cate_arbo = dol_dir_list($path, 'directories', 1, '', array('(\.meta|_preview.*\.png)$', '^\.'), 'relativename', SORT_ASC);
 		}
 
-		$output = '<select class="flat minwidth100 maxwidth500" id="'.$select_name.'" name="'.$select_name.'">';
+		$output = '<select autocomplete="off" class="flat minwidth100 maxwidth500" id="'.$select_name.'" name="'.$select_name.'">';
 		if (is_array($cate_arbo)) {
 			if (!count($cate_arbo)) {
 				$output .= '<option value="-1" disabled>'.$langs->trans("NoDirectoriesFound").'</option>';
@@ -100,7 +100,7 @@ class FormEcm
 			}
 		}
 		$output .= '</select>';
-		$output .= ajax_combobox($select_name);
+		//$output .= ajax_combobox($select_name);
 		$output .= "\n";
 		return $output;
 	}

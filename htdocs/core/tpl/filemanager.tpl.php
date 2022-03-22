@@ -51,7 +51,7 @@ if ($module == 'medias') {
 	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 	$showroot = 1;
 }
-
+$section = 0;
 
 
 // Confirm remove file (for non javascript users)
@@ -102,12 +102,26 @@ $('#acreatedir').on('click', function() {
 	try{
 		section_dir = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].rel;
 		section = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].id.split('_')[2];
+		catParent = ";
+if ($module == 'ecm') {
+	print "section;";
+} else {
+	print "section_dir.substring(0, section_dir.length - 1);";
+}
+print "
 	} catch{
 		section_dir = '/';
 		section = 0;
+		catParent = ";
+if ($module == 'ecm') {
+	print "section;";
+} else {
+	print "section_dir;";
+}
+print "
 	}
 	console.log('We click to create a new directory, we set current section_dir='+section_dir+' into href url of button acreatedir');
-	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section));
+	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'%26section_dir%3D'+encodeURI(section_dir)+'%26section%3D'+encodeURI(section)+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section)+'&catParent='+encodeURI(catParent));
 	console.log($('#acreatedir').attr('href'));
 });
 $('#agenerateimgwebp').on('click', function() {
