@@ -3857,7 +3857,6 @@ if ($action == 'create') {
 	print "</form>\n";
 } elseif ($id > 0 || !empty($ref)) {
 	if (empty($object->id)) {
-		llxHeader();
 		$langs->load('errors');
 		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 		llxFooter();
