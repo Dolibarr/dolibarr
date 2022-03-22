@@ -477,7 +477,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				$tab_top += $extra_under_address_shift;
-				$tab_top_newpage += $extra_under_address_shift;
+				$tab_top_newpage += 0;
 
 				// Incoterm
 				$height_incoterms = 0;
