@@ -212,6 +212,28 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
 }
 
+$newarrayoftype = array();
+foreach ($arrayoftype as $key => $val) {
+	if (dol_eval($val['enabled'], 1, 1, '1')) {
+		$newarrayoftype[$key] = $arrayoftype[$key];
+	}
+	if ($val['langs']) {
+		$langs->load($val['langs']);
+	}
+}
+
+$count = 0;
+$arrayofmesures = fillArrayOfMeasures($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofmesures, 0, $count);
+
+$count = 0;
+$arrayofxaxis = fillArrayOfXAxis($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofxaxis, 0, $count);
+$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 0, 0, 1);
+
+$count = 0;
+$arrayofgroupby = fillArrayOfGroupBy($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofgroupby, 0, $count);
+$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
+
+
 // Check parameters
 if ($action == 'viewgraph') {
 	if (!count($search_measures)) {
@@ -252,6 +274,8 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			$fieldtocount = $search_groupby[$gkey];
 		}
 
+		var_dump($fieldtocount);
+		var_dump($arrayofgroupby);
 		$sql = "SELECT DISTINCT ".$fieldtocount." as val";
 		if (strpos($fieldtocount, 'te.') === 0) {
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.'_extrafields as te';
@@ -380,15 +404,6 @@ print '<div class="liste_titre liste_titre_bydiv centpercent">';
 // Select object
 print '<div class="divadvancedsearchfield center floatnone">';
 print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
-$newarrayoftype = array();
-foreach ($arrayoftype as $key => $val) {
-	if (dol_eval($val['enabled'], 1, 1, '1')) {
-		$newarrayoftype[$key] = $arrayoftype[$key];
-	}
-	if ($val['langs']) {
-		$langs->load($val['langs']);
-	}
-}
 print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
 if (empty($conf->use_javascript_ajax)) {
 	print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
@@ -412,7 +427,6 @@ print '</div>';
 
 // Add measures into array
 $count = 0;
-$arrayofmesures = fillArrayOfMeasures($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofmesures, 0, $count);
 //var_dump($arrayofmesures);
 print '<div class="divadvancedsearchfield clearboth">';
 print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
@@ -421,8 +435,6 @@ print '</div>';
 
 // XAxis
 $count = 0;
-$arrayofxaxis = fillArrayOfXAxis($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofxaxis, 0, $count);
-$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 0, 0, 1);
 print '<div class="divadvancedsearchfield">';
 print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
 //var_dump($arrayofxaxis);
@@ -431,8 +443,6 @@ print '</div>';
 
 // Group by
 $count = 0;
-$arrayofgroupby = fillArrayOfGroupBy($object, 't', $langs->trans($newarrayoftype[$objecttype]['label']), $arrayofgroupby, 0, $count);
-$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
 print '<div class="divadvancedsearchfield">';
 print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
 print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth200 maxwidth250', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
@@ -1100,14 +1110,31 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				continue;
 			}
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$arrayofgroupby[$tablealias.'.'.$key.'-year'] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => ($val['position']+($count * 100000)).'.1');
-				$arrayofgroupby[$tablealias.'.'.$key.'-month'] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => ($val['position']+($count * 100000)).'.2');
-				$arrayofgroupby[$tablealias.'.'.$key.'-day'] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => ($val['position']+($count * 100000)).'.3');
+				$arrayofgroupby[$tablealias.'.'.$key.'-year'] = array(
+					'label' => img_picto('', $object->picto,
+					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => ($val['position']+($count * 100000)).'.1',
+					'table' => $object->table_element
+				);
+				$arrayofgroupby[$tablealias.'.'.$key.'-month'] = array(
+					'label' => img_picto('', $object->picto,
+					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => ($val['position']+($count * 100000)).'.2',
+					'table' => $object->table_element
+				);
+				$arrayofgroupby[$tablealias.'.'.$key.'-day'] = array(
+					'label' => img_picto('', $object->picto,
+					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => ($val['position']+($count * 100000)).'.3',
+					'table' => $object->table_element
+				);
 			} else {
-				$arrayofgroupby[$tablealias.'.'.$key] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']), 'position' => ($val['position']+($count * 100000)));
+				$arrayofgroupby[$tablealias.'.'.$key] = array(
+					'label' => img_picto('', $object->picto,
+					'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']), 'position' => ($val['position']+($count * 100000)),
+					'table' => $object->table_element
+				);
 			}
 		}
 	}
+
 	// Add extrafields to Group by
 	if ($object->isextrafieldmanaged) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -1117,9 +1144,14 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
 				continue;
 			}
-			$arrayofgroupby[$tablealias.'e.'.$key] = array('label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000));
+			$arrayofgroupby[$tablealias.'e.'.$key] = array(
+				'label' => img_picto('', $object->picto,
+				'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key] + ($count * 100000),
+				'table' => $object->table_element
+			);
 		}
 	}
+
 	// Add fields for parent objects
 	foreach ($object->fields as $key => $val) {
 		if (preg_match('/^[^:]+:[^:]+:/', $val['type'])) {
@@ -1129,10 +1161,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				dol_include_once($tmptype[2]);
 				if (class_exists($newobject)) {
 					$tmpobject = new $newobject($db);
-					/*var_dump($val['label']);
-					 var_dump($tmptype);
-					 var_dump($arrayofmesures);
-					 var_dump('t-'.$key);*/
+					//var_dump($key); var_dump($tmpobject->element); var_dump($val['label']); var_dump($tmptype); var_dump('t-'.$key);
 					$count++;
 					$arrayofgroupby = fillArrayOfGroupBy($tmpobject, $tablealias.'__'.$key, $langs->trans($val['label']), $arrayofgroupby, $level + 1, $count);
 				} else {
