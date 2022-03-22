@@ -405,27 +405,28 @@ if ($action == "sign" && $permissiontoclose) {
 		}
 	}
 }
+
 if ($action == "nosign" && $permissiontoclose) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
+			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
 					$tmpproposal->statut = $tmpproposal::STATUS_NOTSIGNED;
-					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED)) {
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
 					} else {
-						dol_print_error($db);
+						setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeClosed'), 'errors');
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeNoSign'), 'errors');
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}
