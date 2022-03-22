@@ -376,7 +376,7 @@ class Contact extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $user;
+		global $user, $hookmanager;
 
 		$this->nb = array();
 		$clause = "WHERE";
@@ -393,6 +393,12 @@ class Contact extends CommonObject
 		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat = ".((int) $user->id)."))";
 		if ($user->socid > 0) {
 			$sql .= " AND sp.fk_soc = ".((int) $user->socid);
+		}
+		// Add where from hooks
+		if (is_object($hookmanager)) {
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
 		}
 
 		$resql = $this->db->query($sql);
