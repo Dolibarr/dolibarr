@@ -216,7 +216,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Save quantity found during inventory
+	// Save quantity found during inventory (when we click on Save button on inventory page)
 	if ($action =='updateinventorylines' && $permissiontoadd) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
@@ -235,6 +235,9 @@ if (empty($reshook)) {
 			while ($i < $num) {
 				$line = $db->fetch_object($resql);
 				$lineid = $line->rowid;
+
+				$result = 0;
+				$resultupdate = 0;
 
 				if (GETPOST("id_".$lineid, 'alpha') != '') {		// If a value was set ('0' or something else)
 					$qtytoupdate = price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
@@ -265,7 +268,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Update line with id of stock movement (and the start quantity if it has changed this last recording)
+		// Update user that update quantities
 		if (! $error) {
 			$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventory";
 			$sqlupdate .= " SET fk_user_modif = ".((int) $user->id);

@@ -189,7 +189,7 @@ class Utils
 	 *  @param  int         $usedefault        1=Use default backup profile (Set this to 1 when used as cron)
 	 *  @param  string      $file              'auto' or filename to build
 	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
-	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec' - need size of dump in memory, but low memory method is used if GETPOST('lowmemorydump') is set, 2=Use the 'popen' method (low memory method)
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
@@ -278,8 +278,8 @@ class Utils
 			if (!empty($dolibarr_main_db_port)) {
 				$param .= " -P ".$dolibarr_main_db_port;
 			}
-			if (!GETPOST("use_transaction", "alpha")) {
-				$param .= " -l --single-transaction";
+			if (GETPOST("use_transaction", "alpha")) {
+				$param .= " --single-transaction";
 			}
 			if (GETPOST("disable_fk", "alpha") || $usedefault) {
 				$param .= " -K";
@@ -342,17 +342,42 @@ class Utils
 
 			$handle = '';
 
+			$lowmemorydump = GETPOSTISSET("lowmemorydump", "alpha") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
+
 			// Start call method to execute dump
 			$fullcommandcrypted = $command." ".$paramcrypted." 2>&1";
 			$fullcommandclear = $command." ".$paramclear." 2>&1";
-			if ($compression == 'none') {
-				$handle = fopen($outputfile, 'w');
-			} elseif ($compression == 'gz') {
-				$handle = gzopen($outputfile, 'w');
-			} elseif ($compression == 'bz') {
-				$handle = bzopen($outputfile, 'w');
-			} elseif ($compression == 'zstd') {
-				$handle = fopen($outputfile, 'w');
+			if (!$lowmemorydump) {
+				if ($compression == 'none') {
+					$handle = fopen($outputfile, 'w');
+				} elseif ($compression == 'gz') {
+					$handle = gzopen($outputfile, 'w');
+				} elseif ($compression == 'bz') {
+					$handle = bzopen($outputfile, 'w');
+				} elseif ($compression == 'zstd') {
+					$handle = fopen($outputfile, 'w');
+				}
+			} else {
+				if ($compression == 'none') {
+					$fullcommandclear .= " > ".$outputfile;
+					$fullcommandcrypted .= " > ".$outputfile;
+					$handle = 1;
+				} elseif ($compression == 'gz') {
+					$fullcommandclear .= " | gzip > ".$outputfile;
+					$fullcommandcrypted .= " | gzip > ".$outputfile;
+					$paramcrypted.=" | gzip";
+					$handle = 1;
+				} elseif ($compression == 'bz') {
+					$fullcommandclear .= " | bzip2 > ".$outputfile;
+					$fullcommandcrypted .= " | bzip2 > ".$outputfile;
+					$paramcrypted.=" | bzip2";
+					$handle = 1;
+				} elseif ($compression == 'zstd') {
+					$fullcommandclear .= " | zstd > ".$outputfile;
+					$fullcommandcrypted .= " | zstd > ".$outputfile;
+					$paramcrypted.=" | zstd";
+					$handle = 1;
+				}
 			}
 
 			$ok = 0;
@@ -374,7 +399,8 @@ class Utils
 				}
 
 
-				// TODO Replace with executeCLI function
+				// TODO Replace with executeCLI function but
+				// we must first introduce a low memory mode
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
@@ -394,16 +420,23 @@ class Utils
 								if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
 									continue;
 								}
-								fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
-								if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
-									$ok = 1;
-								} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
-									$ok = 1;
+								if (!$lowmemorydump) {
+									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
+									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
+										$ok = 1;
+									} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
+										$ok = 1;
+									}
+								} else {
+									// If we have a result here in lowmemorydump mode, something is strange
 								}
 							}
+						} elseif ($lowmemorydump) {
+							$ok = 1;
 						}
 					}
 				}
+
 				if ($execmethod == 2) {	// With this method, there is no way to get the return code, only output
 					$handlein = popen($fullcommandclear, 'r');
 					$i = 0;

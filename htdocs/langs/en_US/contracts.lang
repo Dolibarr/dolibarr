@@ -103,3 +103,5 @@ TypeContact_contrat_external_SALESREPSIGN=Signing contract customer contact
 HideClosedServiceByDefault=Hide closed services by default
 ShowClosedServices=Show Closed Services
 HideClosedServices=Hide Closed Services
+UserStartingService=User starting service
+UserClosingService=User closing service
