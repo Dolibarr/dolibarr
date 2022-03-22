@@ -5682,7 +5682,7 @@ class Product extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $hookmanager;
 
 		$this->nb = array();
 
