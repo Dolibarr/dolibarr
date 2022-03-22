@@ -565,7 +565,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 			$tmpval = explode('.', $val);
 			//var_dump($arrayofxaxis[$val]['table']);
 			if (! in_array($arrayofxaxis[$val]['table'], $listoftablesalreadyadded)) {	// We do not add join for main table already added
-				$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$arrayofxaxis[$val]['table'].' as '.$db->escape($tmpval[0]);
+				$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$arrayofxaxis[$val]['table'].' as '.$db->sanitize($tmpval[0]);
 				$listoftablesalreadyadded[$arrayofxaxis[$val]['table']] = $arrayofxaxis[$val]['table'];
 			}
 		} else {
