@@ -657,7 +657,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 					if ($conf->expedition_bon->enabled) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&id='.$object->id, '');
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
 
