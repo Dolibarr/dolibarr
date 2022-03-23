@@ -612,7 +612,7 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
 									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -740,7 +740,11 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
+									$fieldArr = explode('.', $fieldname);
+									if (count($fieldArr) > 0) {
+										$fieldname = $fieldArr[1];
+									}
 									$listfields[] = $fieldname;
 									$listvalues[] = $res;
 								}
