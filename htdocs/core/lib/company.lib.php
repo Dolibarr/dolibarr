@@ -1102,6 +1102,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	// Add where from extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+	// Add where from hooks
+	$parameters = array('socid' => $object->id);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	if ($sortfield == "t.name") {
 		$sql .= " ORDER BY t.lastname $sortorder, t.firstname $sortorder";
 	} else {
