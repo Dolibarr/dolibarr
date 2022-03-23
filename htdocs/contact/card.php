@@ -1524,7 +1524,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Delete
 			if ($user->rights->societe->contact->supprimer) {
 				$url = $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken();
-				$url.= '&backtopage='.urlencode(DOL_URL_ROOT . '/contact/list.php');
+				if ($backtopage) {
+					$url.= '&backtopage='.urlencode(DOL_URL_ROOT . '/contact/list.php');
+				} else {
+					$backtopage = '';
+				}
 				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $url, '', true, $params);
 			}
 		}
