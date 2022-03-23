@@ -285,3 +285,4 @@ SelectLinesOfTimeSpentToInvoice=Select lines of time spent that are unbilled, th
 ProjectTasksWithoutTimeSpent=Project tasks without time spent
 FormForNewLeadDesc=Thanks to fill the following form to contact us. You can also send us an email directly to <b>%s</b>.
 StartDateCannotBeAfterEndDate=End date cannot be before start date
+ErrorPROJECTLEADERRoleMissingRestoreIt=The "PROJECTLEADER" role is missing or has been de-activited, please restore in the dictionary of contact types
