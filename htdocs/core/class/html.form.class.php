@@ -1677,7 +1677,7 @@ class Form
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 			$sql .= " LEFT OUTER JOIN  ".$this->db->prefix()."societe as s ON s.rowid=sp.fk_soc";
 		}
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND sp.fk_soc = ".((int) $socid);
 		}
