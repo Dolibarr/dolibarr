@@ -9111,6 +9111,7 @@ function dol_getmypid()
  * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
+ * @see dolSqlDateFilter()
  */
 function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 {

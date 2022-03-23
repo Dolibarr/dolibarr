@@ -654,18 +654,7 @@ class ImportXlsx extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
-									if ($res < 0) {
-										if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-											$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-										} else {
-											$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-										}
-										$this->errors[$error]['type'] = 'FOREIGNKEY';
-										$errorforthistable++;
-										$error++;
-									} else {
-										$newval = $arrayrecord[($key)]['val']; //We get new value computed.
-									}
+									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
@@ -757,6 +746,8 @@ class ImportXlsx extends ModeleImports
 				}
 
 				// We add hidden fields (but only if there is at least one field to add into table)
+				// We process here all the fields that were declared into the array $this->import_fieldshidden_array of the descriptor file.
+				// Previously we processed the ->import_fields_array.
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $key => $val) {
@@ -791,13 +782,12 @@ class ImportXlsx extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
-									if ($res < 0) {
-										if (!empty($objimport->array_import_convertvalue[0][$fieldname]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, end($listvalues), 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$fieldname]['dict']));
-										else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-										$this->errors[$error]['type'] = 'FOREIGNKEY';
-										$errorforthistable++;
-										$error++;
+									$fieldArr = explode('.', $fieldname);
+									if (count($fieldArr) > 0) {
+										$fieldname = $fieldArr[1];
 									}
+									$listfields[] = $fieldname;
+									$listvalues[] = $res;
 								}
 							}
 						} else {

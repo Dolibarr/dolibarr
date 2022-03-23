@@ -1831,7 +1831,7 @@ class BonPrelevement extends CommonObject
 		$DtOfSgntr = dol_print_date($row_datec, '%Y-%m-%d');
 
 		if ($type != 'bank-transfer') {
-			// SEPA Paiement Information of buyer for Direct debit
+			// SEPA Paiement Information of buyer for Direct Debit
 			$XML_DEBITOR = '';
 			$XML_DEBITOR .= '			<DrctDbtTxInf>'.$CrLf;
 			$XML_DEBITOR .= '				<PmtId>'.$CrLf;
@@ -1884,7 +1884,7 @@ class BonPrelevement extends CommonObject
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
 			$XML_CREDITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('CT-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_CREDITOR .= '				</PmtId>'.$CrLf;
-			if ($this->sepa_xml_pti_in_ctti) {
+			if (!empty($this->sepa_xml_pti_in_ctti)) {
 				$XML_CREDITOR .= '				<PmtTpInf>' . $CrLf;
 
 				// Can be 'NORM' for normal or 'HIGH' for high priority level
@@ -2076,7 +2076,7 @@ class BonPrelevement extends CommonObject
 			$RefBon = $obj->ref;
 
 			if ($type != 'bank-transfer') {
-				// SEPA Paiement Information of my company for Direct debit
+				// SEPA Paiement Information of my company for Direct Debit
 				$XML_SEPA_INFO = '';
 				$XML_SEPA_INFO .= '		<PmtInf>'.$CrLf;
 				$XML_SEPA_INFO .= '			<PmtInfId>'.('DD/'.$dateTime_YMD.'/ID'.$IdBon.'-'.$RefBon).'</PmtInfId>'.$CrLf;
@@ -2147,7 +2147,7 @@ class BonPrelevement extends CommonObject
 				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>'.$nombre.'</NbOfTxs>'.$CrLf;
 				$XML_SEPA_INFO .= '			<CtrlSum>'.$total.'</CtrlSum>'.$CrLf;
-				if (!$this->sepa_xml_pti_in_ctti) {
+				if (!empty($this->sepa_xml_pti_in_ctti) && !empty($format)) {	// @TODO Using $format (FRST ou RCUR) in a section for a Credit Transfer looks strange.
 					$XML_SEPA_INFO .= '			<PmtTpInf>' . $CrLf;
 					$XML_SEPA_INFO .= '				<SvcLvl>' . $CrLf;
 					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
