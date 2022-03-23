@@ -782,6 +782,10 @@ class ImportXlsx extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
+									$fieldArr = explode('.', $fieldname);
+									if (count($fieldArr) > 0) {
+										$fieldname = $fieldArr[1];
+									}
 									$listfields[] = $fieldname;
 									$listvalues[] = $res;
 								}
