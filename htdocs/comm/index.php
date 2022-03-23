@@ -568,9 +568,15 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
-	if ($socid) {
-		$sql .= " AND s.rowid = $socid";
+	// Add where from hooks
+	$parameters = array('socid' => $socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $companystatic); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		if ($socid > 0) {
+			$sql .= " AND s.rowid = ".((int) $socid);
+		}
 	}
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -664,9 +670,15 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 	if (empty($user->rights->societe->client->voir) && !$user->socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
-	if ($socid) {
-		$sql .= " AND s.rowid = ".((int) $socid);
+	// Add where from hooks
+	$parameters = array('socid' => $socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $companystatic); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		if ($socid > 0) {
+			$sql .= " AND s.rowid = ".((int) $socid);
+		}
 	}
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
 
