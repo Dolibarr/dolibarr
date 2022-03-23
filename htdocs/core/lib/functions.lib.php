@@ -8771,15 +8771,18 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
-							$labeltemp = explode(',', $values[2]);
+							$labeltemp = explode(':', $values[2]);
 							$label = $langs->trans($labeltemp[0]);
 							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
 								dol_include_once($labeltemp[2]);
-								$obj = new $labeltemp[1]($db);
-								$function = $labeltemp[3];
-								if (method_exists($obj, $function)) {
-									$nbrec = $obj->$function($object->id, $obj);
-									$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+								$classtoload = $labeltemp[1];
+								if (class_exists($classtoload)) {
+									$obj = new $classtoload($db);
+									$function = $labeltemp[3];
+									if (method_exists($obj, $function)) {
+										$nbrec = $obj->$function($object->id, $obj);
+										$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+									}
 								}
 							}
 						}
