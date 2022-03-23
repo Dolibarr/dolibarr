@@ -2473,21 +2473,21 @@ if ($action == 'create') {
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 
-				print '<tr class="liste_titre">';
+				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
-				print '<td class="center">'.$langs->trans('Date').'</td>';
+				print '<td class="center expensereportcreatedate">'.$langs->trans('Date').'</td>';
 				if (!empty($conf->projet->enabled)) {
 					print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 				}
-				print '<td class="center">'.$langs->trans('Type').'</td>';
+				print '<td class="center expensereportcreatetype">'.$langs->trans('Type').'</td>';
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
-				print '<td>'.$langs->trans('Description').'</td>';
-				print '<td class="right">'.$langs->trans('VAT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
-				print '<td class="right">'.$langs->trans('Qty').'</td>';
+				print '<td class="right expensereportcreatedescription">'.$langs->trans('Description').'</td>';
+				print '<td class="right expensereportcreatevat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').'</td>';
+				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').'</td>';
+				print '<td class="right expensereportcreateqty">'.$langs->trans('Qty').'</td>';
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
