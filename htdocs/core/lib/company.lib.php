@@ -2138,7 +2138,8 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
  * 		@param	Societe		$object		Third party object
  *      @return	int number of tags
  */
-function showCategoriesContacts($conf, $langs, $db, $object){
+function showCategoriesContacts($conf, $langs, $db, $object)
+{
 
 	$c = new Categorie($db);
 	$TContacts = $object->contact_array_objects();
@@ -2146,17 +2147,17 @@ function showCategoriesContacts($conf, $langs, $db, $object){
 	$TContactsTags = array();
 	$toprint = array();
 
-	if(!empty($TContacts)) {
+	if (!empty($TContacts)) {
 		foreach ($TContacts as $contact) {
 			$TContactsTags = array_unique(array_merge($TContactsTags, $c->containing($contact->id, 'contact', 'id')));
 		}
 
-		if(!empty($TContactsTags)) {
+		if (!empty($TContactsTags)) {
 			foreach ($TContactsTags as $id_cat) {
 				$res = $c->fetch($id_cat);
-				if($res > 0) {
+				if ($res > 0) {
 					$ways = $c->print_all_ways(' &gt;&gt; ', 1, 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
-					if(!empty($ways)) {
+					if (!empty($ways)) {
 						foreach ($ways as $way) {
 							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
 						}
