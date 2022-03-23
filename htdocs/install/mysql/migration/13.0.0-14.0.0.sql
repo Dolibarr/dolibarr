@@ -657,3 +657,5 @@ ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);
 
 -- Easya 2022.5 -> 2022.6
 ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
+
+ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER domiciliation;
