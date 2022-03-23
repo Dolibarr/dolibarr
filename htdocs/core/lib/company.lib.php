@@ -2128,3 +2128,34 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 		return $sql2;
 	}
 }
+
+/**
+ *  Show tags of contacts's company
+ *
+ *		@param	Conf		$conf		Object conf
+ * 		@param	Translate	$langs		Object langs
+ * 		@param	DoliDB		$db			Database handler
+ * 		@param	Societe		$object		Third party object
+ *      @return	int number of tags
+ */
+function showCategoriesContacts($conf, $langs, $db, $object){
+
+	$c = new Categorie($db);
+	$TContacts = $object->contact_array_objects();
+	$TContactsTags = array();
+
+	foreach($TContacts as $contact){
+		$TContactsTags = array_unique(array_merge($TContactsTags, $c->containing($contact->id, 'contact', 'id')));
+	}
+
+	foreach ($TContactsTags as $id_cat){
+		$c->fetch($id_cat);
+		$ways = $c->print_all_ways(' &gt;&gt; ', 1, 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+		foreach ($ways as $way) {
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.$way.'</li>';
+		}
+	}
+	print '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+
+	return count($TContactsTags);
+}

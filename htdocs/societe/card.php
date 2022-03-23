@@ -2743,8 +2743,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 				print "</td></tr>";
 			}
-		}
 
+			//Contacts Tags
+			print '<tr><td>'.$langs->trans("ContactsCategoriesShort").'</td>';
+			print '<td>';
+			showCategoriesContacts($conf, $langs, $db, $object);
+			print "</td></tr>";
+		}
 
 		// Third-Party Type
 		print '<tr><td>';
