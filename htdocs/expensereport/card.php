@@ -2043,24 +2043,24 @@ if ($action == 'create') {
 				$i = 0; $total = 0;
 
 				print '<tr class="liste_titre">';
-				print '<td class="center">'.$langs->trans('LineNb').'</td>';
+				print '<td class="center linecollinenb">'.$langs->trans('LineNb').'</td>';
 				//print '<td class="center">'.$langs->trans('Piece').'</td>';
-				print '<td class="center">'.$langs->trans('Date').'</td>';
+				print '<td class="center linecoldate">'.$langs->trans('Date').'</td>';
 				if (!empty($conf->projet->enabled)) {
-					print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					print '<td class="minwidth100imp linecolproject">'.$langs->trans('Project').'</td>';
 				}
-				print '<td class="center">'.$langs->trans('Type').'</td>';
+				print '<td class="center linecoltype">'.$langs->trans('Type').'</td>';
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
-					print '<td>'.$langs->trans('CarCategory').'</td>';
+					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
-				print '<td>'.$langs->trans('Description').'</td>';
-				print '<td class="right">'.$langs->trans('VAT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
-				print '<td class="right">'.$langs->trans('Qty').'</td>';
+				print '<td class="center linecoldescription">'.$langs->trans('Description').'</td>';
+				print '<td class="right linecolvat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').'</td>';
+				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').'</td>';
+				print '<td class="right linecolqty">'.$langs->trans('Qty').'</td>';
 				if ($action != 'editline') {
-					print '<td class="right">'.$langs->trans('AmountHT').'</td>';
-					print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
+					print '<td class="right linecolamountht">'.$langs->trans('AmountHT').'</td>';
+					print '<td class="right linecolamountttc">'.$langs->trans('AmountTTC').'</td>';
 				}
 				// Picture
 				print '<td>';
