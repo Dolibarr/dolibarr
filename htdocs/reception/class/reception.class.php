@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
- * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -591,6 +591,7 @@ class Reception extends CommonObject
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
 					$mouvS->origin = &$this;
+					$mouvS->setOrigin($this->element, $this->id);
 
 					// get unit price with discount
 					$up_ht_disc = $obj->subprice;
@@ -1640,6 +1641,7 @@ class Reception extends CommonObject
 
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
 
 						if (empty($obj->batch)) {
 							// line without batch detail
@@ -1804,6 +1806,7 @@ class Reception extends CommonObject
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
 
 						if (empty($obj->batch)) {
 							// line without batch detail
@@ -1934,6 +1937,7 @@ class Reception extends CommonObject
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
 
 						if (empty($obj->batch)) {
 							// line without batch detail
