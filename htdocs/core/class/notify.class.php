@@ -836,7 +836,7 @@ class Notify
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
-				$pdf_path = $dir_output."/".$ref.".pdf";
+				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
 				if (!dol_is_file($pdf_path)) {
 					// We can't add PDF as it is not generated yet.
 					$filepdf = '';
