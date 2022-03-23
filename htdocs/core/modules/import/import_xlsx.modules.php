@@ -757,6 +757,8 @@ class ImportXlsx extends ModeleImports
 				}
 
 				// We add hidden fields (but only if there is at least one field to add into table)
+				// We process here all the fields that were declared into the array $this->import_fieldshidden_array of the descriptor file.
+				// Previously we processed the ->import_fields_array.
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $key => $val) {
