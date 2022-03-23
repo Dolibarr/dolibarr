@@ -625,6 +625,7 @@ print '</tr>';
 print '</form>';
 
 // default update prices on cloning a proposal
+/*
 print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<input type="hidden" name="token" value="' . newToken() .'">';
 print '<tr class="oddeven">';
@@ -643,6 +644,7 @@ if (!empty($conf->use_javascript_ajax)) {
 print '</td>';
 print '</tr>';
 print '</form>';
+*/
 
 /*
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
