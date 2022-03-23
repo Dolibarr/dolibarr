@@ -2664,7 +2664,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
 				$tmptask->fetch('', $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;

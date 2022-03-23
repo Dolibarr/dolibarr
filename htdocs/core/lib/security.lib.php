@@ -227,9 +227,6 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	if ($features == 'product') {
 		$features = 'produit';
 	}
-	if ($features == 'banque') {
-		$parentfortableentity = 'fk_account@bank_account';
-	}
 
 
 	// Get more permissions checks from hooks
@@ -606,7 +603,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 	foreach ($featuresarray as $feature) {
 		$sql = '';
 
-		//var_dump($feature);
+		//var_dump($feature);exit;
 
 		// For backward compatibility
 		if ($feature == 'member') {

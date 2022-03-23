@@ -1173,35 +1173,56 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
-			}
+			if ($mode) {
+				$options = array();
+				foreach ($param['options'] as $okey => $val) {
+					if ((string) $okey == '') {
+						continue;
+					}
 
-			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			$out .= '<option value="0">&nbsp;</option>';
-			foreach ($param['options'] as $key => $val) {
-				if ((string) $key == '') {
-					continue;
+					if ($langfile && $val) {
+						$options[$okey] = $langs->trans($val);
+					} else {
+						$options[$okey] = $val;
+					}
 				}
-				$valarray = explode('|', $val);
-				$val = $valarray[0];
-				$parent = '';
-				if (!empty($valarray[1])) {
-					$parent = $valarray[1];
+				$selected = array();
+				if (!is_array($value)) {
+					$selected = explode(',', $value);
 				}
-				$out .= '<option value="'.$key.'"';
-				$out .= (((string) $value == (string) $key) ? ' selected' : '');
-				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$out .= '>';
-				if ($langfile && $val) {
-					$out .= $langs->trans($val);
-				} else {
-					$out .= $val;
+
+				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2));
+			} else {
+				if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+					$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 				}
-				$out .= '</option>';
+
+				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+				$out .= '<option value="0">&nbsp;</option>';
+				foreach ($param['options'] as $key => $val) {
+					if ((string) $key == '') {
+						continue;
+					}
+					$valarray = explode('|', $val);
+					$val = $valarray[0];
+					$parent = '';
+					if (!empty($valarray[1])) {
+						$parent = $valarray[1];
+					}
+					$out .= '<option value="'.$key.'"';
+					$out .= (((string) $value == (string) $key) ? ' selected' : '');
+					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
+					$out .= '>';
+					if ($langfile && $val) {
+						$out .= $langs->trans($val);
+					} else {
+						$out .= $val;
+					}
+					$out .= '</option>';
+				}
+				$out .= '</select>';
 			}
-			$out .= '</select>';
 		} elseif ($type == 'sellist') {
 			$out = '';
 			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
@@ -1679,7 +1700,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $langs, 0, 0, -1);
+				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$langs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
@@ -2207,6 +2228,17 @@ class ExtraFields
 						$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
 					} else {
 						continue; // Value was not provided, we should not set it.
+					}
+				} elseif ($key_type == 'select') {
+					// to detect if we are in search context
+					$value_arr_test = GETPOST($keysuffix."options_".$key.$keyprefix, 'none');
+					if (is_array($value_arr_test)) {
+						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix, 'array:aZ09');
+						// Make sure we get an array even if there's only one selected
+						$value_arr = (array) $value_arr;
+						$value_key = implode(',', $value_arr);
+					} else {
+						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {

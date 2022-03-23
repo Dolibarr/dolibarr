@@ -139,7 +139,6 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-
 $option = GETPOST('search_option');
 if ($option == 'late') {
 	$search_status = '1';
@@ -1632,7 +1631,7 @@ if ($resql) {
 
 				print '<td class="nobordernopadding nowraponall">';
 				if ($contextpage == 'poslist') {
-					print $obj->ref;
+					print dol_escape_htmltag($obj->ref);
 				} else {
 					print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
 				}
@@ -1659,7 +1658,7 @@ if ($resql) {
 			// Customer ref
 			if (!empty($arrayfields['f.ref_client']['checked'])) {
 				print '<td class="nowrap tdoverflowmax200">';
-				print $obj->ref_client;
+				print dol_escape_htmltag($obj->ref_client);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1724,7 +1723,7 @@ if ($resql) {
 			if (!empty($arrayfields['p.title']['checked'])) {
 				print '<td class="nowraponall">';
 				if ($obj->project_id > 0) {
-					print $projectstatic->title;
+					print dol_escape_htmltag($projectstatic->title);
 				}
 				print '</td>';
 				if (!$i) {
@@ -1736,9 +1735,9 @@ if ($resql) {
 			if (!empty($arrayfields['s.nom']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				if ($contextpage == 'poslist') {
-					print $companystatic->name;
+					print dol_escape_htmltag($companystatic->name);
 				} else {
-					print $companystatic->getNomUrl(1, 'customer');
+					print $companystatic->getNomUrl(1, 'customer', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 				}
 				print '</td>';
 				if (!$i) {
@@ -1747,8 +1746,8 @@ if ($resql) {
 			}
 			// Alias
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax150" title="'.$obj->name_alias.'">';
-				print $obj->name_alias;
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
+				print dol_escape_htmltag($companystatic->name_alias);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1757,7 +1756,7 @@ if ($resql) {
 			// Town
 			if (!empty($arrayfields['s.town']['checked'])) {
 				print '<td>';
-				print $obj->town;
+				print dol_escape_htmltag($obj->town);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1766,7 +1765,7 @@ if ($resql) {
 			// Zip
 			if (!empty($arrayfields['s.zip']['checked'])) {
 				print '<td class="nowraponall">';
-				print $obj->zip;
+				print dol_escape_htmltag($obj->zip);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1804,10 +1803,10 @@ if ($resql) {
 			// Staff
 			if (!empty($arrayfields['staff.code']['checked'])) {
 				print '<td class="center">';
-				if (!is_array($staffArray) || count($staffArray) == 0) {
-					$staffArray = $formcompany->effectif_array(1);
+				if (!is_array($conf->cache['staff']) || count($conf->cache['staff']) == 0) {
+					$conf->cache['staff'] = $formcompany->effectif_array(1);
 				}
-				print $staffArray[$obj->staff_code];
+				print $conf->cache['staff'][$obj->staff_code];
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1837,7 +1836,7 @@ if ($resql) {
 			// Module Source
 			if (!empty($arrayfields['f.module_source']['checked'])) {
 				print '<td>';
-				print $obj->module_source;
+				print dol_escape_htmltag($obj->module_source);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1847,7 +1846,7 @@ if ($resql) {
 			// POS Terminal
 			if (!empty($arrayfields['f.pos_source']['checked'])) {
 				print '<td>';
-				print $obj->pos_source;
+				print dol_escape_htmltag($obj->pos_source);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1856,7 +1855,7 @@ if ($resql) {
 
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				  print '<td class="right nowraponall amount">'.price($obj->total_ht)."</td>\n";
+				  print '<td class="right nowraponall">'.price($obj->total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1939,11 +1938,11 @@ if ($resql) {
 			}
 
 			if (!empty($arrayfields['f.retained_warranty']['checked'])) {
-				print '<td align="right amount">'.(!empty($obj->retained_warranty) ?price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
+				print '<td align="right">'.(!empty($obj->retained_warranty) ? price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
 			}
 
 			if (!empty($arrayfields['dynamount_payed']['checked'])) {
-				print '<td class="right nowraponall amount">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowraponall amount">'.(!empty($totalpay) ? price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1970,7 +1969,7 @@ if ($resql) {
 
 			// Currency
 			if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
-				  print '<td class="nowraponall">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+				print '<td class="nowraponall">'.dol_escape_htmltag($obj->multicurrency_code).' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2064,7 +2063,7 @@ if ($resql) {
 			print $hookmanager->resPrint;
 			// Date creation
 			if (!empty($arrayfields['f.datec']['checked'])) {
-				print '<td align="center" class="nowrap">';
+				print '<td class="nowrap center">';
 				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
@@ -2073,7 +2072,7 @@ if ($resql) {
 			}
 			// Date modification
 			if (!empty($arrayfields['f.tms']['checked'])) {
-				print '<td align="center" class="nowrap">';
+				print '<td class="nowrap center">';
 				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
@@ -2082,7 +2081,7 @@ if ($resql) {
 			}
 			// Date closing
 			if (!empty($arrayfields['f.date_closing']['checked'])) {
-				print '<td align="center" class="nowrap">';
+				print '<td class="nowrap center">';
 				print dol_print_date($db->jdate($obj->date_closing), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
