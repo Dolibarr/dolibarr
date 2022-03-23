@@ -8779,7 +8779,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 								if (class_exists($classtoload)) {
 									$obj = new $classtoload($db);
 									$function = $labeltemp[3];
-									if (method_exists($obj, $function)) {
+									if ($obj && $function && method_exists($obj, $function)) {
 										$nbrec = $obj->$function($object->id, $obj);
 										$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
 									}
