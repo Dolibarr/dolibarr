@@ -37,6 +37,8 @@ $action = GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('index'));
 
+$langs->load('errors');
+
 
 /*
  * Actions
