@@ -613,18 +613,7 @@ class ImportCsv extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
-									if ($res < 0) {
-										if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-											$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-										} else {
-											$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-										}
-										$this->errors[$error]['type'] = 'FOREIGNKEY';
-										$errorforthistable++;
-										$error++;
-									} else {
-										$newval = $arrayrecord[($key - 1)]['val']; //We get new value computed.
-									}
+									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
@@ -751,14 +740,9 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
-									if ($res < 0) {
-										if (!empty($objimport->array_import_convertvalue[0][$fieldname]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, end($listvalues), 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$fieldname]['dict']));
-										else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-										$this->errors[$error]['type'] = 'FOREIGNKEY';
-										$errorforthistable++;
-										$error++;
-									}
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname));
+									$listfields[] = $fieldname;
+									$listvalues[] = $res;
 								}
 							}
 						} else {
