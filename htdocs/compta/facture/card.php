@@ -3058,7 +3058,7 @@ if ($action == 'create') {
 		if (empty($conf->global->INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE)) {
 			$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
 		}
-		print info_admin($text, 0, 0, 0).'<br>';
+		print info_admin($text, 0, 0, 0, 'opacitymedium').'<br>';
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
