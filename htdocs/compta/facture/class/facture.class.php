@@ -14,7 +14,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2016-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
@@ -2326,6 +2326,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
+						$mouvP->setOrigin($this->element, $this->id);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr", $this->ref));
@@ -2763,6 +2764,7 @@ class Facture extends CommonInvoice
 						if ($this->lines[$i]->fk_product > 0) {
 							$mouvP = new MouvementStock($this->db);
 							$mouvP->origin = &$this;
+							$mouvP->setOrigin($this->element, $this->id);
 							// We decrease stock for product
 							if ($this->type == self::TYPE_CREDIT_NOTE) {
 								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
@@ -3055,6 +3057,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
+						$mouvP->setOrigin($this->element, $this->id);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr", $this->ref));

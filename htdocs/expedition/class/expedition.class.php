@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
- * Copyright (C) 2016-2021	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
@@ -753,6 +753,7 @@ class Expedition extends CommonObject
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
 					$mouvS->origin = dol_clone($this, 1);
+					$mouvS->setOrigin($this->element, $this->id);
 
 					if (empty($obj->edbrowid)) {
 						// line without batch detail
@@ -2241,6 +2242,7 @@ class Expedition extends CommonObject
 
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
 
 						if (empty($obj->edbrowid)) {
 							// line without batch detail
@@ -2412,6 +2414,7 @@ class Expedition extends CommonObject
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
 
 						if (empty($obj->edbrowid)) {
 							// line without batch detail

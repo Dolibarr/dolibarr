@@ -2224,7 +2224,8 @@ class Product extends CommonObject
 				$this->db->commit();
 			} else {
 				$this->db->rollback();
-				dol_print_error($this->db);
+				$this->error = $this->db->lasterror();
+				return -1;
 			}
 		}
 
