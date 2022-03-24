@@ -113,7 +113,7 @@ if (is_numeric($entity)) {
  * @ignore
  * @return	void
  */
-function llxHeader()sql
+function llxHeader()
 {
 }
 /**
