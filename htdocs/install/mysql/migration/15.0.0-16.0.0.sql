@@ -30,6 +30,8 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8)     DEFAULT 0;
+
 -- Missing in v15 or lower
 
 ALTER TABLE llx_c_actioncomm MODIFY COLUMN libelle varchar(128);
