@@ -306,8 +306,7 @@ if (empty($reshook)) {
 			$last_of_type = $object->willBeLastOfSameType();
 			if (empty($object->date_validation) && !$last_of_type[0]) {
 				setEventMessages($langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $object->ref, dol_print_date($object->date, 'day'), dol_print_date($last_of_type[1], 'day')), null, 'errors');
-				header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
-				exit;
+				$action = '';
 			}
 		}
 
