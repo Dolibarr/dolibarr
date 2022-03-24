@@ -405,6 +405,7 @@ NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
 UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement.
+ErrorLetteringAlreadyDone=Le lettrage "%s" a déjà été réalisé sur le numéro de pièce "%s"
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Désolé ce module n'est pas compatible avec la fonctionnalité expérimentale des factures de situation
 
 ## Import

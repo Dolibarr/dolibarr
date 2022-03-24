@@ -39,6 +39,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$toselect = GETPOST('toselect', 'array');
+$type = GETPOST('type', 'alpha');
+if ($type == 'sub') {
+	$context_default = 'bookkeepingbysubaccountlist';
+} else {
+	$context_default = 'bookkeepingbyaccountlist';
+}
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
 $search_date_startyear =  GETPOST('search_date_startyear', 'int');
 $search_date_startmonth =  GETPOST('search_date_startmonth', 'int');
 $search_date_startday =  GETPOST('search_date_startday', 'int');
@@ -109,7 +119,7 @@ if ($sortfield == "") {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new BookKeeping($db);
 $formfile = new FormFile($db);
-$hookmanager->initHooks(array('bookkeepingbyaccountlist'));
+$hookmanager->initHooks(array($context_default));
 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
@@ -187,8 +197,11 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Action
  */
 
+$param = '';
+
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -242,10 +255,10 @@ if (empty($reshook)) {
 		$search_credit = '';
 		$search_lettering_code = '';
 		$search_not_reconciled = '';
+		$toselect = '';
 	}
 
 	// Must be after the remove filter action, before the export.
-	$param = '';
 	$filter = array();
 
 	if (!empty($search_date_start)) {
@@ -261,12 +274,20 @@ if (empty($reshook)) {
 		$param .= '&doc_datemonth='.GETPOST('doc_datemonth', 'int').'&doc_dateday='.GETPOST('doc_dateday', 'int').'&doc_dateyear='.GETPOST('doc_dateyear', 'int');
 	}
 	if (!empty($search_accountancy_code_start)) {
-		$filter['t.numero_compte>='] = $search_accountancy_code_start;
-		$param .= '&search_accountancy_code_start='.urlencode($search_accountancy_code_start);
+		if ($type == 'sub') {
+			$filter['t.subledger_account>='] = $search_accountancy_code_start;
+		} else {
+			$filter['t.numero_compte>='] = $search_accountancy_code_start;
+		}
+		$param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
 	}
 	if (!empty($search_accountancy_code_end)) {
-		$filter['t.numero_compte<='] = $search_accountancy_code_end;
-		$param .= '&search_accountancy_code_end='.urlencode($search_accountancy_code_end);
+		if ($type == 'sub') {
+			$filter['t.subledger_account<='] = $search_accountancy_code_end;
+		} else {
+			$filter['t.numero_compte<='] = $search_accountancy_code_end;
+		}
+		$param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
 	}
 	if (!empty($search_label_account)) {
 		$filter['t.label_compte'] = $search_label_account;
@@ -328,6 +349,12 @@ if (empty($reshook)) {
 	}
 }
 
+// param with type of list
+$url_param = substr($param, 1); // remove first "&"
+if (!empty($type)) {
+	$param = '&type='.$type.$param;
+}
+
 if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->supprimer) {
 	$import_key = GETPOST('importkey', 'alpha');
 
@@ -384,6 +411,54 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 	}
 }
 
+// others mass actions
+if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+	$error = 0;
+	if ($massaction == 'lettering' && $user->rights->accounting->mouvements->creer) {
+		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
+
+		$lettering = new Lettering($db);
+
+		// check lettering not already done
+		$sql = "SELECT";
+		$sql .= " rowid";
+		$sql .= ", piece_num";
+		$sql .= ", lettering_code";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		$sql .= " WHERE rowid IN (" . $db->sanitize(implode(',', $toselect)) . ")";
+		$sql .= " AND lettering_code != ''";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			$error++;
+			$lettering->errors[] = $db->lasterror();
+		}
+		if (!$error) {
+			if ($db->num_rows($resql) > 0) {
+				$error++;
+				while ($obj = $db->fetch_object($resql)) {
+					$lettering->errors[] = $langs->trans('ErrorLetteringAlreadyDone', $obj->lettering_code, $obj->piece_num);
+				}
+			}
+			$db->free($resql);
+		}
+
+		if (!$error) {
+			$result = $lettering->updateLettering($toselect);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			setEventMessages('', $lettering->errors, 'errors');
+		} else {
+			setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+			header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
+			exit();
+		}
+	}
+}
+
 
 /*
  * View
@@ -394,24 +469,41 @@ $formfile = new FormFile($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-$title_page = $langs->trans("Operations").' - '.$langs->trans("VueByAccountAccounting").' ('.$langs->trans("Bookkeeping").')';
+$title_page = $langs->trans("Operations").' - '.$langs->trans("VueByAccountAccounting").' (';
+if ($type == 'sub') {
+	$title_page .= $langs->trans("BookkeepingSubAccount");
+} else {
+	$title_page .= $langs->trans("Bookkeeping");
+}
+$title_page .= ')';
 
 llxHeader('', $title_page);
 
 // List
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+	if ($type == 'sub') {
+		$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
+	} else {
+		$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+	}
+
 	if ($nbtotalofrecords < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
-$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter);
+if ($type == 'sub') {
+	$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter, 'AND', 1);
+} else {
+	$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter);
+}
 
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 $num = count($object->lines);
 
@@ -461,6 +553,15 @@ if ($action == 'delbookkeepingyear') {
 	print $formconfirm;
 }
 
+// List of mass actions available
+$arrayofmassactions = array();
+if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+	$arrayofmassactions['lettering'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('Lettering');
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+	$arrayofmassactions = array();
+}
+$massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -469,15 +570,22 @@ if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$newcardbutton = dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
+	if ($type == 'sub') {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+	} else {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+	}
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 }
 
@@ -488,11 +596,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-if ($massactionbutton) {
+if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
 
@@ -509,9 +617,17 @@ $moreforfilter = '';
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
-$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200');
+if ($type == 'sub') {
+	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+} else {
+	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200');
+}
 $moreforfilter .= ' ';
-$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
+if ($type == 'sub') {
+	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
+} else {
+	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
+}
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
 
@@ -667,7 +783,11 @@ while ($i < min($num, $limit)) {
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
 
-	$accountg = length_accountg($line->numero_compte);
+	if ($type == 'sub') {
+		$accountg = length_accounta($line->subledger_account);
+	} else {
+		$accountg = length_accountg($line->numero_compte);
+	}
 	//if (empty($accountg)) $accountg = '-';
 
 	$colspan = 0;			// colspan before field 'label of operation'
@@ -686,7 +806,11 @@ while ($i < min($num, $limit)) {
 		// Show a subtotal by accounting account
 		if (isset($displayed_account_number)) {
 			print '<tr class="liste_total">';
-			print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.length_accountg($displayed_account_number).':</td>';
+			if ($type == 'sub') {
+				print '<td class="right" colspan="' . $colspan . '">' . $langs->trans("TotalForAccount") . ' ' . length_accounta($displayed_account_number) . ':</td>';
+			} else {
+				print '<td class="right" colspan="' . $colspan . '">' . $langs->trans("TotalForAccount") . ' ' . length_accountg($displayed_account_number) . ':</td>';
+			}
 			print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
 			print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
 			print '<td colspan="'.$colspanend.'"></td>';
@@ -712,11 +836,28 @@ while ($i < min($num, $limit)) {
 
 		// Show the break account
 		print '<tr class="trforbreak">';
-		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 10).'" class="tdforbreak">';
-		if ($line->numero_compte != "" && $line->numero_compte != '-1') {
-			print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
+		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : count($arrayfields)+1).'" class="tdforbreak">';
+		if ($type == 'sub') {
+			if ($line->subledger_account != "" && $line->subledger_account != '-1') {
+				print $line->subledger_label . ' : ' . length_accounta($line->subledger_account);
+			} else {
+				// Should not happen: subledger account must be null or a non empty value
+				print '<span class="error">' . $langs->trans("Unknown");
+				if ($line->subledger_label) {
+					print ' (' . $line->subledger_label . ')';
+					$htmltext = 'EmptyStringForSubledgerAccountButSubledgerLabelDefined';
+				} else {
+					$htmltext = 'EmptyStringForSubledgerAccountAndSubledgerLabel';
+				}
+				print $form->textwithpicto('', $htmltext);
+				print '</span>';
+			}
 		} else {
-			print '<span class="error">'.$langs->trans("Unknown").'</span>';
+			if ($line->numero_compte != "" && $line->numero_compte != '-1') {
+				print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
+			} else {
+				print '<span class="error">' . $langs->trans("Unknown") . '</span>';
+			}
 		}
 		print '</td>';
 		print '</tr>';
@@ -897,6 +1038,13 @@ while ($i < min($num, $limit)) {
 
 	// Action column
 	print '<td class="nowraponall center">';
+	if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		$selected = 0;
+		if (in_array($line->id, $arrayofselected)) {
+			$selected = 1;
+		}
+		print '<input id="cb' . $line->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $line->id . '"' . ($selected ? ' checked="checked"' : '') . ' />';
+	}
 	if (empty($line->date_export) && empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->creer) {
 			print '<a class="editfielda paddingleft marginrightonly" href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';

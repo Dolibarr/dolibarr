@@ -42,6 +42,10 @@ $langs->loadLangs(array("accountancy", "compta"));
 $socid = GETPOST('socid', 'int');
 
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$toselect = GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
@@ -220,6 +224,8 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
+$param = '';
+
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
@@ -294,10 +300,10 @@ if (empty($reshook)) {
 		$search_credit = '';
 		$search_lettering_code = '';
 		$search_not_reconciled = '';
+		$toselect = '';
 	}
 
 	// Must be after the remove filter action, before the export.
-	$param = '';
 	$filter = array();
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
@@ -490,6 +496,52 @@ if ($action == 'setreexport') {
 	}
 }
 
+// others mass actions
+if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+	$error = 0;
+	if ($massaction == 'lettering' && $user->rights->accounting->mouvements->creer) {
+		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
+
+		$lettering = new Lettering($db);
+
+		// check lettering not already done
+		$sql  = "SELECT";
+		$sql .= " rowid";
+		$sql .= ", piece_num";
+		$sql .= ", lettering_code";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		$sql .= " WHERE rowid IN (" . $db->sanitize(implode(',', $toselect)) . ")";
+		$sql .= " AND lettering_code != ''";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			$error++;
+			$lettering->errors[] = $db->lasterror();
+		}
+		if ($db->num_rows($resql) > 0) {
+			$error++;
+			while ($obj = $db->fetch_object($resql)) {
+				$lettering->errors[] = $langs->trans('ErrorLetteringAlreadyDone', $obj->lettering_code, $obj->piece_num);
+			}
+		}
+		$db->free($resql);
+
+		if (!$error) {
+			$result = $lettering->updateLettering($toselect);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			setEventMessages('', $lettering->errors, 'errors');
+		} else {
+			setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+			header('Location: '.$_SERVER['PHP_SELF'].'?noreset=1'.$param);
+			exit();
+		}
+	}
+}
+
 // Build and execute select (used by page and export action)
 // must de set after the action that set $filter
 // --------------------------------------------------------------------
@@ -667,6 +719,7 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 	$num = $db->num_rows($resql);
 }
 
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Output page
 // --------------------------------------------------------------------
@@ -759,6 +812,16 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 
+// List of mass actions available
+$arrayofmassactions = array();
+if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+	$arrayofmassactions['lettering'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('Lettering');
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+	$arrayofmassactions = array();
+}
+$massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="list">';
@@ -768,8 +831,7 @@ if ($optioncss != '') {
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.urlencode($sortfield).'">';
 print '<input type="hidden" name="sortorder" value="'.urlencode($sortorder).'">';
-
-$massactionbutton = '';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (count($filter)) {
 	$buttonLabel = $langs->trans("ExportFilteredList");
@@ -794,7 +856,7 @@ if (empty($reshook)) {
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?type=sub'.$param, '', 1, array('morecss' => 'marginleftonly'));
 
 	$url = './card.php?action=create';
 	if (!empty($socid)) {
@@ -807,7 +869,7 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, 
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-if ($massactionbutton) {
+if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
 
@@ -1254,6 +1316,13 @@ while ($i < min($num, $limit)) {
 
 	// Action column
 	print '<td class="nowraponall center">';
+	if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		$selected = 0;
+		if (in_array($line->id, $arrayofselected)) {
+			$selected = 1;
+		}
+		print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').' />';
+	}
 	if (empty($line->date_export) && empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->creer) {
 			print '<a class="editfielda paddingleft marginrightonly" href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';

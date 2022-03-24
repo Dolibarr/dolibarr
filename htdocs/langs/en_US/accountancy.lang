@@ -406,6 +406,7 @@ NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+ErrorLetteringAlreadyDone=Lettering "%s" already set on piece number "%s"
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
