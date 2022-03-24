@@ -64,13 +64,13 @@ class Product extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
-		'supplier_proposaldet',
-		'propaldet',
-		'commandedet',
-		'facturedet',
-		'contratdet',
-		'facture_fourn_det',
-		'commande_fournisseurdet'
+		'supplier_proposaldet' => array('parent' => 'supplier_proposal', 'parentkey' => 'fk_supplier_proposal'),
+		'propaldet' => array('parent' => 'propal', 'parentkey' => 'fk_propal'),
+		'commandedet' => array('parent' => 'commande', 'parentkey' => 'fk_commande'),
+		'facturedet' => array('parent' => 'facture', 'parentkey' => 'fk_facture'),
+		'contratdet' => array('parent' => 'contrat', 'parentkey' => 'fk_contrat'),
+		'facture_fourn_det' => array('parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
+		'commande_fournisseurdet' => array('parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
 	);
 
 	/**

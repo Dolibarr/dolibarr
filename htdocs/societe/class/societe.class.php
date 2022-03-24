@@ -73,18 +73,18 @@ class Societe extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
-		"supplier_proposal" => 'SupplierProposal',
-		"propal" => 'Proposal',
-		"commande" => 'Order',
-		"facture" => 'Invoice',
-		"facture_rec" => 'RecurringInvoiceTemplate',
-		"contrat" => 'Contract',
-		"fichinter" => 'Fichinter',
-		"facture_fourn" => 'SupplierInvoice',
-		"commande_fournisseur" => 'SupplierOrder',
-		"projet" => 'Project',
-		"expedition" => 'Shipment',
-		"prelevement_lignes" => 'DirectDebitRecord',
+		"supplier_proposal" => array('name' => 'SupplierProposal'),
+		"propal" => array('name' => 'Proposal'),
+		"commande" => array('name' => 'Order'),
+		"facture" => array('name' => 'Invoice'),
+		"facture_rec" => array('name' => 'RecurringInvoiceTemplate'),
+		"contrat" => array('name' => 'Contract'),
+		"fichinter" => array('name' => 'Fichinter'),
+		"facture_fourn" => array('name' => 'SupplierInvoice'),
+		"commande_fournisseur" => array('name' => 'SupplierOrder'),
+		"projet" => array('name' => 'Project'),
+		"expedition" => array('name' => 'Shipment'),
+		"prelevement_lignes" => array('name' => 'DirectDebitRecord'),
 	);
 
 	/**
