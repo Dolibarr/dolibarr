@@ -6668,7 +6668,7 @@ abstract class CommonObject
 
 		// Add validation state class
 		if (!empty($validationClass)) {
-			$morecss.= ' '.$validationClass;
+			$morecss.= $validationClass;
 		}
 
 		if (in_array($type, array('date'))) {

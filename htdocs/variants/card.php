@@ -191,10 +191,8 @@ if ($action == 'create') {
 	print '</form>';
 
 	dol_set_focus('input[name="label"]');
-}
-
-// Part to edit record
-elseif (($id || $ref) && $action == 'edit') {
+} elseif (($id || $ref) && $action == 'edit') {
+	// Part to edit record
 	print load_fiche_titre($langs->trans("ProductAttribute"), '', 'object_' . $object->picto);
 
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
@@ -224,10 +222,8 @@ elseif (($id || $ref) && $action == 'edit') {
 	print '</div>';
 
 	print '</form>';
-}
-
-// Part to show record
-elseif ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+} elseif ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+	// Part to show record
 	$res = $object->fetch_optionals();
 
 	$head = productAttributePrepareHead($object);
