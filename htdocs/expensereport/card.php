@@ -2080,15 +2080,15 @@ if ($action == 'create') {
 					$numline = $i + 1;
 
 					if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int')) {
-						print '<tr class="oddeven dataline" data-lineID="'.$line->id.'">';
+						print '<tr class="oddeven dataline" data-id="'.$line->id.'">';
 
 						// Num
-						print '<td class="center datanumline">';
+						print '<td class="center linecollinenb">';
 						print $numline;
 						print '</td>';
 
 						// Date
-						print '<td class="center datadate">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+						print '<td class="center linecoldate">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 
 						// Project
 						if (!empty($conf->projet->enabled)) {
@@ -2118,26 +2118,26 @@ if ($action == 'create') {
 						}
 
 						// Type of fee
-						print '<td class="center datatype" title="'.dol_escape_htmltag($titlealt).'">';
+						print '<td class="center linecoltype" title="'.dol_escape_htmltag($titlealt).'">';
 						$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 						print $labeltype;
 						print '</td>';
 
 						// IK
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
-							print '<td class="fk_c_exp_tax_cat datataxcat">';
+							print '<td class="fk_c_exp_tax_cat linecoltaxcat">';
 							print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 							print '</td>';
 						}
 
 						// Comment
-						print '<td class="left datacomment">'.dol_nl2br($line->comments).'</td>';
+						print '<td class="left linecolcomment">'.dol_nl2br($line->comments).'</td>';
 
 						// VAT rate
-						print '<td class="right datavatrate">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
+						print '<td class="right linecolvatrate">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
 
 						// Unit price HT
-						print '<td class="right dataunitht">';
+						print '<td class="right linecolunitht">';
 						if (!empty($line->value_unit_ht)) {
 							print price($line->value_unit_ht);
 						} else {
@@ -2147,17 +2147,17 @@ if ($action == 'create') {
 						}
 						print '</td>';
 
-						print '<td class="right dataunitttc">'.price($line->value_unit).'</td>';
+						print '<td class="right linecolunitttc">'.price($line->value_unit).'</td>';
 
-						print '<td class="right dataqty">'.dol_escape_htmltag($line->qty).'</td>';
+						print '<td class="right linecolqty">'.dol_escape_htmltag($line->qty).'</td>';
 
 						if ($action != 'editline') {
-							print '<td class="right totaoht">'.price($line->total_ht).'</td>';
-							print '<td class="right datatotalttc">'.price($line->total_ttc).'</td>';
+							print '<td class="right linecoltotalht">'.price($line->total_ht).'</td>';
+							print '<td class="right linecoltotalttc">'.price($line->total_ttc).'</td>';
 						}
 
 						// Column with preview
-						print '<td class="center">';
+						print '<td class="center linecolpreview">';
 						if ($line->fk_ecm_files > 0) {
 							$modulepart = 'expensereport';
 							$maxheightmini = 32;
@@ -2227,13 +2227,13 @@ if ($action == 'create') {
 						}
 						print '</td>';
 
-						print '<td class="nowrap right">';
+						print '<td class="nowrap right linecolwarning">';
 						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '&nbsp;';
 						print '</td>';
 
 						// Ajout des boutons de modification/suppression
 						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
-							print '<td class="nowrap right">';
+							print '<td class="nowrap right linecolaction">';
 
 							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$line->rowid.'">';
 							print img_edit();
