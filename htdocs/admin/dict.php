@@ -723,8 +723,7 @@ if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 
 	$search_code = '';
 }
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Actions add or modify an entry into a dictionary
 	if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 		$listfield = explode(',', str_replace(' ', '', $tabfield[$id]));
