@@ -2954,5 +2954,4 @@ class ExpenseReportLine
 		}
 		return $result;
 	}
-
 }
