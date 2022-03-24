@@ -94,7 +94,7 @@ if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == 2 
 $search_code = GETPOST('search_code', 'alpha');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('admin'));
+$hookmanager->initHooks(array('admin', 'dictionaryadmin'));
 
 // This page is a generic page to edit dictionaries
 // Put here declaration of dictionaries properties
