@@ -30,7 +30,7 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
-ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8)     DEFAULT 0;
+ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8) DEFAULT NULL;
 
 -- Missing in v15 or lower
 
