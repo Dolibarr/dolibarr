@@ -126,7 +126,6 @@ class PropaleStats extends Stats
 	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
-
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->socid) {

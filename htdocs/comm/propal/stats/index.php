@@ -21,18 +21,18 @@
  */
 
 /**
- *	    \file       htdocs/comm/propal/stats/index.php
+ *        \file       htdocs/comm/propal/stats/index.php
  *      \ingroup    propale
- *		\brief      Page des stats propositions commerciales
+ *        \brief      Page des stats propositions commerciales
  */
 
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propalestats.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formpropal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -40,6 +40,8 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 
 $object_status = GETPOST('object_status', 'intcomma');
+$propal_commercial = GETPOST('propal_commercial');
+$showBySignDate_toselect = GETPOST('showBySignDate_toselect');
 $typent_id = GETPOST('typent_id', 'int');
 $categ_id = GETPOST('categ_id', 'categ_id');
 
@@ -83,14 +85,14 @@ if ($mode == 'customer') {
 	$title = $langs->trans("ProposalsStatistics");
 	$dir = $conf->propal->dir_temp;
 	$cat_type = Categorie::TYPE_CUSTOMER;
-	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
+	$cat_label = $langs->trans("Category") . ' ' . lcfirst($langs->trans("Customer"));
 }
 if ($mode == 'supplier') {
 	$picto = 'supplier_proposal';
 	$title = $langs->trans("ProposalsStatisticsSuppliers");
 	$dir = $conf->supplier_proposal->dir_temp;
 	$cat_type = Categorie::TYPE_SUPPLIER;
-	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
+	$cat_label = $langs->trans("Category") . ' ' . lcfirst($langs->trans("Supplier"));
 }
 
 llxHeader('', $title);
@@ -102,21 +104,27 @@ dol_mkdir($dir);
 
 
 $stats = new PropaleStats($db, $socid, ($userid > 0 ? $userid : 0), $mode, ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
-if ($object_status != '' && $object_status >= 0) {
-	$stats->where .= ' AND p.fk_statut IN ('.$db->sanitize($object_status).')';
+if (GETPOST('showBySignDate_toselect') == 'on') {
+	$stats->field_date = 'p.date_cloture';
 }
-
+if ($object_status != '' && $object_status >= 0) {
+	$stats->where .= ' AND p.fk_statut IN (' . $db->sanitize($object_status) . ')';
+}
+if ($propal_commercial != '' && $propal_commercial >= 0) {
+	$stats->join .= " INNER JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS scatgp ON scatgp.fk_soc=p.fk_soc';
+	$stats->where .= " AND scatgp.fk_user=" . $propal_commercial;
+}
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
 if (!$user->rights->societe->client->voir || $user->socid) {
-	$filenamenb = $dir.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$user->id.'-'.$year.'.png';
+	$filenamenb = $dir . '/proposalsnbinyear-' . $user->id . '-' . $year . '.png';
+	$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-' . $user->id . '-' . $year . '.png';
 } else {
-	$filenamenb = $dir.'/proposalsnbinyear-'.$year.'.png';
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$year.'.png';
+	$filenamenb = $dir . '/proposalsnbinyear-' . $year . '.png';
+	$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-' . $year . '.png';
 }
 
 $px1 = new DolGraph();
@@ -148,11 +156,11 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 if (!$user->rights->societe->client->voir || $user->socid) {
-	$filenameamount = $dir.'/proposalsamountinyear-'.$user->id.'-'.$year.'.png';
-	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$user->id.'-'.$year.'.png';
+	$filenameamount = $dir . '/proposalsamountinyear-' . $user->id . '-' . $year . '.png';
+	$fileurlamount = DOL_URL_ROOT . '/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-' . $user->id . '-' . $year . '.png';
 } else {
-	$filenameamount = $dir.'/proposalsamountinyear-'.$year.'.png';
-	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$year.'.png';
+	$filenameamount = $dir . '/proposalsamountinyear-' . $year . '.png';
+	$fileurlamount = DOL_URL_ROOT . '/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-' . $year . '.png';
 }
 
 $px2 = new DolGraph();
@@ -183,20 +191,20 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $fileurl_avg = '';
 if (!$user->rights->societe->client->voir || $user->socid) {
-	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
+	$filename_avg = $dir . '/ordersaverage-' . $user->id . '-' . $year . '.png';
 	if ($mode == 'customer') {
-		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+		$fileurl_avg = DOL_URL_ROOT . '/viewimage.php?modulepart=orderstats&file=ordersaverage-' . $user->id . '-' . $year . '.png';
 	}
 	if ($mode == 'supplier') {
-		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+		$fileurl_avg = DOL_URL_ROOT . '/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-' . $user->id . '-' . $year . '.png';
 	}
 } else {
-	$filename_avg = $dir.'/ordersaverage-'.$year.'.png';
+	$filename_avg = $dir . '/ordersaverage-' . $year . '.png';
 	if ($mode == 'customer') {
-		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
+		$fileurl_avg = DOL_URL_ROOT . '/viewimage.php?modulepart=orderstats&file=ordersaverage-' . $year . '.png';
 	}
 	if ($mode == 'supplier') {
-		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+		$fileurl_avg = DOL_URL_ROOT . '/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-' . $year . '.png';
 	}
 }
 
@@ -240,7 +248,7 @@ if (!count($arrayyears)) {
 
 $h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT.'/comm/propal/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT . '/comm/propal/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -254,42 +262,66 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Show filter box
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<form name="stats" method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<input type="hidden" name="token" value="' . newToken() . '">';
+print '<input type="hidden" name="mode" value="' . $mode . '">';
 
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+print '<tr class="liste_titre"><td class="liste_titre" colspan="2">' . $langs->trans("Filter") . '</td></tr>';
 // Company
-print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+print '<tr><td class="left">' . $langs->trans("ThirdParty") . '</td><td class="left">';
 $filter = 's.client IN (1,2,3)';
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
 // ThirdParty Type
-print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
+print '<tr><td>' . $langs->trans("ThirdPartyType") . '</td><td>';
 $sortparam_typent = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam_typent, '', 1);
 if ($user->admin) {
-	print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	print ' ' . info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 }
 print '</td></tr>';
 // Category
-print '<tr><td>'.$cat_label.'</td><td>';
+print '<tr><td>' . $cat_label . '</td><td>';
 print img_picto('', 'category', 'class="pictofixedwidth"');
 print $formother->select_categories($cat_type, $categ_id, 'categ_id', 0, 1, 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // User
-print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
+print '<tr><td>' . $langs->trans("CreatedBy") . '</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Status
-print '<tr><td>'.$langs->trans("Status").'</td><td>';
+print '<tr><td>' . $langs->trans("Status") . '</td><td>';
 $formpropal->selectProposalStatus(($object_status != '' ? $object_status : -1), 0, 0, 1, $mode, 'object_status');
+
+print "&nbsp;";
+if ($object_status == Propal::STATUS_SIGNED) $moreclass = "";
+else $moreclass = "hideobject";
+
+?>
+	<script>
+		let $statusList = $("select[name='object_status']");
+		$statusList.on('change', function () {
+			let $selectedStatusIndex = $("select[name='object_status'] option:selected").val();
+			console.log($selectedStatusIndex)
+			if ($selectedStatusIndex == <?php echo Propal::STATUS_SIGNED ?>) {
+				$('#showBySign').removeClass("hideobject");
+			} else {
+				$('#cbsign').prop("checked", false);
+				$('#showBySign').addClass("hideobject");
+			}
+		});
+	</script><?php
+if (isset($_POST['showBySignDate_toselect']) && $object_status == Propal::STATUS_SIGNED) {
+	print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' checked='on'>&nbsp;" . $langs->trans('ShowBySignDate') . "</span>";
+} else {
+	print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' >&nbsp;" . $langs->trans('ShowBySignDate') . "</span>";
+}
 print '</td></tr>';
 // Year
-print '<tr><td>'.$langs->trans("Year").'</td><td>';
+print '<tr><td>' . $langs->trans("Year") . '</td><td>';
 if (!in_array($year, $arrayyears)) {
 	$arrayyears[$year] = $year;
 }
@@ -299,7 +331,11 @@ if (!in_array($nowyear, $arrayyears)) {
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
-print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
+
+print '<tr><td class="left">' . $langs->trans("Commerciaux") . '</td><td class="left">';
+$formpropal->selectProposalCommercial();
+print '</td></tr>';
+print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="' . $langs->trans("Refresh") . '"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -307,23 +343,23 @@ print '<br><br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
-print '<td class="center">'.$langs->trans("Year").'</td>';
-print '<td class="right">'.$langs->trans("NbOfProposals").'</td>';
+print '<td class="center">' . $langs->trans("Year") . '</td>';
+print '<td class="right">' . $langs->trans("NbOfProposals") . '</td>';
 print '<td class="right">%</td>';
-print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="right">' . $langs->trans("AmountTotal") . '</td>';
 print '<td class="right">%</td>';
-print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td class="right">' . $langs->trans("AmountAverage") . '</td>';
 print '<td class="right">%</td>';
 print '</tr>';
 
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1) {	// If we have empty year
+	while (!empty($year) && $oldyear > $year + 1) {    // If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+		print '<td align="center"><a href="' . $_SERVER["PHP_SELF"] . '?year=' . $oldyear . '&amp;mode=' . $mode . ($socid > 0 ? '&socid=' . $socid : '') . ($userid > 0 ? '&userid=' . $userid : '') . '">' . $oldyear . '</a></td>';
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
 		print '<td class="right">0</td>';
@@ -333,13 +369,13 @@ foreach ($data as $val) {
 		print '</tr>';
 	}
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
-	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.(($val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['nb_diff']).'%</td>';
-	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right opacitylow" style="'.(($val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['total_diff']).'%</td>';
-	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-	print '<td class="right opacitylow" style="'.(($val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['avg_diff']).'%</td>';
+	print '<td align="center"><a href="' . $_SERVER["PHP_SELF"] . '?year=' . $year . ($socid > 0 ? '&socid=' . $socid : '') . ($userid > 0 ? '&userid=' . $userid : '') . '">' . $year . '</a></td>';
+	print '<td class="right">' . $val['nb'] . '</td>';
+	print '<td class="right opacitylow" style="' . (($val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;') . '">' . round($val['nb_diff']) . '%</td>';
+	print '<td class="right">' . price(price2num($val['total'], 'MT'), 1) . '</td>';
+	print '<td class="right opacitylow" style="' . (($val['total_diff'] >= 0) ? 'color: green;' : 'color: red;') . '">' . round($val['total_diff']) . '%</td>';
+	print '<td class="right">' . price(price2num($val['avg'], 'MT'), 1) . '</td>';
+	print '<td class="right opacitylow" style="' . (($val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;') . '">' . round($val['avg_diff']) . '%</td>';
 	print '</tr>';
 	$oldyear = $year;
 }
