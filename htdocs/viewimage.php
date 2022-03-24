@@ -113,7 +113,7 @@ if (is_numeric($entity)) {
  * @ignore
  * @return	void
  */
-function llxHeader()
+function llxHeader()sql
 {
 }
 /**
@@ -237,8 +237,8 @@ if (empty($modulepart)) {
 // When logged in a different entity, medias cannot be accessed because $conf->$module->multidir_output
 // is not set on the requested entity, but they are public documents, so reset entity
 if ($modulepart === 'medias' && $entity != $conf->entity) {
-    $conf->entity = $entity;
-    $conf->setValues($db);
+	$conf->entity = $entity;
+	$conf->setValues($db);
 }
 
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
