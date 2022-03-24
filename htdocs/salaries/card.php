@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -270,7 +270,7 @@ if ($action == 'add' && empty($cancel)) {
 
 		$ret = $object->create($user);
 		if ($ret < 0) {
-			var_dump($ret);
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
 		}
 		if (!empty($auto_create_paiement) && !$error) {
