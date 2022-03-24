@@ -150,6 +150,9 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if ($object->element == 'productlot')       $permok = $user->rights->stock->creer;
 			if ($object->element == 'facturerec') 	    $permok = $user->rights->facture->creer;
 			if ($object->element == 'mo') 	    		$permok = $user->rights->mrp->write;
+			if ($object->element == 'contact') {
+				$permok = $user->rights->societe->contact->creer;
+			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
 			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$tmpkeyextra]))
