@@ -2420,7 +2420,7 @@ if ($action == 'create') {
 
 				// Add line with link to add new file or attach to an existing file
 				print '<tr class="liste_titre">';
-				print '<td colspan="'.$colspan.'" class="liste_titre">';
+				print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
 				print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 				print '</a>';
