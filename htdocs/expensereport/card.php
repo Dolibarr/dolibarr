@@ -2080,7 +2080,7 @@ if ($action == 'create') {
 					$numline = $i + 1;
 
 					if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int')) {
-						print '<tr class="oddeven dataline" data-id="'.$line->id.'">';
+						print '<tr class="oddeven linetr" data-id="'.$line->id.'">';
 
 						// Num
 						print '<td class="center linecollinenb">';
