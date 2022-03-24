@@ -26,6 +26,7 @@
  *       \brief      File to manage Expense Reports
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.php';
 
@@ -2545,7 +2546,7 @@ class ExpenseReport extends CommonObject
 /**
  * Class of expense report details lines
  */
-class ExpenseReportLine
+class ExpenseReportLine extends CommonObjectLine
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -2918,40 +2919,5 @@ class ExpenseReportLine
 			$this->db->rollback();
 			return -2;
 		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Call trigger based on this instance.
-	 * Some context information may also be provided into array property this->context.
-	 * NB:  Error from trigger are stacked in interface->errors
-	 * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
-	 *
-	 * @param   string    $triggerName   trigger's name to execute
-	 * @param   User      $user           Object user
-	 * @return  int                       Result of run_triggers
-	 */
-	public function call_trigger($triggerName, $user)
-	{
-		// phpcs:enable
-		global $langs, $conf;
-
-		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers.
-			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-			$langs = new Translate('', $conf);
-		}
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		$interface = new Interfaces($this->db);
-		$result = $interface->run_triggers($triggerName, $this, $user, $langs, $conf);
-
-		if ($result < 0) {
-			if (!empty($this->errors)) {
-				$this->errors = array_unique(array_merge($this->errors, $interface->errors)); // We use array_unique because when a trigger call another trigger on same object, this->errors is added twice.
-			} else {
-				$this->errors = $interface->errors;
-			}
-		}
-		return $result;
 	}
 }
