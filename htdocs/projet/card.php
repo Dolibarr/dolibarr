@@ -186,7 +186,7 @@ if (empty($reshook)) {
 				// -3 means type not found (PROJECTLEADER renamed, de-activated or deleted), so don't prevent creation if it has been the case
 				if ($result == -3) {
 					setEventMessage('ErrorPROJECTLEADERRoleMissingRestoreIt', 'errors');
-                    $error++;
+					$error++;
 				} elseif ($result < 0) {
 					$langs->load("errors");
 					setEventMessages($object->error, $object->errors, 'errors');
