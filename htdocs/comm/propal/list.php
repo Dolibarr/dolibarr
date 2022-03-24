@@ -382,7 +382,7 @@ if ($action == "sign" && $permissiontoclose) {
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
-					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;;
+					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;
 					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED) >= 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 					} else {
