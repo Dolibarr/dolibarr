@@ -4413,7 +4413,11 @@ abstract class CommonObject
 				$sql.= " AND c.".$element['parentkey']." = p.rowid";
 			}
 			if (!empty($entity)) {
-				$sql.= " AND p.entity = ".((int) $entity);
+				if (!empty($element['parent']) && !empty($element['parentkey'])) {
+					$sql.= " AND p.entity = ".((int) $entity);
+				} else {
+					$sql.= " AND c.entity = ".((int) $entity);
+				}
 			}
 			$resql = $this->db->query($sql);
 			if ($resql) {
