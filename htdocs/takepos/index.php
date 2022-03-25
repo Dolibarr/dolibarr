@@ -620,7 +620,7 @@ function Search2(keyCodeForEnter) {
 						ChangeThirdparty(data[0]['rowid']);
 					}
 					else if ('product' == data[0]['object']) {
-						console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
+						console.log("There is only 1 answer matching the search, so we add the product in basket, qty="+data[0]['qty']);
 						ClickProduct(0, data[0]['qty']);
 					}
 				}
