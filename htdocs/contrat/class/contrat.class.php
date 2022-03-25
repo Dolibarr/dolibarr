@@ -233,10 +233,10 @@ class Contrat extends CommonObject
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial suivi', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative Signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative follower', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
@@ -245,7 +245,7 @@ class Contrat extends CommonObject
 		'ref_customer' =>array('type'=>'varchar(50)', 'label'=>'Ref customer', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed'))
+		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'notnull'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed'))
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -2750,8 +2750,8 @@ class ContratLigne extends CommonObjectLine
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
 		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
 		//'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
-		'fk_user_ouverture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserOpen', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
-		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCloture', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'fk_user_ouverture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserStartingService', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosingService', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
 		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 4=>'Open', 5=>'Closed'))
 	);
 	// END MODULEBUILDER PROPERTIES

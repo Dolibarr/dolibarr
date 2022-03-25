@@ -9,9 +9,9 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
- * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2022  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
+ * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2021-2022 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -525,6 +525,7 @@ class Commande extends CommonOrder
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
+						$mouvP->setOrigin($this->element, $this->id);
 						// We decrement stock of product (and sub-products)
 						$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr", $num));
 						if ($result < 0) {
@@ -653,6 +654,7 @@ class Commande extends CommonOrder
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
+						$mouvP->setOrigin($this->element, $this->id);
 						// We increment stock of product (and sub-products)
 						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr", $this->ref));
 						if ($result < 0) {
@@ -834,6 +836,7 @@ class Commande extends CommonOrder
 				for ($i = 0; $i < $num; $i++) {
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
+						$mouvP->setOrigin($this->element, $this->id);
 						// We increment stock of product (and sub-products)
 						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
 						if ($result < 0) {
@@ -3734,7 +3737,7 @@ class Commande extends CommonOrder
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			}
 			if (!empty($this->date)) {
-				$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'dayhour');
+				$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 			}
 			if (!empty($this->delivery_date)) {
 				$label .= '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');
