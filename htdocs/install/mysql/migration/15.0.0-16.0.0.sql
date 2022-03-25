@@ -290,3 +290,12 @@ ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_chargesociales ADD COLUMN note_private text;
 ALTER TABLE llx_chargesociales ADD COLUMN note_public text;
 
+ALTER TABLE llx_c_availability ADD COLUMN type_duration varchar(1);
+ALTER TABLE llx_c_availability ADD COLUMN qty real DEFAULT 0;
+
+UPDATE llx_c_availability SET type_duration = null, qty = 0 WHERE code = 'AV_NOW';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 1 WHERE code = 'AV_1W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 2 WHERE code = 'AV_2W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 3 WHERE code = 'AV_3W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 4 WHERE code = 'AV_4W';
+
