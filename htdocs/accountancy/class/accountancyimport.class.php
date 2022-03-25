@@ -39,6 +39,24 @@
 class AccountancyImport
 {
 	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		global $conf;
+
+		$this->db = $db;
+	}
+
+	/**
 	 *  Clean amount
 	 *
 	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
@@ -48,10 +66,12 @@ class AccountancyImport
 	 * @param 	int			$record_key         Record key
 	 * @return  int         <0 if KO, >0 if OK
 	 */
-	public function cleanAmount(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $record_key)
+	public function cleanAmount(&$arrayrecord, $fieldname, $listfields, $listvalues, $record_key)
 	{
 		$value_trim = trim($arrayrecord[$record_key]['val']);
 		$arrayrecord[$record_key]['val'] = floatval($value_trim);
+
+		return 1;
 	}
 
 	/**
@@ -64,9 +84,11 @@ class AccountancyImport
 	 * @param 	int			$record_key         Record key
 	 * @return  int         <0 if KO, >0 if OK
 	 */
-	public function cleanValue(&$arrayrecord, $fieldname, &$listfields, &$listvalues, $record_key)
+	public function cleanValue(&$arrayrecord, $fieldname, $listfields, $listvalues, $record_key)
 	{
 		$arrayrecord[$record_key]['val'] = trim($arrayrecord[$record_key]['val']);
+
+		return 1;
 	}
 
 	/**
@@ -85,22 +107,23 @@ class AccountancyImport
 			$fieldname = $fieldArr[1];
 		}
 
-		$debit_index = 11;
-		$credit_index = 12;
-		$debit_val = trim($arrayrecord[$debit_index]['val']);
-		$credit_val = trim($arrayrecord[$credit_index]['val']);
-		$debit  = floatval($debit_val);
-		$credit = floatval($credit_val);
-		if (!empty($debit)) {
-			$amount = $debit;
-		} else {
-			$amount = $credit;
-		}
-		$listvalues[$debit_index] = "'" . $debit . "'";
-		$listvalues[$credit_index] = "'" . $credit . "'";
+		// get fields indexes
+		$field_index_list = array_flip($listfields);
+		if (isset($field_index_list['debit']) && isset($field_index_list['credit'])) {
+			$debit_index = $field_index_list['debit'];
+			$credit_index = $field_index_list['credit'];
 
-		$listfields[] = $fieldname;
-		$listvalues[] = "'" . abs($amount) . "'";
+			$debit  = floatval($arrayrecord[$debit_index]['val']);
+			$credit = floatval($arrayrecord[$credit_index]['val']);
+			if (!empty($debit)) {
+				$amount = $debit;
+			} else {
+				$amount = $credit;
+			}
+
+			$listfields[] = $fieldname;
+			$listvalues[] = "'" . $this->db->escape(abs($amount)) . "'";
+		}
 
 		return 1;
 	}
@@ -121,15 +144,20 @@ class AccountancyImport
 			$fieldname = $fieldArr[1];
 		}
 
-		$debit = floatval(trim($arrayrecord[11]['val']));
-		if (!empty($debit)) {
-			$sens = 'D';
-		} else {
-			$sens = 'C';
-		}
+		$field_index_list = array_flip($listfields);
+		if (isset($field_index_list['debit'])) {
+			$debit_index = $field_index_list['debit'];
 
-		$listfields[] = $fieldname;
-		$listvalues[] = "'" . $sens . "'";
+			$debit = floatval($arrayrecord[$debit_index]['val']);
+			if (!empty($debit)) {
+				$sens = 'D';
+			} else {
+				$sens = 'C';
+			}
+
+			$listfields[] = $fieldname;
+			$listvalues[] = "'" . $this->db->escape($sens) . "'";
+		}
 
 		return 1;
 	}
