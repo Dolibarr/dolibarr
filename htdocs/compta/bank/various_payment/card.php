@@ -548,7 +548,7 @@ if ($id) {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
 	}
 
-	// Confirmation of the removal of the Social Contribution
+	// Confirmation of the removal of the Various Payment
 	if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteVariousPayment');
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
