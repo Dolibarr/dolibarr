@@ -2518,6 +2518,20 @@ class Facture extends CommonInvoice
 		{
 			$keymin = strtolower($key);
 			$i = (int) preg_replace('/[^0-9]/', '', $key);
+			if ($i == 1) {
+				if (!is_object($this->thirdparty)) {
+					$langs->load('errors');
+					$this->error = $langs->trans('ErrorInvoiceLoadThirdParty', $this->ref);
+					dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+					return -1;
+				}
+			}
+			if (!property_exists($this->thirdparty, $keymin)) {
+				$langs->load('errors');
+				$this->error = $langs->trans('ErrorInvoiceLoadThirdPartyKey', $keymin, $this->ref);
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+				return -1;
+			}
 			$vallabel = $this->thirdparty->$keymin;
 
 			if ($i > 0)
