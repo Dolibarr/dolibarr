@@ -190,7 +190,13 @@ print '<script type="text/javascript">
  * Customer Invoice lines
  */
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.type, f.datef, f.ref_client,";
-$sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
+$sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
+$sql .= " CASE WHEN l_prev_situation_line.rowid IS NOT NULL
+			THEN
+					fd.total_ht - COALESCE(l_prev_situation_line.total_ht, 0)
+			ELSE
+					fd.total_ht
+			END as total_ht,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -206,6 +212,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as l_prev_situation_line ON (fd.fk_prev_id = l_prev_situation_line.rowid)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);

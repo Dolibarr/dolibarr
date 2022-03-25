@@ -226,7 +226,13 @@ if (empty($chartaccountcode)) {
 
 // Customer Invoice lines
 $sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype,";
-$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+$sql .= " l.rowid, l.fk_product, l.description, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+$sql .= " CASE WHEN l_prev_situation_line.rowid IS NOT NULL
+			THEN
+					l.total_ht - COALESCE(l_prev_situation_line.total_ht, 0)
+			ELSE
+					l.total_ht
+			END as total_ht,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
@@ -254,6 +260,7 @@ if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as l_prev_situation_line ON (l.fk_prev_id = l_prev_situation_line.rowid)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
