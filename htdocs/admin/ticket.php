@@ -181,6 +181,26 @@ if ($action == 'setvarother') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+}
+
+if ($action == 'setvarworkflowother') {
+	$param_delay_first_response = GETPOST('delay_first_response', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 
@@ -478,7 +498,8 @@ print '<td></td>';
 print "</tr>\n";
 
 // Auto assign ticket at user who created it
-print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
@@ -492,11 +513,55 @@ print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 
 print '</td>';
 print '</tr>';
 
-print '</table><br>';
+// Auto notify contacts when closing the ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoNotifyClose").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_NOTIFY_AT_CLOSING');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("TICKET_NOTIFY_AT_CLOSING", $arrval, $conf->global->TICKET_NOTIFY_AT_CLOSING);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
 
 if (!$conf->use_javascript_ajax) {
 	print '</form>';
 }
+
+// Define wanted maximum time elapsed before answers to tickets
+print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<input type="hidden" name="action" value="setvarworkflowother">';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";
+print '<td class="left">
+	<input type="number" value="'.$conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE.'" name="delay_first_response">
+	<input type="submit" class="button small" value="'.$langs->trans("Save").'">
+	</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsDelayBetweenAnswers")."</td>";
+print '<td class="left">
+	<input type="number" value="'.$conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE.'" name="delay_between_responses">
+	<input type="submit" class="button small" value="'.$langs->trans("Save").'">
+	</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '</form>';
+
+print '</table><br>';
+
 
 // Admin var of module
 print load_fiche_titre($langs->trans("Notification"), '', '');

@@ -3400,7 +3400,7 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'price_ht'=>price2num($objp->unitprice, 'MT'),
+						'price_ht'=>price2num($objp->unitprice, 'MU'),
 						'discount'=>$outdiscount,
 						'type'=>$outtype,
 						'duration_value'=>$outdurationvalue,

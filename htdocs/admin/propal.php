@@ -196,6 +196,37 @@ if ($action == 'updateMask') {
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "PROPALE_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
+
+	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
 }
 
 
@@ -588,6 +619,26 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
 print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
 print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
+
+// default update prices on cloning a proposal
+print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<input type="hidden" name="token" value="' . newToken() .'">';
+print '<tr class="oddeven">';
+print '<td>' . $langs->trans('DefaultPuttingPricesUpToDate').'</td>';
+print '<td></td>';
+print '<td class="right">';
+if (!empty($conf->use_javascript_ajax)) {
+	print ajax_constantonoff('PROPOSAL_CLONE_UPDATE_PRICES', array(), $conf->entity, 0, 0, 1, 0);
+} else {
+	if (empty($conf->global->PROPOSAL_CLONE_UPDATE_PRICES)) {
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_PROPOSAL_CLONE_UPDATE_PRICES">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+	} else {
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_PROPOSAL_CLONE_UPDATE_PRICES">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+	}
+}
+print '</td>';
 print '</tr>';
 print '</form>';
 

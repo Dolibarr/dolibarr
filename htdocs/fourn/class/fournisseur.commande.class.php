@@ -32,7 +32,7 @@
  *	\brief      File of class to manage suppliers orders
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->productbatch->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
@@ -431,6 +431,7 @@ class CommandeFournisseur extends CommonOrder
 			 * Lines
 			 */
 			$result = $this->fetch_lines();
+
 			if ($result < 0) {
 				return -1;
 			} else {
@@ -453,7 +454,7 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf;
 		// phpcs:enable
-		//$result=$this->fetch_lines();
+
 		$this->lines = array();
 
 		$sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
@@ -464,15 +465,9 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " l.fk_unit,";
 		$sql .= " l.date_start, l.date_end,";
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging";
-		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn AND pfp.fk_soc = ".((int) $this->socid);
-		}
-		$sql .= " WHERE l.fk_commande = ".$this->id;
+		$sql .= " WHERE l.fk_commande = ".((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
 		}
@@ -523,11 +518,34 @@ class CommandeFournisseur extends CommonOrder
 				$line->ref_supplier        = $objp->ref_supplier; // The supplier ref of price when product was added. May have change since
 
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					$line->fk_fournprice = $objp->fk_pfp;
-					$line->packaging     = $objp->packaging;
+					// TODO We should not fetch this properties into the fetch_lines. This is NOT properties of a line.
+					// Move this into another method and call it when required.
+
+					// Take better packaging for $objp->qty (first supplier ref quantity <= $objp->qty)
+					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.MAIN_DB_PREFIX."product_fournisseur_price";
+					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
+					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
+					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
+					$sqlsearchpackage .= " AND quantity <= ".((float) $objp->qty);	// required to be qualified
+					$sqlsearchpackage .= " AND (packaging IS NULL OR packaging = 0 OR packaging <= ".((float) $objp->qty).")";	// required to be qualified
+					$sqlsearchpackage .= " AND fk_soc = ".((int) $this->socid);
+					$sqlsearchpackage .= " ORDER BY packaging ASC";		// Take the smaller package first
+					$sqlsearchpackage .= " LIMIT 1";
+
+					$resqlsearchpackage = $this->db->query($sqlsearchpackage);
+					if ($resqlsearchpackage) {
+						$objsearchpackage = $this->db->fetch_object($resqlsearchpackage);
+						if ($objsearchpackage) {
+							$line->fk_fournprice = $objsearchpackage->rowid;
+							$line->packaging     = $objsearchpackage->packaging;
+						}
+					} else {
+						$this->error = $this->db->lasterror();
+						return -1;
+					}
 				}
 
-				$line->date_start = $this->db->jdate($objp->date_start);
+				$line->date_start          = $this->db->jdate($objp->date_start);
 				$line->date_end            = $this->db->jdate($objp->date_end);
 				$line->fk_unit             = $objp->fk_unit;
 
@@ -1360,29 +1378,35 @@ class CommandeFournisseur extends CommonOrder
 
 				// insert products details into database
 				for ($i = 0; $i < $num; $i++) {
-					$this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
+										$line = $this->lines[$i];
+					if (!is_object($line)) {
+						$line = (object) $line;
+					}
+
+
+					$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
 					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 					$result = $this->addline(
-						$this->lines[$i]->desc,
-						$this->lines[$i]->subprice,
-						$this->lines[$i]->qty,
-						$this->lines[$i]->tva_tx,
-						$this->lines[$i]->localtax1_tx,
-						$this->lines[$i]->localtax2_tx,
-						$this->lines[$i]->fk_product,
+						$line->desc,
+						$line->subprice,
+						$line->qty,
+						$line->tva_tx,
+						$line->localtax1_tx,
+						$line->localtax2_tx,
+						$line->fk_product,
 						0,
-						$this->lines[$i]->ref_fourn, // $this->lines[$i]->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
-						$this->lines[$i]->remise_percent,
+						$line->ref_fourn, // $line->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
+						$line->remise_percent,
 						'HT',
 						0,
-						$this->lines[$i]->product_type,
-						$this->lines[$i]->info_bits,
+						$line->product_type,
+						$line->info_bits,
 						false,
-						$this->lines[$i]->date_start,
-						$this->lines[$i]->date_end,
-						$this->lines[$i]->array_options,
-						$this->lines[$i]->fk_unit
+						$line->date_start,
+						$line->date_end,
+						$line->array_options,
+						$line->fk_unit
 						);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functionnal error
@@ -1797,6 +1821,7 @@ class CommandeFournisseur extends CommonOrder
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$prod = new Product($this->db, $fk_product);
 					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid));
+
 					if ($qty < $prod->packaging) {
 						$qty = $prod->packaging;
 					} else {
@@ -3505,22 +3530,18 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		global $conf;
 
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx, cd.special_code,';
-		$sql .= ' cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.ref,';
+		$sql .= ' cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.ref as ref_supplier,';
 		$sql .= ' cd.remise, cd.remise_percent, cd.subprice,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql .= ' cd.total_localtax1, cd.total_localtax2,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
 		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
-		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging";
-		}
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
+		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
+		$sql .= ' c.fk_soc as socid';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur as c, '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
-		}
-		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
+		$sql .= ' WHERE cd.fk_commande = c.rowid AND cd.rowid = '.((int) $rowid);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);
@@ -3531,8 +3552,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->fk_commande      = $objp->fk_commande;
 				$this->desc             = $objp->description;
 				$this->qty              = $objp->qty;
-				$this->ref_fourn        = $objp->ref;
-				$this->ref_supplier     = $objp->ref;
+				$this->ref_fourn        = $objp->ref_supplier;
+				$this->ref_supplier     = $objp->ref_supplier;
 				$this->subprice         = $objp->subprice;
 				$this->tva_tx           = $objp->tva_tx;
 				$this->localtax1_tx		= $objp->localtax1_tx;
@@ -3556,9 +3577,33 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->product_ref      = $objp->product_ref;
 				$this->product_label    = $objp->product_label;
 				$this->product_desc     = $objp->product_desc;
+
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					$this->packaging = $objp->packaging;
-					$this->fk_fournprice = $objp->fk_pfp;
+					// TODO We should not fetch this properties into the fetch_lines. This is NOT properties of a line.
+					// Move this into another method and call it when required.
+
+					// Take better packaging for $objp->qty (first supplier ref quantity <= $objp->qty)
+					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.MAIN_DB_PREFIX."product_fournisseur_price";
+					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
+					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
+					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
+					$sqlsearchpackage .= " AND quantity <= ".((float) $objp->qty);	// required to be qualified
+					$sqlsearchpackage .= " AND (packaging IS NULL OR packaging = 0 OR packaging <= ".((float) $objp->qty).")";	// required to be qualified
+					$sqlsearchpackage .= " AND fk_soc = ".((int) $objp->socid);
+					$sqlsearchpackage .= " ORDER BY packaging ASC";		// Take the smaller package first
+					$sqlsearchpackage .= " LIMIT 1";
+
+					$resqlsearchpackage = $this->db->query($sqlsearchpackage);
+					if ($resqlsearchpackage) {
+						$objsearchpackage = $this->db->fetch_object($resqlsearchpackage);
+						if ($objsearchpackage) {
+							$this->fk_fournprice = $objsearchpackage->rowid;
+							$this->packaging     = $objsearchpackage->packaging;
+						}
+					} else {
+						$this->error = $this->db->lasterror();
+						return -1;
+					}
 				}
 
 				$this->date_start       		= $this->db->jdate($objp->date_start);

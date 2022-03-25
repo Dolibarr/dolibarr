@@ -136,6 +136,10 @@ TicketsPublicNotificationNewMessage=Envoyer un ou des emails lorsqu’un nouveau
 TicketsPublicNotificationNewMessageHelp=Envoyer un (des) courriel(s) lorsqu’un nouveau message est ajouté à partir de l’interface publique (à l’utilisateur désigné ou au courriel de notification  (mise à jour) et/ou au courriel de notification)
 TicketPublicNotificationNewMessageDefaultEmail=Emails de notifications à (mise à jour)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez un email à cette adresse email pour chaque nouveau message de notifications si le ticket n'a pas d'utilisateur assigné ou si l'utilisateur n'a pas d'email connu.
+TicketsAutoNotifyClose=Envoyer un courriel de notification aux contacts à la cloture du ticket.
+TicketsAutoNotifyCloseHelp=A la cloture de tickets, vous pouvez envoyer des emails de notification aux contacts du ticket. Cette option sélectionne par défaut "tous les contacts".
+TicketWrongContact=Le contact n'est pas lié au ticket. L'email n'a pas été envoyé.
+
 #
 # Index & list page
 #
@@ -151,6 +155,8 @@ OrderByDateAsc=Trier par date croissante
 OrderByDateDesc=Trier par date décroissante
 ShowAsConversation=Afficher comme liste de conversation
 MessageListViewType=Afficher la liste sous forme de tableau
+ConfirmMassTicketClosingSendEmail=Envoyer des emails à tous les contacts à la cloture des tickets
+ConfirmMassTicketClosingSendEmailQuestion=Voulez-vous notifier tous les contacts liés lors de la clôture de ces tickets ?
 
 #
 # Ticket card
@@ -238,6 +244,9 @@ TicketChangeStatus=Changer l'état
 TicketConfirmChangeStatus=Confirmez le changement d'état: %s?
 TicketLogStatusChanged=Statut modifié: %s à %s
 TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
+NotifyThirdpartyOnTicketClosing=Envoyer un email de notification à :
+TicketNotifyAllTiersAtClose=Tous les contacts liés
+TicketNotNotifyTiersAtClose=Aucun contact lié
 Unread=Non lu
 TicketNotCreatedFromPublicInterface=Non disponible. Le ticket n’a pas été créé à partir de l'interface publique.
 ErrorTicketRefRequired=La référence du ticket est requise
@@ -270,6 +279,7 @@ TicketNewEmailBodyInfosTicket=Informations pour la surveillance du ticket
 TicketNewEmailBodyInfosTrackId=Numéro de suivi du ticket : %s
 TicketNewEmailBodyInfosTrackUrl=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-dessus.
 TicketNewEmailBodyInfosTrackUrlCustomer=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-dessus.
+TicketCloseEmailBodyInfosTrackUrlCustomer=Vous pouvez consulter l'historique du ticket en cliquant sur le lien ci-dessus.
 TicketEmailPleaseDoNotReplyToThisEmail=Merci de ne pas répondre directement à ce courriel ! Utilisez le lien pour répondre via l'interface.
 TicketPublicInfoCreateTicket=Ce formulaire vous permet d'enregistrer un ticket dans notre système de gestion.
 TicketPublicPleaseBeAccuratelyDescribe=Veuillez décrire avec précision le problème. Fournissez le plus d'informations possibles pour nous permettre d'identifier correctement votre demande.
@@ -291,6 +301,10 @@ NewUser=Nouvel utilisateur
 NumberOfTicketsByMonth=Nombre de tickets par mois
 NbOfTickets=Nombre de tickets
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket clôturé
+TicketCloseEmailBodyCustomer=Ceci est un email automatique pour vous informer que le ticket %s a été clôturé.
+TicketCloseEmailSubjectAdmin=Ticket clôturé - Réf %s (ID public %s)
+TicketCloseEmailBodyAdmin=Le ticket #%s vient d'être clôturé. Voir les informations :
 TicketNotificationEmailSubject=Ticket %s mis à jour
 TicketNotificationEmailBody=Ceci est un message automatique pour vous informer que le ticket %s vient d'être mis à jour
 TicketNotificationRecipient=Destinataire de la notification

@@ -875,8 +875,8 @@ class Societe extends CommonObject
 			$sql .= ", name_alias";
 			$sql .= ", entity";
 			$sql .= ", datec";
-			$sql .= ", fk_typent";
 			$sql .= ", fk_user_creat";
+			$sql .= ", fk_typent";
 			$sql .= ", canvas";
 			$sql .= ", status";
 			$sql .= ", ref_ext";
@@ -2481,9 +2481,10 @@ class Societe extends CommonObject
 	 *		@param	int		$maxlen			          Max length of name
 	 *      @param	int  	$notooltip		          1=Disable tooltip
 	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *      @param	int		$noaliasinname			  1=Do not add alias into the link ref
 	 *		@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2521,7 +2522,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (!empty($this->name_alias)) {
+		if (!empty($this->name_alias) && empty($noaliasinname)) {
 			$name .= ' ('.$this->name_alias.')';
 		}
 
