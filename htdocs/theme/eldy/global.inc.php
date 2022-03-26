@@ -2402,7 +2402,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td, .trextrafields_collapse_last td {
 	/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
-	border-bottom: 2px solid var(--colortopbordertitle1) !important;
+	/* border-bottom: 2px solid var(--colortopbordertitle1) !important; */
 }
 
 .tdhrthin {
