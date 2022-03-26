@@ -261,7 +261,7 @@ ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NUL
 
 ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 
-ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
+ALTER TABLE llx_mailing ADD UNIQUE INDEX uk_mailing(titre, entity);
 
 create table llx_inventory_extrafields
 (
