@@ -645,17 +645,20 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 	$("#select_type").change(function()
 	{
 		setforfree();
-		if (jQuery('#select_type').val() >= 0)
-		{
-			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+
+		if (jQuery('#select_type').val() >= 0) {
+			console.log("Set focus on description field");
+			/* this focus code works on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
-			/* focus if CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-			{
+			/* this focus code works for CKEDITOR */
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
 				var editor = CKEDITOR.instances['dp_desc'];
-				if (editor) { editor.focus(); }
+				if (editor) {
+					editor.focus();
+				}
 			}
 		}
+
 		console.log("Hide/show date according to product type");
 		if (jQuery('#select_type').val() == '0')
 		{

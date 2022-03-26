@@ -2104,6 +2104,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_PROFID6"), 6).'</span>';
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
+	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.$langs->trans("Country".$mysoc->country_code).'</span>';
 
 	$dropdownBody .= '</div>';
 
@@ -2242,7 +2243,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	    </div>';
 	} else {
 		$btnUser = '<!-- div for user link -->
-	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
+	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'">
 	    	'.$userImage.'
 	    		<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
@@ -2273,10 +2274,12 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	            });
 
 	            $("#topmenulogincompanyinfo-btn").on("click", function() {
+					console.log("Clik on topmenulogincompanyinfo-btn");
 	                $("#topmenulogincompanyinfo").slideToggle();
 	            });
 
 	            $("#topmenuloginmoreinfo-btn").on("click", function() {
+					console.log("Clik on topmenuloginmoreinfo-btn");
 	                $("#topmenuloginmoreinfo").slideToggle();
 	            });';
 		}
