@@ -279,7 +279,8 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input), select:focus, .select2-container--open .select2-selection--single {
+input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
+ select:focus, .select2-container--open .select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
