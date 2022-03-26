@@ -65,6 +65,15 @@ function societe_prepare_head(Societe $object)
 				$sql = "SELECT COUNT(p.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
+				// Add table from hooks
+				$parameters = array('contacttab' => true);
+				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+				$sql .= $hookmanager->resPrint;
+				$sql .= " WHERE p.fk_soc = ".$object->id;
+				// Add where from hooks
+				$parameters = array('contacttab' => true);
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+				$sql .= $hookmanager->resPrint;
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
