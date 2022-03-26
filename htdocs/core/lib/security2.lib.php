@@ -69,6 +69,8 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 
 	// Validation of login/pass/entity with standard modules
 	if (empty($login)) {
+		unset($_SESSION["dol_loginmesg"]);
+
 		$test = true;
 		foreach ($authmode as $mode) {
 			if ($test && $mode && !$login) {
@@ -111,7 +113,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Load translation files required by the page
 					$langs->loadLangs(array('other', 'main', 'errors'));
 
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorFailedToLoadLoginFileForMode", $mode);
+					$_SESSION["dol_loginmesg"] = (isset($_SESSION["dol_loginmesg"]) ? $_SESSION["dol_loginmesg"].', ' : '').$langs->transnoentitiesnoconv("ErrorFailedToLoadLoginFileForMode", $mode);
 				}
 			}
 		}
