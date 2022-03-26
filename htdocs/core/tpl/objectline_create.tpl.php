@@ -1034,18 +1034,18 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ht").val('').show();
 			jQuery("#title_up_ht, #title_up_ht_currency").show();
 		<?php } else { ?>
-			jQuery("#price_ht").val('').hide();
+			//jQuery("#price_ht").val('').hide();
 			jQuery("#multicurrency_price_ht").val('').hide();
 			jQuery("#title_up_ht, #title_up_ht_currency").hide();
 		<?php } ?>
-		<?php if (empty($conf->global->MAIN_ENABLE_EDIT_PREDEF_PRICETTC)) { ?>
-			jQuery("#price_ttc").val('').hide();
-			jQuery("#multicurrency_price_ttc").val('').hide();
-			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
-		<?php } else { /* this option work great with supplier invoices */ ?>
+		<?php if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICETTC)) { ?>
 			jQuery("#price_ttc").val('').show();
 			jQuery("#multicurrency_price_ttc").val('').show();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").show();
+		<?php } else { ?>
+			jQuery("#price_ttc").val('').hide();
+			jQuery("#multicurrency_price_ttc").val('').hide();
+			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
 		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
 		/* jQuery("#title_fourn_ref").hide(); */

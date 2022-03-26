@@ -1447,7 +1447,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
-		if (!GETPOST('qty')) {
+		if (!GETPOST('qty', 'alpha')) {	// 0 is NOT allowed for invoices
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -1499,12 +1499,27 @@ if (empty($reshook)) {
 
 			if ($idprod > 0) {
 				$label = $productsupplier->label;
-
+				// Define output language
+				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						$newlang = GETPOST('lang_id', 'aZ09');
+					}
+					if (empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$desc = (!empty($productsupplier->multilangs[$outputlangs->defaultlang]["description"])) ? $productsupplier->multilangs[$outputlangs->defaultlang]["description"] : $productsupplier->description;
+				} else {
+					$desc = $productsupplier->description;
+				}
 				// if we use supplier description of the products
 				if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
 					$desc = $productsupplier->desc_supplier;
-				} else {
-					$desc = $productsupplier->description;
 				}
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
@@ -3555,7 +3570,7 @@ if ($action == 'create') {
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 		$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;

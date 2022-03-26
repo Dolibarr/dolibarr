@@ -1718,7 +1718,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Add order line
 	 *
 	 *	@param      string	$desc            		Description
-	 *	@param      float	$pu_ht              	Unit price
+	 *	@param      float	$pu_ht              	Unit price (used if $price_base_type is 'HT')
 	 *	@param      float	$qty             		Quantity
 	 *	@param      float	$txtva           		Taux tva
 	 *	@param      float	$txlocaltax1        	Localtax1 tax
@@ -1728,7 +1728,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      string	$ref_supplier			Supplier reference price
 	 *	@param      float	$remise_percent  		Remise
 	 *	@param      string	$price_base_type		HT or TTC
-	 *	@param		float	$pu_ttc					Unit price TTC
+	 *	@param		float	$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
 	 *	@param		int		$type					Type of line (0=product, 1=service)
 	 *	@param		int		$info_bits				More information
 	 *  @param		bool	$notrigger				Disable triggers
