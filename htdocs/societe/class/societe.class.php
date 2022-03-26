@@ -73,18 +73,18 @@ class Societe extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
-		"supplier_proposal" => array('name' => 'SupplierProposal'),
-		"propal" => array('name' => 'Proposal'),
-		"commande" => array('name' => 'Order'),
-		"facture" => array('name' => 'Invoice'),
-		"facture_rec" => array('name' => 'RecurringInvoiceTemplate'),
-		"contrat" => array('name' => 'Contract'),
-		"fichinter" => array('name' => 'Fichinter'),
-		"facture_fourn" => array('name' => 'SupplierInvoice'),
-		"commande_fournisseur" => array('name' => 'SupplierOrder'),
-		"projet" => array('name' => 'Project'),
-		"expedition" => array('name' => 'Shipment'),
-		"prelevement_lignes" => array('name' => 'DirectDebitRecord'),
+		'supplier_proposal' => array('name' => 'SupplierProposal'),
+		'propal' => array('name' => 'Proposal'),
+		'commande' => array('name' => 'Order'),
+		'facture' => array('name' => 'Invoice'),
+		'facture_rec' => array('name' => 'RecurringInvoiceTemplate'),
+		'contrat' => array('name' => 'Contract'),
+		'fichinter' => array('name' => 'Fichinter'),
+		'facture_fourn' => array('name' => 'SupplierInvoice'),
+		'commande_fournisseur' => array('name' => 'SupplierOrder'),
+		'projet' => array('name' => 'Project'),
+		'expedition' => array('name' => 'Shipment'),
+		'prelevement_lignes' => array('name' => 'DirectDebitRecord'),
 	);
 
 	/**
@@ -92,22 +92,22 @@ class Societe extends CommonObject
 	 *               if name like with @ClassName:FilePathClass:ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
-		"societe_prices",
-		"societe_address",
-		"product_fournisseur_price",
-		"product_customer_price_log",
-		"product_customer_price",
-		"@Contact:/contact/class/contact.class.php:fk_soc",
-		"adherent",
-		"societe_account",
-		"societe_rib",
-		"societe_remise",
-		"societe_remise_except",
-		"societe_commerciaux",
-		"categorie",
-		"notify",
-		"notify_def",
-		"actioncomm",
+		'societe_prices',
+		'societe_address',
+		'product_fournisseur_price',
+		'product_customer_price_log',
+		'product_customer_price',
+		'@Contact:/contact/class/contact.class.php:fk_soc',
+		'adherent',
+		'societe_account',
+		'societe_rib',
+		'societe_remise',
+		'societe_remise_except',
+		'societe_commerciaux',
+		'categorie',
+		'notify',
+		'notify_def',
+		'actioncomm',
 	);
 
 	/**

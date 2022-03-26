@@ -64,13 +64,13 @@ class Product extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
-		'supplier_proposaldet' => array('parent' => 'supplier_proposal', 'parentkey' => 'fk_supplier_proposal'),
-		'propaldet' => array('parent' => 'propal', 'parentkey' => 'fk_propal'),
-		'commandedet' => array('parent' => 'commande', 'parentkey' => 'fk_commande'),
-		'facturedet' => array('parent' => 'facture', 'parentkey' => 'fk_facture'),
-		'contratdet' => array('parent' => 'contrat', 'parentkey' => 'fk_contrat'),
-		'facture_fourn_det' => array('parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
-		'commande_fournisseurdet' => array('parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
+		'supplier_proposaldet' => array('name' => 'SupplierProposal', 'parent' => 'supplier_proposal', 'parentkey' => 'fk_supplier_proposal'),
+		'propaldet' => array('name' => 'Proposal', 'parent' => 'propal', 'parentkey' => 'fk_propal'),
+		'commandedet' => array('name' => 'Order', 'parent' => 'commande', 'parentkey' => 'fk_commande'),
+		'facturedet' => array('name' => 'Invoice', 'parent' => 'facture', 'parentkey' => 'fk_facture'),
+		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
+		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
+		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
 	);
 
 	/**
