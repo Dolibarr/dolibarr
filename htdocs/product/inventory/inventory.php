@@ -229,7 +229,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Save quantity found during inventory
+	// Save quantity found during inventory (when we click on Save button on inventory page)
 	if ($action =='updateinventorylines' && $permissiontoadd) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
@@ -248,6 +248,9 @@ if (empty($reshook)) {
 			while ($i < $num) {
 				$line = $db->fetch_object($resql);
 				$lineid = $line->rowid;
+
+				$result = 0;
+				$resultupdate = 0;
 
 				if (GETPOST("id_".$lineid, 'alpha') != '') {		// If a value was set ('0' or something else)
 					$qtytoupdate = price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
@@ -268,6 +271,8 @@ if (empty($reshook)) {
 					$result = $inventoryline->fetch($lineid);
 					if ($result > 0) {
 						$inventoryline->qty_view = null;			// The new value we want
+						$inventoryline->pmp_real = price2num(GETPOST('realpmp_'.$lineid, 'alpha'), 'MS');
+						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
 						$resultupdate = $inventoryline->update($user);
 					}
 				}
@@ -280,7 +285,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Update line with id of stock movement (and the start quantity if it has changed this last recording)
+		// Update user that update quantities
 		if (! $error) {
 			$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventory";
 			$sqlupdate .= " SET fk_user_modif = ".((int) $user->id);
@@ -392,8 +397,9 @@ print '<script type="text/javascript">
 function disablebuttonmakemovementandclose() {
 	console.log("Disable button idbuttonmakemovementandclose until we save");
 	jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
+	jQuery("#idbuttonmakemovementandclose").attr(\'onclick\', \'return false;\');
 	jQuery("#idbuttonmakemovementandclose").attr(\'title\',\''.dol_escape_js($langs->trans("SaveQtyFirst")).'\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
+	jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused classfortooltip\');
 };
 
 jQuery(document).ready(function() {
@@ -561,7 +567,7 @@ if ($object->id > 0) {
 			// Save
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MakeMovementsAndClose")).'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
+					print '<a class="butAction classfortooltip" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MakeMovementsAndClose")).'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
 				}
@@ -626,6 +632,7 @@ if ($object->id > 0) {
 			print '<script>';
 
 			print '
+			var duplicatedbatchcode = [];
 			var errortab1 = [];
 			var errortab2 = [];
 			var errortab3 = [];
@@ -641,6 +648,7 @@ if ($object->id > 0) {
 				var textarea = $("textarea[name=barcodelist]").val();
 				var textarray = textarea.split(/[\s,;]+/);
 				var tabproduct = [];
+				duplicatedbatchcode = [];
 				errortab1 = [];
 				errortab2 = [];
 				errortab3 = [];
@@ -652,18 +660,20 @@ if ($object->id > 0) {
 				if(textarray.some((element) => element != "")){
 					$(".expectedqty").each(function(){
 						id = this.id;
-						console.log("Analyze line "+id+" in inventory");
-						warehouse = $("#"+id+"_warehouse").children().first().text();
-						productbarcode = $("#"+id+"_product").children().first().attr("title");
-						productbarcode = productbarcode.split("<br>");
-						productbarcode = productbarcode.filter(barcode => barcode.includes("'.$langs->trans('BarCode').'"))[0];
-						productbarcode = productbarcode.slice(productbarcode.indexOf("</b> ")+5);
+						console.log("Analyze the line "+id+" in inventory, barcodemode="+barcodemode);
+						warehouse = $("#"+id+"_warehouse").attr(\'data-ref\');
+						//console.log(warehouse);
+						productbarcode = $("#"+id+"_product").attr(\'data-barcode\');
+						//console.log(productbarcode);
+						productbatchcode = $("#"+id+"_batch").attr(\'data-batch\');
+						//console.log(productbatchcode);
 
-						productbatchcode = $("#"+id+"_batch").text();
 						if (barcodemode != "barcodeforproduct") {
 							tabproduct.forEach(product=>{
+								console.log("product.Batch="+product.Batch+" productbatchcode="+productbatchcode);
 								if(product.Batch != "" && product.Batch == productbatchcode){
-									errortab1.push(productbatchcode);
+									console.log("duplicate batch code found for batch code "+productbatchcode);
+									duplicatedbatchcode.push(productbatchcode);
 								}
 							})
 						}
@@ -674,7 +684,9 @@ if ($object->id > 0) {
 						tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':productinput,\'fetched\':false});
 					});
 
+					console.log("Loop on each record entered in the textarea");
 					textarray.forEach(function(element,index){
+						console.log("Process record element="+element+" id="+id);
 						var verify_batch = false;
 						var verify_barcode = false;
 						switch(barcodemode){
@@ -689,15 +701,20 @@ if ($object->id > 0) {
 								verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,selectaddorreplace,"lotserial");
 								break;
 							default:
-								alert("'.$langs->trans("ErrorWrongBarcodemode").' \""+barcodemode+"\"");
-								throw "'.$langs->trans('ErrorWrongBarcodemode').' \""+barcodemode+"\"";
+								alert(\''.dol_escape_js($langs->trans("ErrorWrongBarcodemode")).' "\'+barcodemode+\'"\');
+								throw \''.dol_escape_js($langs->trans('ErrorWrongBarcodemode')).' "\'+barcodemode+\'"\';
 						}
 
-						if (verify_batch == false && verify_barcode == false) {		/* If the 2 flags are false, error */
+						if (verify_batch == false && verify_barcode == false) {		/* If the 2 flags are false, not found error */
 							errortab2.push(element);
-						}
-						if (verify_batch == true && verify_barcode == true) {		/* If the 2 flags are true, error: we don t know which one to take */
+						} else if (verify_batch == true && verify_barcode == true) {		/* If the 2 flags are true, error: we don t know which one to take */
 							errortab3.push(element);
+						} else if (verify_batch == true) {
+							console.log("element="+element);
+							console.log(duplicatedbatchcode);
+							if (duplicatedbatchcode.includes(element)) {
+								errortab1.push(element);
+							}
 						}
 					});
 
@@ -731,41 +748,41 @@ if ($object->id > 0) {
 								}
 							}
 						});
-						jQuery("#scantoolmessage").text("'.$langs->trans("QtyWasAddedToTheScannedBarcode").'\n");
+						jQuery("#scantoolmessage").text("'.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\n");
 						/* document.forms["formrecord"].submit(); */
 					} else {
 						let stringerror = "";
 						if (Object.keys(errortab1).length > 0) {
-							stringerror += "<br>'.$langs->transnoentities('ErrorSameBatchNumber').': ";
+							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': ";
 							errortab1.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab2).length > 0) {
-							stringerror += "<br>'.$langs->transnoentities('ErrorCantFindCodeInInventory').': ";
+							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': ";
 							errortab2.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab3).length > 0) {
-							stringerror += "<br>'.$langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial').': ";
+							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': ";
 							errortab3.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab4).length > 0) {
-							stringerror += "<br>'.$langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse').': ";
+							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': ";
 							errortab4.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 
-						jQuery("#scantoolmessage").text("'.$langs->trans("ErrorOnElementsInventory").'\n" + stringerror);
-						//alert("'.$langs->trans("ErrorOnElementsInventory").' :\n" + stringerror);
+						jQuery("#scantoolmessage").html(\''.dol_escape_js($langs->transnoentities("ErrorOnElementsInventory")).'\' + stringerror);
+						//alert("'.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n" + stringerror);
 					}
 				}
 
@@ -843,6 +860,7 @@ if ($object->id > 0) {
 	print 'jQuery(document).ready(function() {
 		$("#clearqty").on("click", function() {
 			console.log("Clear all values");
+			disablebuttonmakemovementandclose();
 			jQuery(".realqty").val("");
 			jQuery(".realqty").trigger("change");
 			return false;	/* disable submit */
@@ -978,16 +996,16 @@ if ($object->id > 0) {
 			}
 
 			print '<tr class="oddeven">';
-			print '<td id="id_'.$obj->rowid.'_warehouse">';
+			print '<td id="id_'.$obj->rowid.'_warehouse" data-ref="'.dol_escape_htmltag($warehouse_static->ref).'">';
 			print $warehouse_static->getNomUrl(1);
 			print '</td>';
-			print '<td id="id_'.$obj->rowid.'_product">';
+			print '<td id="id_'.$obj->rowid.'_product" data-ref="'.dol_escape_htmltag($product_static->ref).'" data-barcode="'.dol_escape_htmltag($product_static->barcode).'">';
 			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
 			if (!empty($conf->productbatch->enabled)) {
-				print '<td id="id_'.$obj->rowid.'_batch">';
-				print $obj->batch;
+				print '<td id="id_'.$obj->rowid.'_batch" data-batch="'.dol_escape_htmltag($obj->batch).'">';
+				print dol_escape_htmltag($obj->batch);
 				print '</td>';
 			}
 

@@ -29,7 +29,7 @@
 /**
  * \file		htdocs/accountancy/class/accountancyimport.class.php
  * \ingroup		Accountancy (Double entries)
- * \brief 		Class accountancy import
+ * \brief 		Class with methods for accountancy import
  */
 
 
@@ -40,62 +40,103 @@
 class AccountancyImport
 {
 	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
+
+	/**
+	 *  Clean amount
+	 *
+	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   array       $listfields         Fields list to add
+	 * @param 	int			$record_key         Record key
+	 * @return  mixed							Value
+	 */
+	public function cleanAmount(&$arrayrecord, $listfields, $record_key)
+	{
+		$value_trim = trim($arrayrecord[$record_key]['val']);
+		return floatval($value_trim);
+	}
+
+	/**
+	 *  Clean value with trim
+	 *
+	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   array       $listfields         Fields list to add
+	 * @param 	int			$record_key         Record key
+	 * @return  mixed							Value
+	 */
+	public function cleanValue(&$arrayrecord, $listfields, $record_key)
+	{
+		return trim($arrayrecord[$record_key]['val']);
+	}
+
+	/**
 	 *  Compute amount
 	 *
 	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param   string      $fieldname          Field name with alias
 	 * @param   array       $listfields         Fields list to add
-	 * @param   array       $listvalues         Values list to add
-	 * @return  int         <0 if KO, >0 if OK
+	 * @param 	int			$record_key         Record key
+	 * @return  mixed							Value
 	 */
-	public function computeAmount(&$arrayrecord, $fieldname, &$listfields, &$listvalues)
+	public function computeAmount(&$arrayrecord, $listfields, $record_key)
 	{
-		$fieldArr = explode('.', $fieldname);
-		if (count($fieldArr) > 0) {
-			$fieldname = $fieldArr[1];
+		// get fields indexes
+		$field_index_list = array_flip($listfields);
+		if (isset($field_index_list['debit']) && isset($field_index_list['credit'])) {
+			$debit_index = $field_index_list['debit'];
+			$credit_index = $field_index_list['credit'];
+
+			$debit  = floatval($arrayrecord[$debit_index]['val']);
+			$credit = floatval($arrayrecord[$credit_index]['val']);
+			if (!empty($debit)) {
+				$amount = $debit;
+			} else {
+				$amount = $credit;
+			}
+
+			return "'" . $this->db->escape(abs($amount)) . "'";
 		}
 
-		$debit  = floatval(trim($arrayrecord[11]['val']));
-		$credit = floatval(trim($arrayrecord[12]['val']));
-		if (!empty($debit)) {
-			$amount = $debit;
-		} else {
-			$amount = $credit;
-		}
-
-		$listfields[] = $fieldname;
-		$listvalues[] = "'" . abs($amount) . "'";
-
-		return 1;
+		return "''";
 	}
 
 
 	/**
-	 *  Compute sens
+	 *  Compute direction
 	 *
 	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param   string      $fieldname          Field name with alias
 	 * @param   array       $listfields         Fields list to add
-	 * @param   array       $listvalues         Values list to add
-	 * @return  int         <0 if KO, >0 if OK
+	 * @param 	int			$record_key         Record key
+	 * @return  mixed							Value
 	 */
-	public function computeDirection(&$arrayrecord, $fieldname, &$listfields, &$listvalues)
+	public function computeDirection(&$arrayrecord, $listfields, $record_key)
 	{
-		$fieldArr = explode('.', $fieldname);
-		if (count($fieldArr) > 0) {
-			$fieldname = $fieldArr[1];
+		$field_index_list = array_flip($listfields);
+		if (isset($field_index_list['debit'])) {
+			$debit_index = $field_index_list['debit'];
+
+			$debit = floatval($arrayrecord[$debit_index]['val']);
+			if (!empty($debit)) {
+				$sens = 'D';
+			} else {
+				$sens = 'C';
+			}
+
+			return "'" . $this->db->escape($sens) . "'";
 		}
 
-		$debit = floatval(trim($arrayrecord[11]['val']));
-		if (!empty($debit)) {
-			$sens = 'D';
-		} else {
-			$sens = 'C';
-		}
-
-		$listfields[] = $fieldname;
-		$listvalues[] = "'" . $sens . "'";
-
-		return 1;
+		return "''";
 	}
 }

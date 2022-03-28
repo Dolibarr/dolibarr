@@ -377,7 +377,7 @@ class Tickets extends DolibarrApi
 		}
 		$this->ticket->message = $ticketMessageText;
 		if (!$this->ticket->createTicketMessage(DolibarrApiAccess::$user)) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when creating ticket');
 		}
 		return $this->ticket->id;
 	}
@@ -438,7 +438,7 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!$this->ticket->delete($id)) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting ticket');
 		}
 
 		return array(

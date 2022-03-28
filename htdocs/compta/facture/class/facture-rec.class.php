@@ -309,10 +309,10 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 			$sql .= ", ".(!empty($this->model_pdf) ? ("'".$this->db->escape($this->model_pdf)."'") : "NULL");
 			$sql .= ", ".((int) $user->id);
-			$sql .= ", ".(!empty($facsrc->fk_project) ? ((int) $facsrc->fk_project) : "null");
+			$sql .= ", ".(!empty($this->fk_project) ? ((int) $this->fk_project) : "null");
 			$sql .= ", ".(!empty($facsrc->fk_account) ? ((int) $facsrc->fk_account) : "null");
-			$sql .= ", ".($facsrc->cond_reglement_id > 0 ? ((int) $facsrc->cond_reglement_id) : "null");
-			$sql .= ", ".($facsrc->mode_reglement_id > 0 ? ((int) $facsrc->mode_reglement_id) : "null");
+			$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
+			$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
 			$sql .= ", ".((int) $this->usenewprice);
 			$sql .= ", ".((int) $this->frequency);
 			$sql .= ", '".$this->db->escape($this->unit_frequency)."'";
@@ -344,6 +344,9 @@ class FactureRec extends CommonInvoice
 						$tva_tx .= ' ('.$facsrc->lines[$i]->vat_src_code.')';
 					}
 
+					$default_start_fill = getDolGlobalInt('INVOICEREC_SET_AUTOFILL_DATE_START');
+					$default_end_fill = getDolGlobalInt('INVOICEREC_SET_AUTOFILL_DATE_END');
+
 					$result_insert = $this->addline(
 						$facsrc->lines[$i]->desc,
 						$facsrc->lines[$i]->subprice,
@@ -363,8 +366,8 @@ class FactureRec extends CommonInvoice
 						$facsrc->lines[$i]->label,
 						$facsrc->lines[$i]->fk_unit,
 						$facsrc->lines[$i]->multicurrency_subprice,
-						0,
-						0,
+						$default_start_fill,
+						$default_end_fill,
 						null,
 						$facsrc->lines[$i]->pa_ht
 					);
@@ -655,18 +658,18 @@ class FactureRec extends CommonInvoice
 	 */
 	public function fetch_lines()
 	{
-		global $extrafields;
-
 		// phpcs:enable
+
 		$this->lines = array();
 
 		// Retrieve all extrafield for line
 		// fetch optionals attributes and labels
-		if (!is_object($extrafields)) {
+		/*if (!is_object($extrafields)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line, true);
+		*/
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';

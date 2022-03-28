@@ -161,7 +161,7 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
 }
 ?>
 </head>
-<body>
+<body class="takepossplitphp">
 
 <script>
 function Split(selectedline, split) {
@@ -201,7 +201,7 @@ $( document ).ready(function() {
 		});
 	});
 
-	
+
 
 	$("#headersplit1").html("<?php echo $langs->trans("Place");?> "+parent.place);
 	$("#headersplit2").html("<?php echo $langs->trans("SplitSale");?>");

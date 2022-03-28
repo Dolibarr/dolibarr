@@ -34,6 +34,8 @@ if (empty($conf) || !is_object($conf)) {
 
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
+$langs->load("ecm");
+
 if (empty($module)) {
 	$module = 'ecm';
 }

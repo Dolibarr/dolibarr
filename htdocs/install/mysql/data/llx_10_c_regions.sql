@@ -11,6 +11,7 @@
 -- Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
 -- Copyright (C) 2019~	   Lao Tian        <281388879@qq.com>
 -- Copyright (C) 2020-2021 Udo Tamm             <dev@dolibit.de>
+-- Copyright (C) 2022      Miro Sertić          <miro.sertic0606@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -55,6 +56,7 @@
 -- Chile
 -- China
 -- Colombie -> for Departmements
+-- Croatia -> for Departmements
 -- Denmark
 -- France
 -- Germany -> for Departmements
@@ -205,6 +207,13 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 9
 
 -- Colombie Regions (id country=70)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 70, 7001, '', 0, 'Colombie');
+
+
+-- Croatia Regions (id country=76)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 76, 7601, '', 0, 'Središnja');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 76, 7602, '', 0, 'Dalmacija');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 76, 7603, '', 0, 'Slavonija');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 76, 7604, '', 0, 'Istra');
 
 
 -- Denmark Regions (id country=80)
