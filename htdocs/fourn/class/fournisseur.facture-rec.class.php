@@ -681,18 +681,17 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function fetch_lines()
 	{
-		global $extrafields;
-
         // phpcs:enable
 		$this->lines = array();
 
 		// Retrieve all extrafield for line
 		// fetch optionals attributes and labels
-		if (!is_object($extrafields)) {
+		/*if (!is_object($extrafields)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line, true);
+		*/
 
 		$sql = 'SELECT l.rowid,';
 		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref, l.label, l.description,';
@@ -710,12 +709,14 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ' ORDER BY l.rang';
 
 		dol_syslog('FactureFournisseurRec::fetch_lines', LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
+
 				$line = new FactureFournisseurLigneRec($this->db);
 
 				$line->id                       = $objp->rowid;

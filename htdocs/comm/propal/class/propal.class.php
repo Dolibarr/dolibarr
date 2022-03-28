@@ -1782,8 +1782,9 @@ class Propal extends CommonObject
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $filters = '')
 	{
-		global $langs, $conf;
 		// phpcs:enable
+		global $langs, $conf;
+
 		$this->lines = array();
 
 		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';

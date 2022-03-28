@@ -504,7 +504,8 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " ORDER BY l.rang, l.rowid";
 		//print $sql;
 
-		dol_syslog(get_class($this)."::fetch get lines", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);

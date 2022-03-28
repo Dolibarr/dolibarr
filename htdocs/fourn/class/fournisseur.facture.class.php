@@ -1041,6 +1041,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ' ORDER BY f.rang, f.rowid';
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+
 		$resql_rows = $this->db->query($sql);
 		if ($resql_rows) {
 			$num_rows = $this->db->num_rows($resql_rows);

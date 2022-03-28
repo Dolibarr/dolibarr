@@ -1775,8 +1775,9 @@ class Facture extends CommonInvoice
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
-		global $langs, $conf;
 		// phpcs:enable
+		global $langs, $conf;
+
 		$this->lines = array();
 
 		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
