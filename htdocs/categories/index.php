@@ -133,7 +133,9 @@ if (empty($nosearch)) {
 			print '</span>';
 			print "</td>\n";
 			print "\t\t<td>";
-			print dolGetFirstLineOfText($cat->description);
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($cat->description, 1));
+			$trunclength = 48;
+			print $form->textwithtooltip(dol_trunc($text, $trunclength), $cat->description);
 			print "</td>\n";
 			print "\t</tr>\n";
 		}

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
-$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
-
 // Security check
 if (empty($conf->variants->enabled)) {
 	accessforbidden('Module not enabled');
@@ -45,8 +44,7 @@ if (empty($conf->variants->enabled)) {
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'variant');
-if (!$permissiontoread) accessforbidden();
+$result = restrictedArea($user, 'variants');
 
 
 /*

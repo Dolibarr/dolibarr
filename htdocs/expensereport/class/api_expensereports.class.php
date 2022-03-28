@@ -401,7 +401,7 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @throws	RestException	401		Not allowed
 	 * @throws  RestException	404		Expense report not found
-	 * @throws	RestException	500
+	 * @throws	RestException	500		System error
 	 */
 	public function put($id, $request_data = null)
 	{

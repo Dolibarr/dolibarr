@@ -3058,7 +3058,7 @@ if ($action == 'create') {
 		if (empty($conf->global->INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE)) {
 			$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
 		}
-		print info_admin($text, 0, 0, 0).'<br>';
+		print info_admin($text, 0, 0, 0, 'opacitymedium').'<br>';
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
@@ -3857,7 +3857,6 @@ if ($action == 'create') {
 	print "</form>\n";
 } elseif ($id > 0 || !empty($ref)) {
 	if (empty($object->id)) {
-		llxHeader();
 		$langs->load('errors');
 		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 		llxFooter();
@@ -4818,6 +4817,7 @@ if ($action == 'create') {
 
 	// List of previous situation invoices
 	if (($object->situation_cycle_ref > 0) && !empty($conf->global->INVOICE_USE_SITUATION)) {
+		print '<!-- List of situation invoices -->';
 		print '<table class="noborder situationstable" width="100%">';
 
 		print '<tr class="liste_titre">';
@@ -4956,15 +4956,16 @@ if ($action == 'create') {
 
 	// List of payments already done
 
+	print '<!-- List of payments already done -->';
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder paymenttable centpercent">';
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">'.($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
-	print '<td class="liste_titre">'.$langs->trans('Date').'</td>';
-	print '<td class="liste_titre">'.$langs->trans('Type').'</td>';
+	print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('Date').'</span></td>';
+	print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('Type').'</span></td>';
 	if (!empty($conf->banque->enabled)) {
-		print '<td class="liste_titre">'.$langs->trans('BankAccount').'</td>';
+		print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('BankAccount').'</span></td>';
 	}
 	print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
 	print '<td class="liste_titre" width="18">&nbsp;</td>';

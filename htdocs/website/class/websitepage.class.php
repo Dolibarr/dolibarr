@@ -725,6 +725,7 @@ class WebsitePage extends CommonObject
 			$object->fk_website = $newwebsite;
 		}
 		$object->import_key = '';
+		$object->status = self::STATUS_DRAFT;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

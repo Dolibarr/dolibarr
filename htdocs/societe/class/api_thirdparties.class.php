@@ -1409,7 +1409,7 @@ class Thirdparties extends DolibarrApi
 		if ($result > 0) {
 			return array("success" => $result);
 		} else {
-			throw new RestException(500);
+			throw new RestException(500, 'Error generating the document '.$this->error);
 		}
 	}
 

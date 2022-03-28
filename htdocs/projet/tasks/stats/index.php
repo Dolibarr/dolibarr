@@ -180,7 +180,7 @@ print '<br><br>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre" height="24">';
+print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfTasks").'</td>';
 print '</tr>';
@@ -191,14 +191,14 @@ foreach ($data_all_year as $val) {
 	while ($year && $oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
 
-		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+		print '<tr class="oddeven">';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 
-	print '<tr class="oddeven" height="24">';
-	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
+	print '<tr class="oddeven">';
+	print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '</tr>';
 	$oldyear = $year;
